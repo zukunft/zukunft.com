@@ -85,9 +85,9 @@ class change_log_named extends change_log
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        $usr_msg = parent::set_from_json_array($json_array);
+        $usr_msg = parent::api_mapper($json_array);
         if (array_key_exists(json_fields::OLD_VALUE, $json_array)) {
             $this->old_value = $json_array[json_fields::OLD_VALUE];
         } else {

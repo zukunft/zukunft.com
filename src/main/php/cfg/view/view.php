@@ -9,6 +9,7 @@
     - db const:          const for the database link
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache
     - cast:              create an api object and set the vars from an api json
@@ -266,6 +267,75 @@ class view extends sandbox_typed
             }
         }
         return $result;
+    }
+
+    /**
+     * map a view api json to this model view object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::CODE_ID) {
+                if ($value <> '') {
+                    $this->code_id = $value;
+                }
+            }
+            /* TODO review
+            if ($key == exp_obj::FLD_VIEW) {
+                $wrd_view = new view($this->user());
+                if ($do_save) {
+                    $wrd_view->load_by_name($value);
+                    if ($wrd_view->id() == 0) {
+                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                    } else {
+                        $this->view_id = $wrd_view->id();
+                    }
+                } else {
+                    $wrd_view->set_name($value);
+                }
+                $this->view = $wrd_view;
+            }
+
+            */
+
+        }
+
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        if ($this->is_excluded()) {
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars[json_fields::CODE_ID] = $this->code_id;
+            if ($this->cmp_lnk_lst != null) {
+                $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($typ_lst);
+            }
+        }
+
+        return $vars;
     }
 
 
@@ -805,75 +875,6 @@ class view extends sandbox_typed
         // TODO implement
         $usr_msg->add_message('not yet implemented');
         return $usr_msg;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        if ($this->is_excluded()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
-            $vars = parent::api_json_array($typ_lst, $usr);
-            $vars[json_fields::CODE_ID] = $this->code_id;
-            if ($this->cmp_lnk_lst != null) {
-                $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($typ_lst);
-            }
-        }
-
-        return $vars;
-    }
-
-    /**
-     * map a view api json to this model view object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::CODE_ID) {
-                if ($value <> '') {
-                    $this->code_id = $value;
-                }
-            }
-            /* TODO review
-            if ($key == exp_obj::FLD_VIEW) {
-                $wrd_view = new view($this->user());
-                if ($do_save) {
-                    $wrd_view->load_by_name($value);
-                    if ($wrd_view->id() == 0) {
-                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
-                    } else {
-                        $this->view_id = $wrd_view->id();
-                    }
-                } else {
-                    $wrd_view->set_name($value);
-                }
-                $this->view = $wrd_view;
-            }
-
-            */
-
-        }
-
-        return $msg;
     }
 
 

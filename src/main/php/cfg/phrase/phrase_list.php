@@ -136,6 +136,25 @@ class phrase_list extends sandbox_list_named
         return parent::rows_mapper_obj(new phrase($this->user()), $db_rows, $load_all);
     }
 
+    /**
+     * map a phrase list api json to this model phrase list object
+     * @param array $api_json the api array with the phrases that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        foreach ($api_json as $json_phr) {
+            $phr = new phrase($this->user());
+            $usr_msg->add($phr->api_mapper($json_phr));
+            if ($usr_msg->is_ok()) {
+                $this->add($phr);
+            }
+        }
+
+        return $usr_msg;
+    }
+
 
     /*
      * load
@@ -416,25 +435,6 @@ class phrase_list extends sandbox_list_named
     /*
      * set and get
      */
-
-    /**
-     * map a phrase list api json to this model phrase list object
-     * @param array $api_json the api array with the phrases that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $usr_msg = new user_message();
-
-        foreach ($api_json as $json_phr) {
-            $phr = new phrase($this->user());
-            $usr_msg->add($phr->set_by_api_json($json_phr));
-            if ($usr_msg->is_ok()) {
-                $this->add($phr);
-            }
-        }
-
-        return $usr_msg;
-    }
 
 
     /*

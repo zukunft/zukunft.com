@@ -9,3 +9,4 @@ system_time_type_id, type_name, code_id, description
 8, 'selected tests', 'test_select', 'total execution time for the selected tests'
 9, 'db reset', 'db_reset', 'total execution time for resetting the database'
 10, 'error log', 'error_log', 'time for writing to the error log and handling the errors'
+11, 'view', 'view', 'time within the main html frontend script'

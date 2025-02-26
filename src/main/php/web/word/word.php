@@ -68,7 +68,7 @@ include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_VERB_PATH . 'verb_list.php';
-//include_once WEB_VIEW_PATH . 'view_list.php';
+//include_once WEB_VIEW_PATH . 'view.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'api.php';
@@ -95,7 +95,7 @@ use html\system\back_trace;
 use html\system\messages;
 use html\user\user_message;
 use html\verb\verb_list;
-use html\view\view_list;
+use html\view\view;
 use shared\api;
 use shared\enum\foaf_direction;
 use shared\json_fields;
@@ -116,6 +116,87 @@ class word extends sandbox_typed
 
     // the main parent phrase
     private ?phrase $parent = null;
+
+    // the default view
+    private ?view $msk = null;
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * set the vars of this word frontend object bases on the url array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array): user_message
+    {
+        $usr_msg = parent::url_mapper($url_array);
+        if ($usr_msg->is_ok()) {
+            /* TODO activate
+            if (array_key_exists(api::URL_VAR_PLURAL, $url_array)) {
+                $this->set_plural($url_array[api::URL_VAR_PLURAL]);
+            } else {
+                $this->set_plural(null);
+            }
+            */
+            if (array_key_exists(api::URL_VAR_VIEW, $url_array)) {
+                if ($url_array[api::URL_VAR_VIEW] != null) {
+                    $this->set_view_id($url_array[api::URL_VAR_VIEW]);
+                }
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the vars of this object bases on the api json array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $json_array an api json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function api_mapper(array $json_array): user_message
+    {
+        // get body from message
+        $api_msg = new api_message();
+        $json_array = $api_msg->validate($json_array);
+
+        $usr_msg = parent::api_mapper($json_array);
+        if (array_key_exists(json_fields::PLURAL, $json_array)) {
+            $this->set_plural($json_array[json_fields::PLURAL]);
+        } else {
+            $this->set_plural(null);
+        }
+        if (array_key_exists(json_fields::PARENT, $json_array)) {
+            $this->set_parent($json_array[json_fields::PARENT]);
+        } else {
+            $this->set_parent(null);
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an api json array for the backend based on this frontend object
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+
+        $vars[json_fields::PLURAL] = $this->plural();
+        if ($this->has_parent()) {
+            $vars[json_fields::PARENT] = $this->parent()->api_array();
+        }
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
 
 
     /*
@@ -142,6 +223,23 @@ class word extends sandbox_typed
         return $this->parent;
     }
 
+    function set_view_id(?int $view_id): void
+    {
+        $msk = new view();
+        $msk->load_by_id($view_id);
+        $this->set_view($msk);
+    }
+
+    function set_view(?view $view): void
+    {
+        $this->msk = $view;
+    }
+
+    function view(): ?view
+    {
+        return $this->msk;
+    }
+
     /**
      * @param string|null $code_id the code id of the phrase type
      */
@@ -153,70 +251,6 @@ class word extends sandbox_typed
         } else {
             $this->set_type_id($phr_typ_cac->id($code_id));
         }
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * set the vars of this object bases on the api json array
-     * public because it is reused e.g. by the phrase group display object
-     * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function set_from_json_array(array $json_array): user_message
-    {
-        // get body from message
-        $api_msg = new api_message();
-        $json_array = $api_msg->validate($json_array);
-
-        $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(json_fields::PLURAL, $json_array)) {
-            $this->set_plural($json_array[json_fields::PLURAL]);
-        } else {
-            $this->set_plural(null);
-        }
-        if (array_key_exists(json_fields::PARENT, $json_array)) {
-            $this->set_parent($json_array[json_fields::PARENT]);
-        } else {
-            $this->set_parent(null);
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * create an api json array for the backend based on this frontend object
-     * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
-     */
-    function api_array(): array
-    {
-        $vars = parent::api_array();
-
-        $vars[json_fields::PLURAL] = $this->plural();
-        if ($this->has_parent()) {
-            $vars[json_fields::PARENT] = $this->parent()->api_array();
-        }
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
-    }
-
-    /**
-     * set the vars of this object bases on the url array
-     * public because it is reused e.g. by the phrase group display object
-     * @param array $url_array an array based on $_GET from a form submit
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function set_from_url_array(array $url_array): user_message
-    {
-        $usr_msg = parent::set_from_json_array($url_array);
-        if (array_key_exists(json_fields::PLURAL, $url_array)) {
-            $this->set_plural($url_array[json_fields::PLURAL]);
-        } else {
-            $this->set_plural(null);
-        }
-        return $usr_msg;
     }
 
 

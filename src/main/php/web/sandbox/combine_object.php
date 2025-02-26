@@ -81,7 +81,7 @@ class combine_object extends CombineObject
      */
     function set_from_json(string $json_api_msg): user_message
     {
-        return $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->api_mapper(json_decode($json_api_msg, true));
     }
 
     /**
@@ -90,7 +90,7 @@ class combine_object extends CombineObject
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
         $usr_msg = new user_message();
         $usr_msg->add_err('This set_from_json_array function should have been overwritten by the child object');
@@ -114,7 +114,7 @@ class combine_object extends CombineObject
         $api = new api_dsp();
         $json_body = $api->api_call_id($this::class, $id);
         if ($json_body) {
-            $this->set_from_json_array($json_body);
+            $this->api_mapper($json_body);
             $result = true;
         }
         return $result;

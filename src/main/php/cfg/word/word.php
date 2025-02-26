@@ -21,10 +21,10 @@
     - preserved:         const word names of a words used by the system
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache
     - load:              database access object (DAO) functions
-    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
     - cast:              create an api object and set the vars from an api json
     - convert:           convert this word e.g. phrase or term
@@ -251,6 +251,82 @@ class word extends sandbox_typed
             }
         }
         return $result;
+    }
+
+    /**
+     * map a word api json to this model word object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * TODO add a test case to check if an import of a pure name overwrites the existing type setting
+     *      or if loading later adding a word with admin_protection and type does not overwrite the type and protection
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            // TODO move plural to language forms
+            if ($key == json_fields::PLURAL) {
+                if ($value <> '') {
+                    $this->plural = $value;
+                }
+            }
+            /*
+            if ($key == exp_obj::FLD_VIEW) {
+                $wrd_view = new view($this->user());
+                if ($do_save) {
+                    $wrd_view->load_by_name($value);
+                    if ($wrd_view->id() == 0) {
+                        $result->add_message('Cannot find view >' . $value . '< when importing ' . $this->dsp_id());
+                    } else {
+                        $this->view_id = $wrd_view->id();
+                    }
+                } else {
+                    $wrd_view->set_name($value);
+                }
+                $this->view = $wrd_view;
+            }
+
+            if ($key == json_fields::PHRASES) {
+                $phr_lst = new phrase_list($this->user());
+                $msg->add($phr_lst->db_obj($value));
+                if ($msg->is_ok()) {
+                    $this->grp->phr_lst = $phr_lst;
+                }
+            }
+            */
+
+        }
+
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        if ($this->is_excluded()) {
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars[json_fields::PLURAL] = $this->plural;
+        }
+
+        return $vars;
     }
 
 
@@ -575,82 +651,6 @@ class word extends sandbox_typed
     function all_sandbox_fields(): array
     {
         return word_db::ALL_SANDBOX_FLD_NAMES;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        if ($this->is_excluded()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
-            $vars = parent::api_json_array($typ_lst, $usr);
-            $vars[json_fields::PLURAL] = $this->plural;
-        }
-
-        return $vars;
-    }
-
-    /**
-     * map a word api json to this model word object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * TODO add a test case to check if an import of a pure name overwrites the existing type setting
-     *      or if loading later adding a word with admin_protection and type does not overwrite the type and protection
-     * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-
-            // TODO move plural to language forms
-            if ($key == json_fields::PLURAL) {
-                if ($value <> '') {
-                    $this->plural = $value;
-                }
-            }
-            /*
-            if ($key == exp_obj::FLD_VIEW) {
-                $wrd_view = new view($this->user());
-                if ($do_save) {
-                    $wrd_view->load_by_name($value);
-                    if ($wrd_view->id() == 0) {
-                        $result->add_message('Cannot find view >' . $value . '< when importing ' . $this->dsp_id());
-                    } else {
-                        $this->view_id = $wrd_view->id();
-                    }
-                } else {
-                    $wrd_view->set_name($value);
-                }
-                $this->view = $wrd_view;
-            }
-
-            if ($key == json_fields::PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $msg->add($phr_lst->db_obj($value));
-                if ($msg->is_ok()) {
-                    $this->grp->phr_lst = $phr_lst;
-                }
-            }
-            */
-
-        }
-
-        return $msg;
     }
 
 

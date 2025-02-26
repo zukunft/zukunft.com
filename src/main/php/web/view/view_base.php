@@ -128,10 +128,10 @@ class view_base extends sandbox_typed
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
         // the root view object
-        $usr_msg = parent::set_from_json_array($json_array);
+        $usr_msg = parent::api_mapper($json_array);
         if (array_key_exists(json_fields::CODE_ID, $json_array)) {
             $this->code_id = $json_array[json_fields::CODE_ID];
         } else {
@@ -151,7 +151,7 @@ class view_base extends sandbox_typed
                 $id = $dbo_json[json_fields::ID];
             }
             if ($id != 0) {
-                $this->dbo->set_from_json_array($dbo_json);
+                $this->dbo->api_mapper($dbo_json);
             }
         }
         if (array_key_exists(api::API_TRIPLE, $json_array)) {
@@ -162,7 +162,7 @@ class view_base extends sandbox_typed
                 $id = $dbo_json[json_fields::ID];
             }
             if ($id != 0) {
-                $this->dbo->set_from_json_array($dbo_json);
+                $this->dbo->api_mapper($dbo_json);
             }
         }
         $this->cmp_lst = $cmp_lst;

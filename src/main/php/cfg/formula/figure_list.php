@@ -5,6 +5,11 @@
     model/formula/figure_list.php - a list of figures, so either a value of a formula result object
     -----------------------------
 
+    The main sections of this object are
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -54,7 +59,13 @@ use shared\library;
 class figure_list extends sandbox_list
 {
 
+    /*
+     * object vars
+     */
+
     // array $lst is the list of figures
+    public ?bool $fig_missing = false; // true if at least one of the results is not set which means is NULL (but zero is a value)
+
 
     /*
      * construct and map
@@ -62,25 +73,17 @@ class figure_list extends sandbox_list
 
     // the rows_mapper is not needed, because the figures are not saved in the database
 
-
-    public ?bool $fig_missing = false; // true if at least one of the results is not set which means is NULL (but zero is a value)
-
-
-    /*
-     * set and get
-     */
-
     /**
      * map a figure list api json to this model figure list object
      * @param array $api_json the api array with the figures that should be mapped
      */
-    function set_by_api_json(array $api_json): user_message
+    function api_mapper(array $api_json): user_message
     {
         $usr_msg = new user_message();
 
         foreach ($api_json as $json_phr) {
             $fig = new figure($this->user());
-            $usr_msg->add($fig->set_by_api_json($json_phr));
+            $usr_msg->add($fig->api_mapper($json_phr));
             if ($usr_msg->is_ok()) {
                 $this->add($fig);
             }

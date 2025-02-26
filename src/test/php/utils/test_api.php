@@ -179,7 +179,7 @@ class test_api extends create_test_objects
         // does frontend and backend api json match?
         $test_name = $class_api . ' fill based on api json matches original';
         if ($result) {
-            $clone_obj->set_by_api_json(json_decode($json_api, true));
+            $clone_obj->api_mapper(json_decode($json_api, true));
             $json_compare = $clone_obj->api_json();
             $result = $this->assert_json_string($test_name, $json_compare, $json_api);
         }

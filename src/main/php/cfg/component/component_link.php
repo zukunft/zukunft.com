@@ -9,6 +9,7 @@
     - db const:          const for the database link
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache
     - cast:              create an api object and set the vars from an api json
@@ -251,6 +252,75 @@ class component_link extends sandbox_link
             $this->set_style_by_id($db_row[self::FLD_STYLE]);
         }
         return $result;
+    }
+
+    /**
+     * map a component api json to this model component link object
+     * @param array $api_json the api array with the values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($value != null) {
+                if ($key == json_fields::POS) {
+                    $this->order_nbr = $value;
+                }
+                if ($key == json_fields::TYPE) {
+                    $this->set_predicate_id($value);
+                }
+                if ($key == json_fields::POS_TYPE) {
+                    $this->set_pos_type_by_id($value);
+                }
+                if ($key == json_fields::STYLE) {
+                    $this->set_style_by_id($value);
+                }
+            }
+        }
+
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = [];
+        if ($this->id() != 0) {
+            $vars[json_fields::LINK_ID] = $this->id();
+        }
+        if ($this->is_excluded()) {
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            if ($this->component() != null) {
+                $vars = array_merge($vars, $this->component()->api_json_array($typ_lst, $usr));
+            }
+            if ($this->order_nbr != component_link::START_ORDER_NBR or $this->id() != 0) {
+                $vars[json_fields::POS] = $this->order_nbr;
+            }
+            // TODO Prio 2 activate
+            //$vars[json_fields::TYPE] = $this->type_id();
+            if ($this->pos_type_code_id() != position_types::BELOW or $this->id() != 0) {
+                $vars[json_fields::POS_TYPE] = $this->pos_type_id();
+            }
+            if ($this->style != null) {
+                $vars[json_fields::STYLE] = $this->style_id();
+            }
+        }
+
+        return $vars;
     }
 
 
@@ -758,75 +828,6 @@ class component_link extends sandbox_link
     function all_sandbox_fields(): array
     {
         return self::ALL_SANDBOX_FLD_NAMES;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = [];
-        if ($this->id() != 0) {
-            $vars[json_fields::LINK_ID] = $this->id();
-        }
-        if ($this->is_excluded()) {
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
-            if ($this->component() != null) {
-                $vars = array_merge($vars, $this->component()->api_json_array($typ_lst, $usr));
-            }
-            if ($this->order_nbr != component_link::START_ORDER_NBR or $this->id() != 0) {
-                $vars[json_fields::POS] = $this->order_nbr;
-            }
-            // TODO Prio 2 activate
-            //$vars[json_fields::TYPE] = $this->type_id();
-            if ($this->pos_type_code_id() != position_types::BELOW or $this->id() != 0) {
-                $vars[json_fields::POS_TYPE] = $this->pos_type_id();
-            }
-            if ($this->style != null) {
-                $vars[json_fields::STYLE] = $this->style_id();
-            }
-        }
-
-        return $vars;
-    }
-
-    /**
-     * map a component api json to this model component link object
-     * @param array $api_json the api array with the values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-            if ($value != null) {
-                if ($key == json_fields::POS) {
-                    $this->order_nbr = $value;
-                }
-                if ($key == json_fields::TYPE) {
-                    $this->set_predicate_id($value);
-                }
-                if ($key == json_fields::POS_TYPE) {
-                    $this->set_pos_type_by_id($value);
-                }
-                if ($key == json_fields::STYLE) {
-                    $this->set_style_by_id($value);
-                }
-            }
-        }
-
-        return $msg;
     }
 
 

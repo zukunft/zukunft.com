@@ -89,7 +89,7 @@ class verb_list extends type_list
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
             $new = clone new verb();
-            $msg = $new->set_from_json_array($value);
+            $msg = $new->api_mapper($value);
             $usr_msg->add($msg);
             $this->add_obj($new);
         }

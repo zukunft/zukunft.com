@@ -122,7 +122,7 @@ class sandbox_value extends sandbox
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
         $usr_msg = new user_message();
         if (array_key_exists(json_fields::ID, $json_array)) {
@@ -143,7 +143,7 @@ class sandbox_value extends sandbox
         }
         $this->set_grp(new group());
         if (array_key_exists(json_fields::PHRASES, $json_array)) {
-            $this->grp()->set_from_json_array($json_array[json_fields::PHRASES]);
+            $this->grp()->api_mapper($json_array[json_fields::PHRASES]);
         } else {
             $usr_msg->add_err('Mandatory field phrase group missing in API JSON ' . json_encode($json_array));
         }

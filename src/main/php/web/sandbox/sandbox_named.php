@@ -113,9 +113,9 @@ class sandbox_named extends sandbox
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        $usr_msg = parent::set_from_json_array($json_array);
+        $usr_msg = parent::api_mapper($json_array);
         if (array_key_exists(json_fields::NAME, $json_array)) {
             $this->set_name($json_array[json_fields::NAME]);
         } else {
@@ -151,9 +151,9 @@ class sandbox_named extends sandbox
      * @param array $url_array an array based on $_GET from a form submit
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_url_array(array $url_array): user_message
+    function url_mapper(array $url_array): user_message
     {
-        $usr_msg = parent::set_from_url_array($url_array);
+        $usr_msg = parent::url_mapper($url_array);
         if (array_key_exists(api::URL_VAR_NAME, $url_array)) {
             $this->set_name($url_array[api::URL_VAR_NAME]);
         } else {
@@ -180,7 +180,7 @@ class sandbox_named extends sandbox
         $api = new api_dsp();
         $json_body = $api->api_call_name($this::class, $name);
         if ($json_body) {
-            $this->set_from_json_array($json_body);
+            $this->api_mapper($json_body);
             if ($this->id() != 0) {
                 $result = true;
             }

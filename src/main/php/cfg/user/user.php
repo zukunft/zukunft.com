@@ -439,6 +439,61 @@ class user extends db_object_seq_id
         return $result;
     }
 
+    // TODO test api_mapper
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = $this->api_json_array_core($typ_lst, $usr);
+        if ($this->description != null) {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        if ($this->profile_id > 0) {
+            $vars[json_fields::PROFILE_ID] = $this->profile_id;
+        }
+        if ($this->email != null) {
+            $vars[json_fields::EMAIL] = $this->email;
+        }
+        if ($this->first_name != null) {
+            $vars[json_fields::FIRST_NAME] = $this->first_name;
+        }
+        if ($this->first_name != null) {
+            $vars[json_fields::LAST_NAME] = $this->last_name;
+        }
+
+        return $vars;
+    }
+
+    /**
+     * create an array for the api json creation with only the core user fields
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array_core(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+        if ($this->name != null) {
+            $vars[json_fields::NAME] = $this->name;
+        } else {
+            $vars[json_fields::NAME] = '';
+        }
+
+        return $vars;
+    }
+
 
     /*
      * set and get
@@ -875,61 +930,6 @@ class user extends db_object_seq_id
         return $this->save($db_con);
 
     }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = $this->api_json_array_core($typ_lst, $usr);
-        if ($this->description != null) {
-            $vars[json_fields::DESCRIPTION] = $this->description;
-        }
-        if ($this->profile_id > 0) {
-            $vars[json_fields::PROFILE_ID] = $this->profile_id;
-        }
-        if ($this->email != null) {
-            $vars[json_fields::EMAIL] = $this->email;
-        }
-        if ($this->first_name != null) {
-            $vars[json_fields::FIRST_NAME] = $this->first_name;
-        }
-        if ($this->first_name != null) {
-            $vars[json_fields::LAST_NAME] = $this->last_name;
-        }
-
-        return $vars;
-    }
-
-    /**
-     * create an array for the api json creation with only the core user fields
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array_core(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = parent::api_json_array($typ_lst, $usr);
-        if ($this->name != null) {
-            $vars[json_fields::NAME] = $this->name;
-        } else {
-            $vars[json_fields::NAME] = '';
-        }
-
-        return $vars;
-    }
-
-    // TODO test set_by_api_json
 
 
     /*

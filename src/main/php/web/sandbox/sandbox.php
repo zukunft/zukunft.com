@@ -79,9 +79,9 @@ class sandbox extends db_object_dsp
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        $usr_msg = parent::set_from_json_array($json_array);
+        $usr_msg = parent::api_mapper($json_array);
 
         if (array_key_exists(json_fields::SHARE, $json_array)) {
             $this->share_id = $json_array[json_fields::SHARE];
@@ -102,9 +102,9 @@ class sandbox extends db_object_dsp
      * @param array $url_array an array based on $_GET from a form submit
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_url_array(array $url_array): user_message
+    function url_mapper(array $url_array): user_message
     {
-        $usr_msg = parent::set_from_json_array($url_array);
+        $usr_msg = parent::api_mapper($url_array);
         if (array_key_exists(api::URL_VAR_SHARE, $url_array)) {
             $this->share_id = $url_array[api::URL_VAR_SHARE];
         } else {

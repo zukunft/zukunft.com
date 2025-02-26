@@ -35,6 +35,11 @@ namespace shared\enum;
 enum messages: string
 {
 
+    // start and end maker for message id within a text to allow changing the order of vars within a message
+    // TODO use
+    const VAR_START = '<!mid';
+    const VAR_END = '!>';
+
     // unique message key
     case IS_RESERVED = 'is_reserved';
     case RESERVED_NAME = 'reserved_name';

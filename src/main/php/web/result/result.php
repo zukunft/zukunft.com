@@ -66,9 +66,9 @@ class result extends sandbox_value
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        $usr_msg = parent::set_from_json_array($json_array);
+        $usr_msg = parent::api_mapper($json_array);
         /* TODO add all result fields that are not part of the sandbox value object
         if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
             $this->set_usr_text($json_array[json_fields::USER_TEXT]);

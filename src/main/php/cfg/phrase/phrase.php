@@ -309,6 +309,35 @@ class phrase extends combine_named
         return $result;
     }
 
+    /**
+     * map a phrase api json to this model phrase object
+     * @param array $api_json the api array with the phrase values that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        if (!array_key_exists(json_fields::ID, $api_json)) {
+            log_warning('Missing id in api_json');
+        } else {
+            if ($api_json[json_fields::ID] > 0) {
+                $wrd = new word($this->user());
+                $usr_msg->add($wrd->api_mapper($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $wrd;
+                }
+            } else {
+                $trp = new triple($this->user());
+                $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
+                $usr_msg->add($trp->api_mapper($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $trp;
+                }
+            }
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * set and get
@@ -527,35 +556,6 @@ class phrase extends combine_named
             $trm->set_id_from_obj($this->id_obj(), $this->obj::class);
         }
         return $trm;
-    }
-
-    /**
-     * map a phrase api json to this model phrase object
-     * @param array $api_json the api array with the phrase values that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $usr_msg = new user_message();
-
-        if (!array_key_exists(json_fields::ID, $api_json)) {
-            log_warning('Missing id in api_json');
-        } else {
-            if ($api_json[json_fields::ID] > 0) {
-                $wrd = new word($this->user());
-                $usr_msg->add($wrd->set_by_api_json($api_json));
-                if ($usr_msg->is_ok()) {
-                    $this->obj = $wrd;
-                }
-            } else {
-                $trp = new triple($this->user());
-                $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
-                $usr_msg->add($trp->set_by_api_json($api_json));
-                if ($usr_msg->is_ok()) {
-                    $this->obj = $trp;
-                }
-            }
-        }
-        return $usr_msg;
     }
 
 
@@ -1499,13 +1499,6 @@ class phrase extends combine_named
 
         $wrd = $this->main_word();
         return $wrd->dsp_time_selector($type, $form_name, $pos, $back);
-    }
-
-    // button to add a new word similar to this phrase
-    function btn_add($back)
-    {
-        $wrd = $this->main_word();
-        return $wrd->btn_add($back);
     }
 
 }

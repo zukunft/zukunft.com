@@ -220,14 +220,14 @@ class triple extends sandbox_typed
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        $usr_msg = parent::set_from_json_array($json_array);
+        $usr_msg = parent::api_mapper($json_array);
         if (array_key_exists(json_fields::FROM, $json_array)) {
             $value = $json_array[json_fields::FROM];
             if (is_array($value)) {
                 $phr = new phrase_dsp();
-                $phr->set_from_json_array($value);
+                $phr->api_mapper($value);
                 $this->set_from($phr);
             } else {
                 $this->set_from_by_id($value);
@@ -239,7 +239,7 @@ class triple extends sandbox_typed
             $value = $json_array[json_fields::VERB];
             if (is_array($value)) {
                 $vrb = new verb_dsp();
-                $vrb->set_from_json_array($value);
+                $vrb->api_mapper($value);
                 $this->set_verb($vrb);
             } else {
                 $this->set_verb_by_id($value);
@@ -251,7 +251,7 @@ class triple extends sandbox_typed
             $value = $json_array[json_fields::TO];
             if (is_array($value)) {
                 $phr = new phrase_dsp();
-                $phr->set_from_json_array($value);
+                $phr->api_mapper($value);
                 $this->set_to($phr);
             } else {
                 $this->set_to_by_id($value);

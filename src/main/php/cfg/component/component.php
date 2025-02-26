@@ -9,6 +9,7 @@
     - db const:          const for the database link
     - object vars:       the variables of this component object
     - construct and map: including the mapping of the db row to this component object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache
     - load:              database access object (DAO) functions
@@ -275,6 +276,59 @@ class component extends sandbox_typed
             }
         }
         return $result;
+    }
+
+    /**
+     * map a component api json to this model component object
+     * @param array $api_json the api array with the values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        foreach ($api_json as $key => $value) {
+            // TODO the code id might be not be mapped because this can never be changed by the user
+            if ($key == json_fields::CODE_ID) {
+                $this->code_id = $value;
+            }
+            if ($key == json_fields::UI_MSG_CODE_ID) {
+                $this->ui_msg_code_id = $value;
+            }
+        }
+
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        if ($this->is_excluded()) {
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            $vars = parent::api_json_array($typ_lst, $usr);
+            if ($this->code_id != null) {
+                $vars[json_fields::CODE_ID] = $this->code_id;
+            }
+            if ($this->ui_msg_code_id != null) {
+                $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
+            }
+        }
+
+        return $vars;
     }
 
 
@@ -751,59 +805,6 @@ class component extends sandbox_typed
             $result = $frm->name();
         }
         return $result;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        if ($this->is_excluded()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
-            $vars = parent::api_json_array($typ_lst, $usr);
-            if ($this->code_id != null) {
-                $vars[json_fields::CODE_ID] = $this->code_id;
-            }
-            if ($this->ui_msg_code_id != null) {
-                $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
-            }
-        }
-
-        return $vars;
-    }
-
-    /**
-     * map a component api json to this model component object
-     * @param array $api_json the api array with the values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-            // TODO the code id might be not be mapped because this can never be changed by the user
-            if ($key == json_fields::CODE_ID) {
-                $this->code_id = $value;
-            }
-            if ($key == json_fields::UI_MSG_CODE_ID) {
-                $this->ui_msg_code_id = $value;
-            }
-        }
-
-        return $msg;
     }
 
 

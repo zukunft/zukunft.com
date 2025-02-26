@@ -11,6 +11,8 @@
 
     The main sections of this object are
     - db const:          const for the database link
+    - construct and map: including the mapping of the db row to this sandbox object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - forward:           forward functions of the object parts for better code reading only
 
 
@@ -186,6 +188,85 @@ class element extends db_object_seq_id_user
         return $result;
     }
 
+    /**
+     * map an element api json to this model element object
+     * @param array $api_json the api array with the element values that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        if (!array_key_exists(json_fields::ID, $api_json)) {
+            log_warning('Missing id in api_json');
+        } elseif (!array_key_exists(json_fields::OBJECT_CLASS, $api_json)) {
+            log_warning('Missing class in api_json');
+        } else {
+            if ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
+                $wrd = new word($this->user());
+                $usr_msg->add($wrd->api_mapper($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $wrd;
+                }
+            } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
+                $trp = new triple($this->user());
+                $usr_msg->add($trp->api_mapper($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $trp;
+                }
+            } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
+                $vrb = new verb();
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $vrb;
+                }
+            } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
+                $frm = new formula($this->user());
+                $usr_msg->add($frm->api_mapper($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $frm;
+                }
+            } else {
+                $this->obj = null;
+            }
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        if ($this->is_excluded()) {
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            $vars = $this->obj->api_json_array($typ_lst, $usr);
+            if ($this->is_word()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
+            } elseif ($this->is_triple()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
+            } elseif ($this->is_verb()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_VERB;
+            } elseif ($this->is_formula()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
+            } else {
+                $vars[json_fields::OBJECT_CLASS] = '';
+            }
+        }
+
+        return $vars;
+    }
+
 
     /*
      * set and get
@@ -301,85 +382,6 @@ class element extends db_object_seq_id_user
     function load_sql_by_id(sql_creator $sc, int $id): sql_par
     {
         return parent::load_sql_by_id($sc, $id);
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        if ($this->is_excluded()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
-            $vars = $this->obj->api_json_array($typ_lst, $usr);
-            if ($this->is_word()) {
-                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
-            } elseif ($this->is_triple()) {
-                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
-            } elseif ($this->is_verb()) {
-                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_VERB;
-            } elseif ($this->is_formula()) {
-                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
-            } else {
-                $vars[json_fields::OBJECT_CLASS] = '';
-            }
-        }
-
-        return $vars;
-    }
-
-    /**
-     * map an element api json to this model element object
-     * @param array $api_json the api array with the element values that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $usr_msg = new user_message();
-
-        if (!array_key_exists(json_fields::ID, $api_json)) {
-            log_warning('Missing id in api_json');
-        } elseif (!array_key_exists(json_fields::OBJECT_CLASS, $api_json)) {
-            log_warning('Missing class in api_json');
-        } else {
-            if ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
-                $wrd = new word($this->user());
-                $usr_msg->add($wrd->set_by_api_json($api_json));
-                if ($usr_msg->is_ok()) {
-                    $this->obj = $wrd;
-                }
-            } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
-                $trp = new triple($this->user());
-                $usr_msg->add($trp->set_by_api_json($api_json));
-                if ($usr_msg->is_ok()) {
-                    $this->obj = $trp;
-                }
-            } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
-                $vrb = new verb();
-                if ($usr_msg->is_ok()) {
-                    $this->obj = $vrb;
-                }
-            } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
-                $frm = new formula($this->user());
-                $usr_msg->add($frm->set_by_api_json($api_json));
-                if ($usr_msg->is_ok()) {
-                    $this->obj = $frm;
-                }
-            } else {
-                $this->obj = null;
-            }
-        }
-        return $usr_msg;
     }
 
 

@@ -76,25 +76,25 @@ class element extends db_object
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        $usr_msg = parent::set_from_json_array($json_array);
+        $usr_msg = parent::api_mapper($json_array);
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
             if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
                 $wrd = new word();
-                $wrd->set_from_json_array($json_array);
+                $wrd->api_mapper($json_array);
                 $this->obj = $wrd;
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
                 $trp = new triple();
-                $trp->set_from_json_array($json_array);
+                $trp->api_mapper($json_array);
                 $this->obj = $trp;
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
                 $vrb = new verb();
-                $vrb->set_from_json_array($json_array);
+                $vrb->api_mapper($json_array);
                 $this->obj = $vrb;
             } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
                 $frm = new formula();
-                $frm->set_from_json_array($json_array);
+                $frm->api_mapper($json_array);
                 $this->obj = $frm;
             }
         }

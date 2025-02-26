@@ -40,6 +40,7 @@
     - db const:          const for the database link
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the vars from unexpected changes
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
@@ -409,6 +410,102 @@ class value_base extends sandbox_value
         return $result;
     }
 
+    /**
+     * map a value api json to this model value object
+     * @param array $api_json the api array with the values that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+
+        $usr_msg = new user_message();
+        $lib = new library();
+
+        // make sure that there are no unexpected leftovers but keep the user
+        // TODO check that it is always moved to sandbox object
+        // TODO use sand
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::ID) {
+                $this->set_id($value);
+            }
+
+            if ($key == json_fields::PHRASES) {
+                $phr_lst = new phrase_list($this->user());
+                $usr_msg->add($phr_lst->api_mapper($value));
+                if ($usr_msg->is_ok()) {
+                    $this->grp()->set_phrase_list($phr_lst);
+                }
+            }
+
+            if ($key == json_fields::TIMESTAMP) {
+                if (strtotime($value)) {
+                    $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
+                } else {
+                    $usr_msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
+                }
+            }
+
+            if ($key == json_fields::NUMBER) {
+                if (is_numeric($value)) {
+                    $this->set_value($value);
+                } else {
+                    $usr_msg->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+                }
+            }
+
+            if ($key == json_fields::SHARE) {
+                $this->share_id = $shr_typ_cac->id($value);
+            }
+
+            if ($key == json_fields::PROTECTION) {
+                $this->protection_id = $ptc_typ_cac->id($value);
+                if ($value <> protect_type_shared::NO_PROTECT) {
+                    $get_ownership = true;
+                }
+            }
+
+            if ($key == json_fields::SOURCE_NAME) {
+                $src = new source($this->user());
+                $src->set_name($value);
+                $this->source = $src;
+            }
+
+        }
+
+        return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        // add the source
+        if ($this->source != null) {
+            $vars[json_fields::SOURCE] = $this->source->id();
+        }
+
+        return $vars;
+    }
+    // TODO test set_by_api_json
+
 
     /*
      * set and get
@@ -451,77 +548,6 @@ class value_base extends sandbox_value
     function symbol(): string
     {
         return $this->symbol;
-    }
-
-    /**
-     * map a value api json to this model value object
-     * @param array $api_json the api array with the values that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-
-        $usr_msg = new user_message();
-        $lib = new library();
-
-        // make sure that there are no unexpected leftovers but keep the user
-        // TODO check that it is always moved to sandbox object
-        // TODO use sand
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::ID) {
-                $this->set_id($value);
-            }
-
-            if ($key == json_fields::PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $usr_msg->add($phr_lst->set_by_api_json($value));
-                if ($usr_msg->is_ok()) {
-                    $this->grp()->set_phrase_list($phr_lst);
-                }
-            }
-
-            if ($key == json_fields::TIMESTAMP) {
-                if (strtotime($value)) {
-                    $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
-                } else {
-                    $usr_msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
-                }
-            }
-
-            if ($key == json_fields::NUMBER) {
-                if (is_numeric($value)) {
-                    $this->set_value($value);
-                } else {
-                    $usr_msg->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
-                }
-            }
-
-            if ($key == json_fields::SHARE) {
-                $this->share_id = $shr_typ_cac->id($value);
-            }
-
-            if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $ptc_typ_cac->id($value);
-                if ($value <> protect_type_shared::NO_PROTECT) {
-                    $get_ownership = true;
-                }
-            }
-
-            if ($key == json_fields::SOURCE_NAME) {
-                $src = new source($this->user());
-                $src->set_name($value);
-                $this->source = $src;
-            }
-
-        }
-
-        return $usr_msg;
     }
 
     /**
@@ -1090,32 +1116,6 @@ class value_base extends sandbox_value
         }
         return $result;
     }
-
-
-    /*
-     * api
-     */
-
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = parent::api_json_array($typ_lst, $usr);
-
-        // add the source
-        if ($this->source != null) {
-            $vars[json_fields::SOURCE] = $this->source->id();
-        }
-
-        return $vars;
-    }
-    // TODO test set_by_api_json
 
 
     /*

@@ -11,12 +11,12 @@
     - db const:          const for the database link
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the vars from unexpected changes
     - modify:            change potentially all variables of this sandbox object
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
     - load sql:          create the sql statements for loading from the db
-    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
     - log read:          read related log messages
@@ -185,6 +185,49 @@ class sandbox_named extends sandbox
         return $result;
     }
 
+    /**
+     * set the type based on the api json
+     * @param array $api_json the api json array with the values that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($key == json_fields::NAME) {
+                $this->set_name($value);
+            }
+            if ($key == json_fields::DESCRIPTION) {
+                if ($value <> '') {
+                    $this->description = $value;
+                }
+            }
+        }
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
+
+        return $vars;
+    }
+
 
     /*
      * set and get
@@ -336,27 +379,6 @@ class sandbox_named extends sandbox
         $api_obj->description = $this->description;
     }
 
-    /**
-     * set the type based on the api json
-     * @param array $api_json the api json array with the values that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
-            }
-        }
-        return $msg;
-    }
-
 
     /*
      * load
@@ -455,28 +477,6 @@ class sandbox_named extends sandbox
         $qp->par = $sc->get_par();
 
         return $qp;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = parent::api_json_array($typ_lst, $usr);
-
-        $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
-
-        return $vars;
     }
 
 

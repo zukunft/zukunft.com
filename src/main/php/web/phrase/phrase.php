@@ -63,42 +63,36 @@ class phrase extends combine_named
 {
 
     /*
-     * set and get
+     * construct and map
      */
 
     /**
-     * set the object id based on the given phrase id
-     * must have the same logic as the database view and the api
-     * @param int $id the phrase id that is converted to the object id
-     * @return void
+     * set the vars of this phrase frontend object bases on the api json array
+     * @param array $json_array an api json message
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_id(int $id): void
+    function api_mapper(array $json_array): user_message
     {
-        $this->set_obj_id(abs($id));
-    }
-
-    /**
-     * @return int the id of the phrase generated from the object id
-     * e.g 1 for a word with id 1, -1 for a triple with id 1
-     */
-    function id(): int
-    {
-        if ($this->is_word()) {
-            return $this->obj_id();
+        $usr_msg = new user_message();
+        if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
+            if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
+                $wrd_dsp = new word();
+                $wrd_dsp->api_mapper($json_array);
+                $this->set_obj($wrd_dsp);
+            } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
+                $trp_dsp = new triple();
+                $trp_dsp->api_mapper($json_array);
+                $this->set_obj($trp_dsp);
+                // switch the phrase id to the object id
+                $this->set_id($trp_dsp->id());
+            } else {
+                $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a phrase');
+            }
         } else {
-            return $this->obj_id() * -1;
+            $usr_msg->add_err('Json class missing, but expected for a phrase');
         }
+        return $usr_msg;
     }
-
-    /**
-     * @return int|string|null the id of the word or triple
-     * e.g 1 for a word with id 1, 1 for a triple with id 1
-     */
-    function obj_id(): int|string|null
-    {
-        return $this->obj()?->id();
-    }
-
 
     /*
      * api
@@ -143,36 +137,48 @@ class phrase extends combine_named
      */
     function set_from_json(string $json_api_msg): user_message
     {
-        return $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->api_mapper(json_decode($json_api_msg, true));
+    }
+
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the object id based on the given phrase id
+     * must have the same logic as the database view and the api
+     * @param int $id the phrase id that is converted to the object id
+     * @return void
+     */
+    function set_id(int $id): void
+    {
+        $this->set_obj_id(abs($id));
     }
 
     /**
-     * set the vars of this phrase frontend object bases on the api json array
-     * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
+     * @return int the id of the phrase generated from the object id
+     * e.g 1 for a word with id 1, -1 for a triple with id 1
      */
-    function set_from_json_array(array $json_array): user_message
+    function id(): int
     {
-        $usr_msg = new user_message();
-        if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
-            if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
-                $wrd_dsp = new word();
-                $wrd_dsp->set_from_json_array($json_array);
-                $this->set_obj($wrd_dsp);
-            } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
-                $trp_dsp = new triple();
-                $trp_dsp->set_from_json_array($json_array);
-                $this->set_obj($trp_dsp);
-                // switch the phrase id to the object id
-                $this->set_id($trp_dsp->id());
-            } else {
-                $usr_msg->add_err('Json class ' . $json_array[json_fields::OBJECT_CLASS] . ' not expected for a phrase');
-            }
+        if ($this->is_word()) {
+            return $this->obj_id();
         } else {
-            $usr_msg->add_err('Json class missing, but expected for a phrase');
+            return $this->obj_id() * -1;
         }
-        return $usr_msg;
     }
+
+    /**
+     * @return int|string|null the id of the word or triple
+     * e.g 1 for a word with id 1, 1 for a triple with id 1
+     */
+    function obj_id(): int|string|null
+    {
+        return $this->obj()?->id();
+    }
+
 
 
     /*

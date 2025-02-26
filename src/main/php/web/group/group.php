@@ -185,10 +185,10 @@ class group extends sandbox_named
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
         if (array_key_exists(json_fields::ID, $json_array)) {
-            $usr_msg = parent::set_from_json_array($json_array);
+            $usr_msg = parent::api_mapper($json_array);
             if (array_key_exists(json_fields::PHRASES, $json_array)) {
                 $phr_lst = $json_array[json_fields::PHRASES];
                 foreach ($phr_lst as $phr_json) {
@@ -217,7 +217,7 @@ class group extends sandbox_named
                 $wrd_or_trp = new triple();
             }
         }
-        $wrd_or_trp->set_from_json_array($phr_json);
+        $wrd_or_trp->api_mapper($phr_json);
         $phr = new phrase();
         $phr->set_obj($wrd_or_trp);
         $this->lst[] = $phr;

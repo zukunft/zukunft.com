@@ -132,6 +132,7 @@ class api
     const URL_VAR_PROTECTION = 'protection';
     const URL_VAR_CONFIRM = 'confirm';
     const URL_REF = 'reference';
+    const URL_VAR_PHRASE_TYPE = 'phrase_type';
 
     // used for the change log
     // the short name of the object class name e.g. word instead of cfg/word

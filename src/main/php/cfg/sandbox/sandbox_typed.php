@@ -10,9 +10,9 @@
     The main sections of this object are
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the variables from unexpected changes
     - preloaded:         get preloaded information such as the type code id
-    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - modify:            change potentially all variables of this sandbox object
     - cast:              create an api object and set the vars from an api json
     - information:       functions to make code easier to read
@@ -89,6 +89,43 @@ class sandbox_typed extends sandbox_named
         $this->type_id = null;
     }
 
+    /**
+     * set the type based on the api json
+     * @param array $api_json the api json array with the values that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($key == json_fields::TYPE) {
+                $this->set_type_id($value);
+            }
+        }
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        $vars[json_fields::TYPE] = $this->type_id();
+
+        return $vars;
+    }
+
 
     /*
      * set and get
@@ -151,43 +188,6 @@ class sandbox_typed extends sandbox_named
         parent::fill_api_obj($api_obj);
 
         $api_obj->set_type_id($this->type_id());
-    }
-
-    /**
-     * set the type based on the api json
-     * @param array $api_json the api json array with the values that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-            if ($key == json_fields::TYPE) {
-                $this->set_type_id($value);
-            }
-        }
-        return $msg;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = parent::api_json_array($typ_lst, $usr);
-
-        $vars[json_fields::TYPE] = $this->type_id();
-
-        return $vars;
     }
 
 

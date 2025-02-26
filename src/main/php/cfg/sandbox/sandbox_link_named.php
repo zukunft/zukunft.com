@@ -5,6 +5,12 @@
     model/sandbox/sandbox_description.php - adding the description and type field to the _sandbox superclass
     -------------------------------------
 
+    The main sections of this object are
+    - object vars:       the variables of this sandbox object
+    - construct and map: including the mapping of the db row to this sandbox object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -121,6 +127,53 @@ class sandbox_link_named extends sandbox_link
             }
         }
         return $result;
+    }
+
+    /**
+     * set the type based on the api json
+     * @param array $api_json the api json array with the values that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        foreach ($api_json as $key => $value) {
+            if ($key == json_fields::NAME) {
+                $this->set_name($value);
+            }
+            if ($key == json_fields::DESCRIPTION) {
+                if ($value <> '') {
+                    $this->description = $value;
+                }
+            }
+            if ($key == json_fields::TYPE) {
+                $this->set_type_id($value);
+            }
+        }
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::TYPE] = $this->type_id();
+
+        return $vars;
     }
 
 
@@ -240,53 +293,6 @@ class sandbox_link_named extends sandbox_link
         $api_obj->set_name($this->name());
         $api_obj->description = $this->description;
         $api_obj->set_type_id($this->type_id());
-    }
-
-    /**
-     * set the type based on the api json
-     * @param array $api_json the api json array with the values that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
-            }
-            if ($key == json_fields::TYPE) {
-                $this->set_type_id($value);
-            }
-        }
-        return $msg;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = parent::api_json_array($typ_lst, $usr);
-
-        $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
-        $vars[json_fields::TYPE] = $this->type_id();
-
-        return $vars;
     }
 
 

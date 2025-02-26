@@ -71,9 +71,9 @@ class change_log extends sandbox
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        $usr_msg = parent::set_from_json_array($json_array);
+        $usr_msg = parent::api_mapper($json_array);
         if (array_key_exists(json_fields::CHANGE_TIME, $json_array)) {
             try {
                 $this->change_time = new DateTime($json_array[json_fields::CHANGE_TIME]);

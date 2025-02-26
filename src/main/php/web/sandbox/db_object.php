@@ -79,6 +79,25 @@ class db_object extends TextIdObject
         }
     }
 
+    /**
+     * TODO rename to api mapper (but only for the frontend)
+     * set the vars of this object bases on the url array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array): user_message
+    {
+        $usr_msg = new user_message();
+        if (array_key_exists(api::URL_VAR_ID, $url_array)) {
+            $this->set_id($url_array[api::URL_VAR_ID]);
+        } else {
+            $this->set_id(0);
+            $usr_msg->add_err('Mandatory field id missing in form url array ' . json_encode($url_array));
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * set and get
@@ -91,7 +110,7 @@ class db_object extends TextIdObject
      */
     function set_from_json(string $json_api_msg): user_message
     {
-        return $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->api_mapper(json_decode($json_api_msg, true));
     }
 
     /**
@@ -101,7 +120,7 @@ class db_object extends TextIdObject
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
         $usr_msg = new user_message();
 
@@ -114,24 +133,6 @@ class db_object extends TextIdObject
         } else {
             $this->set_id(0);
             $usr_msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * set the vars of this object bases on the url array
-     * public because it is reused e.g. by the phrase group display object
-     * @param array $url_array an array based on $_GET from a form submit
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function set_from_url_array(array $url_array): user_message
-    {
-        $usr_msg = new user_message();
-        if (array_key_exists(api::URL_VAR_ID, $url_array)) {
-            $this->set_id($url_array[api::URL_VAR_ID]);
-        } else {
-            $this->set_id(0);
-            $usr_msg->add_err('Mandatory field id missing in form url array ' . json_encode($url_array));
         }
         return $usr_msg;
     }
@@ -162,11 +163,17 @@ class db_object extends TextIdObject
         $result = false;
 
         $api = new api_dsp();
-        $json_body = $api->api_call_id($this::class, $id, $data);
-        if ($json_body) {
-            $this->set_from_json_array($json_body);
-            if ($this->name() != '') {
-                $result = true;
+        $json_array = $api->api_call_id($this::class, $id, $data);
+        if ($json_array) {
+            $excluded = false;
+            if (array_key_exists(json_fields::EXCLUDED, $json_array)) {
+                $excluded = $json_array[json_fields::EXCLUDED];
+            }
+            if (!$excluded) {
+                $this->api_mapper($json_array);
+                if ($this->name() != '') {
+                    $result = true;
+                }
             }
         }
         return $result;

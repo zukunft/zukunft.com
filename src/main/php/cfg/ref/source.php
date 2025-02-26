@@ -222,6 +222,51 @@ class source extends sandbox_typed
         return $result;
     }
 
+    /**
+     * map a source api json to this model source object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the triple values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::URL) {
+                if ($value <> '') {
+                    $this->url = $value;
+                }
+            }
+
+        }
+
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+        if ($this->code_id != null) {
+            $vars[json_fields::CODE_ID] = $this->code_id;
+        }
+        $vars[json_fields::URL] = $this->url;
+        return $vars;
+    }
+
 
     /*
      * set and get
@@ -386,51 +431,6 @@ class source extends sandbox_typed
     function all_sandbox_fields(): array
     {
         return self::ALL_SANDBOX_FLD_NAMES;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = parent::api_json_array($typ_lst, $usr);
-        if ($this->code_id != null) {
-            $vars[json_fields::CODE_ID] = $this->code_id;
-        }
-        $vars[json_fields::URL] = $this->url;
-        return $vars;
-    }
-
-    /**
-     * map a source api json to this model source object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * @param array $api_json the api array with the triple values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::URL) {
-                if ($value <> '') {
-                    $this->url = $value;
-                }
-            }
-
-        }
-
-        return $msg;
     }
 
 

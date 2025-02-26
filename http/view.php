@@ -89,13 +89,39 @@ use shared\const\views as view_shared;
 $db_con = prg_start("view", '', false);
 
 // get the parameters
-$view = $_GET[api::URL_VAR_MASK] ?? 0; // the database id of the view to display
-$id = $_GET[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
-$confirm = $_GET[api::URL_VAR_CONFIRM] ?? 0; // the database id of the prime object to display
+$url_array = $_GET;
 
-$new_view_id = $_GET[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
-$view_words = $_GET[api::URL_VAR_WORDS] ?? '';
-$back = $_GET[api::URL_VAR_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
+/* only for local debugging
+echo '<br>';
+echo '<br>';
+echo '<br>';
+echo '<br>';
+echo '<br>';
+echo '<br>';
+echo implode(',',$url_array);
+echo '<br>';
+echo implode(',',array_keys($url_array));
+echo '<br>';
+echo '<br>';
+
+$url_values = explode(',', '2,1,1,1,new word 2,1,Mathematics is an area of knowledge that includes the topics of numbers and formulas,1,3');
+$url_keys = explode(',', 'm,id,back,confirm,name,phrase_type,description,share,protection');
+
+$url_array = [];
+$i = 0;
+foreach ($url_keys as $key){
+    $url_array[$key] = $url_values[$i];
+    $i++;
+}
+*/
+
+$view = $url_array[api::URL_VAR_MASK] ?? 0; // the database id of the view to display
+$id = $url_array[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
+$confirm = $url_array[api::URL_VAR_CONFIRM] ?? 0; // the database id of the prime object to display
+
+$new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
+$view_words = $url_array[api::URL_VAR_WORDS] ?? '';
+$back = $url_array[api::URL_VAR_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
 
 // init the view
 global $sys_msk_cac;
@@ -168,22 +194,27 @@ if ($usr->id() > 0) {
     // save form action
     // if the save bottom has been pressed
     if ($confirm > 0) {
-        $dbo_dsp->set_from_url_array($_GET);
-        $dbo->set_by_api_json($dbo_dsp->api_array());
+        $dbo_dsp->url_mapper($url_array);
+        $dbo->api_mapper($dbo_dsp->api_array());
 
         // save the changes
-        $upd_result = $dbo->save()->get_last_message();
+        $upd_result = $dbo->save();
 
         // if update was fine ...
-        if (str_replace('1', '', $upd_result) == '') {
+        if ($upd_result->is_ok()) {
+            $id = $dbo->id();
             // ... display the calling page is switched off to keep the user on the edit view and see the implications of the change
             // switched off because maybe staying on the edit page is the expected behaviour
+            if ($back == '' or $back == 0) {
+                $view_id = view_shared::START_ID;
+            }
             //$result .= dsp_go_back($back, $usr);
         } else {
             // ... or in case of a problem prepare to show the message
-            $msg .= $upd_result;
+            $msg .= $upd_result->get_last_message();
         }
     }
+
 
     // get the main object to display
     if ($id != 0) {

@@ -15,13 +15,13 @@
     - db const:          const for the database link
     - object vars:       the variables of this sandbox object
     - construct and map: including the mapping of the db row to this sandbox object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the vars from unexpected changes
     - modify:            change potentially all variables of this sandbox object
     - preloaded:         select e.g. types from cache
     - placeholder:       function that are overwritten by the child objects (some load related)
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
-    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
     - owner and access:  functions to make code easier to read
@@ -380,6 +380,69 @@ class sandbox extends db_object_seq_id_user
         global $ptc_typ_cac;
         $this->share_id = $shr_typ_cac->id(share_type_shared::PUBLIC);
         $this->protection_id = $ptc_typ_cac->id(protect_type_shared::NO_PROTECT);
+    }
+
+    /**
+     * fill the vars with this sandbox object based on the given api json array
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        // make sure that there are no unexpected leftovers
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::ID) {
+                $this->set_id($value);
+            }
+            if ($key == json_fields::SHARE) {
+                $this->share_id = $value;
+            }
+            if ($key == json_fields::PROTECTION) {
+                $this->protection_id = $value;
+            }
+
+        }
+
+        return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = [];
+
+        $vars[json_fields::ID] = $this->id();
+        if ($this->is_excluded()) {
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            if ($this->share_id != null) {
+                $vars[json_fields::SHARE] = $this->share_id;
+            }
+            if ($this->protection_id != null) {
+                $vars[json_fields::PROTECTION] = $this->protection_id;
+            }
+
+        }
+
+        return $vars;
     }
 
 
@@ -821,69 +884,6 @@ class sandbox extends db_object_seq_id_user
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
         return true;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = [];
-
-        $vars[json_fields::ID] = $this->id();
-        if ($this->is_excluded()) {
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
-            if ($this->share_id != null) {
-                $vars[json_fields::SHARE] = $this->share_id;
-            }
-            if ($this->protection_id != null) {
-                $vars[json_fields::PROTECTION] = $this->protection_id;
-            }
-
-        }
-
-        return $vars;
-    }
-
-    /**
-     * fill the vars with this sandbox object based on the given api json array
-     * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $usr_msg = new user_message();
-
-        // make sure that there are no unexpected leftovers
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::ID) {
-                $this->set_id($value);
-            }
-            if ($key == json_fields::SHARE) {
-                $this->share_id = $value;
-            }
-            if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $value;
-            }
-
-        }
-
-        return $usr_msg;
     }
 
 

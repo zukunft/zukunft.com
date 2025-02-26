@@ -16,6 +16,9 @@
                                do the cleanup calculations always "in memory"
                                drop the results in blocks to the database
 
+    The main sections of this object are
+    - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
 
 
     This file is part of zukunft.com - calc with words
@@ -365,6 +368,79 @@ class result extends sandbox_value
         }
 
         return $result;
+    }
+
+    /**
+     * map a result api json to this model result object
+     * @param array $api_json the api array with the values that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        // make sure that there are no unexpected leftovers but keep the user
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::ID) {
+                $this->set_id($value);
+            }
+
+            if ($key == json_fields::PHRASES) {
+                $phr_lst = new phrase_list($this->user());
+                $usr_msg->add($phr_lst->api_mapper($value));
+                if ($usr_msg->is_ok()) {
+                    $this->grp()->set_phrase_list($phr_lst);
+                }
+            }
+
+            if ($key == json_fields::NUMBER) {
+                if (is_numeric($value)) {
+                    $this->set_value($value);
+                } else {
+                    $usr_msg->add_message('Import result: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+                }
+            }
+
+        }
+
+        return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        // add the source phrases if requested
+        if ($typ_lst->include_phrases()) {
+            $phr_lst = $this->source_group()->phrase_list();
+            $vars[json_fields::CONTEXT] = $phr_lst->api_json_array($typ_lst);
+        }
+
+        // add the formula that has created the result
+        if ($this->formula_id() != null) {
+            $vars[json_fields::FORMULA_ID] = $this->formula_id();
+        }
+
+        // add the numeric string itself
+        $vars[json_fields::NUMBER] = $this->value();
+
+        return $vars;
     }
 
 
@@ -907,84 +983,6 @@ class result extends sandbox_value
             $frm->load_by_id($this->frm->id());
             $this->frm = $frm;
         }
-    }
-
-
-    /*
-     * information
-     */
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = parent::api_json_array($typ_lst, $usr);
-
-        // add the source phrases if requested
-        if ($typ_lst->include_phrases()) {
-            $phr_lst = $this->source_group()->phrase_list();
-            $vars[json_fields::CONTEXT] = $phr_lst->api_json_array($typ_lst);
-        }
-
-        // add the formula that has created the result
-        if ($this->formula_id() != null) {
-            $vars[json_fields::FORMULA_ID] = $this->formula_id();
-        }
-
-        // add the numeric string itself
-        $vars[json_fields::NUMBER] = $this->value();
-
-        return $vars;
-    }
-
-    /**
-     * map a result api json to this model result object
-     * @param array $api_json the api array with the values that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $usr_msg = new user_message();
-
-        // make sure that there are no unexpected leftovers but keep the user
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::ID) {
-                $this->set_id($value);
-            }
-
-            if ($key == json_fields::PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $usr_msg->add($phr_lst->set_by_api_json($value));
-                if ($usr_msg->is_ok()) {
-                    $this->grp()->set_phrase_list($phr_lst);
-                }
-            }
-
-            if ($key == json_fields::NUMBER) {
-                if (is_numeric($value)) {
-                    $this->set_value($value);
-                } else {
-                    $usr_msg->add_message('Import result: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
-                }
-            }
-
-        }
-
-        return $usr_msg;
     }
 
 

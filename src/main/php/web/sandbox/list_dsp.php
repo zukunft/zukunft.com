@@ -110,7 +110,7 @@ class list_dsp extends ListOfIdObjects
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
             $new = clone $dbo;
-            $msg = $new->set_from_json_array($value);
+            $msg = $new->api_mapper($value);
             $usr_msg->add($msg);
             $this->add_obj($new, true);
         }

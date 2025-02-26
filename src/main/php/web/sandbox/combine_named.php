@@ -150,7 +150,7 @@ class combine_named extends combine_object
         $api = new api_dsp();
         $json_body = $api->api_call_name($this::class, $name);
         if ($json_body) {
-            $this->set_from_json_array($json_body);
+            $this->api_mapper($json_body);
             if ($this->obj_id() != 0) {
                 $result = true;
             }

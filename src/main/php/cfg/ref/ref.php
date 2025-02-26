@@ -22,6 +22,7 @@
     - db const:          const for the database link
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the vars from unexpected changes
     - cast:              create an api object and set the vars from an api json
     - preloaded:         select e.g. types from cache
@@ -269,6 +270,74 @@ class ref extends sandbox_link
             }
         }
         return $result;
+    }
+
+    /**
+     * map a ref api json to this model ref object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the triple values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::PHRASE) {
+                if ($value != '' and $value != 0) {
+                    $phr = new phrase($this->user());
+                    $phr->set_id($value);
+                    $this->set_phrase($phr);
+                }
+            }
+            if ($key == json_fields::EXTERNAL_KEY) {
+                if ($value <> '') {
+                    $this->external_key = $value;
+                }
+            }
+            if ($key == json_fields::URL) {
+                if ($value <> '') {
+                    $this->url = $value;
+                }
+            }
+            if ($key == json_fields::DESCRIPTION) {
+                if ($value <> '') {
+                    $this->description = $value;
+                }
+            }
+
+        }
+
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars[json_fields::URL] = $this->url;
+        $vars[json_fields::EXTERNAL_KEY] = $this->external_key;
+        if ($this->phrase()->id() != 0) {
+            $vars[json_fields::PHRASE] = $this->phrase()->id();
+        }
+        $vars[json_fields::SOURCE] = $this->source?->id();
+        if ($this->predicate_id() != 0) {
+            $vars[json_fields::PREDICATE] = $this->predicate_id();
+        }
+        $vars[json_fields::DESCRIPTION] = $this->description;
+        return $vars;
     }
 
 
@@ -669,74 +738,6 @@ class ref extends sandbox_link
     function type_field(): string
     {
         return ref_type::FLD_ID;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = parent::api_json_array($typ_lst, $usr);
-        $vars[json_fields::URL] = $this->url;
-        $vars[json_fields::EXTERNAL_KEY] = $this->external_key;
-        if ($this->phrase()->id() != 0) {
-            $vars[json_fields::PHRASE] = $this->phrase()->id();
-        }
-        $vars[json_fields::SOURCE] = $this->source?->id();
-        if ($this->predicate_id() != 0) {
-            $vars[json_fields::PREDICATE] = $this->predicate_id();
-        }
-        $vars[json_fields::DESCRIPTION] = $this->description;
-        return $vars;
-    }
-
-    /**
-     * map a ref api json to this model ref object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * @param array $api_json the api array with the triple values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::PHRASE) {
-                if ($value != '' and $value != 0) {
-                    $phr = new phrase($this->user());
-                    $phr->set_id($value);
-                    $this->set_phrase($phr);
-                }
-            }
-            if ($key == json_fields::EXTERNAL_KEY) {
-                if ($value <> '') {
-                    $this->external_key = $value;
-                }
-            }
-            if ($key == json_fields::URL) {
-                if ($value <> '') {
-                    $this->url = $value;
-                }
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
-            }
-
-        }
-
-        return $msg;
     }
 
 

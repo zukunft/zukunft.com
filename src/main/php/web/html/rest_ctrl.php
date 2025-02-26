@@ -110,10 +110,10 @@ class rest_ctrl
     }
 
     /**
-     * create an execute an api call for a database object
+     * create and execute an api call for a database object
      * by id
      * @param string $class the frontend class name that should be loaded
-     * @param int $id|string the id of the database object that should be loaded
+     * @param int|string $id|string the id of the database object that should be loaded
      * @param array $data additional data that should be included in the get request
      * @return array with the body json message from the backend
      */

@@ -70,28 +70,28 @@ class term extends combine_named_dsp
      * @param array $json_array an api json message as a string
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
         $usr_msg = new user_message();
         if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
             $wrd = new word_dsp();
-            $wrd->set_from_json_array($json_array);
+            $wrd->api_mapper($json_array);
             $this->set_obj($wrd);
             // unlike the cases below the switch of the term id to the object id not needed for words
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
             $trp = new triple_dsp();
-            $trp->set_from_json_array($json_array);
+            $trp->api_mapper($json_array);
             $this->set_obj($trp);
             // TODO check if needed
             //$this->set_id($trp->id());
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
             $vrb = new verb_dsp();
-            $vrb->set_from_json_array($json_array);
+            $vrb->api_mapper($json_array);
             $this->set_obj($vrb);
             //$this->set_id($vrb->id());
         } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
             $frm = new formula_dsp();
-            $frm->set_from_json_array($json_array);
+            $frm->api_mapper($json_array);
             $this->set_obj($frm);
             //$this->set_id($frm->id());
         } else {

@@ -28,6 +28,13 @@
     phrase groups are not part of the user sandbox, because this is a kind of hidden layer
     The main intention for word groups is to save space and execution time
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -112,8 +119,8 @@ use shared\types\api_type_list;
 class group extends sandbox_multi
 {
 
-    /*f
-     * database link
+    /*
+     * db const
      */
 
     // object specific database and JSON object field names
@@ -232,6 +239,70 @@ class group extends sandbox_multi
             $this->is_saved = true;
         }
         return $result;
+    }
+
+    /**
+     * map a group api json to this model group object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the group values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::ID) {
+                $this->set_id($value);
+            }
+            if ($key == json_fields::NAME) {
+                $this->set_name($value);
+            }
+            if ($key == json_fields::DESCRIPTION) {
+                $this->set_description($value);
+            }
+
+        }
+
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json message
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        if ($this->is_excluded()) {
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars[json_fields::ID] = $this->id();
+            if ($this->name != null or !$typ_lst->include_phrases()) {
+                $vars[json_fields::NAME] = $this->name();
+            }
+            if ($this->description() != null) {
+                $vars[json_fields::DESCRIPTION] = $this->description();
+            }
+            if ($typ_lst->include_phrases()) {
+                $phr_lst = $this->phrase_list();
+                $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst);
+            }
+
+        }
+
+        return $vars;
     }
 
 
@@ -497,70 +568,6 @@ class group extends sandbox_multi
     function grp(): group
     {
         return $this;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json message
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        if ($this->is_excluded()) {
-            $vars = [];
-            $vars[json_fields::ID] = $this->id();
-            $vars[json_fields::EXCLUDED] = true;
-        } else {
-            $vars = parent::api_json_array($typ_lst, $usr);
-            $vars[json_fields::ID] = $this->id();
-            if ($this->name != null or !$typ_lst->include_phrases()) {
-                $vars[json_fields::NAME] = $this->name();
-            }
-            if ($this->description() != null) {
-                $vars[json_fields::DESCRIPTION] = $this->description();
-            }
-            if ($typ_lst->include_phrases()) {
-                $phr_lst = $this->phrase_list();
-                $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst);
-            }
-
-        }
-
-        return $vars;
-    }
-
-    /**
-     * map a group api json to this model group object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * @param array $api_json the api array with the group values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::ID) {
-                $this->set_id($value);
-            }
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                $this->set_description($value);
-            }
-
-        }
-
-        return $msg;
     }
 
 

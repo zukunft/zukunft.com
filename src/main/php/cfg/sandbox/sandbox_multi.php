@@ -13,6 +13,7 @@
     - db const:          const for the database link
     - object vars:       the variables of this multi table sandbox object
     - construct and map: including the mapping of the db row to this formula object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the vars from unexpected changes
     - sql write fields:  field list for writing to the database
     - sql helper:        support function for the sql creation
@@ -20,7 +21,6 @@
     - load types:        load related types
     - im- and export:    create an export object and set the vars from an import object
     - info:              functions to make code easier to read
-    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - delete:            manage to remove from the database
     - log:               write the changes to the log
     - internal:          internal info functions
@@ -354,6 +354,51 @@ class sandbox_multi extends db_object_multi_user
         global $ptc_typ_cac;
         $this->share_id = $shr_typ_cac->id(share_type_shared::PUBLIC);
         $this->protection_id = $ptc_typ_cac->id(protect_type_shared::NO_PROTECT);
+    }
+
+    /**
+     * fill the vars with this sandbox object based on the given api json array
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        // make sure that there are no unexpected leftovers
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::SHARE) {
+                $this->share_id = $value;
+            }
+            if ($key == json_fields::PROTECTION) {
+                $this->protection_id = $value;
+            }
+
+        }
+
+        return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create the array for the api message
+     * which is on this level the same as the export json array
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        return $this->common_json();
     }
 
 
@@ -748,51 +793,6 @@ class sandbox_multi extends db_object_multi_user
         }
 
         return $ptc_typ_cac->name($this->protection_id);
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create the array for the api message
-     * which is on this level the same as the export json array
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        return $this->common_json();
-    }
-
-    /**
-     * fill the vars with this sandbox object based on the given api json array
-     * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $usr_msg = new user_message();
-
-        // make sure that there are no unexpected leftovers
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::SHARE) {
-                $this->share_id = $value;
-            }
-            if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $value;
-            }
-
-        }
-
-        return $usr_msg;
     }
 
 

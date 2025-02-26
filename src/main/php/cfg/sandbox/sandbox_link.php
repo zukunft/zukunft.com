@@ -11,6 +11,7 @@
     - db const:          const for the database link
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the vars from unexpected changes
     - sql create:        to support the initial database setup
     - cast:              create an api object and set the vars from an api json
@@ -147,6 +148,60 @@ class sandbox_link extends sandbox
         $this->fob = null;
         $this->tob = null;
         $this->predicate_id = null;
+    }
+
+    /**
+     * fill the vars with this link type sandbox object based on the given api json array
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message
+     */
+    function api_mapper(array $api_json): user_message
+    {
+
+        $msg = parent::api_mapper($api_json);
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::PREDICATE) {
+                $this->predicate_id = $value;
+            }
+
+        }
+
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        // for triples the predicate is the verb and already included in the vars at this point
+        if ($this::class != triple::class) {
+            if ($this->predicate_id() != 0) {
+                if ($this::class == formula_link::class) {
+                    global $frm_lnk_typ_cac;
+                    if ($this->predicate_id() != $frm_lnk_typ_cac->id(formula_link_type::DEFAULT)) {
+                        $vars[json_fields::PREDICATE] = $this->predicate_id();
+                    }
+                } else {
+                    $vars[json_fields::PREDICATE] = $this->predicate_id();
+                }
+            }
+        }
+
+        return $vars;
     }
 
 
@@ -504,60 +559,6 @@ class sandbox_link extends sandbox
         }
     }
     */
-
-    /**
-     * fill the vars with this link type sandbox object based on the given api json array
-     * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::PREDICATE) {
-                $this->predicate_id = $value;
-            }
-
-        }
-
-        return $msg;
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = parent::api_json_array($typ_lst, $usr);
-
-        // for triples the predicate is the verb and already included in the vars at this point
-        if ($this::class != triple::class) {
-            if ($this->predicate_id() != 0) {
-                if ($this::class == formula_link::class) {
-                    global $frm_lnk_typ_cac;
-                    if ($this->predicate_id() != $frm_lnk_typ_cac->id(formula_link_type::DEFAULT)) {
-                        $vars[json_fields::PREDICATE] = $this->predicate_id();
-                    }
-                } else {
-                    $vars[json_fields::PREDICATE] = $this->predicate_id();
-                }
-            }
-        }
-
-        return $vars;
-    }
 
 
     /*
