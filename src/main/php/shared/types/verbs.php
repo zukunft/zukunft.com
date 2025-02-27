@@ -69,6 +69,9 @@ class verbs
     const CAN_BE = "can_be";
     const CAN_BE_NAME = "can be";
     const CAN_BE_ID = 17;
+    const CAN_GET = "can_get";
+    const CAN_GET_NAME = "can get";
+    const CAN_GET_ID = 18;
     const CAN_USE = "can_use";
     const SELECTOR = "selector"; // the from_phrase of a selector can be used more than once so the description of the to_phrase should be shown to the user
     const TO = 'to'; // to define a time period e.g. "12:00 to 13:00" or "1. March 2024 to 3. March 2024"

@@ -261,6 +261,11 @@ class verb_list extends type_list
         $vrb->set_name(verbs::CAN_BE_NAME);
         $vrb->code_id = verbs::CAN_BE;
         $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->set_id(verbs::CAN_GET_ID);
+        $vrb->set_name(verbs::CAN_GET_NAME);
+        $vrb->code_id = verbs::CAN_GET;
+        $this->add_verb($vrb);
     }
 
 

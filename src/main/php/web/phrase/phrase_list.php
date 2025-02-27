@@ -43,6 +43,7 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_USER_PATH . 'user_message.php';
+//include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_VERB_PATH . 'verb_list.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
@@ -59,6 +60,7 @@ use html\phrase\phrase_list as phrase_list_dsp;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\sandbox_list_named;
 use html\user\user_message;
+use html\verb\verb;
 use html\verb\verb_list;
 use html\word\triple;
 use html\word\word;
@@ -139,6 +141,28 @@ class phrase_list extends sandbox_list_named
     /*
      * select
      */
+
+    /**
+     * get all phrases that are connected to the given phrase
+     * selected by the given verb
+     * @param phrase $phr the parent phrase
+     * @param verb|null $vrb the verb to filter the child phrases
+     * @return phrase_list the filtered children
+     */
+    function children(phrase $phr, verb|null $vrb = null): phrase_list
+    {
+        $result = new phrase_list;
+        foreach ($this->lst() as $trp) {
+            if ($trp->is_triple()) {
+                if ($trp->verb() == $vrb or $vrb == null) {
+                    if ($trp->from() == $phr) {
+                        $result->add($trp);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
 
     /**
      * get the most useful time for the given phrases

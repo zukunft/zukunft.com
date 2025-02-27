@@ -68,20 +68,6 @@ class job_list extends list_dsp
 
 
     /*
-     * modify
-     */
-
-    /**
-     * add a batch_job to the list
-     * @returns bool true if the batch_job has been added
-     */
-    function add(job_dsp $job): bool
-    {
-        return parent::add_obj($job);
-    }
-
-
-    /*
      * display
      */
 

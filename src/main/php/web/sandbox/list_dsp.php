@@ -202,7 +202,34 @@ class list_dsp extends ListOfIdObjects
 
 
     /*
-     * modify functions
+     * modify
+     */
+
+    function merge(list_dsp $lst): void
+    {
+        foreach ($lst->lst() as $phr) {
+            $this->add($phr);
+        }
+    }
+
+    /**
+     * add one named object e.g. a word to the list, but only if it is not yet part of the list
+     * @param IdObject|TextIdObject|CombineObject|null $to_add the named object e.g. a word object that should be added
+     * @returns bool true the object has been added
+     */
+    function add(IdObject|TextIdObject|CombineObject|null $to_add): bool
+    {
+        $result = false;
+        if ($to_add != null) {
+            $this->add_obj($to_add);
+            $result = true;
+        }
+        return $result;
+    }
+
+
+    /*
+     * info
      */
 
     /**

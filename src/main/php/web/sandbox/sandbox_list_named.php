@@ -117,10 +117,10 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * add one named object e.g. a word to the list, but only if it is not yet part of the list
-     * @param sandbox_named|triple|phrase|term|null $to_add the named object e.g. a word object that should be added
+     * @param sandbox_named|triple|phrase|term|IdObject|TextIdObject|CombineObject|null $to_add the named object e.g. a word object that should be added
      * @returns bool true the object has been added
      */
-    function add(sandbox_named|triple|phrase|term|null $to_add): bool
+    function add(sandbox_named|triple|phrase|term|IdObject|TextIdObject|CombineObject|null $to_add): bool
     {
         $result = false;
         if ($to_add != null) {

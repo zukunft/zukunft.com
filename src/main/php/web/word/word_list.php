@@ -73,20 +73,6 @@ class word_list extends list_named
 
 
     /*
-     * modify
-     */
-
-    /**
-     * add a word to the list
-     * @returns bool true if the word has been added
-     */
-    function add(word $wrd): bool
-    {
-        return parent::add_obj($wrd);
-    }
-
-
-    /*
      * cast
      */
 
@@ -161,17 +147,6 @@ class word_list extends list_named
                 }
             }
             $this->set_lst($result);
-        }
-    }
-
-    /**
-     * merge as a function, because the array_merge does not create an object
-     * @param word_list $new_wrd_lst with the words that should be added
-     */
-    function merge(word_list $new_wrd_lst): void
-    {
-        foreach ($new_wrd_lst->lst() as $new_wrd) {
-            $this->add($new_wrd);
         }
     }
 

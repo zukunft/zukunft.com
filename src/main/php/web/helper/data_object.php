@@ -35,8 +35,10 @@ namespace html\helper;
 include_once SHARED_PATH . 'json_fields.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_VIEW_PATH . 'view_list.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_WORD_PATH . 'word_list.php';
 
+use html\phrase\phrase_list;
 use html\user\user_message;
 use html\view\view_list;
 use html\word\word_list;
@@ -50,6 +52,7 @@ class data_object
      */
 
     private word_list $wrd_lst;
+    private phrase_list $phr_lst;
     private view_list $msk_lst;
 
     // for warning and errors while filling the data_object
@@ -78,6 +81,7 @@ class data_object
     function reset(): void
     {
         $this->wrd_lst = new word_list();
+        $this->phr_lst = new phrase_list();
         $this->msk_lst = new view_list();
         $this->usr_msg = new user_message();
         $this->online = true;
@@ -132,6 +136,18 @@ class data_object
         } else {
             return false;
         }
+    }
+
+    function add_phrases(phrase_list $phr_lst): void
+    {
+        foreach ($phr_lst->lst() as $phr) {
+            $this->phr_lst->add($phr);
+        }
+    }
+
+    function phrase_list(): phrase_list
+    {
+        return $this->phr_lst;
     }
 
     function set_online(): void

@@ -240,11 +240,16 @@ class words
     const CASH_FLOW_ID = 274;
     const TAX = 'Income taxes';
     const TAX_ID = 273;
+
     const GLOBAL = 'global';
     const GLOBAL_ID = 216;
 
     const PROBLEM = 'problem';
     const PROBLEM_ID = 215;
+    const CLIMATE = 'climate';
+    const CLIMATE_ID = 222;
+    const WARMER = 'warmer';
+    const WARMER_ID = 225;
 
     const GWP = 'global warming potential';
     const GWP_ID = 1070;

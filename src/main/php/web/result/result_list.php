@@ -43,6 +43,9 @@ include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_SANDBOX_PATH . 'sandbox_list.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -55,6 +58,9 @@ use html\sandbox\list_value;
 use html\system\back_trace;
 use html\user\user_message;
 use shared\api;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 use shared\library;
 
 class result_list extends list_value
@@ -112,11 +118,11 @@ class result_list extends list_value
      * add a formula result to the list
      * @returns bool true if the formula result has been added
      */
-    function add(result $res): bool
+    function add(result|IdObject|TextIdObject|CombineObject|null $to_add): bool
     {
         $result = false;
-        if (!in_array($res->id(), $this->id_lst())) {
-            $this->add_direct($res);
+        if (!in_array($to_add->id(), $this->id_lst())) {
+            $this->add_direct($to_add);
             $this->set_lst_dirty();
             $result = true;
         }

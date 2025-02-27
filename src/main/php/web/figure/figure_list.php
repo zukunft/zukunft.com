@@ -37,10 +37,16 @@ namespace html\figure;
 include_once WEB_FIGURE_PATH . 'figure.php';
 include_once WEB_SANDBOX_PATH . 'list_dsp.php';
 include_once WEB_USER_PATH . 'user_message.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 
 use html\figure\figure as figure_dsp;
 use html\sandbox\list_dsp;
 use html\user\user_message;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 
 class figure_list extends list_dsp
 {
@@ -66,14 +72,14 @@ class figure_list extends list_dsp
 
     /**
      * add a figure to the list
-     * @param figure_dsp $fig the figure frontend object that should be added to the list
+     * @param figure_dsp|IdObject|TextIdObject|CombineObject|null $to_add the figure frontend object that should be added to the list
      * @returns bool true if the figure has been added
      */
-    function add(figure_dsp $fig): bool
+    function add(figure_dsp|IdObject|TextIdObject|CombineObject|null $to_add): bool
     {
         $result = false;
-        if (!in_array($fig->id(), $this->id_lst())) {
-            $this->add_direct($fig);
+        if (!in_array($to_add->id(), $this->id_lst())) {
+            $this->add_direct($to_add);
             $this->set_lst_dirty();
             $result = true;
         }

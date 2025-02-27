@@ -37,12 +37,18 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_SANDBOX_PATH . 'sandbox_list.php';
 include_once WEB_USER_PATH . 'user.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 include_once SHARED_PATH . 'library.php';
 
 use html\phrase\phrase;
 use html\phrase\phrase_list;
 use html\sandbox\sandbox_list;
 use html\user\user;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 use shared\library;
 
 class group_list extends sandbox_list
@@ -64,27 +70,28 @@ class group_list extends sandbox_list
     /**
      * add a phrase group if it is not yet part of the list
      */
-    function add(group $grp): void
+    function add(group|IdObject|TextIdObject|CombineObject|null $to_add): bool
     {
-        log_debug($grp->id());
+        log_debug($to_add->id());
         $do_add = false;
-        if ($grp->id() > 0) {
+        if ($to_add->id() > 0) {
             if ($this->grp_ids == null) {
                 $do_add = true;
             } else {
-                if (!in_array($grp->id(), $this->grp_ids)) {
+                if (!in_array($to_add->id(), $this->grp_ids)) {
                     $do_add = true;
                 }
             }
         }
         if ($do_add) {
-            $this->lst[] = $grp;
-            $this->grp_ids[] = $grp->id();
+            $this->lst[] = $to_add;
+            $this->grp_ids[] = $to_add->id();
             $this->time_lst[] = null;
-            log_debug($grp->dsp_id() . ' added to list ' . $this->dsp_id());
+            log_debug($to_add->dsp_id() . ' added to list ' . $this->dsp_id());
         } else {
-            log_debug($grp->dsp_id() . ' skipped, because is already in list ' . $this->dsp_id());
+            log_debug($to_add->dsp_id() . ' skipped, because is already in list ' . $this->dsp_id());
         }
+        return $do_add;
     }
 
 

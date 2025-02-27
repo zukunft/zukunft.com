@@ -62,20 +62,6 @@ class formula_list extends list_dsp
 
 
     /*
-     * modify
-     */
-
-    /**
-     * add a formula to the list
-     * @returns bool true if the formula has been added
-     */
-    function add(formula_dsp $wrd): bool
-    {
-        return parent::add_obj($wrd);
-    }
-
-
-    /*
      * display
      */
 

@@ -33,6 +33,7 @@
 namespace html;
 
 include_once WEB_HELPER_PATH . 'data_object.php';
+include_once WEB_HTML_PATH . 'table.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_WORD_PATH . 'triple.php';
@@ -55,13 +56,10 @@ class list_sort
      * @return string html code to display a spreadsheet
      */
     function list_sort(
-        phrase $phr,
+        phrase      $phr,
         data_object $dbo = null
     ): string
     {
-        /*
-         * outline of the target solution
-
         // create the table
         $tbl = new table();
 
@@ -70,7 +68,10 @@ class list_sort
 
         // get the phrases for the rows
         // from "global problem" to e.g. "climate change"
-        $phr_lst = $phr->is_or_can_be();
+        //$phr_lst = $phr->is_or_can_be($dbo?->phrase_list());
+
+        /*
+         * outline of the remaining target solution
 
         // get the most relevant result
         $tbl->add_column($phr_lst->result_most_relevant());

@@ -2,8 +2,9 @@
 
 /*
 
-    web\ref\source_list.php - create the HTML code to display a source list
-    -----------------------
+    web/html/sheet.php - create the html code to display a spreadsheet
+    ------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -29,31 +30,35 @@
 
 */
 
-namespace html\ref;
+namespace html;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_REF_PATH . 'source.php';
-include_once WEB_USER_PATH . 'user_message.php';
+include_once WEB_HELPER_PATH . 'data_object.php';
+include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
+include_once WEB_SHEET_PATH . 'position_list.php';
 
-use html\sandbox\list_dsp;
-use html\ref\source as source_dsp;
-use html\user\user_message;
+use html\phrase\phrase;
+use html\phrase\phrase_list;
 
-class source_list extends list_dsp
+class table
 {
 
-    /*
-     * set and get
-     */
+    private phrase_list $col_lst;
 
-    /**
-     * set the vars of a source object based on the given json
-     * @param array $json_array an api single object json message
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function api_mapper(array $json_array): user_message
+    function __construct(?string $api_json = null)
     {
-        return parent::api_mapper_list($json_array, new source_dsp());
+        $this->reset();
+    }
+
+    function reset(): void
+    {
+        $this->col_lst = new phrase_list();
+    }
+
+
+    function add_column(phrase $phr): void
+    {
+        $this->col_lst->add($phr);
     }
 
 }

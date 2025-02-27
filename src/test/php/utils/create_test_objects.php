@@ -881,6 +881,20 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
+    function word_climate(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::CLIMATE_ID, words::CLIMATE);
+        return $wrd;
+    }
+
+    function word_warmer(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::WARMER_ID, words::WARMER);
+        return $wrd;
+    }
+
     function word_gwp(): word
     {
         $wrd = new word($this->usr1);
@@ -976,6 +990,14 @@ class create_test_objects extends test_base
     function verb_can_be(): verb
     {
         return new verb(verbs::CAN_BE_ID, verbs::CAN_BE_NAME, verbs::CAN_BE);
+    }
+
+    /**
+     * @return verb
+     */
+    function verb_can_get(): verb
+    {
+        return new verb(verbs::CAN_GET_ID, verbs::CAN_GET_NAME, verbs::CAN_GET);
     }
 
     /**
@@ -1155,7 +1177,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return triple "pi (math)" used for unit testing
+     * @return triple "global problem" used for start view unit testing
      */
     function global_problem(): triple
     {
@@ -1164,6 +1186,19 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_problem()->phrase());
         $trp->set_verb($this->verb_can_be());
         $trp->set_to($this->word_global()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "climate warming" used for start view unit testing
+     */
+    function climate_warming(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triples::GLOBAL_PROBLEM_ID, triples::GLOBAL_PROBLEM);
+        $trp->set_from($this->word_climate()->phrase());
+        $trp->set_verb($this->verb_can_get());
+        $trp->set_to($this->word_warmer()->phrase());
         return $trp;
     }
 
@@ -1339,6 +1374,23 @@ class create_test_objects extends test_base
         $lst->merge($this->phrase_list_math_const());
         $lst->merge($this->phrase_list_cities());
         return $lst;
+    }
+
+    function phrase_list_start_view(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word()->phrase());
+        $lst->add($this->word_const()->phrase());
+        $lst->add($this->triple()->phrase());
+        $lst->add($this->triple_pi()->phrase());
+        $lst->add($this->global_problem()->phrase());
+        $lst->add($this->climate_warming()->phrase());
+        return $lst;
+    }
+
+    function phrase_list_start_view_dsp(): phrase_list_dsp
+    {
+        return new phrase_list_dsp($this->phrase_list_start_view()->api_json());
     }
 
     /**

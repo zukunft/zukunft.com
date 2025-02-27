@@ -44,6 +44,7 @@ include_once WEB_WORD_PATH . 'word.php';
 //include_once WEB_WORD_PATH . 'word_list.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use html\button;
@@ -58,6 +59,7 @@ use html\word\word;
 use html\word\word_list;
 use shared\enum\foaf_direction;
 use shared\json_fields;
+use shared\types\verbs;
 
 class phrase extends combine_named
 {
@@ -280,6 +282,29 @@ class phrase extends combine_named
         $url = (new html_base())->url($obj_name . api_dsp::REMOVE, $this->id(), $this->id());
         return (new button($url))->del($ui_msg_id);
     }
+
+
+    /*
+     * select
+     */
+
+    /**
+     * get the phrases that are related to this phrase be the verbs "is" of "can be"
+     * if a phrase list id given only this cache is used for the selection
+     * @param phrase_list|null $phr_lst_cac
+     * @return phrase_list
+     */
+    function is_or_can_be(phrase_list $phr_lst_cac = null): phrase_list
+    {
+        global $vrb_cac;
+        $result = new phrase_list();
+        if ($phr_lst_cac != null) {
+            $result->merge($phr_lst_cac->children($this, $vrb_cac->get(verbs::IS)));
+            $result->merge($phr_lst_cac->children($this, $vrb_cac->get(verbs::CAN_BE)));
+        }
+        return $result;
+    }
+
 
     /*
      * to review

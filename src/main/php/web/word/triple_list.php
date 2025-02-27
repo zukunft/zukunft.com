@@ -73,20 +73,6 @@ class triple_list extends list_dsp
 
 
     /*
-     * modify
-     */
-
-    /**
-     * add a triple to the list
-     * @returns bool true if the triple has been added
-     */
-    function add(triple_dsp $phr): bool
-    {
-        return parent::add_obj($phr);
-    }
-
-
-    /*
      * display
      */
 
@@ -297,17 +283,6 @@ class triple_list extends list_dsp
                 }
             }
             $this->set_lst($result);
-        }
-    }
-
-    /**
-     * merge as a function, because the array_merge does not create an object
-     * @param triple_list_dsp $new_wrd_lst with the triples that should be added
-     */
-    function merge(triple_list_dsp $new_wrd_lst): void
-    {
-        foreach ($new_wrd_lst->lst() as $new_wrd) {
-            $this->add($new_wrd);
         }
     }
 

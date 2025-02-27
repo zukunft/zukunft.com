@@ -46,6 +46,9 @@ include_once WEB_VALUE_PATH . 'value.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'word_list.php';
 include_once SHARED_CONST_PATH . 'views.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -60,6 +63,9 @@ use html\user\user_message;
 use html\word\word;
 use html\word\word_list;
 use shared\api;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 use shared\library;
 use shared\const\views as view_shared;
 
@@ -109,11 +115,11 @@ class value_list extends list_dsp
      * add a value to the list
      * @returns bool true if the value has been added
      */
-    function add(value $val): bool
+    function add(value|IdObject|TextIdObject|CombineObject|null $to_add): bool
     {
         $result = false;
-        if (!in_array($val->id(), $this->id_lst())) {
-            $this->add_direct($val);
+        if (!in_array($to_add->id(), $this->id_lst())) {
+            $this->add_direct($to_add);
             $this->set_lst_dirty();
             $result = true;
         }
