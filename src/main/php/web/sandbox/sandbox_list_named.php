@@ -96,7 +96,7 @@ class sandbox_list_named extends sandbox_list
      */
     function set_from_json(string $json_api_msg): user_message
     {
-        $usr_msg = $this->set_from_json_array(json_decode($json_api_msg, true));
+        $usr_msg = $this->api_mapper(json_decode($json_api_msg, true));
         $this->set_lst_dirty();
         return $usr_msg;
     }

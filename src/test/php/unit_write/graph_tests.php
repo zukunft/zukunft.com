@@ -123,7 +123,7 @@ class graph_tests
         // create the HTML code to display the type names
         $api_json = json_decode($zh_types->api_json(), true);
         $dsp_trp_list = new triple_list_dsp();
-        $dsp_trp_list->set_from_json_array($api_json);
+        $dsp_trp_list->api_mapper($api_json);
         $result = $dsp_trp_list->tbl($back);
         $t->assert_text_contains($test_name . words::CITY, $result, words::COMPANY);
         $t->assert_text_contains($test_name . words::CANTON, $result, words::COMPANY);

@@ -69,9 +69,9 @@ class result_list extends list_value
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new result());
+        return parent::api_mapper_list($json_array, new result());
     }
 
 
@@ -95,7 +95,7 @@ class result_list extends list_value
         $data[api::URL_VAR_FORMULA] = $frm->id();
         $data[api::URL_VAR_GROUP] = $lst->ids();
         $json_body = $api->api_get(self::class, $data);
-        $this->set_from_json_array($json_body);
+        $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
         }

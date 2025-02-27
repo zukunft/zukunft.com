@@ -35,9 +35,12 @@ namespace html\helper;
 include_once SHARED_PATH . 'json_fields.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_VIEW_PATH . 'view_list.php';
+include_once WEB_WORD_PATH . 'word_list.php';
 
 use html\user\user_message;
 use html\view\view_list;
+use html\word\word_list;
+use shared\json_fields;
 
 class data_object
 {
@@ -46,7 +49,9 @@ class data_object
      *  object vars
      */
 
+    private word_list $wrd_lst;
     private view_list $msk_lst;
+
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
     // set to false if the api should not be used to reload missing data
@@ -58,11 +63,21 @@ class data_object
      */
 
     /**
-     * always set the user because always someone must have requested to create the list
-     * e.g. an admin can have requested to import words for another user
+     * init the data object vars and set the lists based on the given api json
+     * @param string|null $api_json string with the api json message to fill the list
      */
-    function __construct()
+    function __construct(?string $api_json = null)
     {
+        if ($api_json != null) {
+            $this->set_from_json($api_json);
+        } else {
+            $this->reset();
+        }
+    }
+
+    function reset(): void
+    {
+        $this->wrd_lst = new word_list();
         $this->msk_lst = new view_list();
         $this->usr_msg = new user_message();
         $this->online = true;
@@ -72,6 +87,23 @@ class data_object
     /*
      * set and get
      */
+
+    /**
+     * set the vars of these list display objects bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_json(string $json_api_msg): user_message
+    {
+        $usr_msg = new user_message();
+        $this->reset();
+        $json_array = json_decode($json_api_msg, true);
+        if (array_key_exists(json_fields::WORDS, $json_array)) {
+            $msg = $this->wrd_lst->api_mapper($json_array[json_fields::WORDS]);
+            $usr_msg->add($msg);
+        }
+        return $usr_msg;
+    }
 
     /**
      * set the view_list of this data object

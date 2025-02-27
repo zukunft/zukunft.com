@@ -45,6 +45,9 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
+include_once API_OBJECT_PATH . 'api_message.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\formula\formula_list;
 use cfg\user\user;
@@ -57,6 +60,9 @@ use cfg\word\word;
 use cfg\word\word_list;
 use cfg\word\triple;
 use cfg\word\triple_list;
+use controller\api_message;
+use shared\json_fields;
+use shared\types\api_type_list;
 
 class data_object
 {
@@ -95,6 +101,53 @@ class data_object
         $this->frm_lst = new formula_list($usr);
         $this->msk_lst = new view_list($usr);
         $this->usr_msg = new user_message();
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create the api json message string of this data object that can be sent to the frontend
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return string with the api json string that should be sent to the backend
+     */
+    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        $vars = $this->api_array($typ_lst);
+
+        // add header if requested
+        if ($typ_lst->use_header()) {
+            global $db_con;
+            $api_msg = new api_message();
+            $msg = $api_msg->api_header_array($db_con, $this::class, $usr, $vars);
+        } else {
+            $msg = $vars;
+        }
+
+        return json_encode($msg);
+    }
+
+    /**
+     * create an api json array for the backend based on this frontend object
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(api_type_list|array $typ_lst = []): array
+    {
+        $vars = [];
+        $vars[json_fields::WORDS] = $this->wrd_lst->api_json_array($typ_lst);
+        $vars[json_fields::TRIPLES] = $this->trp_lst->api_json_array($typ_lst);
+        $vars[json_fields::VALUES] = $this->val_lst->api_json_array($typ_lst);
+        $vars[json_fields::FORMULAS] = $this->frm_lst->api_json_array($typ_lst);
+        $vars[json_fields::VIEWS] = $this->msk_lst->api_json_array($typ_lst);
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 

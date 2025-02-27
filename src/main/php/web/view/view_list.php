@@ -70,9 +70,9 @@ class view_list extends list_dsp
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new view_dsp());
+        return parent::api_mapper_list($json_array, new view_dsp());
     }
 
     function get_by_code_id(string $code_id): view_dsp
@@ -99,7 +99,7 @@ class view_list extends list_dsp
         $data = array(api::URL_VAR_PATTERN => $pattern);
         $rest = new rest_ctrl();
         $json_body = $rest->api_get(view_list::class, $data);
-        $this->set_from_json_array($json_body);
+        $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
         }
@@ -119,7 +119,7 @@ class view_list extends list_dsp
         $data = array(api::URL_VAR_CMP_ID => $id);
         $rest = new rest_ctrl();
         $json_body = $rest->api_get(view_base::class, $data);
-        $this->set_from_json_array($json_body);
+        $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
         }

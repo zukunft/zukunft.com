@@ -419,7 +419,7 @@ class type_lists
     {
         global $html_system_views;
         $html_system_views = new view_list_dsp();
-        $html_system_views->set_from_json_array($json_array);
+        $html_system_views->api_mapper($json_array);
     }
 
     // TODO add similar functions for all cache types

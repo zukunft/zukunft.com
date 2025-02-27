@@ -88,7 +88,7 @@ class config extends value_list
         $data = array(api::URL_VAR_CONFIG_PART => $part);
         $rest = new rest_ctrl();
         $json_body = $rest->api_get(config::class, $data);
-        $this->set_from_json_array($json_body);
+        $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $usr_msg->add_message('config api message is empty');
         }

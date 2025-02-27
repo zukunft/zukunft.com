@@ -257,6 +257,8 @@ class json_fields
 
     // name of the view to show a word, triple or formula
     const VIEW = 'view';
+    // list of views
+    const VIEWS = 'views';
 
     // the name of the value source
     const SOURCE_NAME = 'source';
@@ -285,6 +287,7 @@ class json_fields
     // for formulas
     const EXPRESSION = 'expression';
     const ASSIGNED_WORD = 'assigned_word';
+    const FORMULAS = 'formulas';
 
 
     // for results

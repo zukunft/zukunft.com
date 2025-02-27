@@ -79,9 +79,9 @@ class phrase_list extends sandbox_list_named
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new phrase_dsp());
+        return parent::api_mapper_list($json_array, new phrase_dsp());
     }
 
 
@@ -107,7 +107,7 @@ class phrase_list extends sandbox_list_named
         $data[api::URL_VAR_DIRECTION] = $direction->value;
         $data[api::URL_VAR_LEVELS] = 1;
         $json_body = $api->api_get(self::class, $data);
-        $this->set_from_json_array($json_body);
+        $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
         }
@@ -128,7 +128,7 @@ class phrase_list extends sandbox_list_named
         $data = array();
         $data[api::URL_VAR_FORMULAS] = $frm->id();
         $json_body = $api->api_get(self::class, $data);
-        $this->set_from_json_array($json_body);
+        $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
         }

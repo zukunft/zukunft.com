@@ -569,7 +569,7 @@ class import
     }
 
     /**
-     * get a list with the all word names (splited triples) from a yaml zukunft.com import array
+     * get a list with the all word names (split triples) from a yaml zukunft.com import array
      * @param array $yaml_array
      * @return array list of the word names used in yaml
      */

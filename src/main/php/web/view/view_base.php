@@ -140,7 +140,7 @@ class view_base extends sandbox_typed
         // set the components
         $cmp_lst = new component_list();
         if (array_key_exists(json_fields::COMPONENTS, $json_array)) {
-            $cmp_lst->set_from_json_array($json_array[json_fields::COMPONENTS]);
+            $cmp_lst->api_mapper($json_array[json_fields::COMPONENTS]);
         }
         // set the objects (e.g. word)
         if (array_key_exists(api::API_WORD, $json_array)) {

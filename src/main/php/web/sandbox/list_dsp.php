@@ -86,7 +86,7 @@ class list_dsp extends ListOfIdObjects
      */
     function set_from_json(string $json_api_msg): user_message
     {
-        return $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->api_mapper(json_decode($json_api_msg, true));
     }
 
     /**
@@ -94,7 +94,7 @@ class list_dsp extends ListOfIdObjects
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
         return new user_message('set_from_json_array not overwritten by child object ' . $this::class);
     }
@@ -105,7 +105,7 @@ class list_dsp extends ListOfIdObjects
      * @param IdObject|TextIdObject|CombineObject $dbo an object with a unique database id that should be added to the list
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_list_from_json(array $json_array, IdObject|TextIdObject|CombineObject $dbo): user_message
+    function api_mapper_list(array $json_array, IdObject|TextIdObject|CombineObject $dbo): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
@@ -193,7 +193,7 @@ class list_dsp extends ListOfIdObjects
         $data = array();
         $data[api::URL_VAR_PATTERN] = $pattern;
         $json_body = $api->api_get($this::class, $data);
-        $this->set_from_json_array($json_body);
+        $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
         }

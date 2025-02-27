@@ -51,9 +51,9 @@ class source_list extends list_dsp
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new source_dsp());
+        return parent::api_mapper_list($json_array, new source_dsp());
     }
 
 
