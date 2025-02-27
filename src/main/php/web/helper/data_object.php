@@ -49,6 +49,8 @@ class data_object
     private view_list $msk_lst;
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
+    // set to false if the api should not be used to reload missing data
+    private bool $online;
 
 
     /*
@@ -63,6 +65,7 @@ class data_object
     {
         $this->msk_lst = new view_list();
         $this->usr_msg = new user_message();
+        $this->online = true;
     }
 
 
@@ -97,6 +100,16 @@ class data_object
         } else {
             return false;
         }
+    }
+
+    function set_online(): void
+    {
+        $this->online = true;
+    }
+
+    function set_offline(): void
+    {
+        $this->online = false;
     }
 
 }

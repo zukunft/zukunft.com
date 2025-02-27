@@ -402,8 +402,8 @@ class component_exe extends component
         data_object $dbo = null
     ): string
     {
-        $sheet = new list_sort();
-        return $sheet->list_sort($phr, $dbo);
+        $lst = new list_sort();
+        return $lst->list_sort($phr, $dbo);
     }
 
     /**

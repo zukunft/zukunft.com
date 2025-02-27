@@ -33,6 +33,7 @@
 namespace cfg\helper;
 
 include_once API_OBJECT_PATH . 'api_message.php';
+include_once MODEL_CONST_PATH . 'files.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_type.php';
@@ -103,6 +104,7 @@ use cfg\component\position_type;
 use cfg\component\position_type_list;
 use cfg\component\view_style;
 use cfg\component\view_style_list;
+use cfg\const\files;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -624,7 +626,7 @@ class type_list
             }
             $csv_file_name .= sql_db::TABLE_EXTENSION;
             if ($csv_list_type == $type) {
-                $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . BASE_CODE_LINK_FILE_TYPE;
+                $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . files::CODE_LINK_TYPE;
             }
         }
         return $csv_path;

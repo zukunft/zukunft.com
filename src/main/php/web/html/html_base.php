@@ -518,6 +518,7 @@ class html_base
         return match ($tbl_style) {
             self::SIZE_HALF => $this->tbl_start_half() . $tbl_rows . $this->tbl_end(),
             styles::STYLE_BORDERLESS => $this->tbl_start_hist() . $tbl_rows . $this->tbl_end(),
+            styles::TABLE_PUR => $this->tbl_start_pur() . $tbl_rows . $this->tbl_end(),
             default => $this->tbl_start() . $tbl_rows . $this->tbl_end(),
         };
     }
@@ -550,6 +551,11 @@ class html_base
             $result = '<table class="change_hist"';
         }
         return $result;
+    }
+
+    function tbl_start_pur(): string
+    {
+        return '<table class="table">';
     }
 
     /**

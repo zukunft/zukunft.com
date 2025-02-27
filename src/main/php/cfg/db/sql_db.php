@@ -42,6 +42,7 @@ include_once MODEL_IMPORT_PATH . 'import_file.php';
 include_once MODEL_HELPER_PATH . 'config_numbers.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once MODEL_CONST_PATH . 'files.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
@@ -173,6 +174,7 @@ use cfg\component\position_type_list;
 use cfg\component\view_style;
 use cfg\component\view_style_list;
 use cfg\config;
+use cfg\const\files;
 use cfg\helper\config_numbers;
 use cfg\element\element;
 use cfg\element\element_type;
@@ -1251,7 +1253,7 @@ class sql_db
         $table_name = $lib->class_to_table($class);
 
         // load the csv
-        $csv_path = PATH_BASE_CODE_LINK_FILES . $table_name . BASE_CODE_LINK_FILE_TYPE;
+        $csv_path = PATH_BASE_CODE_LINK_FILES . $table_name . files::CODE_LINK_TYPE;
 
         $row = 1;
         // TODO ignore empty rows
@@ -5595,7 +5597,7 @@ class sql_db
                 $this->load_user_profiles();
                 $usr->set_profile(user_profiles::SYSTEM);
                 $imf = new import_file();
-                $import_result = $imf->json_file(SYSTEM_USER_CONFIG_FILE, $usr);
+                $import_result = $imf->json_file(files::SYSTEM_USERS, $usr);
                 if (str_starts_with($import_result, ' done ')) {
                     $result = true;
                 }
@@ -5614,7 +5616,7 @@ class sql_db
 
         if ($usr->is_admin() or $usr->is_system()) {
             $imf = new import_file();
-            $import_result = $imf->json_file(SYSTEM_VERB_CONFIG_FILE, $usr);
+            $import_result = $imf->json_file(files::VERBS, $usr);
             if (str_starts_with($import_result, ' done ')) {
                 $result = true;
             }
@@ -5715,7 +5717,7 @@ class sql_db
 
         if ($usr->is_admin() or $usr->is_system()) {
             $imf = new import_file();
-            $import_result = $imf->json_file(SYSTEM_VIEW_CONFIG_PATH, $usr);
+            $import_result = $imf->json_file(files::SYSTEM_VIEWS, $usr);
             if (str_starts_with($import_result, ' done ')) {
                 $result = true;
             }

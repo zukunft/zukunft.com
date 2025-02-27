@@ -713,6 +713,7 @@ const MODEL_IMPORT_PATH = MODEL_PATH . 'import' . DIRECTORY_SEPARATOR;
 const SERVICE_EXPORT_PATH = SERVICE_PATH . 'export' . DIRECTORY_SEPARATOR;
 const EXPORT_PATH = MODEL_PATH . 'export' . DIRECTORY_SEPARATOR;
 const SERVICE_MATH_PATH = SERVICE_PATH . 'math' . DIRECTORY_SEPARATOR;
+const MODEL_CONST_PATH = MODEL_PATH . 'const' . DIRECTORY_SEPARATOR;
 const MODEL_HELPER_PATH = MODEL_PATH . 'helper' . DIRECTORY_SEPARATOR;
 const MODEL_SYSTEM_PATH = MODEL_PATH . 'system' . DIRECTORY_SEPARATOR;
 const MODEL_LOG_PATH = MODEL_PATH . 'log' . DIRECTORY_SEPARATOR;
@@ -1260,27 +1261,10 @@ const DB_TABLE_LIST = [
     'results_time_series_big',
     'user_results_time_series_big'
 ];
-const BASE_CODE_LINK_FILE_TYPE = '.csv';
-const SYSTEM_USER_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'users.json';
-const SYSTEM_VERB_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'verbs.json';
-const SYSTEM_VIEW_CONFIG_FILE = 'system_views.json';
-const BASE_VIEW_CONFIG_FILE = 'base_views.json';
-const SYSTEM_CONFIG_FILE = PATH_BASE_CONFIG_FILES . 'config.json';
-const SYSTEM_CONFIG_FILE_YAML = PATH_BASE_CONFIG_FILES . 'config.yaml';
-const PATH_BASE_CONFIG_MESSAGE_FILES = PATH_BASE_CONFIG_FILES . 'messages/';
-const SYSTEM_VIEW_CONFIG_PATH = PATH_BASE_CONFIG_MESSAGE_FILES . SYSTEM_VIEW_CONFIG_FILE;
-const BASE_CONFIG_FILES = [
-    SYSTEM_VIEW_CONFIG_FILE,
-    'sources.json',
-    'units.json',
-    'scaling.json',
-    'time_definition.json',
-    'ip_blacklist.json',
-    BASE_VIEW_CONFIG_FILE,
-    'country.json',
-    'solution_prio.json',
-    'company.json'
-];
+
+/*
+ * files
+ */
 
 # list of all static import files for testing the system consistency
 const PATH_TEST_FILES = ROOT_PATH . 'src/test/resources/';
@@ -2012,36 +1996,3 @@ function prg_version_is_newer_test(test_cleanup $t): void
     $t->display('prg_version 0.2.3 is newer than 1.1.1', $target, $result);
 }
 
-/*
-string functions
-*/
-
-function zu_trim($text): string
-{
-    return trim(preg_replace('!\s+!', ' ', $text));
-}
-
-
-/*
-  name shortcuts - rename some often used functions to make to code look nicer and not draw the focus away from the important part
-  --------------
-*/
-
-
-// SQL list: create a query string for the standard list
-// e.g. the type "source" creates the SQL statement "SELECT source_id, source_name FROM sources ORDER BY source_name;"
-function sql_lst($type): string
-{
-    global $db_con;
-    $db_con->set_class($type);
-    return $db_con->sql_std_lst();
-}
-
-// similar to "sql_lst", but taking the user sandbox into account
-function sql_lst_usr($type, $usr): string
-{
-    global $db_con;
-    $db_con->set_class($type);
-    $db_con->usr_id = $usr->id();
-    return $db_con->sql_std_lst_usr();
-}

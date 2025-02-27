@@ -255,14 +255,20 @@
       "name": "htp"
     },
     {
-      "name": "billion"
-    },
-    {
-      "name": "trillion"
-    },
-    {
       "name": "million",
       "comment": "to specify numbers in millions",
+      "type": "scaling",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "billion",
+      "comment": "to specify numbers in billion",
+      "type": "scaling",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "trillion",
+      "comment": "to specify numbers in trillion",
       "type": "scaling",
       "protection": "admin_protection"
     },

@@ -32,7 +32,9 @@ include_once MODEL_HELPER_PATH . 'config_numbers.php';
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_CONST_PATH . 'files.php';
 
+use cfg\const\files;
 use cfg\helper\config_numbers;
 use cfg\user\user;
 use cfg\user\user_message;
@@ -59,7 +61,7 @@ class import_file
                 $msg .= ' failed because message file is empty of not found.';
             } else {
                 $import = new import;
-                $import_result = $import->put_json($json_str, $usr);
+                $import_result = $import->put_json_direct($json_str, $usr);
                 if ($import_result->is_ok()) {
                     $msg .= ' done ('
                         . $import->words_done . ' words, '
@@ -138,7 +140,7 @@ class import_file
 
         if ($usr->is_admin() or $usr->is_system()) {
             $imf = new import_file();
-            $import_result = $imf->json_file(SYSTEM_CONFIG_FILE, $usr);
+            $import_result = $imf->json_file(files::SYSTEM_CONFIG_OLD, $usr);
             if (str_starts_with($import_result, ' done ')) {
                 $result = true;
             }
@@ -160,7 +162,7 @@ class import_file
 
         if ($usr->is_admin() or $usr->is_system()) {
             $imf = new import_file();
-            $import_result = $imf->yaml_file(SYSTEM_CONFIG_FILE_YAML, $usr);
+            $import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $usr);
             if (str_starts_with($import_result->get_last_message(), ' done ')) {
                 $result = true;
             }
@@ -170,9 +172,9 @@ class import_file
             if ($cfg->count() != $import_result->checksum()) {
                 // report the missing config values
                 $imp = new import;
-                $yaml_str = file_get_contents(SYSTEM_CONFIG_FILE_YAML);
+                $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                 $yaml_array = yaml_parse($yaml_str);
-                $dto = $imp->yaml_data_object($yaml_array, $usr);
+                $dto = $imp->get_data_object($yaml_array, $usr);
                 $dto->save();
                 $val_diff = $dto->value_list()->diff($cfg);
                 log_warning('These configuration values could not be imported: ' . $val_diff->dsp_id());
@@ -201,9 +203,9 @@ class import_file
             $usr, true
         );
 
-        foreach (BASE_CONFIG_FILES as $filename) {
+        foreach (files::BASE_CONFIG_FILES as $filename) {
             $this->echo('load ' . $filename);
-            $result .= $this->json_file(PATH_BASE_CONFIG_MESSAGE_FILES . $filename, $usr);
+            $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr);
         }
 
         log_debug('load base config ... done');

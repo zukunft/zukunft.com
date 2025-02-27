@@ -34,7 +34,9 @@ namespace unit;
 
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_IMPORT_PATH . 'convert_wikipedia_table.php';
+include_once MODEL_CONST_PATH . 'files.php';
 
+use cfg\const\files;
 use cfg\db\sql_creator;
 use cfg\import\convert_wikipedia_table;
 use cfg\import\import;
@@ -52,10 +54,10 @@ class import_tests
         $t->subheader('Import unit tests');
 
         $test_name = 'YAML import word count';
-        $yaml_str = file_get_contents(SYSTEM_CONFIG_FILE_YAML);
+        $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
         $json_array = yaml_parse($yaml_str);
         $imp = new import;
-        $dto = $imp->yaml_data_object($json_array, $usr);
+        $dto = $imp->get_data_object($json_array, $usr);
         $t->assert($test_name, $dto->word_list()->count(), 73);
         $test_name = 'YAML import triple count';
         $t->assert($test_name, $dto->triple_list()->count(), 22);
@@ -68,7 +70,7 @@ class import_tests
         $test_name = 'JSON import warning creation';
         $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'warning_and_error_test.json');
         $imp = new import;
-        $result = $imp->put_json($json_str, $usr);
+        $result = $imp->put_json_direct($json_str, $usr);
         $target = 'Unknown element test';
         $t->assert($test_name, $result->get_last_message(), $target);
 

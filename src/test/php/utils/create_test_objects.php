@@ -48,6 +48,7 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_CONST_PATH . 'files.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once MODEL_RESULT_PATH . 'results.php';
@@ -82,6 +83,7 @@ use cfg\component\component_list;
 use cfg\component\component_type_list;
 use cfg\component\position_type_list;
 use cfg\component\view_style_list;
+use cfg\const\files;
 use cfg\db\sql_db;
 use cfg\element\element;
 use cfg\element\element_list;
@@ -469,7 +471,7 @@ class create_test_objects extends test_base
             }
             $csv_file_name .= sql_db::TABLE_EXTENSION;
             if ($csv_list_type == $type) {
-                $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . BASE_CODE_LINK_FILE_TYPE;
+                $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . files::CODE_LINK_TYPE;
             }
         }
         return $csv_path;
@@ -865,6 +867,20 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
+    function word_global(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::GLOBAL_ID, words::GLOBAL);
+        return $wrd;
+    }
+
+    function word_problem(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::PROBLEM_ID, words::PROBLEM);
+        return $wrd;
+    }
+
     function word_gwp(): word
     {
         $wrd = new word($this->usr1);
@@ -947,11 +963,19 @@ class create_test_objects extends test_base
     /**
      * @return verb a standard verb with user null
      */
-    function verb_of(): verb
+    function verb_with(): verb
     {
-        $vrb = new verb(verbs::OF_ID, verbs::OF, verbs::CAN_CONTAIN_NAME_REVERSE);
+        $vrb = new verb(verbs::WITH_ID, verbs::WITH, verbs::CAN_CONTAIN_NAME_REVERSE);
         $vrb->set_user($this->usr1);
         return $vrb;
+    }
+
+    /**
+     * @return verb a standard verb with user null
+     */
+    function verb_can_be(): verb
+    {
+        return new verb(verbs::CAN_BE_ID, verbs::CAN_BE_NAME, verbs::CAN_BE);
     }
 
     /**
@@ -1127,6 +1151,19 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_ge()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->word_city()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "pi (math)" used for unit testing
+     */
+    function global_problem(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triples::GLOBAL_PROBLEM_ID, triples::GLOBAL_PROBLEM);
+        $trp->set_from($this->word_problem()->phrase());
+        $trp->set_verb($this->verb_can_be());
+        $trp->set_to($this->word_global()->phrase());
         return $trp;
     }
 
@@ -1898,7 +1935,7 @@ class create_test_objects extends test_base
         $lst->add($this->word_this()->term());
         $lst->add($this->word_parts()->term());
         $lst->add($this->word_total()->term());
-        $lst->add($this->verb_of()->term());
+        $lst->add($this->verb_with()->term());
         $lst->add($this->word_one()->term());
         $lst->add($this->word_mio()->term());
         return $lst;

@@ -451,19 +451,19 @@ class test_cleanup extends test_api
             $trm->set_obj_id($pos);
             $trm->set_name($name);
 
-            // ste types of some special terms
+            // set types of some special terms
             if ($name == formulas::THIS_NAME) {
                 $trm->obj()->type_cl = formula_type::THIS;
-                $trm->set_obj_id(18, $class);
+                $trm->set_obj_id(formulas::THIS_ID);
                 $wrd = new word($usr);
-                $wrd->set(174, formula_type::THIS);
+                $wrd->set(words::THIS_ID, formula_type::THIS);
                 $trm->obj()->name_wrd = $wrd;
             }
             if ($name == formulas::PRIOR) {
                 $trm->obj()->type_cl = formula_type::PREV;
-                $trm->set_obj_id(20, $class);
+                $trm->set_obj_id(formulas::PRIOR_ID);
                 $wrd = new word($usr);
-                $wrd->set(176, formula_type::PREV);
+                $wrd->set(words::PRIOR_ID, formula_type::PREV);
                 $trm->obj()->name_wrd = $wrd;
             }
 

@@ -64,6 +64,7 @@ class triples
 
     // triple used in the default start view
     const GLOBAL_PROBLEM = 'global problem';
+    const GLOBAL_PROBLEM_ID = 392;
 
     const TN_CUBIC_METER = 'm3';
 

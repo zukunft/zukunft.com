@@ -68,6 +68,7 @@ include_once TEST_UNIT_UI_PATH . 'change_log_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'sys_log_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'job_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'system_views_ui_tests.php';
+include_once TEST_UNIT_UI_PATH . 'start_ui_tests.php';
 
 use test\test_cleanup;
 use unit\all_unit_tests;
@@ -116,6 +117,7 @@ class all_ui_tests extends all_unit_tests
         (new job_ui_tests)->run($t);
 
         // TODO compare with run_ui_test in all_unit_read_tests
+        (new start_ui_tests)->run($t);
         (new system_views_ui_tests)->run($t);
 
         $t->subheader('check about page e.g. to check the library');

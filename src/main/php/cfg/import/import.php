@@ -163,7 +163,7 @@ class import
                 $usr_msg->add_warning('YAML string is empty');
             }
         } else {
-            $dto = $this->yaml_data_object($yaml_array, $usr_trigger);
+            $dto = $this->get_data_object($yaml_array, $usr_trigger);
             $usr_msg = $dto->save();
             $usr_msg->set_checksum($dto->value_list()->count());
         }
@@ -171,13 +171,38 @@ class import
     }
 
     /**
-     * drop a zukunft.com yaml object to the database
+     * drop a zukunft.com json object to the database
+     *
+     * @param string $json_str the zukunft.com YAML message to import as a string
+     * @param user $usr_trigger the user who has triggered the import
+     * @return user_message the result of the import
+     */
+    function put_json(string $json_str, user $usr_trigger): user_message
+    {
+        $usr_msg = new user_message();
+        $json_array = json_decode($json_str, true);
+        if ($json_array == null) {
+            if ($json_str != '') {
+                $usr_msg->add_message('JSON decode failed of ' . $json_str);
+            } else {
+                $usr_msg->add_warning('JSON string is empty');
+            }
+        } else {
+            $dto = $this->get_data_object($json_array, $usr_trigger);
+            $usr_msg = $dto->save();
+            $usr_msg->set_checksum($dto->value_list()->count());
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * drop a zukunft.com yaml object direct to the database
      *
      * @param string $json_str the zukunft.com JSON message to import as a string
      * @param user $usr_trigger the user who has triggered the import
      * @return user_message the result of the import
      */
-    function put_json(string $json_str, user $usr_trigger): user_message
+    function put_json_direct(string $json_str, user $usr_trigger): user_message
     {
         $usr_msg = new user_message();
         $json_array = json_decode($json_str, true);
@@ -586,14 +611,14 @@ class import
      * @param user $usr_trigger the user who has started the import
      * @return data_object filled based on the yaml array
      */
-    function yaml_data_object(array $yml_arr, user $usr_trigger): data_object
+    function get_data_object(array $yml_arr, user $usr_trigger): data_object
     {
         $dto = new data_object($usr_trigger);
         $wrd = null;
         $trp = null;
         $val = null;
         $phr_lst = new phrase_list($usr_trigger);
-        $dto = $this->yaml_data_object_loop($dto, $phr_lst, $yml_arr, $wrd, $trp, $val, $usr_trigger);
+        $dto = $this->get_data_object_loop($dto, $phr_lst, $yml_arr, $wrd, $trp, $val, $usr_trigger);
         // add the last word, triple or value to the lists
         if ($wrd != null) {
             $dto->add_word($wrd);
@@ -612,7 +637,7 @@ class import
         return $dto;
     }
 
-    function yaml_data_object_loop(
+    private function get_data_object_loop(
         data_object $dto,
         phrase_list $phr_lst,
         array       $yml_arr,
@@ -685,7 +710,7 @@ class import
                 }
                 // add the sub array
                 if (is_array($value)) {
-                    $dto = $this->yaml_data_object_loop($dto, $sub_phr_lst, $value, $wrd, $trp, $val, $usr_trigger);
+                    $dto = $this->get_data_object_loop($dto, $sub_phr_lst, $value, $wrd, $trp, $val, $usr_trigger);
                 } else {
                     // remember the value
                     if (is_string($value)) {

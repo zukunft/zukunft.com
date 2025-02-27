@@ -34,11 +34,13 @@ namespace html;
 
 include_once WEB_HELPER_PATH . 'data_object.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
+include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
 
 use html\helper\data_object;
 use html\phrase\phrase;
+use html\phrase\phrase_list;
 use html\word\triple;
 use html\word\word;
 
@@ -57,13 +59,50 @@ class list_sort
         data_object $dbo = null
     ): string
     {
+        /*
+         * outline of the target solution
+
+        // create the table
+        $tbl = new table();
+
+        // add the main column
+        $tbl->add_column($phr);
+
         // get the phrases for the rows
-        // $phr_lst = $phr->is_or_can_be();
+        // from "global problem" to e.g. "climate change"
+        $phr_lst = $phr->is_or_can_be();
 
-        // loop over the position list and get the related object
+        // get the most relevant result
+        $tbl->add_column($phr_lst->result_most_relevant());
 
-        $result = '<table class="table">
-  <thead>
+        // fill the space with the most relevant related phrases and numbers
+        // if a solution exists and the table has enough space add the solution
+        $col_nbr = $tbl->target_columns(); // 1 expected
+        $col_phr_lst = $phr_lst->phrases_most_relevant($col_nbr);
+
+        foreach ($col_phr_lst as $col_phr)
+        {
+            $tbl->add_column($col_phr);
+
+            // get the most relevant result
+            $tbl->add_column($col_phr->result_most_relevant());
+        }
+
+        // if the list is sorted start it with a ranking column
+        $rank_phr = new phrase(phrases::RANKING);
+        $tbl->add_first_column($rank_phr);
+
+        // show the table
+
+        */
+
+        // temp hardcoded solution
+
+        $html = new html_base();
+        $col_lst = new phrase_list();
+
+
+        $result = '<thead>
     <tr>
       <th scope="col">Priority</th>
       <th scope="col">Problem</th>
@@ -166,8 +205,7 @@ class list_sort
         $result .= '<td class="text-right"></td>';
         $result .= '</tr>';
         $result .= '</tbody>';
-        $result .= '</table>';
-        return $result;
+        return $html->tbl($result, styles::TABLE_PUR);
     }
 
 }

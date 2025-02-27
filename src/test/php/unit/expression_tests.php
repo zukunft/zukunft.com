@@ -129,7 +129,7 @@ class expression_tests
         $exp->ref_text($trm_lst);
         $elm_grp_lst = $exp->element_grp_lst($trm_lst);
         $result = $elm_grp_lst->dsp_id();
-        $target = '"parts,of" (' . words::PARTS_ID . ',' . verbs::OF_ID . ') / "total" (' . words::TOTAL_ID
+        $target = '"parts,of" (' . words::PARTS_ID . ',' . verbs::WITH_ID . ') / "total" (' . words::TOTAL_ID
             . ') for user 1 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);
@@ -138,7 +138,7 @@ class expression_tests
         $elm_grp_lst = $exp->element_list($trm_lst);
         $result = $elm_grp_lst->dsp_id();
         $target = '"parts","of","total" (element_id '
-            . words::PARTS_ID . ',' . verbs::OF_ID . ',' . words::TOTAL_ID
+            . words::PARTS_ID . ',' . verbs::WITH_ID . ',' . words::TOTAL_ID
             . ') for user 1 (zukunft.com system test)';
         //$target = '"' . formulas::TN_PERCENT . '" (1)';
         $t->assert($test_name, $result, $target);

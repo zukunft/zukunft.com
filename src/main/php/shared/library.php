@@ -1012,6 +1012,7 @@ class library
             'cfg' => 'SERVICE_PATH',
             'cfg\db' => 'DB_PATH',
             'cfg\log' => 'MODEL_LOG_PATH',
+            'cfg\const' => 'MODEL_CONST_PATH',
             'cfg\system' => 'MODEL_SYSTEM_PATH',
             'cfg\formula' => 'MODEL_FORMULA_PATH',
             'cfg\element' => 'MODEL_ELEMENT_PATH',

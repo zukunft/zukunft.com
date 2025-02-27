@@ -41,5 +41,6 @@ class styles
     const STYLE_USER = 'user_specific';
     const STYLE_RIGHT = 'right_ref';
     const STYLE_BORDERLESS = 'borderless';
+    const TABLE_PUR = 'table';
 
 }

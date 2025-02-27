@@ -232,29 +232,34 @@ class verb_list extends type_list
     function load_dummy(): void
     {
         $vrb = new verb();
-        $vrb->set_id(1);
+        $vrb->set_id(verbs::NOT_SET_ID);
         $vrb->set_name(verbs::NOT_SET_NAME);
         $vrb->code_id = verbs::NOT_SET;
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(2);
+        $vrb->set_id(verbs::IS_ID);
         $vrb->set_name(verbs::IS_NAME);
         $vrb->code_id = verbs::IS;
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(3);
+        $vrb->set_id(verbs::PART_ID);
         $vrb->set_name(verbs::PART_NAME);
-        $vrb->code_id = verbs::PART_NAME;
+        $vrb->code_id = verbs::PART;
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(4);
-        $vrb->set_name(verbs::IS_WITH);
-        $vrb->code_id = verbs::IS_WITH;
+        $vrb->set_id(verbs::WITH_ID);
+        $vrb->set_name(verbs::WITH_NAME);
+        $vrb->code_id = verbs::WITH_NAME;
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(9);
-        $vrb->set_name(verbs::FOLLOW);
+        $vrb->set_id(verbs::FOLLOW_ID);
+        $vrb->set_name(verbs::FOLLOW_NAME);
         $vrb->code_id = verbs::FOLLOW;
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->set_id(verbs::CAN_BE_ID);
+        $vrb->set_name(verbs::CAN_BE_NAME);
+        $vrb->code_id = verbs::CAN_BE;
         $this->add_verb($vrb);
     }
 

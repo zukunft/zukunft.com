@@ -573,6 +573,22 @@ class triple extends sandbox_typed
         return (new html_base)->td($cell_text, $intent);
     }
 
+    /**
+     * simply to display a single triple in a table
+     */
+    function dsp_tbl($intent): string
+    {
+        log_debug('triple->dsp_tbl');
+        $result = '    <td>' . "\n";
+        while ($intent > 0) {
+            $result .= '&nbsp;';
+            $intent = $intent - 1;
+        }
+        $result .= '      ' . $this->name_link() . "\n";
+        $result .= '    </td>' . "\n";
+        return $result;
+    }
+
 
     /*
      * views
