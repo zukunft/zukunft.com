@@ -67,7 +67,7 @@ class triples
     const GLOBAL_PROBLEM_ID = 55;
     const GLOBAL_WARMING = 'climate warming';
     const GLOBAL_WARMING_ID = 58;
-    const GLOBAL_WARMING_PROBLEM_ID = 58;
+    const GLOBAL_WARMING_PROBLEM_ID = 65;
     const POTENTIAL_HEALTH_PROBLEM_ID = 67;
 
     const TN_CUBIC_METER = 'm3';

@@ -60,6 +60,7 @@ include_once WEB_TYPES_PATH . 'view_link_type_list.php';
 include_once WEB_TYPES_PATH . 'component_type_list.php';
 include_once WEB_TYPES_PATH . 'component_link_type_list.php';
 include_once WEB_TYPES_PATH . 'position_type_list.php';
+//include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_VIEW_PATH . 'view_list.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_USER_PATH . 'user_message.php';
@@ -69,6 +70,7 @@ include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'api.php';
 
 use html\user\user_message;
+use html\verb\verb;
 use html\view\view_list as view_list_dsp;
 use html\word\word as word_dsp;
 use shared\api;
@@ -377,7 +379,7 @@ class type_lists
     {
         global $html_verbs;
         $html_verbs = new verbs();
-        $html_verbs->set_from_json_array($json_array);
+        $html_verbs->set_from_json_array($json_array, verb::class);
     }
 
     function set_sys_log_stati(array $json_array = null): void

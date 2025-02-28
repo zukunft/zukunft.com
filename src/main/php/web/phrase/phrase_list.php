@@ -154,8 +154,30 @@ class phrase_list extends sandbox_list_named
         $result = new phrase_list;
         foreach ($this->lst() as $trp) {
             if ($trp->is_triple()) {
-                if ($trp->verb() == $vrb or $vrb == null) {
-                    if ($trp->from() == $phr) {
+                if ($trp->verb()->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->from()->id() == $phr->id()) {
+                        $result->add($trp);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get all phrases that are connected to the given phrase
+     * selected by the given verb
+     * @param phrase $phr the parent phrase
+     * @param verb|null $vrb the verb to filter the child phrases
+     * @return phrase_list the filtered children
+     */
+    function parents(phrase $phr, verb|null $vrb = null): phrase_list
+    {
+        $result = new phrase_list;
+        foreach ($this->lst() as $trp) {
+            if ($trp->is_triple()) {
+                if ($trp->verb()->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->to()->id() == $phr->id()) {
                         $result->add($trp);
                     }
                 }

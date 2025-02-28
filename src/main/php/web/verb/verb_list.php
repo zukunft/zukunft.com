@@ -82,9 +82,10 @@ class verb_list extends type_list
     /**
      * set the vars of a term object based on the given json
      * @param array $json_array an api single object json message
+     * @param string $class to force to use the verb child class of the type object
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function set_from_json_array(array $json_array, string $class = verb::class): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_array as $value) {

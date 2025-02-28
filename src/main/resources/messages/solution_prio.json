@@ -413,13 +413,11 @@
       "to": "billion"
     },
     {
-      "name": "global warming is a global problem",
       "from": "climate warming",
       "verb": "is a",
       "to": "global problem"
     },
     {
-      "name": "populism is a global problem",
       "from": "populism",
       "verb": "is a",
       "to": "global problem"

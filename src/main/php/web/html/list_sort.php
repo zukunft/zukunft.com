@@ -68,7 +68,7 @@ class list_sort
 
         // get the phrases for the rows
         // from "global problem" to e.g. "climate change"
-        //$phr_lst = $phr->is_or_can_be($dbo?->phrase_list());
+        $phr_lst = $phr->is_or_can_be($dbo?->phrase_list());
 
         /*
          * outline of the remaining target solution

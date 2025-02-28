@@ -40,6 +40,7 @@ include_once WEB_TYPES_PATH . 'protection.php';
 include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_TYPES_PATH . 'type_object.php';
 include_once WEB_USER_PATH . 'user_message.php';
+//include_once WEB_VERB_PATH . 'verb.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -47,6 +48,7 @@ include_once SHARED_PATH . 'library.php';
 use html\user\user_message;
 use html\html_selector;
 use html\types\type_object as type_object_dsp;
+use html\verb\verb;
 use shared\json_fields;
 use shared\library;
 use shared\types\view_styles;
@@ -73,28 +75,34 @@ class type_list
      * @param array $json_array an api list json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function set_from_json_array(array $json_array, string $class = ''): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
-            if (!array_key_exists(json_fields::CODE_ID, $value)) {
-                $usr_msg->add_err('code id is missing for ' . implode(',', $value));
-            }
-            if (array_key_exists(json_fields::DESCRIPTION, $value)) {
-                $typ = new type_object_dsp(
-                    $value[json_fields::ID],
-                    $value[json_fields::CODE_ID],
-                    $value[json_fields::NAME],
-                    $value[json_fields::DESCRIPTION]
-                );
+            if ($class == verb::class) {
+                $vrb = new verb();
+                $vrb->api_mapper($value);
+                $this->add_obj($vrb);
             } else {
-                $typ = new type_object_dsp(
-                    $value[json_fields::ID],
-                    $value[json_fields::CODE_ID],
-                    $value[json_fields::NAME]
-                );
+                if (!array_key_exists(json_fields::CODE_ID, $value)) {
+                    $usr_msg->add_err('code id is missing for ' . implode(',', $value));
+                }
+                if (array_key_exists(json_fields::DESCRIPTION, $value)) {
+                    $typ = new type_object_dsp(
+                        $value[json_fields::ID],
+                        $value[json_fields::CODE_ID],
+                        $value[json_fields::NAME],
+                        $value[json_fields::DESCRIPTION]
+                    );
+                } else {
+                    $typ = new type_object_dsp(
+                        $value[json_fields::ID],
+                        $value[json_fields::CODE_ID],
+                        $value[json_fields::NAME]
+                    );
+                }
+                $this->add_obj($typ);
             }
-            $this->add_obj($typ);
         }
         return $usr_msg;
     }
@@ -179,9 +187,9 @@ class type_list
     /**
      * pick a type from the preloaded object list
      * @param int $id the database id of the expected type
-     * @return type_object|null the type object
+     * @return verb|type_object|null the type object
      */
-    function get(int $id): ?type_object
+    function get(int $id): verb|type_object|null
     {
         $result = null;
         if ($id > 0) {
@@ -196,6 +204,16 @@ class type_list
             log_debug('Type id not set');
         }
         return $result;
+    }
+
+    /**
+     * get the type object by code id (just to shorten the code)
+     * @param string $code_id
+     * @return verb|type_object|null
+     */
+    function get_by_code_id(string $code_id): verb|type_object|null
+    {
+        return $this->get($this->id($code_id));
     }
 
 

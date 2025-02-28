@@ -39,6 +39,7 @@ include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_USER_PATH . 'user_message.php';
+//include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_VERB_PATH . 'verb_list.php';
 include_once WEB_WORD_PATH . 'word.php';
 //include_once WEB_WORD_PATH . 'word_list.php';
@@ -53,6 +54,7 @@ use html\rest_ctrl as api_dsp;
 use html\sandbox\combine_named;
 use html\system\messages;
 use html\user\user_message;
+use html\verb\verb;
 use html\verb\verb_list;
 use html\word\triple;
 use html\word\word;
@@ -181,6 +183,32 @@ class phrase extends combine_named
         return $this->obj()?->id();
     }
 
+    function verb(): ?verb
+    {
+        if ($this->is_triple()) {
+            return $this->obj()->verb();
+        } else {
+            return null;
+        }
+    }
+
+    function from(): ?phrase
+    {
+        if ($this->is_triple()) {
+            return $this->obj()->from();
+        } else {
+            return null;
+        }
+    }
+
+    function to(): ?phrase
+    {
+        if ($this->is_triple()) {
+            return $this->obj()->to();
+        } else {
+            return null;
+        }
+    }
 
 
     /*
@@ -201,6 +229,11 @@ class phrase extends combine_named
         } else {
             return false;
         }
+    }
+
+    function is_triple(): bool
+    {
+        return !$this->is_word();
     }
 
 
@@ -296,11 +329,11 @@ class phrase extends combine_named
      */
     function is_or_can_be(phrase_list $phr_lst_cac = null): phrase_list
     {
-        global $vrb_cac;
+        global $html_verbs;
         $result = new phrase_list();
         if ($phr_lst_cac != null) {
-            $result->merge($phr_lst_cac->children($this, $vrb_cac->get(verbs::IS)));
-            $result->merge($phr_lst_cac->children($this, $vrb_cac->get(verbs::CAN_BE)));
+            $result->merge($phr_lst_cac->parents($this, $html_verbs->get_by_code_id(verbs::IS)));
+            $result->merge($phr_lst_cac->parents($this, $html_verbs->get_by_code_id(verbs::CAN_BE)));
         }
         return $result;
     }
