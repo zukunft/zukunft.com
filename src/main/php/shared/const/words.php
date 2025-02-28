@@ -250,6 +250,8 @@ class words
     const CLIMATE_ID = 222;
     const WARMER = 'warmer';
     const WARMER_ID = 225;
+    const HEALTH = 'health';
+    const HEALTH_ID = 235;
 
     const GWP = 'global warming potential';
     const GWP_ID = 1070;

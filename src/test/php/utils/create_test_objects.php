@@ -895,6 +895,13 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
+    function word_health(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::HEALTH_ID, words::HEALTH);
+        return $wrd;
+    }
+
     function word_gwp(): word
     {
         $wrd = new word($this->usr1);
@@ -1192,13 +1199,39 @@ class create_test_objects extends test_base
     /**
      * @return triple "climate warming" used for start view unit testing
      */
-    function climate_warming(): triple
+    function global_warming(): triple
     {
         $trp = new triple($this->usr1);
-        $trp->set(triples::GLOBAL_PROBLEM_ID, triples::GLOBAL_PROBLEM);
+        $trp->set(triples::GLOBAL_WARMING_ID, triples::GLOBAL_WARMING);
         $trp->set_from($this->word_climate()->phrase());
         $trp->set_verb($this->verb_can_get());
         $trp->set_to($this->word_warmer()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "global warming" "is a" "global problem" used for start view unit testing
+     */
+    function global_warming_problem(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triples::GLOBAL_WARMING_PROBLEM_ID);
+        $trp->set_from($this->global_warming()->phrase());
+        $trp->set_verb($this->verb_is());
+        $trp->set_to($this->global_problem()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that defines that "health" "can be a" "global problem" used for start view unit testing
+     */
+    function potential_health_problem(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triples::POTENTIAL_HEALTH_PROBLEM_ID);
+        $trp->set_from($this->word_health()->phrase());
+        $trp->set_verb($this->verb_can_be());
+        $trp->set_to($this->global_problem()->phrase());
         return $trp;
     }
 
@@ -1384,7 +1417,9 @@ class create_test_objects extends test_base
         $lst->add($this->triple()->phrase());
         $lst->add($this->triple_pi()->phrase());
         $lst->add($this->global_problem()->phrase());
-        $lst->add($this->climate_warming()->phrase());
+        $lst->add($this->global_warming()->phrase());
+        $lst->add($this->global_warming_problem()->phrase());
+        $lst->add($this->potential_health_problem()->phrase());
         return $lst;
     }
 

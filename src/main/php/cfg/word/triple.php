@@ -483,6 +483,12 @@ class triple extends sandbox_link_named
                     $vars[json_fields::TO] = $this->to_id();
                 }
             }
+            // add the generated name if there is no given name
+            if (!array_key_exists(json_fields::NAME, $vars)) {
+                $vars[json_fields::NAME] = $this->generate_name();
+            } elseif ($vars[json_fields::NAME] == '') {
+                $vars[json_fields::NAME] = $this->generate_name();
+            }
         }
 
         return $vars;
