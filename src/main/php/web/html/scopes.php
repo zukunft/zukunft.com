@@ -2,7 +2,7 @@
 
 /*
 
-    web/html/styles.php - style constants used for html frontend
+    web/html/scopes.php - scope constants used for html frontend
     -------------------
 
 
@@ -32,17 +32,11 @@
 
 namespace html;
 
-class styles
+class scopes
 {
 
-    // styles used
-    const STYLE_GREY = 'grey';
-    const STYLE_GLYPH = 'glyphicon glyphicon-pencil';
-    const STYLE_USER = 'user_specific';
-    const STYLE_RIGHT = 'right_ref';
-    const STYLE_BORDERLESS = 'borderless';
-    const TABLE_PUR = 'table';
-    const TEXT_RIGHT = 'text-right';
-
+    // scopes used
+    const COL = 'col';
+    const ROW = 'row';
 
 }

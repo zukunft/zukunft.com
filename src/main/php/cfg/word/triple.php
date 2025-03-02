@@ -470,6 +470,9 @@ class triple extends sandbox_link_named
                 if ($from->id() <> 0 or $from->name() != '') {
                     //$vars[json_fields::FROM] = $from->phrase()->api_json_array($typ_lst);
                     $vars[json_fields::FROM] = $this->from_id();
+                    if ($typ_lst->include_phrases()) {
+                        $vars[json_fields::FROM_PHRASE] = $from->api_json_array($typ_lst);
+                    }
                 }
             }
             if ($this->verb() != null) {
@@ -481,6 +484,9 @@ class triple extends sandbox_link_named
                 if ($to->id() <> 0 or $to->name() != '') {
                     //$vars[json_fields::TO] = $to->phrase()->api_json_array($typ_lst);
                     $vars[json_fields::TO] = $this->to_id();
+                    if ($typ_lst->include_phrases()) {
+                        $vars[json_fields::TO_PHRASE] = $to->api_json_array($typ_lst);
+                    }
                 }
             }
             // add the generated name if there is no given name

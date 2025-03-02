@@ -68,7 +68,14 @@ class triples
     const GLOBAL_WARMING = 'climate warming';
     const GLOBAL_WARMING_ID = 58;
     const GLOBAL_WARMING_PROBLEM_ID = 65;
+    const POPULISM_PROBLEM_ID = 66;
     const POTENTIAL_HEALTH_PROBLEM_ID = 67;
+    const POVERTY_PROBLEM_ID = 68;
+    const POTENTIAL_EDUCATION_PROBLEM_ID = 69;
+    const TIME_POINTS = 'time points';
+    const TIME_POINTS_ID = 61;
+    const HAPPY_TIME_POINTS = 'happy time points';
+    const HAPPY_TIME_POINTS_ID = 62;
 
     const TN_CUBIC_METER = 'm3';
 

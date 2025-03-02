@@ -139,6 +139,24 @@ class phrase_list extends sandbox_list_named
 
 
     /*
+     * related
+     */
+
+    /**
+     * get the phrase of the most relevant result
+     * e.g. "happy time points" for "global problems"
+     * @return phrase the main phrase of the most relevant result
+     */
+    function result_phrases_most_relevant(): phrase_list
+    {
+        $phr = new phrase_list();
+        // TODO review temp solution
+        //$phr->load_by_name();
+        return $phr;
+    }
+
+
+    /*
      * select
      */
 
@@ -178,7 +196,7 @@ class phrase_list extends sandbox_list_named
             if ($trp->is_triple()) {
                 if ($trp->verb()->id() == $vrb?->id() or $vrb == null) {
                     if ($trp->to()->id() == $phr->id()) {
-                        $result->add($trp);
+                        $result->add($trp->from());
                     }
                 }
             }

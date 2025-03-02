@@ -34,6 +34,7 @@ namespace html;
 
 include_once WEB_HELPER_PATH . 'data_object.php';
 include_once WEB_HTML_PATH . 'table.php';
+include_once WEB_HTML_PATH . 'scopes.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_WORD_PATH . 'triple.php';
@@ -70,11 +71,31 @@ class list_sort
         // from "global problem" to e.g. "climate change"
         $phr_lst = $phr->is_or_can_be($dbo?->phrase_list());
 
-        /*
-         * outline of the remaining target solution
+        // TODO remove temp hardcoded solution
+        if ($phr_lst->is_empty()) {
+            $phr_lst = new phrase_list();
+            $trp = new triple();
+            $trp->load_by_name('climate warming');
+            $phr_lst->add($trp->phrase());
+            $wrd = new word();
+            $wrd->load_by_name('populism');
+            $phr_lst->add($wrd->phrase());
+            $wrd = new word();
+            $wrd->load_by_name('health');
+            $phr_lst->add($wrd->phrase());
+            $wrd = new word();
+            $wrd->load_by_name('poverty');
+            $phr_lst->add($wrd->phrase());
+            $wrd = new word();
+            $wrd->load_by_name('education');
+            $phr_lst->add($wrd->phrase());
+        }
 
         // get the most relevant result
-        $tbl->add_column($phr_lst->result_most_relevant());
+        //$tbl->add_column($phr_lst->result_phrases_most_relevant());
+
+        /*
+         * outline of the remaining target solution
 
         // fill the space with the most relevant related phrases and numbers
         // if a solution exists and the table has enough space add the solution
@@ -97,116 +118,75 @@ class list_sort
 
         */
 
-        // temp hardcoded solution
-
         $html = new html_base();
         $col_lst = new phrase_list();
+        // add phrase_views class: a phrase_list with a selected component and component parameters
+
+        $trillion = new word();
+        $trillion->load_by_name('trillion');
+        $billion = new word();
+        $billion->load_by_name('billion');
+        $usd = new word();
+        $usd->load_by_name('USD');
+        $htp = new word();
+        $htp->load_by_name('htp');
 
 
-        $result = '<thead>
-    <tr>
-      <th scope="col">Priority</th>
-      <th scope="col">Problem</th>
-      <th class="text-right" scope="col">Costs in ';
-        // temp code
-        $wrd = new word();
-        $wrd->load_by_name('trillion');
-        $result .= $wrd->name_link();
-        $result .= ' ';
-        // temp code
-        $wrd = new word();
-        $wrd->load_by_name('USD');
-        $result .= $wrd->name_link();
-        $result .= '</th>
-      <th scope="col">Solution</th>
-      <th class="text-right" scope="col">Gain in ';
-        // temp code
-        $wrd = new word();
-        $wrd->load_by_name('billion');
-        $result .= $wrd->name_link();
-        $result .= ' ';
-        // temp code
-        $wrd = new word();
-        $wrd->load_by_name('htp');
-        $result .= $wrd->name_link();
-        $result .= '</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>';
-        // temp code
-        $trp = new triple();
-        $trp->load_by_name('climate warming');
-        $result .= $trp->name_link();
-        $result .= '</td>
-      <td class="text-right">31.5</td>
-      <td>reduce climate gas emissions</td>
-      <td class="text-right">35.2</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>';
-        // temp code
-        $wrd = new word();
-        $wrd->load_by_name('populism');
-        $result .= $wrd->name_link();
-        $result .= '</td>
-      <td class="text-right">23.8</td>
-      <td>avoid wrong decisions</td>
-      <td class="text-right">34.1</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>';
-        // temp code
-        $wrd = new word();
-        $wrd->load_by_name('health');
-        $result .= $wrd->name_link();
-        $result .= '</td>
-      <td class="text-right">20.4</td>
-      <td>research</td>
-      <td class="text-right">34.1</td>
-    </tr>
-    <tr>
-      <th scope="row">4</th>
-      <td>';
-        // temp code
-        $wrd = new word();
-        $wrd->load_by_name('poverty');
-        $result .= $wrd->name_link();
-        $result .= '</td>
-      <td class="text-right">13.6</td>
-      <td>taxes</td>
-      <td class="text-right">8.8</td>
-    </tr>
-    <tr>
-      <th scope="row">5</th>
-      <td>';
-        // temp code
-        $wrd = new word();
-        $wrd->load_by_name('education');
-        $result .= $wrd->name_link();
-        $result .= '</td>
-      <td class="text-right">9.4</td>
-      <td>spending</td>
-      <td class="text-right">14.3</td>
-    </tr>';
-        $result .= '<tr>';
-        $result .= '<th scope="row"></th>';
-        $result .= '<td>';
-        // temp code
-        $result .= $phr->button_add_triple($phr->id());
-        $result .= '</td>';
-        $result .= '<td class="text-right"></td>';
-        $result .= '<td>';
-        // temp code
-        $result .= $phr->button_add_triple($phr->id());
-        $result .= '<td class="text-right"></td>';
-        $result .= '</tr>';
-        $result .= '</tbody>';
-        return $html->tbl($result, styles::TABLE_PUR);
+        $th = $html->th('Priority', scopes::COL);
+        $th .= $html->th('Problem', scopes::COL);
+        $th .= $html->th('Costs in ' . $trillion->name_link() . ' ' . $usd->name_link(),
+            scopes::COL, styles::TEXT_RIGHT);
+        $th .= $html->th('Solution', scopes::COL);
+        $th .= $html->th('Gain in ' . $billion->name_link() . ' ' . $htp->name_link(),
+            scopes::COL, styles::TEXT_RIGHT);
+        $tr = $html->tr($th);
+        $thead = $html->thead($tr);
+        $result = $thead;
+        $tr = '';
+        $row = 1;
+        foreach ($phr_lst->lst() as $row_phr) {
+            $td = $html->th($row, scopes::ROW);
+            $td .= $html->td($row_phr->name_link());
+            // TODO remove temp hardcoded solution
+            if ($row == 1) {
+                $td .= $html->td("31.5", styles::TEXT_RIGHT);
+                $td .= $html->td("reduce climate gas emissions");
+                $td .= $html->td("35.2", styles::TEXT_RIGHT);
+            }
+            if ($row == 2) {
+                $td .= $html->td("23.8", styles::TEXT_RIGHT);
+                $td .= $html->td("avoid wrong decisions");
+                $td .= $html->td("34.1", styles::TEXT_RIGHT);
+            }
+            if ($row == 3) {
+                $td .= $html->td("20.4", styles::TEXT_RIGHT);
+                $td .= $html->td("research");
+                $td .= $html->td("34.1", styles::TEXT_RIGHT);
+            }
+            if ($row == 4) {
+                $td .= $html->td("13.6", styles::TEXT_RIGHT);
+                $td .= $html->td("taxes");
+                $td .= $html->td("8.8", styles::TEXT_RIGHT);
+            }
+            if ($row == 5) {
+                $td .= $html->td("9.4", styles::TEXT_RIGHT);
+                $td .= $html->td("spending");
+                $td .= $html->td("14.3", styles::TEXT_RIGHT);
+            }
+            $tr .= $html->tr($td);
+            $row++;
+        }
+
+        // footer row to extend the table
+        $td = $html->th('', scopes::ROW);
+        $td .= $html->td($phr->button_add_triple($phr->id()));
+        $td .= $html->td("", styles::TEXT_RIGHT);
+        $td .= $html->td($phr->button_add_triple($phr->id()));
+        $td .= $html->td("", styles::TEXT_RIGHT);
+        $tr .= $html->tr($td);
+        $tbody = $html->tbody($tr);
+
+        return $html->tbl($thead . $tbody, styles::TABLE_PUR);
     }
 
 }

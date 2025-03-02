@@ -460,11 +460,25 @@ class html_base
     /**
      * show a text of link within a table header cell
      * @param string $header_text the text or link that should be shown
+     * @param string $scope the bootstrap formatting scope
+     * @param string $style the bootstrap formatting class
      * @return string the html code of the table header cell
      */
-    function th(string $header_text): string
+    function th(string $header_text, string $scope = '', string $style = ''): string
     {
-        return '<th>' . $header_text . '</th>';
+        if ($scope != '') {
+            if ($style != '') {
+                return '<th class="' . $style . '" scope="' . $scope . '">' . $header_text . '</th>';
+            } else {
+                return '<th scope="' . $scope . '">' . $header_text . '</th>';
+            }
+        } else {
+            if ($style != '') {
+                return '<th class="' . $style . '">' . $header_text . '</th>';
+            } else {
+                return '<th>' . $header_text . '</th>';
+            }
+        }
     }
 
     /**
@@ -494,17 +508,54 @@ class html_base
     /**
      * show a text of link within a table cell
      * @param string|null $cell_text the text or link that should be shown or null to return an empty cell
+     * @param string $style the bootstrap formatting class
      * @param int $intent the number of spaces on the left (or right e.g. for arabic) inside the table cell
      * @return string the html code of the table cell
      */
-    function td(?string $cell_text = '', int $intent = 0): string
+    function td(?string $cell_text = '', string $style = '', int $intent = 0): string
     {
         // just for formatting the html code
         while ($intent > 0) {
             $cell_text .= '&nbsp;';
             $intent = $intent - 1;
         }
-        return '<td>' . $cell_text . '</td>';
+        if ($style != '') {
+            return '<td class="' . $style . '">' . $cell_text . '</td>';
+        } else {
+            return '<td>' . $cell_text . '</td>';
+        }
+    }
+
+    /**
+     * add the table header html maker around the give html code
+     * @param string|null $html_rows the text or link that should be shown or null to return an empty cell
+     * @param int $intent the number of spaces on the left (or right e.g. for arabic) inside the table cell
+     * @return string the html code of the table cell
+     */
+    function thead(?string $html_rows = '', int $intent = 0): string
+    {
+        // just for formatting the html code
+        while ($intent > 0) {
+            $html_rows .= '&nbsp;';
+            $intent = $intent - 1;
+        }
+        return '<thead>' . $html_rows . '</thead>';
+    }
+
+    /**
+     * add the table body html maker around the give html code
+     * @param string|null $html_rows the text or link that should be shown or null to return an empty cell
+     * @param int $intent the number of spaces on the left (or right e.g. for arabic) inside the table cell
+     * @return string the html code of the table cell
+     */
+    function tbody(?string $html_rows = '', int $intent = 0): string
+    {
+        // just for formatting the html code
+        while ($intent > 0) {
+            $html_rows .= '&nbsp;';
+            $intent = $intent - 1;
+        }
+        return '<tbody>' . $html_rows . '</tbody>';
     }
 
     /**

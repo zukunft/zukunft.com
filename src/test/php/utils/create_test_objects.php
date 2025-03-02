@@ -195,6 +195,7 @@ use shared\const\triples;
 use shared\const\values;
 use shared\const\views;
 use shared\const\words;
+use shared\types\api_type;
 use shared\types\api_type_list;
 use shared\types\component_type as comp_type_shared;
 use shared\types\phrase_type as phrase_type_shared;
@@ -902,6 +903,48 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
+    function word_populism(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::POPULISM_ID, words::POPULISM);
+        return $wrd;
+    }
+
+    function word_poverty(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::POVERTY_ID, words::POVERTY);
+        return $wrd;
+    }
+
+    function word_education(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::EDUCATION_ID, words::EDUCATION);
+        return $wrd;
+    }
+
+    function word_happy(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::HAPPY_ID, words::HAPPY);
+        return $wrd;
+    }
+
+    function word_time(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::TIME_ID, words::TIME);
+        return $wrd;
+    }
+
+    function word_points(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::POINTS_ID, words::POINTS);
+        return $wrd;
+    }
+
     function word_gwp(): word
     {
         $wrd = new word($this->usr1);
@@ -1223,6 +1266,32 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return triple that "populism" "is a" "global problem" used for start view unit testing
+     */
+    function populism_problem(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triples::POPULISM_PROBLEM_ID);
+        $trp->set_from($this->word_populism()->phrase());
+        $trp->set_verb($this->verb_is());
+        $trp->set_to($this->global_problem()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that "poverty" "is a" "global problem" used for start view unit testing
+     */
+    function poverty_problem(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triples::POVERTY_PROBLEM_ID);
+        $trp->set_from($this->word_poverty()->phrase());
+        $trp->set_verb($this->verb_is());
+        $trp->set_to($this->global_problem()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple that defines that "health" "can be a" "global problem" used for start view unit testing
      */
     function potential_health_problem(): triple
@@ -1232,6 +1301,45 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_health()->phrase());
         $trp->set_verb($this->verb_can_be());
         $trp->set_to($this->global_problem()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that defines that "education" "can be a" "global problem" used for start view unit testing
+     */
+    function potential_education_problem(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triples::POTENTIAL_EDUCATION_PROBLEM_ID);
+        $trp->set_from($this->word_education()->phrase());
+        $trp->set_verb($this->verb_can_be());
+        $trp->set_to($this->global_problem()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that defines "time points"
+     */
+    function time_points(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triples::TIME_POINTS_ID, triples::TIME_POINTS);
+        $trp->set_from($this->word_time()->phrase());
+        $trp->set_verb($this->verb_can_be());
+        $trp->set_to($this->word_points()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple that defines the "happy time points"
+     */
+    function happy_time_points(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triples::HAPPY_TIME_POINTS_ID, triples::HAPPY_TIME_POINTS);
+        $trp->set_from($this->word_happy()->phrase());
+        $trp->set_verb($this->verb_can_be());
+        $trp->set_to($this->time_points()->phrase());
         return $trp;
     }
 
@@ -1419,13 +1527,17 @@ class create_test_objects extends test_base
         $lst->add($this->global_problem()->phrase());
         $lst->add($this->global_warming()->phrase());
         $lst->add($this->global_warming_problem()->phrase());
+        $lst->add($this->populism_problem()->phrase());
         $lst->add($this->potential_health_problem()->phrase());
+        $lst->add($this->poverty_problem()->phrase());
+        $lst->add($this->potential_education_problem()->phrase());
+        $lst->add($this->happy_time_points()->phrase());
         return $lst;
     }
 
     function phrase_list_start_view_dsp(): phrase_list_dsp
     {
-        return new phrase_list_dsp($this->phrase_list_start_view()->api_json());
+        return new phrase_list_dsp($this->phrase_list_start_view()->api_json([api_type::INCL_PHRASES]));
     }
 
     /**

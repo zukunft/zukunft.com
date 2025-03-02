@@ -84,7 +84,7 @@ class export
     const VALUES = 'values';
     const VALUE_NUMBER = 'number';
     const VALUE_LIST = 'value-list';
-    const CONTEXT = 'context';
+    const CONTEXT = 'context'; // also used to select the phrases used to filter the values for calculating this result
     const VIEWS = 'views';
     const COMPONENTS = 'components';
     const CALC_VALIDATION = 'calc-validation';

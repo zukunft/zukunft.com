@@ -120,7 +120,9 @@ class json_fields
     // for link api objects the id of the preloaded link type
     const PREDICATE = 'predicate_id';
     const FROM = 'from_id';
+    const FROM_PHRASE = 'from_phrase';
     const TO = 'to_id';
+    const TO_PHRASE = 'to_phrase';
     const VERB = 'verb_id';
     // the json field names in the api json message which is supposed to be the same as the var $id
     const PARENT = 'parent';

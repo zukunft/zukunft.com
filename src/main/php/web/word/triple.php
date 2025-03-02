@@ -223,7 +223,16 @@ class triple extends sandbox_typed
     function api_mapper(array $json_array): user_message
     {
         $usr_msg = parent::api_mapper($json_array);
-        if (array_key_exists(json_fields::FROM, $json_array)) {
+        if (array_key_exists(json_fields::FROM_PHRASE, $json_array)) {
+            $value = $json_array[json_fields::FROM_PHRASE];
+            if (is_array($value)) {
+                $phr = new phrase_dsp();
+                $phr->api_mapper($value);
+                $this->set_from($phr);
+            } else {
+                $this->set_from_by_id($value);
+            }
+        } elseif (array_key_exists(json_fields::FROM, $json_array)) {
             $value = $json_array[json_fields::FROM];
             if (is_array($value)) {
                 $phr = new phrase_dsp();
@@ -247,7 +256,16 @@ class triple extends sandbox_typed
         } else {
             $this->set_verb(new verb_dsp());
         }
-        if (array_key_exists(json_fields::TO, $json_array)) {
+        if (array_key_exists(json_fields::TO_PHRASE, $json_array)) {
+            $value = $json_array[json_fields::TO_PHRASE];
+            if (is_array($value)) {
+                $phr = new phrase_dsp();
+                $phr->api_mapper($value);
+                $this->set_to($phr);
+            } else {
+                $this->set_to_by_id($value);
+            }
+        } elseif (array_key_exists(json_fields::TO, $json_array)) {
             $value = $json_array[json_fields::TO];
             if (is_array($value)) {
                 $phr = new phrase_dsp();
@@ -570,7 +588,7 @@ class triple extends sandbox_typed
     function td(string $back = '', string $style = '', int $intent = 0): string
     {
         $cell_text = $this->name_link($back, $style);
-        return (new html_base)->td($cell_text, $intent);
+        return (new html_base)->td($cell_text, '', $intent);
     }
 
     /**

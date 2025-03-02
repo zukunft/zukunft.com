@@ -457,7 +457,7 @@ class word extends sandbox_typed
     function td(string $back = '', string $style = '', int $intent = 0): string
     {
         $cell_text = $this->name_link($back, $style);
-        return (new html_base)->td($cell_text, $intent);
+        return (new html_base)->td($cell_text, '', $intent);
     }
 
 

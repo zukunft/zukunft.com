@@ -581,6 +581,25 @@
       "expression": "\"htp\" = \"htp\",\"percent\" * \"global\",\"human\",\"population\"",
       "assigned_word": "htp"
     }
+  ],
+  "results": [
+    {
+      "context": [
+        "climate warming",
+        "potential",
+        "loss",
+        "percent",
+        "htp"
+      ],
+      "formula": "global happy time points",
+      "words": [
+        "climate warming",
+        "potential",
+        "loss",
+        "htp"
+      ],
+      "number": "31.5"
+    }
   ]
 }
 

@@ -299,7 +299,7 @@ class job extends db_object_dsp
     function td(string $back = '', string $style = '', int $intent = 0): string
     {
         $cell_text = $this->display_linked($back, $style);
-        return (new html_base)->td($cell_text, $intent);
+        return (new html_base)->td($cell_text, '', $intent);
     }
 
     /**

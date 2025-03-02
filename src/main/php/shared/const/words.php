@@ -91,6 +91,7 @@ class words
     // general words used also for the system configuration that have a fixed tooltip
     const TIME = 'time';
     const TIME_COM = 'Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future';
+    const TIME_ID = 100;
     const YEAR = 'year';
     const YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
     const YEAR_CAP = 'Year';
@@ -252,6 +253,16 @@ class words
     const WARMER_ID = 225;
     const HEALTH = 'health';
     const HEALTH_ID = 235;
+    const POPULISM = 'populism';
+    const POPULISM_ID = 229;
+    const POVERTY = 'poverty';
+    const POVERTY_ID = 237;
+    const EDUCATION = 'education';
+    const EDUCATION_ID = 239;
+    const HAPPY = 'happy';
+    const HAPPY_ID = 242;
+    const POINTS = 'points';
+    const POINTS_ID = 244;
 
     const GWP = 'global warming potential';
     const GWP_ID = 1070;
