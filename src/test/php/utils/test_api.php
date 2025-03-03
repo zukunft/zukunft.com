@@ -820,24 +820,24 @@ class test_api extends create_test_objects
         }
 
         // replace any local test username with the standard test username
-        if (array_key_exists(export::USER, $json)) {
-            $actual_user = $json[export::USER];
+        if (array_key_exists(json_fields::USER_NAME, $json)) {
+            $actual_user = $json[json_fields::USER_NAME];
             if ($actual_user == '::1'
                 or $actual_user == '127.0.0.1'
                 or 'zukunft.com system'
                 or 'localhost') {
                 $new_value = user::SYSTEM_TEST_NAME;
-                $json = $this->json_remove_volatile_replace_field($json, export::USER, $new_value);
+                $json = $this->json_remove_volatile_replace_field($json, json_fields::USER_NAME, $new_value);
             }
         }
 
         // replace any local test user id with the standard test user id
-        if (array_key_exists(export::USER_ID, $json)) {
-            $user_id = $json[export::USER_ID];
+        if (array_key_exists(json_fields::USER_ID, $json)) {
+            $user_id = $json[json_fields::USER_ID];
             if ($user_id >= 0) {
                 $user_id = user::SYSTEM_TEST_ID;
             }
-            $json = $this->json_remove_volatile_replace_int_field($json, export::USER_ID, $user_id);
+            $json = $this->json_remove_volatile_replace_int_field($json, json_fields::USER_ID, $user_id);
         }
         return $json;
     }

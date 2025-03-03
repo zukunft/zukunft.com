@@ -58,38 +58,9 @@ use shared\library;
 class export
 {
 
-    // the json header
-    const VERSION = 'version';
-    const POD = 'pod';
-    const TIME = 'time';
-    const SELECTION = 'selection';
-    const DESCRIPTION = 'description';
-    const USER = 'user';
-    const USER_ID = 'user_id';
-    const USERS = 'users';
-    const VERBS = 'verbs';
-    const WORDS = 'words';
-    const WORD_LIST = 'word-list'; // a list of the word names without further parameters
-    const NAME = 'name';
-    const TYPE = 'type';
-    const PHRASES = 'phrases';
-    const PHRASE_VALUES = 'phrase-values';
-    const TRIPLES = 'triples';
-    const FROM = 'from';
-    const VERB = 'verb';
-    const TO = 'to';
-    const FORMULAS = 'formulas';
-    const SOURCES = 'sources';
-    const REFS = 'refs';
-    const VALUES = 'values';
-    const VALUE_NUMBER = 'number';
-    const VALUE_LIST = 'value-list';
-    const CONTEXT = 'context'; // also used to select the phrases used to filter the values for calculating this result
-    const VIEWS = 'views';
-    const COMPONENTS = 'components';
-    const CALC_VALIDATION = 'calc-validation';
-    const VIEW_VALIDATION = 'view-validation';
-    const IP_BLACKLIST = 'ip-blacklist';
+    /*
+     * set and get
+     */
 
     /**
      * export zukunft.com data as object for creating e.g. a json message

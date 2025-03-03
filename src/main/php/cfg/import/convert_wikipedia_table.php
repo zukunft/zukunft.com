@@ -38,10 +38,12 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'library.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\export\export;
 use cfg\phrase\phrase_list;
 use cfg\user\user;
+use shared\json_fields;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\library;
 use DateTime;
@@ -120,8 +122,8 @@ class convert_wikipedia_table
         foreach ($col_names as $col_name) {
             if ($i > $col_start) {
                 $word = [];
-                $word[export::NAME] = $col_name;
-                $word[export::TYPE] = $col_type;
+                $word[json_fields::NAME] = $col_name;
+                $word[json_fields::TYPE_NAME] = $col_type;
                 $words[] = $word;
             }
             $i++;
@@ -131,7 +133,7 @@ class convert_wikipedia_table
             $val_row = [];
             $context_row = $context;
             $context_row[] = $row_in[1];
-            $val_row[export::CONTEXT] = $context_row;
+            $val_row[json_fields::CONTEXT] = $context_row;
             $i = 0;
             $val_row_items = [];
             foreach ($row_in as $item) {
@@ -140,16 +142,16 @@ class convert_wikipedia_table
                 }
                 $i++;
             }
-            $val_row[export::VALUES] = $val_row_items;
+            $val_row[json_fields::VALUES] = $val_row_items;
             $val_list[] = $val_row;
         }
 
         // build the json
         $json = $this->header($usr, $timestamp);
-        $json[export::SELECTION] = $context;
-        $json[export::WORD_LIST] = $word_list;
-        $json[export::WORDS] = $words;
-        $json[export::VALUE_LIST] = $val_list;
+        $json[json_fields::SELECTION] = $context;
+        $json[json_fields::WORD_LIST] = $word_list;
+        $json[json_fields::WORDS] = $words;
+        $json[json_fields::VALUE_LIST] = $val_list;
 
         return json_encode($json);
     }
@@ -273,8 +275,8 @@ class convert_wikipedia_table
                         if ($this->get_value_words($wiki_row[$i]) != null) {
                             $val_words[] = $this->get_value_words($wiki_row[$i]);
                         }
-                        $value[export::WORDS] = $val_words;
-                        $value[export::VALUE_NUMBER] = $this->get_value($wiki_row[$i]);
+                        $value[json_fields::WORDS] = $val_words;
+                        $value[json_fields::NUMBER] = $this->get_value($wiki_row[$i]);
                         $values[] = $value;
                     } else {
                         $word_entry = $wiki_row[$i];
@@ -310,21 +312,21 @@ class convert_wikipedia_table
                         if (!$this->is_value($phr_name)) {
                             // assume that the row name has an "is a" relation to the column name
                             $trp = [];
-                            $trp[export::FROM] = $phr_name;
-                            $trp[export::VERB] = verbs::IS_NAME;
+                            $trp[json_fields::EX_FROM] = $phr_name;
+                            $trp[json_fields::EX_VERB] = verbs::IS_NAME;
                             if ($row_name_out != '') {
-                                $trp[export::TO] = $row_name_out;
+                                $trp[json_fields::EX_TO] = $row_name_out;
                             } else {
-                                $trp[export::TO] = $col_names[$i];
+                                $trp[json_fields::EX_TO] = $col_names[$i];
                             }
                             $triples[] = $trp;
 
                             // create other assumed relations
                             if (in_array($col_names[$i], $list_of_symbols)) {
                                 $trp = [];
-                                $trp[export::FROM] = $phr_name;
-                                $trp[export::VERB] = verbs::SYMBOL_NAME;
-                                $trp[export::TO] = $row_key;
+                                $trp[json_fields::EX_FROM] = $phr_name;
+                                $trp[json_fields::EX_VERB] = verbs::SYMBOL_NAME;
+                                $trp[json_fields::EX_TO] = $row_key;
                                 $triples[] = $trp;
                             }
                         }
@@ -339,21 +341,21 @@ class convert_wikipedia_table
                 if (is_array($row_key)) {
                     $row_key = $row_key[0];
                 }
-                $trp[export::FROM] = $row_key;
-                $trp[export::VERB] = verbs::IS_NAME;
-                $trp[export::TO] = $row_name_out;
+                $trp[json_fields::EX_FROM] = $row_key;
+                $trp[json_fields::EX_VERB] = verbs::IS_NAME;
+                $trp[json_fields::EX_TO] = $row_name_out;
                 $triples[] = $trp;
 
                 $trp = [];
-                $trp[export::FROM] = $wiki_row[$pos_col];
-                $trp[export::VERB] = verbs::IS_NAME;
-                $trp[export::TO] = $context_array[1] . ' ' . $col_name_out;
+                $trp[json_fields::EX_FROM] = $wiki_row[$pos_col];
+                $trp[json_fields::EX_VERB] = verbs::IS_NAME;
+                $trp[json_fields::EX_TO] = $context_array[1] . ' ' . $col_name_out;
                 $triples[] = $trp;
 
                 $trp = [];
-                $trp[export::FROM] = $wiki_row[$pos_col];
-                $trp[export::VERB] = verbs::SYMBOL_NAME;
-                $trp[export::TO] = $row_key;
+                $trp[json_fields::EX_FROM] = $wiki_row[$pos_col];
+                $trp[json_fields::EX_VERB] = verbs::SYMBOL_NAME;
+                $trp[json_fields::EX_TO] = $row_key;
                 $triples[] = $trp;
             }
 
@@ -363,13 +365,13 @@ class convert_wikipedia_table
         $words = $this->word_names_to_array($word_lst);
 
         if (count($words) > 0) {
-            $json[export::WORDS] = $words;
+            $json[json_fields::WORDS] = $words;
         }
         if (count($triples) > 0) {
-            $json[export::TRIPLES] = $triples;
+            $json[json_fields::TRIPLES] = $triples;
         }
         if (count($values) > 0) {
-            $json[export::VALUES] = $values;
+            $json[json_fields::VALUES] = $values;
         }
         return json_encode($json);
     }
@@ -396,7 +398,7 @@ class convert_wikipedia_table
                     } else {
                         // TODO base this on the ontologie / context
                         $word_name = str_replace('[lower-alpha 2]', '', $word_part);
-                        $word[export::NAME] = $word_name;
+                        $word[json_fields::NAME] = $word_name;
                     }
                 }
             } else {
@@ -404,7 +406,7 @@ class convert_wikipedia_table
                     if (!in_array($word_entry, $words_in_list)) {
                         // TODO base this on the ontologie / context
                         $word_name = str_replace('[lower-alpha 2]', '', $word_entry);
-                        $word[export::NAME] = $word_name;
+                        $word[json_fields::NAME] = $word_name;
                     }
                 }
             }
@@ -451,7 +453,7 @@ class convert_wikipedia_table
             // TODO base this on the ontologie / context
             if ($cell_text == '%') {
                 $word = [];
-                $word[export::NAME] = '%';
+                $word[json_fields::NAME] = '%';
                 return $word;
             } else {
                 return null;
@@ -664,12 +666,12 @@ class convert_wikipedia_table
     private function header(user $usr, string $timestamp = ''): array
     {
         $header = [];
-        $header[export::POD] = POD_NAME;
-        $header[export::VERSION] = PRG_VERSION;
+        $header[json_fields::POD] = POD_NAME;
+        $header[json_fields::VERSION] = PRG_VERSION;
         if ($timestamp == '') {
-            $header[export::TIME] = (new DateTime())->format(DateTimeInterface::ATOM);
+            $header[json_fields::TIME] = (new DateTime())->format(DateTimeInterface::ATOM);
         } else {
-            $header[export::TIME] = $timestamp;
+            $header[json_fields::TIME] = $timestamp;
         }
         return $header;
     }

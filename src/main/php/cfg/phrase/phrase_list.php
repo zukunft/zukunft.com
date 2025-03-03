@@ -65,7 +65,6 @@ include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
-include_once EXPORT_PATH . 'export.php';
 include_once MODEL_FORMULA_PATH . 'formula_list.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
@@ -85,13 +84,13 @@ include_once MODEL_PHRASE_PATH . 'term_list.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\export\export;
 use cfg\formula\formula_list;
 use cfg\group\group;
 use cfg\group\group_id;
@@ -106,6 +105,7 @@ use cfg\word\word_list;
 use cfg\word\triple;
 use cfg\word\triple_list;
 use shared\enum\foaf_direction;
+use shared\json_fields;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 use shared\library;
@@ -536,14 +536,14 @@ class phrase_list extends sandbox_list_named
 
         $usr_msg = new user_message();
         foreach ($json_array as $key => $json_obj) {
-            if ($key == export::WORDS) {
+            if ($key == json_fields::WORDS) {
                 foreach ($json_obj as $word) {
                     $wrd = new word($usr);
                     $import_result = $wrd->import_obj_fill($word);
                     $this->add_by_name($wrd->phrase());
                     $usr_msg->add($import_result);
                 }
-            } elseif ($key == export::TRIPLES) {
+            } elseif ($key == json_fields::TRIPLES) {
                 foreach ($json_obj as $triple) {
                     $trp = new triple($usr);
                     $import_result = $trp->import_obj($triple);

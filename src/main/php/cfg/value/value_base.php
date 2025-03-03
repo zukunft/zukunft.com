@@ -1144,7 +1144,7 @@ class value_base extends sandbox_value
         $get_ownership = false;
         foreach ($in_ex_json as $key => $value) {
 
-            if ($key == export::WORDS) {
+            if ($key == json_fields::WORDS) {
                 $phr_lst = new phrase_list($this->user());
                 $result->add($phr_lst->import_lst($value, $test_obj));
                 if ($result->is_ok()) {
@@ -1247,7 +1247,7 @@ class value_base extends sandbox_value
 
         foreach ($api_json as $key => $value) {
 
-            if ($key == export::WORDS) {
+            if ($key == json_fields::WORDS) {
                 $grp = new group($this->user());
                 $usr_msg->add($grp->save_from_api_msg($value, $do_save));
                 if ($usr_msg->is_ok()) {

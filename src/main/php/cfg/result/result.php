@@ -1010,14 +1010,27 @@ class result extends sandbox_value
 
         foreach ($in_ex_json as $key => $res) {
 
-            if ($key == export::WORDS) {
+            // the phrases of the result
+            if ($key == json_fields::WORDS) {
                 $phr_lst = new phrase_list($this->user());
                 $result->add($phr_lst->import_lst($res, $test_obj));
                 if ($result->is_ok()) {
                     $phr_grp = $phr_lst->get_grp_id($do_save);
                     log_debug('got word group ' . $phr_grp->dsp_id());
                     $this->set_grp($phr_grp);
-                    log_debug('set grp id to ' . $this->grp()->id());
+                    log_debug('set grp id to ' . $this->grp_id());
+                }
+            }
+
+            // the phrases used to calculate the result
+            if ($key == json_fields::CONTEXT) {
+                $phr_lst = new phrase_list($this->user());
+                $result->add($phr_lst->import_lst($res, $test_obj));
+                if ($result->is_ok()) {
+                    $phr_grp = $phr_lst->get_grp_id($do_save);
+                    log_debug('got context ' . $phr_grp->dsp_id());
+                    $this->set_src_grp($phr_grp);
+                    log_debug('set grp id to ' . $this->src_grp_id());
                 }
             }
 

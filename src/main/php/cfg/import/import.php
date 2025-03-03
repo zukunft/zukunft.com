@@ -38,7 +38,6 @@
 
 namespace cfg\import;
 
-include_once SHARED_PATH . 'library.php';
 include_once EXPORT_PATH . 'export.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
@@ -66,6 +65,8 @@ include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\component\component;
 use cfg\export\export;
@@ -88,8 +89,9 @@ use cfg\view\view;
 use cfg\view\view_list;
 use cfg\word\triple;
 use cfg\word\word;
-use shared\library;
 use shared\const\words;
+use shared\json_fields;
+use shared\library;
 
 class import
 {
@@ -242,7 +244,7 @@ class import
         $usr_import = null;
         foreach ($json_array as $key => $json_obj) {
             if ($usr_import == null) {
-                if ($key == export::USERS) {
+                if ($key == json_fields::USERS) {
                     $import_result = new user_message();
                     foreach ($json_obj as $user) {
                         // TODO check if the constructor is always used
@@ -271,29 +273,29 @@ class import
         foreach ($json_array as $key => $json_obj) {
             $this->display_progress($pos, $total);
             $pos++;
-            if ($key == export::VERSION) {
+            if ($key == json_fields::VERSION) {
                 if (prg_version_is_newer($json_obj)) {
                     $usr_msg->add_message('Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION);
                 }
-            } elseif ($key == export::POD) {
+            } elseif ($key == json_fields::POD) {
                 // TODO set the source pod
                 log_warning('import of pod details not yet implemented');
-            } elseif ($key == export::TIME) {
+            } elseif ($key == json_fields::TIME) {
                 // TODO set the time of the export
                 log_warning('import of time not yet implemented');
-            } elseif ($key == export::SELECTION) {
+            } elseif ($key == json_fields::SELECTION) {
                 // TODO set the selection as context
                 log_warning('import of selection not yet implemented');
-            } elseif ($key == export::DESCRIPTION) {
+            } elseif ($key == json_fields::DESCRIPTION) {
                 // TODO remember the description for the log
                 log_warning('import of description not yet implemented');
-            } elseif ($key == export::USER) {
+            } elseif ($key == json_fields::USER_NAME) {
                 // TODO set the user that has created the export
                 log_warning('import of a single user not yet implemented');
-            } elseif ($key == export::USERS) {
+            } elseif ($key == json_fields::USERS) {
                 // TODO import the users (but only by a user with the privileges)
                 log_warning('import of users not yet implemented');
-            } elseif ($key == export::VERBS) {
+            } elseif ($key == json_fields::LIST_VERBS) {
                 $import_result = new user_message();
                 foreach ($json_obj as $verb) {
                     $vrb = new verb;
@@ -308,7 +310,7 @@ class import
                     $pos++;
                 }
                 $usr_msg->add($import_result);
-            } elseif ($key == export::WORDS) {
+            } elseif ($key == json_fields::WORDS) {
                 foreach ($json_obj as $word) {
                     $wrd = new word($usr_trigger);
                     $import_result = $wrd->import_obj($word);
@@ -321,7 +323,7 @@ class import
                     $this->display_progress($pos, $total, word::class);
                     $pos++;
                 }
-            } elseif ($key == export::WORD_LIST) {
+            } elseif ($key == json_fields::WORD_LIST) {
                 // a list of just the word names without further parameter
                 // phrase list because a word might also be a triple
                 $phr_lst = new phrase_list($usr_trigger);
@@ -334,7 +336,7 @@ class import
                 $usr_msg->add($import_result);
                 $this->display_progress($pos, $total, phrase_list::class);
                 $pos++;
-            } elseif ($key == export::TRIPLES) {
+            } elseif ($key == json_fields::TRIPLES) {
                 foreach ($json_obj as $triple) {
                     $wrd_lnk = new triple($usr_trigger);
                     $import_result = $wrd_lnk->import_obj($triple);
@@ -347,7 +349,7 @@ class import
                     $this->display_progress($pos, $total, triple::class);
                     $pos++;
                 }
-            } elseif ($key == export::FORMULAS) {
+            } elseif ($key == json_fields::FORMULAS) {
                 foreach ($json_obj as $formula) {
                     $frm = new formula($usr_trigger);
                     $import_result = $frm->import_obj($formula);
@@ -361,7 +363,7 @@ class import
                     $this->display_progress($pos, $total, formula::class);
                     $pos++;
                 }
-            } elseif ($key == export::SOURCES) {
+            } elseif ($key == json_fields::SOURCES) {
                 foreach ($json_obj as $value) {
                     $src = new source($usr_trigger);
                     $import_result = $src->import_obj($value);
@@ -374,7 +376,7 @@ class import
                     $this->display_progress($pos, $total, source::class);
                     $pos++;
                 }
-            } elseif ($key == export::REFS) {
+            } elseif ($key == json_fields::REFS) {
                 foreach ($json_obj as $value) {
                     $ref = new ref($usr_trigger);
                     $import_result = $ref->import_obj($value);
@@ -387,7 +389,7 @@ class import
                     $this->display_progress($pos, $total, ref::class);
                     $pos++;
                 }
-            } elseif ($key == export::PHRASE_VALUES) {
+            } elseif ($key == json_fields::PHRASE_VALUES) {
                 foreach ($json_obj as $val_key => $number) {
                     $val = new value($usr_trigger);
                     $import_result = $val->import_phrase_value($val_key, $number);
@@ -400,7 +402,7 @@ class import
                     $this->display_progress($pos, $total, value::class);
                     $pos++;
                 }
-            } elseif ($key == export::VALUES) {
+            } elseif ($key == json_fields::VALUES) {
                 foreach ($json_obj as $value) {
                     $val = new value($usr_trigger);
                     $import_result = $val->import_obj($value);
@@ -413,7 +415,7 @@ class import
                     $this->display_progress($pos, $total, value::class);
                     $pos++;
                 }
-            } elseif ($key == export::VALUE_LIST) {
+            } elseif ($key == json_fields::VALUE_LIST) {
                 // TODO add a unit test
                 foreach ($json_obj as $value) {
                     $val = new value_list($usr_trigger);
@@ -427,7 +429,7 @@ class import
                     $this->display_progress($pos, $total, value_list::class);
                     $pos++;
                 }
-            } elseif ($key == export::VIEWS) {
+            } elseif ($key == json_fields::VIEWS) {
                 foreach ($json_obj as $view) {
                     $view_obj = new view($usr_trigger);
                     $import_result = $view_obj->import_obj($view);
@@ -440,7 +442,7 @@ class import
                     $this->display_progress($pos, $total, view::class);
                     $pos++;
                 }
-            } elseif ($key == export::COMPONENTS) {
+            } elseif ($key == json_fields::COMPONENTS) {
                 foreach ($json_obj as $cmp) {
                     $cmp_obj = new component($usr_trigger);
                     $import_result = $cmp_obj->import_obj($cmp);
@@ -453,7 +455,7 @@ class import
                     $this->display_progress($pos, $total, component::class);
                     $pos++;
                 }
-            } elseif ($key == export::CALC_VALIDATION) {
+            } elseif ($key == json_fields::CALC_VALIDATION) {
                 // TODO add a unit test
                 foreach ($json_obj as $value) {
                     $res = new result($usr_trigger);
@@ -468,7 +470,7 @@ class import
                     $this->display_progress($pos, $total, result::class);
                     $pos++;
                 }
-            } elseif ($key == export::VIEW_VALIDATION) {
+            } elseif ($key == json_fields::VIEW_VALIDATION) {
                 // TODO switch to view usr_msg
                 // TODO add a unit test
                 foreach ($json_obj as $value) {
@@ -484,7 +486,7 @@ class import
                     $this->display_progress($pos, $total, view::class);
                     $pos++;
                 }
-            } elseif ($key == export::IP_BLACKLIST) {
+            } elseif ($key == json_fields::IP_BLACKLIST) {
                 foreach ($json_obj as $ip_range) {
                     $ip_obj = new ip_range;
                     $ip_obj->set_user($usr_trigger);
