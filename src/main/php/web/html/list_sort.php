@@ -39,12 +39,14 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use html\helper\data_object;
 use html\phrase\phrase;
 use html\phrase\phrase_list;
 use html\word\triple;
 use html\word\word;
+use shared\const\words;
 
 class list_sort
 {
@@ -89,6 +91,20 @@ class list_sort
             $wrd = new word();
             $wrd->load_by_name('education');
             $phr_lst->add($wrd->phrase());
+            $trillion = new word();
+
+            $trillion->load_by_name('trillion');
+            $billion = new word();
+            $billion->load_by_name('billion');
+            $usd = new word();
+            $usd->load_by_name('USD');
+            $htp = new word();
+            $htp->load_by_name('htp');
+        } else {
+            $trillion = $phr_lst->get_by_name(words::TRILLION);
+            $billion = $phr_lst->get_by_name(words::BILLION);
+            $usd = $phr_lst->get_by_name(words::USD);
+            $htp = $phr_lst->get_by_name(words::HTP);
         }
 
         // get the most relevant result
@@ -122,14 +138,6 @@ class list_sort
         $col_lst = new phrase_list();
         // add phrase_views class: a phrase_list with a selected component and component parameters
 
-        $trillion = new word();
-        $trillion->load_by_name('trillion');
-        $billion = new word();
-        $billion->load_by_name('billion');
-        $usd = new word();
-        $usd->load_by_name('USD');
-        $htp = new word();
-        $htp->load_by_name('htp');
 
 
         $th = $html->th('Priority', scopes::COL);

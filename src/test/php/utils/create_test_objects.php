@@ -945,6 +945,34 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
+    function word_trillion(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::TRILLION_ID, words::TRILLION);
+        return $wrd;
+    }
+
+    function word_billion(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::BILLION_ID, words::BILLION);
+        return $wrd;
+    }
+
+    function word_usd(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::USD_ID, words::USD);
+        return $wrd;
+    }
+
+    function word_htp(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::HTP_ID, words::HTP);
+        return $wrd;
+    }
+
     function word_gwp(): word
     {
         $wrd = new word($this->usr1);
@@ -1532,6 +1560,10 @@ class create_test_objects extends test_base
         $lst->add($this->poverty_problem()->phrase());
         $lst->add($this->potential_education_problem()->phrase());
         $lst->add($this->happy_time_points()->phrase());
+        $lst->add($this->word_trillion()->phrase());
+        $lst->add($this->word_billion()->phrase());
+        $lst->add($this->word_usd()->phrase());
+        $lst->add($this->word_htp()->phrase());
         return $lst;
     }
 

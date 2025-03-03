@@ -263,6 +263,14 @@ class words
     const HAPPY_ID = 242;
     const POINTS = 'points';
     const POINTS_ID = 244;
+    const TRILLION = 'trillion';
+    const TRILLION_ID = 248;
+    const BILLION = 'billion';
+    const BILLION_ID = 171;
+    const USD = 'USD';
+    const USD_ID = 251;
+    const HTP = 'htp';
+    const HTP_ID = 247;
 
     const GWP = 'global warming potential';
     const GWP_ID = 1070;
