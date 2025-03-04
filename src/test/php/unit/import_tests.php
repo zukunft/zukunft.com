@@ -50,14 +50,14 @@ class import_tests
     {
         global $usr;
         $sc = new sql_creator();
+        $imp = new import;
 
         $t->subheader('Import unit tests');
 
         $test_name = 'YAML import word count';
         $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
         $json_array = yaml_parse($yaml_str);
-        $imp = new import;
-        $dto = $imp->get_data_object($json_array, $usr);
+        $dto = $imp->get_data_object_yaml($json_array, $usr);
         $t->assert($test_name, $dto->word_list()->count(), 73);
         $test_name = 'YAML import triple count';
         $t->assert($test_name, $dto->triple_list()->count(), 22);
@@ -66,6 +66,11 @@ class import_tests
         $test_name = 'YAML import sql function count';
         $t->assert($test_name, $dto->word_list()->sql_call_with_par($sc)->count(), 1);
 
+        $test_name = 'JSON import word count';
+        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . '/unit_tests/words.json');
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr);
+        $t->assert($test_name, $dto->word_list()->count(), 3);
 
         $test_name = 'JSON import warning creation';
         $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'warning_and_error_test.json');

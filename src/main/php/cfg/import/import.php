@@ -165,7 +165,7 @@ class import
                 $usr_msg->add_warning('YAML string is empty');
             }
         } else {
-            $dto = $this->get_data_object($yaml_array, $usr_trigger);
+            $dto = $this->get_data_object_yaml($yaml_array, $usr_trigger);
             $usr_msg = $dto->save();
             $usr_msg->set_checksum($dto->value_list()->count());
         }
@@ -190,7 +190,7 @@ class import
                 $usr_msg->add_warning('JSON string is empty');
             }
         } else {
-            $dto = $this->get_data_object($json_array, $usr_trigger);
+            $dto = $this->get_data_object_yaml($json_array, $usr_trigger);
             $usr_msg = $dto->save();
             $usr_msg->set_checksum($dto->value_list()->count());
         }
@@ -607,20 +607,72 @@ class import
     }
 
     /**
+     * create a data object based on a json zukunft.com import array
+     *
+     * @param array $json_array the array of a zukunft.com yaml
+     * @param user $usr_trigger the user who has started the import
+     * @return data_object filled based on the yaml array
+     */
+    function get_data_object(array $json_array, user $usr_trigger): data_object
+    {
+        $dto = new data_object($usr_trigger);
+        $usr_msg = $this->message_check($json_array);
+        if ($usr_msg->is_ok()) {
+            if (key_exists(json_fields::WORDS, $json_array)) {
+                $wrd_array = $json_array[json_fields::WORDS];
+                $usr_msg->add($this->get_data_object_words($wrd_array, $usr_trigger, $dto));
+            }
+        }
+        return $dto;
+    }
+
+    /**
+     * @param array $json_array
+     * @param user $usr_trigger
+     * @param data_object $dto
+     * @return data_object
+     */
+    private function message_check(array $json_array): user_message
+    {
+        $usr_msg = new user_message();
+        if (key_exists(json_fields::VERSION, $json_array)) {
+            if (prg_version_is_newer($json_array[json_fields::VERSION])) {
+                $usr_msg->add_message('Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION);
+            }
+        }
+        return $usr_msg;
+    }
+
+    private function get_data_object_words(
+        array $json_array,
+        user $usr_trigger,
+        data_object $dto
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($json_array as $word) {
+            $wrd = new word($usr_trigger);
+            $usr_msg->add($wrd->import_mapper($word));
+            $dto->add_word($wrd);
+        }
+        return $usr_msg;
+    }
+
+    /**
      * create a data object based on a yaml zukunft.com import array
      *
      * @param array $yml_arr the array of a zukunft.com yaml
      * @param user $usr_trigger the user who has started the import
      * @return data_object filled based on the yaml array
      */
-    function get_data_object(array $yml_arr, user $usr_trigger): data_object
+    function get_data_object_yaml(array $yml_arr, user $usr_trigger): data_object
     {
         $dto = new data_object($usr_trigger);
         $wrd = null;
         $trp = null;
         $val = null;
         $phr_lst = new phrase_list($usr_trigger);
-        $dto = $this->get_data_object_loop($dto, $phr_lst, $yml_arr, $wrd, $trp, $val, $usr_trigger);
+        $dto = $this->get_data_object_yaml_loop($dto, $phr_lst, $yml_arr, $wrd, $trp, $val, $usr_trigger);
         // add the last word, triple or value to the lists
         if ($wrd != null) {
             $dto->add_word($wrd);
@@ -639,7 +691,7 @@ class import
         return $dto;
     }
 
-    private function get_data_object_loop(
+    private function get_data_object_yaml_loop(
         data_object $dto,
         phrase_list $phr_lst,
         array       $yml_arr,
@@ -712,7 +764,7 @@ class import
                 }
                 // add the sub array
                 if (is_array($value)) {
-                    $dto = $this->get_data_object_loop($dto, $sub_phr_lst, $value, $wrd, $trp, $val, $usr_trigger);
+                    $dto = $this->get_data_object_yaml_loop($dto, $sub_phr_lst, $value, $wrd, $trp, $val, $usr_trigger);
                 } else {
                     // remember the value
                     if (is_string($value)) {

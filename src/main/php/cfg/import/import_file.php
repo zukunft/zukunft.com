@@ -174,7 +174,7 @@ class import_file
                 $imp = new import;
                 $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                 $yaml_array = yaml_parse($yaml_str);
-                $dto = $imp->get_data_object($yaml_array, $usr);
+                $dto = $imp->get_data_object_yaml($yaml_array, $usr);
                 $dto->save();
                 $val_diff = $dto->value_list()->diff($cfg);
                 log_warning('These configuration values could not be imported: ' . $val_diff->dsp_id());

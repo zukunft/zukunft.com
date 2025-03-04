@@ -20,12 +20,12 @@
     - db const:          const for the database link
     - preserved:         const word names of a words used by the system
     - object vars:       the variables of this word object
-    - construct and map: including the mapping of the db row to this word object
+    - construct and map: set the vars of this word object to the initial value or based on a db row, api or import object
     - api:               create an api array for the frontend and set the vars based on a frontend api message
+    - im- and export:    create an export array or write the imported object to the database
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache
     - load:              database access object (DAO) functions
-    - im- and export:    create an export object and set the vars from an import object
     - cast:              create an api object and set the vars from an api json
     - convert:           convert this word e.g. phrase or term
     - sql fields:        field names for sql
@@ -303,6 +303,65 @@ class word extends sandbox_typed
         return $msg;
     }
 
+    /**
+     * set the vars of this word object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message
+     */
+    function import_mapper(array $in_ex_json, object $test_obj = null): user_message
+    {
+        global $phr_typ_cac;
+
+        // reset all parameters for the word object but keep the user
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+
+        // set the object vars based on the json
+        $result = parent::import_obj($in_ex_json, $test_obj);
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == json_fields::TYPE_NAME) {
+                $this->type_id = $phr_typ_cac->id($value);
+            }
+            if ($key == sql::FLD_CODE_ID) {
+                if ($this->user()->is_admin()) {
+                    if ($value <> '') {
+                        $this->set_code_id($value);
+                    }
+                }
+            }
+            if ($key == word_db::FLD_PLURAL) {
+                if ($value <> '') {
+                    $this->plural = $value;
+                }
+            }
+            // TODO change to view object like in triple
+            if ($key == json_fields::VIEW) {
+                $wrd_view = new view($this->user());
+                if (!$test_obj) {
+                    $wrd_view->load_by_name($value);
+                    if ($wrd_view->id() == 0) {
+                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                    } else {
+                        $this->set_view_id($wrd_view->id());
+                    }
+                } else {
+                    $wrd_view->set_name($value);
+                }
+                $this->view = $wrd_view;
+            }
+        }
+
+        // set the default type if no type is specified
+        if ($this->type_id <= 0) {
+            $this->type_id = $phr_typ_cac->default_id();
+        }
+
+        return $result;
+    }
+
 
     /*
      * api
@@ -324,6 +383,98 @@ class word extends sandbox_typed
         } else {
             $vars = parent::api_json_array($typ_lst, $usr);
             $vars[json_fields::PLURAL] = $this->plural;
+        }
+
+        return $vars;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * import a word from a json data word object
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    {
+
+        log_debug();
+
+        // set the object vars based on the json
+        $result = $this->import_mapper($in_ex_json, $test_obj);
+
+        // save the word in the database
+        if ($test_obj == null) {
+            if ($result->is_ok()) {
+                $result->add($this->save());
+            }
+        }
+
+        // add related parameters to the word object
+        if ($result->is_ok()) {
+            log_debug('saved ' . $this->dsp_id());
+
+            if ($this->id() <= 0) {
+                $result->add_message('Word ' . $this->dsp_id() . ' cannot be saved');
+            } else {
+                foreach ($in_ex_json as $key => $value) {
+                    if ($result->is_ok()) {
+                        if ($key == word_db::FLD_REFS) {
+                            foreach ($value as $ref_data) {
+                                $ref_obj = new ref($this->user());
+                                $ref_obj->set_phrase($this->phrase());
+                                $result->add($ref_obj->import_obj($ref_data, $test_obj));
+                                $this->ref_lst[] = $ref_obj;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        global $phr_typ_cac;
+
+        $vars = parent::export_json($do_load);
+
+        if ($this->plural <> '') {
+            $vars[json_fields::PLURAL] = $this->plural;
+        }
+        if ($this->type_id > 0) {
+            if ($this->type_id == $phr_typ_cac->default_id()) {
+                unset($vars[json_fields::TYPE_NAME]);
+            }
+        }
+
+        if ($this->view != null) {
+            if ($this->view_id() > 0 and $this->view->name() == '') {
+                if ($do_load) {
+                    $this->load_view();
+                }
+            }
+            if ($this->view->name() != '') {
+                $vars[json_fields::VIEW] = $this->view->name();
+            }
+        }
+        if (count($this->ref_lst) > 0) {
+            $ref_lst = [];
+            foreach ($this->ref_lst as $ref) {
+                $ref_lst[] = $ref->export_json();
+            }
+            $vars[json_fields::REFS] = $ref_lst;
         }
 
         return $vars;
@@ -651,157 +802,6 @@ class word extends sandbox_typed
     function all_sandbox_fields(): array
     {
         return word_db::ALL_SANDBOX_FLD_NAMES;
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * import a word from a json data word object
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
-    {
-
-        log_debug();
-
-        // set the object vars based on the json
-        $result = $this->import_obj_fill($in_ex_json, $test_obj);
-
-        // save the word in the database
-        if ($test_obj == null) {
-            if ($result->is_ok()) {
-                $result->add($this->save());
-            }
-        }
-
-        // add related parameters to the word object
-        if ($result->is_ok()) {
-            log_debug('saved ' . $this->dsp_id());
-
-            if ($this->id() <= 0) {
-                $result->add_message('Word ' . $this->dsp_id() . ' cannot be saved');
-            } else {
-                foreach ($in_ex_json as $key => $value) {
-                    if ($result->is_ok()) {
-                        if ($key == word_db::FLD_REFS) {
-                            foreach ($value as $ref_data) {
-                                $ref_obj = new ref($this->user());
-                                $ref_obj->set_phrase($this->phrase());
-                                $result->add($ref_obj->import_obj($ref_data, $test_obj));
-                                $this->ref_lst[] = $ref_obj;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * set the vars of this word object based on the given json without writing to the database
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message
-     */
-    function import_obj_fill(array $in_ex_json, object $test_obj = null): user_message
-    {
-        global $phr_typ_cac;
-
-        // reset all parameters for the word object but keep the user
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
-
-        // set the object vars based on the json
-        $result = parent::import_obj($in_ex_json, $test_obj);
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::TYPE_NAME) {
-                $this->type_id = $phr_typ_cac->id($value);
-            }
-            if ($key == sql::FLD_CODE_ID) {
-                if ($this->user()->is_admin()) {
-                    if ($value <> '') {
-                        $this->set_code_id($value);
-                    }
-                }
-            }
-            if ($key == word_db::FLD_PLURAL) {
-                if ($value <> '') {
-                    $this->plural = $value;
-                }
-            }
-            // TODO change to view object like in triple
-            if ($key == json_fields::VIEW) {
-                $wrd_view = new view($this->user());
-                if (!$test_obj) {
-                    $wrd_view->load_by_name($value);
-                    if ($wrd_view->id() == 0) {
-                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
-                    } else {
-                        $this->set_view_id($wrd_view->id());
-                    }
-                } else {
-                    $wrd_view->set_name($value);
-                }
-                $this->view = $wrd_view;
-            }
-        }
-
-        // set the default type if no type is specified
-        if ($this->type_id <= 0) {
-            $this->type_id = $phr_typ_cac->default_id();
-        }
-
-        return $result;
-    }
-
-    /**
-     * create an array with the export json fields
-     * @param bool $do_load to switch off the database load for unit tests
-     * @return array the filled array used to create the user export json
-     */
-    function export_json(bool $do_load = true): array
-    {
-        global $phr_typ_cac;
-
-        $vars = parent::export_json($do_load);
-
-        if ($this->plural <> '') {
-            $vars[json_fields::PLURAL] = $this->plural;
-        }
-        if ($this->type_id > 0) {
-            if ($this->type_id == $phr_typ_cac->default_id()) {
-                unset($vars[json_fields::TYPE_NAME]);
-            }
-        }
-
-        if ($this->view != null) {
-            if ($this->view_id() > 0 and $this->view->name() == '') {
-                if ($do_load) {
-                    $this->load_view();
-                }
-            }
-            if ($this->view->name() != '') {
-                $vars[json_fields::VIEW] = $this->view->name();
-            }
-        }
-        if (count($this->ref_lst) > 0) {
-            $ref_lst = [];
-            foreach ($this->ref_lst as $ref) {
-                $ref_lst[] = $ref->export_json();
-            }
-            $vars[json_fields::REFS] = $ref_lst;
-        }
-
-        return $vars;
     }
 
 
