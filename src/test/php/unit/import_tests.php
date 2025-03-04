@@ -72,6 +72,12 @@ class import_tests
         $dto = $imp->get_data_object($json_array, $usr);
         $t->assert($test_name, $dto->word_list()->count(), 3);
 
+        $test_name = 'JSON import triple count';
+        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . '/unit_tests/triples.json');
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr);
+        $t->assert($test_name, $dto->triple_list()->count(), 2);
+
         $test_name = 'JSON import warning creation';
         $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'warning_and_error_test.json');
         $imp = new import;

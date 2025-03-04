@@ -1,0 +1,129 @@
+{
+  "version": "0.0.3",
+  "time": "2024-03-26 19:58:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unt test for word count"
+  ],
+  "words": [
+    {
+      "name": "problem",
+      "comment": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
+      "refs": [
+        {
+          "name": "Problem_solving",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "global",
+      "comment": "here more a something that effects all people on earth (wikipedia does not really match)",
+      "refs": [
+        {
+          "name": "Globalization",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "solution",
+      "refs": [
+        {
+          "name": "Problem solving",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q730920",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "climate",
+      "refs": [
+        {
+          "name": "Climate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7937",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "warm",
+      "refs": [
+        {
+          "name": "heating",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4311765",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "warming"
+    },
+    {
+      "name": "warmer"
+    },
+    {
+      "name": "climate",
+      "refs": [
+        {
+          "name": "Climate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7937",
+          "type": "wikidata"
+        }
+      ]
+    }
+  ],
+  "triples": [
+    {
+      "name": "global problem",
+      "from": "problem",
+      "verb": "can be",
+      "to": "global",
+      "comment": "here more a personal issue (wikipedia does not really match)",
+      "refs": [
+        {
+          "name": "List_of_global_issues",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q65117122",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "from": "warming",
+      "verb": "is a",
+      "to": "warm"
+    },
+    {
+      "name": "climate warming",
+      "from": "climate",
+      "verb": "can get",
+      "to": "warmer",
+      "refs": [
+        {
+          "name": "Climate_change",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7942",
+          "type": "wikidata"
+        }
+      ]
+    }
+  ]
+}
+

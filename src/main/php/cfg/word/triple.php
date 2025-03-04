@@ -70,6 +70,7 @@ include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_LANGUAGE_PATH . 'language.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
@@ -113,6 +114,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\combine_named;
+use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
 use cfg\language\language;
 use cfg\log\change;
@@ -445,6 +447,97 @@ class triple extends sandbox_link_named
         return $msg;
     }
 
+    /**
+     * set the vars of this triple object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        global $phr_typ_cac;
+
+        $result = parent::import_obj($in_ex_json, $test_obj);
+
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == json_fields::TYPE_NAME) {
+                $this->type_id = $phr_typ_cac->id($value);
+            }
+            if ($key == json_fields::EX_FROM) {
+                if ($value == "") {
+                    $lib = new library();
+                    $result->add_message('from name should not be empty at ' . $lib->dsp_array($in_ex_json));
+                } else {
+                    if (is_string($value)) {
+                        if ($dto == null) {
+                            $this->set_from($this->import_phrase($value, $test_obj));
+                        } else {
+                            $phr = $dto->get_phrase_by_name($value);
+                            if ($phr == null) {
+                                $result->add_message('Inconsistency: phrase ' . $value . ' missing');;
+                            } else {
+                                $this->set_from($phr);
+                            }
+                        }
+                    } else {
+                        log_err($value . ' is expected to be a string');
+                    }
+                }
+            }
+            if ($key == json_fields::EX_TO) {
+                if ($value == "") {
+                    $lib = new library();
+                    $result->add_message('to name should not be empty at ' . $lib->dsp_array($in_ex_json));
+                } else {
+                    if ($dto == null) {
+                        $this->set_to($this->import_phrase($value, $test_obj));
+                    } else {
+                        $phr = $dto->get_phrase_by_name($value);
+                        if ($phr == null) {
+                            $result->add_message('Inconsistency: phrase ' . $value . ' missing');;
+                        } else {
+                            $this->set_to($phr);
+                        }
+                    }
+                }
+            }
+            if ($key == json_fields::EX_VERB) {
+                $vrb = new verb;
+                $vrb->set_user($this->user());
+                if (!$test_obj) {
+                    if ($result->is_ok()) {
+                        $vrb->load_by_name($value);
+                        if ($vrb->id() <= 0) {
+                            $result->add_message('verb "' . $value . '" not found');
+                            if ($this->name <> '') {
+                                $result->add_message('for triple "' . $this->name . '"');
+                            }
+                        }
+                    }
+                } else {
+                    $vrb->set_name($value);
+                }
+                $this->set_verb($vrb);
+            }
+            if ($key == json_fields::VIEW) {
+                $trp_view = new view($this->user());
+                if (!$test_obj) {
+                    $trp_view->load_by_name($value);
+                    if ($trp_view->id() == 0) {
+                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                    }
+                } else {
+                    $trp_view->set_name($value);
+                }
+                $this->view = $trp_view;
+            }
+        }
+
+        return $result;
+    }
+
 
     /*
      * api
@@ -548,6 +641,145 @@ class triple extends sandbox_link_named
             log_err('unexpected format of api message');
         }
         return $vrb;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * get a phrase based on the name (and save it if needed and requested)
+     *
+     * @param string $name the name of the phrase
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return phrase the created phrase object
+     */
+    private function import_phrase(string $name, object $test_obj = null): phrase
+    {
+        $result = new phrase($this->user());
+        if (!$test_obj) {
+            $result->load_by_name($name);
+            if ($result->id() == 0) {
+                // if there is no word or triple with the name yet, automatically create a word
+                $wrd = new word($this->user());
+                $wrd->set_name($name);
+                $wrd->save();
+                if ($wrd->id() == 0) {
+                    log_err('Cannot add from word "' . $name . '" when importing ' . $this->dsp_id(), 'triple->import_obj');
+                } else {
+                    $result = $wrd->phrase();
+                }
+            }
+        } else {
+            $result->set_name($name, word::class);
+        }
+        return $result;
+    }
+
+    /**
+     * import a triple from a json object
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    {
+        global $phr_typ_cac;
+
+        log_debug();
+
+        // set the object vars based on the json
+        $result = $this->import_mapper($in_ex_json, null, $test_obj);
+
+        // save the triple in the database
+        if (!$test_obj) {
+            if ($result->is_ok()) {
+                // remove unneeded given names
+                $this->set_names();
+                $result->add($this->save());
+            }
+        }
+
+        // add related parameters to the word object
+        if ($result->is_ok()) {
+            log_debug('saved ' . $this->dsp_id());
+
+            if (!$test_obj) {
+                if ($this->id() == 0) {
+                    $result->add_message('Triple ' . $this->dsp_id() . ' cannot be saved');
+                } else {
+                    foreach ($in_ex_json as $key => $value) {
+                        if ($result->is_ok()) {
+                            if ($key == self::FLD_REFS) {
+                                foreach ($value as $ref_data) {
+                                    $ref_obj = new ref($this->user());
+                                    $ref_obj->set_phrase($this->phrase());
+                                    $result->add($ref_obj->import_obj($ref_data, $test_obj));
+                                    $this->ref_lst[] = $ref_obj;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the user export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        global $phr_typ_cac;
+
+        $vars = parent::export_json($do_load);
+
+        if ($this->name() <> '') {
+            $vars[json_fields::NAME] = $this->name();
+        }
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        if ($this->type_name() <> '') {
+            if ($this->type_id != $phr_typ_cac->default_id()) {
+                $vars[json_fields::TYPE_NAME] = $this->type_name();
+            }
+        }
+        if ($this->from()->name() <> '') {
+            $vars[json_fields::EX_FROM] = $this->from()->name();
+        }
+        if ($this->verb_name() <> '') {
+            $vars[json_fields::EX_VERB] = $this->verb_name();
+        }
+        if ($this->to()->name() <> '') {
+            $vars[json_fields::EX_TO] = $this->to()->name();
+        }
+
+        if ($this->view != null) {
+            if ($this->view_id() > 0 and $this->view->name() == '') {
+                if ($do_load) {
+                    $this->load_view();
+                }
+            }
+            if ($this->view->name() != '') {
+                $vars[json_fields::VIEW] = $this->view->name();
+            }
+        }
+        if (count($this->ref_lst) > 0) {
+            $ref_lst = [];
+            foreach ($this->ref_lst as $ref) {
+                $ref_lst[] = $ref->export_json();
+            }
+            $vars[json_fields::REFS] = $ref_lst;
+        }
+
+        return $vars;
     }
 
 
@@ -1558,217 +1790,6 @@ class triple extends sandbox_link_named
 
         log_debug($wrd_lst->name());
         return $wrd_lst;
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * get a phrase based on the name (and save it if needed and requested)
-     *
-     * @param string $name the name of the phrase
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return phrase the created phrase object
-     */
-    private function import_phrase(string $name, object $test_obj = null): phrase
-    {
-        $result = new phrase($this->user());
-        if (!$test_obj) {
-            $result->load_by_name($name);
-            if ($result->id() == 0) {
-                // if there is no word or triple with the name yet, automatically create a word
-                $wrd = new word($this->user());
-                $wrd->set_name($name);
-                $wrd->save();
-                if ($wrd->id() == 0) {
-                    log_err('Cannot add from word "' . $name . '" when importing ' . $this->dsp_id(), 'triple->import_obj');
-                } else {
-                    $result = $wrd->phrase();
-                }
-            }
-        } else {
-            $result->set_name($name, word::class);
-        }
-        return $result;
-    }
-
-    /**
-     * import a triple from a json object
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
-    {
-        global $phr_typ_cac;
-
-        log_debug();
-
-        // set the object vars based on the json
-        $result = $this->import_obj_fill($in_ex_json, $test_obj);
-
-        // save the triple in the database
-        if (!$test_obj) {
-            if ($result->is_ok()) {
-                // remove unneeded given names
-                $this->set_names();
-                $result->add($this->save());
-            }
-        }
-
-        // add related parameters to the word object
-        if ($result->is_ok()) {
-            log_debug('saved ' . $this->dsp_id());
-
-            if (!$test_obj) {
-                if ($this->id() == 0) {
-                    $result->add_message('Triple ' . $this->dsp_id() . ' cannot be saved');
-                } else {
-                    foreach ($in_ex_json as $key => $value) {
-                        if ($result->is_ok()) {
-                            if ($key == self::FLD_REFS) {
-                                foreach ($value as $ref_data) {
-                                    $ref_obj = new ref($this->user());
-                                    $ref_obj->set_phrase($this->phrase());
-                                    $result->add($ref_obj->import_obj($ref_data, $test_obj));
-                                    $this->ref_lst[] = $ref_obj;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * set the vars of this triple object based on the given json without writing to the database
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message
-     */
-    function import_obj_fill(array $in_ex_json, object $test_obj = null): user_message
-    {
-        global $phr_typ_cac;
-
-        $result = parent::import_obj($in_ex_json, $test_obj);
-
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::TYPE_NAME) {
-                $this->type_id = $phr_typ_cac->id($value);
-            }
-            if ($key == json_fields::EX_FROM) {
-                if ($value == "") {
-                    $lib = new library();
-                    $result->add_message('from name should not be empty at ' . $lib->dsp_array($in_ex_json));
-                } else {
-                    if (is_string($value)) {
-                        $this->set_from($this->import_phrase($value, $test_obj));
-                    } else {
-                        log_err($value . ' is expected to be a string');
-                    }
-                }
-            }
-            if ($key == json_fields::EX_TO) {
-                if ($value == "") {
-                    $lib = new library();
-                    $result->add_message('to name should not be empty at ' . $lib->dsp_array($in_ex_json));
-                } else {
-                    $this->set_to($this->import_phrase($value, $test_obj));
-                }
-            }
-            if ($key == json_fields::EX_VERB) {
-                $vrb = new verb;
-                $vrb->set_user($this->user());
-                if (!$test_obj) {
-                    if ($result->is_ok()) {
-                        $vrb->load_by_name($value);
-                        if ($vrb->id() <= 0) {
-                            $result->add_message('verb "' . $value . '" not found');
-                            if ($this->name <> '') {
-                                $result->add_message('for triple "' . $this->name . '"');
-                            }
-                        }
-                    }
-                } else {
-                    $vrb->set_name($value);
-                }
-                $this->set_verb($vrb);
-            }
-            if ($key == json_fields::VIEW) {
-                $trp_view = new view($this->user());
-                if (!$test_obj) {
-                    $trp_view->load_by_name($value);
-                    if ($trp_view->id() == 0) {
-                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
-                    }
-                } else {
-                    $trp_view->set_name($value);
-                }
-                $this->view = $trp_view;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * create an array with the export json fields
-     * @param bool $do_load to switch off the database load for unit tests
-     * @return array the filled array used to create the user export json
-     */
-    function export_json(bool $do_load = true): array
-    {
-        global $phr_typ_cac;
-
-        $vars = parent::export_json($do_load);
-
-        if ($this->name() <> '') {
-            $vars[json_fields::NAME] = $this->name();
-        }
-        if ($this->description <> '') {
-            $vars[json_fields::DESCRIPTION] = $this->description;
-        }
-        if ($this->type_name() <> '') {
-            if ($this->type_id != $phr_typ_cac->default_id()) {
-                $vars[json_fields::TYPE_NAME] = $this->type_name();
-            }
-        }
-        if ($this->from()->name() <> '') {
-            $vars[json_fields::EX_FROM] = $this->from()->name();
-        }
-        if ($this->verb_name() <> '') {
-            $vars[json_fields::EX_VERB] = $this->verb_name();
-        }
-        if ($this->to()->name() <> '') {
-            $vars[json_fields::EX_TO] = $this->to()->name();
-        }
-
-        if ($this->view != null) {
-            if ($this->view_id() > 0 and $this->view->name() == '') {
-                if ($do_load) {
-                    $this->load_view();
-                }
-            }
-            if ($this->view->name() != '') {
-                $vars[json_fields::VIEW] = $this->view->name();
-            }
-        }
-        if (count($this->ref_lst) > 0) {
-            $ref_lst = [];
-            foreach ($this->ref_lst as $ref) {
-                $ref_lst[] = $ref->export_json();
-            }
-            $vars[json_fields::REFS] = $ref_lst;
-        }
-
-        return $vars;
     }
 
 

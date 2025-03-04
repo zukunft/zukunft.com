@@ -622,6 +622,10 @@ class import
                 $wrd_array = $json_array[json_fields::WORDS];
                 $usr_msg->add($this->get_data_object_words($wrd_array, $usr_trigger, $dto));
             }
+            if (key_exists(json_fields::TRIPLES, $json_array)) {
+                $trp_array = $json_array[json_fields::TRIPLES];
+                $usr_msg->add($this->get_data_object_triples($trp_array, $usr_trigger, $dto));
+            }
         }
         return $dto;
     }
@@ -643,6 +647,13 @@ class import
         return $usr_msg;
     }
 
+    /**
+     * add the words from the json array to the data object
+     * @param array $json_array the word part of the import json
+     * @param user $usr_trigger the user who has started the import
+     * @param data_object $dto the data object that should be filled
+     * @return user_message the messages to the user if something has not been fine
+     */
     private function get_data_object_words(
         array $json_array,
         user $usr_trigger,
@@ -654,6 +665,28 @@ class import
             $wrd = new word($usr_trigger);
             $usr_msg->add($wrd->import_mapper($word));
             $dto->add_word($wrd);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add the triples from the json array to the data object
+     * @param array $json_array the word part of the import json
+     * @param user $usr_trigger the user who has started the import
+     * @param data_object $dto the data object that should be filled
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function get_data_object_triples(
+        array $json_array,
+        user $usr_trigger,
+        data_object $dto
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($json_array as $word) {
+            $trp = new triple($usr_trigger);
+            $usr_msg->add($trp->import_mapper($word, $dto));
+            $dto->add_triple($trp);
         }
         return $usr_msg;
     }
