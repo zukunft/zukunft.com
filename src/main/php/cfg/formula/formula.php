@@ -70,6 +70,7 @@ include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once MODEL_ELEMENT_PATH . 'element.php';
 include_once MODEL_ELEMENT_PATH . 'element_list.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
@@ -117,6 +118,7 @@ use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\element\element;
 use cfg\element\element_list;
+use cfg\helper\data_object;
 use cfg\log\change;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
@@ -1477,25 +1479,22 @@ class formula extends sandbox_typed
      */
 
     /**
-     * import a formula from a JSON object
+     * set the vars of this formula object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @return user_message
      */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
     {
         global $frm_typ_cac;
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-
-        log_debug();
 
         // reset the all parameters for the formula object but keep the user
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
-        $result = parent::import_obj($in_ex_json, $test_obj);
+        $result = parent::import_mapper($in_ex_json, $dto, $test_obj);
         foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::TYPE_NAME) {
                 $this->type_id = $frm_typ_cac->id($value);
@@ -1512,32 +1511,49 @@ class formula extends sandbox_typed
             $this->type_id = $frm_typ_cac->default_id();
         }
 
+        return $result;
+    }
+
+    /**
+     * import a formula from a JSON object
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    {
+        log_debug();
+
+        // set the object vars based on the json
+        $usr_msg = $this->import_mapper($in_ex_json, null, $test_obj);
+
         // save the formula in the database
         if (!$test_obj) {
-            if ($result->is_ok()) {
-                $result->add($this->save());
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
             }
         }
 
         // assign the formula to the words and triple
-        if ($result->is_ok()) {
+        if ($usr_msg->is_ok()) {
             log_debug('saved ' . $this->dsp_id());
             foreach ($in_ex_json as $key => $value) {
-                if ($result->is_ok()) {
+                if ($usr_msg->is_ok()) {
                     if ($key == self::FLD_ASSIGN) {
                         if (is_array($value)) {
                             foreach ($value as $lnk_phr_name) {
-                                $result->add_message($this->assign_name($lnk_phr_name, $test_obj));
+                                $usr_msg->add_message($this->assign_name($lnk_phr_name, $test_obj));
                             }
                         } else {
-                            $result->add_message($this->assign_name($value, $test_obj));
+                            $usr_msg->add_message($this->assign_name($value, $test_obj));
                         }
                     }
                 }
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     private function assign_name(string $phr_name, object $test_obj = null): string

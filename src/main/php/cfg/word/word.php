@@ -80,6 +80,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_FORMULA_PATH . 'formula_link.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
@@ -114,6 +115,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
 use cfg\formula\formula_link;
+use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
 use cfg\log\change;
 use cfg\phrase\phrase;
@@ -307,10 +309,11 @@ class word extends sandbox_typed
      * set the vars of this word object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message
      */
-    function import_mapper(array $in_ex_json, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
     {
         global $phr_typ_cac;
 
@@ -320,7 +323,7 @@ class word extends sandbox_typed
         $this->set_user($usr);
 
         // set the object vars based on the json
-        $result = parent::import_obj($in_ex_json, $test_obj);
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
         foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::TYPE_NAME) {
                 $this->type_id = $phr_typ_cac->id($value);
@@ -343,7 +346,7 @@ class word extends sandbox_typed
                 if (!$test_obj) {
                     $wrd_view->load_by_name($value);
                     if ($wrd_view->id() == 0) {
-                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                        $usr_msg->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     } else {
                         $this->set_view_id($wrd_view->id());
                     }
@@ -359,7 +362,7 @@ class word extends sandbox_typed
             $this->type_id = $phr_typ_cac->default_id();
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 
@@ -394,7 +397,7 @@ class word extends sandbox_typed
      */
 
     /**
-     * import a word from a json data word object
+     * import a word from a json data word object and write it to the database
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
@@ -406,7 +409,7 @@ class word extends sandbox_typed
         log_debug();
 
         // set the object vars based on the json
-        $result = $this->import_mapper($in_ex_json, $test_obj);
+        $result = $this->import_mapper($in_ex_json, null, $test_obj);
 
         // save the word in the database
         if ($test_obj == null) {

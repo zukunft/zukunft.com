@@ -18,13 +18,14 @@
     - db const:          const for the database link
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
+    - im- and export:    create an export object and set the vars from an import object
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache
     - cast:              create an api object and set the vars from an api json
     - convert:           convert this word e.g. phrase or term
     - load:              database access object (DAO) functions
     - sql fields:        field names for sql
-    - im- and export:    create an export object and set the vars from an import object
     - sandbox:           manage the user sandbox
     - save:              manage to update the database
     - sql write:         sql statement creation to write to the database
@@ -67,6 +68,7 @@ include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
@@ -89,6 +91,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\data_object;
 use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\sandbox\sandbox;
@@ -245,6 +248,38 @@ class source extends sandbox_typed
         return $msg;
     }
 
+    /**
+     * set the object vars of this source object based on the import json array
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        global $src_typ_cac;
+
+        log_debug();
+        $result = parent::import_mapper($in_ex_json, $dto, $test_obj);
+
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == self::FLD_URL) {
+                $this->url = $value;
+            }
+            if ($this->user()->is_system() or $this->user()->is_admin()) {
+                if ($key == json_fields::CODE_ID) {
+                    $this->code_id = $value;
+                }
+            }
+            if ($key == json_fields::TYPE_NAME) {
+                $this->type_id = $src_typ_cac->id($value);
+            }
+        }
+
+        return $result;
+    }
+
 
     /*
      * api
@@ -264,6 +299,88 @@ class source extends sandbox_typed
             $vars[json_fields::CODE_ID] = $this->code_id;
         }
         $vars[json_fields::URL] = $this->url;
+        return $vars;
+    }
+
+    /**
+     * set the source object vars based on an api json array
+     * similar to import_obj but using the database id instead of the names and code id
+     * @param array $api_json the api array
+     * @return user_message false if a value could not be set
+     */
+    function save_from_api_msg(array $api_json, bool $do_save = true): user_message
+    {
+        log_debug();
+        $usr_msg = new user_message();
+
+        foreach ($api_json as $key => $value) {
+
+            if ($key == json_fields::NAME) {
+                $this->name = $value;
+            }
+            if ($key == self::FLD_URL) {
+                $this->url = $value;
+            }
+            if ($key == json_fields::DESCRIPTION) {
+                $this->description = $value;
+            }
+            if ($key == json_fields::TYPE) {
+                $this->type_id = $value;
+            }
+        }
+
+        if ($usr_msg->is_ok() and $do_save) {
+            $usr_msg->add($this->save());
+        }
+
+        return $usr_msg;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * import a source from an object
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    {
+        global $src_typ_cac;
+
+        log_debug();
+        $usr_msg = $this->import_mapper($in_ex_json, null, $test_obj);
+
+        // save the source in the database
+        if (!$test_obj) {
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
+            }
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+
+        if ($this->url <> '') {
+            $vars[json_fields::URL] = $this->url;
+        }
+        if ($this->code_id <> '') {
+            $vars[json_fields::CODE_ID] = $this->code_id;
+        }
+
         return $vars;
     }
 
@@ -431,102 +548,6 @@ class source extends sandbox_typed
     function all_sandbox_fields(): array
     {
         return self::ALL_SANDBOX_FLD_NAMES;
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * import a source from an object
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
-    {
-        global $src_typ_cac;
-
-        log_debug();
-        $result = parent::import_obj($in_ex_json, $test_obj);
-
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == self::FLD_URL) {
-                $this->url = $value;
-            }
-            if ($this->user()->is_system() or $this->user()->is_admin()) {
-                if ($key == json_fields::CODE_ID) {
-                    $this->code_id = $value;
-                }
-            }
-            if ($key == json_fields::TYPE_NAME) {
-                $this->type_id = $src_typ_cac->id($value);
-            }
-        }
-
-        // save the source in the database
-        if (!$test_obj) {
-            if ($result->is_ok()) {
-                $result->add($this->save());
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * create an array with the export json fields
-     * @param bool $do_load true if any missing data should be loaded while creating the array
-     * @return array with the json fields
-     */
-    function export_json(bool $do_load = true): array
-    {
-        $vars = parent::export_json($do_load);
-
-        if ($this->url <> '') {
-            $vars[json_fields::URL] = $this->url;
-        }
-        if ($this->code_id <> '') {
-            $vars[json_fields::CODE_ID] = $this->code_id;
-        }
-
-        return $vars;
-    }
-
-    /**
-     * set the source object vars based on an api json array
-     * similar to import_obj but using the database id instead of the names and code id
-     * @param array $api_json the api array
-     * @return user_message false if a value could not be set
-     */
-    function save_from_api_msg(array $api_json, bool $do_save = true): user_message
-    {
-        log_debug();
-        $usr_msg = new user_message();
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::NAME) {
-                $this->name = $value;
-            }
-            if ($key == self::FLD_URL) {
-                $this->url = $value;
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                $this->description = $value;
-            }
-            if ($key == json_fields::TYPE) {
-                $this->type_id = $value;
-            }
-        }
-
-        if ($usr_msg->is_ok() and $do_save) {
-            $usr_msg->add($this->save());
-        }
-
-        return $usr_msg;
     }
 
 

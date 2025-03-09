@@ -846,11 +846,10 @@ class test_base
         }
         $this->set_id_for_unit_tests($usr_obj);
         $json_ex = $usr_obj->export_json(false);
-        $result = $lib->json_is_similar($json_in, $json_ex);
         // TODO remove, for faster debugging only
         $json_in_txt = json_encode($json_in);
         $json_ex_txt = json_encode($json_ex);
-        return $this->assert($this->name . 'import check name', $result, true);
+        return $this->assert_json($this->name . 'import check name', $json_in, $json_ex);
     }
 
     /**

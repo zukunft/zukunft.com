@@ -86,6 +86,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
@@ -134,6 +135,7 @@ use cfg\formula\formula;
 use cfg\formula\formula_link;
 use cfg\formula\formula_link_type;
 use cfg\helper\combine_named;
+use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
 use cfg\helper\db_object_seq_id_user;
 use cfg\helper\type_object;
@@ -413,6 +415,40 @@ class sandbox extends db_object_seq_id_user
         return $usr_msg;
     }
 
+    /**
+     * function to import the core user sandbox object values from a json string
+     * e.g. the share and protection settings
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+
+        $usr_msg = parent::import_db_obj($this, $test_obj);
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == json_fields::SHARE) {
+                $this->share_id = $shr_typ_cac->id($value);
+                if ($this->share_id < 0) {
+                    $lib = new library();
+                    $usr_msg->add_message('share type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
+                }
+            }
+            if ($key == json_fields::PROTECTION) {
+                $this->protection_id = $ptc_typ_cac->id($value);
+                if ($this->protection_id < 0) {
+                    $lib = new library();
+                    $usr_msg->add_message('protection type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
+                }
+            }
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * api
@@ -440,6 +476,36 @@ class sandbox extends db_object_seq_id_user
                 $vars[json_fields::PROTECTION] = $this->protection_id;
             }
 
+        }
+
+        return $vars;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load to switch off the database load for unit tests
+     * @return array the filled array used to create the export json
+     */
+    function export_json(bool $do_load = true): array
+    {
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+
+        $vars = [];
+
+        // add the share type
+        if ($this->share_id > 0 and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
+            $vars[json_fields::SHARE] = $this->share_type_code_id();
+        }
+
+        // add the protection type
+        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+            $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
         }
 
         return $vars;
@@ -884,69 +950,6 @@ class sandbox extends db_object_seq_id_user
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
         return true;
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * function to import the core user sandbox object values from a json string
-     * e.g. the share and protection settings
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
-    {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-
-        $usr_msg = parent::import_db_obj($this, $test_obj);
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::SHARE) {
-                $this->share_id = $shr_typ_cac->id($value);
-                if ($this->share_id < 0) {
-                    $lib = new library();
-                    $usr_msg->add_message('share type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
-                }
-            }
-            if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $ptc_typ_cac->id($value);
-                if ($this->protection_id < 0) {
-                    $lib = new library();
-                    $usr_msg->add_message('protection type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
-                }
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * create an array with the export json fields
-     * @param bool $do_load to switch off the database load for unit tests
-     * @return array the filled array used to create the export json
-     */
-    function export_json(bool $do_load = true): array
-    {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-
-        $vars = [];
-
-        // add the share type
-        if ($this->share_id > 0 and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
-            $vars[json_fields::SHARE] = $this->share_type_code_id();
-        }
-
-        // add the protection type
-        if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
-            $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
-        }
-
-        return $vars;
     }
 
 

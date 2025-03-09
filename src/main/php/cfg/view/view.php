@@ -10,6 +10,7 @@
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
     - api:               create an api array for the frontend and set the vars based on a frontend api message
+    - im- and export:    create an export object and set the vars from an import object
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache
     - cast:              create an api object and set the vars from an api json
@@ -18,7 +19,6 @@
     - load helper:       the field names of this object as overwrite functions
     - components:        modify interface functions
     - assign:            interface functions to assign the view to word, triples, verbs or formulas
-    - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
     - save:              manage to update the database
     - save helper:       helpers for updating the database
@@ -69,6 +69,7 @@ include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once MODEL_COMPONENT_PATH . 'position_type.php';
 include_once MODEL_COMPONENT_PATH . 'view_style.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_LANGUAGE_PATH . 'language.php';
@@ -103,6 +104,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\data_object;
 use cfg\helper\type_list;
 use cfg\helper\type_object;
 use cfg\language\language;
@@ -309,6 +311,130 @@ class view extends sandbox_typed
         return $msg;
     }
 
+    /**
+     * set the vars of this view object based on the given json without writing to the database
+     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param object|null $test_obj if not null the unit testing object
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        log_debug();
+
+        // reset the all parameters for the view object but keep the user
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+        $result = parent::import_mapper($in_ex_json, $dto, $test_obj);
+
+        // first save the parameters of the view itself
+        foreach ($in_ex_json as $key => $value) {
+
+            if ($key == json_fields::TYPE_NAME) {
+                if ($value != '') {
+                    $type_id = $this->type_id_by_code_id($value);
+                    if ($type_id == type_list::CODE_ID_NOT_FOUND) {
+                        $result->add_message('view type "' . $value . '" not found');
+                    } else {
+                        $this->type_id = $type_id;
+                    }
+                }
+            }
+            if ($key == json_fields::CODE_ID) {
+                if ($value != '') {
+                    if ($this->user()->is_admin() or $this->user()->is_system()) {
+                        $this->code_id = $value;
+                    }
+                }
+            }
+        }
+
+        // after saving (or remembering) add the view components
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == self::FLD_COMPONENT) {
+                $json_lst = $value;
+                $cmp_pos = 1;
+                foreach ($json_lst as $json_cmp) {
+                    $cmp = new component($usr);
+                    $style_code_id = null;
+                    $pos_type_code_id = null;
+                    // if for the component only the position and name is defined
+                    // do not overwrite an existing component
+                    // instead just add the existing component
+                    if ((count($json_cmp) == 2
+                            and array_key_exists(json_fields::POSITION, $json_cmp)
+                            and array_key_exists(json_fields::NAME, $json_cmp))
+                        or (count($json_cmp) == 3
+                            and array_key_exists(json_fields::POSITION, $json_cmp)
+                            and array_key_exists(json_fields::NAME, $json_cmp)
+                            and array_key_exists(json_fields::POS_TYPE, $json_cmp))
+                        or (count($json_cmp) == 3
+                            and array_key_exists(json_fields::POSITION, $json_cmp)
+                            and array_key_exists(json_fields::NAME, $json_cmp)
+                            and array_key_exists(json_fields::STYLE, $json_cmp))
+                        or (count($json_cmp) == 4
+                            and array_key_exists(json_fields::POSITION, $json_cmp)
+                            and array_key_exists(json_fields::NAME, $json_cmp)
+                            and array_key_exists(json_fields::POS_TYPE, $json_cmp)
+                            and array_key_exists(json_fields::STYLE, $json_cmp))) {
+                        $cmp->load_by_name($json_cmp[json_fields::NAME]);
+                        if (array_key_exists(json_fields::POS_TYPE, $json_cmp)) {
+                            $pos_type_code_id = $json_cmp[json_fields::POS_TYPE];
+                        }
+                        if (array_key_exists(json_fields::STYLE
+                            , $json_cmp)) {
+                            $style_code_id = $json_cmp[json_fields::STYLE];
+                        }
+                        // if the component does not jet exist
+                        // nevertheless create the component
+                        // but send a warning message
+                        if ($cmp->id() <= 0) {
+                            log_warning('Component ' . $json_cmp[json_fields::NAME]
+                                . ' has not yet been created, but is supposed to be at position '
+                                . $json_cmp[json_fields::POSITION] . ' of a view ');
+                            $cmp->import_obj($json_cmp, $test_obj);
+                        }
+                    } else {
+                        log_warning('overwriting the component by the view');
+                        $cmp->import_obj($json_cmp, $test_obj);
+                    }
+                    // on import first add all view components to the view object and save them all at once
+                    // TODO overwrite the style or position type
+                    $result->add_message($this->add_cmp($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj));
+                    $cmp_pos++;
+                }
+            }
+        }
+
+        // TODO add the assigned terms
+        // after the view has it's components assign the view to the terms
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == json_fields::ASSIGNED) {
+                foreach ($value as $trm_name) {
+                    $trm = new term($this->user());
+                    $trm->load_by_name($trm_name);
+                    if ($trm->id() == 0) {
+                        log_warning('word "' . $trm_name .
+                            '" created to link it to view "' . $this->name() .
+                            '" as requested by the import of ');
+                    }
+                    if ($trm->id() != 0) {
+                        $this->add_term($trm);
+                    }
+                }
+            }
+        }
+
+        if (!$result->is_ok()) {
+            $lib = new library();
+            $result->add_message(' when importing ' . $lib->dsp_array($in_ex_json));
+        }
+
+        return $result;
+    }
+
 
     /*
      * api
@@ -335,6 +461,168 @@ class view extends sandbox_typed
             }
         }
 
+        return $vars;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * import a view from a JSON object
+     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param object|null $test_obj if not null the unit testing object
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    {
+        log_debug();
+
+        // reset the all parameters for the word object but keep the user
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+        $result = parent::import_mapper($in_ex_json, null, $test_obj);
+
+        // first save the parameters of the view itself
+        foreach ($in_ex_json as $key => $value) {
+
+            if ($key == json_fields::TYPE_NAME) {
+                if ($value != '') {
+                    $type_id = $this->type_id_by_code_id($value);
+                    if ($type_id == type_list::CODE_ID_NOT_FOUND) {
+                        $result->add_message('view type "' . $value . '" not found');
+                    } else {
+                        $this->type_id = $type_id;
+                    }
+                }
+            }
+            if ($key == json_fields::CODE_ID) {
+                if ($value != '') {
+                    if ($this->user()->is_admin() or $this->user()->is_system()) {
+                        $this->code_id = $value;
+                    }
+                }
+            }
+        }
+
+        if (!$test_obj) {
+            if ($this->name == '') {
+                $result->add_message('name in view missing');
+            } else {
+                $result->add($this->save());
+
+                if ($result->is_ok()) {
+                    // TODO save also the links
+                    //$dsp_lnk = new component_link();
+                    log_debug($this->dsp_id());
+                }
+            }
+        }
+
+        // after saving (or remembering) add the view components
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == self::FLD_COMPONENT) {
+                $json_lst = $value;
+                $cmp_pos = 1;
+                foreach ($json_lst as $json_cmp) {
+                    $cmp = new component($usr);
+                    $style_code_id = null;
+                    $pos_type_code_id = null;
+                    // if for the component only the position and name is defined
+                    // do not overwrite an existing component
+                    // instead just add the existing component
+                    if ((count($json_cmp) == 2
+                            and array_key_exists(json_fields::POSITION, $json_cmp)
+                            and array_key_exists(json_fields::NAME, $json_cmp))
+                        or (count($json_cmp) == 3
+                            and array_key_exists(json_fields::POSITION, $json_cmp)
+                            and array_key_exists(json_fields::NAME, $json_cmp)
+                            and array_key_exists(json_fields::POS_TYPE, $json_cmp))
+                        or (count($json_cmp) == 3
+                            and array_key_exists(json_fields::POSITION, $json_cmp)
+                            and array_key_exists(json_fields::NAME, $json_cmp)
+                            and array_key_exists(json_fields::STYLE, $json_cmp))
+                        or (count($json_cmp) == 4
+                            and array_key_exists(json_fields::POSITION, $json_cmp)
+                            and array_key_exists(json_fields::NAME, $json_cmp)
+                            and array_key_exists(json_fields::POS_TYPE, $json_cmp)
+                            and array_key_exists(json_fields::STYLE, $json_cmp))) {
+                        $cmp->load_by_name($json_cmp[json_fields::NAME]);
+                        if (array_key_exists(json_fields::POS_TYPE, $json_cmp)) {
+                            $pos_type_code_id = $json_cmp[json_fields::POS_TYPE];
+                        }
+                        if (array_key_exists(json_fields::STYLE
+                            , $json_cmp)) {
+                            $style_code_id = $json_cmp[json_fields::STYLE];
+                        }
+                        // if the component does not jet exist
+                        // nevertheless create the component
+                        // but send a warning message
+                        if ($cmp->id() <= 0) {
+                            log_warning('Component ' . $json_cmp[json_fields::NAME]
+                                . ' has not yet been created, but is supposed to be at position '
+                                . $json_cmp[json_fields::POSITION] . ' of a view ');
+                            $cmp->import_obj($json_cmp, $test_obj);
+                        }
+                    } else {
+                        log_warning('overwriting the component by the view');
+                        $cmp->import_obj($json_cmp, $test_obj);
+                    }
+                    // on import first add all view components to the view object and save them all at once
+                    // TODO overwrite the style or position type
+                    $result->add_message($this->add_cmp($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj));
+                    $cmp_pos++;
+                }
+            }
+        }
+
+        // TODO add the assigned terms
+        // after the view has it's components assign the view to the terms
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == json_fields::ASSIGNED) {
+                foreach ($value as $trm_name) {
+                    $trm = new term($this->user());
+                    $trm->load_by_name($trm_name);
+                    if ($trm->id() == 0) {
+                        log_warning('word "' . $trm_name .
+                            '" created to link it to view "' . $this->name() .
+                            '" as requested by the import of ');
+                    }
+                    if ($trm->id() != 0) {
+                        $this->add_term($trm);
+                    }
+                }
+            }
+        }
+
+        if (!$result->is_ok()) {
+            $lib = new library();
+            $result->add_message(' when importing ' . $lib->dsp_array($in_ex_json));
+        }
+
+        return $result;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+
+        // add the view components used
+        if ($do_load) {
+            $this->load_components();
+        }
+        if ($this->cmp_lnk_lst != null) {
+            $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->export_json();
+        }
         return $vars;
     }
 
@@ -875,168 +1163,6 @@ class view extends sandbox_typed
         // TODO implement
         $usr_msg->add_message('not yet implemented');
         return $usr_msg;
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * import a view from a JSON object
-     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit testing object
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
-    {
-        log_debug();
-
-        // reset the all parameters for the word object but keep the user
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
-        $result = parent::import_obj($in_ex_json, $test_obj);
-
-        // first save the parameters of the view itself
-        foreach ($in_ex_json as $key => $value) {
-
-            if ($key == json_fields::TYPE_NAME) {
-                if ($value != '') {
-                    $type_id = $this->type_id_by_code_id($value);
-                    if ($type_id == type_list::CODE_ID_NOT_FOUND) {
-                        $result->add_message('view type "' . $value . '" not found');
-                    } else {
-                        $this->type_id = $type_id;
-                    }
-                }
-            }
-            if ($key == json_fields::CODE_ID) {
-                if ($value != '') {
-                    if ($this->user()->is_admin() or $this->user()->is_system()) {
-                        $this->code_id = $value;
-                    }
-                }
-            }
-        }
-
-        if (!$test_obj) {
-            if ($this->name == '') {
-                $result->add_message('name in view missing');
-            } else {
-                $result->add($this->save());
-
-                if ($result->is_ok()) {
-                    // TODO save also the links
-                    //$dsp_lnk = new component_link();
-                    log_debug($this->dsp_id());
-                }
-            }
-        }
-
-        // after saving (or remembering) add the view components
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == self::FLD_COMPONENT) {
-                $json_lst = $value;
-                $cmp_pos = 1;
-                foreach ($json_lst as $json_cmp) {
-                    $cmp = new component($usr);
-                    $style_code_id = null;
-                    $pos_type_code_id = null;
-                    // if for the component only the position and name is defined
-                    // do not overwrite an existing component
-                    // instead just add the existing component
-                    if ((count($json_cmp) == 2
-                            and array_key_exists(json_fields::POSITION, $json_cmp)
-                            and array_key_exists(json_fields::NAME, $json_cmp))
-                        or (count($json_cmp) == 3
-                            and array_key_exists(json_fields::POSITION, $json_cmp)
-                            and array_key_exists(json_fields::NAME, $json_cmp)
-                            and array_key_exists(json_fields::POS_TYPE, $json_cmp))
-                        or (count($json_cmp) == 3
-                            and array_key_exists(json_fields::POSITION, $json_cmp)
-                            and array_key_exists(json_fields::NAME, $json_cmp)
-                            and array_key_exists(json_fields::STYLE, $json_cmp))
-                        or (count($json_cmp) == 4
-                            and array_key_exists(json_fields::POSITION, $json_cmp)
-                            and array_key_exists(json_fields::NAME, $json_cmp)
-                            and array_key_exists(json_fields::POS_TYPE, $json_cmp)
-                            and array_key_exists(json_fields::STYLE, $json_cmp))) {
-                        $cmp->load_by_name($json_cmp[json_fields::NAME]);
-                        if (array_key_exists(json_fields::POS_TYPE, $json_cmp)) {
-                            $pos_type_code_id = $json_cmp[json_fields::POS_TYPE];
-                        }
-                        if (array_key_exists(json_fields::STYLE
-                            , $json_cmp)) {
-                            $style_code_id = $json_cmp[json_fields::STYLE];
-                        }
-                        // if the component does not jet exist
-                        // nevertheless create the component
-                        // but send a warning message
-                        if ($cmp->id() <= 0) {
-                            log_warning('Component ' . $json_cmp[json_fields::NAME]
-                                . ' has not yet been created, but is supposed to be at position '
-                                . $json_cmp[json_fields::POSITION] . ' of a view ');
-                            $cmp->import_obj($json_cmp, $test_obj);
-                        }
-                    } else {
-                        log_warning('overwriting the component by the view');
-                        $cmp->import_obj($json_cmp, $test_obj);
-                    }
-                    // on import first add all view components to the view object and save them all at once
-                    // TODO overwrite the style or position type
-                    $result->add_message($this->add_cmp($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj));
-                    $cmp_pos++;
-                }
-            }
-        }
-
-        // TODO add the assigned terms
-        // after the view has it's components assign the view to the terms
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::ASSIGNED) {
-                foreach ($value as $trm_name) {
-                    $trm = new term($this->user());
-                    $trm->load_by_name($trm_name);
-                    if ($trm->id() == 0) {
-                        log_warning('word "' . $trm_name .
-                            '" created to link it to view "' . $this->name() .
-                            '" as requested by the import of ');
-                    }
-                    if ($trm->id() != 0) {
-                        $this->add_term($trm);
-                    }
-                }
-            }
-        }
-
-        if (!$result->is_ok()) {
-            $lib = new library();
-            $result->add_message(' when importing ' . $lib->dsp_array($in_ex_json));
-        }
-
-        return $result;
-    }
-
-    /**
-     * create an array with the export json fields
-     * @param bool $do_load true if any missing data should be loaded while creating the array
-     * @return array with the json fields
-     */
-    function export_json(bool $do_load = true): array
-    {
-        $vars = parent::export_json($do_load);
-
-        // add the view components used
-        if ($do_load) {
-            $this->load_components();
-        }
-        if ($this->cmp_lnk_lst != null) {
-            $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->export_json();
-        }
-        return $vars;
     }
 
 

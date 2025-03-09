@@ -46,6 +46,7 @@ include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_LOG_PATH . 'change_log_list.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
@@ -58,6 +59,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\data_object;
 use cfg\log\change_log_list;
 use cfg\user\user;
 use cfg\user\user_message;
@@ -174,6 +176,32 @@ class sandbox_link_named extends sandbox_link
         $vars[json_fields::TYPE] = $this->type_id();
 
         return $vars;
+    }
+
+    /**
+     * set the vars of this named link object based on the given json without writing to the database
+     * import the name and description of a sandbox link object
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        $result = parent::import_mapper($in_ex_json, $dto, $test_obj);
+
+        // reset of object not needed, because the calling function has just created the object
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == json_fields::NAME) {
+                $this->set_name($value);
+            }
+            if ($key == json_fields::DESCRIPTION) {
+                $this->description = $value;
+            }
+        }
+
+        return $result;
     }
 
 
@@ -293,35 +321,6 @@ class sandbox_link_named extends sandbox_link
         $api_obj->set_name($this->name());
         $api_obj->description = $this->description;
         $api_obj->set_type_id($this->type_id());
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * import the name and description of a sandbox link object
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
-    {
-        $result = parent::import_obj($in_ex_json, $test_obj);
-
-        // reset of object not needed, because the calling function has just created the object
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                $this->description = $value;
-            }
-        }
-
-        return $result;
     }
 
 

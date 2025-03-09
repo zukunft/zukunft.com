@@ -10,13 +10,13 @@
     - object vars:       the variables of this component object
     - construct and map: including the mapping of the db row to this component object
     - api:               create an api array for the frontend and set the vars based on a frontend api message
+    - im- and export:    create an export object and set the vars from an import object
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache
     - load:              database access object (DAO) functions
     - sql fields:        field names for sql and other load helper functions
     - retrieval:         get related objects assigned to this component
     - cast:              create an api object and set the vars from an api json
-    - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
     - log:               write the changes to the log
     - link:              link and release the component to and from a view
@@ -64,6 +64,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_COMPONENT_PATH . 'component_db.php';
 include_once MODEL_COMPONENT_PATH . 'view_style.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
@@ -88,6 +89,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\helper\data_object;
 use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_link;
@@ -300,6 +302,53 @@ class component extends sandbox_typed
         return $msg;
     }
 
+    /**
+     * import a view component from a JSON object
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+
+        foreach ($in_ex_json as $key => $value) {
+
+            if ($key == component_db::FLD_POSITION) {
+                $this->order_nbr = $value;
+            }
+            if ($key == json_fields::TYPE_NAME) {
+                if ($value != '') {
+                    if ($this->user()->is_admin() or $this->user()->is_system()) {
+                        $this->type_id = $this->type_id_by_code_id($value);
+                    }
+                }
+            }
+            if ($key == json_fields::STYLE) {
+                if ($value != '') {
+                    $this->set_style($value);
+                }
+            }
+            if ($key == json_fields::CODE_ID) {
+                if ($value != '') {
+                    if ($this->user()->is_admin() or $this->user()->is_system()) {
+                        $this->code_id = $value;
+                    }
+                }
+            }
+            if ($key == json_fields::UI_MSG_CODE_ID) {
+                if ($value != '') {
+                    if ($this->user()->is_admin() or $this->user()->is_system()) {
+                        $this->ui_msg_code_id = $value;
+                    }
+                }
+            }
+        }
+
+        return $usr_msg;
+    }
+
 
     /*
      * api
@@ -325,6 +374,74 @@ class component extends sandbox_typed
             }
             if ($this->ui_msg_code_id != null) {
                 $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
+            }
+        }
+
+        return $vars;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * import a view component from a JSON object
+     * @param array $in_ex_json an array with the data of the json object
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    {
+        $usr_msg = $this->import_mapper($in_ex_json, null, $test_obj);
+
+        if (!$test_obj) {
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
+            } else {
+                log_debug('not saved because ' . $usr_msg->get_last_message());
+            }
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+
+        if ($this->order_nbr >= 0) {
+            $vars[json_fields::POSITION] = $this->order_nbr;
+        }
+        if ($this->code_id != null) {
+            $vars[json_fields::CODE_ID] = $this->code_id;
+        }
+        if ($this->ui_msg_code_id != null) {
+            $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
+        }
+
+        // add the phrases used
+        if ($do_load) {
+            $this->load_phrases();
+        }
+        if ($this->row_phrase != null) {
+            if ($this->row_phrase->name() != '') {
+                $vars[json_fields::ROW] = $this->row_phrase->name();
+            }
+        }
+        if ($this->col_phrase != null) {
+            if ($this->col_phrase->name() != '') {
+                $vars[json_fields::COLUMN] = $this->col_phrase->name();
+            }
+        }
+        if ($this->col_sub_phrase != null) {
+            if ($this->col_sub_phrase->name() != '') {
+                $vars[json_fields::COLUMN2] = $this->col_sub_phrase->name();
             }
         }
 
@@ -805,109 +922,6 @@ class component extends sandbox_typed
             $result = $frm->name();
         }
         return $result;
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     *  */
-    /**
-     * import a view component from a JSON object
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
-    {
-        $usr_msg = parent::import_obj($in_ex_json, $test_obj);
-
-        foreach ($in_ex_json as $key => $value) {
-
-            if ($key == component_db::FLD_POSITION) {
-                $this->order_nbr = $value;
-            }
-            if ($key == json_fields::TYPE_NAME) {
-                if ($value != '') {
-                    if ($this->user()->is_admin() or $this->user()->is_system()) {
-                        $this->type_id = $this->type_id_by_code_id($value);
-                    }
-                }
-            }
-            if ($key == json_fields::STYLE) {
-                if ($value != '') {
-                    $this->set_style($value);
-                }
-            }
-            if ($key == json_fields::CODE_ID) {
-                if ($value != '') {
-                    if ($this->user()->is_admin() or $this->user()->is_system()) {
-                        $this->code_id = $value;
-                    }
-                }
-            }
-            if ($key == json_fields::UI_MSG_CODE_ID) {
-                if ($value != '') {
-                    if ($this->user()->is_admin() or $this->user()->is_system()) {
-                        $this->ui_msg_code_id = $value;
-                    }
-                }
-            }
-        }
-
-        if (!$test_obj) {
-            if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
-            } else {
-                log_debug('not saved because ' . $usr_msg->get_last_message());
-            }
-        }
-
-        return $usr_msg;
-    }
-
-    /**
-     * create an array with the export json fields
-     * @param bool $do_load true if any missing data should be loaded while creating the array
-     * @return array with the json fields
-     */
-    function export_json(bool $do_load = true): array
-    {
-        $vars = parent::export_json($do_load);
-
-        if ($this->order_nbr >= 0) {
-            $vars[json_fields::POSITION] = $this->order_nbr;
-        }
-        if ($this->code_id != null) {
-            $vars[json_fields::CODE_ID] = $this->code_id;
-        }
-        if ($this->ui_msg_code_id != null) {
-            $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
-        }
-
-        // add the phrases used
-        if ($do_load) {
-            $this->load_phrases();
-        }
-        if ($this->row_phrase != null) {
-            if ($this->row_phrase->name() != '') {
-                $vars[json_fields::ROW] = $this->row_phrase->name();
-            }
-        }
-        if ($this->col_phrase != null) {
-            if ($this->col_phrase->name() != '') {
-                $vars[json_fields::COLUMN] = $this->col_phrase->name();
-            }
-        }
-        if ($this->col_sub_phrase != null) {
-            if ($this->col_sub_phrase->name() != '') {
-                $vars[json_fields::COLUMN2] = $this->col_sub_phrase->name();
-            }
-        }
-
-        return $vars;
     }
 
 

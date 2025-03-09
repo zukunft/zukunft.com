@@ -39,8 +39,10 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_ELEMENT_PATH . 'element.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
@@ -58,8 +60,10 @@ use cfg\db\sql_par_type;
 use cfg\element\element;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
+use cfg\phrase\term;
 use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_list;
+use cfg\sandbox\sandbox_list_named;
+use cfg\sandbox\sandbox_named;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\word\triple;
@@ -67,7 +71,7 @@ use cfg\word\word;
 use shared\calc\parameter_type;
 use shared\library;
 
-class formula_list extends sandbox_list
+class formula_list extends sandbox_list_named
 {
     // the number of formulas that should be updated with one commit if no dependency calculations are expected
     const UPDATE_BLOCK_SIZE = 100;
@@ -572,12 +576,12 @@ class formula_list extends sandbox_list
 
     /**
      * add one formula to the formula list, but only if it is not yet part of the list
-     * @param formula|null $frm_to_add the formula backend object that should be added
+     * @param formula|sandbox_named|triple|phrase|term|null $to_add the formula backend object that should be added
      * @returns bool true the formula has been added
      */
-    function add(?formula $frm_to_add): bool
+    function add(formula|sandbox_named|triple|phrase|term|null $to_add): bool
     {
-        return parent::add_obj($frm_to_add);
+        return parent::add_obj($to_add);
     }
 
 

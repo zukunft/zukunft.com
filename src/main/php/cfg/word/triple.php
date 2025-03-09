@@ -459,7 +459,7 @@ class triple extends sandbox_link_named
     {
         global $phr_typ_cac;
 
-        $result = parent::import_obj($in_ex_json, $test_obj);
+        $result = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
         foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::TYPE_NAME) {

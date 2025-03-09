@@ -67,6 +67,7 @@ include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 //include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_LOG_PATH . 'change.php';
@@ -96,6 +97,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
 use cfg\log\change;
 use cfg\log\change_link;
@@ -206,6 +208,31 @@ class sandbox_named extends sandbox
         return $msg;
     }
 
+    /**
+     * function to import the core user sandbox object values from a json string
+     * e.g. the share and protection settings
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == json_fields::NAME) {
+                $this->set_name($value);
+            }
+            if ($key == json_fields::DESCRIPTION) {
+                if ($value <> '') {
+                    $this->description = $value;
+                }
+            }
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * api
@@ -225,6 +252,26 @@ class sandbox_named extends sandbox
         $vars[json_fields::NAME] = $this->name();
         $vars[json_fields::DESCRIPTION] = $this->description();
 
+        return $vars;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+        $vars[json_fields::NAME] = $this->name();
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
         return $vars;
     }
 
@@ -477,50 +524,6 @@ class sandbox_named extends sandbox
         $qp->par = $sc->get_par();
 
         return $qp;
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * function to import the core user sandbox object values from a json string
-     * e.g. the share and protection settings
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
-    {
-        $usr_msg = parent::import_obj($in_ex_json, $test_obj);
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * create an array with the export json fields
-     * @param bool $do_load true if any missing data should be loaded while creating the array
-     * @return array with the json fields
-     */
-    function export_json(bool $do_load = true): array
-    {
-        $vars = parent::export_json($do_load);
-        $vars[json_fields::NAME] = $this->name();
-        if ($this->description <> '') {
-            $vars[json_fields::DESCRIPTION] = $this->description;
-        }
-        return $vars;
     }
 
 

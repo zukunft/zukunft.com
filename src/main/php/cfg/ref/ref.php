@@ -23,11 +23,11 @@
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
     - api:               create an api array for the frontend and set the vars based on a frontend api message
+    - im- and export:    create an export object and set the vars from an import object
     - set and get:       to capsule the vars from unexpected changes
     - cast:              create an api object and set the vars from an api json
     - preloaded:         select e.g. types from cache
     - load:              database access object (DAO) functions
-    - im- and export:    create an export object and set the vars from an import object
     - log:               write the changes to the log
     - save:              manage to update the database
     - del:               manage to remove from the database
@@ -76,6 +76,7 @@ include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
@@ -108,6 +109,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\combine_named;
+use cfg\helper\data_object;
 use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_link;
@@ -312,6 +314,53 @@ class ref extends sandbox_link
         return $msg;
     }
 
+    /**
+     * set the vars of this reference object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        $usr_msg = parent::import_mapper($in_ex_json, null, $test_obj);
+
+        global $ref_typ_cac;
+        // reset of object not needed, because the calling function has just created the object
+        foreach ($in_ex_json as $key => $value) {
+            if ($key == json_fields::SOURCE_NAME) {
+                $src = new source($this->user());
+                if (!$test_obj) {
+                    $src->load_by_name($value);
+                    if ($src->id() == 0) {
+                        $usr_msg->add_message('Cannot find source "' . $value . '" when importing ' . $this->dsp_id());
+                    }
+                } else {
+                    $src->set_name($value);
+                }
+                $this->source = $src;
+            }
+            if ($key == json_fields::TYPE_NAME) {
+                $this->set_predicate_id($ref_typ_cac->id($value));
+
+                if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
+                    $usr_msg->add_message('Reference type for ' . $value . ' not found');
+                }
+            }
+            if ($key == json_fields::NAME) {
+                $this->external_key = $value;
+            }
+            if ($key == json_fields::DESCRIPTION) {
+                $this->description = $value;
+            }
+            if ($key == self::FLD_URL) {
+                $this->url = $value;
+            }
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * api
@@ -337,6 +386,61 @@ class ref extends sandbox_link
             $vars[json_fields::PREDICATE] = $this->predicate_id();
         }
         $vars[json_fields::DESCRIPTION] = $this->description;
+        return $vars;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * import a link to external database from an imported json object
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    {
+        $usr_msg = $this->import_mapper($in_ex_json, null, $test_obj);
+
+        // to be able to log the object names
+        if (!$test_obj) {
+            if ($this->load_objects()) {
+                if ($usr_msg->is_ok()) {
+                    $usr_msg->add($this->save());
+                }
+            }
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * create an array with the export json fields of this reference excluding e.g. the database id
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = [];
+
+        if ($this->source != null) {
+            $vars[json_fields::SOURCE_NAME] = $this->source->name();
+        }
+        if ($this->predicate_id > 0) {
+            $vars[json_fields::TYPE_NAME] = $this->predicate_code_id();
+        }
+        if ($this->external_key <> '') {
+            $vars[json_fields::NAME] = $this->external_key;
+        }
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        if ($this->url <> '') {
+            $vars[json_fields::URL] = $this->url;
+        }
         return $vars;
     }
 
@@ -738,93 +842,6 @@ class ref extends sandbox_link
     function type_field(): string
     {
         return ref_type::FLD_ID;
-    }
-
-
-    /*
-     * im- and export
-     */
-
-    /**
-     * import a link to external database from an imported json object
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
-    {
-        $result = parent::import_obj($in_ex_json, $test_obj);
-
-        global $ref_typ_cac;
-        // reset of object not needed, because the calling function has just created the object
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::SOURCE_NAME) {
-                $src = new source($this->user());
-                if (!$test_obj) {
-                    $src->load_by_name($value);
-                    if ($src->id() == 0) {
-                        $result->add_message('Cannot find source "' . $value . '" when importing ' . $this->dsp_id());
-                    }
-                } else {
-                    $src->set_name($value);
-                }
-                $this->source = $src;
-            }
-            if ($key == json_fields::TYPE_NAME) {
-                $this->set_predicate_id($ref_typ_cac->id($value));
-
-                if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
-                    $result->add_message('Reference type for ' . $value . ' not found');
-                }
-            }
-            if ($key == json_fields::NAME) {
-                $this->external_key = $value;
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                $this->description = $value;
-            }
-            if ($key == self::FLD_URL) {
-                $this->url = $value;
-            }
-        }
-        // to be able to log the object names
-        if (!$test_obj) {
-            if ($this->load_objects()) {
-                if ($result->is_ok()) {
-                    $result->add($this->save());
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * create an array with the export json fields of this reference excluding e.g. the database id
-     * @param bool $do_load true if any missing data should be loaded while creating the array
-     * @return array with the json fields
-     */
-    function export_json(bool $do_load = true): array
-    {
-        $vars = [];
-
-        if ($this->source != null) {
-            $vars[json_fields::SOURCE_NAME] = $this->source->name();
-        }
-        if ($this->predicate_id > 0) {
-            $vars[json_fields::TYPE_NAME] = $this->predicate_code_id();
-        }
-        if ($this->external_key <> '') {
-            $vars[json_fields::NAME] = $this->external_key;
-        }
-        if ($this->description <> '') {
-            $vars[json_fields::DESCRIPTION] = $this->description;
-        }
-        if ($this->url <> '') {
-            $vars[json_fields::URL] = $this->url;
-        }
-        return $vars;
     }
 
 
