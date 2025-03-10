@@ -324,37 +324,40 @@ class word extends sandbox_typed
 
         // set the object vars based on the json
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::TYPE_NAME) {
-                $this->type_id = $phr_typ_cac->id($value);
-            }
-            if ($key == sql::FLD_CODE_ID) {
-                if ($this->user()->is_admin()) {
-                    if ($value <> '') {
-                        $this->set_code_id($value);
-                    }
+
+        if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
+            $this->type_id = $phr_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
+        }
+        if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
+            if ($this->user()->is_admin()) {
+                if ($in_ex_json[json_fields::CODE_ID] <> '') {
+                    $this->set_code_id($in_ex_json[json_fields::CODE_ID]);
                 }
             }
-            if ($key == word_db::FLD_PLURAL) {
-                if ($value <> '') {
-                    $this->plural = $value;
-                }
+        }
+        if (key_exists(json_fields::PLURAL, $in_ex_json)) {
+            if ($in_ex_json[json_fields::PLURAL] <> '') {
+                $this->plural = $in_ex_json[json_fields::PLURAL];
             }
-            // TODO change to view object like in triple
-            if ($key == json_fields::VIEW) {
-                $wrd_view = new view($this->user());
-                if (!$test_obj) {
-                    $wrd_view->load_by_name($value);
-                    if ($wrd_view->id() == 0) {
-                        $usr_msg->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
-                    } else {
-                        $this->set_view_id($wrd_view->id());
-                    }
+        }
+
+        // TODO change to view object like in triple
+        if (key_exists(json_fields::VIEW, $in_ex_json)) {
+            $msk_name = $in_ex_json[json_fields::VIEW];
+            $wrd_view = new view($this->user());
+            if (!$test_obj) {
+                $wrd_view->load_by_name($msk_name);
+                if ($wrd_view->id() == 0) {
+                    $usr_msg->add_message(
+                        'Cannot find view "' . $msk_name
+                        . '" when importing ' . $this->dsp_id());
                 } else {
-                    $wrd_view->set_name($value);
+                    $this->set_view_id($wrd_view->id());
                 }
-                $this->view = $wrd_view;
+            } else {
+                $wrd_view->set_name($msk_name);
             }
+            $this->view = $wrd_view;
         }
 
         // set the default type if no type is specified

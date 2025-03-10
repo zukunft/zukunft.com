@@ -189,19 +189,18 @@ class sandbox_link_named extends sandbox_link
      */
     function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
     {
-        $result = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
         // reset of object not needed, because the calling function has just created the object
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                $this->description = $value;
-            }
+        // name is not mandatory because might be generated based on the link
+        if (key_exists(json_fields::NAME, $in_ex_json)) {
+            $this->set_name($in_ex_json[json_fields::NAME]);
+        }
+        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            $this->description = $in_ex_json[json_fields::DESCRIPTION];
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 

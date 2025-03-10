@@ -260,24 +260,21 @@ class source extends sandbox_typed
     {
         global $src_typ_cac;
 
-        log_debug();
-        $result = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == self::FLD_URL) {
-                $this->url = $value;
-            }
-            if ($this->user()->is_system() or $this->user()->is_admin()) {
-                if ($key == json_fields::CODE_ID) {
-                    $this->code_id = $value;
-                }
-            }
-            if ($key == json_fields::TYPE_NAME) {
-                $this->type_id = $src_typ_cac->id($value);
+        if (key_exists(json_fields::URL, $in_ex_json)) {
+            $this->url = $in_ex_json[json_fields::URL];
+        }
+        if ($this->user()->is_system() or $this->user()->is_admin()) {
+            if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
+                $this->code_id = $in_ex_json[json_fields::CODE_ID];
             }
         }
+        if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
+            $this->type_id = $src_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
+        }
 
-        return $result;
+        return $usr_msg;
     }
 
 

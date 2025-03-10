@@ -1495,14 +1495,13 @@ class formula extends sandbox_typed
         $this->reset();
         $this->set_user($usr);
         $result = parent::import_mapper($in_ex_json, $dto, $test_obj);
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::TYPE_NAME) {
-                $this->type_id = $frm_typ_cac->id($value);
-            }
-            if ($key == self::FLD_EXPRESSION) {
-                if ($value <> '') {
-                    $this->usr_text = $value;
-                }
+
+        if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
+            $this->type_id = $frm_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
+        }
+        if (key_exists(json_fields::EXPRESSION, $in_ex_json)) {
+            if ($in_ex_json[json_fields::EXPRESSION] <> '') {
+                $this->usr_text = $in_ex_json[json_fields::EXPRESSION];
             }
         }
 

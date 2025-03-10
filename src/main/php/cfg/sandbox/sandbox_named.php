@@ -220,16 +220,16 @@ class sandbox_named extends sandbox
     function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
     {
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
+
+        if (key_exists(json_fields::NAME, $in_ex_json)) {
+            $this->set_name($in_ex_json[json_fields::NAME]);
+        }
+        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            if ($in_ex_json[json_fields::DESCRIPTION] <> '') {
+                $this->description = $in_ex_json[json_fields::DESCRIPTION];
             }
         }
+
         return $usr_msg;
     }
 

@@ -313,35 +313,32 @@ class component extends sandbox_typed
     {
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
-        foreach ($in_ex_json as $key => $value) {
-
-            if ($key == component_db::FLD_POSITION) {
-                $this->order_nbr = $value;
+        if (key_exists(json_fields::POSITION, $in_ex_json)) {
+            $this->order_nbr = $in_ex_json[json_fields::POSITION];
+        }
+        if (key_exists(json_fields::STYLE, $in_ex_json)) {
+            $style_name = $in_ex_json[json_fields::STYLE];
+            if ($style_name != '') {
+                $this->set_style($style_name);
             }
-            if ($key == json_fields::TYPE_NAME) {
-                if ($value != '') {
-                    if ($this->user()->is_admin() or $this->user()->is_system()) {
-                        $this->type_id = $this->type_id_by_code_id($value);
-                    }
+        }
+        if ($this->user()->is_admin() or $this->user()->is_system()) {
+            if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
+                $type_name = $in_ex_json[json_fields::TYPE_NAME];
+                if ($type_name != '') {
+                    $this->type_id = $this->type_id_by_code_id($type_name);
                 }
             }
-            if ($key == json_fields::STYLE) {
-                if ($value != '') {
-                    $this->set_style($value);
+            if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
+                $code_id = $in_ex_json[json_fields::CODE_ID];
+                if ($code_id != '') {
+                    $this->code_id = $code_id;
                 }
             }
-            if ($key == json_fields::CODE_ID) {
-                if ($value != '') {
-                    if ($this->user()->is_admin() or $this->user()->is_system()) {
-                        $this->code_id = $value;
-                    }
-                }
-            }
-            if ($key == json_fields::UI_MSG_CODE_ID) {
-                if ($value != '') {
-                    if ($this->user()->is_admin() or $this->user()->is_system()) {
-                        $this->ui_msg_code_id = $value;
-                    }
+            if (key_exists(json_fields::UI_MSG_CODE_ID, $in_ex_json)) {
+                $msg_id = $in_ex_json[json_fields::UI_MSG_CODE_ID];
+                if ($msg_id != '') {
+                    $this->ui_msg_code_id = $msg_id;
                 }
             }
         }

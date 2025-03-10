@@ -461,78 +461,80 @@ class triple extends sandbox_link_named
 
         $result = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::TYPE_NAME) {
-                $this->type_id = $phr_typ_cac->id($value);
-            }
-            if ($key == json_fields::EX_FROM) {
-                if ($value == "") {
-                    $lib = new library();
-                    $result->add_message('from name should not be empty at ' . $lib->dsp_array($in_ex_json));
-                } else {
-                    if (is_string($value)) {
-                        if ($dto == null) {
-                            $this->set_from($this->import_phrase($value, $test_obj));
-                        } else {
-                            $phr = $dto->get_phrase_by_name($value);
-                            if ($phr == null) {
-                                $result->add_message('Inconsistency: phrase ' . $value . ' missing');;
-                            } else {
-                                $this->set_from($phr);
-                            }
-                        }
-                    } else {
-                        log_err($value . ' is expected to be a string');
-                    }
-                }
-            }
-            if ($key == json_fields::EX_TO) {
-                if ($value == "") {
-                    $lib = new library();
-                    $result->add_message('to name should not be empty at ' . $lib->dsp_array($in_ex_json));
-                } else {
+        if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
+            $this->type_id = $phr_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
+        }
+        if (key_exists(json_fields::EX_FROM, $in_ex_json)) {
+            $value = $in_ex_json[json_fields::EX_FROM];
+            if ($value == "") {
+                $lib = new library();
+                $result->add_message('from name should not be empty at ' . $lib->dsp_array($in_ex_json));
+            } else {
+                if (is_string($value)) {
                     if ($dto == null) {
-                        $this->set_to($this->import_phrase($value, $test_obj));
+                        $this->set_from($this->import_phrase($value, $test_obj));
                     } else {
                         $phr = $dto->get_phrase_by_name($value);
                         if ($phr == null) {
                             $result->add_message('Inconsistency: phrase ' . $value . ' missing');;
                         } else {
-                            $this->set_to($phr);
-                        }
-                    }
-                }
-            }
-            if ($key == json_fields::EX_VERB) {
-                $vrb = new verb;
-                $vrb->set_user($this->user());
-                if (!$test_obj) {
-                    if ($result->is_ok()) {
-                        $vrb->load_by_name($value);
-                        if ($vrb->id() <= 0) {
-                            $result->add_message('verb "' . $value . '" not found');
-                            if ($this->name <> '') {
-                                $result->add_message('for triple "' . $this->name . '"');
-                            }
+                            $this->set_from($phr);
                         }
                     }
                 } else {
-                    $vrb->set_name($value);
+                    log_err($value . ' is expected to be a string');
                 }
-                $this->set_verb($vrb);
             }
-            if ($key == json_fields::VIEW) {
-                $trp_view = new view($this->user());
-                if (!$test_obj) {
-                    $trp_view->load_by_name($value);
-                    if ($trp_view->id() == 0) {
-                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
-                    }
+        }
+        if (key_exists(json_fields::EX_TO, $in_ex_json)) {
+            $value = $in_ex_json[json_fields::EX_TO];
+            if ($value == "") {
+                $lib = new library();
+                $result->add_message('to name should not be empty at ' . $lib->dsp_array($in_ex_json));
+            } else {
+                if ($dto == null) {
+                    $this->set_to($this->import_phrase($value, $test_obj));
                 } else {
-                    $trp_view->set_name($value);
+                    $phr = $dto->get_phrase_by_name($value);
+                    if ($phr == null) {
+                        $result->add_message('Inconsistency: phrase ' . $value . ' missing');;
+                    } else {
+                        $this->set_to($phr);
+                    }
                 }
-                $this->view = $trp_view;
             }
+        }
+        if (key_exists(json_fields::EX_VERB, $in_ex_json)) {
+            $value = $in_ex_json[json_fields::EX_VERB];
+            $vrb = new verb;
+            $vrb->set_user($this->user());
+            if (!$test_obj) {
+                if ($result->is_ok()) {
+                    $vrb->load_by_name($value);
+                    if ($vrb->id() <= 0) {
+                        $result->add_message('verb "' . $value . '" not found');
+                        if ($this->name <> '') {
+                            $result->add_message('for triple "' . $this->name . '"');
+                        }
+                    }
+                }
+            } else {
+                $vrb->set_name($value);
+            }
+            $this->set_verb($vrb);
+        }
+        if (key_exists(json_fields::VIEW, $in_ex_json)) {
+            $value = $in_ex_json[json_fields::VIEW];
+            $trp_view = new view($this->user());
+            if (!$test_obj) {
+                $trp_view->load_by_name($value);
+                if ($trp_view->id() == 0) {
+                    $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                }
+            } else {
+                $trp_view->set_name($value);
+            }
+            $this->view = $trp_view;
         }
 
         return $result;

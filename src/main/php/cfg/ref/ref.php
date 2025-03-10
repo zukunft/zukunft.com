@@ -327,37 +327,39 @@ class ref extends sandbox_link
         $usr_msg = parent::import_mapper($in_ex_json, null, $test_obj);
 
         global $ref_typ_cac;
-        // reset of object not needed, because the calling function has just created the object
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::SOURCE_NAME) {
-                $src = new source($this->user());
-                if (!$test_obj) {
-                    $src->load_by_name($value);
-                    if ($src->id() == 0) {
-                        $usr_msg->add_message('Cannot find source "' . $value . '" when importing ' . $this->dsp_id());
-                    }
-                } else {
-                    $src->set_name($value);
-                }
-                $this->source = $src;
-            }
-            if ($key == json_fields::TYPE_NAME) {
-                $this->set_predicate_id($ref_typ_cac->id($value));
 
-                if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
-                    $usr_msg->add_message('Reference type for ' . $value . ' not found');
+        // reset of object not needed, because the calling function has just created the object
+        if (key_exists(json_fields::SOURCE_NAME, $in_ex_json)) {
+            $src_name = $in_ex_json[json_fields::SOURCE_NAME];
+            $src = new source($this->user());
+            if (!$test_obj) {
+                $src->load_by_name($src_name);
+                if ($src->id() == 0) {
+                    $usr_msg->add_message('Cannot find source "' . $src_name . '" when importing ' . $this->dsp_id());
                 }
+            } else {
+                $src->set_name($src_name);
             }
-            if ($key == json_fields::NAME) {
-                $this->external_key = $value;
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                $this->description = $value;
-            }
-            if ($key == self::FLD_URL) {
-                $this->url = $value;
+            $this->source = $src;
+        }
+        if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
+            $this->set_predicate_id($ref_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]));
+
+            if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
+                $usr_msg->add_message('Reference type for '
+                    . $in_ex_json[json_fields::TYPE_NAME] . ' not found');
             }
         }
+        if (key_exists(json_fields::NAME, $in_ex_json)) {
+            $this->external_key = $in_ex_json[json_fields::NAME];
+        }
+        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            $this->description = $in_ex_json[json_fields::DESCRIPTION];
+        }
+        if (key_exists(json_fields::URL, $in_ex_json)) {
+            $this->url = $in_ex_json[json_fields::URL];
+        }
+
         return $usr_msg;
     }
 
