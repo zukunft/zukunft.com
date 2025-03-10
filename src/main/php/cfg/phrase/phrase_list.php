@@ -68,6 +68,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_FORMULA_PATH . 'formula_list.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -94,6 +95,7 @@ use cfg\db\sql_par_type;
 use cfg\formula\formula_list;
 use cfg\group\group;
 use cfg\group\group_id;
+use cfg\helper\data_object;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_list_named;
 use cfg\user\user_message;
@@ -150,6 +152,65 @@ class phrase_list extends sandbox_list_named
             if ($usr_msg->is_ok()) {
                 $this->add($phr);
             }
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * import a phrase list from an inner part of a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $json_obj, data_object $dto = null, object $test_obj = null): user_message
+    {
+        global $phr_typ_cac;
+
+        $usr_msg = new user_message();
+        if ($dto != null) {
+            $phr_lst = $dto->phrase_list();
+        } else {
+            $phr_lst = $this;
+        }
+        foreach ($json_obj as $phr_name) {
+            if ($phr_name != '') {
+                $new_phr = new phrase($this->user());
+                if ($usr_msg->is_ok()) {
+                    if (!$test_obj) {
+                        // TODO prevent that this happens at all
+                        if (is_array($phr_name)) {
+                            $lib = new library();
+                            log_err($lib->dsp_array($phr_name) . ' is expected to be a string');
+                            // TODO remove this fallback solution
+                            if (count($phr_name) == 1) {
+                                $phr_name = $phr_name[0];
+                            }
+                        }
+                        if (!is_array($phr_name)) {
+                            $phr = $phr_lst->get($phr_name);
+                            if ($phr == null) {
+                                $phr = $new_phr;
+                                $phr->set_name($phr_name);
+                                $phr_lst->add($phr);
+                            }
+                        }
+                    } else {
+                        // fallback for unit tests
+                        $new_phr->set_name($phr_name, word::class);
+                        $new_phr->set_id($test_obj->seq_id());
+                    }
+                }
+                $this->add($new_phr);
+            }
+        }
+
+        // save the word in the database
+        // TODO check why this is needed
+        if ($usr_msg == '' and $test_obj == null) {
+            $usr_msg->add($this->save());
         }
 
         return $usr_msg;
@@ -546,7 +607,7 @@ class phrase_list extends sandbox_list_named
             } elseif ($key == json_fields::TRIPLES) {
                 foreach ($json_obj as $triple) {
                     $trp = new triple($usr);
-                    $import_result = $trp->import_obj($triple);
+                    $import_result = $trp->import_mapper($triple);
                     $this->add_by_name($trp->phrase());
                     $usr_msg->add($import_result);
                 }

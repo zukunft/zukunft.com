@@ -626,6 +626,14 @@ class import
                 $trp_array = $json_array[json_fields::TRIPLES];
                 $usr_msg->add($this->get_data_object_triples($trp_array, $usr_trigger, $dto));
             }
+            if (key_exists(json_fields::SOURCES, $json_array)) {
+                $src_array = $json_array[json_fields::SOURCES];
+                $usr_msg->add($this->get_data_object_sources($src_array, $usr_trigger, $dto));
+            }
+            if (key_exists(json_fields::VALUES, $json_array)) {
+                $val_array = $json_array[json_fields::VALUES];
+                $usr_msg->add($this->get_data_object_values($val_array, $usr_trigger, $dto));
+            }
             if (key_exists(json_fields::FORMULAS, $json_array)) {
                 $frm_array = $json_array[json_fields::FORMULAS];
                 $usr_msg->add($this->get_data_object_formulas($frm_array, $usr_trigger, $dto));
@@ -691,6 +699,50 @@ class import
             $trp = new triple($usr_trigger);
             $usr_msg->add($trp->import_mapper($word, $dto));
             $dto->add_triple($trp);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add the source from the json array to the data object
+     * @param array $json_array the source part of the import json
+     * @param user $usr_trigger the user who has started the import
+     * @param data_object $dto the data object that should be filled
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function get_data_object_sources(
+        array $json_array,
+        user $usr_trigger,
+        data_object $dto
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($json_array as $src_json) {
+            $src = new source($usr_trigger);
+            $usr_msg->add($src->import_mapper($src_json, $dto));
+            $dto->add_source($src);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add the source from the json array to the data object
+     * @param array $json_array the source part of the import json
+     * @param user $usr_trigger the user who has started the import
+     * @param data_object $dto the data object that should be filled
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function get_data_object_values(
+        array $json_array,
+        user $usr_trigger,
+        data_object $dto
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($json_array as $src_json) {
+            $val = new value($usr_trigger);
+            $usr_msg->add($val->import_mapper($src_json, $dto));
+            $dto->add_value($val);
         }
         return $usr_msg;
     }

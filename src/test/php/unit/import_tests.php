@@ -78,6 +78,20 @@ class import_tests
         $dto = $imp->get_data_object($json_array, $usr);
         $t->assert($test_name, $dto->triple_list()->count(), 2);
 
+        $test_name = 'JSON import source count';
+        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . '/unit_tests/sources.json');
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr);
+        $t->assert($test_name, $dto->source_list()->count(), 2);
+
+        /*
+        $test_name = 'JSON import value count';
+        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . '/unit_tests/values.json');
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr);
+        $t->assert($test_name, $dto->value_list()->count(), 4);
+        */
+
         $test_name = 'JSON import warning creation';
         $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'warning_and_error_test.json');
         $imp = new import;

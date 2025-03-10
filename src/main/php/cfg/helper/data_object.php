@@ -39,7 +39,10 @@ namespace cfg\helper;
 //include_once MODEL_FORMULA_PATH . 'formula_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+//include_once MODEL_REF_PATH . 'source.php';
+//include_once MODEL_REF_PATH . 'source_list.php';
 //include_once MODEL_PHRASE_PATH . 'phrase.php';
+//include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
@@ -55,6 +58,9 @@ include_once SHARED_PATH . 'json_fields.php';
 use cfg\formula\formula;
 use cfg\formula\formula_list;
 use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
+use cfg\ref\source;
+use cfg\ref\source_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
@@ -79,6 +85,7 @@ class data_object
 
     private word_list $wrd_lst;
     private triple_list $trp_lst;
+    private source_list $src_lst;
     private value_list $val_lst;
     private formula_list $frm_lst;
     private view_list $msk_lst;
@@ -101,6 +108,7 @@ class data_object
         $this->set_user($usr);
         $this->wrd_lst = new word_list($usr);
         $this->trp_lst = new triple_list($usr);
+        $this->src_lst = new source_list($usr);
         $this->val_lst = new value_list($usr);
         $this->frm_lst = new formula_list($usr);
         $this->msk_lst = new view_list($usr);
@@ -140,6 +148,7 @@ class data_object
 
     /**
      * create an api json array for the backend based on this frontend object
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array() calls
      */
@@ -148,6 +157,7 @@ class data_object
         $vars = [];
         $vars[json_fields::WORDS] = $this->wrd_lst->api_json_array($typ_lst);
         $vars[json_fields::TRIPLES] = $this->trp_lst->api_json_array($typ_lst);
+        $vars[json_fields::SOURCES] = $this->src_lst->api_json_array($typ_lst);
         $vars[json_fields::VALUES] = $this->val_lst->api_json_array($typ_lst);
         $vars[json_fields::FORMULAS] = $this->frm_lst->api_json_array($typ_lst);
         $vars[json_fields::VIEWS] = $this->msk_lst->api_json_array($typ_lst);
@@ -192,6 +202,24 @@ class data_object
     function triple_list(): triple_list
     {
         return $this->trp_lst;
+    }
+
+    /**
+     * @return phrase_list with the words and triples of this data object
+     */
+    function phrase_list(): phrase_list
+    {
+        $phr_lst = $this->word_list()->phrase_lst();
+        $phr_lst->merge($this->triple_list()->phrase_lst());
+        return $phr_lst;
+    }
+
+    /**
+     * @return source_list with the sources of this data object
+     */
+    function source_list(): source_list
+    {
+        return $this->src_lst;
     }
 
     /**
@@ -250,13 +278,23 @@ class data_object
     }
 
     /**
-     * add a triple name with word names but without db id to the list
+     * add a triple with the names of the linked phrase names but without db id to the list
      * @param triple $trp with the name and word names set
      * @return void
      */
     function add_triple(triple $trp): void
     {
         $this->trp_lst->add_by_name($trp);
+    }
+
+    /**
+     * add a source with the names but without db id to the list
+     * @param source $src with the name and word names set
+     * @return void
+     */
+    function add_source(source $src): void
+    {
+        $this->src_lst->add_by_name($src);
     }
 
     /**

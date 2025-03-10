@@ -327,14 +327,14 @@ class view extends sandbox_typed
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
-        $result = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
         // first save the parameters of the view itself
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             if ($in_ex_json[json_fields::TYPE_NAME] != '') {
                 $type_id = $this->type_id_by_code_id($in_ex_json[json_fields::TYPE_NAME]);
                 if ($type_id == type_list::CODE_ID_NOT_FOUND) {
-                    $result->add_message('view type "'
+                    $usr_msg->add_message('view type "'
                         . $in_ex_json[json_fields::TYPE_NAME] . '" not found');
                 } else {
                     $this->type_id = $type_id;
@@ -399,7 +399,7 @@ class view extends sandbox_typed
                 }
                 // on import first add all view components to the view object and save them all at once
                 // TODO overwrite the style or position type
-                $result->add_message($this->add_cmp($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj));
+                $usr_msg->add_message($this->add_cmp($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj));
                 $cmp_pos++;
             }
         }
@@ -422,12 +422,12 @@ class view extends sandbox_typed
             }
         }
 
-        if (!$result->is_ok()) {
+        if (!$usr_msg->is_ok()) {
             $lib = new library();
-            $result->add_message(' when importing ' . $lib->dsp_array($in_ex_json));
+            $usr_msg->add_message(' when importing ' . $lib->dsp_array($in_ex_json));
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 

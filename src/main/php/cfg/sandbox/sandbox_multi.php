@@ -77,6 +77,7 @@ include_once MODEL_ELEMENT_PATH . 'element.php';
 //include_once MODEL_GROUP_PATH . 'group.php';
 //include_once MODEL_GROUP_PATH . 'group_id.php';
 //include_once MODEL_GROUP_PATH . 'result_id.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
@@ -128,6 +129,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\data_object;
 use cfg\helper\db_object_multi_user;
 use cfg\element\element;
 use cfg\formula\formula;
@@ -379,6 +381,48 @@ class sandbox_multi extends db_object_multi_user
                 $this->protection_id = $value;
             }
 
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * function to import the core user sandbox object values from a json string
+     * e.g. the share and protection settings
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+
+        $usr_msg = parent::import_db_obj($this, $test_obj);
+
+        if (key_exists(json_fields::SHARE, $in_ex_json)) {
+            $this->share_id = $shr_typ_cac->id(
+                $in_ex_json[json_fields::SHARE]);
+            if ($this->share_id < 0) {
+                $lib = new library();
+                $usr_msg->add_message('share type '
+                    . $in_ex_json[json_fields::SHARE]
+                    . ' is not expected when importing '
+                    . $lib->dsp_array($in_ex_json));
+            }
+        }
+        if (key_exists(json_fields::PROTECTION, $in_ex_json)) {
+            $this->protection_id = $ptc_typ_cac->id(
+                $in_ex_json[json_fields::PROTECTION]);
+            if ($this->protection_id < 0) {
+                $lib = new library();
+                $usr_msg->add_message('protection type '
+                    . $in_ex_json[json_fields::PROTECTION]
+                    . ' is not expected when importing '
+                    . $lib->dsp_array($in_ex_json));
+            }
         }
 
         return $usr_msg;

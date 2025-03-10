@@ -1494,7 +1494,7 @@ class formula extends sandbox_typed
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
-        $result = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $this->type_id = $frm_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
@@ -1510,7 +1510,7 @@ class formula extends sandbox_typed
             $this->type_id = $frm_typ_cac->default_id();
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**

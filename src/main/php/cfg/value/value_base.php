@@ -94,6 +94,7 @@ include_once MODEL_FORMULA_PATH . 'expression.php';
 include_once MODEL_FORMULA_PATH . 'figure.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_field_list.php';
@@ -132,6 +133,7 @@ use cfg\db\sql;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use cfg\formula\figure;
+use cfg\helper\data_object;
 use cfg\log\change;
 use cfg\log\change_values_big;
 use cfg\log\change_values_norm;
@@ -475,6 +477,39 @@ class value_base extends sandbox_value
                 $src->set_name($value);
                 $this->source = $src;
             }
+
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * set the vars of this value object based on the given json without writing to the database
+     * TODO import the description and save it in the group description
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        log_debug();
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+
+        foreach ($in_ex_json as $key => $value) {
+
+            if ($key == json_fields::WORDS) {
+                $phr_lst = new phrase_list($this->user());
+                $phr_lst->merge($dto->phrase_list());
+                $usr_msg->add($phr_lst->import_lst($value, $test_obj));
+                if ($usr_msg->is_ok()) {
+                    $phr_grp = $phr_lst->get_grp_id(false);
+                    $this->set_grp($phr_grp);
+                }
+            }
+
+            $usr_msg->add($this->set_fields_from_json($key, $value, $usr_msg, $do_save));
 
         }
 
