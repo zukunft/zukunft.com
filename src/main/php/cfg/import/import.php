@@ -69,7 +69,6 @@ include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\component\component;
-use cfg\export\export;
 use cfg\formula\formula;
 use cfg\formula\formula_list;
 use cfg\helper\data_object;
@@ -97,11 +96,10 @@ class import
 {
 
     // import assumption
-    const IMPORT_VALIDAT_PCT_TIME = 10;
+    const IMPORT_VALIDATE_PCT_TIME = 10;
 
     // parameters to filter the import
     public ?user $usr = null; // the user who wants to import data
-    public ?string $json_str = null; // a string with the json data to import
     public ?int $users_done = 0;
     public ?int $users_failed = 0;
     public ?int $verbs_done = 0;
@@ -173,38 +171,13 @@ class import
     }
 
     /**
-     * drop a zukunft.com json object to the database
-     *
-     * @param string $json_str the zukunft.com YAML message to import as a string
-     * @param user $usr_trigger the user who has triggered the import
-     * @return user_message the result of the import
-     */
-    function put_json(string $json_str, user $usr_trigger): user_message
-    {
-        $usr_msg = new user_message();
-        $json_array = json_decode($json_str, true);
-        if ($json_array == null) {
-            if ($json_str != '') {
-                $usr_msg->add_message('JSON decode failed of ' . $json_str);
-            } else {
-                $usr_msg->add_warning('JSON string is empty');
-            }
-        } else {
-            $dto = $this->get_data_object_yaml($json_array, $usr_trigger);
-            $usr_msg = $dto->save();
-            $usr_msg->set_checksum($dto->value_list()->count());
-        }
-        return $usr_msg;
-    }
-
-    /**
      * drop a zukunft.com yaml object direct to the database
      *
      * @param string $json_str the zukunft.com JSON message to import as a string
      * @param user $usr_trigger the user who has triggered the import
      * @return user_message the result of the import
      */
-    function put_json_direct(string $json_str, user $usr_trigger): user_message
+    function put_json(string $json_str, user $usr_trigger): user_message
     {
         $usr_msg = new user_message();
         $json_array = json_decode($json_str, true);
@@ -237,7 +210,7 @@ class import
         $this->last_display_time = microtime(true);
 
         $total = $lib->count_recursive($json_array, 3);
-        $val_steps = round(self::IMPORT_VALIDAT_PCT_TIME * $total);
+        $val_steps = round(self::IMPORT_VALIDATE_PCT_TIME * $total);
         $total = $total + $val_steps;
 
         // get the user first to allow user specific validation
@@ -530,83 +503,6 @@ class import
     }
 
     /**
-     * count the number of words or triples within a yaml zukunft.com import array
-     *
-     * @param array $yaml_array
-     * @return int
-     */
-    function yaml_phrase_count(array $yaml_array): int
-    {
-        return count($this->yaml_phrase_names($yaml_array));
-    }
-
-    /**
-     * get a list with the phrase names from a yaml zukunft.com import array
-     * @param array $yaml_array
-     * @return array list of the phrase names used in yaml
-     */
-    function yaml_phrase_names(array $yaml_array): array
-    {
-        $lib = new library();
-        $names = array_unique($lib->array_keys_r($yaml_array));
-        return array_diff($names, [words::TOOLTIP_COMMENT]);
-    }
-
-    /**
-     * get a list with the word names from a yaml zukunft.com import array
-     * @param array $yaml_array
-     * @return array list of the word names used in yaml
-     */
-    function yaml_word_names(array $yaml_array): array
-    {
-        $names = $this->yaml_phrase_names($yaml_array);
-        $wrd_names = [];
-        foreach ($names as $name) {
-            $name = trim($name);
-            if (!str_contains($name, ' ')) {
-                $wrd_names[] = $name;
-            }
-        }
-        return $wrd_names;
-    }
-
-    /**
-     * get a list with the all word names (split triples) from a yaml zukunft.com import array
-     * @param array $yaml_array
-     * @return array list of the word names used in yaml
-     */
-    function yaml_word_names_all(array $yaml_array): array
-    {
-        $names = $this->yaml_phrase_names($yaml_array);
-        $wrd_names = [];
-        foreach ($names as $name) {
-            $name = trim($name);
-            if (str_contains($name, ' ')) {
-                $wrd_names[] = $name;
-            }
-        }
-        return $wrd_names;
-    }
-
-    /**
-     * get a list with the triple names from a yaml zukunft.com import array
-     * @param array $yaml_array
-     * @return array list of the triple names used in yaml
-     */
-    function yaml_triple_names(array $yaml_array): array
-    {
-        $names = $this->yaml_phrase_names($yaml_array);
-        $wrd_names = [];
-        foreach ($names as $name) {
-            $name = trim($name);
-            if (str_contains($name, ' ')) {
-                $wrd_names[] = $name;
-            }
-        }
-        return $wrd_names;
-    }
-
-    /**
      * create a data object based on a json zukunft.com import array
      *
      * @param array $json_array the array of a zukunft.com yaml
@@ -643,10 +539,9 @@ class import
     }
 
     /**
-     * @param array $json_array
-     * @param user $usr_trigger
-     * @param data_object $dto
-     * @return data_object
+     * check the import message header
+     * @param array $json_array the complete json import message as an array
+     * @return user_message if something is not fine the message that should be shown to the user
      */
     private function message_check(array $json_array): user_message
     {
@@ -673,9 +568,9 @@ class import
     ): user_message
     {
         $usr_msg = new user_message();
-        foreach ($json_array as $word) {
+        foreach ($json_array as $wrd_json) {
             $wrd = new word($usr_trigger);
-            $usr_msg->add($wrd->import_mapper($word));
+            $usr_msg->add($wrd->import_mapper($wrd_json));
             $dto->add_word($wrd);
         }
         return $usr_msg;
@@ -695,9 +590,9 @@ class import
     ): user_message
     {
         $usr_msg = new user_message();
-        foreach ($json_array as $word) {
+        foreach ($json_array as $trp_json) {
             $trp = new triple($usr_trigger);
-            $usr_msg->add($trp->import_mapper($word, $dto));
+            $usr_msg->add($trp->import_mapper($trp_json, $dto));
             $dto->add_triple($trp);
         }
         return $usr_msg;
@@ -739,9 +634,9 @@ class import
     ): user_message
     {
         $usr_msg = new user_message();
-        foreach ($json_array as $src_json) {
+        foreach ($json_array as $val_json) {
             $val = new value($usr_trigger);
-            $usr_msg->add($val->import_mapper($src_json, $dto));
+            $usr_msg->add($val->import_mapper($val_json, $dto));
             $dto->add_value($val);
         }
         return $usr_msg;
@@ -761,9 +656,9 @@ class import
     ): user_message
     {
         $usr_msg = new user_message();
-        foreach ($json_array as $word) {
+        foreach ($json_array as $frm_json) {
             $frm = new formula($usr_trigger);
-            $usr_msg->add($frm->import_mapper($word, $dto));
+            $usr_msg->add($frm->import_mapper($frm_json, $dto));
             $dto->add_formula($frm);
         }
         return $usr_msg;
@@ -878,14 +773,12 @@ class import
                     $dto = $this->get_data_object_yaml_loop($dto, $sub_phr_lst, $value, $wrd, $trp, $val, $usr_trigger);
                 } else {
                     // remember the value
+                    $val = new value($usr_trigger);
+                    $val->set_phrase_lst($sub_phr_lst);
                     if (is_string($value)) {
-                        $val = new value($usr_trigger);
-                        $val->set_phrase_lst($sub_phr_lst);
                         // TODO Prio 1
                         log_warning('string value not yet implemented');
                     } else {
-                        $val = new value($usr_trigger);
-                        $val->set_phrase_lst($sub_phr_lst);
                         $val->set_value($value);
                     }
                 }

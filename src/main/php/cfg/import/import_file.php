@@ -61,7 +61,7 @@ class import_file
                 $msg .= ' failed because message file is empty of not found.';
             } else {
                 $import = new import;
-                $import_result = $import->put_json_direct($json_str, $usr);
+                $import_result = $import->put_json($json_str, $usr);
                 if ($import_result->is_ok()) {
                     $msg .= ' done ('
                         . $import->words_done . ' words, '

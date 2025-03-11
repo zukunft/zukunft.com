@@ -90,10 +90,16 @@ class import_tests
         $dto = $imp->get_data_object($json_array, $usr);
         $t->assert($test_name, $dto->value_list()->count(), 4);
 
+        $test_name = 'JSON import formula count';
+        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . '/unit_tests/formulas.json');
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr);
+        $t->assert($test_name, $dto->formula_list()->count(), 3);
+
         $test_name = 'JSON import warning creation';
         $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'warning_and_error_test.json');
         $imp = new import;
-        $result = $imp->put_json_direct($json_str, $usr);
+        $result = $imp->put_json($json_str, $usr);
         $target = 'Unknown element test';
         $t->assert($test_name, $result->get_last_message(), $target);
 
