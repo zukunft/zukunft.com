@@ -537,7 +537,7 @@ class triple_list extends sandbox_list_named
      */
 
     /**
-     * convert the word list object into a phrase list object
+     * convert this triple list object into a phrase list object
      * @return phrase_list with all triples of this list as a phrase
      */
     function phrase_lst(): phrase_list
@@ -545,6 +545,21 @@ class triple_list extends sandbox_list_named
         $phr_lst = new phrase_list($this->user());
         foreach ($this->lst() as $lnk) {
             $phr_lst->add($lnk->phrase());
+        }
+        return $phr_lst;
+    }
+
+    /**
+     * convert this triple list object into a phrase list object
+     * and use the name as the unique key instead of the database id
+     * used for the data_object based import
+     * @return phrase_list with all triples of this list as a phrase
+     */
+    function phrase_lst_of_names(): phrase_list
+    {
+        $phr_lst = new phrase_list($this->user());
+        foreach ($this->lst() as $lnk) {
+            $phr_lst->add_by_name($lnk->phrase());
         }
         return $phr_lst;
     }

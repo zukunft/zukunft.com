@@ -80,9 +80,9 @@ class ListOfIdObjects
     /**
      * TODO check if a more specific return object can be used
      * @param string|int $key the key of the lst array
-     * @return IdObject|TextIdObject|CombineObject the found user sandbox object or null if no id is found
+     * @return IdObject|TextIdObject|CombineObject|null the found user sandbox object or null if no id is found
      */
-    function get(string|int $key): IdObject|TextIdObject|CombineObject
+    function get(string|int $key): IdObject|TextIdObject|CombineObject|null
     {
         return $this->lst[$key];
     }

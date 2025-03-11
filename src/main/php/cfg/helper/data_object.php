@@ -205,12 +205,13 @@ class data_object
     }
 
     /**
+     * the phrase list merged by the name, not the database id
      * @return phrase_list with the words and triples of this data object
      */
     function phrase_list(): phrase_list
     {
-        $phr_lst = $this->word_list()->phrase_lst();
-        $phr_lst->merge($this->triple_list()->phrase_lst());
+        $phr_lst = $this->word_list()->phrase_lst_of_names();
+        $phr_lst->merge_by_name($this->triple_list()->phrase_lst_of_names());
         return $phr_lst;
     }
 

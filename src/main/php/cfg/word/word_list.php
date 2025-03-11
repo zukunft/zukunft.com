@@ -1231,8 +1231,6 @@ class word_list extends sandbox_list_named
      */
     function phrase_lst(): phrase_list
     {
-        log_debug($this->dsp_id());
-        $lib = new library();
         $phr_lst = new phrase_list($this->user());
         foreach ($this->lst() as $phr) {
             if (get_class($phr) == word::class) {
@@ -1244,7 +1242,27 @@ class word_list extends sandbox_list_named
             }
         }
         $phr_lst->id_lst();
-        log_debug('done ' . $lib->dsp_count($phr_lst->lst()));
+        return $phr_lst;
+    }
+
+    /**
+     * convert the word list object into a phrase list object
+     * and use the word name instead of the database id as the unique key
+     * @return phrase_list with all words of this list
+     */
+    function phrase_lst_of_names(): phrase_list
+    {
+        $phr_lst = new phrase_list($this->user());
+        foreach ($this->lst() as $phr) {
+            if (get_class($phr) == word::class) {
+                $phr_lst->add_by_name($phr->phrase());
+            } elseif (get_class($phr) == phrase::class) {
+                $phr_lst->add_by_name($phr);
+            } else {
+                log_err('unexpected object type ' . get_class($phr));
+            }
+        }
+        $phr_lst->id_lst();
         return $phr_lst;
     }
 

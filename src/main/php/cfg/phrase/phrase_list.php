@@ -167,50 +167,24 @@ class phrase_list extends sandbox_list_named
      */
     function import_mapper(array $json_obj, data_object $dto = null, object $test_obj = null): user_message
     {
-        global $phr_typ_cac;
-
         $usr_msg = new user_message();
-        if ($dto != null) {
-            $phr_lst = $dto->phrase_list();
-        } else {
-            $phr_lst = $this;
-        }
-        foreach ($json_obj as $phr_name) {
-            if ($phr_name != '') {
-                $new_phr = new phrase($this->user());
-                if ($usr_msg->is_ok()) {
-                    if (!$test_obj) {
-                        // TODO prevent that this happens at all
-                        if (is_array($phr_name)) {
-                            $lib = new library();
-                            log_err($lib->dsp_array($phr_name) . ' is expected to be a string');
-                            // TODO remove this fallback solution
-                            if (count($phr_name) == 1) {
-                                $phr_name = $phr_name[0];
-                            }
-                        }
-                        if (!is_array($phr_name)) {
-                            $phr = $phr_lst->get($phr_name);
-                            if ($phr == null) {
-                                $phr = $new_phr;
-                                $phr->set_name($phr_name);
-                                $phr_lst->add($phr);
-                            }
-                        }
-                    } else {
-                        // fallback for unit tests
-                        $new_phr->set_name($phr_name, word::class);
-                        $new_phr->set_id($test_obj->seq_id());
-                    }
-                }
-                $this->add($new_phr);
-            }
-        }
+        $phr_lst = $dto->phrase_list();
 
-        // save the word in the database
-        // TODO check why this is needed
-        if ($usr_msg == '' and $test_obj == null) {
-            $usr_msg->add($this->save());
+        foreach ($json_obj as $phr_name) {
+            if ($phr_name == '') {
+                $usr_msg->add_message(implode(',', $json_obj) . ' contains an empty phrase name');
+            } else {
+                if ($usr_msg->is_ok()) {
+                    $phr = $phr_lst->get_by_name($phr_name);
+                    if ($phr == null) {
+                        $usr_msg->add_message('word or triple for ' . $phr_name . ' is missing in the import message');
+                        $phr = new phrase($this->user());
+                        $phr->set_name($phr_name);
+                        $phr_lst->add_by_name($phr);
+                    }
+                    $this->add_by_name($phr);
+                }
+            }
         }
 
         return $usr_msg;
@@ -1418,6 +1392,21 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * merge as a function, because the array_merge does not create an object
+     * @return phrase_list this all phrases of this and the given list
+     */
+    function merge_by_name($new_phr_lst): phrase_list
+    {
+        log_debug($new_phr_lst->dsp_id() . ' to ' . $this->dsp_id());
+        if (!$new_phr_lst->is_empty()) {
+            foreach ($new_phr_lst->lst() as $new_phr) {
+                $this->add_by_name($new_phr);
+            }
+        }
+        return $this;
+    }
+
+    /**
      * remove a list of phrases from this phrase list
      * e.g. out of "2014", "2015", "2016", "2017"
      *      with the filter "2016", "2017","2018"
@@ -2280,8 +2269,8 @@ class phrase_list extends sandbox_list_named
      * @return bool true if at least one triple found
      */
     function load_by_phr(
-        phrase $phr,
-        ?verb $vrb = null,
+        phrase         $phr,
+        ?verb          $vrb = null,
         foaf_direction $direction = foaf_direction::BOTH
     ): bool
     {

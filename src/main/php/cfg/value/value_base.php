@@ -494,23 +494,64 @@ class value_base extends sandbox_value
      */
     function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
     {
-        log_debug();
+
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
-        foreach ($in_ex_json as $key => $value) {
-
-            if ($key == json_fields::WORDS) {
-                $phr_lst = new phrase_list($this->user());
-                $phr_lst->merge($dto->phrase_list());
-                $usr_msg->add($phr_lst->import_lst($value, $test_obj));
-                if ($usr_msg->is_ok()) {
-                    $phr_grp = $phr_lst->get_grp_id(false);
-                    $this->set_grp($phr_grp);
-                }
+        if (key_exists(json_fields::WORDS, $in_ex_json)) {
+            $phr_lst = new phrase_list($this->user());
+            $usr_msg->add($phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $dto, $test_obj));
+            if ($usr_msg->is_ok()) {
+                $phr_grp = $phr_lst->get_grp_id(false);
+                $this->set_grp($phr_grp);
             }
+        }
 
-            $usr_msg->add($this->set_fields_from_json($key, $value, $usr_msg, $do_save));
+        if (key_exists(json_fields::SOURCE_NAME, $in_ex_json)) {
+            $src_name = $in_ex_json[json_fields::SOURCE_NAME];
+            $src = $dto->source_list()->get_by_name($src_name);
+            if ($src == null) {
+                $usr_msg->add_message('source of ' . $src_name . ' is missing in the import message');
+                $src = new source($this->user());
+                $src->set_name($src_name);
+                $dto->source_list()->add_by_name($src);
+            }
+            $this->source = $src;
+        }
 
+        return $this->common_mapper($in_ex_json, $usr_msg);
+    }
+
+    /**
+     * set the vars of this value object based on the given json
+     * that are the same for the api and the import mapper
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg the user message object to remember the message that should be shown to the user
+     * @return user_message the enriched user message
+     */
+    private function common_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg
+    ): user_message
+    {
+        $lib = new library();
+
+        if (key_exists(json_fields::TIMESTAMP, $in_ex_json)) {
+            $value = $in_ex_json[json_fields::TIMESTAMP];
+            if (strtotime($value)) {
+                $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
+            } else {
+                $usr_msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
+            }
+        }
+
+        if (key_exists(json_fields::NUMBER, $in_ex_json)) {
+            $value = $in_ex_json[json_fields::NUMBER];
+            if (is_numeric($value)) {
+                $this->set_value($value);
+            } else {
+                $usr_msg->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+            }
         }
 
         return $usr_msg;
