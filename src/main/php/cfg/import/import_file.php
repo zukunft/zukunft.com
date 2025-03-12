@@ -47,9 +47,10 @@ class import_file
      *
      * @param string $filename
      * @param user $usr
+     * @param bool $direct true if each object should be saved separate in the database 
      * @return string
      */
-    function json_file(string $filename, user $usr): string
+    function json_file(string $filename, user $usr, bool $direct = true): string
     {
         $msg = '';
 
@@ -61,7 +62,11 @@ class import_file
                 $msg .= ' failed because message file is empty of not found.';
             } else {
                 $import = new import;
-                $import_result = $import->put_json($json_str, $usr);
+                if ($direct) {
+                    $import_result = $import->put_json_direct($json_str, $usr);
+                } else {
+                    $import_result = $import->put_json($json_str, $usr);
+                }
                 if ($import_result->is_ok()) {
                     $msg .= ' done ('
                         . $import->words_done . ' words, '
@@ -193,7 +198,7 @@ class import_file
      * TODO load this configuration on first start of zukunft
      * TODO add a check bottom for admin to reload the base configuration
      */
-    function import_base_config(user $usr): string
+    function import_base_config(user $usr, bool $direct = true): string
     {
         $result = '';
         log_info('base setup',
@@ -203,9 +208,9 @@ class import_file
             $usr, true
         );
 
-        foreach (files::BASE_CONFIG_FILES as $filename) {
+        foreach (files::BASE_CONFIG_FILES_DIRECT as $filename) {
             $this->echo('load ' . $filename);
-            $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr);
+            $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct);
         }
 
         log_debug('load base config ... done');
@@ -229,8 +234,13 @@ class import_file
 
         foreach (TEST_IMPORT_FILE_LIST as $filename) {
             $this->echo('load ' . $filename);
+            $result .= $this->json_file(PATH_TEST_IMPORT_FILES . $filename, $usr, false);
+        }
+        foreach (TEST_DIRECT_IMPORT_FILE_LIST as $filename) {
+            $this->echo('load ' . $filename);
             $result .= $this->json_file(PATH_TEST_IMPORT_FILES . $filename, $usr);
         }
+
 
         log_debug('import test ... done');
 

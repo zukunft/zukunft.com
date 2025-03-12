@@ -596,46 +596,74 @@ class triple_list extends sandbox_list_named
     {
         $usr_msg = new user_message();
 
-        // get names of the used phrases
-        $phr_lst = $this->phrase_parts();
+        if ($this->is_empty()) {
+            log_info('no triples to save');
+        } else {
+            // get names of the used phrases
+            $phr_lst = $this->phrase_parts();
 
-        // check if any needed phrases have not yet a db id
-        $phr_to_load = $phr_lst->missing_ids();
-        $names_to_load = $phr_to_load->names();
-        $phr_loaded = new phrase_list($this->user());
-        $phr_loaded->load_by_names($names_to_load);
-        $phr_to_load->fill_by_name($phr_loaded);
-        if (!$phr_to_load->is_empty()) {
-            log_err('Unexpected missing phrases ' . $phr_to_load->dsp_id());
+            // check if any needed phrases have not yet a db id
+            $phr_to_load = $phr_lst->missing_ids();
+            $names_to_load = $phr_to_load->names();
+            $phr_loaded = new phrase_list($this->user());
+            $phr_loaded->load_by_names($names_to_load);
+            $phr_to_load->fill_by_name($phr_loaded);
+            if (!$phr_to_load->is_empty()) {
+                log_err('Unexpected missing phrases ' . $phr_to_load->dsp_id());
+            }
+
+            // get the objects that need to be loaded
+            $cache_names = $cache->names();
+            $load_list = clone $this;
+            $load_list = $load_list->filter_by_name($cache_names);
+
+            // load the objects that are already in the database
+            if (!$load_list->is_empty()) {
+                $db_lst = new triple_list($this->user());
+                $db_lst->load_by_names($load_list->names());
+
+                // TODO check and add missing from and to phrases (or at least report)
+                // get missing words (TODO check if all missing triples are already selected)
+                $wrd_lst = $this->missing_words();
+                if (!$wrd_lst->is_empty()) {
+                    log_warning('words ' . $wrd_lst->dsp_id() . ' added via list insert');
+                    $wrd_lst->save();
+                    // TODO add the id of the loaded words to the triple parts
+                    $this->set_id_by_name($wrd_lst->phrase_lst());
+                }
+                $this->fill_missing_verbs();
+
+                // create any missing sql functions and insert the missing triples
+                $usr_msg->add($this->insert($db_lst));
+
+                // update the existing triples
+                // loop over the triples and check if all needed functions exist
+                // create the missing functions
+                // create blocks of update function calls
+            }
         }
-
-        // get the objects that need to be loaded
-        $cache_names = $cache->names();
-        $load_list = clone $this;
-        $load_list = $load_list->filter_by_name($cache_names);
-
-        // load the objects that are already in the database
-        $db_lst = new triple_list($this->user());
-        $db_lst->load_by_names($load_list->names());
-
-        // TODO check and add missing from and to phrases (or at least report)
-        // get missing words (TODO check if all missing triples are already selected)
-        $wrd_lst = $this->missing_words();
-        if (!$wrd_lst->is_empty()) {
-            log_warning('words ' . $wrd_lst->dsp_id() . ' added via list insert');
-        }
-        $wrd_lst->save();
-        $this->fill_missing_verbs();
-
-        // create any missing sql functions and insert the missing triples
-        $usr_msg->add($this->insert($db_lst));
-
-        // update the existing triples
-        // loop over the triples and check if all needed functions exist
-        // create the missing functions
-        // create blocks of update function calls
 
         return $usr_msg;
+    }
+
+    function set_id_by_name(phrase_list $phr_lst): void
+    {
+        foreach ($this->lst() as $trp) {
+            if ($trp->from_id() == 0) {
+                $phr = $trp->from();
+                $db_phr = $phr_lst->get_by_name($phr->name());
+                if ($db_phr != null) {
+                    $phr->set_id($db_phr->id());
+                }
+            }
+            if ($trp->to_id() == 0) {
+                $phr = $trp->to();
+                $db_phr = $phr_lst->get_by_name($phr->name());
+                if ($db_phr != null) {
+                    $phr->set_id($db_phr->id());
+                }
+            }
+        }
     }
 
     function missing_words(): word_list

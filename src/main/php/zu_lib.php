@@ -644,6 +644,7 @@ use cfg\element\element_type;
 use cfg\formula\formula;
 use cfg\formula\formula_link_type;
 use cfg\formula\formula_type;
+use cfg\helper\config_numbers;
 use cfg\helper\type_lists;
 use cfg\ref\ref;
 use cfg\ref\ref_type;
@@ -1269,13 +1270,16 @@ const DB_TABLE_LIST = [
 # list of all static import files for testing the system consistency
 const PATH_TEST_FILES = ROOT_PATH . 'src/test/resources/';
 const PATH_TEST_IMPORT_FILES = ROOT_PATH . 'src/test/resources/import/';
+const SYSTEM_CONFIG_SAMPLE = PATH_TEST_FILES . 'config_sample.yaml';
 const TEST_IMPORT_FILE_LIST = [
     'countries.json',
     'wikipedia/country-ISO-3166.json',
-    'wikipedia/democratie_index_table.json',
-    'wikipedia/currency.json',
+    'wikipedia/democratie_index_table.json'
+];
+const TEST_DIRECT_IMPORT_FILE_LIST = [
     'companies.json',
-    'wind_investment.json'
+    'wind_investment.json',
+    'wikipedia/currency.json'
 ];
 const TEST_IMPORT_FILE_LIST_ALL = [
     'countries.json',
@@ -1685,6 +1689,7 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
     global $sys_time_start, $sys_script, $errors;
     global $sys_times;
 
+    // TODO check if cookies are actually needed
     // resume session (based on cookies)
     session_start();
 
@@ -1714,6 +1719,7 @@ function prg_restart(string $code_name): sql_db
 {
 
     global $db_con;
+    global $cfg;
 
     // link to database
     $db_con = new sql_db;
@@ -1745,6 +1751,10 @@ function prg_restart(string $code_name): sql_db
         $usr_sys = new user();
         $usr_sys->set_id(user::SYSTEM_ID);
         $usr_sys->name = user::SYSTEM_NAME;
+
+        // load system configuration
+        $cfg = new config_numbers($usr_sys);
+        $cfg->load_cfg($usr_sys);
 
         // preload all types from the database
         $sys_typ_lst = new type_lists();

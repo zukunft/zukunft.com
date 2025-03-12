@@ -55,14 +55,14 @@ class import_tests
         $t->subheader('Import unit tests');
 
         $test_name = 'YAML import word count';
-        $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
+        $yaml_str = file_get_contents(SYSTEM_CONFIG_SAMPLE);
         $json_array = yaml_parse($yaml_str);
         $dto = $imp->get_data_object_yaml($json_array, $usr);
-        $t->assert($test_name, $dto->word_list()->count(), 73);
+        $t->assert($test_name, $dto->word_list()->count(), 80);
         $test_name = 'YAML import triple count';
-        $t->assert($test_name, $dto->triple_list()->count(), 22);
+        $t->assert($test_name, $dto->triple_list()->count(), 24);
         $test_name = 'YAML import value count';
-        $t->assert($test_name, $dto->value_list()->count(), 41);
+        $t->assert($test_name, $dto->value_list()->count(), 47);
         $test_name = 'YAML import sql function count';
         $t->assert($test_name, $dto->word_list()->sql_call_with_par($sc)->count(), 1);
 
@@ -99,7 +99,7 @@ class import_tests
         $test_name = 'JSON import warning creation';
         $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'warning_and_error_test.json');
         $imp = new import;
-        $result = $imp->put_json($json_str, $usr);
+        $result = $imp->put_json_direct($json_str, $usr);
         $target = 'Unknown element test';
         $t->assert($test_name, $result->get_last_message(), $target);
 

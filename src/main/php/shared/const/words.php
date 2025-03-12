@@ -81,6 +81,9 @@ class words
     const ROW = 'row';
     const LIMIT = 'limit';
     const WORD = 'word';
+    const TRIPLE = 'triple';
+    const SOURCE = 'source';
+    const FORMULA = 'formula';
     const CHANGES = 'changes';
     const PERCENT = 'percent';
     const DECIMAL = 'decimal';
@@ -122,11 +125,15 @@ class words
     const UPDATE = 'update';
     const DELETE = 'delete';
     const TABLE = 'table';
+    const FILE = 'file';
+    const READ = 'read';
     const NAME = 'name';
     const PHRASE = 'phrase';
     const MILLISECOND = 'millisecond';
     const SELECT = 'select';
     const INITIAL = 'initial';
+    const IMPORT = 'import';
+    const EXPECTED = 'expected';
     const ENTRY = 'entry';
     const PRESELECT = 'preselect';
     const FUTURE = 'future';

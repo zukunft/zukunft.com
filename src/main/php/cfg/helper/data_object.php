@@ -339,6 +339,12 @@ class data_object
         return $phr;
     }
 
+    function expected_total_import_time(): int
+    {
+        // TODO fill it
+        return 0;
+    }
+
     /**
      * add all words, triples and values to the database
      * or update the database
@@ -348,7 +354,10 @@ class data_object
     {
         $usr_msg = new user_message();
         // save the data lists in order of the dependencies
+        $pos = 10; // where 10 is the time expected for the reading of the import file and the creation of the data object
+        $total = $this->expected_total_import_time();
         $usr_msg->add($this->word_list()->save());
+        //$this->display_progress($pos, $total, word::class);
         $usr_msg->add($this->triple_list()->save($this->word_list()->phrase_lst()));
         $usr_msg->add($this->value_list()->save());
         return $usr_msg;

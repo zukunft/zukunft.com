@@ -1600,18 +1600,22 @@ class word_list extends sandbox_list_named
     {
         $usr_msg = new user_message();
 
-        // load the words that are already in the database
-        $db_lst = new word_list($this->user());
-        $db_lst->load_by_names($this->names());
+        if ($this->is_empty()) {
+            log_info('no words to save');
+        } else {
+            // load the words that are already in the database
+            $db_lst = new word_list($this->user());
+            $db_lst->load_by_names($this->names());
 
-        // create any missing sql functions and insert the missing triples
-        $usr_msg->add($this->insert($db_lst));
+            // create any missing sql functions and insert the missing words
+            $usr_msg->add($this->insert($db_lst));
 
-        // update the existing words
-        // TODO create a test that fields not included in the import message are not updated, but e.g. an empty descrption is updated
-        // loop over the words and check if all needed functions exist
-        // create the missing functions
-        // create blocks of update function calls
+            // update the existing words
+            // TODO create a test that fields not included in the import message are not updated, but e.g. an empty descrption is updated
+            // loop over the words and check if all needed functions exist
+            // create the missing functions
+            // create blocks of update function calls
+        }
 
         return $usr_msg;
     }

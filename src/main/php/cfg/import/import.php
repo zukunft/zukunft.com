@@ -131,6 +131,12 @@ class import
 
     public float $last_display_time;
 
+    function __construct()
+    {
+        $this->last_display_time = microtime(true);
+    }
+
+
     function display_progress(int $pos, int $total, string $topic = ''): void
     {
         $lib = new library();
@@ -171,13 +177,32 @@ class import
     }
 
     /**
-     * drop a zukunft.com yaml object direct to the database
+     * drop a zukunft.com json message object to the database
+     * and check the consistency upfront
      *
      * @param string $json_str the zukunft.com JSON message to import as a string
      * @param user $usr_trigger the user who has triggered the import
      * @return user_message the result of the import
      */
     function put_json(string $json_str, user $usr_trigger): user_message
+    {
+        $usr_msg = new user_message();
+        $imp = new import;
+
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr_trigger, $usr_msg);
+        $usr_msg->add($dto->save());
+        return $usr_msg;
+    }
+
+    /**
+     * drop a zukunft.com json message direct to the database
+     *
+     * @param string $json_str the zukunft.com JSON message to import as a string
+     * @param user $usr_trigger the user who has triggered the import
+     * @return user_message the result of the import
+     */
+    function put_json_direct(string $json_str, user $usr_trigger): user_message
     {
         $usr_msg = new user_message();
         $json_array = json_decode($json_str, true);
@@ -509,31 +534,60 @@ class import
      * @param user $usr_trigger the user who has started the import
      * @return data_object filled based on the yaml array
      */
-    function get_data_object(array $json_array, user $usr_trigger): data_object
+    function get_data_object(
+        array        $json_array,
+        user         $usr_trigger,
+        user_message $usr_msg = new user_message()
+    ): data_object
     {
         $dto = new data_object($usr_trigger);
-        $usr_msg = $this->message_check($json_array);
+        $usr_msg->add($this->message_check($json_array));
+        $pos = 0;
+        // TODO use config vars
+        $total = 10/5; // where 10 is the expected percentage of the total import time used for creating the data_object and 5 the number of import sections
         if ($usr_msg->is_ok()) {
+            // TODO add json_fields::IP_BLACKLIST
+            // TODO add json_fields::USERS
+            // TODO add json_fields::LIST_VERBS
             if (key_exists(json_fields::WORDS, $json_array)) {
                 $wrd_array = $json_array[json_fields::WORDS];
                 $usr_msg->add($this->get_data_object_words($wrd_array, $usr_trigger, $dto));
+                $this->display_progress($pos, $total, word::class);
+                $pos++;
             }
+            // TODO add json_fields::WORD_LIST
             if (key_exists(json_fields::TRIPLES, $json_array)) {
                 $trp_array = $json_array[json_fields::TRIPLES];
                 $usr_msg->add($this->get_data_object_triples($trp_array, $usr_trigger, $dto));
+                $this->display_progress($pos, $total, triple::class);
+                $pos++;
             }
             if (key_exists(json_fields::SOURCES, $json_array)) {
                 $src_array = $json_array[json_fields::SOURCES];
                 $usr_msg->add($this->get_data_object_sources($src_array, $usr_trigger, $dto));
+                $this->display_progress($pos, $total, source::class);
+                $pos++;
             }
+            // TODO add json_fields::REFS
+            // TODO add json_fields::PHRASE_VALUES
             if (key_exists(json_fields::VALUES, $json_array)) {
                 $val_array = $json_array[json_fields::VALUES];
                 $usr_msg->add($this->get_data_object_values($val_array, $usr_trigger, $dto));
+                $this->display_progress($pos, $total, value::class);
+                $pos++;
             }
+            // TODO add json_fields::VALUE_LIST
             if (key_exists(json_fields::FORMULAS, $json_array)) {
                 $frm_array = $json_array[json_fields::FORMULAS];
                 $usr_msg->add($this->get_data_object_formulas($frm_array, $usr_trigger, $dto));
+                $this->display_progress($pos, $total, formula::class);
+                $pos++;
             }
+            // TODO add json_fields::RESULTS
+            // TODO add json_fields::CALC_VALIDATION
+            // TODO add json_fields::VIEWS
+            // TODO add json_fields::COMPONENTS
+            // TODO add json_fields::VIEW_VALIDATION
         }
         return $dto;
     }
@@ -551,6 +605,11 @@ class import
                 $usr_msg->add_message('Import file has been created with version ' . $json_array[json_fields::VERSION] . ', which is newer than this, which is ' . PRG_VERSION);
             }
         }
+        // TODO add json_fields::POD
+        // TODO add json_fields::TIME
+        // TODO add json_fields::SELECTION
+        // TODO add json_fields::DESCRIPTION
+        // TODO add json_fields::USER_NAME
         return $usr_msg;
     }
 
@@ -562,8 +621,8 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function get_data_object_words(
-        array $json_array,
-        user $usr_trigger,
+        array       $json_array,
+        user        $usr_trigger,
         data_object $dto
     ): user_message
     {
@@ -584,8 +643,8 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function get_data_object_triples(
-        array $json_array,
-        user $usr_trigger,
+        array       $json_array,
+        user        $usr_trigger,
         data_object $dto
     ): user_message
     {
@@ -606,8 +665,8 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function get_data_object_sources(
-        array $json_array,
-        user $usr_trigger,
+        array       $json_array,
+        user        $usr_trigger,
         data_object $dto
     ): user_message
     {
@@ -628,8 +687,8 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function get_data_object_values(
-        array $json_array,
-        user $usr_trigger,
+        array       $json_array,
+        user        $usr_trigger,
         data_object $dto
     ): user_message
     {
@@ -650,8 +709,8 @@ class import
      * @return user_message the messages to the user if something has not been fine
      */
     private function get_data_object_formulas(
-        array $json_array,
-        user $usr_trigger,
+        array       $json_array,
+        user        $usr_trigger,
         data_object $dto
     ): user_message
     {

@@ -87,6 +87,7 @@ include_once SHARED_ENUM_PATH . 'user_profiles.php';
 use cfg\component\component_link_type_list;
 use cfg\component\component_type_list;
 use cfg\component\position_type_list;
+use cfg\const\files;
 use cfg\db\sql_db;
 use cfg\element\element_type_list;
 use cfg\formula\formula_link_type_list;
@@ -169,7 +170,7 @@ class all_unit_tests extends test_cleanup
         // run the selected unit tests
         //(new system_tests)->run($this);
         //(new import_tests)->run($this);
-        (new formula_link_tests())->run($this);
+        //(new formula_link_tests())->run($this);
 
         // restore the global vars
         $db_con = $global_db_con;
@@ -207,6 +208,9 @@ class all_unit_tests extends test_cleanup
 
 
             // run the selected db write
+            $imf = new import_file();
+            $import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $usr);
+            $imf->json_file(PATH_TEST_IMPORT_FILES . 'countries.json', $usr, false);
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);
             //(new triple_read_tests())->run($this);
@@ -215,7 +219,7 @@ class all_unit_tests extends test_cleanup
             //(new view_read_tests())->run($this);
             //(new component_read_tests())->run($this);
             //(new graph_tests())->run($this);
-            (new value_read_tests())->run($this);
+            //(new value_read_tests())->run($this);
 
 
             /*
@@ -223,22 +227,22 @@ class all_unit_tests extends test_cleanup
              */
 
             // run the selected db write
-            (new word_write_tests)->run($this);
+            //(new word_write_tests)->run($this);
             //(new word_list_write_tests)->run($this);
-            (new triple_write_tests)->run($this);
+            //(new triple_write_tests)->run($this);
             //(new group_write_tests)->run($this);
             //(new source_write_tests)->run($this);
-            (new ref_write_tests)->run($this);
+            //(new ref_write_tests)->run($this);
             //(new value_write_tests)->run($this);
             //(new formula_write_tests)->run($this);
-            (new formula_link_write_tests)->run($this);
-            (new expression_write_tests)->run($this);
-            (new element_write_tests)->run($this);
-            (new element_write_tests)->run_list($this);
+            //(new formula_link_write_tests)->run($this);
+            //(new expression_write_tests)->run($this);
+            //(new element_write_tests)->run($this);
+            //(new element_write_tests)->run_list($this);
             //(new view_write_tests)->run($this);
-            (new view_link_write_tests)->run($this);
+            //(new view_link_write_tests)->run($this);
             //(new component_write_tests)->run($this);
-            (new component_link_write_tests)->run($this);
+            //(new component_link_write_tests)->run($this);
 
 
             //$import = new import_file();

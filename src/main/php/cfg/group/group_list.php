@@ -59,7 +59,7 @@ use shared\library;
 class group_list extends sandbox_list
 {
 
-    public ?array $time_lst = null;     // the list of the time phrase (the add function)
+    public array $time_lst = [];     // the list of the time phrase (the add function)
     public ?array $grp_ids = null;      // the list of the phrase group ids
 
     // search fields
@@ -661,7 +661,9 @@ class group_list extends sandbox_list
         $result = '';
         // check the object setup
         if (count($this->lst()) <> count($this->time_lst)) {
-            $result .= 'The number of groups (' . $lib->dsp_count($this->lst()) . ') are not equal the number of times (' . $lib->dsp_count($this->time_lst) . ') of this phrase group list';
+            $result .= 'The number of groups (' . $lib->dsp_count($this->lst())
+                . ') are not equal the number of times (' . $lib->dsp_count($this->time_lst)
+                . ') of this phrase group list';
         } else {
 
             $pos = 0;

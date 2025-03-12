@@ -2581,7 +2581,7 @@ class triple extends sandbox_link_named
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
 
         // for triple the type is the phrase type
-        // the type is object specific that why it is not part of snadbox_link_types
+        // the type is object specific that why it is not part of sandbox_link_types
         if ($sbx->type_id() <> $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(

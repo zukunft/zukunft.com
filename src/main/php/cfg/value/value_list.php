@@ -1334,26 +1334,30 @@ class value_list extends sandbox_value_list
     {
         $usr_msg = new user_message();
 
-        // if the group id is not yet set
-        $this->set_grp_ids();
+        if ($this->is_empty()) {
+            log_info('no values to save');
+        } else {
+            // if the group id is not yet set
+            $this->set_grp_ids();
 
-        // load the values already in the database
-        $grp_lst = $this->grp_ids();
-        $db_lst = new value_list($this->user());
-        $db_lst->load_by_ids($grp_lst->ids());
+            // load the values already in the database
+            $grp_lst = $this->grp_ids();
+            $db_lst = new value_list($this->user());
+            $db_lst->load_by_ids($grp_lst->ids());
 
-        // insert the new values
-        foreach ($this->lst() as $val) {
-            if ($val->value() != null) {
-                $usr_msg->add($val->save());
+            // insert the new values
+            foreach ($this->lst() as $val) {
+                if ($val->value() != null) {
+                    $usr_msg->add($val->save());
+                }
             }
+
+            // update the existing values
+
+            // TODO loop over the values and check if all needed functions exist
+            //      create the missing functions
+            //      create blocks of update function calls
         }
-
-        // update the existing values
-
-        // TODO loop over the values and check if all needed functions exist
-        //      create the missing functions
-        //      create blocks of update function calls
 
         return $usr_msg;
     }

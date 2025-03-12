@@ -109,7 +109,7 @@ class config extends value_list
                 $val = shared_config::DEFAULT_PERCENT_DECIMALS;
                 break;
             case [words::ROW, words::LIMIT]:
-                $val = shared_shared_config::ROW_LIMIT;
+                $val = shared_config::ROW_LIMIT;
                 break;
             case [words::DECIMAL, words::POINT]:
                 $val = shared_config::DEFAULT_DEC_POINT;

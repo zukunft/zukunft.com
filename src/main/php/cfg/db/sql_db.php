@@ -2604,7 +2604,7 @@ class sql_db
      * write a database exception to the log table if still possible
      *
      * @param string $msg a text from the calling function that adds an indication what might have caused the issue
-     * @param Exception $e the execption created by the db call
+     * @param Exception $e the exception created by the db call
      * @param string $sql the sql statement that have caused the issue from this code point of view
      * @param int $log_level to prevent further messages in case of fatal errors
      * @return string the message that should be shown to the user
