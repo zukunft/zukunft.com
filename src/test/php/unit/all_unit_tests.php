@@ -83,6 +83,7 @@ include_once MODEL_LOG_PATH . 'change_link.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
+include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\component\component_link_type_list;
 use cfg\component\component_type_list;
@@ -117,23 +118,9 @@ use shared\enum\user_profiles;
 use test\all_tests;
 use test\test_cleanup;
 use unit\import_tests as import_tests;
-use unit_read\component_read_tests;
-use unit_read\formula_read_tests;
-use unit_read\source_read_tests;
-use unit_read\value_read_tests;
-use unit_read\view_read_tests;
-use unit_read\word_read_tests;
 use unit_ui\all_ui_tests;
 use unit_ui\base_ui_tests;
-use unit_write\component_link_write_tests;
-use unit_write\element_write_tests;
-use unit_write\expression_write_tests;
-use unit_write\formula_link_write_tests;
-use unit_write\graph_tests;
-use unit_write\ref_write_tests;
-use unit_write\triple_write_tests;
-use unit_write\view_link_write_tests;
-use unit_write\word_write_tests;
+use const\files as test_files;
 
 class all_unit_tests extends test_cleanup
 {
@@ -210,7 +197,7 @@ class all_unit_tests extends test_cleanup
             // run the selected db write
             $imf = new import_file();
             $import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $usr);
-            $imf->json_file(PATH_TEST_IMPORT_FILES . 'countries.json', $usr, false);
+            $imf->json_file(test_files::IMPORT_COUNTRIES, $usr, false);
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);
             //(new triple_read_tests())->run($this);

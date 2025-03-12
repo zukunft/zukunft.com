@@ -1253,7 +1253,7 @@ class sql_db
         $table_name = $lib->class_to_table($class);
 
         // load the csv
-        $csv_path = PATH_BASE_CODE_LINK_FILES . $table_name . files::CODE_LINK_TYPE;
+        $csv_path = files::CODE_LINK_PATH . $table_name . files::CODE_LINK_TYPE;
 
         $row = 1;
         // TODO ignore empty rows

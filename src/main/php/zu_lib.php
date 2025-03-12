@@ -684,6 +684,7 @@ use cfg\view\view_link_type;
 use cfg\view\view_type;
 use cfg\word\triple;
 use cfg\word\word;
+use const\files as test_files;
 use html\component\component_exe as component;
 use html\html_base;
 use html\view\view as view_dsp;
@@ -795,6 +796,14 @@ const REL_SRC_PATH = REL_ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
 const REL_MAIN_PATH = REL_SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
 const REL_RES_PATH = REL_MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
 const REL_IMAGE_PATH = REL_RES_PATH . 'images' . DIRECTORY_SEPARATOR;
+
+// test path for the initial load of the test files
+const TEST_PATH = SRC_PATH . 'test' . DIRECTORY_SEPARATOR;
+// the test code path
+const TEST_PHP_PATH = TEST_PATH . 'php' . DIRECTORY_SEPARATOR;
+// the test const path
+const TEST_CONST_PATH = TEST_PHP_PATH . 'const' . DIRECTORY_SEPARATOR;
+
 
 
 const DB_SETUP_SQL_FILE = 'zukunft_structure.sql';
@@ -961,11 +970,6 @@ const SQL_STD_CLASSES = [
     sys_log_status_list::class,
     sys_log_function::class
 ];
-
-# list of JSON files that define the base configuration of zukunft.com that is supposed never to be changed
-// TODO make the csv file list based on the class name
-define("PATH_BASE_CONFIG_FILES", ROOT_PATH . 'src/main/resources/');
-const PATH_BASE_CODE_LINK_FILES = PATH_BASE_CONFIG_FILES . 'db_code_links/';
 
 // type classes that have a csv file for the initial load
 const BASE_CODE_LINK_FILES = [
@@ -1263,53 +1267,6 @@ const DB_TABLE_LIST = [
     'user_results_time_series_big'
 ];
 
-/*
- * files
- */
-
-# list of all static import files for testing the system consistency
-const PATH_TEST_FILES = ROOT_PATH . 'src/test/resources/';
-const PATH_TEST_IMPORT_FILES = ROOT_PATH . 'src/test/resources/import/';
-const SYSTEM_CONFIG_SAMPLE = PATH_TEST_FILES . 'config_sample.yaml';
-const TEST_IMPORT_FILE_LIST = [
-    'countries.json',
-    'wikipedia/country-ISO-3166.json',
-    'wikipedia/democratie_index_table.json'
-];
-const TEST_DIRECT_IMPORT_FILE_LIST = [
-    'companies.json',
-    'wind_investment.json',
-    'wikipedia/currency.json'
-];
-const TEST_IMPORT_FILE_LIST_ALL = [
-    'countries.json',
-    'wikipedia/country-ISO-3166.json',
-    'wikipedia/democratie_index_table.json',
-    'wikipedia/currency.json',
-    'travel_scoring.json',
-    'travel_scoring_value_list.json',
-    'companies.json',
-    'wind_investment.json',
-    'ABB_2013.json',
-    'ABB_2017.json',
-    'ABB_2019.json',
-    'NESN_2019.json',
-    'real_estate.json',
-    'Ultimatum_game.json',
-    'COVID-19.json',
-    'personal_climate_gas_emissions_timon.json',
-    'THOMY_test.json'
-];
-
-# list of import files for quick win testing
-/*
-define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('COVID-19.json',
-                                                         'countries.json', 
-                                                         'real_estate.json', 
-                                                         'Ultimatum_game.json')));
-define ("TEST_IMPORT_FILE_LIST_QUICK", serialize (array ('ABB_2013.json','work.json')));
-*/
-define("TEST_IMPORT_FILE_LIST_QUICK", serialize(array('car_costs.json')));
 
 /**
  * for internal functions debugging

@@ -34,6 +34,7 @@ namespace cfg\db;
 
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once SERVICE_PATH . 'config.php';
+include_once MODEL_CONST_PATH . 'files.php';
 include_once MODEL_FORMULA_PATH . 'formula_list.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
@@ -52,6 +53,7 @@ include_once SHARED_PATH . 'library.php';
 
 use cfg\component\component;
 use cfg\config;
+use cfg\const\files;
 use cfg\formula\formula_list;
 use cfg\group\group;
 use cfg\phrase\phrase;
@@ -350,11 +352,11 @@ class db_check
             $sql = 'UPDATE' . ' `users` SET `activation_timeout` = CURRENT_TIMESTAMP WHERE `users`.`activation_timeout` = 0';
             $result .= $db_con->exe_try('Filling missing activation timestamps for users', $sql);
 
-            $sql = file_get_contents(PATH_BASE_CONFIG_FILES . 'db/upgrade/v0.0.3/upgrade_mysql.sql');
+            $sql = file_get_contents(files::RESOURCE_PATH . 'db/upgrade/v0.0.3/upgrade_mysql.sql');
             $result .= $db_con->exe_try('Finally add the new views', $sql);
         }
         if ($db_con->db_type == sql_db::POSTGRES) {
-            $sql = file_get_contents(PATH_BASE_CONFIG_FILES . 'db/upgrade/v0.0.3/upgrade_postgres.sql');
+            $sql = file_get_contents(files::RESOURCE_PATH . 'db/upgrade/v0.0.3/upgrade_postgres.sql');
             //src/main/resources/db/upgrade/v0.0.3/upgrade_postgres.sql
             //$result .= $db_con->exe_try('Finally add the new views', $sql);
         }

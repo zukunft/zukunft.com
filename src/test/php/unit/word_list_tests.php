@@ -37,6 +37,7 @@ include_once WEB_WORD_PATH . 'word_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_CONST_PATH . 'words.php';
+include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -50,6 +51,7 @@ use shared\const\words;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
 use test\test_cleanup;
+use const\files as test_files;
 
 class word_list_tests
 {
@@ -284,7 +286,7 @@ class word_list_tests
         $wrd_lst->add($wrd_measure);
         $wrd_lst->add($wrd_scale);
         $json = $wrd_lst->export_json();
-        $json_expected = json_decode(file_get_contents(PATH_TEST_FILES . 'export/word/word_list.json'));
+        $json_expected = json_decode(file_get_contents(test_files::WORD_LIST));
         $result = $lib->json_is_similar($json, $json_expected);
         // TODO remove, for faster debugging only
         $json_expected_txt = json_encode($json_expected);

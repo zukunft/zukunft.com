@@ -36,62 +36,14 @@ namespace unit_write;
 
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SERVICE_PATH . 'config.php';
+include_once TEST_CONST_PATH . 'files.php';
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\component\component_link_type;
-use cfg\component\component_type;
-use cfg\component\component_type_list;
-use cfg\component\position_type_list;
-use cfg\config;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\element\element;
-use cfg\element\element_type;
-use cfg\element\element_type_list;
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\formula\formula_link_type_list;
-use cfg\formula\formula_type;
-use cfg\formula\formula_type_list;
-use cfg\group\group;
 use cfg\import\import_file;
 use cfg\system\ip_range;
 use cfg\system\job;
-use cfg\system\job_type;
 use cfg\system\job_type_list;
-use cfg\language\language_form_list;
-use cfg\language\language_list;
-use cfg\log\change;
-use cfg\log\change_action;
-use cfg\log\change_action_list;
-use cfg\log\change_field;
-use cfg\log\change_field_list;
-use cfg\log\change_link;
-use cfg\log\change_table;
-use cfg\log\change_table_list;
-use cfg\log\changes_big;
-use cfg\log\changes_norm;
-use cfg\phrase\phrase_type;
-use cfg\phrase\phrase_types;
-use cfg\protection_type;
-use cfg\protection_type_list;
-use cfg\ref\ref;
-use cfg\ref\ref_type;
-use cfg\ref\ref_type_list;
-use cfg\result\result;
-use cfg\share_type;
-use cfg\share_type_list;
-use cfg\ref\source;
-use cfg\source_type;
-use cfg\ref\source_type_list;
-use cfg\system\sys_log;
-use cfg\system\sys_log_function;
-use cfg\sys_log_status;
-use cfg\word\triple;
 use cfg\user\user;
-use cfg\view_type;
-use cfg\view_type_list;
+use const\files as test_files;
 use shared\enum\user_profiles;
 use shared\library;
 use test\all_tests;
@@ -207,7 +159,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 $import = new import_file();
                 $import->import_base_config($usr);
-                $import->import_test_files($usr);
+                $this->import_test_files($usr);
             }
 
             // testing cleanup to remove any remaining test records
@@ -351,6 +303,47 @@ class all_unit_write_tests extends all_unit_read_tests
         echo "\n";
         echo $errors . ' internal errors';
 
+    }
+
+    /**
+     * TODO move HTML code to frontend
+     * import some zukunft.com test json files
+     */
+    function import_test_files(user $usr): string
+    {
+        $result = '';
+        log_info('test import',
+            'import_test_files',
+            'import of the some test json files',
+            'import_test_files',
+            $usr, true
+        );
+
+        $imf = new import_file();
+
+        foreach (test_files::TEST_IMPORT_FILE_LIST as $filename) {
+            $this->echo('load ' . basename($filename));
+            $result .= $imf->json_file($filename, $usr, false);
+        }
+        foreach (test_files::TEST_DIRECT_IMPORT_FILE_LIST as $filename) {
+            $this->echo('load ' . basename($filename));
+            $result .= $imf->json_file($filename, $usr);
+        }
+
+
+        log_debug('import test ... done');
+
+        return $result;
+    }
+
+    /**
+     * display a message immediately to the user
+     * @param string $txt the text that should be should to the user
+     */
+    function echo(string $txt): void
+    {
+        echo $txt;
+        echo "\n";
     }
 
 }

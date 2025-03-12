@@ -39,6 +39,7 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
 include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
 include_once SHARED_CONST_PATH . 'refs.php';
 include_once SHARED_CONST_PATH . 'words.php';
+include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\config;
 use cfg\db\sql_creator;
@@ -62,6 +63,7 @@ use shared\const\refs;
 use shared\const\words;
 use shared\types\api_type;
 use test\test_cleanup;
+use const\files as test_files;
 
 class system_tests
 {
@@ -268,7 +270,7 @@ class system_tests
 
         $t->subheader('Im- and Export tests');
 
-        $json_in = json_decode(file_get_contents(PATH_TEST_FILES . 'unit/system/ip_blacklist.json'), true);
+        $json_in = json_decode(file_get_contents(test_files::RESOURCE_PATH . 'unit/system/ip_blacklist.json'), true);
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
         $ip_range->import_obj($json_in, $t);
@@ -283,7 +285,7 @@ class system_tests
 
         $t->subheader('ip range tests');
 
-        $json_in = json_decode(file_get_contents(PATH_TEST_FILES . 'unit/system/ip_blacklist.json'), true);
+        $json_in = json_decode(file_get_contents(test_files::RESOURCE_PATH . 'unit/system/ip_blacklist.json'), true);
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
         $ip_range->import_obj($json_in, $t);
@@ -400,18 +402,18 @@ class system_tests
         $api_msg = $log->api_json();
         $log_dsp = new sys_log_dsp($api_msg);
         $created = $log_dsp->api_json();
-        $expected = file_get_contents(PATH_TEST_FILES . 'api/system/sys_log.json');
+        $expected = file_get_contents(test_files::SYS_LOG);
         $t->assert('sys_log_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
         // html code for the system log entry for normal users
         $created = $log_dsp->display();
-        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log.html');
+        $expected = file_get_contents(test_files::SYS_LOG_HTML);
         $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 
         // ... and the same for admin users
         $usr_sys_dsp = new user($usr_sys->api_json());
         $created = $log_dsp->display_admin($usr_sys_dsp);
-        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log_admin.html');
+        $expected = file_get_contents(test_files::SYS_LOG_ADMIN);
         $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 
         // create a second system log entry to create a list
@@ -433,16 +435,16 @@ class system_tests
         $log_lst_dsp = new sys_log_list_dsp($log_lst->api_json());
         $usr1_dsp = new user($t->usr1->api_json());
         $created = $log_lst_dsp->api_json([api_type::HEADER], $usr1_dsp);
-        $expected = file_get_contents(PATH_TEST_FILES . 'api/sys_log_list/sys_log_list.json');
+        $expected = file_get_contents(test_files::RESOURCE_PATH . 'api/sys_log_list/sys_log_list.json');
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
         $t->assert('sys_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
         $created = $log_lst_dsp->get_html($usr1_dsp);
-        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log_list.html');
+        $expected = file_get_contents(test_files::RESOURCE_PATH . 'web/system/sys_log_list.html');
         $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
 
         $created = $log_lst_dsp->get_html_page($usr1_dsp);
-        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log_list_page.html');
+        $expected = file_get_contents(test_files::RESOURCE_PATH . 'web/system/sys_log_list_page.html');
         $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
 
 
@@ -455,7 +457,7 @@ class system_tests
         $db_con = new sql_db();
         $db_con->set_class(formula::class);
         $created = $db_con->count_sql();
-        $expected = file_get_contents(PATH_TEST_FILES . 'db/formula/formula_count.sql');
+        $expected = file_get_contents(test_files::FORMULA_COUNT);
         $t->assert_sql('sql_db->count', $created, $expected);
 
     }

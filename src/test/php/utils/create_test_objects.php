@@ -472,7 +472,7 @@ class create_test_objects extends test_base
             }
             $csv_file_name .= sql_db::TABLE_EXTENSION;
             if ($csv_list_type == $type) {
-                $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . files::CODE_LINK_TYPE;
+                $csv_path = files::CODE_LINK_PATH . $csv_file_name . files::CODE_LINK_TYPE;
             }
         }
         return $csv_path;

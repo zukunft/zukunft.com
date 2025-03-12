@@ -219,35 +219,6 @@ class import_file
     }
 
     /**
-     * TODO move HTML code to frontend
-     * import some zukunft.com test json files
-     */
-    function import_test_files(user $usr): string
-    {
-        $result = '';
-        log_info('test import',
-            'import_test_files',
-            'import of the some test json files',
-            'import_test_files',
-            $usr, true
-        );
-
-        foreach (TEST_IMPORT_FILE_LIST as $filename) {
-            $this->echo('load ' . $filename);
-            $result .= $this->json_file(PATH_TEST_IMPORT_FILES . $filename, $usr, false);
-        }
-        foreach (TEST_DIRECT_IMPORT_FILE_LIST as $filename) {
-            $this->echo('load ' . $filename);
-            $result .= $this->json_file(PATH_TEST_IMPORT_FILES . $filename, $usr);
-        }
-
-
-        log_debug('import test ... done');
-
-        return $result;
-    }
-
-    /**
      * display a message immediately to the user
      * @param string $txt the text that should be should to the user
      */

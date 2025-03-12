@@ -39,8 +39,14 @@ class files
      * path
      */
 
-    const RESOURCE_PATH = ROOT_PATH . 'src/main/resources/';
-    const MESSAGE_PATH = self::RESOURCE_PATH . 'messages/';
+    const RESOURCE_PATH = MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
+    const MESSAGE_PATH = self::RESOURCE_PATH . 'messages' . DIRECTORY_SEPARATOR;
+    const DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
+    const DB_UPGRADE_PATH = self::DB_PATH . 'upgrade' . DIRECTORY_SEPARATOR;
+    const DB_UPGRADE_V003_PATH = self::DB_UPGRADE_PATH . 'v0.0.3' . DIRECTORY_SEPARATOR;
+
+    // TODO make the csv file list based on the class name
+    const CODE_LINK_PATH = self::RESOURCE_PATH . 'db_code_links' . DIRECTORY_SEPARATOR;
 
 
     /*

@@ -60,6 +60,7 @@ include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -131,6 +132,7 @@ use shared\library;
 use shared\const\words;
 use shared\types\api_type;
 use shared\types\verbs;
+use const\files as test_files;
 
 // TODO activate
 //use html\group\group as group_dsp;
@@ -145,11 +147,6 @@ const TEST_UNIT_WRITE_PATH = TEST_PHP_PATH . 'unit_write' . DIRECTORY_SEPARATOR;
 const TEST_UNIT_INT_PATH = TEST_PHP_PATH . 'integration' . DIRECTORY_SEPARATOR;   // for integration tests
 const TEST_DEV_PATH = TEST_PHP_PATH . 'dev' . DIRECTORY_SEPARATOR;                // for test still in development
 
-// set all paths of the resources
-const TEST_RES_PATH = TEST_PATH . 'resources' . DIRECTORY_SEPARATOR; // main path for the test resources
-const TEST_RES_API_PATH = TEST_RES_PATH . 'api' . DIRECTORY_SEPARATOR; // path for resources to test the api
-const TEST_RES_WEB_PATH = TEST_RES_PATH . 'web' . DIRECTORY_SEPARATOR; // path for resources to test the frontend
-const TEST_RES_UI_PATH = TEST_RES_WEB_PATH . 'ui' . DIRECTORY_SEPARATOR; // path for resources to test the user interface
 
 // load the system config for testing
 include_once SERVICE_PATH . 'config.php';
@@ -3601,7 +3598,7 @@ class test_base
     function file(string $test_resource_path): string
     {
         $result = '';
-        $filepath = TEST_RES_PATH . $test_resource_path;
+        $filepath = test_files::RESOURCE_PATH . $test_resource_path;
         if ($this->has_file($test_resource_path)) {
             $result = file_get_contents($filepath);
             if ($result === false) {
@@ -3619,7 +3616,7 @@ class test_base
      */
     function has_file(string $test_resource_path): bool
     {
-        return file_exists(TEST_RES_PATH . $test_resource_path);
+        return file_exists(test_files::RESOURCE_PATH . $test_resource_path);
     }
 
 }
