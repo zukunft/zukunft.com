@@ -261,7 +261,6 @@ class all_unit_write_tests extends all_unit_read_tests
 
         $import = new import_file();
         $import->import_base_config($sys_usr);
-        $import->import_config($usr);
         $import->import_config_yaml($usr);
 
         // use the system user again to create the database test datasets

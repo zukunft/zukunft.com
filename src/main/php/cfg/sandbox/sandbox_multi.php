@@ -109,7 +109,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'triple.php';
+//include_once MODEL_WORD_PATH . 'triple.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';

@@ -118,12 +118,12 @@ class sandbox_list extends base_list
     /**
      * add the user sandbox object to the list
      *
-     * @param object $sdb_obj the user sandbox object that should be added to the list
+     * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $sdb_obj the user sandbox object that should be added to the list
      * @param array|null $db_rows is an array of an array with the database values
      * @param bool $load_all force to include also the excluded phrases e.g. for admins
      * @return bool true if at least one object has been loaded
      */
-    protected function rows_mapper_obj(object $sdb_obj, ?array $db_rows, bool $load_all = false): bool
+    protected function rows_mapper_obj(IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $sdb_obj, ?array $db_rows, bool $load_all = false): bool
     {
         $result = false;
         if ($db_rows != null) {
@@ -351,7 +351,7 @@ class sandbox_list extends base_list
             $obj_to_add->set_user($this->user());
             log_warning('missing user set in ' . $this->dsp_id());
         }
-        if ($obj_to_add->user() != $this->user()) {
+        if ($obj_to_add->user() !== $this->user()) {
             if (!$this->user()->is_admin() and !$this->user()->is_system()) {
                 log_warning('Trying to add ' . $obj_to_add->dsp_id()
                     . ' of user ' . $obj_to_add->user()->name()
@@ -586,19 +586,6 @@ class sandbox_list extends base_list
             $result .= sql_type::BIG->extension();
         }
         return $result;
-    }
-
-    /**
-     * @param array $tbl_types list of sql table types that specifies the current case
-     * @return bool true if the list of types specifies that the value has no user overwrites
-     */
-    protected function is_user(array $tbl_types): bool
-    {
-        if (in_array(sql_type::STANDARD, $tbl_types)) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
 }

@@ -209,7 +209,7 @@ class combine_named extends combine_object
      */
     function is_excluded(): bool
     {
-        return $this->obj()?->excluded();
+        return $this->obj()?->is_excluded();
     }
 
     /**

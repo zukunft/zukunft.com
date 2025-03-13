@@ -59,9 +59,6 @@ class files
     // the default system config as a yaml including the pod and the user frontend config
     const SYSTEM_CONFIG = self::RESOURCE_PATH . 'config.yaml';
 
-    // TODO deprecate: the default default system config as a json
-    const SYSTEM_CONFIG_OLD = self::RESOURCE_PATH . 'config.json';
-
     // the system views as a zukunft.com user import json
     const SYSTEM_VIEWS_FILE = 'system_views.json';
     const SYSTEM_VIEWS = self::MESSAGE_PATH . self::SYSTEM_VIEWS_FILE;

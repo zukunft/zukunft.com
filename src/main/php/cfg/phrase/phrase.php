@@ -73,6 +73,8 @@ include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_type.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_FORMULA_PATH . 'formula_link.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
@@ -117,6 +119,8 @@ use cfg\word\word_db;
 use cfg\word\word_list;
 use cfg\word\triple;
 use shared\enum\foaf_direction;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 use shared\json_fields;
 use shared\library;
 use shared\types\phrase_type as phrase_type_shared;
@@ -507,7 +511,7 @@ class phrase extends combine_named
     /**
      * fill this word or triple based on the given phrase
      *
-     * @param phrase|db_object_seq_id $phr word with the values that should been updated e.g. based on the import
+     * @param phrase|db_object_seq_id $phr word with the values that should be updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
     function fill(phrase|db_object_seq_id $phr): user_message
@@ -525,9 +529,9 @@ class phrase extends combine_named
      */
 
     /**
-     * @return word|null
+     * @return word|IdObject|TextIdObject|null the word object or null
      */
-    function word(): word|null
+    function word(): word|IdObject|TextIdObject|null
     {
         if ($this->is_word()) {
             return $this->obj();
@@ -537,9 +541,9 @@ class phrase extends combine_named
     }
 
     /**
-     * @return triple|null
+     * @return triple|IdObject|TextIdObject|null the triple object or null
      */
-    function triple(): triple|null
+    function triple(): triple|IdObject|TextIdObject|null
     {
         if ($this->is_word()) {
             return null;
@@ -1035,8 +1039,7 @@ class phrase extends combine_named
     }
 
 
-    public
-    static function cmp($a, $b): string
+    public static function cmp($a, $b): string
     {
         return strcmp($a->name(), $b->name());
     }

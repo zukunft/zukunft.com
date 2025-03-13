@@ -45,6 +45,9 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par_list;
@@ -56,8 +59,10 @@ use cfg\word\triple_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\triple;
-use cfg\word\word;
 use cfg\word\word_list;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 
 class sandbox_list_named extends sandbox_list
 {
@@ -213,9 +218,9 @@ class sandbox_list_named extends sandbox_list
      * should be cast by the child function get_by_name
      *
      * @param string $name the unique name of the object that should be returned
-     * @return term|phrase|triple|word|null the found user sandbox object or null if no name is found
+     * @return CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string $name): term|phrase|triple|word|null
+    function get_by_name(string $name): CombineObject|IdObject|TextIdObject|null
     {
         $key_lst = $this->name_pos_lst();
         $pos = null;

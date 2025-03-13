@@ -37,7 +37,7 @@ namespace html\sandbox;
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
+//include_once WEB_PHRASE_PATH . 'phrase.php';
 //include_once WEB_PHRASE_PATH . 'term.php';
 include_once WEB_USER_PATH . 'user_message.php';
 //include_once WEB_VIEW_PATH . 'view_list.php';

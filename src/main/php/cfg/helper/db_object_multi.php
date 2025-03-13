@@ -39,7 +39,6 @@ include_once API_OBJECT_PATH . 'api_message.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
 //include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -48,7 +47,6 @@ include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
-use cfg\db\sql_type;
 use cfg\group\group_id;
 use cfg\user\user;
 use cfg\user\user_message;
@@ -78,6 +76,7 @@ class db_object_multi extends db_object_key
      */
     function __construct()
     {
+        parent::__construct();
         $this->id = 0;
     }
 
@@ -146,13 +145,11 @@ class db_object_multi extends db_object_key
      *
      * @param sql_creator $sc with the target db_type set
      * @param int|string $id the id of the user sandbox object
-     * @param ?sql_type $typ if known the value data type to preselect the table
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_id(
         sql_creator $sc,
-        int|string $id,
-        ?sql_type $typ = null
+        int|string  $id
     ): sql_par
     {
         return parent::load_sql_by_id_str($sc, $id);
@@ -196,7 +193,7 @@ class db_object_multi extends db_object_key
         if ($typ_lst->use_header()) {
             global $db_con;
             $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+            $msg = $api_msg->api_header_array($db_con, $this::class, $usr, $vars);
         } else {
             $msg = $vars;
         }
@@ -286,12 +283,10 @@ class db_object_multi extends db_object_key
     /**
      * load a row from the database selected by id
      * @param int|string $id the id of the word, triple, formula, verb, view or view component
-     * @param ?sql_type $typ if known the value data type to preselect the table
      * @return int|string the id of the object found and zero if nothing is found
      */
     function load_by_id(
-        int|string $id,
-        ?sql_type $typ = null
+        int|string $id
     ): int|string
     {
         global $db_con;

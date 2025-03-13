@@ -265,6 +265,7 @@ class sandbox_value extends sandbox_multi
      */
     function __construct(user $usr)
     {
+        $this->grp = new group($usr);
         parent::__construct($usr);
         $this->reset();
     }
@@ -363,7 +364,7 @@ class sandbox_value extends sandbox_multi
      * add a list of phrase names to the value object
      * that should be converted to a group id once all words and triples are added to the database
      *
-     * @param phrase_list $phr_lst a phrase list with the word an triple names but that might not yet have a database id
+     * @param phrase_list $phr_lst a phrase list with the word a triple names but that might not yet have a database id
      * @return void
      */
     function set_phrase_lst(phrase_list $phr_lst): void
@@ -394,7 +395,7 @@ class sandbox_value extends sandbox_multi
     /**
      * set the timestamp of the last update of this value
      *
-     * @param DateTime|null $last_update the timestamp when this value has been updated eiter by the user or a calculatio job
+     * @param DateTime|null $last_update the timestamp when this value has been updated eiter by the user or a calculation job
      * @return void
      */
     function set_last_update(?DateTime $last_update): void
@@ -1282,7 +1283,7 @@ class sandbox_value extends sandbox_multi
      * dummy function to be overwritten by the child value or result objects
      * @param group $grp
      * @param bool $by_source set to true to force the selection e.g. by source phrase group id
-     * @return bool true if the vlaue or result has been loaded
+     * @return bool true if the value or result has been loaded
      */
     function load_by_grp(group $grp, bool $by_source = false): bool
     {
@@ -1302,24 +1303,6 @@ class sandbox_value extends sandbox_multi
     function trp_lst(): triple_list
     {
         return $this->phrase_list()->triples();
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @param object $api_obj frontend API object filled with the database id
-     */
-    function fill_api_obj(object $api_obj): void
-    {
-        parent::fill_api_obj($api_obj);
-
-        $phr_lst = $this->grp()->phrase_list();
-        $api_phr_lst = $phr_lst->api_obj();
-        $api_obj->phrases = $api_phr_lst;
-        $api_obj->set_number($this->value());
     }
 
 
@@ -1442,7 +1425,7 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * set the log entry parameter to delete a object
+     * set the log entry parameter to delete an object
      * @returns change_link with the object presets e.g. th object name
      */
     function log_del(): change
@@ -1910,7 +1893,7 @@ class sandbox_value extends sandbox_multi
         }
         // finally actually create the sql
         $qp->sql = $sc->create_sql_update($id_fields, $id_lst, $fvt_lst);
-        // and remember the paraemeters used
+        // and remember the parameters used
         $qp->par = $sc->par_values();
         return $qp;
     }
@@ -1951,7 +1934,7 @@ class sandbox_value extends sandbox_multi
         } else {
             // TODO add test fpr !$sc_par_lst_used->exclude_sql()
             $qp->sql = $sc->create_sql_delete_fvt($fvt_lst_id, $sc_par_lst_used);
-            // and remember the paraemeters used
+            // and remember the parameters used
             $qp->par = $sc->par_values();
         }
         return $qp;

@@ -41,7 +41,7 @@ namespace html\sandbox;
 
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_WORD_PATH . 'word.php';
+//include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 
 use html\rest_ctrl as api_dsp;

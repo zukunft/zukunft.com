@@ -50,7 +50,7 @@ include_once MODEL_USER_PATH . 'user_profile.php';
 //include_once MODEL_VALUE_PATH . 'value_text.php';
 //include_once MODEL_VALUE_PATH . 'value_geo.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_WORD_PATH . 'triple.php';
+//include_once MODEL_WORD_PATH . 'triple.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_PATH . 'library.php';

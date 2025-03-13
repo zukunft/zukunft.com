@@ -70,7 +70,7 @@ include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
 include_once MODEL_LOG_PATH . 'change.php';
 //include_once MODEL_REF_PATH . 'ref.php';
-include_once MODEL_WORD_PATH . 'triple.php';
+//include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';

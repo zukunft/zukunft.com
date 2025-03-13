@@ -41,7 +41,7 @@ include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_USER_PATH . 'user_message.php';
 //include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_VERB_PATH . 'verb_list.php';
-include_once WEB_WORD_PATH . 'word.php';
+//include_once WEB_WORD_PATH . 'word.php';
 //include_once WEB_WORD_PATH . 'word_list.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';

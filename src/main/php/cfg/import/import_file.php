@@ -135,27 +135,6 @@ class import_file
 
     /**
      * import the initial system configuration
-     * TODO deprecate and replace with import_config_yaml
-     * @param user $usr who has triggered the function
-     * @return bool true if the configuration has imported
-     */
-    function import_config(user $usr): bool
-    {
-        $result = false;
-
-        if ($usr->is_admin() or $usr->is_system()) {
-            $imf = new import_file();
-            $import_result = $imf->json_file(files::SYSTEM_CONFIG_OLD, $usr);
-            if (str_starts_with($import_result, ' done ')) {
-                $result = true;
-            }
-        }
-
-        return $result;
-    }
-
-    /**
-     * import the initial system configuration
      * TODO validate the import by comparing the import with the api message to tne frontend
      *
      * @param user $usr who has triggered the function

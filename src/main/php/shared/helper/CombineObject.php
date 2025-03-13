@@ -76,7 +76,7 @@ class CombineObject
         $this->obj = $obj;
     }
 
-    function obj(): object
+    function obj(): IdObject|TextIdObject|null
     {
         return $this->obj;
     }
