@@ -65,7 +65,7 @@ class import_file
                 if ($direct) {
                     $import_result = $import->put_json_direct($json_str, $usr);
                 } else {
-                    $import_result = $import->put_json($json_str, $usr);
+                    $import_result = $import->put_json($json_str, $usr, basename($filename));
                 }
                 if ($import_result->is_ok()) {
                     $msg .= ' done ('
@@ -180,7 +180,7 @@ class import_file
                 $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                 $yaml_array = yaml_parse($yaml_str);
                 $dto = $imp->get_data_object_yaml($yaml_array, $usr);
-                $dto->save();
+                $dto->save($imp, 'config yaml');
                 $val_diff = $dto->value_list()->diff($cfg);
                 log_warning('These configuration values could not be imported: ' . $val_diff->dsp_id());
                 //log_err('These configuration values could not be imported: ' . $val_diff->dsp_id());

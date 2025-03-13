@@ -37,6 +37,7 @@ namespace cfg\helper;
 // more specific includes are switched off to avoid circular includes
 //include_once MODEL_FORMULA_PATH . 'formula.php';
 //include_once MODEL_FORMULA_PATH . 'formula_list.php';
+//include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_REF_PATH . 'source.php';
@@ -54,9 +55,11 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\formula\formula;
 use cfg\formula\formula_list;
+use cfg\import\import;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\ref\source;
@@ -72,6 +75,7 @@ use cfg\word\triple;
 use cfg\word\triple_list;
 use controller\api_message;
 use shared\json_fields;
+use shared\library;
 use shared\types\api_type_list;
 
 class data_object
@@ -85,6 +89,8 @@ class data_object
 
     private word_list $wrd_lst;
     private triple_list $trp_lst;
+    private phrase_list $phr_lst;
+    private bool $phr_lst_dirty;
     private source_list $src_lst;
     private value_list $val_lst;
     private formula_list $frm_lst;
@@ -108,6 +114,8 @@ class data_object
         $this->set_user($usr);
         $this->wrd_lst = new word_list($usr);
         $this->trp_lst = new triple_list($usr);
+        $this->phr_lst = new phrase_list($usr);
+        $this->phr_lst_dirty = false;
         $this->src_lst = new source_list($usr);
         $this->val_lst = new value_list($usr);
         $this->frm_lst = new formula_list($usr);
@@ -210,9 +218,13 @@ class data_object
      */
     function phrase_list(): phrase_list
     {
-        $phr_lst = $this->word_list()->phrase_lst_of_names();
-        $phr_lst->merge_by_name($this->triple_list()->phrase_lst_of_names());
-        return $phr_lst;
+        if ($this->phr_lst_dirty) {
+            $phr_lst = $this->word_list()->phrase_lst_of_names();
+            $phr_lst->merge_by_name($this->triple_list()->phrase_lst_of_names());
+            $this->phr_lst = $phr_lst;
+            $this->phr_lst_dirty = false;
+        }
+        return $this->phr_lst;
     }
 
     /**
@@ -275,6 +287,7 @@ class data_object
      */
     function add_word(word $wrd): void
     {
+        $this->phr_lst_dirty = true;
         $this->wrd_lst->add_by_name($wrd);
     }
 
@@ -285,6 +298,7 @@ class data_object
      */
     function add_triple(triple $trp): void
     {
+        $this->phr_lst_dirty = true;
         $this->trp_lst->add_by_name($trp);
     }
 
@@ -339,27 +353,66 @@ class data_object
         return $phr;
     }
 
-    function expected_total_import_time(): int
+    function expected_word_import_time(): int
     {
-        // TODO fill it
-        return 0;
+        return $this->word_list()->count() * 10;
     }
 
+    function expected_triple_import_time(): int
+    {
+        return $this->triple_list()->count() * 15;
+    }
+    function expected_value_import_time(): int
+    {
+        return $this->value_list()->count() * 10;
+    }
+    function expected_total_import_time(): int
+    {
+        return $this->expected_word_import_time()
+            + $this->expected_triple_import_time()
+            + $this->expected_value_import_time();
+    }
     /**
      * add all words, triples and values to the database
      * or update the database
+     * @param import $imp the import object that includes the start time of the import
+     * @param string $filename the filename for user info only
      * @return user_message ok or the error message for the user with the suggested solution
      */
-    function save(): user_message
+    function save(import $imp, string $filename = ''): user_message
     {
         $usr_msg = new user_message();
+        $lib = new library();
+
+        // start showing the progress to the user
+        $pos = 12; // where 10 is the time expected for the reading of the import file and the creation of the data object
+        $total = $pos + $this->expected_total_import_time();
+
         // save the data lists in order of the dependencies
-        $pos = 10; // where 10 is the time expected for the reading of the import file and the creation of the data object
-        $total = $this->expected_total_import_time();
+        // import first the words
         $usr_msg->add($this->word_list()->save());
-        //$this->display_progress($pos, $total, word::class);
+
+        // showing to the user that the words have been imported
+        $pos = $pos + $this->expected_word_import_time();
+        $msg = 'import ' . $filename . ' save ' . $lib->class_to_table(word::class);
+        $imp->display_progress($pos, $total, $msg);
+
+        // import the triples
         $usr_msg->add($this->triple_list()->save($this->word_list()->phrase_lst()));
+
+        // showing to the user that the triples have been imported
+        $pos = $pos + $this->expected_triple_import_time();
+        $msg = 'import ' . $filename . ' save ' . $lib->class_to_table(triple::class);
+        $imp->display_progress($pos, $total, $msg);
+
+        // import the values
         $usr_msg->add($this->value_list()->save());
+
+        // showing to the user that the values have been imported
+        $pos = $pos + $this->expected_value_import_time();
+        $msg = 'import ' . $filename . ' save ' . $lib->class_to_table(value::class);
+        $imp->display_progress($pos, $total, $msg);
+
         return $usr_msg;
     }
 

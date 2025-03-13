@@ -133,7 +133,7 @@ class import_tests
 
         $test_name = 'wikipedia data table json to zukunft.com JSON';
         $in_table = file_get_contents(test_files::IMPORT_CURRENCY_WIKI);
-        $json_str = file_get_contents(test_files::IMPORT_CURRENCY);
+        $json_str = file_get_contents(test_files::IMPORT_CURRENCY_CONVERT);
         $context_str = file_get_contents(test_files::IMPORT_CURRENCY_CONTEXT);
         $conv_wiki = new convert_wikipedia_table;
         $conv_str = $conv_wiki->convert_wiki_json(

@@ -196,8 +196,8 @@ class all_unit_tests extends test_cleanup
 
             // run the selected db write
             $imf = new import_file();
-            $import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $usr);
-            $imf->json_file(test_files::IMPORT_COUNTRIES, $usr, false);
+            //$import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $usr);
+            $imf->json_file(test_files::IMPORT_CURRENCY, $usr, false);
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);
             //(new triple_read_tests())->run($this);

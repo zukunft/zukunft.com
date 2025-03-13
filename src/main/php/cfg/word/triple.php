@@ -992,6 +992,7 @@ class triple extends sandbox_link_named
         if ($this->generate_name() != '' and $this->generate_name() != ' ()') {
             $this->name_generated = $this->generate_name();
         }
+
         // remove the given name if not needed
         if ($this->name_given == $this->name_generated) {
             $this->name_given = null;
@@ -1001,6 +1002,7 @@ class triple extends sandbox_link_named
                 $this->name_given = $this->name;
             }
         }
+
         // use the generated name as fallback
         if ($this->name == '') {
             if ($this->name_given != null and $this->name_given != '') {
@@ -1043,6 +1045,11 @@ class triple extends sandbox_link_named
      */
     function name_generated(): ?string
     {
+        if ($this->name_generated == ''
+            and $this->name_given == null
+            and $this->name == '') {
+            $this->name_generated = $this->generate_name();
+        }
         return $this->name_generated;
     }
 
@@ -1124,7 +1131,7 @@ class triple extends sandbox_link_named
         if ($sbx->name_given != null) {
             $this->name_given = $sbx->name_given;
         }
-        if ($sbx->name_generated != null) {
+        if ($sbx->name_generated != '') {
             $this->name_generated = $sbx->name_generated;
         }
         if ($sbx->values != null) {
@@ -2712,25 +2719,29 @@ class triple extends sandbox_link_named
                 $old_name
             );
         }
-        if ($sbx->name_generated() <> $this->name_generated()) {
-            if ($do_log) {
+        // TODO add test case
+        // if the user has not changed the name or the give name the generated name does not need to be taken into account
+        if (!$usr_tbl and ($sbx->name != '' or $sbx->name_given() != '')) {
+            if ($sbx->name_generated() <> $this->name_generated()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME_AUTO,
+                        $cng_fld_cac->id($table_id . self::FLD_NAME_AUTO),
+                        change::FLD_FIELD_ID_SQL_TYP
+                    );
+                }
+                if ($sbx->name_generated() == '') {
+                    $old_name = null;
+                } else {
+                    $old_name = $sbx->name_generated();
+                }
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME_AUTO,
-                    $cng_fld_cac->id($table_id . self::FLD_NAME_AUTO),
-                    change::FLD_FIELD_ID_SQL_TYP
+                    self::FLD_NAME_AUTO,
+                    $this->name_generated(),
+                    self::FLD_NAME_AUTO_SQL_TYP,
+                    $old_name
                 );
             }
-            if ($sbx->name_generated() == '') {
-                $old_name = null;
-            } else {
-                $old_name = $sbx->name_generated();
-            }
-            $lst->add_field(
-                self::FLD_NAME_AUTO,
-                $this->name_generated(),
-                self::FLD_NAME_AUTO_SQL_TYP,
-                $old_name
-            );
         }
         // TODO rename to usage
         if ($sbx->values <> $this->values) {
@@ -2812,7 +2823,8 @@ class triple extends sandbox_link_named
                 $result = $this->name_given();
             } else {
                 // or use the standard generic description
-                $result = $this->name_generated();
+                // but do not generate a new generated name for user sandbox compare
+                $result = $this->name_generated;
             }
         }
 

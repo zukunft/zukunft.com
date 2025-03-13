@@ -92,6 +92,7 @@ class files
     const IMPORT_DEMOCRACY_INDEX = self::IMPORT_WIKIPEDIA_PATH . 'democracy_index_table.json';
     const IMPORT_DEMOCRACY_INDEX_TXT = self::IMPORT_WIKIPEDIA_PATH . 'democracy_index_table.txt';
     const IMPORT_CURRENCY = self::IMPORT_WIKIPEDIA_PATH . 'currency.json';
+    const IMPORT_CURRENCY_CONVERT = self::IMPORT_WIKIPEDIA_PATH . 'currency-convert.json';
     const IMPORT_CURRENCY_WIKI = self::IMPORT_WIKIPEDIA_PATH . 'currency-wiki.json';
     const IMPORT_CURRENCY_CONTEXT = self::IMPORT_WIKIPEDIA_PATH . 'currency-context.json';
 

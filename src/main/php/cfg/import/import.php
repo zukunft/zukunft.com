@@ -145,7 +145,7 @@ class import
         if ($time_since_last_display > UI_MIN_RESPONSE_TIME) {
             $progress = round($pos / $total * 100) . '%';
             //echo '<br><br>import' . $progress . ' done<br>';
-            echo $progress . ' ' . $lib->class_to_name($topic) . "\n";
+            echo $progress . ' ' . $topic . "\n";
             log_debug('import->put ' . $progress);
             $this->last_display_time = microtime(true);
         }
@@ -170,7 +170,7 @@ class import
             }
         } else {
             $dto = $this->get_data_object_yaml($yaml_array, $usr_trigger);
-            $usr_msg = $dto->save();
+            $usr_msg = $dto->save($this, 'config yaml');
             $usr_msg->set_checksum($dto->value_list()->count());
         }
         return $usr_msg;
@@ -182,16 +182,25 @@ class import
      *
      * @param string $json_str the zukunft.com JSON message to import as a string
      * @param user $usr_trigger the user who has triggered the import
+     * @param string $filename the filename for user info only
      * @return user_message the result of the import
      */
-    function put_json(string $json_str, user $usr_trigger): user_message
+    function put_json(string $json_str, user $usr_trigger, string $filename = ''): user_message
     {
         $usr_msg = new user_message();
-        $imp = new import;
 
+        // read the import file
+        $this->display_progress(0, 100, 'read ' . $filename);
         $json_array = json_decode($json_str, true);
-        $dto = $imp->get_data_object($json_array, $usr_trigger, $usr_msg);
-        $usr_msg->add($dto->save());
+
+        // analyse the import file
+        $this->display_progress(2, 100, 'analyse ' . $filename);
+        $dto = $this->get_data_object($json_array, $usr_trigger, $usr_msg, $filename);
+
+        // write to the database
+        $usr_msg->add($dto->save($this, $filename));
+
+        $this->display_progress(100, 100, $filename . ' import done');
         return $usr_msg;
     }
 
@@ -532,19 +541,26 @@ class import
      *
      * @param array $json_array the array of a zukunft.com yaml
      * @param user $usr_trigger the user who has started the import
+     * @param string $filename the filename for user info only
      * @return data_object filled based on the yaml array
      */
     function get_data_object(
         array        $json_array,
         user         $usr_trigger,
-        user_message $usr_msg = new user_message()
+        user_message $usr_msg = new user_message(),
+        string       $filename = ''
     ): data_object
     {
         $dto = new data_object($usr_trigger);
+        $lib = new library();
         $usr_msg->add($this->message_check($json_array));
-        $pos = 0;
+        $pct_file_read = 2; // where 2 is the expected time percent for reading the import file
+        $steps = 5; // where 5 is the number of data objects that are filled with this function
+        $pct_analyse = 10; // where 10 is the expected percentage of the total import time used for creating the data_object
         // TODO use config vars
-        $total = 10/5; // where 10 is the expected percentage of the total import time used for creating the data_object and 5 the number of import sections
+        $pos = $pct_file_read;
+        $total = $pos + $pct_analyse + 100;
+        $sub_topic = 'import ' . $filename . ' count ';
         if ($usr_msg->is_ok()) {
             // TODO add json_fields::IP_BLACKLIST
             // TODO add json_fields::USERS
@@ -552,36 +568,42 @@ class import
             if (key_exists(json_fields::WORDS, $json_array)) {
                 $wrd_array = $json_array[json_fields::WORDS];
                 $usr_msg->add($this->get_data_object_words($wrd_array, $usr_trigger, $dto));
-                $this->display_progress($pos, $total, word::class);
-                $pos++;
+                $pos = $pos + $pct_analyse / $steps;
+                $msg = $sub_topic . $lib->class_to_table(word::class);
+                $this->display_progress($pos, $total, $msg);
             }
             // TODO add json_fields::WORD_LIST
             if (key_exists(json_fields::TRIPLES, $json_array)) {
                 $trp_array = $json_array[json_fields::TRIPLES];
                 $usr_msg->add($this->get_data_object_triples($trp_array, $usr_trigger, $dto));
-                $this->display_progress($pos, $total, triple::class);
-                $pos++;
+                $pos = $pos + $pct_analyse / $steps;
+                $msg = $sub_topic . $lib->class_to_table(triple::class);
+                $this->display_progress($pos, $total, $msg);
             }
             if (key_exists(json_fields::SOURCES, $json_array)) {
                 $src_array = $json_array[json_fields::SOURCES];
                 $usr_msg->add($this->get_data_object_sources($src_array, $usr_trigger, $dto));
-                $this->display_progress($pos, $total, source::class);
-                $pos++;
+                $pos = $pos + $pct_analyse / $steps;
+                $msg = $sub_topic . $lib->class_to_table(source::class);
+                $this->display_progress($pos, $total, $msg);
             }
             // TODO add json_fields::REFS
             // TODO add json_fields::PHRASE_VALUES
             if (key_exists(json_fields::VALUES, $json_array)) {
                 $val_array = $json_array[json_fields::VALUES];
-                $usr_msg->add($this->get_data_object_values($val_array, $usr_trigger, $dto));
-                $this->display_progress($pos, $total, value::class);
-                $pos++;
+                $usr_msg->add($this->get_data_object_values($val_array, $usr_trigger, $dto,
+                    $pos, $total, $pct_analyse / $steps, $sub_topic));
+                $pos = $pos + $pct_analyse / $steps;
+                $msg = $sub_topic . $lib->class_to_table(value::class);
+                $this->display_progress($pos, $total, $msg);
             }
             // TODO add json_fields::VALUE_LIST
             if (key_exists(json_fields::FORMULAS, $json_array)) {
                 $frm_array = $json_array[json_fields::FORMULAS];
                 $usr_msg->add($this->get_data_object_formulas($frm_array, $usr_trigger, $dto));
-                $this->display_progress($pos, $total, formula::class);
-                $pos++;
+                $pos = $pos + $pct_analyse / $steps;
+                $msg = $sub_topic . $lib->class_to_table(formula::class);
+                $this->display_progress($pos, $total, $msg);
             }
             // TODO add json_fields::RESULTS
             // TODO add json_fields::CALC_VALIDATION
@@ -689,14 +711,29 @@ class import
     private function get_data_object_values(
         array       $json_array,
         user        $usr_trigger,
-        data_object $dto
+        data_object $dto,
+        int         $pos = 0,
+        int         $total = 0,
+        float       $total_step = 0,
+        string $sub_topic = ''
     ): user_message
     {
         $usr_msg = new user_message();
+        if (count($json_array) > 0) {
+            $step = $total_step / count($json_array);
+        } else {
+            $step = 0;
+        }
+        $lib = new library();
+        $msg = $sub_topic . $lib->class_to_table(value::class);
         foreach ($json_array as $val_json) {
             $val = new value($usr_trigger);
             $usr_msg->add($val->import_mapper($val_json, $dto));
             $dto->add_value($val);
+            if ($pos != 0 and $total != 0) {
+                $pos = $pos + $step;
+                $this->display_progress($pos, $total, $msg);
+            }
         }
         return $usr_msg;
     }
