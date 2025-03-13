@@ -42,12 +42,10 @@ include_once SHARED_CONST_PATH . 'words.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_USER_PATH . 'user_message.php';
 
-use html\phrase\phrase_list;
 use html\rest_ctrl;
 use html\user\user_message;
 use html\value\value_list;
 use shared\api;
-use shared\const\words;
 use shared\helper\Config as shared_config;
 
 class config extends value_list
@@ -105,18 +103,6 @@ class config extends value_list
      */
     function get_by(array $names): int|float|string|null
     {
-        /*
-        switch ($names) {
-            case [words::PERCENT, words::DECIMAL]:
-                $result = shared_config::DEFAULT_PERCENT_DECIMALS;
-                break;
-            case [words::ROW, words::LIMIT]:
-                $result = shared_config::ROW_LIMIT;
-                break;
-            case [words::DECIMAL, words::POINT]:
-                $result = shared_config::DEFAULT_DEC_POINT;
-        }
-        */
         $val = $this->get_by_names($names);
         return $val?->number();
     }

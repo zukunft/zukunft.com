@@ -39,6 +39,7 @@ include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_HTML_PATH . 'styles.php';
+include_once WEB_GROUP_PATH . 'group.php';
 include_once WEB_GROUP_PATH . 'group_list.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_USER_PATH . 'user_message.php';
@@ -53,6 +54,7 @@ include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'library.php';
 
 use html\button;
+use html\group\group;
 use html\html_base;
 use html\group\group_list;
 use html\phrase\phrase_list;
@@ -129,6 +131,7 @@ class value_list extends list_dsp
         }
         return $result;
     }
+
 
     /*
      * modify

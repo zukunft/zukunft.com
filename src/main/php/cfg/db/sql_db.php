@@ -158,6 +158,8 @@ include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once WEB_HTML_PATH . 'html_base.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
@@ -280,6 +282,8 @@ use Exception;
 use mysqli;
 use mysqli_result;
 use PDOException;
+use shared\const\triples;
+use shared\const\words;
 use shared\enum\user_profiles;
 use shared\library;
 use shared\types\protection_type as protect_type_shared;
@@ -783,11 +787,11 @@ class sql_db
 
     function retry_delay(): int
     {
-        $cfg = new config();
+        global $cfg;
         if ($this->reconnect_delay = 0) {
-            $this->reconnect_delay = $cfg->get(config::DB_RETRY_MIN);
+            $this->reconnect_delay = $cfg->get_by([words::DATABASE, words::RETRY, triples::START_DELAY]);
         } else {
-            $max_delay = $cfg->get(config::DB_RETRY_MAX);
+            $max_delay = $cfg->get_by([words::DATABASE, words::RETRY, triples::MAX_DELAY]);
             if ($this->reconnect_delay * 2 < $max_delay) {
                 $this->reconnect_delay = $this->reconnect_delay * 2;
             }

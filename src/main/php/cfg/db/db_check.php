@@ -150,8 +150,10 @@ class db_check
 
     }
 
-// upgrade the database from any version prior of 0.0.3
-// the version 0.0.3 is the first version, which has a build in upgrade process
+    /**
+     * upgrade the database from any version prior of 0.0.3
+     * the version 0.0.3 is the first version, which has a build in upgrade process
+     */
     function db_upgrade_0_0_3(sql_db $db_con): string
     {
         global $sys_times;

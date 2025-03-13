@@ -188,6 +188,30 @@ class value extends value_base
 
 
     /*
+     * select
+     */
+
+    /**
+     * to select the value if it matches all given phrase names
+     * @param array $names the phrase names for the selection
+     * @return bool true if this values is related to all phrase names
+     */
+    function match_all(array $names): bool
+    {
+        $result = true;
+        $phr_names = $this->phr_lst()->names();
+        foreach ($names as $name) {
+            if ($result) {
+                if (!in_array($name, $phr_names)) {
+                    $result = false;
+                }
+            }
+        }
+        return $result;
+    }
+
+
+    /*
      * sql helper
      */
 

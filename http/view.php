@@ -48,6 +48,7 @@ include_once WEB_PATH . 'frontend.php';
 include_once MODEL_SYSTEM_PATH . 'system_time_list.php';
 include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
+include_once WEB_HELPER_PATH . 'config.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_VALUE_PATH . 'value.php';
 include_once WEB_VIEW_PATH . 'view.php';
@@ -69,6 +70,7 @@ use cfg\view\view;
 use cfg\word\triple;
 use cfg\word\word;
 use html\frontend;
+use html\helper\config;
 use html\html_base;
 use html\rest_ctrl;
 use html\types\type_lists;
@@ -140,6 +142,11 @@ if ($usr->id() > 0) {
     $main = new frontend('view');
     $api_msg = $main->api_get(type_lists::class);
     $frontend_cache = new type_lists($api_msg);
+
+    // load the user changeable configuration once via api
+    global $cfg;
+    $cfg = new config();
+    $cfg->load();
 
     $usr->load_usr_data();
 

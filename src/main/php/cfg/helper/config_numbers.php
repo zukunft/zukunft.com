@@ -169,6 +169,23 @@ class config_numbers extends value_list
 
 
     /*
+     * set and get
+     */
+
+    /**
+     * get a frontend config value selected by the phrase names
+     *
+     * @param array $names with the phrase names to select the config value
+     * @return int|float|string|null with the user specific config value
+     */
+    function get_by(array $names): int|float|string|null
+    {
+        $val = $this->get_by_names($names);
+        return $val?->number();
+    }
+
+
+    /*
      * load
      */
 

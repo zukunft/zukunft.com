@@ -18,7 +18,7 @@ zukunft.com:
         update: 100
         delete: 500
       row limit:
-        tooltip-comment: "initial number of page rows "
+        tooltip-comment: "initial number of page rows"
         default: 20
       import:
         expected time:

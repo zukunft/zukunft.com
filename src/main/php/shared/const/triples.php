@@ -49,6 +49,9 @@ class triples
     const NUMBER_FORMAT = 'number format';
     const PERCENT_DECIMAL = 'percent decimal';
     const BLOCK_SIZE = 'block size';
+    const AVERAGE_DELAY = 'average delay';
+    const START_DELAY = 'start delay';
+    const MAX_DELAY = 'max delay';
 
     // triples included in the initial setup that are used for system testing
     const MATH_CONST = 'Mathematical constant';
