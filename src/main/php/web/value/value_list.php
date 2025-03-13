@@ -108,6 +108,29 @@ class value_list extends list_dsp
 
 
     /*
+     * select
+     */
+
+    /**
+     * get the first value of the list that is related to all given phrase names
+     * TODO use a memory db
+     * @param array $names list of phrase names
+     * @return value|null this first matching value or null if no value is found
+     */
+    function get_by_names(array $names): ?value
+    {
+        $result = null;
+        foreach ($this->lst() as $val) {
+            if ($result == null) {
+                if ($val->match_all($names)) {
+                    $result = $val;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /*
      * modify
      */
 

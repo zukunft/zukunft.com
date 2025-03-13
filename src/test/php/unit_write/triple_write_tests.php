@@ -70,8 +70,7 @@ class triple_write_tests
         $test_name = 'add triple ' . triples::SYSTEM_TEST_ADD_VIA_SQL . ' via sql insert';
         $t->assert_write_via_func_or_sql($test_name, $t->triple_add_by_sql(), false);
         $test_name = 'add triple ' . triples::SYSTEM_TEST_ADD_VIA_FUNC . ' via sql function';
-        // TODO Prio 0 activate
-        //$t->assert_write_via_func_or_sql($test_name, $t->triple_add_by_func(), true);
+        $t->assert_write_via_func_or_sql($test_name, $t->triple_add_by_func(), true);
 
         $t->subheader('triple write sandbox tests for ' . triples::SYSTEM_TEST_ADD);
         //$t->assert_write_link($t->triple_filled_add(), triples::TN_ADD);
@@ -109,6 +108,7 @@ class triple_write_tests
         $test_name = '... check if the link is shown correctly';
         $trp = new triple($t->usr1);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
+        $trp->set_name('');
         $result = $trp->name_generated();
         $target = words::TEST_RENAMED . ' (' . words::TEST_PARENT . ')';
         $t->assert($test_name, $result, $target);
@@ -161,6 +161,7 @@ class triple_write_tests
         // ... check if the link is still used for the first user
         $trp = new triple($t->usr1);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
+        $trp->set_name('');
         $result = $trp->name_generated();
         $target = words::TEST_RENAMED . ' (' . words::TEST_PARENT . ')';
         $t->display('triple->load of "' . $wrd_from->name() . '" ' . verbs::IS . ' "' . $wrd_to->name() . '" is still used for user "' . $t->usr1->name . '"', $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
@@ -261,7 +262,6 @@ class triple_write_tests
         $trp = new triple($t->usr2);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
         $msg = $trp->del();
-
 
 
         // ... and the values have been updated

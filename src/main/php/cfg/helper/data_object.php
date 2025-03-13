@@ -405,6 +405,20 @@ class data_object
         $msg = 'import ' . $filename . ' save ' . $lib->class_to_table(triple::class);
         $imp->display_progress($pos, $total, $msg);
 
+        // TODO create at least a warning if a phrase id is still missing
+        $phr_lst = $this->phrase_list();
+        foreach ($this->value_list()->lst() as $val) {
+            foreach ($val->phrase_list()->lst() as $phr) {
+                if ($phr->id() == 0) {
+                    $phr_reloaded = $phr_lst->get_by_name($phr->name());
+                    if ($phr_reloaded != null) {
+                        $phr->set_id($phr_reloaded->id());
+                        echo 'phrase id for ' . $phr->name() . ' has been zero' . "\n";
+                    }
+                }
+            }
+        }
+
         // import the values
         $usr_msg->add($this->value_list()->save());
 

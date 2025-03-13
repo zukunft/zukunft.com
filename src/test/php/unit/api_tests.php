@@ -79,7 +79,9 @@ use html\helper\data_object as data_object_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use shared\api;
+use shared\const\triples;
 use shared\enum\change_fields;
+use shared\helper\Config as shared_config;
 use shared\library;
 use shared\const\components;
 use shared\const\formulas;
@@ -167,11 +169,25 @@ class api_tests
 
         $cfg = new config();
         $cfg->load();
-        $test_name = 'at least one configuration value must be loaded';
+        $test_name = 'at least one frontend configuration value must be loaded via api message';
         $t->assert_not($test_name, $cfg->count(), 0);
-        $test_name = 'the configuration api message must at least contain the pod name';
+        $test_name = 'the frontend configuration must at least contain some user number format settings';
+        $t->assert_not($test_name, $cfg->get_by([words::USER, triples::NUMBER_FORMAT]),
+            null);
+        $test_name = 'the frontend configuration must at least contain the user settings for the decimal places';
+        $t->assert($test_name, $cfg->get_by([triples::NUMBER_FORMAT, triples::PERCENT_DECIMAL]), shared_config::DEFAULT_PERCENT_DECIMALS);
+        $test_name = 'the frontend configuration should not contain the database block size settings';
         // TODO activate
-        //$t->assert($test_name, $cfg->get([words::POD, words::URL]), POD_NAME);
+        //$t->assert($test_name, $cfg->get_by([words::DATABASE, triples::BLOCK_SIZE]), null);
+
+        $cfg_all = new config();
+        $cfg_all->load(api::CONFIG_ALL);
+        $test_name = 'there must be more configuration values than the frontend configuration values';
+        // TODO activate
+        //$t->assert_greater($test_name, $cfg->count(), $cfg_all->count());
+        $test_name = 'the complete configuration api message must at least contain the pod name';
+        // TODO activate
+        //$t->assert($test_name, $cfg->get_by([words::POD, words::URL]), POD_NAME);
 
         // TODO get frontend configuration values and check if frontend and user config contains less values
         // TODO check if requesting an unknown config part returns an error message

@@ -3309,13 +3309,13 @@ class test_base
                 $lib = new library();
                 $target = $lib->dsp_array($target);
             }
-            $final_msg .= '<p style="color:red">Error</p>';
-            $final_msg .= '<p>' . $test_name . ': ';
+            $final_msg .= '<p style="color:red">Error</p>' . "\n";
+            $final_msg .= '<p>' . $test_name . ': ' . "\n";
             if ($diff_msg != '') {
-                $final_msg .= 'diff: ' . $diff_msg . ', ';
+                $final_msg .= 'diff: ' . $diff_msg . ', ' . "\n";
             }
-            $final_msg .= 'actual: ' . $result . ', ';
-            $final_msg .= 'expected: ' . $target;
+            $final_msg .= 'actual: ' . $result . ', ' . "\n";
+            $final_msg .= 'expected: ' . $target . "\n";
             $this->error_counter++;
             // TODO: create a ticket after version 0.1 where hopefully more than one developer is working on the project
         }

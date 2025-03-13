@@ -45,6 +45,11 @@ class triples
     const SYSTEM_CONFIG = 'system configuration';
     const SYSTEM_CONFIG_ID = 73;
 
+    // triple names used for the system configuration
+    const NUMBER_FORMAT = 'number format';
+    const PERCENT_DECIMAL = 'percent decimal';
+    const BLOCK_SIZE = 'block size';
+
     // triples included in the initial setup that are used for system testing
     const MATH_CONST = 'Mathematical constant';
     const MATH_CONST_ID = 1;

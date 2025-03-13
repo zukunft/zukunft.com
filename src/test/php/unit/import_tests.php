@@ -58,7 +58,7 @@ class import_tests
         $yaml_str = file_get_contents(test_files::SYSTEM_CONFIG_SAMPLE);
         $json_array = yaml_parse($yaml_str);
         $dto = $imp->get_data_object_yaml($json_array, $usr);
-        $t->assert($test_name, $dto->word_list()->count(), 80);
+        $t->assert($test_name, $dto->word_list()->count(), 79);
         $test_name = 'YAML import triple count';
         $t->assert($test_name, $dto->triple_list()->count(), 24);
         $test_name = 'YAML import value count';

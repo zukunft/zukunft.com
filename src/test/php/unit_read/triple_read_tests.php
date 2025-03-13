@@ -84,6 +84,7 @@ class triple_read_tests
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB);
 
         $test_name = 'triple generated name of ' . words::CANTON . ' ' . words::ZH . ' via function';
+        $lnk_canton->set_name('');
         $result = $lnk_canton->name_generated();
         $t->assert($test_name, $result, $target);
 
@@ -95,6 +96,7 @@ class triple_read_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = 'triple generated name of ' . triples::COMPANY_ZURICH . ' via function';
+        $lnk_company->set_name('');
         $target = 'Zurich (Company)';
         $result = $lnk_company->name_generated();
         $t->assert($test_name, $result, $target);

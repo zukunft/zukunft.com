@@ -989,8 +989,10 @@ class triple extends sandbox_link_named
     function set_names(): void
     {
         // update the generated name if needed
-        if ($this->generate_name() != '' and $this->generate_name() != ' ()') {
-            $this->name_generated = $this->generate_name();
+        if ($this->name_given == null and $this->name == '') {
+            if ($this->generate_name() != '' and $this->generate_name() != ' ()') {
+                $this->name_generated = $this->generate_name();
+            }
         }
 
         // remove the given name if not needed
@@ -2094,20 +2096,23 @@ class triple extends sandbox_link_named
     function save_field_name_generated(sql_db $db_con, triple $db_rec, triple $std_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->name_generated <> $this->name_generated()) {
-            $usr_msg->add($this->is_name_used_msg($this->name_generated()));
-            if ($usr_msg->is_ok()) {
-                $log = $this->log_upd_field();
-                if ($db_rec->name_generated == '') {
-                    $log->old_value = null;
-                } else {
-                    $log->old_value = $db_rec->name_generated;
+        // only write the generated name if no name is given
+        if ($this->name_given == null and $this->name == '') {
+            if ($db_rec->name_generated <> $this->name_generated()) {
+                $usr_msg->add($this->is_name_used_msg($this->name_generated()));
+                if ($usr_msg->is_ok()) {
+                    $log = $this->log_upd_field();
+                    if ($db_rec->name_generated == '') {
+                        $log->old_value = null;
+                    } else {
+                        $log->old_value = $db_rec->name_generated;
+                    }
+                    $log->new_value = $this->name_generated();
+                    $log->std_value = $std_rec->name_generated;
+                    $log->row_id = $this->id();
+                    $log->set_field(self::FLD_NAME_AUTO);
+                    $usr_msg->add($this->save_field_user($db_con, $log));
                 }
-                $log->new_value = $this->name_generated();
-                $log->std_value = $std_rec->name_generated;
-                $log->row_id = $this->id();
-                $log->set_field(self::FLD_NAME_AUTO);
-                $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
         return $usr_msg;

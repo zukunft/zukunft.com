@@ -804,6 +804,7 @@ class import
     ): data_object
     {
         foreach ($yml_arr as $key => $value) {
+            // add the tooltip to the last added phrase of value
             if ($key == words::TOOLTIP_COMMENT) {
                 if ($wrd == null and $trp == null and $val == null) {
                     $dto->add_message('yaml is not expected to start with a tooltip-comment');
@@ -849,8 +850,11 @@ class import
                     $trp = $this->yaml_data_object_map_triple($key, $dto, $usr_trigger);
                 } else {
                     // set the name for a normal word
-                    $wrd = new word($usr_trigger);
-                    $wrd->set_name($key);
+                    // but ignore the keyword "sys-conv-value" that is only used as a placeholder for the value
+                    if ($key != words::SYS_CONF_VALUE) {
+                        $wrd = new word($usr_trigger);
+                        $wrd->set_name($key);
+                    }
                 }
                 // add this word or triple to the lists
                 $sub_phr_lst = clone $phr_lst;

@@ -85,11 +85,13 @@ class config extends value_list
     {
         $usr_msg = new user_message();
 
-        $data = array(api::URL_VAR_CONFIG_PART => $part);
+        $data = [];
+        $data[api::URL_VAR_CONFIG_PART] = $part;
+        $data[api::URL_VAR_WITH_PHRASES] = api::URL_VAR_TRUE;
         $rest = new rest_ctrl();
         $json_body = $rest->api_get(config::class, $data);
         $this->api_mapper($json_body);
-        if (!$this->is_empty()) {
+        if ($this->is_empty()) {
             $usr_msg->add_message('config api message is empty');
         }
         return $usr_msg;
@@ -97,24 +99,26 @@ class config extends value_list
 
     /**
      * get a frontend config value selected by the phrase names
+     *
      * @param array $names with the phrase names to select the config value
      * @return int|float|string|null with the user specific config value
      */
-    function get_by_names(array $names): int|float|string|null
+    function get_by(array $names): int|float|string|null
     {
-        $phr_lst = new phrase_list();
-        $val = null;
+        /*
         switch ($names) {
             case [words::PERCENT, words::DECIMAL]:
-                $val = shared_config::DEFAULT_PERCENT_DECIMALS;
+                $result = shared_config::DEFAULT_PERCENT_DECIMALS;
                 break;
             case [words::ROW, words::LIMIT]:
-                $val = shared_config::ROW_LIMIT;
+                $result = shared_config::ROW_LIMIT;
                 break;
             case [words::DECIMAL, words::POINT]:
-                $val = shared_config::DEFAULT_DEC_POINT;
+                $result = shared_config::DEFAULT_DEC_POINT;
         }
-        return $val;
+        */
+        $val = $this->get_by_names($names);
+        return $val?->number();
     }
 
 }

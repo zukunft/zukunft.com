@@ -121,6 +121,7 @@ use unit\import_tests as import_tests;
 use unit_ui\all_ui_tests;
 use unit_ui\base_ui_tests;
 use const\files as test_files;
+use unit_write\triple_write_tests;
 
 class all_unit_tests extends test_cleanup
 {
@@ -197,8 +198,8 @@ class all_unit_tests extends test_cleanup
             // run the selected db write
             $imf = new import_file();
             //$import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $usr);
-            $imf->json_file(test_files::IMPORT_CURRENCY, $usr, false);
-            //(new api_tests())->run($this);
+            //$imf->json_file(test_files::IMPORT_CURRENCY, $usr, false);
+            (new api_tests())->run($this);
             //(new word_read_tests())->run($this);
             //(new triple_read_tests())->run($this);
             //(new source_read_tests())->run($this);
@@ -216,7 +217,7 @@ class all_unit_tests extends test_cleanup
             // run the selected db write
             //(new word_write_tests)->run($this);
             //(new word_list_write_tests)->run($this);
-            //(new triple_write_tests)->run($this);
+            (new triple_write_tests)->run($this);
             //(new group_write_tests)->run($this);
             //(new source_write_tests)->run($this);
             //(new ref_write_tests)->run($this);
