@@ -99,13 +99,13 @@ class files
     const TEST_IMPORT_FILE_LIST = [
         self::IMPORT_COUNTRIES,
         self::IMPORT_COUNTRY_ISO,
-        self::IMPORT_DEMOCRACY_INDEX
+        self::IMPORT_DEMOCRACY_INDEX,
+        self::IMPORT_CURRENCY
     ];
 
     const TEST_DIRECT_IMPORT_FILE_LIST = [
         self::IMPORT_COMPANIES,
         self::IMPORT_WIND_INVESTMENT,
-        self::IMPORT_CURRENCY
     ];
 
     const TEST_IMPORT_FILE_LIST_ALL = [

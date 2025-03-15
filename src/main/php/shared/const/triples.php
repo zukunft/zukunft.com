@@ -52,6 +52,13 @@ class triples
     const AVERAGE_DELAY = 'average delay';
     const START_DELAY = 'start delay';
     const MAX_DELAY = 'max delay';
+    const FILE_READ = 'file read';
+    const OBJECT_CREATION = 'object creation';
+    const EXPECTED_TIME = 'expected time';
+    const BYTES_SECOND = 'bytes second';
+    const ANALYSE_WORDS = 'analyse words';
+    const SAVE_WORDS = 'save words';
+    const AUTOMATIC_CREATE = 'automatic create';
 
     // triples included in the initial setup that are used for system testing
     const MATH_CONST = 'Mathematical constant';

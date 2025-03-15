@@ -23,10 +23,22 @@ zukunft.com:
       import:
         expected time:
           tooltip-comment: "the expected times for the database import"
-          percent:
+          bytes second:
             file read:
-              sys-conf-value: 10
-              tooltip-comment: "the percentage of the total import time that is needed to read the file and create the data object"
+              sys-conf-value: 3216541
+              tooltip-comment: "the estimated bytes per second for pur reading the import file"
+            decode:
+              sys-conf-value: 3216541
+              tooltip-comment: "the estimated bytes per second for decoding the import json file"
+            object creation:
+              sys-conf-value: 76331
+              tooltip-comment: "the estimated bytes per second for creating the objects"
+            analyse words:
+              sys-conf-value: 2653
+              tooltip-comment: "the estimated number of objects that can be created per second"
+            total:
+              sys-conf-value: 16386
+              tooltip-comment: "the estimated bytes per second that can be processed when importing a json"
           millisecond:
             tooltip-comment: "the expected time in milliseconds to add or update on entry in the database"
             word:
@@ -98,7 +110,7 @@ zukunft.com:
           tooltip-comment: "used to preselect phrases for the next value: if 30% or more of the phrases of a list are the same, the probability is high that the next phrase is the same"
     year:
       automatic create: 10
-      tooltip-comment: "the number of futures year automatically created by the system"
+      tooltip-comment: "the number of futures years automatically created by the system"
     view:
       freeze: 20
       tooltip-comment: "the number of view by one user to automatically freeze the view for the user"

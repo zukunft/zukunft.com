@@ -60,7 +60,7 @@ class config_numbers extends value_list
 
     // list of word that should be hidden be default for normal selections
     // TODO check on pod start that these words exists and are of hidden type
-    const HIDDEN_KEYWORDS= [
+    const HIDDEN_KEYWORDS = [
         words::THIS_SYSTEM,
     ];
 
@@ -176,12 +176,19 @@ class config_numbers extends value_list
      * get a frontend config value selected by the phrase names
      *
      * @param array $names with the phrase names to select the config value
+     * @param bool $no_zero if true a non-zero number is returned to avoid decision by zero
      * @return int|float|string|null with the user specific config value
      */
-    function get_by(array $names): int|float|string|null
+    function get_by(array $names, bool $no_zero = false): int|float|string|null
     {
         $val = $this->get_by_names($names);
-        return $val?->number();
+        $num = $val?->number();
+        if ($no_zero) {
+            if ($num == 0 or $num == null) {
+                $num = 1;
+            }
+        }
+        return $num;
     }
 
 

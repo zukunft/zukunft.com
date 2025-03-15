@@ -1809,6 +1809,31 @@ class triple extends sandbox_link_named
      */
 
     /**
+     * check if the object can be added to the database
+     * e.g. if from and to are valid
+     * @return user_message if not valid the message for the user what needs to be changed
+     */
+    function check(): user_message
+    {
+        $usr_msg = new user_message();
+        if ($this->from() == null) {
+            $usr_msg->add_message('triple from phrase is missing');
+        } else {
+            if ($this->from()->id() == 0) {
+                $usr_msg->add_message('triple phrase from id is 0');
+            }
+        }
+        if ($this->to() == null) {
+            $usr_msg->add_message('triple to phrase is missing');
+        } else {
+            if ($this->from()->id() == 0) {
+                $usr_msg->add_message('triple phrase to id is 0');
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
      * check if the word in the database needs to be updated
      * e.g. for import  if this word has only the name set, the protection should not be updated in the database
      *

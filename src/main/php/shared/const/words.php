@@ -133,6 +133,7 @@ class words
     const SELECT = 'select';
     const INITIAL = 'initial';
     const IMPORT = 'import';
+    const DECODE = 'decode';
     const EXPECTED = 'expected';
     const ENTRY = 'entry';
     const PRESELECT = 'preselect';

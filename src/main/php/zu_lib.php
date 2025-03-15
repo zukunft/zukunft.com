@@ -22,6 +22,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO add missing unit tests to frontend classes and check teh test coverage
     TODO move the remaining html function from the backend to the frontend
 
+    TODO add a short group id that leaves out the leading "." space holders
+
     TODO make sure that unit tests does not start any api call
     TODO move all user configuration settings to the config yaml
     TODO test the single html frontend function like $wrd->btn_edit() with the html_tests e.g. word_html_tests
@@ -225,6 +227,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
          if the id request from the master pod takes too long
          or if the word or triple should be a preferred / prime phrase for the pod
     TODO use the PHPUnit test coverage check
+    TODO create a value_ps_data table additional to the value_ts_data table for phrase series data
+    TODO create a result_ts_data table additional to the value_ts_data table for result series data
+    TODO create a result_ps_data table additional to the result_ts_data table for result phrase series data
+    TODO create value_ts_data_* tables with a short group id
     TODO move all sample SQL statements from the unit test to separate files for auto syntax check
     TODO check that all sample SQL statements are checked for the unique name and for mysql syntax
     TODO cleanup the objects and remove all vars not needed any more e.g. id arrays
@@ -915,7 +921,7 @@ The beta test is expected to start with version 0.7
 // global code settings
 // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
 const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
-const UI_MIN_RESPONSE_TIME = 0.1; // minimal time in seconds after that the user should see an update e.g. during long calculations every 2 sec the user should seen the screen updated
+const UI_MIN_RESPONSE_TIME = 0.01; // minimal time in seconds after that the user should see an update e.g. during long calculations every 2 sec the user should seen the screen updated
 const UI_MAX_NAMES = 10;        // default number of names shown of a long list
 const UI_TIMEOUT_START = 200;   // the max number of milliseconds after which the program should react to a user action
 const UI_TIMEOUT_TARGET = 1000; // the target number of milliseconds between a screen update during a long process

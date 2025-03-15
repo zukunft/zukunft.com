@@ -108,12 +108,9 @@ class phrase_list_read_tests
 
         // all children
         $test_name = 'The default number of forecast years is a system configuration parameter';
-        $sys_cfg_root_phr = new phrase($t->usr1);
-        $sys_cfg_root_phr->load_by_name(triples::SYSTEM_CONFIG);
-        $sys_cfg_phr_lst = $sys_cfg_root_phr->all_children();
-        $auto_years = new phrase($t->usr1);
-        $auto_years->load_by_name(config::YEARS_AUTO_CREATE_DSP);
-        $t->assert_contains($test_name, $sys_cfg_phr_lst->names(), $auto_years->name());
+        global $cfg;
+        $auto_years = $cfg->get_by([triples::AUTOMATIC_CREATE, words::YEAR]);
+        $t->assert_greater($test_name, 0, $auto_years);
 
         // Canton is related to Switzerland and Zurich
         $phr_canton = $t->load_phrase(words::CANTON);

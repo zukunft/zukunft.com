@@ -33,14 +33,32 @@ include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_CONST_PATH . 'files.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\const\files;
 use cfg\helper\config_numbers;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\const\triples;
+use shared\const\words;
 
 class import_file
 {
+
+    public float $start_time;
+    public float $start_read;
+    public float $start_analyse;
+    public float $start_save;
+
+    function __construct()
+    {
+        $this->start_time = microtime(true);
+        $this->start_read = microtime(true);
+        $this->start_analyse = microtime(true);
+        $this->start_save = microtime(true);
+    }
+
     /**
      * import a single json file
      * TODO return a user message instead of a string
@@ -52,21 +70,44 @@ class import_file
      */
     function json_file(string $filename, user $usr, bool $direct = true): string
     {
+        global $cfg;
+
+        $import = new import();
         $msg = '';
 
+        // get the relevant config values
+        $read_bytes_per_second = $cfg->get_by(
+            [triples::FILE_READ, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], true);
+        $total_bytes_per_second = $cfg->get_by(
+            [words::TOTAL_PRE, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], true);
+
+        // indicate to the user that the import has started
+        $size = filesize($filename);
+        $time_total = $size / $total_bytes_per_second;
+        $topic = 'import ' . basename($filename);
+        $import->display_progress($time_total, $topic, '(' . round($size/1000) . ' kBytes)', true);
+
+        // read the import file
         $json_str = file_get_contents($filename);
+        $time_read = $size / $read_bytes_per_second;
+        $import->display_progress($time_total, $topic, 'loaded');
+
         if (!$json_str) {
             log_err('Error reading JSON resource ' . $filename);
         } else {
             if ($json_str == '') {
                 $msg .= ' failed because message file is empty of not found.';
             } else {
-                $import = new import;
+
+                // analyse the import file and update the database
+                $import->start_analyse = microtime(true);
                 if ($direct) {
-                    $import_result = $import->put_json_direct($json_str, $usr);
+                    $import_result = $import->put_json_direct($json_str, $usr, basename($filename), $time_total);
                 } else {
-                    $import_result = $import->put_json($json_str, $usr, basename($filename));
+                    $import_result = $import->put_json($json_str, $usr, basename($filename), $time_total);
                 }
+
+                // show the summery to the user
                 if ($import_result->is_ok()) {
                     $msg .= ' done ('
                         . $import->words_done . ' words, '

@@ -53,6 +53,8 @@ include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
 //include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once API_OBJECT_PATH . 'api_message.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -74,6 +76,8 @@ use cfg\word\word_list;
 use cfg\word\triple;
 use cfg\word\triple_list;
 use controller\api_message;
+use shared\const\triples;
+use shared\const\words;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -362,31 +366,45 @@ class data_object
     {
         return $this->triple_list()->count() * 15;
     }
+
     function expected_value_import_time(): int
     {
         return $this->value_list()->count() * 10;
     }
+
     function expected_total_import_time(): int
     {
         return $this->expected_word_import_time()
             + $this->expected_triple_import_time()
             + $this->expected_value_import_time();
     }
+
     /**
      * add all words, triples and values to the database
      * or update the database
      * @param import $imp the import object that includes the start time of the import
      * @param string $filename the filename for user info only
+     * @param float $total the expected total time for the import in seconds
      * @return user_message ok or the error message for the user with the suggested solution
      */
-    function save(import $imp, string $filename = ''): user_message
+    function save(
+        import $imp,
+        string $filename = '',
+        float  $total = 1.0
+    ): user_message
     {
-        $usr_msg = new user_message();
+        global $cfg;
+
         $lib = new library();
+        $usr_msg = new user_message();
+        $msg = 'import ' . $filename;
+
+        // get the relevant config values
+        $time_object = $cfg->get_by([triples::OBJECT_CREATION, words::PERCENT, triples::EXPECTED_TIME, words::IMPORT]);
 
         // start showing the progress to the user
-        $pos = 12; // where 10 is the time expected for the reading of the import file and the creation of the data object
-        $total = $pos + $this->expected_total_import_time();
+        $pos = $time_object; // where 10 is the time expected for the reading of the import file and the creation of the data object
+        $expected_time = $this->expected_total_import_time();
 
         // save the data lists in order of the dependencies
         // import first the words
@@ -394,16 +412,16 @@ class data_object
 
         // showing to the user that the words have been imported
         $pos = $pos + $this->expected_word_import_time();
-        $msg = 'import ' . $filename . ' save ' . $lib->class_to_table(word::class);
-        $imp->display_progress($pos, $total, $msg);
+        $part = 'saved ' . $lib->class_to_table(word::class) . ': ' . $this->word_list()->count();
+        $imp->display_progress($total, $msg, $part);
 
         // import the triples
         $usr_msg->add($this->triple_list()->save($this->word_list()->phrase_lst()));
 
         // showing to the user that the triples have been imported
         $pos = $pos + $this->expected_triple_import_time();
-        $msg = 'import ' . $filename . ' save ' . $lib->class_to_table(triple::class);
-        $imp->display_progress($pos, $total, $msg);
+        $part = 'save ' . $lib->class_to_table(triple::class);
+        $imp->display_progress($total, $msg, $part);
 
         // TODO create at least a warning if a phrase id is still missing
         $phr_lst = $this->phrase_list();
@@ -413,7 +431,7 @@ class data_object
                     $phr_reloaded = $phr_lst->get_by_name($phr->name());
                     if ($phr_reloaded != null) {
                         $phr->set_id($phr_reloaded->id());
-                        echo 'phrase id for ' . $phr->name() . ' has been zero' . "\n";
+                        $usr_msg->add_message('phrase id for ' . $phr->name() . ' has been zero');
                     }
                 }
             }
@@ -424,8 +442,8 @@ class data_object
 
         // showing to the user that the values have been imported
         $pos = $pos + $this->expected_value_import_time();
-        $msg = 'import ' . $filename . ' save ' . $lib->class_to_table(value::class);
-        $imp->display_progress($pos, $total, $msg);
+        $part = 'save ' . $lib->class_to_table(value::class);
+        $imp->display_progress($total, $msg, $part);
 
         return $usr_msg;
     }

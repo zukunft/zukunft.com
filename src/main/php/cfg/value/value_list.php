@@ -1372,7 +1372,11 @@ class value_list extends sandbox_value_list
             // insert the new values
             foreach ($this->lst() as $val) {
                 if ($val->value() != null) {
-                    $usr_msg->add($val->save());
+                    if ($val->id() == 0) {
+                        $usr_msg->add_message('cannot save ' . $val->dsp_id() . ' because id is zero');
+                    } else {
+                        $usr_msg->add($val->save());
+                    }
                 }
             }
 
