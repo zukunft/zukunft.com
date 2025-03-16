@@ -2,7 +2,7 @@
 
 /*
 
-    model/sandbox/protection_type.php - to define if and how an object can changed
+    shared/types/protection_type.php - to define if and how an object can changed
     ---------------------------------
 
     This file is part of zukunft.com - calc with words

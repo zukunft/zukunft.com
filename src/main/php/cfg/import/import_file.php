@@ -77,9 +77,9 @@ class import_file
 
         // get the relevant config values
         $read_bytes_per_second = $cfg->get_by(
-            [triples::FILE_READ, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], true);
+            [triples::FILE_READ, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $total_bytes_per_second = $cfg->get_by(
-            [words::TOTAL_PRE, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], true);
+            [words::TOTAL_PRE, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         // indicate to the user that the import has started
         $size = filesize($filename);

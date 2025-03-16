@@ -71,6 +71,9 @@ zukunft.com:
               tooltip-comment: "maximal number of changes that an user without login can do per day"
         frontend:
           tooltip-comment: "the setting for the user interface"
+          language:
+            sys-conf-value: en
+            tooltip-comment: "the language of the user frontend"
           row limit:
             tooltip-comment: "number of rows to be shown"
             word changes: 20

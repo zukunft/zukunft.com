@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/component/component_type.php - db based ENUM of the component types
-    --------------------------------
+    shared/types/component_type.php - db based ENUM of the component types
+    -------------------------------
 
     list of the view component types that have a coded functionality
     where *_COM is the description for the tooltip

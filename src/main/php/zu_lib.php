@@ -1683,6 +1683,7 @@ function prg_restart(string $code_name): sql_db
 
     global $db_con;
     global $cfg;
+    global $lan;
 
     // link to database
     $db_con = new sql_db;
@@ -1718,6 +1719,7 @@ function prg_restart(string $code_name): sql_db
         // load system configuration
         $cfg = new config_numbers($usr_sys);
         $cfg->load_cfg($usr_sys);
+        $lan = $cfg->language();
 
         // preload all types from the database
         $sys_typ_lst = new type_lists();

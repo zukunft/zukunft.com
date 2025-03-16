@@ -111,7 +111,7 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\word\word;
 use shared\const\groups;
-use shared\enum\messages as msg_enum;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -1238,8 +1238,8 @@ class group extends sandbox_multi
         // init
         $usr_msg = new user_message();
         $mtr = new message_translator();
-        $msg_res = $mtr->txt(msg_enum::IS_RESERVED);
-        $msg_for = $mtr->txt(msg_enum::RESERVED_NAME);
+        $msg_res = $mtr->txt(msg_id::IS_RESERVED);
+        $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 

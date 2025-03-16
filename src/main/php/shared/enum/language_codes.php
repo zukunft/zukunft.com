@@ -2,8 +2,9 @@
 
 /*
 
-    shared/types/formula_types.php - db based ENUM of the formula types
-    ------------------------------
+    shared/enum/languages.php - enum of the user message ids and the text in the default language
+    ------------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -22,23 +23,25 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
-namespace shared\types;
+namespace shared\enum;
 
-class formula_types
+use shared\helper\Translator;
+use shared\types\languages;
+
+enum language_codes: string
 {
 
-    // list of the formula types that have a coded functionality
-    const CALC = "default";    // a normal calculation formula
-    const NEXT = "time_next";  // time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"
-    const THIS = "time_this";  // selects the assumed time term
-    const PREV = "time_prior"; // time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"
-    const REV = "reversible";  // used to define a const value that is not supposed to be changed like pi
+    // predefined language id
+    const EN = 'en';
+
+    // the fallback system language
+    const SYS = self::EN;
 
 }

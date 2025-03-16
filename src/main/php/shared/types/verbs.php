@@ -2,8 +2,8 @@
 
 /*
 
-    model/sandbox/verbs.php - to use the same verb code_id in frontend and backend
-    -----------------------
+    shared/types/verbs.php - to use the same verb code_id in frontend and backend
+    ----------------------
 
     This file is part of zukunft.com - calc with words
 

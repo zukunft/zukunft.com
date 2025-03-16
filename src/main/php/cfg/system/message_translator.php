@@ -46,15 +46,17 @@ class message_translator
      * TODO read translation from yaml and use it
      *
      * @param msg_enum $msg_id the id const of the message that should be shown
-     * @param int $language_id the id const of the message that should be shown
+     * @param string $lan the code id const of the frontend user language
      * @return string the message text in the user specific language that should be shown to the user
      */
-    function txt(msg_enum $msg_id, int $language_id = language::DEFAULT_ID): string
+    function txt(msg_enum $msg_id, string $lan = ''): string
     {
         // to be replaced with a get_cfg function
-        $user_language = 'en';
+        if ($lan == '') {
+            global $lan;
+        }
         // $msg_file = yaml_parse_file('/resources/translation/en.yaml');
-        return $msg_id->text();
+        return $msg_id->text($lan);
     }
 
 }

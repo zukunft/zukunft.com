@@ -69,6 +69,7 @@ class words
     const USER = 'user';
     const FRONTEND = 'frontend';
     const BACKEND = 'backend';
+    const LANGUAGE = 'language';
 
     // e.g. one instance / pod of zukunft.com
     const URL = 'url';

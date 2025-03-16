@@ -66,6 +66,7 @@ include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -91,6 +92,7 @@ use cfg\word\triple;
 use cfg\word\word;
 use shared\const\triples;
 use shared\const\words;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 
@@ -148,16 +150,16 @@ class import
     /**
      * show the progress of an import process
      * @param float $expected_time the expected total as time or percent
-     * @param string $topic the name of the process
-     * @param string $sub_topic the part of the process that is done at the moment
+     * @param string $name of the process
+     * @param string $step the part of the process that is done at the moment
      * @param bool $show if true the message should be preferred shown to the user
      * @param bool $stat if true the statistic of the import should be shown
      * @return void
      */
     function display_progress(
         float  $expected_time,
-        string $topic = '',
-        string $sub_topic = '',
+        string $name = '',
+        string $step = '',
         bool   $show = false,
         bool   $stat = false
     ): void
@@ -166,7 +168,7 @@ class import
         $time_since_last_display = $check_time - $this->last_display_time;
         $real_time = $check_time - $this->start_time;
         if ($stat) {
-            echo $topic . ' ' . round($real_time, 3) . 's ' . $expected_time . ' ' . $sub_topic . "\n";
+            echo $name . ' ' . round($real_time, 3) . 's ' . $expected_time . ' ' . $step . "\n";
         } elseif ($show or ($time_since_last_display > UI_MIN_RESPONSE_TIME)) {
             if ($real_time < 0.001) {
                 $progress = '';
@@ -174,9 +176,9 @@ class import
                 $progress = round($real_time / $expected_time * 100, 1) . '% ';
             }
             //echo '<br><br>import' . $progress . ' done<br>';
-            echo $topic . ' '
+            echo $name . ' '
                 . round($real_time, 3) . 's / ' . round($expected_time, 3) . 's '
-                . $progress . $sub_topic . "\n";
+                . $progress . $step . "\n";
             log_debug('import->put ' . $progress);
             $this->last_display_time = microtime(true);
         }
@@ -225,23 +227,30 @@ class import
     ): user_message
     {
         global $cfg;
+        global $lan;
 
         // get the relevant config values
-        $decode_bytes_per_second = $cfg->get_by([words::DECODE, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT]);
-        $object_creation_bytes_per_second = $cfg->get_by([triples::OBJECT_CREATION, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT]);
+        $decode_bytes_per_second = $cfg->get_by([
+            words::DECODE,
+            triples::BYTES_SECOND,
+            triples::EXPECTED_TIME, words::IMPORT], 1);
+        $object_creation_bytes_per_second = $cfg->get_by([
+            triples::OBJECT_CREATION,
+            triples::BYTES_SECOND,
+            triples::EXPECTED_TIME, words::IMPORT], 1);
 
         $usr_msg = new user_message();
-        $msg = 'import ' . $filename;
+        $name = 'import ' . $filename;
 
         // read the import file
         $size = strlen($json_str);
         $time_decode = $size / $decode_bytes_per_second;
-        $this->display_progress($time_total, $msg, 'decode');
+        $this->display_progress($time_total, $name, 'decode');
         $json_array = json_decode($json_str, true);
 
         // analyse the import file
         $step_start_time = microtime(true);
-        $this->display_progress($time_total, $msg, 'analysing');
+        $this->display_progress($time_total, $name, 'analysing');
         $dto = $this->get_data_object($json_array, $usr_trigger, $usr_msg, $filename, $time_total, $size);
         $step_end_time = microtime(true);
         $expected_analyse_time = $size / $object_creation_bytes_per_second;
@@ -251,7 +260,15 @@ class import
 
         // write to the database
         $usr_msg->add($dto->save($this, $filename, $time_total));
-        $this->display_progress($time_total, $msg, 'done', true);
+
+        // show the import resul
+        if ($usr_msg->is_ok()) {
+            $step = msg_id::DONE->text($lan);
+        } else {
+            $step = $usr_msg->all_message_text();
+        }
+
+        $this->display_progress($time_total, $name, $step, true);
 
         return $usr_msg;
     }
@@ -626,9 +643,9 @@ class import
 
         // get the relevant config values
         $analyse_bytes_per_second = $cfg->get_by([
-            triples::OBJECT_CREATION, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], true);
+            triples::OBJECT_CREATION, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $analyse_words_per_second = $cfg->get_by(
-            [triples::ANALYSE_WORDS, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], true);
+            [triples::ANALYSE_WORDS, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         // estimate the total estimated time for analysing the import data
         $time_analyse = $size / $analyse_bytes_per_second;

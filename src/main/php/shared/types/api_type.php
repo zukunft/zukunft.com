@@ -2,8 +2,8 @@
 
 /*
 
-    api/helper/api_type.php - options of the api messages
-    -----------------------
+    shared/types/api_type.php - options of the api messages
+    -------------------------
 
 
     This file is part of zukunft.com - calc with words

@@ -36,23 +36,19 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'library.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_CONST_PATH . 'triples.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once WEB_USER_PATH . 'user_type_list.php';
+include_once SHARED_ENUM_PATH . 'language_codes.php';
+include_once SHARED_PATH . 'api.php';
 
 use cfg\phrase\phrase;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value_list;
-use shared\api;
 use shared\const\triples;
 use shared\const\words;
+use shared\enum\language_codes;
+use shared\api;
 
 
 class config_numbers extends value_list
@@ -176,16 +172,17 @@ class config_numbers extends value_list
      * get a frontend config value selected by the phrase names
      *
      * @param array $names with the phrase names to select the config value
-     * @param bool $no_zero if true a non-zero number is returned to avoid decision by zero
+     * @param int|float|string|null $fallback if not null the fallback value that should be used
+     *                                        if the configuration value is not found
      * @return int|float|string|null with the user specific config value
      */
-    function get_by(array $names, bool $no_zero = false): int|float|string|null
+    function get_by(array $names, int|float|string|null $fallback = null): int|float|string|null
     {
         $val = $this->get_by_names($names);
         $num = $val?->number();
-        if ($no_zero) {
-            if ($num == 0 or $num == null) {
-                $num = 1;
+        if ($num == 0 or $num == null) {
+            if ($fallback != null) {
+                $num = $fallback;
             }
         }
         return $num;
@@ -260,6 +257,24 @@ class config_numbers extends value_list
     function default_json(): string
     {
         return '';
+    }
+
+
+    /*
+     * predefined
+     */
+
+    /**
+     * @return string the code_id of the user frontend language
+     */
+    function language(): string
+    {
+        return $this->get_by([
+            words::LANGUAGE,
+            words::USER,
+            words::FRONTEND],
+            language_codes::SYS
+        );
     }
 
 }

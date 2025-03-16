@@ -32,6 +32,8 @@
 
 namespace shared\enum;
 
+use shared\helper\Translator;
+
 enum messages: string
 {
 
@@ -47,6 +49,7 @@ enum messages: string
     case RELOAD = 'reload';
     case OF_DEFAULT = 'of_default';
     case FAILED = 'failed';
+    case DONE = 'done';
 
     // for the change log
     const LOG_ADD = 'added';
@@ -64,22 +67,28 @@ enum messages: string
     /**
      * @return string with the text for the user in the default language
      */
-    public function text(): string
+    public function text(string $lan): string
     {
-        return match($this) {
-            self::IS_RESERVED => 'is a reserved',
-            self::RESERVED_NAME => 'name for system testing. Please use another name',
-            self::NOT_SIMILAR => 'seems to be not similar to',
-            self::RELOAD => 'reloading',
-            self::OF_DEFAULT => 'of default',
-            self::FAILED => 'failed',
-            self::LOG_ADD => 'added',
-            self::LOG_UPDATE => 'changed',
-            self::LOG_DEL => 'deleted',
-            self::LOG_LINK => 'linked',
-            self::LOG_TO => ' to ',
-            default => 'message id missing',
-        };
+        if ($lan == language_codes::SYS) {
+            return match($this) {
+                self::IS_RESERVED => 'is a reserved',
+                self::RESERVED_NAME => 'name for system testing. Please use another name',
+                self::NOT_SIMILAR => 'seems to be not similar to',
+                self::RELOAD => 'reloading',
+                self::OF_DEFAULT => 'of default',
+                self::FAILED => 'failed',
+                self::LOG_ADD => 'added',
+                self::LOG_UPDATE => 'changed',
+                self::LOG_DEL => 'deleted',
+                self::LOG_LINK => 'linked',
+                self::LOG_TO => ' to ',
+                default => $this->value,
+            };
+        } else {
+            $mtr = new Translator();
+            return $mtr->txt($this->name, $lan);
+        }
+
     }
 
 }
