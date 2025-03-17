@@ -34,35 +34,71 @@ namespace shared\helper;
 
 include_once SHARED_ENUM_PATH . 'messages.php';
 
-use const\files;
-use shared\enum\messages as shared_msg;
+use cfg\const\files;
+use shared\enum\language_codes;
+use shared\enum\messages as msg_id;
 
 class Translator
 {
 
+    const MESSAGES = "messages";
+
+    private array $msg_file = [];
+    private string $lan = '';
+
+    function __construct(string $lan)
+    {
+        $this->msg_file = $this->read($lan);
+        $this->lan = $lan;
+    }
+
     /**
-     * @param string $msg_id the id const of the message that should be shown
+     * create a text message for the user by default in the user language
+     *
+     * @param msg_id $msg_id the id const of the message that should be shown
      * @param string $lan the code id of the target language
      * @return string the message text in the user specific language that should be shown to the user
      */
-    function txt(string $msg_id, string $lan = ''): string
+    function txt(msg_id $msg_id, string $lan = ''): string
     {
-        if ($lan == '') {
-            global $lan;
+        if ($lan == $this->lan or $lan == '') {
+            $msg_file = $this->msg_file;
+        } else {
+            $msg_file = $this->read($lan);
         }
-        $lan_file = $lan . files::YAML;
-        $msg_file = yaml_parse_file(files::TRANSLATION_PATH . $lan_file);
-        $msg_text = match ($msg_id) {
-            shared_msg::IP_BLOCK_PRE_ADDR => 'Your IP ',
-            shared_msg::IP_BLOCK_POST_ADDR => ' is blocked at the moment because ',
-            shared_msg::IP_BLOCK_SOLUTION => '. If you think, this should not be the case, ' .
-                'please request the unblocking with an email to admin@zukunft.com.',
-            default => $msg_id . ' (translation missing)',
-        };
-        if ($msg_text == $msg_id . ' (translation missing)') {
-            log_warning('translation missing for ' . $msg_id);
+        if (array_key_exists($msg_id->value, $msg_file)) {
+            $msg_text = $msg_file[$msg_id->value];
+        } else {
+            if ($lan == language_codes::SYS or $lan == '') {
+                $msg_text = $msg_id->value;
+            } else {
+                $msg_text = 'translation missing for ' . $msg_id->value;
+                log_warning($msg_text);
+            }
         }
         return $msg_text;
+    }
+
+    function has(msg_id $msg_id): bool
+    {
+        return array_key_exists($msg_id->value, $this->msg_file);
+    }
+
+    private function read(string $lan = ''): array
+    {
+        $file_path = files::TRANSLATION_PATH . $lan . files::YAML;;
+        $result = yaml_parse_file($file_path);
+        if ($result === false) {
+            log_warning('translation file ' . $file_path . ' missing');
+            return [];
+        } else {
+            if (array_key_exists(self::MESSAGES, $result)) {
+                return $result[self::MESSAGES];
+            } else {
+                log_warning(self::MESSAGES . ' key missing in translation file ' . $file_path);
+                return [];
+            }
+        }
     }
 
 }

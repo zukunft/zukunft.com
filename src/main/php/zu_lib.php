@@ -117,6 +117,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO define all database field names as const
     TODO for reference field names use the destination object
             e.g. for the field name phrase_group_id use phrase_group::FLD_ID
+    TODO if a translation is missing offer the user to translate the message
     TODO rename phrase_group to group
     TODO move the time field of phrase groups to the group
     TODO check that all times include the time zone
@@ -690,10 +691,10 @@ use cfg\view\view_link_type;
 use cfg\view\view_type;
 use cfg\word\triple;
 use cfg\word\word;
-use const\files as test_files;
 use html\component\component_exe as component;
 use html\html_base;
 use html\view\view as view_dsp;
+use shared\helper\Translator;
 use shared\library;
 use shared\types\protection_type;
 use shared\types\share_type;
@@ -1683,7 +1684,7 @@ function prg_restart(string $code_name): sql_db
 
     global $db_con;
     global $cfg;
-    global $lan;
+    global $mtr;
 
     // link to database
     $db_con = new sql_db;
@@ -1719,7 +1720,7 @@ function prg_restart(string $code_name): sql_db
         // load system configuration
         $cfg = new config_numbers($usr_sys);
         $cfg->load_cfg($usr_sys);
-        $lan = $cfg->language();
+        $mtr = new Translator($cfg->language());
 
         // preload all types from the database
         $sys_typ_lst = new type_lists();

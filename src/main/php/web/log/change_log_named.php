@@ -57,7 +57,7 @@ use html\user\user_message;
 use shared\enum\change_actions;
 use shared\enum\change_fields;
 use shared\enum\change_tables;
-use shared\enum\messages as msg_shared;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 
 class change_log_named extends change_log
@@ -294,6 +294,7 @@ class change_log_named extends change_log
      */
     public function dsp(bool $ex_time = false): string
     {
+        global $mtr;
         $result = '';
         $usr_cfg = new config();
 
@@ -307,12 +308,12 @@ class change_log_named extends change_log
         }
         if ($this->old_value <> '') {
             if ($this->new_value <> '') {
-                $result .= msg_shared::LOG_UPDATE . ' "' . $this->old_value . '" ' . msg_shared::LOG_TO . ' "' . $this->new_value . '"';
+                $result .= $mtr->txt(msg_id::LOG_UPDATE) . ' "' . $this->old_value . '" ' . $mtr->txt(msg_id::LOG_TO) . ' "' . $this->new_value . '"';
             } else {
-                $result .= msg_shared::LOG_DEL . ' "' . $this->old_value . '"';;
+                $result .= $mtr->txt(msg_id::LOG_DEL) . ' "' . $this->old_value . '"';;
             }
         } else {
-            $result .= msg_shared::LOG_ADD . ' "' . $this->new_value . '"';;
+            $result .= $mtr->txt(msg_id::LOG_ADD) . ' "' . $this->new_value . '"';;
         }
         return $result;
     }

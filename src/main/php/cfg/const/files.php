@@ -36,6 +36,15 @@ class files
 {
 
     /*
+     * types and extensions
+     */
+
+    CONST JSON = '.json';
+    CONST YAML = '.yaml';
+    const CODE_LINK_TYPE = '.csv';
+
+
+    /*
      * path
      */
 
@@ -54,17 +63,18 @@ class files
      */
 
     // the system users as a zukunft.com user import json
-    const SYSTEM_USERS = self::RESOURCE_PATH . 'users.json';
+    const SYSTEM_USERS = self::RESOURCE_PATH . 'users' . self::JSON;
 
     // the default system config as a yaml including the pod and the user frontend config
-    const SYSTEM_CONFIG = self::RESOURCE_PATH . 'config.yaml';
+    const SYSTEM_CONFIG = self::RESOURCE_PATH . 'config' . self::YAML;
 
     // the system views as a zukunft.com user import json
-    const SYSTEM_VIEWS_FILE = 'system_views.json';
+    const SYSTEM_VIEWS_FILE = 'system_views' . self::JSON;
     const SYSTEM_VIEWS = self::MESSAGE_PATH . self::SYSTEM_VIEWS_FILE;
+    const TRANSLATION_PATH = self::RESOURCE_PATH . 'translations' . DIRECTORY_SEPARATOR;
 
     // initial configuration of some views that the user can change
-    const BASE_VIEWS_FILE = 'base_views.json';
+    const BASE_VIEWS_FILE = 'base_views' . self::JSON;
 
 
     /*
@@ -72,37 +82,30 @@ class files
      */
 
     // the initial verbs as a zukunft.com verb import json
-    const VERBS = self::RESOURCE_PATH . 'verbs.json';
+    const VERBS = self::RESOURCE_PATH . 'verbs' . self::JSON;
 
 
     // the initial list of blocked ip addresses
-    const IP_BLACKLIST_FILE = 'ip_blacklist.json';
+    const IP_BLACKLIST_FILE = 'ip_blacklist' . self::JSON;
 
     // sources used for the initial pod setup and for system testing
-    const SOURCES_FILE = 'sources.json';
+    const SOURCES_FILE = 'sources' . self::JSON;
 
     // some basic units e.g. kilogram
-    const UNITS_FILE = 'units.json';
+    const UNITS_FILE = 'units' . self::JSON;
 
     // some basic scaling formulas e.g. to scale millions to one
-    const SCALING_FILE = 'scaling.json';
+    const SCALING_FILE = 'scaling' . self::JSON;
 
     // some basic time definition e.g. years
-    const TIME_FILE = 'time_definition.json';
+    const TIME_FILE = 'time_definition' . self::JSON;
 
     // data for the default start page
-    const START_PAGE_DATA_FILE = 'solution_prio.json';
+    const START_PAGE_DATA_FILE = 'solution_prio' . self::JSON;
 
     // initial data just to add some sample data and for system testing
-    const COUNTRY_FILE = 'country.json';
-    const COMPANY_FILE = 'company.json';
-
-
-    /*
-     * files types
-     */
-
-    const CODE_LINK_TYPE = '.csv';
+    const COUNTRY_FILE = 'country' . self::JSON;
+    const COMPANY_FILE = 'company' . self::JSON;
 
 
     /*

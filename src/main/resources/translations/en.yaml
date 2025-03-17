@@ -1,4 +1,9 @@
 messages:
+  is_reserved: "is a reserved"
+  reserved_name: "name for system testing. Please use another name"
+  not_similar: "seems to be not similar to"
+  reload: "reloading"
+  of_default: "of default"
   form_title_word_add:
     text: "Add word"
     tooltip: "add a new word, but should not have a verb, triple or formula with the same name"
@@ -12,6 +17,9 @@ messages:
   form_button_cancel: "cancel"
   form_button_save: "save"
   form_button_del: "del"
+  ip_block_pre_addr: "Your IP "
+  ip_block_post_addr: " is blocked at the moment because "
+  ip_block_solution: ". If you think, this should not be the case, please request the unblocking with an email to admin@zukunft.com."
   rename_word:
     text: "Rename"
     tooltip: "change the word name only for as an exception"

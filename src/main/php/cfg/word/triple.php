@@ -84,7 +84,6 @@ include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SYSTEM_PATH . 'message_translator.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
@@ -127,7 +126,6 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_link_named;
 use cfg\sandbox\sandbox_named;
-use cfg\system\message_translator;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value_list;
@@ -136,13 +134,12 @@ use cfg\view\view;
 use shared\const\triples;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
-use shared\enum\messages as msg_enum;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
-use shared\types\view_styles;
 
 
 class triple extends sandbox_link_named
@@ -2387,11 +2384,11 @@ class triple extends sandbox_link_named
         log_debug($this->dsp_id());
 
         global $db_con;
+        global $mtr;
 
         // init
-        $mtr = new message_translator();
-        $msg_reload = $mtr->txt(msg_enum::RELOAD);
-        $msg_fail = $mtr->txt(msg_enum::FAILED);
+        $msg_reload = $mtr->txt(msg_id::RELOAD);
+        $msg_fail = $mtr->txt(msg_id::FAILED);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 

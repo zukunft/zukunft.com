@@ -100,7 +100,6 @@ include_once MODEL_LOG_PATH . 'change_log.php';
 include_once MODEL_LOG_PATH . 'change_table.php';
 //include_once MODEL_REF_PATH . 'ref.php';
 //include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_SYSTEM_PATH . 'message_translator.php';
 //include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_list.php';
@@ -147,7 +146,6 @@ use cfg\log\change_table;
 use cfg\phrase\phrase;
 use cfg\ref\ref;
 use cfg\ref\source;
-use cfg\system\message_translator;
 use cfg\user\user;
 use cfg\user\user_list;
 use cfg\user\user_message;
@@ -158,7 +156,7 @@ use cfg\word\triple;
 use cfg\word\word;
 use Exception;
 use shared\enum\change_actions;
-use shared\enum\messages as msg_enum;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -2367,11 +2365,11 @@ class sandbox extends db_object_seq_id_user
         log_debug($this->dsp_id());
 
         global $db_con;
+        global $mtr;
 
         // init
-        $mtr = new message_translator();
-        $msg_reload = $mtr->txt(msg_enum::RELOAD);
-        $msg_fail = $mtr->txt(msg_enum::FAILED);
+        $msg_reload = $mtr->txt(msg_id::RELOAD);
+        $msg_fail = $mtr->txt(msg_id::FAILED);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
@@ -2409,7 +2407,7 @@ class sandbox extends db_object_seq_id_user
             if ($similar->id() <> 0) {
                 // check that the get_similar function has really found a similar object and report potential program errors
                 if (!$this->is_similar($similar)) {
-                    $msg_not = $mtr->txt(msg_enum::NOT_SIMILAR);
+                    $msg_not = $mtr->txt(msg_id::NOT_SIMILAR);
                     $usr_msg->add_message($this->dsp_id() . ' ' . $msg_not . ' ' . $similar->dsp_id());
                 } else {
                     // if similar is found set the id to trigger the updating instead of adding

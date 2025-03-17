@@ -32,18 +32,17 @@
 
 namespace shared\enum;
 
-use shared\helper\Translator;
-
 enum messages: string
 {
 
     // start and end maker for message id within a text to allow changing the order of vars within a message
-    // TODO use
     const VAR_START = '<!mid';
     const VAR_END = '!>';
 
-    // unique message key
+    // unique message keys
+    // *_txt sample translation to test the English mapping
     case IS_RESERVED = 'is_reserved';
+    case IS_RESERVED_TXT = 'is a reserved';
     case RESERVED_NAME = 'reserved_name';
     case NOT_SIMILAR = 'not_similar';
     case RELOAD = 'reload';
@@ -52,41 +51,32 @@ enum messages: string
     case DONE = 'done';
 
     // for the change log
-    const LOG_ADD = 'added';
-    const LOG_UPDATE = 'changed';
-    const LOG_DEL = 'deleted';
-    const LOG_LINK = 'linked';
-    const LOG_TO = 'to';
+    case LOG_ADD = 'added';
+    case LOG_UPDATE = 'changed';
+    case LOG_DEL = 'deleted';
+    case LOG_LINK = 'linked';
+    case LOG_TO = 'to';
 
     // IP filter
-    const IP_BLOCK_PRE_ADDR = 'ip_block_pre_addr';
-    const IP_BLOCK_POST_ADDR = 'ip_block_post_addr';
-    const IP_BLOCK_SOLUTION = 'ip_block_solution';
+    case IP_BLOCK_PRE_ADDR = 'ip_block_pre_addr';
+    case IP_BLOCK_POST_ADDR = 'ip_block_post_addr';
+    case IP_BLOCK_SOLUTION = 'ip_block_solution';
 
 
     /**
      * @return string with the text for the user in the default language
      */
-    public function text(string $lan): string
+    public function text(string $lan = ''): string
     {
+        global $mtr;
         if ($lan == language_codes::SYS) {
-            return match($this) {
-                self::IS_RESERVED => 'is a reserved',
-                self::RESERVED_NAME => 'name for system testing. Please use another name',
-                self::NOT_SIMILAR => 'seems to be not similar to',
-                self::RELOAD => 'reloading',
-                self::OF_DEFAULT => 'of default',
-                self::FAILED => 'failed',
-                self::LOG_ADD => 'added',
-                self::LOG_UPDATE => 'changed',
-                self::LOG_DEL => 'deleted',
-                self::LOG_LINK => 'linked',
-                self::LOG_TO => ' to ',
-                default => $this->value,
-            };
+            if ($mtr->has($this)) {
+                return $mtr->txt($this);
+            } else {
+                return $this->value;
+            }
         } else {
-            $mtr = new Translator();
-            return $mtr->txt($this->name, $lan);
+            return $mtr->txt($this);
         }
 
     }

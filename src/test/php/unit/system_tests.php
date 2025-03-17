@@ -36,6 +36,7 @@ include_once MODEL_SYSTEM_PATH . 'ip_range.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 include_once MODEL_SYSTEM_PATH . 'session.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
 include_once SHARED_CONST_PATH . 'refs.php';
 include_once SHARED_CONST_PATH . 'words.php';
@@ -57,6 +58,8 @@ use DateTime;
 use html\system\sys_log as sys_log_dsp;
 use html\system\sys_log_list as sys_log_list_dsp;
 use html\user\user;
+use shared\enum\language_codes;
+use shared\enum\messages as msg_id;
 use shared\enum\sys_log_statuus;
 use shared\library;
 use shared\const\refs;
@@ -74,6 +77,7 @@ class system_tests
         global $usr_sys;
         global $sql_names;
         global $sys_log_sta_cac;
+        global $mtr;
 
         // init
         $lib = new library();
@@ -151,6 +155,17 @@ class system_tests
         $t->assert_dsp_id($t->sys_log(), 'system log id 1 at 2023-01-03T20:59:59+01:00 row the log text that describes the problem for the user or system admin');
         $t->assert_dsp_id($t->job(), 'base_import for id 1 (1) for user 1 (zukunft.com system)');
 
+
+        $t->header('translation tests');
+        $test_name = 'show a message in the system language';
+        $t->assert($test_name, $mtr->txt(msg_id::DONE), msg_id::DONE->value);
+        $test_name = 'translate a message in the system language';
+        $t->assert($test_name, $mtr->txt(msg_id::IS_RESERVED), msg_id::IS_RESERVED_TXT->value);
+        $test_name = 'translate a message';
+        $t->assert($test_name, $mtr->txt(msg_id::DONE, language_codes::DE), "erledigt");
+
+        $t->subheader('System function tests');
+        $t->assert('default log message', log_debug(), 'unit\system_tests->run');
 
         $t->header('Unit tests of the system classes (src/main/php/model/system/ip_range.php)');
 

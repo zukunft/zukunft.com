@@ -32,14 +32,12 @@
 
 namespace shared\enum;
 
-use shared\helper\Translator;
-use shared\types\languages;
-
 enum language_codes: string
 {
 
     // predefined language id
     const EN = 'en';
+    const DE = 'de';
 
     // the fallback system language
     const SYS = self::EN;

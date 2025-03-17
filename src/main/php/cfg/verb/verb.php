@@ -52,7 +52,6 @@ include_once MODEL_LOG_PATH . 'changes_big.php';
 //include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SYSTEM_PATH . 'message_translator.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_WORD_PATH . 'word.php';
@@ -75,13 +74,12 @@ use cfg\log\change;
 use cfg\phrase\term;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
-use cfg\system\message_translator;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\word;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
-use shared\enum\messages as msg_enum;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -1006,12 +1004,12 @@ class verb extends type_object
     protected function check_preserved(): user_message
     {
         global $usr;
+        global $mtr;
 
         // init
         $usr_msg = new user_message();
-        $mtr = new message_translator();
-        $msg_res = $mtr->txt(msg_enum::IS_RESERVED);
-        $msg_for = $mtr->txt(msg_enum::RESERVED_NAME);
+        $msg_res = $mtr->txt(msg_id::IS_RESERVED);
+        $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 

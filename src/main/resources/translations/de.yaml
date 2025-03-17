@@ -1,4 +1,5 @@
 messages:
+  done: "erledigt"
   rename_word:
     text: "Umbenennen"
     tooltip: "Sie können das Wort für sich umbenennen"

@@ -72,7 +72,6 @@ include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'message_translator.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
@@ -105,7 +104,6 @@ use cfg\phrase\phrase_list;
 use cfg\result\result;
 use cfg\sandbox\sandbox_multi;
 use cfg\sandbox\sandbox_value;
-use cfg\system\message_translator;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
@@ -1234,10 +1232,10 @@ class group extends sandbox_multi
     protected function check_preserved(): user_message
     {
         global $usr;
+        global $mtr;
 
         // init
         $usr_msg = new user_message();
-        $mtr = new message_translator();
         $msg_res = $mtr->txt(msg_id::IS_RESERVED);
         $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
         $lib = new library();

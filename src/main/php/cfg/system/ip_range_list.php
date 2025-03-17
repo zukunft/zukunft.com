@@ -43,8 +43,7 @@ include_once SHARED_HELPER_PATH . 'Translator.php';
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\user\user_message;
-use shared\enum\messages as shared_msg;
-use shared\helper\Translator;
+use shared\enum\messages as msg_id;
 
 class ip_range_list extends base_list
 {
@@ -124,15 +123,15 @@ class ip_range_list extends base_list
      */
     function includes(string $ip_addr): user_message
     {
+        global $mtr;
         $result = new user_message;
         foreach ($this->lst() as $range) {
             if ($range->includes($ip_addr)) {
-                $ui_msg = new Translator();
-                $msg = $ui_msg->txt(shared_msg::IP_BLOCK_PRE_ADDR)
+                $msg = $mtr->txt(msg_id::IP_BLOCK_PRE_ADDR)
                     . $ip_addr
-                    . $ui_msg->txt(shared_msg::IP_BLOCK_POST_ADDR)
+                    . $mtr->txt(msg_id::IP_BLOCK_POST_ADDR)
                     . $range->reason
-                    . $ui_msg->txt(shared_msg::IP_BLOCK_SOLUTION);
+                    . $mtr->txt(msg_id::IP_BLOCK_SOLUTION);
                 $result->add_message($msg);
             }
         }

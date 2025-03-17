@@ -45,6 +45,7 @@ class files
     CONST SQL = '.sql';
     CONST TXT = '.txt';
 
+
     /*
      * path of test files
      */
@@ -62,7 +63,6 @@ class files
     const IMPORT_PATH = self::RESOURCE_PATH . 'import' . DIRECTORY_SEPARATOR;
     const IMPORT_UNIT_PATH = self::IMPORT_PATH . 'unit_tests' . DIRECTORY_SEPARATOR;
     const IMPORT_WIKIPEDIA_PATH = self::IMPORT_PATH . 'wikipedia' . DIRECTORY_SEPARATOR;
-    const TRANSLATION_PATH = self::RESOURCE_PATH . 'translation' . DIRECTORY_SEPARATOR;
 
     // path for resources to test the frontend
     const WEB_RES_PATH = self::RESOURCE_PATH . 'web' . DIRECTORY_SEPARATOR;

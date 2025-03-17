@@ -74,7 +74,6 @@ include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 //include_once MODEL_LOG_PATH . 'change_link.php';
 //include_once MODEL_LOG_PATH . 'change_log_list.php';
-include_once MODEL_SYSTEM_PATH . 'message_translator.php';
 //include_once MODEL_PHRASE_PATH . 'phrase.php';
 //include_once MODEL_PHRASE_PATH . 'term.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
@@ -104,7 +103,6 @@ use cfg\log\change_link;
 use cfg\log\change_log_list;
 use cfg\phrase\phrase;
 use cfg\phrase\term;
-use cfg\system\message_translator;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\verb\verb;
@@ -112,7 +110,7 @@ use cfg\word\triple;
 use cfg\word\word;
 use Exception;
 use shared\enum\change_actions;
-use shared\enum\messages as msg_enum;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -754,12 +752,12 @@ class sandbox_named extends sandbox
     protected function check_preserved(): user_message
     {
         global $usr;
+        global $mtr;
 
         // init
         $usr_msg = new user_message();
-        $mtr = new message_translator();
-        $msg_res = $mtr->txt(msg_enum::IS_RESERVED);
-        $msg_for = $mtr->txt(msg_enum::RESERVED_NAME);
+        $msg_res = $mtr->txt(msg_id::IS_RESERVED);
+        $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 

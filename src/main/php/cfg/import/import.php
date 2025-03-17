@@ -151,22 +151,25 @@ class import
      * show the progress of an import process
      * @param float $expected_time the expected total as time or percent
      * @param string $name of the process
-     * @param string $step the part of the process that is done at the moment
+     * @param string|msg_id $step the part of the process that is done at the moment
      * @param bool $show if true the message should be preferred shown to the user
      * @param bool $stat if true the statistic of the import should be shown
      * @return void
      */
     function display_progress(
-        float  $expected_time,
-        string $name = '',
-        string $step = '',
-        bool   $show = false,
-        bool   $stat = false
+        float         $expected_time,
+        string        $name = '',
+        string|msg_id $step = '',
+        bool          $show = false,
+        bool          $stat = false
     ): void
     {
         $check_time = microtime(true);
         $time_since_last_display = $check_time - $this->last_display_time;
         $real_time = $check_time - $this->start_time;
+        if (!is_string($step)) {
+            $step = $step->text();
+        }
         if ($stat) {
             echo $name . ' ' . round($real_time, 3) . 's ' . $expected_time . ' ' . $step . "\n";
         } elseif ($show or ($time_since_last_display > UI_MIN_RESPONSE_TIME)) {
@@ -227,7 +230,7 @@ class import
     ): user_message
     {
         global $cfg;
-        global $lan;
+        global $mtr;
 
         // get the relevant config values
         $decode_bytes_per_second = $cfg->get_by([
@@ -261,9 +264,9 @@ class import
         // write to the database
         $usr_msg->add($dto->save($this, $filename, $time_total));
 
-        // show the import resul
+        // show the import result
         if ($usr_msg->is_ok()) {
-            $step = msg_id::DONE->text($lan);
+            $step = $mtr->txt(msg_id::DONE);
         } else {
             $step = $usr_msg->all_message_text();
         }

@@ -93,7 +93,7 @@ use DateTimeInterface;
 use Exception;
 use shared\enum\change_fields;
 use shared\enum\change_tables;
-use shared\enum\messages;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\types\api_type_list;
 
@@ -603,6 +603,7 @@ class change extends change_log
      */
     function dsp(): string
     {
+        global $mtr;
         $result = date_format($this->time(), $this->date_time_format()) . ' ';
         if ($this->user() != null) {
             if ($this->user()->name() <> '') {
@@ -611,12 +612,12 @@ class change extends change_log
         }
         if ($this->old_value <> '') {
             if ($this->new_value <> '') {
-                $result .= messages::LOG_UPDATE . ' "' . $this->old_value . '" to "' . $this->new_value . '"';
+                $result .= $mtr->txt(msg_id::LOG_UPDATE) . ' "' . $this->old_value . '" to "' . $this->new_value . '"';
             } else {
-                $result .= messages::LOG_DEL . ' "' . $this->old_value . '"';;
+                $result .= $mtr->txt(msg_id::LOG_DEL) . ' "' . $this->old_value . '"';;
             }
         } else {
-            $result .= messages::LOG_ADD . ' "' . $this->new_value . '"';;
+            $result .= $mtr->txt(msg_id::LOG_ADD) . ' "' . $this->new_value . '"';;
         }
         return $result;
     }
