@@ -53,6 +53,7 @@ include_once WEB_VIEW_PATH . 'view_list.php';
 include_once WEB_TYPES_PATH . 'view_style_list.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_CONST_PATH . 'views.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
@@ -72,6 +73,7 @@ use html\view\view_list;
 use html\word\word;
 use shared\json_fields;
 use shared\const\views;
+use shared\enum\messages as msg_id;
 use shared\types\component_type;
 use shared\types\position_types;
 use shared\types\view_styles;
@@ -88,7 +90,7 @@ class component extends sandbox_typed
     public ?int $link_id = 0;               // ??
 
     // the code_id for the message that should be shown to the user and that should be translated to the frontend language
-    public ?string $ui_msg_code_id = null;
+    public ?msg_id $ui_msg_code_id = null;
 
     // mainly for table components
     public ?phrase_dsp $phr_row = null;     // the main phrase to select the table rows
@@ -121,7 +123,8 @@ class component extends sandbox_typed
             $this->code_id = null;
         }
         if (array_key_exists(json_fields::UI_MSG_CODE_ID, $json_array)) {
-            $this->ui_msg_code_id = $json_array[json_fields::UI_MSG_CODE_ID];
+            global $mtr;
+            $this->ui_msg_code_id = $mtr->get($json_array[json_fields::UI_MSG_CODE_ID]);
         } else {
             $this->ui_msg_code_id = null;
         }
@@ -159,7 +162,7 @@ class component extends sandbox_typed
     {
         $vars = parent::api_array();
         $vars[json_fields::CODE_ID] = $this->code_id;
-        $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
+        $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id?->value;
         if ($this->position != 0 or $this->link_id != 0) {
             $vars[json_fields::POSITION] = $this->position;
         }

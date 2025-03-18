@@ -62,11 +62,11 @@ include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 include_once WEB_RESULT_PATH . 'result.php';
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_CONST_PATH . 'views.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -85,12 +85,12 @@ use html\phrase\term;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\sandbox_typed;
 use html\system\back_trace;
-use html\system\messages;
 use html\user\user_message;
 use shared\api;
 use shared\const\views;
 use shared\json_fields;
 use shared\types\view_styles;
+use shared\enum\messages as msg_id;
 
 class formula extends sandbox_typed
 {
@@ -236,7 +236,7 @@ class formula extends sandbox_typed
     {
         return parent::btn_add_sbx(
             views::VALUE_ADD,
-            views::FORMULA_ADD,
+            msg_id::FORMULA_ADD,
             $back);
     }
 
@@ -247,10 +247,11 @@ class formula extends sandbox_typed
      */
     function btn_edit(string $back = ''): string
     {
+        global $mtr;
         return parent::btn_edit_sbx(
             views::FORMULA_EDIT,
-            messages::FORMULA_EDIT,
-            $back, messages::FOR . $this->name);
+            msg_id::FORMULA_EDIT,
+            $back, $mtr->txt(msg_id::FOR) . $this->name);
     }
 
     /**
@@ -260,10 +261,11 @@ class formula extends sandbox_typed
      */
     function btn_del(string $back = ''): string
     {
+        global $mtr;
         return parent::btn_del_sbx(
             views::FORMULA_DEL,
-            messages::FORMULA_DEL,
-            $back, messages::OF . $this->name);
+            msg_id::FORMULA_DEL,
+            $back, $mtr->txt(msg_id::OF) . $this->name);
     }
 
 
@@ -340,12 +342,12 @@ class formula extends sandbox_typed
     function dsp_hist(
         int        $page,
         int        $size,
-        string     $call,
+        string     $call = '',
         back_trace $back = null
     ): string
     {
         $log_dsp = new user_log_display();
-        return $log_dsp->dsp_hist(formula::class, $this->id(), $size, $page, '', $back);
+        return $log_dsp->dsp_hist(formula::class, $this->id(), $size, $page, $call, $back);
     }
 
     // display the history of a formula
@@ -479,7 +481,6 @@ class formula extends sandbox_typed
      */
     function dsp_used4words($add, $wrd, $back): string
     {
-        global $usr;
         log_debug($this->ref_text . " for " . $wrd->name() . ",back:" . $back);
         $result = '';
 
@@ -516,7 +517,7 @@ class formula extends sandbox_typed
             if ($this->id() > 0) {
                 $url = $this->obj_url(views::FORMULA_ADD);
                 // TODO check if 'add_link=1' is needed
-                $result .= (new button($url, $back))->add(messages::FORMULA_ADD);
+                $result .= (new button($url, $back))->add(msg_id::FORMULA_ADD);
             }
         }
         $result .= '    </td>';
@@ -574,11 +575,11 @@ class formula extends sandbox_typed
         log_debug("value list");
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($this);
-        $sample_val = $res_lst->display($back);
+        $sample_val = $res_lst->display();
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {
                 $name_wrd_dsp = $this->name_wrd;
-                $result .= $html->dsp_text_h3("Results for " . $name_wrd_dsp->name_link($back), "change_hist");
+                $result .= $html->dsp_text_h3("Results for " . $name_wrd_dsp->name_link(), "change_hist");
             }
             $result .= $sample_val;
         }
@@ -617,27 +618,10 @@ class formula extends sandbox_typed
     {
         log_debug($phr_id);
         $result = '    <td>' . "\n";
-        $url = \html\rest_ctrl::PATH_FIXED . self::class . api_dsp::UPDATE . api_dsp::EXT . '?id=' . $this->id() . '&unlink_phrase=' . $phr_id . '&back=' . $back;
-        $result .= (new button($url, $back))->del(messages::FORMULA_UNLINK);
+        $url = api_dsp::PATH_FIXED . self::class . api_dsp::UPDATE . api_dsp::EXT . '?id=' . $this->id() . '&unlink_phrase=' . $phr_id . '&back=' . $back;
+        $result .= (new button($url, $back))->del(msg_id::FORMULA_UNLINK);
         $result .= '    </td>' . "\n";
         return $result;
     }
-
-    /*
-     * to review
-     */
-
-    /**
-     * display the most interesting formula result for one word
-     * TODO define the criteria and review the result loading
-     */
-    function dsp_result(phrase $phr, string $back): string
-    {
-        log_debug('for "' . $phr->name() . '" and formula ' . $this->dsp_id());
-        $res_lst = new result_list();
-        $res_lst->load_by_formula_and_group_list($this, $phr->groups());
-        return $res_lst->display();
-    }
-
 
 }

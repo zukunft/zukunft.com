@@ -65,7 +65,6 @@ include_once WEB_PHRASE_PATH . 'phrase_list.php';
 //include_once WEB_PHRASE_PATH . 'term.php';
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_VERB_PATH . 'verb_list.php';
 //include_once WEB_VIEW_PATH . 'view.php';
@@ -75,6 +74,7 @@ include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'library.php';
 
 use controller\api_message;
@@ -92,7 +92,6 @@ use html\rest_ctrl;
 use html\sandbox\sandbox_typed;
 use html\styles;
 use html\system\back_trace;
-use html\system\messages;
 use html\user\user_message;
 use html\verb\verb_list;
 use html\view\view;
@@ -101,6 +100,7 @@ use shared\enum\foaf_direction;
 use shared\json_fields;
 use shared\const\views;
 use shared\const\words;
+use shared\enum\messages as msg_id;
 use shared\types\phrase_type;
 use shared\types\view_styles;
 
@@ -348,7 +348,7 @@ class word extends sandbox_typed
     {
         return parent::btn_add_sbx(
             views::WORD_ADD,
-            messages::WORD_ADD,
+            msg_id::WORD_ADD,
             $back);
     }
 
@@ -360,7 +360,7 @@ class word extends sandbox_typed
     {
         return parent::btn_edit_sbx(
             views::WORD_EDIT,
-            messages::WORD_EDIT,
+            msg_id::WORD_EDIT,
             $back);
     }
 
@@ -373,7 +373,7 @@ class word extends sandbox_typed
     {
         return parent::btn_del_sbx(
             views::WORD_DEL,
-            messages::WORD_DEL,
+            msg_id::WORD_DEL,
             $back);
     }
 
@@ -383,7 +383,7 @@ class word extends sandbox_typed
     function btn_unlink(int $link_id, string $back = ''): string
     {
         $url = (new html_base())->url(rest_ctrl::LINK . rest_ctrl::REMOVE, $link_id, $this->id());
-        return (new button($url, $back))->del(messages::WORD_UNLINK);
+        return (new button($url, $back))->del(msg_id::WORD_UNLINK);
     }
 
 

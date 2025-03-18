@@ -37,7 +37,6 @@ include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_USER_PATH . 'user_message.php';
 //include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_VERB_PATH . 'verb_list.php';
@@ -45,6 +44,7 @@ include_once WEB_VERB_PATH . 'verb_list.php';
 //include_once WEB_WORD_PATH . 'word_list.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
 
@@ -52,7 +52,6 @@ use html\button;
 use html\html_base;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\combine_named;
-use html\system\messages;
 use html\user\user_message;
 use html\verb\verb;
 use html\verb\verb_list;
@@ -60,6 +59,7 @@ use html\word\triple;
 use html\word\word;
 use html\word\word_list;
 use shared\enum\foaf_direction;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\types\verbs;
 
@@ -307,10 +307,10 @@ class phrase extends combine_named
     {
         if ($this->is_word()) {
             $obj_name = api_dsp::WORD;
-            $ui_msg_id = messages::WORD_DEL;
+            $ui_msg_id = msg_id::WORD_DEL;
         } else {
             $obj_name = api_dsp::TRIPLE;
-            $ui_msg_id = messages::TRIPLE_DEL;
+            $ui_msg_id = msg_id::TRIPLE_DEL;
         }
         $url = (new html_base())->url($obj_name . api_dsp::REMOVE, $this->id(), $this->id());
         return (new button($url))->del($ui_msg_id);

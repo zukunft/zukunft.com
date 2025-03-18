@@ -37,8 +37,10 @@ namespace html;
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once WEB_HTML_PATH . 'styles.php';
+include_once SHARED_PATH . 'library.php';
 
 use shared\api;
+use shared\library;
 use shared\types\view_styles;
 
 class html_base
@@ -855,15 +857,19 @@ class html_base
     {
         $result = "";
 
+        $lib = new library();
+        $class_name = $lib->class_to_name($class);
+
         foreach ($item_lst as $item) {
             if ($item->id() != null) {
-                $url = $this->url($class . rest_ctrl::UPDATE, $item->id(), $back);
+                $url = $this->url($class_name . rest_ctrl::UPDATE, $item->id(), $back);
                 $result .= $this->ref($url, $item->name());
                 $result .= '<br>';
             }
         }
-        $url_add = $this->url($class . rest_ctrl::CREATE, 0, $back);
-        $result .= (new button($url_add, $back))->add($class . rest_ctrl::CREATE);
+        $url_add = $this->url($class_name . rest_ctrl::CREATE, 0, $back);
+        $msg_id = $lib->class_to_add_msg_id($class);
+        $result .= (new button($url_add, $back))->add($msg_id);
         $result .= '<br>';
 
         return $result;

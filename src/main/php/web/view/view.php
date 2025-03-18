@@ -42,14 +42,15 @@ include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'display_list.php';
 include_once WEB_HELPER_PATH . 'config.php';
 include_once WEB_HTML_PATH . 'html_base.php';
+include_once WEB_HTML_PATH . 'styles.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_HELPER_PATH . 'Config.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'library.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_TYPES_PATH . 'view_type.php';
 
@@ -58,13 +59,14 @@ use html\display_list;
 use html\html_base;
 use html\log\user_log_display;
 use html\rest_ctrl as api_dsp;
+use html\styles;
 use html\system\back_trace;
-use html\system\messages;
 use html\word\word;
 use shared\api;
 use shared\library;
 use shared\types\view_styles;
 use shared\types\view_type;
+use shared\enum\messages as msg_id;
 use shared\helper\Config as shared_config;
 
 class view extends view_exe
@@ -232,16 +234,16 @@ class view extends view_exe
         $result .= '<td class="' . styles::STYLE_RIGHT . '">';
         if ($this->is_system() and !$usr->is_admin()) {
             $url = $html->url(api_dsp::SEARCH);
-            $result .= (new button($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
+            $result .= (new button($url, $back))->find(msg_id::SEARCH_MAIN) . ' - ';
             $result .= $this->name . ' ';
         } else {
             $url = '/http/find.php?word=' . $back;
-            $result .= (new button($url, $back))->find(messages::SEARCH_MAIN) . ' - ';
+            $result .= (new button($url, $back))->find(msg_id::SEARCH_MAIN) . ' - ';
             $result .= $this->dsp_view_name($back);
             $url = $html->url(api::DSP_VIEW_EDIT, $this->id());
-            $result .= (new button($url, $back))->edit(messages::VIEW_EDIT, $this->name) . ' ';
+            $result .= (new button($url, $back))->edit(msg_id::VIEW_EDIT, $this->name) . ' ';
             $url = $html->url(api::DSP_VIEW_ADD);
-            $result .= (new button($url, $back))->add(messages::VIEW_ADD);
+            $result .= (new button($url, $back))->add(msg_id::VIEW_ADD);
         }
         $result .= ' - ';
         $result .= $this->dsp_user($back);
@@ -467,7 +469,7 @@ class view extends view_exe
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
                 $url = $html->url(api::DSP_VIEW_ADD, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
-                $result .= (new button($url, $back))->add(messages::COMPONENT_ADD);
+                $result .= (new button($url, $back))->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected);
 
@@ -480,7 +482,7 @@ class view extends view_exe
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
                 $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
-                $result .= (new button($url, $back))->add(messages::COMPONENT_ADD);
+                $result .= (new button($url, $back))->add(msg_id::COMPONENT_ADD);
             }
         }
         if (html_base::UI_USE_BOOTSTRAP) {

@@ -109,8 +109,10 @@ use cfg\value\value_ts_data;
 use cfg\view\view;
 use cfg\view\view_term_link;
 use cfg\word\word;
+use html\verb\verb as verb_dsp;
 use DateTime;
 use Exception;
+use shared\enum\messages as msg_id;
 use shared\types\protection_type;
 use shared\types\share_type;
 use shared\types\view_type;
@@ -2049,6 +2051,23 @@ class library
                 break;
         }
         return $result;
+    }
+
+    /**
+     * get the add message id for the given class
+     *
+     * @param string $class including the namespace
+     * @return msg_id class name without the namespace
+     */
+    function class_to_add_msg_id(string $class): msg_id
+    {
+        $msg_id = msg_id::ADD;
+        switch ($class) {
+            case verb_dsp::class;
+                $msg_id = msg_id::VERB_ADD;
+                break;
+        }
+        return $msg_id;
     }
 
     /**

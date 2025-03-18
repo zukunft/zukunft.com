@@ -75,10 +75,11 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_CONST_PATH . 'components.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
-include_once SHARED_CONST_PATH . 'components.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql;
@@ -102,6 +103,7 @@ use cfg\word\word;
 use shared\enum\change_actions;
 use shared\json_fields;
 use shared\const\components;
+use shared\enum\messages as msg_id;
 use shared\types\api_type_list;
 use shared\types\position_types;
 
@@ -158,14 +160,11 @@ class component extends sandbox_typed
     // e.g. "add word" or "Wort zufügen"
     // the code id cannot be changed by the user
     // so this field is not part of the table user_components
-    public ?string $ui_msg_code_id = null;
+    public ?msg_id $ui_msg_code_id = null;
 
     // database fields repeated from the component link for a easy to use in memory view object
     // TODO create a component_phrase_link table with a type fields where the type can be at least row, row_right, col and sub_col
     // TODO easy use the position type object similar to the style
-
-    // the position type in the linked view
-    public ?int $pos_type_id = null;
 
     // linked fields
 
@@ -245,14 +244,19 @@ class component extends sandbox_typed
         string $name_fld = component_db::FLD_NAME
     ): bool
     {
-        global $msk_sty_cac;
+        global $mtr;
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
             if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
                 $this->code_id = $db_row[sql::FLD_CODE_ID];
             }
             if (array_key_exists(component_db::FLD_UI_MSG_ID, $db_row)) {
-                $this->ui_msg_code_id = $db_row[component_db::FLD_UI_MSG_ID];
+                $msg_id_txt = $db_row[component_db::FLD_UI_MSG_ID];
+                if ($msg_id_txt == null) {
+                    $this->ui_msg_code_id = null;
+                } else {
+                    $this->ui_msg_code_id = $mtr->get($db_row[component_db::FLD_UI_MSG_ID]);
+                }
             }
             // TODO easy use set_type_by_id function
             if (array_key_exists(component_db::FLD_TYPE, $db_row)) {
@@ -295,7 +299,8 @@ class component extends sandbox_typed
                 $this->code_id = $value;
             }
             if ($key == json_fields::UI_MSG_CODE_ID) {
-                $this->ui_msg_code_id = $value;
+                global $mtr;
+                $this->ui_msg_code_id = $mtr->get($value);
             }
         }
 
@@ -336,9 +341,10 @@ class component extends sandbox_typed
                 }
             }
             if (key_exists(json_fields::UI_MSG_CODE_ID, $in_ex_json)) {
+                global $mtr;
                 $msg_id = $in_ex_json[json_fields::UI_MSG_CODE_ID];
                 if ($msg_id != '') {
-                    $this->ui_msg_code_id = $msg_id;
+                    $this->ui_msg_code_id = $mtr->get($msg_id);
                 }
             }
         }
@@ -1371,9 +1377,9 @@ class component extends sandbox_typed
             }
             $lst->add_field(
                 component_db::FLD_UI_MSG_ID,
-                $this->ui_msg_code_id,
+                $this->ui_msg_code_id?->value,
                 component_db::FLD_UI_MSG_ID_SQL_TYP,
-                $sbx->ui_msg_code_id
+                $sbx->ui_msg_code_id?->value
             );
         }
         if ($sbx->row_phrase_id() <> $this->row_phrase_id()) {

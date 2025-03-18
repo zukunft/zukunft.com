@@ -43,15 +43,16 @@ include_once WEB_HTML_PATH . 'display_list.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_COMPONENT_PATH . 'component.php';
-include_once WEB_HELPER_PATH . 'config.php';
 include_once WEB_HELPER_PATH . 'data_object.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_VIEW_PATH . 'view_list.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_CONST_PATH . 'components.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_TYPES_PATH . 'view_type.php';
@@ -61,15 +62,16 @@ include_once SHARED_PATH . 'library.php';
 
 use html\button;
 use html\display_list;
-use html\helper\config;
 use html\helper\data_object;
 use html\html_base;
 use html\log\user_log_display;
 use html\sandbox\db_object;
 use html\system\back_trace;
-use html\system\messages;
 use html\word\word;
 use shared\api;
+use shared\const\triples;
+use shared\const\words;
+use shared\enum\messages as msg_id;
 use shared\types\position_types;
 use shared\types\view_styles;
 use shared\types\view_type;
@@ -244,6 +246,7 @@ class view_exe extends view_base
     {
         global $usr;
         global $msk_typ_cac;
+        global $cfg;
 
         $result = '';
         $html = new html_base();
@@ -297,15 +300,16 @@ class view_exe extends view_base
             $result .= '</div>';
 
             $comp_html = $this->linked_components($add_cmp, $wrd, $script, $back);
+            $row_limit = $cfg->get_by([triples::ROW_LIMIT, words::DATABASE]);
 
             // collect the history
-            $changes = $this->dsp_hist(0, shared_config::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, $row_limit, '', $back);
             if (trim($changes) <> "") {
                 $hist_html = $changes;
             } else {
                 $hist_html = 'Nothing changed yet.';
             }
-            $changes = $this->dsp_hist_links(0, shared_config::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, $row_limit, '', $back);
             if (trim($changes) <> "") {
                 $link_html = $changes;
             } else {
@@ -373,7 +377,7 @@ class view_exe extends view_base
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
                 $url = $html->url(api::DSP_VIEW_ADD, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
-                $result .= (new button($url, $back))->add(messages::COMPONENT_ADD);
+                $result .= (new button($url, $back))->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected);
 
@@ -386,7 +390,7 @@ class view_exe extends view_base
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
                 $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
-                $result .= (new button($url, $back))->add(messages::COMPONENT_ADD);
+                $result .= (new button($url, $back))->add(msg_id::COMPONENT_ADD);
             }
         }
         if (html_base::UI_USE_BOOTSTRAP) {

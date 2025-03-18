@@ -82,6 +82,8 @@ class component_exe extends component
         bool             $test_mode = false
     ): string
     {
+        global $mtr;
+
         if ($dbo == null) {
             // the $dbo check and the message creation has already been done in the view level
             $this->log_debug($this->dsp_id());

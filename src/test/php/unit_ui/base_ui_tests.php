@@ -39,6 +39,7 @@ include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_RESULT_PATH . 'result_list.php';
 include_once WEB_VERB_PATH . 'verb_list.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use cfg\component\component;
@@ -55,13 +56,14 @@ use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\result\result as result_dsp;
 use html\result\result_list as result_list_dsp;
-use html\system\messages;
 use html\value\value as value_dsp;
+use html\verb\verb as verb_dsp;
 use shared\library;
 use shared\const\components;
 use shared\const\values;
 use shared\const\views;
 use shared\const\words;
+use shared\enum\messages as msg_id;
 use shared\types\api_type;
 use shared\types\component_type as comp_type_shared;
 use shared\types\verbs;
@@ -113,7 +115,7 @@ class base_ui_tests
 
         // button add
         $url = $html->url(views::WORD_ADD);
-        $t->html_test((new button($url))->add(messages::WORD_ADD), '', 'button_add', $t);
+        $t->html_test((new button($url))->add(msg_id::WORD_ADD), '', 'button_add', $t);
 
 
         $t->subheader('HTML list tests');
@@ -128,7 +130,7 @@ class base_ui_tests
         // TODO use set_from_json to set the display object
         $vrb_lst_dsp = new verb_list_dsp();
         $vrb_lst_dsp->set_from_json_array($lst->api_json_array());
-        $t->html_test($vrb_lst_dsp->list(verb::class, 'Verbs'), '', 'list_verbs', $t);
+        $t->html_test($vrb_lst_dsp->list(verb_dsp::class, 'Verbs'), '', 'list_verbs', $t);
 
 
         $t->subheader('HTML table tests');
@@ -265,7 +267,7 @@ class base_ui_tests
         $back = '1';
         $target = '<a href="/http/word_add.php" title="Add test"><img src="/images/button_add.svg" alt="Add test"></a>';
         $target = '<a href="/http/word_add.php" title="add new word">';
-        $result = (new button($url, $back))->add(messages::WORD_ADD);
+        $result = (new button($url, $back))->add(msg_id::WORD_ADD);
         $t->dsp_contains(", btn_add", $target, $result);
 
         // TODO move e.g. because the edit word button is tested already in the unit tests of the object
@@ -273,25 +275,25 @@ class base_ui_tests
         $url = $html->url(views::WORD_DEL);
         $target = '<a href="/http/view.php" title="Del test"><img src="/images/button_del.svg" alt="Del test"></a>';
         $target = '<a href="/http/word_del.php" title="delete word"><i class="far fa-times-circle"></i></a>';
-        $result = (new button($url, $back))->del(messages::WORD_DEL);
+        $result = (new button($url, $back))->del(msg_id::WORD_DEL);
         $t->dsp_contains(", btn_del", $target, $result);
 
         $url = $html->url(views::WORD);
         $target = '<a href="/http/view.php" title="Undo test"><img src="/images/button_undo.svg" alt="Undo test"></a>';
         $target = '<a href="/http/word.php" title="undo"><img src="/images/button_undo.svg" alt="undo"></a>';
-        $result = (new button($url, $back))->undo(messages::UNDO);
+        $result = (new button($url, $back))->undo(msg_id::UNDO);
         //$t->display(", btn_undo", $target, $result);
 
         $url = $html->url(views::WORD_ADD);
         $target = '<a href="/http/view.php" title="Find test"><img src="/images/button_find.svg" alt="Find test"></a>';
         $target = '<a href="/http/word_add.php" title=""><img src="/images/button_find.svg" alt=""></a>';
-        $result = (new button($url, $back))->find();
+        $result = (new button($url, $back))->find(msg_id::FIND);
         //$t->display(", btn_find", $target, $result);
 
         $url = $html->url(views::WORD_ADD);
         $target = '<a href="/http/view.php" title="Show all test"><img src="/images/button_filter_off.svg" alt="Show all test"></a>';
         $target = '<a href="/http/word_add.php" title=""><img src="/images/button_filter_off.svg" alt=""></a>';
-        $result = (new button($url, $back))->un_filter();
+        $result = (new button($url, $back))->un_filter(msg_id::REMOVE_FILTER);
         //$t->display(", btn_unfilter", $target, $result);
 
         $url = $html->url(views::WORD_ADD);

@@ -39,7 +39,6 @@ include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_COMPONENT_PATH . 'component_exe.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_USER_PATH . 'user.php';
 include_once WEB_VALUE_PATH . 'value.php';
@@ -47,6 +46,7 @@ include_once WEB_VIEW_PATH . 'view.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_ENUM_PATH . 'change_fields.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'library.php';
 
 use html\component\component_exe as component;
@@ -55,13 +55,13 @@ use html\rest_ctrl;
 use html\button;
 use html\html_base;
 use html\system\back_trace;
-use html\system\messages;
 use html\user\user;
 use html\value\value;
 use html\view\view;
 use html\word\word;
 use shared\enum\change_tables;
 use shared\enum\change_fields;
+use shared\enum\messages as msg_id;
 use shared\library;
 
 class user_log_display
@@ -291,7 +291,7 @@ class user_log_display
                 if ($this->type == 'word') {
                     if ($db_row['type'] == 'add') {
                         $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id, $this->back);
-                        $undo_btn = (new button($undo_call))->undo(messages::UNDO_ADD);
+                        $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_ADD);
                     }
                 } elseif ($this->type == 'value') {
                     if ($db_row['type'] == 'add') {
@@ -300,7 +300,7 @@ class user_log_display
                 } elseif ($this->type == 'formula') {
                     if ($db_row['type'] == 'update') {
                         $undo_call = $html->url(formula::class . rest_ctrl::UPDATE, $db_row["row_id"], $this->back . '&undo_change=' . $db_row["change_id"]);
-                        $undo_btn = (new button($undo_call))->undo(messages::UNDO_ADD);
+                        $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_ADD);
                     }
                 }
                 // display the undo button
@@ -470,7 +470,7 @@ class user_log_display
                 $undo_btn = '';
                 if ($this->type == formula::class) {
                     $undo_call = $html->url(formula::class . rest_ctrl::UPDATE, $db_row["row_id"], $this->back . '&undo_change=' . $db_row["change_link_id"]);
-                    $undo_btn = (new button($undo_call))->undo(messages::UNDO_EDIT);
+                    $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_EDIT);
                 }
                 // display the undo button
                 if ($undo_call <> '') {

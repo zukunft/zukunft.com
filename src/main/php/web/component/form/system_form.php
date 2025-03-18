@@ -41,10 +41,10 @@ include_once WEB_COMPONENT_PATH . 'component.php';
 include_once DB_PATH . 'sql_db.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_TYPES_PATH . 'view_style_list.php';
 include_once SHARED_CONST_PATH . 'views.php';
 include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'library.php';
@@ -52,11 +52,11 @@ include_once SHARED_PATH . 'library.php';
 use html\component\component;
 use html\html_base;
 use html\sandbox\db_object as db_object_dsp;
-use html\system\messages;
 use shared\api;
 use shared\library;
 use shared\const\views;
 use shared\const\words;
+use shared\enum\messages as msg_id;
 use shared\types\view_styles;
 
 class system_form extends component
@@ -65,15 +65,17 @@ class system_form extends component
     /**
      * start an HTML form, show the title and set and set the unique form name
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user specific frontend language
      * @return string the html code to start a new form and display the tile
      */
-    function form_tile(string $form_name, ?string $ui_msg_code_id = null): string
+    function form_tile(string $form_name, ?msg_id $ui_msg_code_id = null): string
     {
+        global $mtr;
+
         $html = new html_base();
-        $ui_msg = new messages();
         $result = '';
         if ($ui_msg_code_id != null) {
-            $result .= $html->text_h2($ui_msg->txt($ui_msg_code_id));
+            $result .= $html->text_h2($mtr->txt($ui_msg_code_id));
         }
         $result .= $html->form_start($form_name);
         return $result;

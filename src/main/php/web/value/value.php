@@ -49,9 +49,9 @@ include_once WEB_GROUP_PATH . 'group.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_REF_PATH . 'source.php';
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_CONST_PATH . 'views.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -66,10 +66,10 @@ use html\ref\source;
 use html\rest_ctrl as api_dsp;
 use html\sandbox\sandbox_value;
 use html\styles;
-use html\system\messages;
 use html\user\user_message;
 use html\word\word;
 use shared\const\views;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 
@@ -312,13 +312,13 @@ class value extends sandbox_value
      */
     function btn_add(string $back = ''): string
     {
-        $msg_code_id = messages::VALUE_ADD;
+        $msg_code_id = msg_id::VALUE_ADD;
         $explain = '';
 
         if ($this->grp()->phr_lst()->is_empty()) {
             if (!empty($this->grp()->phr_lst()->lst())) {
                 $explain = htmlentities($this->grp()->phr_lst()->dsp_name());
-                $msg_code_id = messages::VALUE_ADD_SIMILAR;
+                $msg_code_id = msg_id::VALUE_ADD_SIMILAR;
             }
         }
 
@@ -336,7 +336,7 @@ class value extends sandbox_value
     {
         return parent::btn_edit_sbx(
             views::VALUE_EDIT,
-            messages::VALUE_EDIT,
+            msg_id::VALUE_EDIT,
             $back);
     }
 
@@ -349,7 +349,7 @@ class value extends sandbox_value
     {
         return parent::btn_del_sbx(
             views::VALUE_DEL,
-            messages::VALUE_DEL,
+            msg_id::VALUE_DEL,
             $back);
     }
 

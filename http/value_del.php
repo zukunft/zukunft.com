@@ -46,12 +46,15 @@ use html\system\messages;
 use html\view\view as view_dsp;
 use shared\api;
 use shared\const\views as view_shared;
+use shared\enum\messages as msg_id;
 
 // to create the code for the html frontend
 $html = new html_base();
 
 // open database
 $db_con = prg_start("value_del");
+
+global $mtr;
 
 $result = ''; // reset the html code var
 
@@ -91,9 +94,8 @@ if ($usr->id() > 0) {
 
             $val->load_phrases();
             $url = $html->url(rest_ctrl::VALUE . rest_ctrl::REMOVE, $val_id, $back);
-            $ui_msg = new messages();
             $result .= (new button($url, $back))->yes_no(
-                messages::VALUE_DEL, $val->number() . $ui_msg->txt(messages::FOR) . $val->phr_lst()->dsp_name() . '?');
+                msg_id::VALUE_DEL->value, $val->number() . $mtr->txt(msg_id::FOR) . $val->phr_lst()->dsp_name() . '?');
         }
     } else {
         $result .= $html->dsp_go_back($back, $usr);

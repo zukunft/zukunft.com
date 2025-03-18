@@ -41,7 +41,9 @@ use shared\enum\messages as msg_id;
 class Translator
 {
 
+    // structure elements of the translation yaml
     const MESSAGES = "messages";
+    const TEXT = "text";
 
     private array $msg_file = [];
     private string $lan = '';
@@ -68,6 +70,14 @@ class Translator
         }
         if (array_key_exists($msg_id->value, $msg_file)) {
             $msg_text = $msg_file[$msg_id->value];
+            if (is_array($msg_text)) {
+                if (array_key_exists(self::TEXT, $msg_text)) {
+                    $msg_text = $msg_text[self::TEXT];
+                } else {
+                    $msg_text = self::TEXT . ' element missing for ' . $msg_id->value;
+                    log_warning($msg_text);
+                }
+            }
         } else {
             if ($lan == language_codes::SYS or $lan == '') {
                 $msg_text = $msg_id->value;
@@ -82,6 +92,20 @@ class Translator
     function has(msg_id $msg_id): bool
     {
         return array_key_exists($msg_id->value, $this->msg_file);
+    }
+
+    function get(?string $msg_id_txt): msg_id
+    {
+        if ($msg_id_txt == null) {
+            return msg_id::NONE;
+        } else {
+            try {
+                return msg_id::get($msg_id_txt);
+            } catch (\ValueError $error) {
+                log_err($error);
+                return msg_id::ERROR;
+            }
+        }
     }
 
     private function read(string $lan = ''): array

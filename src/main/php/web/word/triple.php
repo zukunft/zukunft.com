@@ -52,12 +52,12 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 //include_once WEB_PHRASE_PATH . 'term.php';
 include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_USER_PATH . 'user_message.php';
 //include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_CONST_PATH . 'views.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'api.php';
@@ -68,7 +68,6 @@ use html\phrase\phrase_list;
 use html\html_base;
 use html\html_selector;
 use html\phrase\phrase_list as phrase_list_dsp;
-use html\system\messages;
 use html\user\user_message;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
@@ -78,6 +77,7 @@ use html\phrase\term as term_dsp;
 use html\verb\verb as verb_dsp;
 use shared\const\views;
 use shared\json_fields;
+use shared\enum\messages as msg_id;
 use shared\types\phrase_type;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\view_styles;
@@ -384,7 +384,7 @@ class triple extends sandbox_typed
     {
         return parent::btn_add_sbx(
             views::TRIPLE_ADD,
-            messages::TRIPLE_ADD,
+            msg_id::TRIPLE_ADD,
             $back);
     }
 
@@ -396,7 +396,7 @@ class triple extends sandbox_typed
     {
         return parent::btn_edit_sbx(
             views::TRIPLE_EDIT,
-            messages::TRIPLE_EDIT,
+            msg_id::TRIPLE_EDIT,
             $back);
     }
 
@@ -409,7 +409,7 @@ class triple extends sandbox_typed
     {
         return parent::btn_del_sbx(
             views::TRIPLE_DEL,
-            messages::TRIPLE_DEL,
+            msg_id::TRIPLE_DEL,
             $back);
     }
 

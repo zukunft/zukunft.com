@@ -38,7 +38,6 @@ include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_LOG_PATH . 'change_log.php';
 //include_once WEB_HELPER_PATH . 'config.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
@@ -52,7 +51,6 @@ use html\rest_ctrl;
 use html\button;
 use html\html_base;
 use html\system\back_trace;
-use html\system\messages;
 use html\user\user_message;
 use shared\enum\change_actions;
 use shared\enum\change_fields;
@@ -203,19 +201,19 @@ class change_log_named extends change_log
         if ($this->table_name() == change_tables::WORD) {
             if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
-                $undo_btn = (new button($undo_call))->undo(messages::UNDO_ADD);
+                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_ADD);
             }
         } elseif ($this->table_name() == change_tables::VIEW) {
             if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
-                $undo_btn = (new button($undo_call))->undo(messages::UNDO_EDIT);
+                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_EDIT);
             }
         } elseif ($this->table_name() == change_tables::FORMULA) {
             if ($this->action_code_id() == change_actions::UPDATE) {
                 $undo_call = $html->url(
                     formula::class . rest_ctrl::UPDATE, $this->row_id,
                     $back->url_encode() . '&undo_change=' . $this->id());
-                $undo_btn = (new button($undo_call))->undo(messages::UNDO_DEL);
+                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_DEL);
             }
         }
         // display the undo button

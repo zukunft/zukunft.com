@@ -49,8 +49,6 @@ class user_type_list extends type_list
 
     function list(string $class, string $title = ''): string
     {
-        $lib = new library();
-        $class = $lib->class_to_name($class);
         $html = new html_base();
         if ($title != '') {
             $title = $html->text_h2($title);

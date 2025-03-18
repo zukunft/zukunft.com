@@ -59,6 +59,7 @@ class triples
     const ANALYSE_WORDS = 'analyse words';
     const SAVE_WORDS = 'save words';
     const AUTOMATIC_CREATE = 'automatic create';
+    const ROW_LIMIT = 'row limit';
 
     // triples included in the initial setup that are used for system testing
     const MATH_CONST = 'Mathematical constant';

@@ -51,7 +51,6 @@ include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_COMPONENT_PATH . 'component.php';
 include_once WEB_COMPONENT_PATH . 'component_list.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_SYSTEM_PATH . 'messages.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_VIEW_PATH . 'view_list.php';
@@ -59,6 +58,7 @@ include_once WEB_WORD_PATH . 'word.php';
 include_once WEB_WORD_PATH . 'triple.php';
 include_once SHARED_CONST_PATH . 'components.php';
 include_once SHARED_CONST_PATH . 'views.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -66,12 +66,12 @@ include_once SHARED_PATH . 'library.php';
 use html\component\component_list;
 use html\sandbox\db_object;
 use html\sandbox\sandbox_typed;
-use html\system\messages;
 use html\user\user_message;
 use html\word\triple;
 use html\word\word;
 use shared\api;
 use shared\const\views;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 
 class view_base extends sandbox_typed
@@ -233,7 +233,7 @@ class view_base extends sandbox_typed
     {
         return parent::btn_add_sbx(
             views::VIEW_ADD,
-            messages::VIEW_ADD,
+            msg_id::VIEW_ADD,
             $back);
     }
 
@@ -245,7 +245,7 @@ class view_base extends sandbox_typed
     {
         return parent::btn_edit_sbx(
             views::VIEW_EDIT,
-            messages::VIEW_EDIT,
+            msg_id::VIEW_EDIT,
             $back);
     }
 
@@ -258,7 +258,7 @@ class view_base extends sandbox_typed
     {
         return parent::btn_del_sbx(
             views::VERB_DEL,
-            messages::VALUE_DEL,
+            msg_id::VALUE_DEL,
             $back);
     }
 
