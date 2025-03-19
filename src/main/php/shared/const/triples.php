@@ -60,6 +60,7 @@ class triples
     const SAVE_WORDS = 'save words';
     const AUTOMATIC_CREATE = 'automatic create';
     const ROW_LIMIT = 'row limit';
+    const RESPONSE_TIME = 'response time';
 
     // triples included in the initial setup that are used for system testing
     const MATH_CONST = 'Mathematical constant';

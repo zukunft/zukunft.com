@@ -183,6 +183,8 @@ class import
     ): void
     {
         global $mtr;
+        global $cfg;
+        $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR]);
 
         $check_time = microtime(true);
         $time_since_last_display = $check_time - $this->last_display_time;
@@ -195,7 +197,7 @@ class import
 
         if ($stat) {
             echo $name . ' ' . round($real_time, 3) . 's ' . $this->time_exp . ' ' . $step . "\n";
-        } elseif ($show or ($time_since_last_display > UI_MIN_RESPONSE_TIME)) {
+        } elseif ($show or ($time_since_last_display > $ui_response_time)) {
             if ($real_time < 0.001) {
                 $progress = '';
             } else {

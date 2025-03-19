@@ -702,12 +702,16 @@ class formula_list extends sandbox_list_named
     function calc_blocks(sql_db $db_con, int $total_formulas = 0): int
     {
         global $cfg;
+
+        // get the configuration
+        $avg_calc_time = $cfg->get_by([words::CALCULATION, triples::BLOCK_SIZE, triples::AVERAGE_DELAY]);
+        $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR]);
+
         if ($total_formulas == 0) {
             $total_formulas = $db_con->count(formula::class);
         }
-        $avg_calc_time = $cfg->get_by([words::CALCULATION, triples::BLOCK_SIZE, triples::AVERAGE_DELAY]);
         $total_expected_time = $total_formulas * $avg_calc_time;
-        return max(1, round($total_expected_time / (UI_MIN_RESPONSE_TIME * 1000)));
+        return max(1, round($total_expected_time / ($ui_response_time * 1000)));
     }
 
     /**

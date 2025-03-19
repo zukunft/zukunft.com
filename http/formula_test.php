@@ -49,11 +49,14 @@ include_once SHARED_CONST_PATH . 'views.php';
 use cfg\formula\formula_list;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase_list;
+use cfg\result\result_list;
 use cfg\user\user;
 use cfg\view\view;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\api;
+use shared\const\triples;
+use shared\const\words;
 use shared\library;
 use shared\const\views as view_shared;
 
@@ -95,6 +98,10 @@ if ($session_usr->id() > 0) {
         $usr->set_id($usr_id);
         $usr->get();
     }
+
+    // get the configuration
+    global $cfg;
+    $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR]);
 
     if ($frm_id == '') {
         echo $html->dsp_text_h2("Please select a formula");
@@ -216,7 +223,7 @@ if ($session_usr->id() > 0) {
                         }
 
                         // show the user the progress every two seconds
-                        if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
+                        if ($last_msg_time + $ui_response_time < time()) {
                             $calc_pct = ($calc_pos / sizeof($calc_lst->lst())) * 100;
                             if ($res->is_updated) {
                                 echo "" . round($calc_pct, 2) . "% processed (calculate " . $r->frm->name_linked($back) . " for " . $r->phr_lst->name_linked() . " = " . $res->display_linked($back) . ")<br>";

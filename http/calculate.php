@@ -37,6 +37,8 @@ use cfg\formula\formula_list;
 use cfg\result\result_list;
 use cfg\user\user;
 use shared\api;
+use shared\const\triples;
+use shared\const\words;
 use shared\library;
 
 $debug = $_GET['debug'] ?? 0;
@@ -56,6 +58,9 @@ $usr_id = $_GET[api::URL_VAR_USER] ?? 0; // to force another user view for testi
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
+
+    global $cfg;
+    $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR]);
 
     $usr->load_usr_data();
     $lib = new library();
@@ -93,7 +98,7 @@ if ($usr->id() > 0) {
                 $res_lst = $frm->calc($r->wrd_lst);
 
                 // show the user the progress every two seconds
-                if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
+                if ($last_msg_time + $ui_response_time < time()) {
                     $calc_pct = ($calc_pos / sizeof($calc_lst->lst())) * 100;
                     echo "" . round($calc_pct, 2) . "% calculated (" . $r->frm->name . " for " . $r->wrd_lst->name_linked() . " = " . $res_lst->names() . ")<br>";
                     ob_flush();

@@ -147,6 +147,7 @@ class words
     const CHANGE = 'change';
     const DAILY = 'daily';
     const IP = 'ip';
+    const BEHAVIOUR = 'behaviour';
 
     // for the configuration of a single job
     // TODO complete the concrete setup

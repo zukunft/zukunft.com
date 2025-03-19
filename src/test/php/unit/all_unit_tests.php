@@ -157,7 +157,7 @@ class all_unit_tests extends test_cleanup
 
         // run the selected unit tests
         //(new system_tests)->run($this);
-        //(new import_tests)->run($this);
+        (new import_tests)->run($this);
         //(new formula_link_tests())->run($this);
 
         // restore the global vars

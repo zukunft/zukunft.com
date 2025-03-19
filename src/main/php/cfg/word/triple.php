@@ -465,7 +465,7 @@ class triple extends sandbox_link_named
             $value = $in_ex_json[json_fields::EX_FROM];
             if ($value == "") {
                 $lib = new library();
-                $usr_msg->add_message('from name should not be empty at ' . $lib->dsp_array($in_ex_json));
+                $usr_msg->add_message('from name should not be empty at "' . $lib->dsp_array($in_ex_json)) . '"';
             } else {
                 if (is_string($value)) {
                     if ($dto == null) {
@@ -1817,17 +1817,34 @@ class triple extends sandbox_link_named
             $usr_msg->add_message('triple from phrase is missing');
         } else {
             if ($this->from()->id() == 0) {
-                $usr_msg->add_message('triple phrase from id is 0');
+                if ($this->from()->name() == '') {
+                    $usr_msg->add_message('triple phrase from name is missing and id is 0');
+                } else {
+                    $usr_msg->add_message('triple phrase from id is 0');
+                }
             }
         }
         if ($this->to() == null) {
             $usr_msg->add_message('triple to phrase is missing');
         } else {
-            if ($this->from()->id() == 0) {
-                $usr_msg->add_message('triple phrase to id is 0');
+            if ($this->to()->id() == 0) {
+                if ($this->to()->name() == '') {
+                    $usr_msg->add_message('triple phrase to name is missing and id is 0');
+                } else {
+                    $usr_msg->add_message('triple phrase to id is 0');
+                }
             }
         }
         return $usr_msg;
+    }
+
+    /**
+     * @return bool true if the triple object can be added to the database
+     *              false e.g. if some parameters ar missing
+     */
+    function is_valid(): bool
+    {
+        return $this->check()->is_ok();
     }
 
     /**

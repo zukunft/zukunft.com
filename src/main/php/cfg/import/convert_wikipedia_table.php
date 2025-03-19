@@ -319,7 +319,9 @@ class convert_wikipedia_table
                             } else {
                                 $trp[json_fields::EX_TO] = $col_names[$i];
                             }
-                            $triples[] = $trp;
+                            if ($trp[json_fields::EX_FROM] != '' and $trp[json_fields::EX_TO]) {
+                                $triples[] = $trp;
+                            }
 
                             // create other assumed relations
                             if (in_array($col_names[$i], $list_of_symbols)) {
@@ -327,7 +329,9 @@ class convert_wikipedia_table
                                 $trp[json_fields::EX_FROM] = $phr_name;
                                 $trp[json_fields::EX_VERB] = verbs::SYMBOL_NAME;
                                 $trp[json_fields::EX_TO] = $row_key;
-                                $triples[] = $trp;
+                                if ($trp[json_fields::EX_FROM] != '' and $trp[json_fields::EX_TO]) {
+                                    $triples[] = $trp;
+                                }
                             }
                         }
                     }
@@ -344,19 +348,25 @@ class convert_wikipedia_table
                 $trp[json_fields::EX_FROM] = $row_key;
                 $trp[json_fields::EX_VERB] = verbs::IS_NAME;
                 $trp[json_fields::EX_TO] = $row_name_out;
-                $triples[] = $trp;
+                if ($trp[json_fields::EX_FROM] != '' and $trp[json_fields::EX_TO]) {
+                    $triples[] = $trp;
+                }
 
                 $trp = [];
                 $trp[json_fields::EX_FROM] = $wiki_row[$pos_col];
                 $trp[json_fields::EX_VERB] = verbs::IS_NAME;
                 $trp[json_fields::EX_TO] = $context_array[1] . ' ' . $col_name_out;
-                $triples[] = $trp;
+                if ($trp[json_fields::EX_FROM] != '' and $trp[json_fields::EX_TO]) {
+                    $triples[] = $trp;
+                }
 
                 $trp = [];
                 $trp[json_fields::EX_FROM] = $wiki_row[$pos_col];
                 $trp[json_fields::EX_VERB] = verbs::SYMBOL_NAME;
                 $trp[json_fields::EX_TO] = $row_key;
-                $triples[] = $trp;
+                if ($trp[json_fields::EX_FROM] != '' and $trp[json_fields::EX_TO]) {
+                    $triples[] = $trp;
+                }
             }
 
         }

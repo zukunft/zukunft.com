@@ -77,6 +77,18 @@ zukunft.com:
           row limit:
             tooltip-comment: "number of rows to be shown"
             word changes: 20
+          behaviour:
+            tooltip-comment: "reaction settings e.g. the expected response time"
+            response time:
+              min:
+                sys-conf-value: 0.1
+                tooltip-comment: "the minimal time in seconds between a screen updates to avoid flickering e.g. during long calculations every 2 sec the user should seen the screen updated"
+              max:
+                sys-conf-value: 2
+                tooltip-comment: "the maximal time in seconds after the last screen update to indicate that the program is still running"
+              target:
+                sys-conf-value: 1
+                tooltip-comment: "seconds after the user should see a screen update e.g. during long calculations every 2 sec the user should seen the screen updated"
           time:
             tooltip-comment: "time related user specific settings"
             min columns:
