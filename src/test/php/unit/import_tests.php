@@ -50,7 +50,7 @@ class import_tests
     {
         global $usr;
         $sc = new sql_creator();
-        $imp = new import;
+        $imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
 
         $t->subheader('Import unit tests');
 
@@ -98,7 +98,7 @@ class import_tests
 
         $test_name = 'JSON import warning creation';
         $json_str = file_get_contents(test_files::IMPORT_PATH . 'warning_and_error_test.json');
-        $imp = new import;
+        $imp = new import(test_files::IMPORT_PATH . 'warning_and_error_test.json');
         $result = $imp->put_json_direct($json_str, $usr, test_files::IMPORT_PATH . 'warning_and_error_test.json');
         $target = 'Unknown element test';
         $t->assert($test_name, $result->get_last_message(), $target);

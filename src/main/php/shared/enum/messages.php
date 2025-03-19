@@ -61,6 +61,10 @@ enum messages: string
     case LOG_LINK = 'linked';
     case LOG_TO = 'to';
 
+    // import
+    case IMPORT_JSON = 'import';
+    case COUNTED = 'counted';
+
     // text to be shown in buttons
     case ADD = 'add';
     case EDIT = 'edit';

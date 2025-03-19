@@ -48,6 +48,7 @@ include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
@@ -68,6 +69,7 @@ include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_field_list;
 use cfg\db\sql_type_list;
+use cfg\import\import;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_value_list;
 use cfg\user\user;
@@ -1354,9 +1356,12 @@ class value_list extends sandbox_value_list
      * save
      */
 
-    function save(): user_message
+    function save(import $imp): user_message
     {
         $usr_msg = new user_message();
+
+        $lib = new library();
+        $name = $lib->class_to_table(value::class);
 
         if ($this->is_empty()) {
             log_info('no values to save');
@@ -1370,6 +1375,7 @@ class value_list extends sandbox_value_list
             $db_lst->load_by_ids($grp_lst->ids());
 
             // insert the new values
+            $i = 0;
             foreach ($this->lst() as $val) {
                 if ($val->value() != null) {
                     if ($val->id() == 0) {
@@ -1378,6 +1384,8 @@ class value_list extends sandbox_value_list
                         $usr_msg->add($val->save());
                     }
                 }
+                $i++;
+                $imp->display_progress('saved ' . $name . ': ' . $i);
             }
 
             // update the existing values

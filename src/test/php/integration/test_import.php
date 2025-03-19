@@ -48,7 +48,8 @@ function run_import_test($file_list, test_cleanup $t): void
         $imf = new import_file();
         $result = $imf->json_file($import_path . $json_test_filename, $usr);
         $target = 'done';
-        $t->dsp_contains(', import of ' . $json_test_filename . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_IMPORT);
+        $t->dsp_contains(', import of ' . $json_test_filename . ' contains at least ' . $target, $target,
+            $result->get_last_message(), $t::TIMEOUT_LIMIT_IMPORT);
     }
 
 }

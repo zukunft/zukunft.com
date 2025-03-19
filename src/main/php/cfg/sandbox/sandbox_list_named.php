@@ -37,6 +37,7 @@ include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par_list.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
@@ -48,11 +49,13 @@ include_once MODEL_WORD_PATH . 'word_list.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\import\import;
 use cfg\phrase\phrase;
 use cfg\phrase\term;
 use cfg\word\triple_list;
@@ -63,6 +66,7 @@ use cfg\word\word_list;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
 use shared\helper\TextIdObject;
+use shared\library;
 
 class sandbox_list_named extends sandbox_list
 {
@@ -344,11 +348,21 @@ class sandbox_list_named extends sandbox_list
      * create any missing sql functions and queries to save the list objects
      * @param word_list|triple_list $db_lst filled with the words or triples that are already in the db
      * @param bool $use_func true if sql function should be used to insert the named user sandbox objects
+     * @param import|null $imp the import object e.g. with the ETA
+     * @param string $class the object class that should be stored in the database
      * @return user_message
      */
-    function insert(word_list|triple_list $db_lst, bool $use_func = true): user_message
+    function insert(
+        word_list|triple_list $db_lst,
+        bool                  $use_func = true,
+        import                $imp = null,
+        string $class = ''
+    ): user_message
     {
         global $db_con;
+
+        $lib = new library();
+        $name = $lib->class_to_table($class);
 
         $sc = $db_con->sql_creator();
         $usr_msg = new user_message();
@@ -358,17 +372,21 @@ class sandbox_list_named extends sandbox_list
 
         // get the objects that need to be added
         $db_names = $db_lst->names();
+        $imp->display_progress('update ' . $name . ': ' . count($db_names), true);
         $add_lst = clone $this;
         $add_lst = $add_lst->filter_by_name($db_names);
+        $imp->display_progress('add ' . $name . ': ' . $add_lst->count(), true);
 
         // get the sql call to add the missing objects
         $ins_calls = $add_lst->sql_call_with_par($sc, $use_func);
+        $imp->display_progress('db statements ' . $ins_calls->count());
 
         // get the functions that are already in the database
         $db_func_lst = $db_con->get_functions();
 
         // get the sql functions that have not yet been created
         $func_to_create = $ins_calls->sql_functions_missing($db_func_lst);
+        $imp->display_progress('create db statements ' . $func_to_create->count());
 
         // get the first object that have requested the missing function
         $func_create_obj = clone $this;
@@ -378,11 +396,13 @@ class sandbox_list_named extends sandbox_list
         // create the missing sql functions and add the first missing word
         $func_to_create = $func_create_obj->sql($sc);
         $func_to_create->exe();
+        $imp->display_progress('created db statements ' . $func_to_create->count());
 
         // add the remaining missing words
         $add_lst = $add_lst->filter_by_name($func_create_obj_names);
         $ins_calls = $add_lst->sql_call_with_par($sc, $use_func);
         $usr_msg->add($ins_calls->exe());
+        $imp->display_progress('added ' . $name . ': ' . $add_lst->count(), true);
 
 
         return $usr_msg;

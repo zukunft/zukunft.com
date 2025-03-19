@@ -80,7 +80,7 @@ class system_time_list
         if ($typ == '') {
             // stop current time measurement
             $this->stop();
-            // continue with previuos time measurement
+            // continue with previous time measurement
             $this->continue();
         } else {
             if ($typ != $this->cur_cat) {
@@ -109,7 +109,7 @@ class system_time_list
             $time_report .= $cat . ': ' .  round($time, 4) . ' sec';
             $total = $total + $time;
         }
-        $time_report .= ' -> mesured ' .  round($total, 4) . ' / unmesured ' .  round($expectd - $total, 4);
+        $time_report .= ' -> measured ' .  round($total, 4) . ' / unmeasured ' .  round($expectd - $total, 4);
         return $time_report;
     }
 

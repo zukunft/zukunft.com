@@ -41,6 +41,10 @@
 
 namespace cfg\user;
 
+include_once SHARED_ENUM_PATH . 'messages.php';
+
+use shared\enum\messages as msg_id;
+
 class user_message
 {
     // the message types that defines what needs to be done next
@@ -53,8 +57,14 @@ class user_message
     private int $msg_status;
     private int|null $checksum = null;
 
-    // array of the messages that should be shown to the user to explain the result of a process
+    // array of the messages that should be shown to the user
+    // to explain the result of a process
     private array $msg_text;
+
+    // array of the messages id that should be shown to the user
+    // in the language of the user frontend
+    // to explain the result of a process
+    private array $msg_id_lst;
     // the prime database row that has caused the user message
     private int|string $db_row_id;
     // to trace to progress
@@ -78,6 +88,7 @@ class user_message
             $this->msg_status = self::NOK;
         }
         $this->db_row_id = 0;
+        $this->msg_id_lst = [];
     }
 
 
@@ -148,6 +159,28 @@ class user_message
     /*
      * add
      */
+
+    /**
+     * to offer the user to see more details without retry
+     * in the user specific language
+     * more than one message text can be added to a user message result
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_message_id(?msg_id $msg_id): void
+    {
+        if ($msg_id != null) {
+            // do not repeat the same text more than once
+            if (!in_array($msg_id, $this->msg_id_lst)) {
+                $this->msg_id_lst[] = $msg_id;
+            }
+            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            if ($this->is_ok()) {
+                $this->set_not_ok();
+            }
+        }
+    }
 
     /**
      * to offer the user to see more details without retry

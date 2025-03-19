@@ -59,6 +59,7 @@ include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
@@ -76,6 +77,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\helper\combine_named;
+use cfg\import\import;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\sandbox\sandbox_link_named;
@@ -590,9 +592,10 @@ class triple_list extends sandbox_list_named
 
     /**
      * @param phrase_list $cache the cached phrases that does not need to be loaded from the db again
+     * @param import $imp the import object with the filename and the estimated time of arrival
      * @return user_message
      */
-    function save(phrase_list $cache): user_message
+    function save(phrase_list $cache, import $imp): user_message
     {
         $usr_msg = new user_message();
 
@@ -627,14 +630,14 @@ class triple_list extends sandbox_list_named
                 $wrd_lst = $this->missing_words();
                 if (!$wrd_lst->is_empty()) {
                     log_warning('words ' . $wrd_lst->dsp_id() . ' added via list insert');
-                    $wrd_lst->save();
+                    $wrd_lst->save($imp);
                     // TODO add the id of the loaded words to the triple parts
                     $this->set_id_by_name($wrd_lst->phrase_lst());
                 }
                 $this->fill_missing_verbs();
 
                 // create any missing sql functions and insert the missing triples
-                $usr_msg->add($this->insert($db_lst));
+                $usr_msg->add($this->insert($db_lst, true, $imp, triple::class));
 
                 // update the existing triples
                 // loop over the triples and check if all needed functions exist

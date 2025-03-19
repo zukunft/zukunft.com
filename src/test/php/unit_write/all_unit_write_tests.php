@@ -322,11 +322,11 @@ class all_unit_write_tests extends all_unit_read_tests
 
         foreach (test_files::TEST_IMPORT_FILE_LIST as $filename) {
             $this->echo('load ' . basename($filename));
-            $result .= $imf->json_file($filename, $usr, false);
+            $result .= $imf->json_file($filename, $usr, false)->get_last_message();
         }
         foreach (test_files::TEST_DIRECT_IMPORT_FILE_LIST as $filename) {
             $this->echo('load ' . basename($filename));
-            $result .= $imf->json_file($filename, $usr);
+            $result .= $imf->json_file($filename, $usr)->get_last_message();
         }
 
 

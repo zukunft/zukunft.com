@@ -66,14 +66,15 @@ class import_file
      * @param string $filename
      * @param user $usr
      * @param bool $direct true if each object should be saved separate in the database 
-     * @return string
+     * @return user_message
      */
-    function json_file(string $filename, user $usr, bool $direct = true): string
+    function json_file(string $filename, user $usr, bool $direct = true): user_message
     {
         global $cfg;
 
-        $import = new import();
-        $msg = '';
+        $usr_msg = new user_message();
+
+        $imp = new import($filename);
 
         // get the relevant config values
         $read_bytes_per_second = $cfg->get_by(
@@ -83,58 +84,57 @@ class import_file
 
         // indicate to the user that the import has started
         $size = filesize($filename);
-        $time_total = $size / $total_bytes_per_second;
-        $topic = 'import ' . basename($filename);
-        $import->display_progress($time_total, $topic, '(' . round($size/1000) . ' kBytes)', true);
+        $imp->time_exp = $size / $total_bytes_per_second;
+        $imp->display_progress('(' . round($size/1000) . ' kBytes)', true);
 
         // read the import file
         $json_str = file_get_contents($filename);
         $time_read = $size / $read_bytes_per_second;
-        $import->display_progress($time_total, $topic, 'loaded');
+        $imp->display_progress('loaded');
 
         if (!$json_str) {
             log_err('Error reading JSON resource ' . $filename);
         } else {
             if ($json_str == '') {
-                $msg .= ' failed because message file is empty of not found.';
+                $usr_msg->add_message(' failed because message file is empty of not found.');
             } else {
 
                 // analyse the import file and update the database
-                $import->start_analyse = microtime(true);
+                $imp->start_analyse = microtime(true);
                 if ($direct) {
-                    $import_result = $import->put_json_direct($json_str, $usr, basename($filename), $time_total);
+                    $import_result = $imp->put_json_direct($json_str, $usr, basename($filename), $imp->time_exp);
                 } else {
-                    $import_result = $import->put_json($json_str, $usr, basename($filename), $time_total);
+                    $import_result = $imp->put_json($json_str, $usr, basename($filename), $imp->time_exp);
                 }
 
                 // show the summery to the user
                 if ($import_result->is_ok()) {
-                    $msg .= ' done ('
-                        . $import->words_done . ' words, '
-                        . $import->verbs_done . ' verbs, '
-                        . $import->triples_done . ' triples, '
-                        . $import->formulas_done . ' formulas, '
-                        . $import->values_done . ' values, '
-                        . $import->list_values_done . ' simple values, '
-                        . $import->sources_done . ' sources, '
-                        . $import->refs_done . ' references, '
-                        . $import->views_done . ' views loaded, '
-                        . $import->components_done . ' components loaded, '
-                        . $import->calc_validations_done . ' results validated, '
-                        . $import->view_validations_done . ' views validated)';
-                    if ($import->users_done > 0) {
-                        $msg .= ' ... and ' . $import->users_done . ' $users';
+                    $usr_msg->add_message(' done ('
+                        . $imp->words_done . ' words, '
+                        . $imp->verbs_done . ' verbs, '
+                        . $imp->triples_done . ' triples, '
+                        . $imp->formulas_done . ' formulas, '
+                        . $imp->values_done . ' values, '
+                        . $imp->list_values_done . ' simple values, '
+                        . $imp->sources_done . ' sources, '
+                        . $imp->refs_done . ' references, '
+                        . $imp->views_done . ' views loaded, '
+                        . $imp->components_done . ' components loaded, '
+                        . $imp->calc_validations_done . ' results validated, '
+                        . $imp->view_validations_done . ' views validated)');
+                    if ($imp->users_done > 0) {
+                        $usr_msg->add_message(' ... and ' . $imp->users_done . ' $users');
                     }
-                    if ($import->system_done > 0) {
-                        $msg .= ' ... and ' . $import->system_done . ' $system objects';
+                    if ($imp->system_done > 0) {
+                        $usr_msg->add_message(' ... and ' . $imp->system_done . ' $system objects');
                     }
                 } else {
-                    $msg .= ' failed because ' . $import_result->all_message_text() . '.';
+                    $usr_msg->add_message(' failed because ' . $import_result->all_message_text() . '.');
                 }
             }
         }
 
-        return $msg;
+        return $usr_msg;
     }
 
     /**
@@ -155,15 +155,15 @@ class import_file
             if ($yaml_str == '') {
                 $usr_msg->add_message(' failed because message file is empty of not found.');
             } else {
-                $import = new import;
-                $import_result = $import->put_yaml($yaml_str, $usr);
+                $imp = new import($filename);
+                $import_result = $imp->put_yaml($yaml_str, $usr);
                 if ($import_result->is_ok()) {
-                    $usr_msg->add_info(' done (' . $import->status_text()->get_last_message() . ' )');
-                    if ($import->users_done > 0) {
-                        $usr_msg->add_message(' ... and ' . $import->users_done . ' $users');
+                    $usr_msg->add_info(' done (' . $imp->status_text()->get_last_message() . ' )');
+                    if ($imp->users_done > 0) {
+                        $usr_msg->add_message(' ... and ' . $imp->users_done . ' $users');
                     }
-                    if ($import->system_done > 0) {
-                        $usr_msg->add_message(' ... and ' . $import->system_done . ' $system objects');
+                    if ($imp->system_done > 0) {
+                        $usr_msg->add_message(' ... and ' . $imp->system_done . ' $system objects');
                     }
                 } else {
                     $usr_msg->add_message(' failed because ' . $import_result->all_message_text() . '.');
@@ -196,11 +196,11 @@ class import_file
             $cfg->load_cfg($usr);
             if ($cfg->count() != $import_result->checksum()) {
                 // report the missing config values
-                $imp = new import;
+                $imp = new import(files::SYSTEM_CONFIG);
                 $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                 $yaml_array = yaml_parse($yaml_str);
                 $dto = $imp->get_data_object_yaml($yaml_array, $usr);
-                $dto->save($imp, 'config yaml');
+                $dto->save($imp);
                 $val_diff = $dto->value_list()->diff($cfg);
                 log_warning('These configuration values could not be imported: ' . $val_diff->dsp_id());
                 //log_err('These configuration values could not be imported: ' . $val_diff->dsp_id());
@@ -230,7 +230,7 @@ class import_file
 
         foreach (files::BASE_CONFIG_FILES_DIRECT as $filename) {
             $this->echo('load ' . $filename);
-            $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct);
+            $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
         }
 
         log_debug('load base config ... done');

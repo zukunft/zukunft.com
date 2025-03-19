@@ -59,6 +59,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
@@ -84,6 +85,7 @@ use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\helper\combine_named;
+use cfg\import\import;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
@@ -1596,19 +1598,25 @@ class word_list extends sandbox_list_named
      * save
      */
 
-    function save(): user_message
+    /**
+     * store all words from this list in the database using grouped calls of predefined sql functions
+     *
+     * @param import $imp the import object with the estimate of the total save time
+     * @return user_message
+     */
+    function save(import $imp): user_message
     {
         $usr_msg = new user_message();
 
         if ($this->is_empty()) {
-            log_info('no words to save');
+            $usr_msg->add_message('no words to save');
         } else {
             // load the words that are already in the database
             $db_lst = new word_list($this->user());
             $db_lst->load_by_names($this->names());
 
             // create any missing sql functions and insert the missing words
-            $usr_msg->add($this->insert($db_lst));
+            $usr_msg->add($this->insert($db_lst, true, $imp, word::class));
 
             // update the existing words
             // TODO create a test that fields not included in the import message are not updated, but e.g. an empty descrption is updated

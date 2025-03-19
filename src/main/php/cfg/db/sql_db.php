@@ -5601,7 +5601,7 @@ class sql_db
                 $usr->set_profile(user_profiles::SYSTEM);
                 $imf = new import_file();
                 $import_result = $imf->json_file(files::SYSTEM_USERS, $usr);
-                if (str_starts_with($import_result, ' done ')) {
+                if (str_starts_with($import_result->get_last_message(), ' done ')) {
                     $result = true;
                 }
             }
@@ -5620,7 +5620,7 @@ class sql_db
         if ($usr->is_admin() or $usr->is_system()) {
             $imf = new import_file();
             $import_result = $imf->json_file(files::VERBS, $usr);
-            if (str_starts_with($import_result, ' done ')) {
+            if (str_starts_with($import_result->get_last_message(), ' done ')) {
                 $result = true;
             }
         }
@@ -5721,7 +5721,7 @@ class sql_db
         if ($usr->is_admin() or $usr->is_system()) {
             $imf = new import_file();
             $import_result = $imf->json_file(files::SYSTEM_VIEWS, $usr);
-            if (str_starts_with($import_result, ' done ')) {
+            if (str_starts_with($import_result->get_last_message(), ' done ')) {
                 $result = true;
             }
         }

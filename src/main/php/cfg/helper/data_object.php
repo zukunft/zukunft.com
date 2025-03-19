@@ -383,21 +383,15 @@ class data_object
      * add all words, triples and values to the database
      * or update the database
      * @param import $imp the import object that includes the start time of the import
-     * @param string $filename the filename for user info only
-     * @param float $total the expected total time for the import in seconds
      * @return user_message ok or the error message for the user with the suggested solution
      */
-    function save(
-        import $imp,
-        string $filename = '',
-        float  $total = 1.0
-    ): user_message
+    function save(import $imp): user_message
     {
         global $cfg;
 
         $lib = new library();
         $usr_msg = new user_message();
-        $msg = 'import ' . $filename;
+        $sub_topic = 'saved ';
 
         // get the relevant config values
         $time_object = $cfg->get_by([triples::OBJECT_CREATION, words::PERCENT, triples::EXPECTED_TIME, words::IMPORT]);
@@ -408,20 +402,20 @@ class data_object
 
         // save the data lists in order of the dependencies
         // import first the words
-        $usr_msg->add($this->word_list()->save());
+        $usr_msg->add($this->word_list()->save($imp));
 
         // showing to the user that the words have been imported
         $pos = $pos + $this->expected_word_import_time();
-        $part = 'saved ' . $lib->class_to_table(word::class) . ': ' . $this->word_list()->count();
-        $imp->display_progress($total, $msg, $part);
+        $part = $sub_topic . $lib->class_to_table(word::class) . ': ' . $this->word_list()->count();
+        $imp->display_progress($part);
 
         // import the triples
-        $usr_msg->add($this->triple_list()->save($this->word_list()->phrase_lst()));
+        $usr_msg->add($this->triple_list()->save($this->word_list()->phrase_lst(), $imp));
 
         // showing to the user that the triples have been imported
         $pos = $pos + $this->expected_triple_import_time();
         $part = 'save ' . $lib->class_to_table(triple::class);
-        $imp->display_progress($total, $msg, $part);
+        $imp->display_progress($part);
 
         // TODO create at least a warning if a phrase id is still missing
         $phr_lst = $this->phrase_list();
@@ -438,12 +432,12 @@ class data_object
         }
 
         // import the values
-        $usr_msg->add($this->value_list()->save());
+        $usr_msg->add($this->value_list()->save($imp));
 
         // showing to the user that the values have been imported
         $pos = $pos + $this->expected_value_import_time();
         $part = 'save ' . $lib->class_to_table(value::class);
-        $imp->display_progress($total, $msg, $part);
+        $imp->display_progress($part);
 
         return $usr_msg;
     }
