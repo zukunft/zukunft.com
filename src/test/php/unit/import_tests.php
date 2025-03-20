@@ -76,7 +76,7 @@ class import_tests
         $json_str = file_get_contents(test_files::IMPORT_TRIPLES);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array, $usr);
-        $t->assert($test_name, $dto->triple_list()->count(), 2);
+        $t->assert($test_name, $dto->triple_list()->count(), 3);
 
         $test_name = 'JSON import source count';
         $json_str = file_get_contents(test_files::IMPORT_SOURCES);

@@ -54,10 +54,11 @@ class triples
     const MAX_DELAY = 'max delay';
     const FILE_READ = 'file read';
     const OBJECT_CREATION = 'object creation';
+    const OBJECT_STORING = 'object storing';
+    const TIME_PERCENT = 'time percent';
     const EXPECTED_TIME = 'expected time';
-    const BYTES_SECOND = 'bytes second';
-    const ANALYSE_WORDS = 'analyse words';
-    const SAVE_WORDS = 'save words';
+    const BYTES_PER_SECOND = 'bytes second';
+    const OBJECTS_PER_SECOND = 'objects second';
     const AUTOMATIC_CREATE = 'automatic create';
     const ROW_LIMIT = 'row limit';
     const RESPONSE_TIME = 'response time';

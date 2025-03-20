@@ -35,6 +35,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_CONST_PATH . 'files.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 
 use cfg\const\files;
 use cfg\helper\config_numbers;
@@ -42,9 +43,12 @@ use cfg\user\user;
 use cfg\user\user_message;
 use shared\const\triples;
 use shared\const\words;
+use shared\enum\messages as msg_id;
 
 class import_file
 {
+
+    const FILE = 'file';
 
     public float $start_time;
     public float $start_read;
@@ -73,24 +77,31 @@ class import_file
         global $cfg;
 
         $usr_msg = new user_message();
-
         $imp = new import($filename);
 
         // get the relevant config values
-        $read_bytes_per_second = $cfg->get_by(
-            [triples::FILE_READ, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $total_bytes_per_second = $cfg->get_by(
-            [words::TOTAL_PRE, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $read_bytes_per_sec = $cfg->get_by([triples::FILE_READ, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $total_bytes_per_sec = $cfg->get_by([words::TOTAL_PRE, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $read_time_pct = $cfg->get_by([triples::FILE_READ, triples::TIME_PERCENT, words::IMPORT], 1);
+        $decode_time_pct = $cfg->get_by([words::DECODE, triples::TIME_PERCENT, words::IMPORT], 1);
+        $create_time_pct = $cfg->get_by([triples::OBJECT_CREATION, triples::TIME_PERCENT, words::IMPORT], 1);
+        $store_time_pct = $cfg->get_by([triples::OBJECT_STORING, triples::TIME_PERCENT, words::IMPORT], 1);
 
         // indicate to the user that the import has started
         $size = filesize($filename);
-        $imp->time_exp = $size / $total_bytes_per_second;
-        $imp->display_progress('(' . round($size/1000) . ' kBytes)', true);
+        $imp->est_time_total = $size / $total_bytes_per_sec;
+        $imp->est_time_read = $imp->est_time_total * $read_time_pct / 100;
+        $imp->est_time_decode = $imp->est_time_total * $decode_time_pct / 100;
+        $imp->est_time_create = $imp->est_time_total * $create_time_pct / 100;
+        $imp->est_time_store = $imp->est_time_total * $store_time_pct / 100;
+
 
         // read the import file
+        $imp->step_main_start(msg_id::READ, $imp->est_time_read);
+        $imp->step_start(msg_id::READ, self::FILE, $size, $imp->est_time_read);
         $json_str = file_get_contents($filename);
-        $time_read = $size / $read_bytes_per_second;
-        $imp->display_progress('loaded');
+        $imp->step_end($size, $read_bytes_per_sec);
+        $imp->step_main_end($size, $read_bytes_per_sec);
 
         if (!$json_str) {
             log_err('Error reading JSON resource ' . $filename);
@@ -100,11 +111,10 @@ class import_file
             } else {
 
                 // analyse the import file and update the database
-                $imp->start_analyse = microtime(true);
                 if ($direct) {
-                    $import_result = $imp->put_json_direct($json_str, $usr, basename($filename), $imp->time_exp);
+                    $import_result = $imp->put_json_direct($json_str, $usr);
                 } else {
-                    $import_result = $imp->put_json($json_str, $usr, basename($filename), $imp->time_exp);
+                    $import_result = $imp->put_json($json_str, $usr);
                 }
 
                 // show the summery to the user

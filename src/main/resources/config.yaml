@@ -21,41 +21,57 @@ zukunft.com:
         tooltip-comment: "initial number of page rows"
         default: 20
       import:
+        time percent:
+          tooltip-comment: "the expected execution time for the database import in percent of the total process"
+          file read: 0.4
+          decode: 0.6
+          object creation: 24
+          object storing: 75
         expected time:
           tooltip-comment: "the expected times for the database import"
           bytes second:
             file read:
-              sys-conf-value: 3216541
-              tooltip-comment: "the estimated bytes per second for pur reading the import file"
+              sys-conf-value: 300
+              tooltip-comment: "the estimated MB per second for pur reading the import file"
             decode:
-              sys-conf-value: 3216541
-              tooltip-comment: "the estimated bytes per second for decoding the import json file"
-            object creation:
-              sys-conf-value: 76331
-              tooltip-comment: "the estimated bytes per second for creating the objects"
-            analyse words:
-              sys-conf-value: 2653
-              tooltip-comment: "the estimated number of objects that can be created per second"
+              sys-conf-value: 130
+              tooltip-comment: "the estimated MB per second for decoding the import json file"
             total:
               sys-conf-value: 16386
               tooltip-comment: "the estimated bytes per second that can be processed when importing a json"
-          millisecond:
-            tooltip-comment: "the expected time in milliseconds to add or update on entry in the database"
-            word:
-              sys-conf-value: 10
-              tooltip-comment: "expected time in milliseconds to add or update one word in the database"
-            triple:
-              sys-conf-value: 20
-              tooltip-comment: "expected time in milliseconds to add or update one triple in the database"
-            source:
-              sys-conf-value: 10
-              tooltip-comment: "expected time in milliseconds to add or update one source in the database"
-            value:
-              sys-conf-value: 20
-              tooltip-comment: "expected time in milliseconds to add or update one value in the database"
-            formula:
-              sys-conf-value: 30
-              tooltip-comment: "expected time in milliseconds to add or update one formula in the database"
+          objects second:
+            create:
+              words:
+                sys-conf-value: 700
+                tooltip-comment: "the estimated number of words that can be created per second"
+              triples:
+                sys-conf-value: 420
+                tooltip-comment: "the estimated number of triples that can be created per second"
+              sources:
+                sys-conf-value: 600
+                tooltip-comment: "the estimated number of sources that can be created per second"
+              values:
+                sys-conf-value: 250
+                tooltip-comment: "the estimated number of values that can be created per second"
+              formulas:
+                sys-conf-value: 150
+                tooltip-comment: "the estimated number of formulas that can be created per second"
+            store:
+              words:
+                sys-conf-value: 800
+                tooltip-comment: "the estimated number of words that can be added or updated in the database per second"
+              triples:
+                sys-conf-value: 450
+                tooltip-comment: "the estimated number of triples that can be added or updated in the database per second"
+              sources:
+                sys-conf-value: 100
+                tooltip-comment: "the estimated number of sources that can be added or updated in the database per second"
+              values:
+                sys-conf-value: 95
+                tooltip-comment: "the estimated number of values that can be added or updated in the database per second"
+              formulas:
+                sys-conf-value: 50
+                tooltip-comment: "the estimated number of formulas that can be added or updated in the database per second"
       value table:
         table name:
           max phrase: 3

@@ -48,7 +48,11 @@ enum messages: string
     case RELOAD = 'reload';
     case OF_DEFAULT = 'of_default';
     case FAILED = 'failed';
+    case READ = 'read';
+    case LOADED = 'loaded';
     case DONE = 'done';
+    case TOTAL = 'total';
+    case EXAMPLE_SHORT = 'e.g.';
 
     // special message id placeholders
     case ERROR = 'error';
@@ -63,7 +67,14 @@ enum messages: string
 
     // import
     case IMPORT_JSON = 'import';
-    case COUNTED = 'counted';
+    case COUNT = 'count';
+    case DECODED = 'decoded';
+    case CHECK = 'check';
+    case PREPARE = 'prepare';
+    case SAVE = 'save';
+    case SAVE_SINGLE = 'save single';
+    case SAVE_LIST = 'save list';
+    case VALIDATE = 'validate';
 
     // text to be shown in buttons
     case ADD = 'add';

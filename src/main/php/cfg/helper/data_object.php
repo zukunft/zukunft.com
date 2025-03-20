@@ -55,6 +55,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once API_OBJECT_PATH . 'api_message.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -78,6 +79,7 @@ use cfg\word\triple_list;
 use controller\api_message;
 use shared\const\triples;
 use shared\const\words;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -379,6 +381,13 @@ class data_object
             + $this->expected_value_import_time();
     }
 
+    function count(): int
+    {
+        return $this->word_list()->count()
+            + $this->triple_list()->count()
+            + $this->value_list()->count();
+    }
+
     /**
      * add all words, triples and values to the database
      * or update the database
@@ -391,31 +400,32 @@ class data_object
 
         $lib = new library();
         $usr_msg = new user_message();
-        $sub_topic = 'saved ';
 
         // get the relevant config values
         $time_object = $cfg->get_by([triples::OBJECT_CREATION, words::PERCENT, triples::EXPECTED_TIME, words::IMPORT]);
+        $wrd_per_sec = $cfg->get_by([words::WORDS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $trp_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $val_per_sec = $cfg->get_by([words::VALUES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         // start showing the progress to the user
         $pos = $time_object; // where 10 is the time expected for the reading of the import file and the creation of the data object
         $expected_time = $this->expected_total_import_time();
 
         // save the data lists in order of the dependencies
-        // import first the words
-        $usr_msg->add($this->word_list()->save($imp));
 
-        // showing to the user that the words have been imported
-        $pos = $pos + $this->expected_word_import_time();
-        $part = $sub_topic . $lib->class_to_table(word::class) . ': ' . $this->word_list()->count();
-        $imp->display_progress($part);
+        // import first the words
+        $wrd_lst = $this->word_list();
+        $wrd_est = $wrd_lst->count() / $wrd_per_sec;
+        $imp->step_start(msg_id::SAVE, word::class, $wrd_lst->count(), $wrd_est);
+        $usr_msg->add($wrd_lst->save($imp));
+        $imp->step_end($wrd_lst->count(), $wrd_per_sec);
 
         // import the triples
-        $usr_msg->add($this->triple_list()->save($this->word_list()->phrase_lst(), $imp));
-
-        // showing to the user that the triples have been imported
-        $pos = $pos + $this->expected_triple_import_time();
-        $part = 'save ' . $lib->class_to_table(triple::class);
-        $imp->display_progress($part);
+        $trp_lst = $this->triple_list();
+        $trp_est = $wrd_lst->count() / $trp_per_sec;
+        $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
+        $usr_msg->add($trp_lst->save($wrd_lst->phrase_lst(), $imp));
+        $imp->step_end($trp_lst->count(), $trp_per_sec);
 
         // TODO create at least a warning if a phrase id is still missing
         $phr_lst = $this->phrase_list();
@@ -432,12 +442,11 @@ class data_object
         }
 
         // import the values
-        $usr_msg->add($this->value_list()->save($imp));
-
-        // showing to the user that the values have been imported
-        $pos = $pos + $this->expected_value_import_time();
-        $part = 'save ' . $lib->class_to_table(value::class);
-        $imp->display_progress($part);
+        $val_lst = $this->value_list();
+        $val_est = $val_lst->count() / $val_per_sec;
+        $imp->step_start(msg_id::SAVE, value::class, $val_lst->count(), $val_est);
+        $usr_msg->add($val_lst->save($imp, $val_per_sec));
+        $imp->step_end($val_lst->count(), $val_per_sec);
 
         return $usr_msg;
     }

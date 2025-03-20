@@ -100,7 +100,9 @@ class sql_par_list
         $usr_msg = new user_message();
 
         foreach ($this->lst as $qp) {
-            $usr_msg->add($db_con->insert($qp, 'add word from list'));
+            $ins_msg = $db_con->insert($qp, 'add word from list');
+            $usr_msg->add($ins_msg);
+            $usr_msg->add_list_name_id($ins_msg, $qp->obj_name);
         }
         return $usr_msg;
     }

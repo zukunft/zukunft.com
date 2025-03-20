@@ -61,6 +61,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
@@ -90,6 +91,7 @@ use cfg\ref\source;
 use cfg\user\user_message;
 use cfg\word\word;
 use cfg\word\word_list;
+use shared\enum\messages as msg_id;
 use shared\library;
 
 class value_list extends sandbox_value_list
@@ -1356,7 +1358,7 @@ class value_list extends sandbox_value_list
      * save
      */
 
-    function save(import $imp): user_message
+    function save(import $imp, float $est_per_sec = 0.0): user_message
     {
         $usr_msg = new user_message();
 
@@ -1367,15 +1369,18 @@ class value_list extends sandbox_value_list
             log_info('no values to save');
         } else {
             // if the group id is not yet set
+            $imp->step_start(msg_id::PREPARE, value::class);
             $this->set_grp_ids();
 
             // load the values already in the database
             $grp_lst = $this->grp_ids();
             $db_lst = new value_list($this->user());
             $db_lst->load_by_ids($grp_lst->ids());
+            $imp->step_end($db_lst->count());
 
             // insert the new values
             $i = 0;
+            $imp->step_start(msg_id::SAVE, value::class);
             foreach ($this->lst() as $val) {
                 if ($val->value() != null) {
                     if ($val->id() == 0) {
@@ -1385,8 +1390,9 @@ class value_list extends sandbox_value_list
                     }
                 }
                 $i++;
-                $imp->display_progress('saved ' . $name . ': ' . $i);
+                $imp->display_progress($i, $est_per_sec, $val->dsp_id());
             }
+            $imp->step_end($i);
 
             // update the existing values
 

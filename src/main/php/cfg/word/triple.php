@@ -534,6 +534,11 @@ class triple extends sandbox_link_named
             $this->view = $trp_view;
         }
 
+        // finally generate the name if needed
+        if ($this->name() == '' and $this->name_given() == '') {
+            $this->name_generated = $this->generate_name();
+        }
+
         return $usr_msg;
     }
 
@@ -739,8 +744,8 @@ class triple extends sandbox_link_named
 
         $vars = parent::export_json($do_load);
 
-        if ($this->name() <> '') {
-            $vars[json_fields::NAME] = $this->name();
+        if ($this->name_ex_generated() <> '') {
+            $vars[json_fields::NAME] = $this->name_ex_generated();
         }
         if ($this->description <> '') {
             $vars[json_fields::DESCRIPTION] = $this->description;
@@ -2869,6 +2874,28 @@ class triple extends sandbox_link_named
                 // or use the standard generic description
                 // but do not generate a new generated name for user sandbox compare
                 $result = $this->name_generated;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * either the user edited description
+     * or the generic name e.g. Australia is a Country
+     * or for the verb is 'is' the category in brackets e.g. Zurich (Canton) or Zurich (City)
+     */
+    function name_ex_generated(bool $ignore_excluded = false): string
+    {
+        $result = '';
+
+        if (!$this->is_excluded() or $ignore_excluded) {
+            if ($this->name <> '') {
+                // use the object
+                $result = $this->name;
+            } elseif ($this->name_given() <> '') {
+                // use the user defined description
+                $result = $this->name_given();
             }
         }
 

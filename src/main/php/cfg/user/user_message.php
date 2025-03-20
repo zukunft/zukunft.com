@@ -67,6 +67,8 @@ class user_message
     private array $msg_id_lst;
     // the prime database row that has caused the user message
     private int|string $db_row_id;
+    // list of database names and id used for inserting a list
+    private array $db_row_id_lst;
     // to trace to progress
     private string $url;
 
@@ -88,6 +90,7 @@ class user_message
             $this->msg_status = self::NOK;
         }
         $this->db_row_id = 0;
+        $this->db_row_id_lst = [];
         $this->msg_id_lst = [];
     }
 
@@ -153,6 +156,11 @@ class user_message
     function checksum(): int|null
     {
         return $this->checksum;
+    }
+
+    function db_row_id_lst(): array
+    {
+        return $this->db_row_id_lst;
     }
 
 
@@ -251,6 +259,21 @@ class user_message
             $this->add_message($msg_text);
         }
         $this->combine_status($msg_to_add);
+        $this->db_row_id_lst = array_merge($this->db_row_id_lst, $msg_to_add->db_row_id_lst);
+    }
+
+    /**
+     * add the database id and the related name to the id list of the user message
+     * @param user_message $msg_to_add  the user message that contains the db id of an object just added to the db
+     * @param string $name the name of the object that is related to the id
+     * @return void
+     */
+    function add_list_name_id(user_message $msg_to_add, string $name = ''): void
+    {
+        $id = $msg_to_add->get_row_id();
+        if ($id != 0 and $name != '') {
+            $this->db_row_id_lst[$name] = $id;
+        }
     }
 
 

@@ -85,6 +85,11 @@ class words
     const TRIPLE = 'triple';
     const SOURCE = 'source';
     const FORMULA = 'formula';
+    const WORDS = 'words';
+    const TRIPLES = 'triples';
+    const SOURCES = 'sources';
+    const VALUES = 'values';
+    const FORMULAS = 'formulas';
     const CHANGES = 'changes';
     const PERCENT = 'percent';
     const DECIMAL = 'decimal';
@@ -135,6 +140,7 @@ class words
     const INITIAL = 'initial';
     const IMPORT = 'import';
     const DECODE = 'decode';
+    const COUNT = 'count';
     const EXPECTED = 'expected';
     const ENTRY = 'entry';
     const PRESELECT = 'preselect';
@@ -142,6 +148,7 @@ class words
     const COLUMNS = 'columns';
     const AUTOMATIC = 'automatic';
     const CREATE = 'create';
+    const STORE = 'store';
     const VIEW = 'view';
     const FREEZE = 'freeze';
     const CHANGE = 'change';
@@ -284,6 +291,8 @@ class words
 
     const GWP = 'global warming potential';
     const GWP_ID = 1070;
+
+    const BYTE = 'byte';
 
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)

@@ -46,6 +46,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
@@ -63,6 +64,7 @@ use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\triple;
 use cfg\word\word_list;
+use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
 use shared\helper\TextIdObject;
@@ -212,6 +214,24 @@ class sandbox_list_named extends sandbox_list
         return $usr_msg;
     }
 
+    function add_id_by_name(array $id_lst): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($id_lst as $name => $id) {
+            if ($id != 0 and $name != '') {
+                $sbx_old = $this->get_by_name($name);
+                if ($sbx_old != null) {
+                    $sbx_old->set_id($id);
+                } else {
+                    $usr_msg->add_message('id or name of word ' . $name . ' missing');
+                }
+            } else {
+                $usr_msg->add_message('id or name of word ' . $name . ' missing');
+            }
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * search
@@ -356,13 +376,10 @@ class sandbox_list_named extends sandbox_list
         word_list|triple_list $db_lst,
         bool                  $use_func = true,
         import                $imp = null,
-        string $class = ''
+        string                $class = ''
     ): user_message
     {
         global $db_con;
-
-        $lib = new library();
-        $name = $lib->class_to_table($class);
 
         $sc = $db_con->sql_creator();
         $usr_msg = new user_message();
@@ -372,21 +389,20 @@ class sandbox_list_named extends sandbox_list
 
         // get the objects that need to be added
         $db_names = $db_lst->names();
-        $imp->display_progress('update ' . $name . ': ' . count($db_names), true);
+        $imp->step_start(msg_id::CHECK, $class, count($db_names));
         $add_lst = clone $this;
         $add_lst = $add_lst->filter_by_name($db_names);
-        $imp->display_progress('add ' . $name . ': ' . $add_lst->count(), true);
+        $imp->step_end(count($db_names));
 
         // get the sql call to add the missing objects
         $ins_calls = $add_lst->sql_call_with_par($sc, $use_func);
-        $imp->display_progress('db statements ' . $ins_calls->count());
+        $imp->step_start(msg_id::PREPARE, $class, $ins_calls->count());
 
         // get the functions that are already in the database
         $db_func_lst = $db_con->get_functions();
 
         // get the sql functions that have not yet been created
         $func_to_create = $ins_calls->sql_functions_missing($db_func_lst);
-        $imp->display_progress('create db statements ' . $func_to_create->count());
 
         // get the first object that have requested the missing function
         $func_create_obj = clone $this;
@@ -396,14 +412,18 @@ class sandbox_list_named extends sandbox_list
         // create the missing sql functions and add the first missing word
         $func_to_create = $func_create_obj->sql($sc);
         $func_to_create->exe();
-        $imp->display_progress('created db statements ' . $func_to_create->count());
+        $imp->step_end($func_to_create->count());
 
-        // add the remaining missing words
+        // add the remaining missing words or triples
+        $imp->step_start(msg_id::ADD, $class, $add_lst->count());
         $add_lst = $add_lst->filter_by_name($func_create_obj_names);
         $ins_calls = $add_lst->sql_call_with_par($sc, $use_func);
         $usr_msg->add($ins_calls->exe());
-        $imp->display_progress('added ' . $name . ': ' . $add_lst->count(), true);
+        $imp->step_end($add_lst->count());
 
+        // TODO create a loop to add depending triples
+        // add the just added words or triples id to this list
+        $this->add_id_by_name($usr_msg->db_row_id_lst());
 
         return $usr_msg;
     }

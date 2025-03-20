@@ -92,6 +92,7 @@ use cfg\word\triple;
 use cfg\word\word;
 use shared\const\triples;
 use shared\const\words;
+use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
@@ -102,15 +103,63 @@ class import
     // import assumption
     const IMPORT_VALIDATE_PCT_TIME = 10;
 
-    // parameters to filter the import
-    public ?user $usr = null; // the user who wants to import data
+    // the user who wants to import data
+    public ?user $usr = null;
 
     // description of the import job
     // the message id of the job name that is translated on the fly inti the language of the frontend
     // so if the user changes the frontend language during a long import
     // the import status is also shown in the changed language
     public ?msg_id $msg_id = null;
+    // the file, url or stream name of the data to import
     public string $file_name = '';
+    // the name of the main import step executed at the moment
+    public msg_id|string $main_step = '';
+    // the name of the import step executed at the moment
+    public msg_id|string $step = '';
+    // the object class processed at the moment
+    public string $class = '';
+    // the number of objects processed in this step until now
+    public string $processed = '';
+
+    // execution times
+
+    // the time when the import has been started
+    public float $start_time;
+    // the start time of the main step e.g. object creation
+    public float $start_time_main_step = 0;
+    // the start time of the sub step e.g. saving words in the database
+    public float $start_time_step = 0;
+
+    // the total expected time to finish this import based on the file size
+    public float $est_time_total;
+    // the expected time to read the file based on the file size
+    public float $est_time_read;
+    // the expected time for decoding based on the file size
+    public float $est_time_decode;
+    // the expected time for object creation based on the file size
+    public float $est_time_create;
+    // the expected time for database save based on the file size
+    public float $est_time_store;
+    // the expected time for the main step executing now
+    public float $est_time_main_step;
+    // the expected time for the step executing now
+    public float $est_time_step = 0;
+
+    // sum of the estimated time already done of main steps
+    public float $done_time_main_step = 0;
+    // sum of the estimated time already done of sub steps
+    public float $done_time_step = 0;
+
+    // the number of objects / bytes within a step
+    public float $micro_steps = 0;
+
+    // the adjusted expected time to finish this import
+    public float $time_exp_act;
+
+
+    // timestamp of the last message shown to the user
+    public float $last_display_time;
 
     // statistic data
     public ?int $users_done = 0;
@@ -142,72 +191,114 @@ class import
     public ?int $system_done = 0;
     public ?int $system_failed = 0;
 
-    // execution times
-
-    // the time when the import has been started
-    public float $start_time;
-
-    // the expected time to finish this import
-    public float $time_exp;
-    public float $step_time;
-    public float $start_analyse;
-    public float $start_save;
-
-    // timestamp of the last message shown to the user
-    public float $last_display_time;
-
     function __construct(string $file_name = '')
     {
         $this->start_time = microtime(true);
-        $this->time_exp = 1.1; // dummy value
-        $this->start_analyse = microtime(true);
-        $this->start_save = microtime(true);
         $this->last_display_time = microtime(true);
         $this->msg_id = msg_id::IMPORT_JSON;
         if ($file_name != '') {
             $this->file_name = $file_name;
         }
+        // set dummy value assuming that an import may last 3 seconds if no other estimates can be done
+        $this->est_time_total = 3;
+        $this->est_time_read = 0.05;
+        $this->est_time_decode = 0.05;
+        $this->est_time_create = 0.5;
+        $this->est_time_store = 2.4;
+        $this->time_exp_act = 3;
     }
 
     /**
      * show the progress of an import process
-     * @param string|msg_id $step the part of the process that is done at the moment
+     * @param int $processed the number of processed objects until now
+     * @param float $per_sec the expected number of words that can be analysed per second
+     * @param string $sample a sample text what is imported at the moment
      * @param bool $show if true the message should be preferred shown to the user
      * @param bool $stat if true the statistic of the import should be shown
      * @return void
      */
     function display_progress(
-        string|msg_id $step = '',
-        bool          $show = false,
-        bool          $stat = false
+        int    $processed = 0,
+        float  $per_sec = 0,
+        string $sample = '',
+        bool   $show = false,
+        bool   $stat = false
     ): void
     {
         global $mtr;
         global $cfg;
+
+        $lib = new library();
+
+        // fix the time
+        $check_time = microtime(true);
+
+        // get the updated configuration settings
         $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR]);
 
-        $check_time = microtime(true);
+        // calc the time statistics
         $time_since_last_display = $check_time - $this->last_display_time;
-        $real_time = $check_time - $this->start_time;
-        if (!is_string($step)) {
-            $step = $step->text();
+        $total_time = 0;
+        $processed_per_sec = 0;
+        if ($stat or $show or ($time_since_last_display > $ui_response_time)) {
+            $total_time = $check_time - $this->start_time;
+            $step_time = $check_time - $this->start_time_step;
+            if ($step_time > 0) {
+                $processed_per_sec = $processed / $step_time;
+            }
+
+            // update the remaining time to avoid reporting too low eta
+            $time_exp_adj = $this->calc_total_time($check_time, $processed);
+
+            $this->time_exp_act = $time_exp_adj;
         }
 
-        $name = $mtr->txt($this->msg_id) . ' ' . basename($this->file_name);
+
+        // create or update the text message parts
+        $name = '';
+        $progress = '';
+        $times = '';
+        $part = '';
+        $speed = '';
+        if ($stat or $show or ($time_since_last_display > $ui_response_time)) {
+            $name = $mtr->txt($this->msg_id) . ' ' . basename($this->file_name);
+            if (!is_string($this->step)) {
+                $step = ' ' . $this->step->text();
+            } else {
+                $step = ' ' . $this->step;
+            }
+            if ($this->class == import_file::FILE) {
+                $class = $this->class;
+                $part = ' ' . $class . $step;
+            } else {
+                $class = $lib->class_to_table($this->class);
+                $part = ' ' . $class . $step . ': ' . $processed;
+            }
+            $times = ' ' . round($total_time, 3) . 's / ' . round($this->time_exp_act, 3) . 's';
+            $final_time = ' ' . round($total_time, 3) . 's ' . $this->time_exp_act;
+            if ($total_time > 0.001) {
+                $progress = ' ' . round($total_time / $this->time_exp_act * 100, 1) . '%';
+            }
+            if ($this->class == import_file::FILE or $this->step == msg_id::DECODED) {
+                $speed = ' (' . round($processed_per_sec / 1000000, 1) . ' MB per sec';
+            } else {
+                $speed = ' (' . round($processed_per_sec, 1) . ' ' . $class . ' per sec';
+            }
+            if ($per_sec > 0) {
+                $speed .= ' vs. ' . $per_sec . ')';
+            } else {
+                $speed .= ')';
+            }
+        }
+        if ($sample != '') {
+            $sample = ' ' . $mtr->txt(msg_id::EXAMPLE_SHORT) . ' ' . $sample;
+        }
 
         if ($stat) {
-            echo $name . ' ' . round($real_time, 3) . 's ' . $this->time_exp . ' ' . $step . "\n";
+            echo $name . $final_time . $step . $speed . "\n";
         } elseif ($show or ($time_since_last_display > $ui_response_time)) {
-            if ($real_time < 0.001) {
-                $progress = '';
-            } else {
-                $progress = round($real_time / $this->time_exp * 100, 1) . '% ';
-            }
             //echo '<br><br>import' . $progress . ' done<br>';
-            echo $name . ' '
-                . round($real_time, 3) . 's / ' . round($this->time_exp, 3) . 's '
-                . $progress . $step . "\n";
-            log_debug('import->put ' . $progress);
+            echo $name . $progress . $times . $part . $speed . $sample . "\n";
             $this->last_display_time = microtime(true);
         }
     }
@@ -243,60 +334,52 @@ class import
      *
      * @param string $json_str the zukunft.com JSON message to import as a string
      * @param user $usr_trigger the user who has triggered the import
-     * @param string $filename the filename for user info only
-     * @param float $time_total the estimated total time for the import in seconds
      * @return user_message the result of the import
      */
     function put_json(
         string $json_str,
-        user   $usr_trigger,
-        string $filename,
-        float  $time_total
+        user   $usr_trigger
     ): user_message
     {
         global $cfg;
-        global $mtr;
 
         // get the relevant config values
-        $decode_bytes_per_second = $cfg->get_by([
+        $decode_per_sec = $cfg->get_by([
             words::DECODE,
-            triples::BYTES_SECOND,
+            triples::BYTES_PER_SECOND,
             triples::EXPECTED_TIME, words::IMPORT], 1);
-        $object_creation_bytes_per_second = $cfg->get_by([
+        $count_per_sec = $cfg->get_by([
             triples::OBJECT_CREATION,
-            triples::BYTES_SECOND,
+            triples::BYTES_PER_SECOND,
+            triples::EXPECTED_TIME, words::IMPORT], 1);
+        $store_per_sec = $cfg->get_by([
+            triples::OBJECT_STORING,
+            triples::BYTES_PER_SECOND,
             triples::EXPECTED_TIME, words::IMPORT], 1);
 
         $usr_msg = new user_message();
-        $name = 'import ' . $filename;
+
+        $size = strlen($json_str);
 
         // read the import file
-        $size = strlen($json_str);
-        $time_decode = $size / $decode_bytes_per_second;
-        $this->display_progress('decode');
+        $this->step_main_start(msg_id::READ, $this->est_time_decode);
+        $this->step_start(msg_id::DECODED, words::BYTE);
         $json_array = json_decode($json_str, true);
+        $this->step_end($size, $decode_per_sec);
+        $this->step_main_end($size, $decode_per_sec);
 
         // analyse the import file
-        $step_start_time = microtime(true);
-        $this->display_progress('analysing');
+        $this->step_main_start(msg_id::COUNT, $this->est_time_create);
         $dto = $this->get_data_object($json_array, $usr_trigger, $usr_msg, $size);
-        $step_end_time = microtime(true);
-        $expected_analyse_time = $size / $object_creation_bytes_per_second;
-        $real_step_time = $step_end_time - $step_start_time;
-        $offset = $real_step_time - $expected_analyse_time;
-        $time_total = $time_total + $offset;
+        $this->step_main_end($size, $count_per_sec);
 
         // write to the database
+        $this->step_main_start(msg_id::SAVE, $this->est_time_store);
         $usr_msg->add($dto->save($this));
+        $this->step_main_end($size, $store_per_sec);
 
         // show the import result
-        if ($usr_msg->is_ok()) {
-            $step = $mtr->txt(msg_id::DONE);
-        } else {
-            $step = $usr_msg->all_message_text();
-        }
-
-        $this->display_progress($step, true);
+        $this->end($size, $store_per_sec, $usr_msg);
 
         return $usr_msg;
     }
@@ -306,15 +389,11 @@ class import
      *
      * @param string $json_str the zukunft.com JSON message to import as a string
      * @param user $usr_trigger the user who has triggered the import
-     * @param string $filename the filename for user info only
-     * @param float $time_total the estimated total time for the import in seconds
      * @return user_message the result of the import
      */
     function put_json_direct(
         string $json_str,
-        user   $usr_trigger,
-        string $filename = '',
-        float  $time_total = 1
+        user   $usr_trigger
     ): user_message
     {
         $usr_msg = new user_message();
@@ -336,15 +415,11 @@ class import
      *
      * @param array $json_array the zukunft.com JSON message to import as an array
      * @param user $usr_trigger the user who has triggered the import
-     * @param string $filename the filename for user info only
-     * @param float $total the expected total time for the import in seconds
      * @return user_message the result of the import
      */
     private function put(
-        array  $json_array,
-        user   $usr_trigger,
-        string $filename = '',
-        float  $total = 1.0
+        array $json_array,
+        user  $usr_trigger
     ): user_message
     {
         global $usr;
@@ -353,11 +428,6 @@ class import
         log_debug();
         $usr_msg = new user_message();
         $this->last_display_time = microtime(true);
-
-        //$total = $lib->count_recursive($json_array, 3);
-        $msg = 'import ' . $filename;
-        $val_steps = round(self::IMPORT_VALIDATE_PCT_TIME * $total);
-        //$total = $total + $val_steps;
 
         // get the user first to allow user specific validation
         $usr_import = null;
@@ -415,6 +485,7 @@ class import
                 // TODO import the users (but only by a user with the privileges)
                 log_warning('import of users not yet implemented');
             } elseif ($key == json_fields::LIST_VERBS) {
+                $this->step_start(msg_id::SAVE_LIST, verb::class);
                 $import_result = new user_message();
                 foreach ($json_obj as $verb) {
                     $vrb = new verb;
@@ -425,11 +496,13 @@ class import
                     } else {
                         $this->verbs_failed++;
                     }
-                    $this->display_progress($lib->class_to_table(verb::class));
+                    $this->display_progress($this->verbs_done);
                     $pos++;
                 }
                 $usr_msg->add($import_result);
+                $this->step_end($this->verbs_done);
             } elseif ($key == json_fields::WORDS) {
+                $this->step_start(msg_id::SAVE_SINGLE, word::class);
                 foreach ($json_obj as $word) {
                     $wrd = new word($usr_trigger);
                     $import_result = $wrd->import_obj($word);
@@ -439,10 +512,12 @@ class import
                         $this->words_failed++;
                     }
                     $usr_msg->add($import_result);
-                    $this->display_progress($lib->class_to_table(word::class));
+                    $this->display_progress($this->words_done);
                     $pos++;
                 }
+                $this->step_end($this->words_done);
             } elseif ($key == json_fields::WORD_LIST) {
+                $this->step_start(msg_id::SAVE_LIST, word::class);
                 // a list of just the word names without further parameter
                 // phrase list because a word might also be a triple
                 $phr_lst = new phrase_list($usr_trigger);
@@ -453,9 +528,10 @@ class import
                     $this->words_failed++;
                 }
                 $usr_msg->add($import_result);
-                $this->display_progress($lib->class_to_table(phrase_list::class));
+                $this->display_progress($this->words_done);
                 $pos++;
             } elseif ($key == json_fields::TRIPLES) {
+                $this->step_start(msg_id::SAVE_SINGLE, triple::class);
                 foreach ($json_obj as $triple) {
                     $wrd_lnk = new triple($usr_trigger);
                     $import_result = $wrd_lnk->import_obj($triple);
@@ -465,10 +541,11 @@ class import
                         $this->triples_failed++;
                     }
                     $usr_msg->add($import_result);
-                    $this->display_progress($lib->class_to_table(triple::class));
+                    $this->display_progress($this->triples_done);
                     $pos++;
                 }
             } elseif ($key == json_fields::FORMULAS) {
+                $this->step_start(msg_id::SAVE_SINGLE, formula::class);
                 foreach ($json_obj as $formula) {
                     $frm = new formula($usr_trigger);
                     $import_result = $frm->import_obj($formula);
@@ -479,10 +556,11 @@ class import
                         $this->formulas_failed++;
                     }
                     $usr_msg->add($import_result);
-                    $this->display_progress($lib->class_to_table(formula::class));
+                    $this->display_progress($this->formulas_done);
                     $pos++;
                 }
             } elseif ($key == json_fields::SOURCES) {
+                $this->step_start(msg_id::SAVE_SINGLE, source::class);
                 foreach ($json_obj as $value) {
                     $src = new source($usr_trigger);
                     $import_result = $src->import_obj($value);
@@ -492,10 +570,11 @@ class import
                         $this->sources_failed++;
                     }
                     $usr_msg->add($import_result);
-                    $this->display_progress($lib->class_to_table(source::class));
+                    $this->display_progress($this->sources_done);
                     $pos++;
                 }
             } elseif ($key == json_fields::REFS) {
+                $this->step_start(msg_id::SAVE_SINGLE, ref::class);
                 foreach ($json_obj as $value) {
                     $ref = new ref($usr_trigger);
                     $import_result = $ref->import_obj($value);
@@ -505,10 +584,11 @@ class import
                         $this->refs_failed++;
                     }
                     $usr_msg->add($import_result);
-                    $this->display_progress($lib->class_to_table(ref::class));
+                    $this->display_progress($this->refs_done);
                     $pos++;
                 }
             } elseif ($key == json_fields::PHRASE_VALUES) {
+                $this->step_start(msg_id::SAVE_SINGLE, value::class);
                 foreach ($json_obj as $val_key => $number) {
                     $val = new value($usr_trigger);
                     $import_result = $val->import_phrase_value($val_key, $number);
@@ -518,10 +598,11 @@ class import
                         $this->values_failed++;
                     }
                     $usr_msg->add($import_result);
-                    $this->display_progress($lib->class_to_table(value::class));
+                    $this->display_progress($this->values_done);
                     $pos++;
                 }
             } elseif ($key == json_fields::VALUES) {
+                $this->step_start(msg_id::SAVE_SINGLE, value::class);
                 foreach ($json_obj as $value) {
                     $val = new value($usr_trigger);
                     $import_result = $val->import_obj($value);
@@ -531,10 +612,11 @@ class import
                         $this->values_failed++;
                     }
                     $usr_msg->add($import_result);
-                    $this->display_progress($lib->class_to_table(value::class));
+                    $this->display_progress($this->values_done);
                     $pos++;
                 }
             } elseif ($key == json_fields::VALUE_LIST) {
+                $this->step_start(msg_id::SAVE_LIST, value::class);
                 // TODO add a unit test
                 foreach ($json_obj as $value) {
                     $val = new value_list($usr_trigger);
@@ -545,10 +627,11 @@ class import
                         $this->list_values_failed++;
                     }
                     $usr_msg->add($import_result);
-                    $this->display_progress($lib->class_to_table(value_list::class));
+                    $this->display_progress($this->list_values_done);
                     $pos++;
                 }
             } elseif ($key == json_fields::VIEWS) {
+                $this->step_start(msg_id::SAVE_SINGLE, view::class);
                 foreach ($json_obj as $view) {
                     $view_obj = new view($usr_trigger);
                     $import_result = $view_obj->import_obj($view);
@@ -558,10 +641,11 @@ class import
                         $this->views_failed++;
                     }
                     $usr_msg->add($import_result);
-                    $this->display_progress($lib->class_to_table(view::class));
+                    $this->display_progress($this->views_done);
                     $pos++;
                 }
             } elseif ($key == json_fields::COMPONENTS) {
+                $this->step_start(msg_id::SAVE_SINGLE, component::class);
                 foreach ($json_obj as $cmp) {
                     $cmp_obj = new component($usr_trigger);
                     $import_result = $cmp_obj->import_obj($cmp);
@@ -571,10 +655,11 @@ class import
                         $this->components_failed++;
                     }
                     $usr_msg->add($import_result);
-                    $this->display_progress($lib->class_to_table(component::class));
+                    $this->display_progress($this->components_done);
                     $pos++;
                 }
             } elseif ($key == json_fields::CALC_VALIDATION) {
+                $this->step_start(msg_id::SAVE_SINGLE, result::class);
                 // TODO add a unit test
                 foreach ($json_obj as $value) {
                     $res = new result($usr_trigger);
@@ -586,10 +671,11 @@ class import
                         $this->calc_validations_failed++;
                     }
                     $usr_msg->add($import_result);
-                    $this->display_progress($lib->class_to_table(result::class));
+                    $this->display_progress($this->calc_validations_done);
                     $pos++;
                 }
             } elseif ($key == json_fields::VIEW_VALIDATION) {
+                $this->step_start(msg_id::SAVE_SINGLE, view::class);
                 // TODO switch to view usr_msg
                 // TODO add a unit test
                 foreach ($json_obj as $value) {
@@ -602,10 +688,11 @@ class import
                         $this->view_validations_failed++;
                     }
                     $usr_msg->add($import_result);
-                    $this->display_progress($lib->class_to_table(view::class));
+                    $this->display_progress($this->view_validations_done);
                     $pos++;
                 }
             } elseif ($key == json_fields::IP_BLACKLIST) {
+                $this->step_start(msg_id::SAVE_SINGLE, ip_range::class);
                 foreach ($json_obj as $ip_range) {
                     $ip_obj = new ip_range;
                     $ip_obj->set_user($usr_trigger);
@@ -616,7 +703,7 @@ class import
                         $this->system_failed++;
                     }
                     $usr_msg->add($import_result);
-                    $this->display_progress($lib->class_to_table(ip_range::class));
+                    $this->display_progress($this->system_done);
                     $pos++;
                 }
             } else {
@@ -625,7 +712,7 @@ class import
         }
 
         // show 90% before validation starts
-        $this->display_progress('validate');
+        $this->step_start(msg_id::VALIDATE);
 
         // validate the import
         if (!$frm_to_calc->is_empty()) {
@@ -664,74 +751,60 @@ class import
     ): data_object
     {
         global $cfg;
-        global $mtr;
 
         // get the relevant config values
-        $analyse_bytes_per_second = $cfg->get_by([
-            triples::OBJECT_CREATION, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $analyse_words_per_second = $cfg->get_by(
-            [triples::ANALYSE_WORDS, triples::BYTES_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-
-        // estimate the total estimated time for analysing the import data
-        $time_analyse = $size / $analyse_bytes_per_second;
+        $wrd_per_sec = $cfg->get_by([words::WORDS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $trp_per_sec = $cfg->get_by([words::TRIPLES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $src_per_sec = $cfg->get_by([words::SOURCES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $val_per_sec = $cfg->get_by([words::VALUES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $frm_per_sec = $cfg->get_by([words::FORMULAS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         // estimate the time for each object type
         // where 5 is the number of data objects that are filled with this function
         $steps = 5;
-        $step_time = $time_analyse / $steps;
+        $step_time = $this->est_time_create / $steps;
 
         // create the data_object to fill
         $dto = new data_object($usr_trigger);
 
         $usr_msg->add($this->message_check($json_array));
-        $sub_topic = $mtr->txt(msg_id::COUNTED);
         if ($usr_msg->is_ok()) {
             // TODO add json_fields::IP_BLACKLIST
             // TODO add json_fields::USERS
             // TODO add json_fields::LIST_VERBS
             if (key_exists(json_fields::WORDS, $json_array)) {
-                $this->step_start();
                 $wrd_array = $json_array[json_fields::WORDS];
-                $usr_msg->add($this->get_data_object_words($wrd_array, $usr_trigger, $dto,
-                    $step_time, $sub_topic));
-                $this->step_end($dto->word_list()->count(), $analyse_words_per_second,
-                    $sub_topic, word::class);
+                $this->step_start(msg_id::COUNT, word::class, count($wrd_array), $step_time);
+                $usr_msg->add($this->dto_get_words($wrd_array, $usr_trigger, $dto, $wrd_per_sec));
+                $this->step_end($dto->word_list()->count(), $wrd_per_sec);
             }
             // TODO add json_fields::WORD_LIST
             if (key_exists(json_fields::TRIPLES, $json_array)) {
-                $this->step_start();
                 $trp_array = $json_array[json_fields::TRIPLES];
-                $usr_msg->add($this->get_data_object_triples($trp_array, $usr_trigger, $dto,
-                    $step_time, $sub_topic));
-                $this->step_end($dto->triple_list()->count(), $analyse_words_per_second,
-                    $sub_topic, triple::class);
+                $this->step_start(msg_id::COUNT, triple::class, count($trp_array), $step_time);
+                $usr_msg->add($this->dto_get_triples($trp_array, $usr_trigger, $dto, $trp_per_sec));
+                $this->step_end($dto->triple_list()->count(), $trp_per_sec);
             }
             if (key_exists(json_fields::SOURCES, $json_array)) {
-                $this->step_start();
                 $src_array = $json_array[json_fields::SOURCES];
-                $usr_msg->add($this->get_data_object_sources($src_array, $usr_trigger, $dto,
-                    $step_time, $sub_topic));
-                $this->step_end($dto->source_list()->count(), $analyse_words_per_second,
-                    $sub_topic, source::class);
+                $this->step_start(msg_id::COUNT, source::class, count($src_array), $step_time);
+                $usr_msg->add($this->dto_get_sources($src_array, $usr_trigger, $dto, $src_per_sec));
+                $this->step_end($dto->source_list()->count(), $src_per_sec);
             }
             // TODO add json_fields::REFS
             // TODO add json_fields::PHRASE_VALUES
             if (key_exists(json_fields::VALUES, $json_array)) {
-                $this->step_start();
                 $val_array = $json_array[json_fields::VALUES];
-                $usr_msg->add($this->get_data_object_values($val_array, $usr_trigger, $dto,
-                    $step_time, $sub_topic));
-                $this->step_end($dto->value_list()->count(), $analyse_words_per_second,
-                    $sub_topic, value::class);
+                $this->step_start(msg_id::COUNT, value::class, count($val_array), $step_time);
+                $usr_msg->add($this->dto_get_values($val_array, $usr_trigger, $dto, $val_per_sec));
+                $this->step_end($dto->value_list()->count(), $val_per_sec);
             }
             // TODO add json_fields::VALUE_LIST
             if (key_exists(json_fields::FORMULAS, $json_array)) {
-                $this->step_start();
                 $frm_array = $json_array[json_fields::FORMULAS];
-                $usr_msg->add($this->get_data_object_formulas($frm_array, $usr_trigger, $dto,
-                    $step_time, $sub_topic));
-                $this->step_end($dto->formula_list()->count(), $analyse_words_per_second,
-                    $sub_topic, formula::class);
+                $this->step_start(msg_id::COUNT, formula::class, count($frm_array), $step_time);
+                $usr_msg->add($this->dto_get_formulas($frm_array, $usr_trigger, $dto, $frm_per_sec));
+                $this->step_end($dto->formula_list()->count(), $frm_per_sec);
             }
             // TODO add json_fields::RESULTS
             // TODO add json_fields::CALC_VALIDATION
@@ -742,34 +815,177 @@ class import
         return $dto;
     }
 
-    private function step_start(): void
+    /**
+     * start a group of steps and remember the estimated time
+     * @param string|msg_id $step
+     * @param float $exp_time the estimated time for this step base on the bytes to import
+     * @return void
+     */
+    function step_main_start(
+        string|msg_id $step = '',
+        float         $exp_time = 0.0
+    ): void
     {
-        $this->step_time = microtime(true);
+        $this->main_step = $step;
+        $this->start_time_main_step = microtime(true);
+        $this->est_time_main_step = $exp_time;
+        $this->done_time_step = 0;
+    }
+
+    /**
+     * remember how much is done by adding the estimated time done
+     */
+    function step_main_end(): void
+    {
+        $this->done_time_main_step = $this->done_time_main_step + $this->est_time_main_step;
+        $this->est_time_main_step = 0;
+        $this->done_time_step = 0;
+    }
+
+    function step_start(
+        string|msg_id $step = '',
+        string        $class = '',
+        float         $total = 0,
+        float         $exp_time = 0.0
+    ): void
+    {
+        $this->step = $step;
+        $this->class = $class;
+        $this->start_time_step = microtime(true);
+        $this->est_time_step = $exp_time;
+        $this->micro_steps = $total;
+        if ($class == import_file::FILE) {
+            global $mtr;
+            $name = $mtr->txt($this->msg_id) . ' ' . basename($this->file_name);
+            $speed = '(' . round($total / 1000) . ' kBytes)';
+            echo $name . ' ' . $speed . "\n";
+        }
     }
 
     /**
      * @param int $nbr the number of precessed objects e.g. count(word)
      * @param float $est_per_sec the expected number of objects that can be processed per second
-     * @param string $sub_topic text to show to the user the step that is processed at the moment
-     * @param string $class the class name that is processed now
      */
-    private function step_end(
-        int    $nbr = 0,
-        float  $est_per_sec = 0.0,
-        string $sub_topic = '',
-        string $class = ''
+    function step_end(
+        int   $nbr = 0,
+        float $est_per_sec = 0.0
     ): void
     {
         $end_time = microtime(true);
+        $this->done_time_step = $this->done_time_step + $this->est_time_step;
+        $this->est_time_step = 0;
+
+        if ($nbr > 0) {
+            if ($this->step == msg_id::DECODED) {
+                $used_est_per_sec = $est_per_sec * 1000000;
+            } elseif ($this->class == import_file::FILE) {
+                $this->step = msg_id::LOADED;
+                $used_est_per_sec = $est_per_sec * 1000000;
+            } else {
+                $this->step = msg_id::TOTAL;
+                $used_est_per_sec = $est_per_sec;
+            }
+            if ($used_est_per_sec != 0) {
+                $this->time_exp_act = $this->calc_total_time($end_time, $nbr);
+            }
+            $this->display_progress($nbr, $est_per_sec, '', true);
+        }
+    }
+
+    /**
+     * calc the adjusted expected total execution time
+     *
+     * @param float $check_time the timestamp of the update
+     * @return float the eta (estimate time of arrival) based total execution time
+     */
+    private function calc_total_time(float $check_time, int $processed = 0): float
+    {
+        // highlight the original expected time based on the file size
+        $original_time_expected = $this->est_time_total;
+
+        // get the real execution time until now
+        $time_already = $check_time - $this->start_time;
+
+        // calc the percentage of the step done
+        if ($processed > 0 and $this->micro_steps > 0) {
+            $step_done_in_pct = $processed / $this->micro_steps;
+        } else {
+            $step_done_in_pct = 0;
+        }
+
+        // calc the time done until now based on the estimates
+        $est_step_time_done = $this->est_time_step * $step_done_in_pct;
+
+        // get the micro percent done
+        // based on the main steps already done ($this->time_done_main_step)
+        // plus the steps already done ($this->time_done_step)
+        // plus the micro step time done ($this->time_done_step)
+        $est_time_done = $this->done_time_main_step + $this->done_time_step + $est_step_time_done;
+
+        // calc the percentage done base on the original estimates
+        $pct_done = $est_time_done / $original_time_expected;
+
+        // calc the remaining time in percent
+        $pct_remaining = 1 - $pct_done;
+
+        // estimated time until now
+        $est_time_now = $original_time_expected * $pct_done;
+
+        // real time until now
+        $real_time_now = $time_already * $pct_done;
+
+        // calc the factor how much longer (or short) it takes relative to the original estimate
+        $factor = 1;
+        if ($est_time_now > 0) {
+            $factor = $real_time_now / $est_time_now;
+        }
+
+        // calc the remaining time based on the original estimate
+        $est_time_remaining = $original_time_expected * $pct_remaining;
+
+        // reduce the adjustment factor based on the percent executed until now
+        // to avoid high adjustments on the beginning of the process
+        $factor_used = $pct_remaining + ($factor * $pct_done);
+
+        // TODO remove
+        /*
+        echo 'done in pct: ' . round($pct_done * 100, 1)
+            . ' (' . round($this->done_time_main_step, 4) .'+' . round($this->done_time_step, 4) .'+' . round($est_step_time_done, 4) .') '
+            . ' factor used ' . round($factor_used, 2) . ' time_exp_remaining ' . round($est_time_remaining, 2) . "\n";
+        */
+
+        // calc the adjusted expected total execution time
+        return $time_already + $est_time_remaining * $factor_used;
+
+    }
+
+    /**
+     * calc the import times and show the result to the user
+     * @param int $nbr the number of precessed objects e.g. count(word)
+     * @param float $est_per_sec the expected number of objects that can be processed per second
+     */
+    function end(
+        int          $nbr = 0,
+        float        $est_per_sec = 0.0,
+        user_message $usr_msg = new user_message()
+    ): void
+    {
+        global $mtr;
+
+        $end_time = microtime(true);
+
+        if ($usr_msg->is_ok()) {
+            $step = $mtr->txt(msg_id::DONE);
+        } else {
+            $step = $usr_msg->all_message_text();
+        }
 
         $lib = new library();
         if ($nbr > 0) {
-            $part = $lib->class_to_table($class) . ' ' . $sub_topic . ': ' . $nbr;
-            $this->display_progress($part, true);
-            $expected_step_time = $nbr / $est_per_sec;
-            $real_step_time = $end_time - $this->step_time;
-            $offset = $real_step_time - $expected_step_time;
-            $this->time_exp = $this->time_exp + $offset;
+            $part = $lib->class_to_table($this->class) . ' ' . $step . ': ' . $nbr;
+            $this->display_progress($nbr, $est_per_sec);
+            $expected_time = $nbr / $est_per_sec;
+            $real_time = $end_time - $this->start_time;
         }
     }
 
@@ -799,28 +1015,25 @@ class import
      * @param array $json_array the word part of the import json
      * @param user $usr_trigger the user who has started the import
      * @param data_object $dto the data object that should be filled
-     * @param float $total_step the total expect time of the import step
-     * @param string $sub_topic the name of the import step e.g. count values
+     * @param float $per_sec the expected number of words that can be analysed per second
      * @return user_message the messages to the user if something has not been fine
      */
-    private function get_data_object_words(
+    private function dto_get_words(
         array       $json_array,
         user        $usr_trigger,
         data_object $dto,
-        float       $total_step = 0,
-        string      $sub_topic = ''
+        float       $per_sec = 0
     ): user_message
     {
         $usr_msg = new user_message();
-        $step = $this->get_data_object_step($json_array, $total_step);
-        $part = $this->get_data_object_part($sub_topic, word::class);
+
         $i = 0;
         foreach ($json_array as $wrd_json) {
             $wrd = new word($usr_trigger);
             $usr_msg->add($wrd->import_mapper($wrd_json));
             $dto->add_word($wrd);
             $i++;
-            $this->display_progress($part . $i);
+            $this->display_progress($i, $per_sec, $wrd->dsp_id());
         }
         return $usr_msg;
     }
@@ -830,28 +1043,25 @@ class import
      * @param array $json_array the word part of the import json
      * @param user $usr_trigger the user who has started the import
      * @param data_object $dto the data object that should be filled
-     * @param float $total_step the total expect time of the import step
-     * @param string $sub_topic the name of the import step e.g. count values
+     * @param float $per_sec the expected number of triples that can be analysed per second
      * @return user_message the messages to the user if something has not been fine
      */
-    private function get_data_object_triples(
+    private function dto_get_triples(
         array       $json_array,
         user        $usr_trigger,
         data_object $dto,
-        float       $total_step = 0,
-        string      $sub_topic = ''
+        float       $per_sec = 0
     ): user_message
     {
         $usr_msg = new user_message();
-        $step = $this->get_data_object_step($json_array, $total_step);
-        $part = $this->get_data_object_part($sub_topic, triple::class);
+
         $i = 0;
         foreach ($json_array as $trp_json) {
             $trp = new triple($usr_trigger);
             $usr_msg->add($trp->import_mapper($trp_json, $dto));
             $dto->add_triple($trp);
             $i++;
-            $this->display_progress($part . $i);
+            $this->display_progress($i, $per_sec, $trp->dsp_id());
         }
         return $usr_msg;
     }
@@ -861,28 +1071,25 @@ class import
      * @param array $json_array the source part of the import json
      * @param user $usr_trigger the user who has started the import
      * @param data_object $dto the data object that should be filled
-     * @param float $total_step the total expect time of the import step
-     * @param string $sub_topic the name of the import step e.g. count values
+     * @param float $per_sec the expected number of sources that can be analysed per second
      * @return user_message the messages to the user if something has not been fine
      */
-    private function get_data_object_sources(
+    private function dto_get_sources(
         array       $json_array,
         user        $usr_trigger,
         data_object $dto,
-        float       $total_step = 0,
-        string      $sub_topic = ''
+        float       $per_sec = 0
     ): user_message
     {
         $usr_msg = new user_message();
-        $step = $this->get_data_object_step($json_array, $total_step);
-        $part = $this->get_data_object_part($sub_topic, source::class);
+
         $i = 0;
         foreach ($json_array as $src_json) {
             $src = new source($usr_trigger);
             $usr_msg->add($src->import_mapper($src_json, $dto));
             $dto->add_source($src);
             $i++;
-            $this->display_progress($part . $i);
+            $this->display_progress($i, $per_sec, $src->dsp_id());
         }
         return $usr_msg;
     }
@@ -892,28 +1099,25 @@ class import
      * @param array $json_array the source part of the import json
      * @param user $usr_trigger the user who has started the import
      * @param data_object $dto the data object that should be filled
-     * @param float $total_step the total expect time of the import step
-     * @param string $sub_topic the name of the import step e.g. count values
+     * @param float $per_sec the expected number of values that can be analysed per second
      * @return user_message the messages to the user if something has not been fine
      */
-    private function get_data_object_values(
+    private function dto_get_values(
         array       $json_array,
         user        $usr_trigger,
         data_object $dto,
-        float       $total_step = 0,
-        string      $sub_topic = ''
+        float       $per_sec = 0
     ): user_message
     {
         $usr_msg = new user_message();
-        $step = $this->get_data_object_step($json_array, $total_step);
-        $part = $this->get_data_object_part($sub_topic, value::class);
+
         $i = 0;
         foreach ($json_array as $val_json) {
             $val = new value($usr_trigger);
             $usr_msg->add($val->import_mapper($val_json, $dto));
             $dto->add_value($val);
             $i++;
-            $this->display_progress($part . $i);
+            $this->display_progress($i, $per_sec, $val->dsp_id());
         }
         return $usr_msg;
     }
@@ -923,80 +1127,27 @@ class import
      * @param array $json_array the word part of the import json
      * @param user $usr_trigger the user who has started the import
      * @param data_object $dto the data object that should be filled
-     * @param float $total_step the total expect time of the import step
-     * @param string $sub_topic the name of the import step e.g. count values
+     * @param float $per_sec the expected number of formulas that can be analysed per second
      * @return user_message the messages to the user if something has not been fine
      */
-    private function get_data_object_formulas(
+    private function dto_get_formulas(
         array       $json_array,
         user        $usr_trigger,
         data_object $dto,
-        float       $total_step = 0,
-        string      $sub_topic = ''
+        float       $per_sec = 0
     ): user_message
     {
         $usr_msg = new user_message();
-        $step = $this->get_data_object_step($json_array, $total_step);
-        $part = $this->get_data_object_part($sub_topic, formula::class);
+
         $i = 0;
         foreach ($json_array as $frm_json) {
             $frm = new formula($usr_trigger);
             $usr_msg->add($frm->import_mapper($frm_json, $dto));
             $dto->add_formula($frm);
             $i++;
-            $this->display_progress($part . $i);
+            $this->display_progress($i, $per_sec, $frm->dsp_id());
         }
         return $usr_msg;
-    }
-
-    /**
-     * add the source from the json array to the data object
-     * @param array $json_array the source part of the import json
-     * @param float $total_step the total expect time of the import step
-     * @return float the step size of each object of this import step
-     */
-    private function get_data_object_step(
-        array $json_array,
-        float $total_step
-    ): float
-    {
-        if (count($json_array) > 0) {
-            return $total_step / count($json_array);
-        } else {
-            return 0.0;
-        }
-    }
-
-    /**
-     * add the source from the json array to the data object
-     * @param string $sub_topic the name of the import step e.g. count values
-     * @param string $class the name class that is imported with this step
-     * @return string the name of the import step
-     */
-    private function get_data_object_part(
-        string $sub_topic = '',
-        string $class = ''
-    ): string
-    {
-        $lib = new library();
-        return $lib->class_to_table($class) . ' ' . $sub_topic . ': ';
-    }
-
-    /**
-     * add the source from the json array to the data object
-     * @param int $i the number of step objects imported so fare
-     * @param float $total the total expect time of the import
-     * @param string $msg the name of the import e.g. import currency.json
-     * @param string $part the name of the import step e.g. count values
-     */
-    private function get_data_object_display(
-        int    $i,
-        float  $total,
-        string $msg = '',
-        string $part = ''
-    ): void
-    {
-        $this->display_progress($part . $i);
     }
 
     /**
