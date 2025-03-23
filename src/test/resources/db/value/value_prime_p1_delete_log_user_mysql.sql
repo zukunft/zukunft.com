@@ -7,7 +7,8 @@ CREATE PROCEDURE value_prime_p1_delete_log_user
      _phrase_id_1             smallint,
      _phrase_id_2             smallint,
      _phrase_id_3             smallint,
-     _phrase_id_4             smallint)
+     _phrase_id_4             smallint,
+     _source_id               bigint)
 
 BEGIN
 
@@ -20,7 +21,8 @@ BEGIN
        AND phrase_id_2 = _phrase_id_2
        AND phrase_id_3 = _phrase_id_3
        AND phrase_id_4 = _phrase_id_4
-       AND user_id = _user_id;
+       AND user_id = _user_id
+       AND source_id = _source_id;
 
 END;
 
@@ -30,6 +32,7 @@ SELECT value_prime_p1_delete_log_user
         1,
         32770,
         -2,
+        null,
         null,
         null,
         null);

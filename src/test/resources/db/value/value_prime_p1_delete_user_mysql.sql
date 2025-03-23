@@ -4,4 +4,5 @@ PREPARE value_prime_p1_delete_user FROM
        AND phrase_id_2 = ?
        AND phrase_id_3 = ?
        AND phrase_id_4 = ?
-       AND user_id = ?';
+       AND user_id = ?
+        AND source_id = ?';

@@ -55,6 +55,8 @@ include_once SERVICE_PATH . 'config.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once WEB_HTML_PATH . 'styles.php';
 include_once DB_PATH . 'sql_type.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type.php';
@@ -129,6 +131,7 @@ use shared\api;
 use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
 use shared\library;
+use shared\const\triples;
 use shared\const\words;
 use shared\types\api_type;
 use shared\types\verbs;
@@ -282,6 +285,8 @@ include_once TEST_UNIT_WRITE_PATH . 'test_math.php';
 
 //
 include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
+include_once TEST_PHP_UTIL_PATH . 'format.php';
+include_once TEST_PHP_UTIL_PATH . 'level.php';
 
 // load the integration test functions
 include_once TEST_UNIT_INT_PATH . 'test_import.php';
@@ -356,8 +361,14 @@ class test_base
 
     private int $seq_nbr;
 
+    public format $format = format::TEXT;
+    public level $level = level::TIMEOUT;
+
+
     function __construct()
     {
+        global $cfg;
+
         // init the times to be able to detect potential timeouts
         $this->start_time = microtime(true);
         $this->exe_start_time = $this->start_time;
@@ -371,6 +382,10 @@ class test_base
 
         $this->name = '';
         $this->resource_path = '';
+
+        // load the test config
+        //$this->format = format::from($cfg->get_by([words::TEST, triples::OUTPUT_FORMAT]));
+        //$this->level = level::from($cfg->get_by([words::TEST, words::LEVEL]));
     }
 
     function set_users(): void
@@ -405,7 +420,11 @@ class test_base
      */
     function header(string $header_text): void
     {
-        echo '<br><br><h2>' . $header_text . '</h2><br>';
+        if ($this->format == format::TEXT) {
+            echo $header_text . "\n";
+        } else {
+            echo '<br><br><h2>' . $header_text . '</h2><br>' . "\n";
+        }
     }
 
     /**
@@ -413,7 +432,11 @@ class test_base
      */
     function subheader(string $header_text): void
     {
-        echo '<br><h3>' . $header_text . '</h3><br>';
+        if ($this->format == format::TEXT) {
+            echo $header_text . "\n";
+        } else {
+            echo '<br><h3>' . $header_text . '</h3><br>' . "\n";
+        }
     }
 
     /**
@@ -3285,21 +3308,30 @@ class test_base
         float             $exe_max_time = self::TIMEOUT_LIMIT): bool
     {
         // calculate the execution time
-        $final_msg = '';
         $new_start_time = microtime(true);
         $since_start = $new_start_time - $this->exe_start_time;
 
         // display the result
+        $final_msg = '';
         if ($test_result) {
             // check if executed in a reasonable time and if the result is fine
             if ($since_start > $exe_max_time) {
-                $final_msg .= '<p style="color:orange">TIMEOUT</p>';
+                if ($this->format == format::TEXT) {
+                    $final_msg .= 'timeout ' . $test_name;
+                } else {
+                    $final_msg .= '<p style="color:orange">timeout</p><p>' . $test_name;
+                }
                 $this->timeout_counter++;
             } else {
-                $final_msg .= '<p style="color:green">OK</p>';
+                if ($this->level == level::ALL) {
+                    if ($this->format == format::TEXT) {
+                        $final_msg .= 'ok ' . $test_name;
+                    } else {
+                        $final_msg .= '<p style="color:green">ok</p><p>' . $test_name;
+                    }
+                }
                 $test_result = true;
             }
-            $final_msg .= '<p>' . $test_name;
         } else {
             if (is_array($result)) {
                 $lib = new library();
@@ -3309,8 +3341,12 @@ class test_base
                 $lib = new library();
                 $target = $lib->dsp_array($target);
             }
-            $final_msg .= '<p style="color:red">Error</p>' . "\n";
-            $final_msg .= '<p>' . $test_name . ': ' . "\n";
+            if ($this->format == format::TEXT) {
+                $final_msg .= 'ERROR ' . $test_name . ': ' . "\n";
+            } else {
+                $final_msg .= '<p style="color:red">ERROR</p>' . "\n";
+                $final_msg .= '<p>' . $test_name . ': ' . "\n";
+            }
             if ($diff_msg != '') {
                 $final_msg .= 'diff: ' . $diff_msg . ', ' . "\n";
             }
@@ -3321,13 +3357,17 @@ class test_base
         }
 
         // show the execution time
-        $final_msg .= ', took ';
-        $final_msg .= round($since_start, 4) . ' seconds';
+        if ($final_msg != '') {
+            $final_msg .= ', took ';
+            $final_msg .= round($since_start, 4) . ' seconds';
 
-        // --- and finally display the test result
-        $final_msg .= '</p>';
-        echo $final_msg;
-        echo "\n";
+            // --- and finally display the test result
+            if ($this->format == format::HTML) {
+                $final_msg .= '</p>';
+            }
+            echo $final_msg;
+            echo "\n";
+        }
         flush();
 
         $this->total_tests++;

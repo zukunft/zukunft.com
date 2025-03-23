@@ -150,6 +150,7 @@ use unit_write\all_unit_write_tests;
 
 class all_tests extends all_unit_write_tests
 {
+
     function run_all_tests(): void
     {
         global $errors;
@@ -176,13 +177,16 @@ class all_tests extends all_unit_write_tests
             $this->run_db_recreate();
         }
 
-        if ($errors <= ERROR_LIMIT and !ONLY_UNIT_TESTS and !RESET_DB_ONLY and !QUICK_TEST_ONLY AND WRITE_TEST) {
+        if ($errors <= ERROR_LIMIT and !ONLY_UNIT_TESTS and !RESET_DB_ONLY and !QUICK_TEST_ONLY and WRITE_TEST) {
             $this->run_db_write_tests($this);
         }
 
         // display the test results
-        $this->dsp_result_html();
-        $this->dsp_result();
+        if ($this->format == format::HTML) {
+            $this->dsp_result_html();
+        } else {
+            $this->dsp_result();
+        }
     }
 
 }

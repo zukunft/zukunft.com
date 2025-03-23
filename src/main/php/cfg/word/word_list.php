@@ -73,7 +73,10 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once MODEL_VERB_PATH . 'verb.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'library.php';
@@ -99,8 +102,12 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_list;
 use cfg\verb\verb;
+use shared\const\triples;
+use shared\const\words;
+use shared\enum\messages;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\enum\foaf_direction;
+use shared\enum\messages as msg_id;
 use shared\library;
 use shared\types\verbs;
 
@@ -1606,17 +1613,28 @@ class word_list extends sandbox_list_named
      */
     function save(import $imp): user_message
     {
+        global $cfg;
+
         $usr_msg = new user_message();
+
+        $load_per_sec = $cfg->get_by([words::WORDS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $save_per_sec = $cfg->get_by([words::WORDS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         if ($this->is_empty()) {
             $usr_msg->add_message('no words to save');
         } else {
             // load the words that are already in the database
+            $step_time = $this->count() / $load_per_sec;
+            $imp->step_start(msg_id::LOAD, word::class, $this->count(), $step_time);
             $db_lst = new word_list($this->user());
             $db_lst->load_by_names($this->names());
+            $imp->step_end($this->count(), $load_per_sec);
 
             // create any missing sql functions and insert the missing words
+            $step_time = $this->count() / $save_per_sec;
+            $imp->step_start(msg_id::SAVE, word::class, $this->count(), $step_time);
             $usr_msg->add($this->insert($db_lst, true, $imp, word::class));
+            $imp->step_end($this->count(), $save_per_sec);
 
             // update the existing words
             // TODO create a test that fields not included in the import message are not updated, but e.g. an empty descrption is updated

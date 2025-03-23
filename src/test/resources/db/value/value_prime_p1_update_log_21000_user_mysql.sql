@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS value_prime_p1_update_log_210000_user;
-CREATE PROCEDURE value_prime_p1_update_log_210000_user
+DROP PROCEDURE IF EXISTS value_prime_p1_update_log_21000_user;
+CREATE PROCEDURE value_prime_p1_update_log_21000_user
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_numeric_value  smallint,
@@ -9,7 +9,8 @@ CREATE PROCEDURE value_prime_p1_update_log_210000_user
      _phrase_id_1             smallint,
      _phrase_id_2             smallint,
      _phrase_id_3             smallint,
-     _phrase_id_4             smallint)
+     _phrase_id_4             smallint,
+     _source_id               bigint)
 
 BEGIN
 
@@ -23,16 +24,17 @@ BEGIN
        AND phrase_id_2 = _phrase_id_2
        AND phrase_id_3 = _phrase_id_3
        AND phrase_id_4 = _phrase_id_4
-       AND user_id = _user_id;
+       AND user_id = _user_id
+       AND source_id = _source_id;
 
 END;
 
-PREPARE value_prime_p1_update_log_210000_user_call FROM
+PREPARE value_prime_p1_update_log_21000_user_call FROM
 
-    'SELECT value_prime_p1_update_log_210000_user
-       (?,?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    'SELECT value_prime_p1_update_log_21000_user
+       (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-SELECT value_prime_p1_update_log_210000_user
+SELECT value_prime_p1_update_log_21000_user
        (1,
         1,
         1,
@@ -40,6 +42,7 @@ SELECT value_prime_p1_update_log_210000_user
         3.1415926535898,
         32770,
         -2,
+        null,
         null,
         null,
         null);

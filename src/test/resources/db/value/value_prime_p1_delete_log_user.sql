@@ -6,7 +6,8 @@ CREATE OR REPLACE FUNCTION value_prime_p1_delete_log_user
      _phrase_id_1            smallint,
      _phrase_id_2            smallint,
      _phrase_id_3            smallint,
-     _phrase_id_4            smallint) RETURNS void AS
+     _phrase_id_4            smallint,
+     _source_id              bigint) RETURNS void AS
 $$
 BEGIN
 
@@ -19,7 +20,8 @@ BEGIN
        AND phrase_id_2 = _phrase_id_2
        AND phrase_id_3 = _phrase_id_3
        AND phrase_id_4 = _phrase_id_4
-       AND user_id = _user_id;
+       AND user_id = _user_id
+       AND source_id = _source_id;
 
 END
 $$ LANGUAGE plpgsql;
@@ -32,4 +34,5 @@ SELECT value_prime_p1_delete_log_user
         -2::smallint,
         null::smallint,
         null::smallint,
-        null::smallint);
+        null::smallint,
+        null::bigint);

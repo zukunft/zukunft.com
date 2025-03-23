@@ -49,6 +49,7 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'result_id.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
@@ -88,6 +89,7 @@ use cfg\formula\formula;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\result_id;
+use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_action;
@@ -389,6 +391,15 @@ class sandbox_value extends sandbox_multi
     function number(): ?float
     {
         return $this->value();
+    }
+
+    /**
+     * to be overwritten by the child object
+     * @return source|null the source of the value
+     */
+    function source(): source|null
+    {
+        return null;
     }
 
 
@@ -1147,6 +1158,17 @@ class sandbox_value extends sandbox_multi
                     user::FLD_ID,
                     $this->user()->id(),
                     user::FLD_ID_SQL_TYP
+                );
+            }
+            if ($sc_par_lst->is_usr_tbl()
+                and ($this::class == value::class
+                    or $this::class == value_time::class
+                    or $this::class == value_text::class
+                    or $this::class == value_geo::class)) {
+                $lst->add_field(
+                    source::FLD_ID,
+                    $this->source()?->id(),
+                    db_object_seq_id::FLD_ID_SQL_TYP
                 );
             }
         }

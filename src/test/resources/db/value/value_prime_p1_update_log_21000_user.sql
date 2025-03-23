@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION value_prime_p1_update_log_210000_user
+CREATE OR REPLACE FUNCTION value_prime_p1_update_log_21000_user
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_numeric_value  smallint,
@@ -8,7 +8,8 @@ CREATE OR REPLACE FUNCTION value_prime_p1_update_log_210000_user
      _phrase_id_1             smallint,
      _phrase_id_2             smallint,
      _phrase_id_3             smallint,
-     _phrase_id_4             smallint) RETURNS void AS
+     _phrase_id_4             smallint,
+     _source_id               bigint) RETURNS void AS
 $$
 BEGIN
 
@@ -22,17 +23,18 @@ BEGIN
        AND phrase_id_2 = _phrase_id_2
        AND phrase_id_3 = _phrase_id_3
        AND phrase_id_4 = _phrase_id_4
-       AND user_id = _user_id;
+       AND user_id = _user_id
+       AND source_id = _source_id;
 
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE value_prime_p1_update_log_210000_user_call
-        (bigint, smallint, smallint, numeric, numeric, bigint, smallint, smallint, smallint, smallint) AS
-    SELECT value_prime_p1_update_log_210000_user
-        ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10);
+PREPARE value_prime_p1_update_log_21000_user_call
+        (bigint, smallint, smallint, numeric, numeric, bigint, smallint, smallint, smallint, smallint, bigint) AS
+    SELECT value_prime_p1_update_log_21000_user
+        ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
 
-SELECT value_prime_p1_update_log_210000_user
+SELECT value_prime_p1_update_log_21000_user
        (1::bigint,
         1::smallint,
         1::smallint,
@@ -42,4 +44,5 @@ SELECT value_prime_p1_update_log_210000_user
         -2::smallint,
         null::smallint,
         null::smallint,
-        null::smallint);
+        null::smallint,
+        null::bigint);

@@ -178,6 +178,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO remove the time phrase from result
     TODO rename change and change_log to change
     TODO rename sys_log to log
+    TODO use LLM KI systems like deepSeek to fill up and validate the phrases semi automatically
     TODO fix the button frontend issue
     TODO use the json api message header for all api messages
     TODO check if reading triples should use a view to generate the triple name and the generated name
@@ -810,7 +811,6 @@ const TEST_PATH = SRC_PATH . 'test' . DIRECTORY_SEPARATOR;
 const TEST_PHP_PATH = TEST_PATH . 'php' . DIRECTORY_SEPARATOR;
 // the test const path
 const TEST_CONST_PATH = TEST_PHP_PATH . 'const' . DIRECTORY_SEPARATOR;
-
 
 
 const DB_SETUP_SQL_FILE = 'zukunft_structure.sql';
@@ -1831,12 +1831,14 @@ function prg_end_write_time($db_con): void
     unset($sys_time_start);
 }
 
-function prg_end($db_con): void
+function prg_end($db_con, $echo_header = true): void
 {
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
 
-    $html = new html_base();
-    echo $html->footer();
+    if ($echo_header) {
+        $html = new html_base();
+        echo $html->footer();
+    }
 
     prg_end_write_time($db_con);
 

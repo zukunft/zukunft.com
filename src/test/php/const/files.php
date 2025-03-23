@@ -106,6 +106,8 @@ class files
     const IMPORT_CURRENCY_CONVERT = self::IMPORT_WIKIPEDIA_PATH . 'currency-convert' . self::JSON;
     const IMPORT_CURRENCY_WIKI = self::IMPORT_WIKIPEDIA_PATH . 'currency-wiki' . self::JSON;
     const IMPORT_CURRENCY_CONTEXT = self::IMPORT_WIKIPEDIA_PATH . 'currency-context' . self::JSON;
+    const IMPORT_TRAVEL_SCORING = self::IMPORT_PATH . 'travel_scoring' . self::JSON;
+    const IMPORT_TRAVEL_SCORING_VALUE_LIST = self::IMPORT_PATH . 'travel_scoring_value_list' . self::JSON;
 
     const TEST_IMPORT_FILE_LIST = [
         self::IMPORT_COUNTRIES,
@@ -124,8 +126,8 @@ class files
         self::IMPORT_COUNTRY_ISO,
         self::IMPORT_DEMOCRACY_INDEX,
         self::IMPORT_CURRENCY,
-        'travel_scoring.json',
-        'travel_scoring_value_list.json',
+        self::IMPORT_TRAVEL_SCORING,
+        self::IMPORT_TRAVEL_SCORING_VALUE_LIST,
         self::IMPORT_COMPANIES,
         self::IMPORT_WIND_INVESTMENT,
         'ABB_2013.json',

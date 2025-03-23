@@ -78,17 +78,14 @@ class base_ui_tests
         $lib = new library();
         $html = new html_base();
 
-        $t->header('Unit tests of the html classes (src/main/php/web/html/*)');
-
-
-        $t->subheader('Login pages');
+        $t->subheader('html ui login tests');
 
         $created_html = $html->about();
         $expected_html = $t->file('web/html/about.html');
         $t->display('about', $lib->trim_html($expected_html), $lib->trim_html($created_html));
 
 
-        $t->subheader('Selector tests');
+        $t->subheader('html ui selector tests');
 
         // TODO test the creation of a phrase list API JSON
         // TODO create a selector using a list an with a simple test page header an footer
@@ -118,7 +115,7 @@ class base_ui_tests
         $t->html_test((new button($url))->add(msg_id::WORD_ADD), '', 'button_add', $t);
 
 
-        $t->subheader('HTML list tests');
+        $t->subheader('html list tests');
 
         // TODO create and set the model objects and
         //      create the api object using the api_obj() function
@@ -133,7 +130,7 @@ class base_ui_tests
         $t->html_test($vrb_lst_dsp->list(verb_dsp::class, 'Verbs'), '', 'list_verbs', $t);
 
 
-        $t->subheader('HTML table tests');
+        $t->subheader('html table tests');
 
         // create a test set of phrase groups
         $t->phrase_list_zh_mio();
@@ -203,7 +200,7 @@ class base_ui_tests
         $t->html_test($res_lst->table($phr_lst_context_dsp), '', 'table_result_context', $t);
 
 
-        $t->subheader('View component tests');
+        $t->subheader('html view component tests');
 
         $cmp = new component($usr);
         $cmp->set(1, components::TEST_ADD_NAME, comp_type_shared::TEXT);
@@ -211,7 +208,7 @@ class base_ui_tests
         $t->html_test($cmp_dsp->html(), '', 'component_text', $t);
 
 
-        $t->header('List tests');
+        $t->header('html list tests');
 
         $test_name = 'sort a named list by the name';
         $lst = $t->phrase_list_zh_mio();
@@ -235,7 +232,7 @@ class base_ui_tests
 
         $is_connected = true; // assumes that the test is done with an internet connection, but if not connected, just show the warning once
 
-        $t->header('Test the view_display class (classes/view_display.php)');
+        $t->header('view tests');
 
         // test the usage of a view to create the HTML code
         /*

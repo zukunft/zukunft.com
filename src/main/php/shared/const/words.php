@@ -130,6 +130,7 @@ class words
     const INSERT = 'insert';
     const UPDATE = 'update';
     const DELETE = 'delete';
+    const LOAD = 'load';
     const TABLE = 'table';
     const FILE = 'file';
     const READ = 'read';
@@ -293,6 +294,16 @@ class words
     const GWP_ID = 1070;
 
     const BYTE = 'byte';
+
+    // for the config.yaml
+    const TEST = 'test';
+    const TEXT = 'text';
+    const HTML = 'html';
+    const LEVEL = 'level';
+    const ALL = 'all';
+    const TIMEOUTS = 'timeouts';
+    const WARNINGS = 'warnings';
+    const ERRORS = 'errors';
 
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)

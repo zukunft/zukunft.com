@@ -92,7 +92,6 @@ use cfg\word\triple;
 use cfg\word\word;
 use shared\const\triples;
 use shared\const\words;
-use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
@@ -366,17 +365,17 @@ class import
         $this->step_start(msg_id::DECODED, words::BYTE);
         $json_array = json_decode($json_str, true);
         $this->step_end($size, $decode_per_sec);
-        $this->step_main_end($size, $decode_per_sec);
+        $this->step_main_end();
 
         // analyse the import file
         $this->step_main_start(msg_id::COUNT, $this->est_time_create);
         $dto = $this->get_data_object($json_array, $usr_trigger, $usr_msg, $size);
-        $this->step_main_end($size, $count_per_sec);
+        $this->step_main_end();
 
         // write to the database
         $this->step_main_start(msg_id::SAVE, $this->est_time_store);
         $usr_msg->add($dto->save($this));
-        $this->step_main_end($size, $store_per_sec);
+        $this->step_main_end();
 
         // show the import result
         $this->end($size, $store_per_sec, $usr_msg);

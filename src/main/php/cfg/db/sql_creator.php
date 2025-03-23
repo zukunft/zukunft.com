@@ -1728,7 +1728,13 @@ class sql_creator
                 $par_lst_out->add($fvt_lst->get($fld));
             }
             if ($usr_tbl) {
-                $par_lst_out->add($fvt_lst->get($id_fld));
+                if (is_array($id_fld)) {
+                    foreach ($id_fld as $is_fld_part) {
+                        $par_lst_out->add($fvt_lst->get($is_fld_part));
+                    }
+                } else {
+                    $par_lst_out->add($fvt_lst->get($id_fld));
+                }
             }
         }
 
@@ -5453,9 +5459,9 @@ class sql_creator
     }
 
     /**
-     * @return string with the name of the id field
+     * @return string|array with the name of the id field
      */
-    function id_field_name(): string
+    function id_field_name(): string|array
     {
         return $this->id_field;
     }

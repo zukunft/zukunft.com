@@ -81,7 +81,7 @@ class verb_write_tests
         // TODO add more tests e.g. that a verb name cannot be used for a word any more
 
 
-        $t->header('Test the verb list class (classes/verb_list.php)');
+        $t->header('verb list write tests');
 
         // check the loading of the "is a" verb
         $wrd_ZH = $t->load_word(words::ZH);

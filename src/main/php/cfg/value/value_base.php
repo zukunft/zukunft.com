@@ -602,7 +602,7 @@ class value_base extends sandbox_value
         return $this->grp()->id();
     }
 
-    function source(): source
+    function source(): source|null
     {
         return $this->source;
     }
@@ -2224,21 +2224,20 @@ class value_base extends sandbox_value
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
 
-        if (!$sc_par_lst->is_standard()) {
-            if ($sbx->source_id() <> $this->source_id()) {
-                if ($sc_par_lst->incl_log()) {
-                    $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
-                        $cng_fld_cac->id($table_id . source::FLD_ID),
-                        change::FLD_FIELD_ID_SQL_TYP
-                    );
-                }
+        // in the user table the source is part of the index to allow several sources for the same value
+        if ($sbx->source_id() <> $this->source_id() or $sc_par_lst->is_usr_tbl()) {
+            if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
-                    source::FLD_ID,
-                    $this->source_id(),
-                    sql_field_type::INT
+                    sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
+                    $cng_fld_cac->id($table_id . source::FLD_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
                 );
             }
+            $lst->add_field(
+                source::FLD_ID,
+                $this->source_id(),
+                sql_field_type::INT
+            );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
     }

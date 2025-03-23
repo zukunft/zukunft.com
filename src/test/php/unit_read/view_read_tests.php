@@ -146,7 +146,7 @@ class view_read_tests
 
 
 
-        $t->subheader('View component db read tests');
+        $t->subheader('view component db read tests');
 
         $test_name = 'load view component ' . components::WORD_NAME . ' by name and id';
         $cmp = new component($t->usr1);
@@ -157,7 +157,7 @@ class view_read_tests
         $t->assert($test_name, $cmp_by_id->description, components::WORD_COM);
 
 
-        $t->subheader('View component types tests');
+        $t->subheader('view component types tests');
         $t->name = 'view component read db->';
 
         // load the view component types

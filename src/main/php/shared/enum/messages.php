@@ -68,6 +68,7 @@ enum messages: string
     // import
     case IMPORT_JSON = 'import';
     case COUNT = 'count';
+    case LOAD = 'load';
     case DECODED = 'decoded';
     case CHECK = 'check';
     case PREPARE = 'prepare';

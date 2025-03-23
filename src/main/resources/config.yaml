@@ -40,6 +40,10 @@ zukunft.com:
               sys-conf-value: 16386
               tooltip-comment: "the estimated bytes per second that can be processed when importing a json"
           objects second:
+            load:
+              words:
+                sys-conf-value: 700
+                tooltip-comment: "the estimated number of words that can be load per second"
             create:
               words:
                 sys-conf-value: 700
@@ -156,6 +160,14 @@ zukunft.com:
             tooltip-comment: "the number of phrases shown in a ranked list with the lowest ranking for an indication of the range"
     job:
       tooltip-comment: "keyword to separate the internal system job configuration"
+    test:
+      tooltip-comment: "to configure the internal system test"
+      output format:
+        sys-conf-value: 0
+        tooltip-comment: "the general formatting style of the test results e.g. 0 for pur text or 1 for html code"
+      level:
+        sys-conf-value: 3
+        tooltip-comment: "to define what should be shown: 4: all, 3: timeouts, 2: warnings or 1: only errors"
     pod:
       url: "zukunft.com"
       tooltip-comment: "the url name of this pod"

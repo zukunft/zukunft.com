@@ -62,6 +62,7 @@ class triples
     const AUTOMATIC_CREATE = 'automatic create';
     const ROW_LIMIT = 'row limit';
     const RESPONSE_TIME = 'response time';
+    const OUTPUT_FORMAT = 'output format';
 
     // triples included in the initial setup that are used for system testing
     const MATH_CONST = 'Mathematical constant';

@@ -57,7 +57,7 @@ use test\all_tests;
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("unit and integration testing");
+$db_con = prg_start("unit and integration testing", '', false);
 
 // load the session user parameters
 $start_usr = new user;
@@ -76,4 +76,4 @@ if ($start_usr->id() > 0) {
 }
 
 // Closing connection
-prg_end($db_con);
+prg_end($db_con, false);

@@ -50,12 +50,13 @@ include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
 
 use cfg\user\user;
 use test\all_tests;
+use test\format;
 
 
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("unit tests");
+$db_con = prg_start("unit tests", '', false);
 
 // load the session user parameters
 $start_usr = new user;
@@ -76,8 +77,11 @@ if ($start_usr->id() > 0) {
         $t->run_unit();
 
         // display the test results
-        $t->dsp_result_html();
-        $t->dsp_result();
+        if ($t->format == format::HTML) {
+            $t->dsp_result_html();
+        } else {
+            $t->dsp_result();
+        }
 
     } else {
         echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.';
@@ -85,4 +89,4 @@ if ($start_usr->id() > 0) {
 }
 
 // Closing connection
-prg_end($db_con);
+prg_end($db_con, false);
