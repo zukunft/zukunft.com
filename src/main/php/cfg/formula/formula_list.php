@@ -705,7 +705,7 @@ class formula_list extends sandbox_list_named
 
         // get the configuration
         $avg_calc_time = $cfg->get_by([words::CALCULATION, triples::BLOCK_SIZE, triples::AVERAGE_DELAY]);
-        $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR]);
+        $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR], 1);
 
         if ($total_formulas == 0) {
             $total_formulas = $db_con->count(formula::class);
