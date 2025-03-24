@@ -59,6 +59,10 @@ class user_message
 
     // array of the messages that should be shown to the user
     // to explain the result of a process
+    private array $info_text;
+
+    // array of the messages that should be shown to the user
+    // to explain the result of a process
     private array $msg_text;
 
     // array of the messages id that should be shown to the user
@@ -82,6 +86,7 @@ class user_message
      */
     function __construct(string $msg_text = '')
     {
+        $this->info_text = [];
         $this->msg_text = [];
         if ($msg_text == '') {
             $this->msg_status = self::OK;
@@ -234,15 +239,15 @@ class user_message
     /**
      * show the info message to the user without interrupting the process
      *
-     * @param string $msg_text the warning text to add
+     * @param string $info_text the warning text to add
      * @return void is never expected to fail
      */
-    function add_info(string $msg_text): void
+    function add_info(string $info_text): void
     {
-        if ($msg_text != '') {
+        if ($info_text != '') {
             // do not repeat the same text more than once
-            if (!in_array($msg_text, $this->msg_text)) {
-                $this->msg_text[] = $msg_text;
+            if (!in_array($info_text, $this->info_text)) {
+                $this->info_text[] = $info_text;
             }
         }
     }
@@ -255,6 +260,9 @@ class user_message
      */
     function add(user_message $msg_to_add): void
     {
+        foreach ($msg_to_add->get_all_info() as $msg_text) {
+            $this->add_info($msg_text);
+        }
         foreach ($msg_to_add->get_all_messages() as $msg_text) {
             $this->add_message($msg_text);
         }
@@ -291,6 +299,15 @@ class user_message
         } else {
             return false;
         }
+    }
+
+    /**
+     * return the info only message text with all messages
+     * @return string simple the message text
+     */
+    function all_info_text(): string
+    {
+        return implode(", ", $this->info_text);
     }
 
     /**
@@ -351,6 +368,14 @@ class user_message
     /*
      * internal
      */
+
+    /**
+     * @return array with all the information only text messages
+     */
+    protected function get_all_info(): array
+    {
+        return $this->info_text;
+    }
 
     /**
      * @return array with all the text messages

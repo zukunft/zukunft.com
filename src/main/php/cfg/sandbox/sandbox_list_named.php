@@ -40,6 +40,7 @@ include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_REF_PATH . 'source_list.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -59,10 +60,12 @@ use cfg\db\sql_type_list;
 use cfg\import\import;
 use cfg\phrase\phrase;
 use cfg\phrase\term;
+use cfg\ref\source_list;
 use cfg\word\triple_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\triple;
+use cfg\word\word;
 use cfg\word\word_list;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
@@ -242,9 +245,9 @@ class sandbox_list_named extends sandbox_list
      * should be cast by the child function get_by_name
      *
      * @param string $name the unique name of the object that should be returned
-     * @return CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
+     * @return phrase|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string $name): CombineObject|IdObject|TextIdObject|null
+    function get_by_name(string $name): phrase|CombineObject|IdObject|TextIdObject|null
     {
         $key_lst = $this->name_pos_lst();
         $pos = null;
@@ -366,17 +369,17 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * create any missing sql functions and queries to save the list objects
-     * @param word_list|triple_list $db_lst filled with the words or triples that are already in the db
+     * @param word_list|triple_list|source_list $db_lst filled with the words or triples that are already in the db
      * @param bool $use_func true if sql function should be used to insert the named user sandbox objects
      * @param import|null $imp the import object e.g. with the ETA
      * @param string $class the object class that should be stored in the database
      * @return user_message
      */
     function insert(
-        word_list|triple_list $db_lst,
-        bool                  $use_func = true,
-        import                $imp = null,
-        string                $class = ''
+        word_list|triple_list|source_list $db_lst,
+        bool                              $use_func = true,
+        import                            $imp = null,
+        string                            $class = ''
     ): user_message
     {
         global $db_con;
@@ -457,14 +460,19 @@ class sandbox_list_named extends sandbox_list
     {
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $trp) {
-            // check always user sandbox and normal name, because reading from database for check would take longer
-            $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
-            if ($use_func) {
-                $sc_par_lst->add(sql_type::LOG);
+            // another validation check as a second line of defence
+            if ($trp->is_valid()) {
+                // check always user sandbox and normal name, because reading from database for check would take longer
+                $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
+                if ($use_func) {
+                    $sc_par_lst->add(sql_type::LOG);
+                }
+                $qp = $trp->sql_insert($sc, $sc_par_lst);
+                $qp->obj_name = $trp->name();
+                $sql_list->add($qp);
+            } else {
+                log_err('triple ' . $trp->dsp_id() . ' is not valid');
             }
-            $qp = $trp->sql_insert($sc, $sc_par_lst);
-            $qp->obj_name = $trp->name();
-            $sql_list->add($qp);
         }
         return $sql_list;
     }

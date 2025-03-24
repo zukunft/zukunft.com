@@ -551,6 +551,19 @@ class sandbox_named extends sandbox
         return $result;
     }
 
+    /**
+     * @return bool true if the triple object can be added to the database
+     *              false e.g. if some parameters ar missing
+     */
+    function is_valid(): bool
+    {
+        if ($this->id() != 0 or $this->name() != '') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
     /*
      * log read

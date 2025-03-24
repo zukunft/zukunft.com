@@ -77,6 +77,9 @@ include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'library.php';
@@ -104,7 +107,9 @@ use cfg\value\value_list;
 use cfg\verb\verb;
 use shared\const\triples;
 use shared\const\words;
-use shared\enum\messages;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\enum\foaf_direction;
 use shared\enum\messages as msg_id;
@@ -488,6 +493,24 @@ class word_list extends sandbox_list_named
             }
         }
         return $additional_added;
+    }
+
+
+    /*
+     * search
+     */
+
+    /**
+     * overwrite of the parent function just to add the word as a return type
+     * find an object from the loaded list by name using the hash
+     * should be cast by the child function get_by_name
+     *
+     * @param string $name the unique name of the object that should be returned
+     * @return word|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
+     */
+    function get_by_name(string $name): word|CombineObject|IdObject|TextIdObject|null
+    {
+            return parent::get_by_name($name);
     }
 
 

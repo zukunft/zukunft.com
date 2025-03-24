@@ -2845,6 +2845,10 @@ class triple extends sandbox_link_named
             $result .= '"' . $this->from()->name() . '" "'; // e.g. Australia
             $result .= $this->verb_name() . '" "'; // e.g. is a
             $result .= $this->to()->name() . '"';       // e.g. Country
+        } elseif ($this->name_given() != '') {
+            $result .= $this->name_given(); // e.g. Canton Zurich
+        } elseif ($this->name() != '') {
+            $result .= $this->name();
         }
         $result .= ' (' . $this->from_id() . ',' . $this->verb_id() . ',' . $this->to_id();
         if ($this->id() > 0) {

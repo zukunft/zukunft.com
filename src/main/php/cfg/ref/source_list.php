@@ -37,13 +37,23 @@ include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\import\import;
 use cfg\sandbox\sandbox_list_named;
+use cfg\user\user_message;
+use shared\enum\messages as msg_id;
+use shared\const\triples;
+use shared\const\words;
 
 class source_list extends sandbox_list_named
 {
@@ -150,6 +160,18 @@ class source_list extends sandbox_list_named
     }
 
     /**
+     * load a list of sources by the names
+     * @param array $src_names a named object used for selection e.g. a source type
+     * @return bool true if at least one source found
+     */
+    function load_by_names(array $src_names): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_names($db_con->sql_creator(), $src_names);
+        return $this->load($qp);
+    }
+
+    /**
      * load the sources selected by the id
      *
      * @param array $ids of source ids that should be loaded
@@ -164,6 +186,25 @@ class source_list extends sandbox_list_named
     }
 
     /**
+     * set the SQL query parameters to load a list of sources by the names
+     * @param sql_creator $sc with the target db_type set
+     * @param array $src_names a list of strings with the word names
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_names(sql_creator $sc, array $src_names): sql_par
+    {
+        $qp = $this->load_sql($sc, 'names');
+        if (count($src_names) > 0) {
+            $sc->add_where(source::FLD_NAME, $src_names, sql_par_type::TEXT_LIST);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
      * load the sources that matches the given pattern
      * @param string $pattern part of the name that should be used to select the sources
      */
@@ -173,6 +214,52 @@ class source_list extends sandbox_list_named
 
         $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
         return $this->load($qp);
+    }
+
+
+    /*
+     * save
+     */
+
+    /**
+     * store all sources from this list in the database using grouped calls of predefined sql functions
+     *
+     * @param import $imp the import object with the estimate of the total save time
+     * @return user_message
+     */
+    function save(import $imp): user_message
+    {
+        global $cfg;
+
+        $usr_msg = new user_message();
+
+        $load_per_sec = $cfg->get_by([words::SOURCES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $save_per_sec = $cfg->get_by([words::SOURCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+
+        if ($this->is_empty()) {
+            $usr_msg->add_info('no sources to save');
+        } else {
+            // load the words that are already in the database
+            $step_time = $this->count() / $load_per_sec;
+            $imp->step_start(msg_id::LOAD, source::class, $this->count(), $step_time);
+            $db_lst = new source_list($this->user());
+            $db_lst->load_by_names($this->names());
+            $imp->step_end($this->count(), $load_per_sec);
+
+            // create any missing sql functions and insert the missing words
+            $step_time = $this->count() / $save_per_sec;
+            $imp->step_start(msg_id::SAVE, source::class, $this->count(), $step_time);
+            $usr_msg->add($this->insert($db_lst, true, $imp, source::class));
+            $imp->step_end($this->count(), $save_per_sec);
+
+            // update the existing sources
+            // TODO create a test that fields not included in the import message are not updated, but e.g. an empty descrption is updated
+            // loop over the sources and check if all needed functions exist
+            // create the missing functions
+            // create blocks of update function calls
+        }
+
+        return $usr_msg;
     }
 
 }

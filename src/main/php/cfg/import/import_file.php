@@ -119,7 +119,7 @@ class import_file
 
                 // show the summery to the user
                 if ($import_result->is_ok()) {
-                    $usr_msg->add_message(' done ('
+                    $usr_msg->add_info(' done ('
                         . $imp->words_done . ' words, '
                         . $imp->verbs_done . ' verbs, '
                         . $imp->triples_done . ' triples, '
@@ -133,10 +133,10 @@ class import_file
                         . $imp->calc_validations_done . ' results validated, '
                         . $imp->view_validations_done . ' views validated)');
                     if ($imp->users_done > 0) {
-                        $usr_msg->add_message(' ... and ' . $imp->users_done . ' $users');
+                        $usr_msg->add_info(' ... and ' . $imp->users_done . ' $users');
                     }
                     if ($imp->system_done > 0) {
-                        $usr_msg->add_message(' ... and ' . $imp->system_done . ' $system objects');
+                        $usr_msg->add_info(' ... and ' . $imp->system_done . ' $system objects');
                     }
                 } else {
                     $usr_msg->add_message(' failed because ' . $import_result->all_message_text() . '.');
@@ -210,10 +210,14 @@ class import_file
                 $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                 $yaml_array = yaml_parse($yaml_str);
                 $dto = $imp->get_data_object_yaml($yaml_array, $usr);
-                $dto->save($imp);
-                $val_diff = $dto->value_list()->diff($cfg);
-                log_warning('These configuration values could not be imported: ' . $val_diff->dsp_id());
-                //log_err('These configuration values could not be imported: ' . $val_diff->dsp_id());
+                $usr_msg = $dto->save($imp);
+                if (!$usr_msg->is_ok()) {
+                    log_err(files::SYSTEM_CONFIG . ' cannot be loaded because ' . $usr_msg->all_message_text());
+                } else {
+                    $val_diff = $dto->value_list()->diff($cfg);
+                    log_warning('These configuration values could not be imported: ' . $val_diff->dsp_id());
+                    //log_err('These configuration values could not be imported: ' . $val_diff->dsp_id());
+                }
             }
         }
 

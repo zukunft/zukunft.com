@@ -196,10 +196,9 @@ class all_unit_tests extends test_cleanup
 
 
             // run the selected db write
-            $imf = new import_file();
             //$import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $usr);
-            //$imf->json_file(test_files::IMPORT_COMPANIES, $usr, false);
-            $imf->json_file(test_files::IMPORT_CURRENCY, $usr, false);
+            $this->file_import(test_files::IMPORT_COMPANIES, $usr);
+            $this->file_import(test_files::IMPORT_CURRENCY, $usr);
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);
             //(new triple_read_tests())->run($this);
@@ -245,6 +244,16 @@ class all_unit_tests extends test_cleanup
         $db_chk = new db_check();
         $db_chk->db_upgrade_0_0_3($db_con);
         */
+    }
+
+    private function file_import(string $filename, user $usr): void
+    {
+        $imf = new import_file();
+        $usr_msg = $imf->json_file($filename, $usr, false);
+        if (!$usr_msg->is_ok()) {
+            log_err($filename .  ' cannot be imported because ' . $usr_msg->all_message_text());
+        }
+
     }
 
     /**

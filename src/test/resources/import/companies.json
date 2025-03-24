@@ -39,6 +39,39 @@
       "name": "Zurich"
     },
     {
+      "name": "City"
+    },
+    {
+      "name": "Canton"
+    },
+    {
+      "name": "Migros"
+    },
+    {
+      "name": "Cooperative"
+    },
+    {
+      "name": "Currency"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "thousand"
+    },
+    {
+      "name": "Year"
+    },
+    {
+      "name": "2019"
+    },
+    {
+      "name": "2012"
+    },
+    {
       "name": "CHF",
       "type": "measure"
     },
@@ -58,6 +91,30 @@
       "name": "Revenues"
     },
     {
+      "name": "balance sheet"
+    },
+    {
+      "name": "cash flow statement"
+    },
+    {
+      "name": "forecast"
+    },
+    {
+      "name": "Sector"
+    },
+    {
+      "name": "employee"
+    },
+    {
+      "name": "Energy"
+    },
+    {
+      "name": "Brand"
+    },
+    {
+      "name": "Nestle"
+    },
+    {
       "name": "Other revenues"
     },
     {
@@ -65,6 +122,9 @@
     },
     {
       "name": "General administrative expenses"
+    },
+    {
+      "name": "Sales of sustainable labels"
     },
     {
       "name": "Other operating expense"
@@ -131,6 +191,9 @@
     },
     {
       "name": "Profit attributable to non-controlling interests"
+    },
+    {
+      "name": "Prepared dishes"
     },
     {
       "name": "Operating profit (reported)",
@@ -518,6 +581,10 @@
       "url": "https://www.nestle.com/asset-library/documents/library/documents/financial_statements/2016-financial-statements-en.pdf"
     },
     {
+      "name": "Nestlé Financial Statement 2016",
+      "url": "https://www.nestle.com/asset-library/documents/library/documents/financial_statements/2016-financial-statements-en.pdf"
+    },
+    {
       "name": "Migros Facts & figures 2016",
       "url": "https://www.migros.ch/dam/jcr...9877.../EN_MGB_Zahlen_und_Fakten_2016.pdf"
     }
@@ -535,7 +602,7 @@
     {
       "words": [
         "Nestlé",
-        "Prepared dishes ",
+        "Prepared dishes",
         "2016"
       ],
       "number": "6512"

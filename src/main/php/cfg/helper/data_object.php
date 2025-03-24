@@ -398,18 +398,15 @@ class data_object
     {
         global $cfg;
 
-        $lib = new library();
         $usr_msg = new user_message();
 
         // get the relevant config values
         $time_object = $cfg->get_by([triples::OBJECT_CREATION, words::PERCENT, triples::EXPECTED_TIME, words::IMPORT]);
         $wrd_per_sec = $cfg->get_by([words::WORDS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $trp_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $src_per_sec = $cfg->get_by([words::SOURCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $val_per_sec = $cfg->get_by([words::VALUES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
-        // start showing the progress to the user
-        $pos = $time_object; // where 10 is the time expected for the reading of the import file and the creation of the data object
-        $expected_time = $this->expected_total_import_time();
 
         // save the data lists in order of the dependencies
 
@@ -420,34 +417,92 @@ class data_object
         $usr_msg->add($wrd_lst->save($imp));
         $imp->step_end($wrd_lst->count(), $wrd_per_sec);
 
-        // import the triples
-        $trp_lst = $this->triple_list();
-        $trp_est = $wrd_lst->count() / $trp_per_sec;
-        $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
-        $usr_msg->add($trp_lst->save($wrd_lst->phrase_lst(), $imp));
-        $imp->step_end($trp_lst->count(), $trp_per_sec);
+        // add the id of the words just added to the triples
+        foreach ($this->triple_list()->lst() as $trp) {
+            $phr = $trp->from();
+            if ($phr->id() == 0) {
+                if ($phr->name() == '') {
+                    $usr_msg->add_warning('from phrase id and name missing in ' . $trp->dsp_id());
+                } else {
+                    $phr_reloaded = $wrd_lst->get_by_name($phr->name());
+                    $usr_msg->add($this->set_phrase_id($phr, $phr_reloaded?->phrase()));
+                }
+            }
+            $phr = $trp->to();
+            if ($phr->id() == 0) {
+                if ($phr->name() == '') {
+                    $usr_msg->add_warning('to phrase id and name missing in ' . $trp->dsp_id());
+                } else {
+                    $phr_reloaded = $wrd_lst->get_by_name($phr->name());
+                    $usr_msg->add($this->set_phrase_id($phr, $phr_reloaded?->phrase()));
+                }
+            }
+        }
 
-        // TODO create at least a warning if a phrase id is still missing
-        $phr_lst = $this->phrase_list();
-        foreach ($this->value_list()->lst() as $val) {
-            foreach ($val->phrase_list()->lst() as $phr) {
-                if ($phr->id() == 0) {
-                    $phr_reloaded = $phr_lst->get_by_name($phr->name());
-                    if ($phr_reloaded != null) {
-                        $phr->set_id($phr_reloaded->id());
-                        $usr_msg->add_message('phrase id for ' . $phr->name() . ' has been zero');
+        // import the triples
+        if ($usr_msg->is_ok()) {
+            $trp_lst = $this->triple_list();
+            $trp_est = $wrd_lst->count() / $trp_per_sec;
+            $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
+            $usr_msg->add($trp_lst->save($wrd_lst->phrase_lst(), $imp));
+            $imp->step_end($trp_lst->count(), $trp_per_sec);
+        }
+
+        // add the id of the triples just added to the values
+        if ($usr_msg->is_ok()) {
+            $phr_lst = $this->phrase_list();
+            foreach ($this->value_list()->lst() as $val) {
+                foreach ($val->phrase_list()->lst() as $phr) {
+                    if ($phr->id() == 0) {
+                        if ($phr->name() == '') {
+                            $usr_msg->add_warning('phrase id and name missing in ' . $phr->dsp_id());
+                        } else {
+                            $phr_reloaded = $phr_lst->get_by_name($phr->name());
+                            $usr_msg->add($this->set_phrase_id($phr, $phr_reloaded));
+                        }
                     }
                 }
             }
         }
 
-        // import the values
-        $val_lst = $this->value_list();
-        $val_est = $val_lst->count() / $val_per_sec;
-        $imp->step_start(msg_id::SAVE, value::class, $val_lst->count(), $val_est);
-        $usr_msg->add($val_lst->save($imp, $val_per_sec));
-        $imp->step_end($val_lst->count(), $val_per_sec);
+        // import the sources
+        if ($usr_msg->is_ok()) {
+            $src_lst = $this->source_list();
+            $src_est = $src_lst->count() / $src_per_sec;
+            $imp->step_start(msg_id::SAVE, value::class, $src_lst->count(), $src_est);
+            $usr_msg->add($src_lst->save($imp, $src_per_sec));
+            $imp->step_end($src_lst->count(), $src_per_sec);
+        }
 
+        // import the values
+        if ($usr_msg->is_ok()) {
+            $val_lst = $this->value_list();
+            $val_est = $val_lst->count() / $val_per_sec;
+            $imp->step_start(msg_id::SAVE, value::class, $val_lst->count(), $val_est);
+            $usr_msg->add($val_lst->save($imp, $val_per_sec));
+            $imp->step_end($val_lst->count(), $val_per_sec);
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * set the missing id in the phrase based on the given database phrase
+     * @param phrase $phr which might have a missing id
+     * @param phrase|null $db_phr which might have the missing id
+     * @return user_message warning if something has been missing
+     */
+    private function set_phrase_id(phrase $phr, phrase|null $db_phr): user_message
+    {
+        $usr_msg = new user_message();
+        if ($phr->id() == 0) {
+            if ($db_phr != null) {
+                $phr->set_id($db_phr->id());
+                $usr_msg->add_message('phrase id for ' . $phr->name() . ' has been zero');
+            } else {
+                $usr_msg->add_warning('phrase id for ' . $phr->name() . ' not found');
+            }
+        }
         return $usr_msg;
     }
 
