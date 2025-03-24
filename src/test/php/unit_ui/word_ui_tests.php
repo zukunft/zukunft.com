@@ -43,7 +43,7 @@ class word_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('word html ui unit tests');
+        $t->subheader('html word unit tests');
 
         // TODO add a list of differences between the user word and the standard word
         //      with an undo button to change back to the standard

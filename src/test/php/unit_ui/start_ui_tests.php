@@ -50,7 +50,7 @@ class start_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('start page html ui unit tests');
+        $t->subheader('unit html start page tests');
 
         // load th cache used for the start page
         /*

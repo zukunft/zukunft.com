@@ -2699,8 +2699,25 @@ class sql_creator
      */
     private function str_array_to_sql_string(array $str_array): string
     {
-        // TODO check how to escape ","
+        // TODO Prio 3 check if escape function of the database can be used
+        $str_array = $this->str_array_esc_comma($str_array);
         return "{" . implode(",", $str_array) . "}";
+    }
+
+    private function str_array_esc_comma(array $str_array): array
+    {
+        $result = [];
+        foreach  ($str_array as $key => $txt) {
+            if (str_contains($txt, "'")) {
+                $txt = str_replace("'", "''", $txt);
+            }
+            if (str_contains($txt, ',')) {
+                $result[$key] = '"' . $txt . '"';
+            } else {
+                $result[$key] = $txt;
+            }
+        }
+        return $result;
     }
 
     /**

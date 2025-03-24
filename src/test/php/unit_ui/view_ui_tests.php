@@ -43,7 +43,7 @@ class view_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('view html ui unit tests');
+        $t->subheader('unit html view tests');
 
         $msk = new view_dsp($t->view()->api_json());
         $test_page = $html->text_h2('view display test');

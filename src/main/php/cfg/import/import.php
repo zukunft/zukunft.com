@@ -347,10 +347,6 @@ class import
             words::DECODE,
             triples::BYTES_PER_SECOND,
             triples::EXPECTED_TIME, words::IMPORT], 1);
-        $count_per_sec = $cfg->get_by([
-            triples::OBJECT_CREATION,
-            triples::BYTES_PER_SECOND,
-            triples::EXPECTED_TIME, words::IMPORT], 1);
         $store_per_sec = $cfg->get_by([
             triples::OBJECT_STORING,
             triples::BYTES_PER_SECOND,

@@ -46,7 +46,7 @@ class triple_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('triple html ui unit tests');
+        $t->subheader('html triple unit tests');
 
         $trp = new triple($t->triple()->api_json());
         $phr_lst = new phrase_list($t->phrase_list()->api_json());

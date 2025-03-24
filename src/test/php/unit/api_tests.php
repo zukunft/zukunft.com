@@ -76,6 +76,7 @@ use cfg\word\word;
 use cfg\word\word_list;
 use html\helper\config;
 use html\helper\data_object as data_object_dsp;
+use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use shared\api;
@@ -267,6 +268,42 @@ class api_tests
         // FIND
         //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1);
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
+
+
+        $t->header('web frontend tests');
+
+        $html = new html_base();
+        $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../main/resources/style/style.css" /> </head> <body class="center_form">'));
+        $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));
+        $result = htmlspecialchars(trim($html->header('Header test', 'center_form')));
+        $t->dsp_contains(", dsp_header", $target, $result);
+
+        // check if the about page contains at least some basic keywords
+        // TODO activate Prio 3: $result = file_get_contents('https://www.zukunft.com/http/about.php?id=1');
+        $target = 'zukunft.com AG';
+        if (strpos($result, $target) > 0) {
+            $result = $target;
+        } else {
+            $result = '';
+        }
+        // about does not return a page for unknown reasons at the moment
+        // $t->dsp_contains(', frontend about.php '.$result.' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+
+        $is_connected = $t->dsp_web_test(
+            'http/privacy_policy.html',
+            'Swiss purpose of data protection',
+            ', frontend privacy_policy.php contains at least');
+        $is_connected = $t->dsp_web_test(
+            'http/error_update.php?id=1',
+            'not permitted',
+            ', frontend error_update.php contains at least', $is_connected);
+        $t->dsp_web_test(
+            'http/find.php?pattern=' . words::ABB,
+            words::ABB,
+            ', frontend find.php contains at least', $is_connected);
+
+
+
     }
 
     /**

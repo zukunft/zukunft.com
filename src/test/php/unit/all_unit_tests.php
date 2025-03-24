@@ -186,8 +186,8 @@ class all_unit_tests extends test_cleanup
 
             $sys_usr = new user;
             $sys_usr->load_by_id(SYSTEM_USER_ID);
-            $import = new import_file();
-            $import->import_config_yaml($sys_usr);
+            //$import = new import_file();
+            //$import->import_config_yaml($sys_usr);
 
             /*
              * db read testing - run
@@ -198,8 +198,8 @@ class all_unit_tests extends test_cleanup
             // run the selected db write
             $imf = new import_file();
             //$import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $usr);
-            $imf->json_file(test_files::IMPORT_CURRENCY, $usr, false);
             //$imf->json_file(test_files::IMPORT_COMPANIES, $usr, false);
+            $imf->json_file(test_files::IMPORT_CURRENCY, $usr, false);
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);
             //(new triple_read_tests())->run($this);
@@ -252,7 +252,7 @@ class all_unit_tests extends test_cleanup
      */
     function run_unit(): void
     {
-        $this->header('Start unit tests');
+        $this->header('unit tests');
 
         // remember the global var for restore after the unit tests
         global $db_con;

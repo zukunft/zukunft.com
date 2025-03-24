@@ -79,14 +79,14 @@ class all_ui_tests extends all_unit_tests
     function run(test_cleanup $t): void
     {
 
-        $t->header('html ui unit tests');
+        $t->header('unit html tests');
 
-        $t->subheader('html ui unit base tests');
+        $t->subheader('unit html base tests');
         (new base_ui_tests)->run($t);
         (new type_lists_ui_tests)->run($t);
         (new user_ui_tests)->run($t);
 
-        $t->subheader('html ui unit page tests');
+        $t->subheader('unit html page tests');
         (new word_ui_tests)->run($t);
         (new word_list_ui_tests)->run($t);
         (new verb_ui_tests())->run($t);

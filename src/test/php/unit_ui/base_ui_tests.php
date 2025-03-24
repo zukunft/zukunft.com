@@ -78,14 +78,14 @@ class base_ui_tests
         $lib = new library();
         $html = new html_base();
 
-        $t->subheader('html ui login tests');
+        $t->subheader('unit html login tests');
 
         $created_html = $html->about();
         $expected_html = $t->file('web/html/about.html');
         $t->display('about', $lib->trim_html($expected_html), $lib->trim_html($created_html));
 
 
-        $t->subheader('html ui selector tests');
+        $t->subheader('unit html selector tests');
 
         // TODO test the creation of a phrase list API JSON
         // TODO create a selector using a list an with a simple test page header an footer
@@ -115,22 +115,7 @@ class base_ui_tests
         $t->html_test((new button($url))->add(msg_id::WORD_ADD), '', 'button_add', $t);
 
 
-        $t->subheader('html list tests');
-
-        // TODO create and set the model objects and
-        //      create the api object using the api_obj() function
-        //      create and set the dsp object based on the api json
-
-        $lst = new verb_list($usr);
-        $lst->add_verb(new verb(1, verbs::IS));
-        $lst->add_verb(new verb(2, verbs::PART_NAME));
-        // TODO use set_from_json to set the display object
-        $vrb_lst_dsp = new verb_list_dsp();
-        $vrb_lst_dsp->set_from_json_array($lst->api_json_array());
-        $t->html_test($vrb_lst_dsp->list(verb_dsp::class, 'Verbs'), '', 'list_verbs', $t);
-
-
-        $t->subheader('html table tests');
+        $t->subheader('unit html table tests');
 
         // create a test set of phrase groups
         $t->phrase_list_zh_mio();
@@ -200,7 +185,7 @@ class base_ui_tests
         $t->html_test($res_lst->table($phr_lst_context_dsp), '', 'table_result_context', $t);
 
 
-        $t->subheader('html view component tests');
+        $t->subheader('unit html view component tests');
 
         $cmp = new component($usr);
         $cmp->set(1, components::TEST_ADD_NAME, comp_type_shared::TEXT);
@@ -208,7 +193,19 @@ class base_ui_tests
         $t->html_test($cmp_dsp->html(), '', 'component_text', $t);
 
 
-        $t->header('html list tests');
+        $t->header('unit html list tests');
+
+        // TODO create and set the model objects and
+        //      create the api object using the api_obj() function
+        //      create and set the dsp object based on the api json
+
+        $lst = new verb_list($usr);
+        $lst->add_verb(new verb(1, verbs::IS));
+        $lst->add_verb(new verb(2, verbs::PART_NAME));
+        // TODO use set_from_json to set the display object
+        $vrb_lst_dsp = new verb_list_dsp();
+        $vrb_lst_dsp->set_from_json_array($lst->api_json_array());
+        $t->html_test($vrb_lst_dsp->list(verb_dsp::class, 'Verbs'), '', 'list_verbs', $t);
 
         $test_name = 'sort a named list by the name';
         $lst = $t->phrase_list_zh_mio();
@@ -232,7 +229,7 @@ class base_ui_tests
 
         $is_connected = true; // assumes that the test is done with an internet connection, but if not connected, just show the warning once
 
-        $t->header('view tests');
+        $t->header('unit html view tests');
 
         // test the usage of a view to create the HTML code
         /*
@@ -245,7 +242,7 @@ class base_ui_tests
         */
 
 
-        $t->header('view component unit test');
+        $t->header('unit view component unit test');
 
         // test if a simple text component can be created
         $cmp = new component($usr);
@@ -258,7 +255,7 @@ class base_ui_tests
         $t->display('component_dsp->text', $target, $result);
 
 
-        $t->header('Test the display button class (src/main/php/web/html/button.php )');
+        $t->header('unit html button tests');
 
         $url = $html->url(views::WORD_ADD);
         $back = '1';
@@ -304,40 +301,6 @@ class base_ui_tests
         $result = (new button($url, $back))->back();
         //$t->display(", btn_back", $target, $result);
 
-
-        $t->header('Test the display HTML class');
-
-        $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../main/resources/style/style.css" /> </head> <body class="center_form">'));
-        $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));
-        $result = htmlspecialchars(trim($html->header('Header test', 'center_form')));
-        $t->dsp_contains(", dsp_header", $target, $result);
-
-
-        $t->header('Test general frontend scripts (e.g. /about.php)');
-
-        // check if the about page contains at least some basic keywords
-        // TODO activate Prio 3: $result = file_get_contents('https://www.zukunft.com/http/about.php?id=1');
-        $target = 'zukunft.com AG';
-        if (strpos($result, $target) > 0) {
-            $result = $target;
-        } else {
-            $result = '';
-        }
-        // about does not return a page for unknown reasons at the moment
-        // $t->dsp_contains(', frontend about.php '.$result.' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
-
-        $is_connected = $t->dsp_web_test(
-            'http/privacy_policy.html',
-            'Swiss purpose of data protection',
-            ', frontend privacy_policy.php contains at least');
-        $is_connected = $t->dsp_web_test(
-            'http/error_update.php?id=1',
-            'not permitted',
-            ', frontend error_update.php contains at least', $is_connected);
-        $t->dsp_web_test(
-            'http/find.php?pattern=' . words::ABB,
-            words::ABB,
-            ', frontend find.php contains at least', $is_connected);
 
 
 
