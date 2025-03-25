@@ -51,7 +51,6 @@ include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par_list;
@@ -65,13 +64,11 @@ use cfg\word\triple_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\triple;
-use cfg\word\word;
 use cfg\word\word_list;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
 use shared\helper\TextIdObject;
-use shared\library;
 
 class sandbox_list_named extends sandbox_list
 {
@@ -461,7 +458,7 @@ class sandbox_list_named extends sandbox_list
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $trp) {
             // another validation check as a second line of defence
-            if ($trp->is_valid()) {
+            if ($trp->db_ready()) {
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
                 if ($use_func) {
@@ -470,8 +467,6 @@ class sandbox_list_named extends sandbox_list
                 $qp = $trp->sql_insert($sc, $sc_par_lst);
                 $qp->obj_name = $trp->name();
                 $sql_list->add($qp);
-            } else {
-                log_err('triple ' . $trp->dsp_id() . ' is not valid');
             }
         }
         return $sql_list;

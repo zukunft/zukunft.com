@@ -487,7 +487,7 @@ class sandbox_link extends sandbox
     /**
      * @return bool true if all mandatory vars of the object are set to save the object
      */
-    function is_valid(): bool
+    function db_ready(): bool
     {
         $result = false;
         if ($this->fob != null and $this->tob != null) {

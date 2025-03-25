@@ -69,7 +69,10 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
 use cfg\db\sql_creator;
@@ -85,7 +88,10 @@ use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user_message;
 use cfg\verb\verb;
+use shared\const\triples;
+use shared\const\words;
 use shared\enum\foaf_direction;
+use shared\enum\messages as msg_id;
 use shared\types\verbs;
 
 class triple_list extends sandbox_list_named
@@ -597,7 +603,12 @@ class triple_list extends sandbox_list_named
      */
     function save(phrase_list $cache, import $imp): user_message
     {
+        global $cfg;
+
         $usr_msg = new user_message();
+
+        $load_per_sec = $cfg->get_by([words::TRIPLES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $save_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         if ($this->is_empty()) {
             log_info('no triples to save');
@@ -622,22 +633,22 @@ class triple_list extends sandbox_list_named
 
             // load the objects that are already in the database
             if (!$load_list->is_empty()) {
+                $step_time = $this->count() / $load_per_sec;
+                $imp->step_start(msg_id::LOAD, triple::class, $load_list->count(), $step_time);
                 $db_lst = new triple_list($this->user());
                 $db_lst->load_by_names($load_list->names());
+                $imp->step_end($load_list->count(), $load_per_sec);
 
-                // TODO check and add missing from and to phrases (or at least report)
-                // get missing words (TODO check if all missing triples are already selected)
-                $wrd_lst = $this->missing_words();
-                if (!$wrd_lst->is_empty()) {
-                    log_warning('words ' . $wrd_lst->dsp_id() . ' added via list insert');
-                    $wrd_lst->save($imp);
-                    // TODO add the id of the loaded words to the triple parts
-                    $this->set_id_by_name($wrd_lst->phrase_lst());
-                }
                 $this->fill_missing_verbs();
 
                 // create any missing sql functions and insert the missing triples
+                $step_time = $this->count() / $save_per_sec;
+                $imp->step_start(msg_id::SAVE, triple::class, $db_lst->count(), $step_time);
                 $usr_msg->add($this->insert($db_lst, true, $imp, triple::class));
+                $imp->step_end($db_lst->count(), $save_per_sec);
+
+                // fill up cache
+                $cache = $cache->merge($db_lst);
 
                 // update the existing triples
                 // loop over the triples and check if all needed functions exist
@@ -667,28 +678,6 @@ class triple_list extends sandbox_list_named
                 }
             }
         }
-    }
-
-    function missing_words(): word_list
-    {
-        $wrd_lst = new word_list($this->user());
-        foreach ($this->lst() as $phr) {
-            if ($phr::class == word::class) {
-                if ($phr->id() == 0) {
-                    $wrd_lst->add_by_name($phr);
-                }
-            } elseif ($phr::class == triple::class) {
-                if ($phr->from()->id() == 0) {
-                    $wrd_lst->add_by_name($phr->from()->obj());
-                }
-                if ($phr->to()->id() == 0) {
-                    $wrd_lst->add_by_name($phr->to()->obj());
-                }
-            } else {
-                log_err('missing words not yet coded for class ' . $phr::class);
-            }
-        }
-        return $wrd_lst;
     }
 
     function fill_missing_verbs(): user_message

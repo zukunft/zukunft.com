@@ -43,6 +43,7 @@ include_once PHP_PATH . 'zu_lib.php';
 
 include_once SHARED_PATH . 'api.php';
 include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once API_OBJECT_PATH . 'controller.php';
 include_once API_OBJECT_PATH . 'api_message.php';
@@ -54,6 +55,7 @@ use cfg\helper\config_numbers;
 use cfg\user\user_message;
 use controller\controller;
 use cfg\user\user;
+use shared\enum\messages as msg_id;
 use shared\api;
 use shared\types\api_type;
 
@@ -85,7 +87,7 @@ if ($usr->id() > 0) {
         $usr_msg->add_message('configuration part ' . $part . ' cannot yet be selected');
     }
     if (!$usr_msg->is_ok()) {
-        $usr_msg->add_message('cannot load config');
+        $usr_msg->add_message(msg_id::CONFIG_NOT_LOADED->value);
     } else {
         if ($cfg_lst->is_empty()) {
             $usr_msg->add_message('config is empty');

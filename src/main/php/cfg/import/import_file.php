@@ -139,7 +139,8 @@ class import_file
                         $usr_msg->add_info(' ... and ' . $imp->system_done . ' $system objects');
                     }
                 } else {
-                    $usr_msg->add_message(' failed because ' . $import_result->all_message_text() . '.');
+                    $usr_msg->add($import_result);
+                    //$usr_msg->add_message('import of ' . $filename . ' failed');
                 }
             }
         }

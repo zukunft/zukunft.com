@@ -417,35 +417,58 @@ class data_object
         $usr_msg->add($wrd_lst->save($imp));
         $imp->step_end($wrd_lst->count(), $wrd_per_sec);
 
-        // add the id of the words just added to the triples
+        // clone the list as cache to filter the phrases already fine
+        // without removing the fine words or triples from the original lists
+        $phr_lst = clone $wrd_lst->phrase_lst();
+
+        // add the id of the words and triples just added to the triples
+        // repeat this id assign until all triples have an id
+        // or until it is clear that a triple is missing
+        $trp_self_ref = true;
+        $trp_add = true;
+        while ($trp_self_ref and $trp_add) {
+            $trp_self_ref = false;
+            $trp_add = false;
+            foreach ($this->triple_list()->lst() as $trp) {
+                $trp_self_ref = $this->check_triple_phrase($trp, $trp->from(), $phr_lst, $usr_msg, $trp_self_ref);
+                $trp_self_ref = $this->check_triple_phrase($trp, $trp->to(), $phr_lst, $usr_msg, $trp_self_ref);
+            }
+
+            // import the triples
+            if ($usr_msg->is_ok()) {
+                // get the list of triples that should be imported
+                $trp_lst = $this->triple_list();
+                // clone the list to filter the phrases already fine without removing the fine triples from the original list
+                $cache = clone $phr_lst;
+                $cache->filter_valid();
+                // estimate the time for the import
+                $trp_est = $trp_lst->count() / $trp_per_sec;
+                $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
+                $usr_msg->add($trp_lst->save($phr_lst, $imp));
+                $imp->step_end($trp_lst->count(), $trp_per_sec);
+                if ($trp_lst->count() > 0) {
+                    $trp_add = true;
+                }
+
+                // prepare adding the id of the triples just added to the triples
+                $phr_lst = $this->phrase_list();
+            }
+        }
+
+        // report missing triples
         foreach ($this->triple_list()->lst() as $trp) {
             $phr = $trp->from();
             if ($phr->id() == 0) {
-                if ($phr->name() == '') {
-                    $usr_msg->add_warning('from phrase id and name missing in ' . $trp->dsp_id());
-                } else {
-                    $phr_reloaded = $wrd_lst->get_by_name($phr->name());
-                    $usr_msg->add($this->set_phrase_id($phr, $phr_reloaded?->phrase()));
+                if ($phr->name() != '') {
+                    $usr_msg->add_type_message($phr->name(), msg_id::PHRASE_ID_NOT_FOUND->value);
                 }
             }
             $phr = $trp->to();
             if ($phr->id() == 0) {
-                if ($phr->name() == '') {
-                    $usr_msg->add_warning('to phrase id and name missing in ' . $trp->dsp_id());
-                } else {
-                    $phr_reloaded = $wrd_lst->get_by_name($phr->name());
-                    $usr_msg->add($this->set_phrase_id($phr, $phr_reloaded?->phrase()));
+                if ($phr->name() != '') {
+                    $usr_msg->add_type_message($phr->name(), msg_id::PHRASE_ID_NOT_FOUND->value);
                 }
             }
-        }
-
-        // import the triples
-        if ($usr_msg->is_ok()) {
-            $trp_lst = $this->triple_list();
-            $trp_est = $wrd_lst->count() / $trp_per_sec;
-            $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
-            $usr_msg->add($trp_lst->save($wrd_lst->phrase_lst(), $imp));
-            $imp->step_end($trp_lst->count(), $trp_per_sec);
         }
 
         // add the id of the triples just added to the values
@@ -487,6 +510,40 @@ class data_object
     }
 
     /**
+     * check if the phrase related to a triple is fine
+     * and if not indicate a self reference by returning true
+     *
+     * @param triple $trp the triple that should be checked
+     * @param phrase $phr either the from or to phrase of the triple
+     * @param phrase_list $phr_lst the cache of all words and triples that are fine until now
+     * @param user_message $usr_msg all user messages of the import up to this check
+     * @param bool $trp_self_ref the status to the self reference before this check
+     * @return bool
+     */
+    private function check_triple_phrase(
+        triple $trp,
+        phrase $phr,
+        phrase_list $phr_lst,
+        user_message $usr_msg,
+        bool $trp_self_ref
+    ): bool
+    {
+        if ($phr->id() == 0) {
+            if ($phr->name() == '') {
+                $usr_msg->add_type_message($trp->dsp_id(), msg_id::PHRASE_MISSING_FROM->value);
+            } else {
+                $phr_reloaded = $phr_lst->get_by_name($phr->name());
+                if ($phr_reloaded == null) {
+                    $trp_self_ref = true;
+                } else {
+                    $usr_msg->add($this->set_phrase_id($phr, $phr_reloaded));
+                }
+            }
+        }
+        return $trp_self_ref;
+    }
+
+    /**
      * set the missing id in the phrase based on the given database phrase
      * @param phrase $phr which might have a missing id
      * @param phrase|null $db_phr which might have the missing id
@@ -498,9 +555,6 @@ class data_object
         if ($phr->id() == 0) {
             if ($db_phr != null) {
                 $phr->set_id($db_phr->id());
-                $usr_msg->add_message('phrase id for ' . $phr->name() . ' has been zero');
-            } else {
-                $usr_msg->add_warning('phrase id for ' . $phr->name() . ' not found');
             }
         }
         return $usr_msg;

@@ -641,7 +641,7 @@ class formula_link extends sandbox_link
         }
 
         if ($this->id() <= 0) {
-            if ($this->is_valid()) {
+            if ($this->db_ready()) {
                 log_debug('new formula link from "' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '"');
                 $usr_msg->add_message($this->add($use_func)->get_last_message());
             }

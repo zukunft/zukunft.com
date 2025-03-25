@@ -57,13 +57,18 @@ class user_message
     private int $msg_status;
     private int|null $checksum = null;
 
-    // array of the messages that should be shown to the user
+    // array of the information only messages that should be shown to the user
     // to explain the result of a process
     private array $info_text;
 
     // array of the messages that should be shown to the user
     // to explain the result of a process
     private array $msg_text;
+
+    // array of the messages types that might have more than one entry
+    // so each array entry is an array with the message keys
+    // e.g. "missing phrase" is the type and "energy" is the entry if the phrase with the name "energy" is missing
+    private array $typ_lst;
 
     // array of the messages id that should be shown to the user
     // in the language of the user frontend
@@ -97,6 +102,7 @@ class user_message
         $this->db_row_id = 0;
         $this->db_row_id_lst = [];
         $this->msg_id_lst = [];
+        $this->typ_lst = [];
     }
 
 
@@ -200,6 +206,35 @@ class user_message
      * more than one message text can be added to a user message result
      *
      * @param string $msg_text the message text to add
+     * @param string $type the message type to group the messages
+     * @return void is never expected to fail
+     */
+    function add_type_message(string $msg_text, string $type): void
+    {
+        if ($msg_text != '') {
+            // find the next key
+            if (in_array($type, array_keys($this->typ_lst))) {
+                $sub_lst = $this->typ_lst[$type];
+                // do not repeat the same text more than once
+                if (!in_array($msg_text, $sub_lst)) {
+                    $sub_lst[] = $msg_text;
+                    $this->typ_lst[$type] = $sub_lst;
+                }
+            } else {
+                $this->typ_lst[$type] = [$msg_text];
+            }
+            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            if ($this->is_ok()) {
+                $this->set_not_ok();
+            }
+        }
+    }
+
+    /**
+     * to offer the user to see more details without retry
+     * more than one message text can be added to a user message result
+     *
+     * @param string $msg_text the message text to add
      * @return void is never expected to fail
      */
     function add_message(string $msg_text): void
@@ -266,6 +301,11 @@ class user_message
         foreach ($msg_to_add->get_all_messages() as $msg_text) {
             $this->add_message($msg_text);
         }
+        foreach ($msg_to_add->get_all_type_messages() as $key => $lst) {
+            foreach ($lst as $entry) {
+                $this->add_type_message($entry, $key);
+            }
+        }
         $this->combine_status($msg_to_add);
         $this->db_row_id_lst = array_merge($this->db_row_id_lst, $msg_to_add->db_row_id_lst);
     }
@@ -316,7 +356,11 @@ class user_message
      */
     function all_message_text(): string
     {
-        return implode(", ", $this->msg_text);
+        $msg = implode(", ", $this->msg_text);
+        foreach ($this->typ_lst as $key => $sub_lst) {
+            $msg .= $key . ': ' . implode(", ", $sub_lst) . '; ';
+        }
+        return $msg;
     }
 
     /**
@@ -383,6 +427,14 @@ class user_message
     protected function get_all_messages(): array
     {
         return $this->msg_text;
+    }
+
+    /**
+     * @return array with all the text messages
+     */
+    protected function get_all_type_messages(): array
+    {
+        return $this->typ_lst;
     }
 
     /**

@@ -473,7 +473,7 @@ class triple extends sandbox_link_named
                     } else {
                         $phr = $dto->get_phrase_by_name($value);
                         if ($phr == null) {
-                            $usr_msg->add_message('Inconsistency: phrase ' . $value . ' missing');;
+                            $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
                         } else {
                             $this->set_from($phr);
                         }
@@ -494,7 +494,7 @@ class triple extends sandbox_link_named
                 } else {
                     $phr = $dto->get_phrase_by_name($value);
                     if ($phr == null) {
-                        $usr_msg->add_message('Inconsistency: phrase ' . $value . ' missing');;
+                        $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
                     } else {
                         $this->set_to($phr);
                     }
@@ -1847,7 +1847,7 @@ class triple extends sandbox_link_named
      * @return bool true if the triple object can be added to the database
      *              false e.g. if some parameters ar missing
      */
-    function is_valid(): bool
+    function db_ready(): bool
     {
         return $this->check()->is_ok();
     }

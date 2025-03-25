@@ -1651,13 +1651,13 @@ class word_list extends sandbox_list_named
             $imp->step_start(msg_id::LOAD, word::class, $this->count(), $step_time);
             $db_lst = new word_list($this->user());
             $db_lst->load_by_names($this->names());
-            $imp->step_end($this->count(), $load_per_sec);
+            $imp->step_end($db_lst->count(), $load_per_sec);
 
             // create any missing sql functions and insert the missing words
             $step_time = $this->count() / $save_per_sec;
-            $imp->step_start(msg_id::SAVE, word::class, $this->count(), $step_time);
+            $imp->step_start(msg_id::SAVE, word::class, $db_lst->count(), $step_time);
             $usr_msg->add($this->insert($db_lst, true, $imp, word::class));
-            $imp->step_end($this->count(), $save_per_sec);
+            $imp->step_end($db_lst->count(), $save_per_sec);
 
             // update the existing words
             // TODO create a test that fields not included in the import message are not updated, but e.g. an empty descrption is updated

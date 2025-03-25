@@ -83,6 +83,7 @@ include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_PHRASE_PATH . 'trm_ids.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -107,6 +108,7 @@ use cfg\word\word_list;
 use cfg\word\triple;
 use cfg\word\triple_list;
 use shared\enum\foaf_direction;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
@@ -177,7 +179,7 @@ class phrase_list extends sandbox_list_named
                 if ($usr_msg->is_ok()) {
                     $phr = $phr_lst->get_by_name($phr_name);
                     if ($phr == null) {
-                        $usr_msg->add_message('word or triple for ' . $phr_name . ' is missing in the import message');
+                        $usr_msg->add_type_message($phr_name, msg_id::PHRASE_MISSING->value);
                         $phr = new phrase($this->user());
                         $phr->set_name($phr_name);
                         $phr_lst->add_by_name($phr);
@@ -1473,6 +1475,21 @@ class phrase_list extends sandbox_list_named
             log_debug($result->dsp_id());
         }
         return $result;
+    }
+
+    /**
+     * leave only the valid words and triples in this list
+     * @return void
+     */
+    function filter_valid(): void
+    {
+        $lst = [];
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_valid()) {
+                $lst[] = $phr;
+            }
+        }
+        $this->set_lst($lst);
     }
 
     /**

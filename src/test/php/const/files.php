@@ -110,14 +110,14 @@ class files
     const IMPORT_TRAVEL_SCORING_VALUE_LIST = self::IMPORT_PATH . 'travel_scoring_value_list' . self::JSON;
 
     const TEST_IMPORT_FILE_LIST = [
+        self::IMPORT_CURRENCY,
         self::IMPORT_COUNTRIES,
         self::IMPORT_COUNTRY_ISO,
         self::IMPORT_DEMOCRACY_INDEX,
-        self::IMPORT_CURRENCY
+        self::IMPORT_COMPANIES
     ];
 
     const TEST_DIRECT_IMPORT_FILE_LIST = [
-        self::IMPORT_COMPANIES,
         self::IMPORT_WIND_INVESTMENT,
     ];
 

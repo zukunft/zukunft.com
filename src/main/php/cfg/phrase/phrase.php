@@ -284,7 +284,10 @@ class phrase extends combine_named
                 // map a triple
                 $trp = new triple($this->user());
                 $trp->set_id($db_row[$id_fld] * -1);
-                $trp->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
+                $name = $db_row[phrase::FLD_NAME . $fld_ext];
+                if ($name != null) {
+                    $trp->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
+                }
                 if (array_key_exists(sandbox_named::FLD_DESCRIPTION . $fld_ext, $db_row)) {
                     $trp->description = $db_row[sandbox_named::FLD_DESCRIPTION . $fld_ext];
                 }
@@ -347,6 +350,11 @@ class phrase extends combine_named
      * set and get
      */
 
+    function obj(): word|triple|IdObject|TextIdObject|null
+    {
+        return $this->obj;
+    }
+
     /**
      * set the object id based on the given term id
      * must have the same logic as the api and the frontend
@@ -392,7 +400,7 @@ class phrase extends combine_named
             $this->obj = new triple($this->user());
             $this->set_obj_id($id);
         }
-        $this->obj->set_id($id);
+        $this->obj()->set_id($id);
     }
 
     /**
@@ -423,7 +431,7 @@ class phrase extends combine_named
         if ($class != '' and $this->obj == null) {
             $this->set_obj_from_class($class);
         }
-        $this->obj->set_name($name);
+        $this->obj()->set_name($name);
     }
 
     /**
@@ -471,7 +479,7 @@ class phrase extends combine_named
         if ($this->obj == null) {
             return 0;
         } else {
-            return $this->obj->id();
+            return $this->obj()->id();
         }
     }
 
@@ -483,7 +491,7 @@ class phrase extends combine_named
         if ($this->obj == null) {
             return '';
         } else {
-            return $this->obj->name($ignore_excluded);
+            return $this->obj()->name($ignore_excluded);
         }
     }
 
@@ -501,6 +509,26 @@ class phrase extends combine_named
     function usage(): ?int
     {
         return $this->obj()->usage();
+    }
+
+    /**
+     * @return bool true if all vars of the phrase are set and the phrase can be stored in the database
+     */
+    function db_ready(): bool
+    {
+        return $this->obj()->db_ready();
+    }
+
+    /**
+     * @return bool true if it has a valid id and name and the phrase is expected to be stored in the database
+     */
+    function is_valid(): bool
+    {
+        if ($this->db_ready()) {
+            return $this->obj()->db_ready();
+        } else {
+            return false;
+        }
     }
 
 
@@ -569,7 +597,7 @@ class phrase extends combine_named
 
     function export_json(): array
     {
-        return $this->obj->export_json();
+        return $this->obj()->export_json();
     }
 
 
@@ -701,7 +729,7 @@ class phrase extends combine_named
             $trp = new triple($this->user());
             $result = $trp->load_by_id($this->obj_id());
             $this->obj = $trp;
-            // TODO check: $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj->name
+            // TODO check: $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj()->name
             log_debug('triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
             $wrd = new word($this->user());
@@ -736,7 +764,7 @@ class phrase extends combine_named
             $this->load_by_name($this->name());
         }
         if ($this->id() < 0) {
-            $lnk = $this->obj;
+            $lnk = $this->obj();
             $lnk->load_objects(); // try to be on the save side, and it is anyway checked if loading is really needed
             $result = $lnk->fob();
         } elseif ($this->id() > 0) {
@@ -776,9 +804,7 @@ class phrase extends combine_named
     function type_id(): ?int
     {
         $result = null;
-        if ($this->obj != null) {
-            $result = $this->obj->type_id();
-        }
+        $result = $this->obj()?->type_id();
         if ($result == null or $result == 0) {
             $wrd = $this->main_word();
             $result = $wrd->type_id;
@@ -1247,7 +1273,7 @@ class phrase extends combine_named
 
         $result = false;
         if ($this->obj != null) {
-            if ($this->obj->type_id == $phr_typ_cac->id(phrase_type_shared::PERCENT)) {
+            if ($this->obj()->type_id == $phr_typ_cac->id(phrase_type_shared::PERCENT)) {
                 $result = true;
             }
         } else {
@@ -1332,7 +1358,7 @@ class phrase extends combine_named
 
         /*
         if (isset($this->obj)) {
-            $usr_msg = $this->obj->save();
+            $usr_msg = $this->obj()->save();
         }
         */
 
@@ -1441,7 +1467,7 @@ class phrase extends combine_named
 
     function name_linked(): string
     {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
+        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
     }
 
     /**
@@ -1479,7 +1505,7 @@ class phrase extends combine_named
      */
     function display_linked(): string
     {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
+        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
     }
 
     /**
@@ -1490,7 +1516,7 @@ class phrase extends combine_named
      */
     function dsp_link_style($style): string
     {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '" class="' . $style . '">' . $this->name() . '</a>';
+        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '" class="' . $style . '">' . $this->name() . '</a>';
     }
 
     // create a selector that contains the time words

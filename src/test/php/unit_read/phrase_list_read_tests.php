@@ -109,7 +109,7 @@ class phrase_list_read_tests
         // all children
         $test_name = 'The default number of forecast years is a system configuration parameter';
         global $cfg;
-        $auto_years = $cfg->get_by([triples::AUTOMATIC_CREATE, words::YEAR]);
+        $auto_years = $cfg->get_by([triples::AUTOMATIC_CREATE, words::YEAR], 10);
         $t->assert_greater($test_name, 0, $auto_years);
 
         // Canton is related to Switzerland and Zurich

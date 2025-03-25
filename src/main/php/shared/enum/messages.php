@@ -76,6 +76,14 @@ enum messages: string
     case SAVE_SINGLE = 'save single';
     case SAVE_LIST = 'save list';
     case VALIDATE = 'validate';
+    case PHRASE_MISSING = 'phrase missing';
+    case PHRASE_MISSING_FROM = 'phrase missing from';
+    case PHRASE_MISSING_TO = 'phrase missing to';
+    case PHRASE_MISSING_ID = 'phrase id is zero';
+    case PHRASE_ID_NOT_FOUND = 'phrase id not fount';
+
+    // config
+    case CONFIG_NOT_LOADED = 'cannot load config';
 
     // text to be shown in buttons
     case ADD = 'add';
