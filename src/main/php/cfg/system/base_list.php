@@ -39,18 +39,22 @@ include_once MODEL_HELPER_PATH . 'combine_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 include_once SHARED_HELPER_PATH . 'ListOfIdObjects.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_db;
 use cfg\helper\combine_object;
 use cfg\helper\db_object_seq_id;
 use cfg\user\user;
+use cfg\user\user_message;
 use controller\api_message;
+use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
 use shared\helper\ListOfIdObjects;
@@ -119,36 +123,6 @@ class base_list extends ListOfIdObjects
         $result = array();
         foreach ($this->lst() as $val) {
             $result[$val->id()] = $val->name();
-        }
-        return $result;
-    }
-
-
-    /*
-     * modify
-     */
-
-    /**
-     * add an object to the list
-     *
-     * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|combine_object $obj_to_add an object with a unique database id that should be added to the list
-     * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
-     * @returns bool true if the object has been added
-     */
-    function add_obj(IdObject|TextIdObject|CombineObject|db_object_seq_id|combine_object $obj_to_add, bool $allow_duplicates = false): bool
-    {
-        $result = false;
-        // check boolean first because in_array might take longer
-        if ($allow_duplicates) {
-            $this->add_direct($obj_to_add);
-            $this->set_lst_dirty();
-            $result = true;
-        } else {
-            if (!in_array($obj_to_add->id(), $this->ids())) {
-                $this->add_direct($obj_to_add);
-                $this->set_lst_dirty();
-                $result = true;
-            }
         }
         return $result;
     }

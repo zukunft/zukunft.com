@@ -149,9 +149,16 @@ class figure_list extends sandbox_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param fig_ids $ids figure ids that should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, fig_ids $ids): sql_par
+    function load_sql_by_ids(
+        sql_creator $sc,
+        fig_ids     $ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(figure::FLD_ID, $ids->lst);
@@ -183,6 +190,14 @@ class figure_list extends sandbox_list
         return $qp;
     }
 
+    // TODO use cache to improve speed
+    function load_phrases(): void
+    {
+        foreach ($this->lst() as $fig) {
+            $fig->obj()->grp()->load_phrases();
+        }
+    }
+
 
     /*
      * modify
@@ -200,7 +215,7 @@ class figure_list extends sandbox_list
         if ($fig_to_add != null) {
             log_debug($fig_to_add->dsp_id());
             if ($fig_to_add->id() <> 0 or $fig_to_add->name() != '') {
-                $result = parent::add_obj($fig_to_add);
+                $result = parent::add_obj($fig_to_add)->is_ok();
             }
         }
         return $result;

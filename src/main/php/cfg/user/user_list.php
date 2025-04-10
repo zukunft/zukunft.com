@@ -135,9 +135,16 @@ class user_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $ids list of user ids that should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    function load_sql_by_ids(
+        sql_creator $sc,
+        array       $ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(user::FLD_ID, $ids);
@@ -211,13 +218,13 @@ class user_list
     private function load_sql_count_all_changes(): string
     {
         $sql = $this->load_sql_count_changes_dbo(new word($this->user()));
-        $sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new triple($this->user()));
-        $sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new value($this->user()));
-        $sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new formula($this->user()));
-        $sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new ref($this->user()));
-        $sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new source($this->user()));
-        $sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new view($this->user()));
-        //$sql .= ' UNION ' . $this->load_sql_count_changes_dbo(new component($this->user()));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new triple($this->user()));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new value($this->user()));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new formula($this->user()));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new ref($this->user()));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new source($this->user()));
+        $sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new view($this->user()));
+        //$sql .= ' ' . sql::UNION . ' ' . $this->load_sql_count_changes_dbo(new component($this->user()));
         /* TODO activate if a class name can be used to create a class instance
         foreach (sql_db::CLASSES_WITH_USER_CHANGES as $class) {
             $sql_count .= $this->load_sql_count_changes($class);
@@ -230,7 +237,7 @@ class user_list
     {
         $sql = 'SELECT ' . sql_db::GRP_TBL . '.' . user::FLD_ID . ',';
         $sql .= ' SUM (' . sql_db::GRP_TBL . '.' . self::FLD_CHANGES . ') AS ' . self::FLD_CHANGES;
-        $sql .= ' FROM ( ' . $this->load_sql_count_all_changes() .') ' . sql_db::GRP_TBL;
+        $sql .= ' FROM ( ' . $this->load_sql_count_all_changes() . ') ' . sql_db::GRP_TBL;
         $sql .= ' GROUP BY ' . user::FLD_ID;
         return $sql;
     }
@@ -247,12 +254,13 @@ class user_list
         $qp = $this->load_sql($sc, 'count_changes');
         $sc->set_join_sql($sub_sql, array(self::FLD_CHANGES), user::FLD_ID);
         $sc->add_where(self::FLD_CHANGES, '', sql_par_type::NOT_NULL);
-        $sc->set_order( self::FLD_CHANGES, sql::ORDER_DESC, sql_db::LNK_TBL);
+        $sc->set_order(self::FLD_CHANGES, sql::ORDER_DESC, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
         return $qp;
     }
+
     /**
      * load this list of user
      * @param sql_db $db_con the database link as a parameter to load the system users at program start
@@ -284,7 +292,7 @@ class user_list
      * @param array $ids list of user ids that should be loaded
      * @return bool true if at least one user found
      */
-    function load_by_ids(sql_db $db_con,  array $ids): bool
+    function load_by_ids(sql_db $db_con, array $ids): bool
     {
         $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
         return $this->load($db_con, $qp);

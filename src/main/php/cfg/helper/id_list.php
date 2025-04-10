@@ -30,7 +30,7 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
 class id_list
 {

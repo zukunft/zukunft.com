@@ -111,6 +111,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
@@ -170,6 +171,7 @@ use cfg\view\view;
 use cfg\word\word;
 use cfg\word\triple;
 use shared\enum\change_actions;
+use shared\enum\messages as msg_id;
 use shared\types\api_type_list;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
@@ -1800,6 +1802,23 @@ class sandbox_multi extends db_object_multi_user
     /*
      * save helper - save fields
      */
+
+    /**
+     * check if the sandbox can be added to the database
+     * @return user_message including suggested solutions
+     *       if something is missing e.g. the user
+     */
+    function db_ready(): user_message
+    {
+        $usr_msg = new user_message();
+
+        if ($this->user() == null) {
+            $this->set_user($this->user());
+            $usr_msg->add_id_with_vars(msg_id::USER_MISSING,
+                [msg_id::VAR_NAME => $this->dsp_id()]);
+        }
+        return $usr_msg;
+    }
 
     /**
      * dummy function to save all updated word fields, which is always overwritten by the child class

@@ -67,6 +67,7 @@
 namespace cfg\phrase;
 
 include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_type.php';
@@ -91,12 +92,14 @@ include_once MODEL_WORD_PATH . 'word_list.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
+use cfg\db\sql;
 use cfg\helper\combine_named;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -119,6 +122,8 @@ use cfg\word\word_db;
 use cfg\word\word_list;
 use cfg\word\triple;
 use shared\enum\foaf_direction;
+use shared\enum\messages;
+use shared\enum\messages as msg_id;
 use shared\helper\IdObject;
 use shared\helper\TextIdObject;
 use shared\json_fields;
@@ -512,20 +517,12 @@ class phrase extends combine_named
     }
 
     /**
-     * @return bool true if all vars of the phrase are set and the phrase can be stored in the database
-     */
-    function db_ready(): bool
-    {
-        return $this->obj()->db_ready();
-    }
-
-    /**
      * @return bool true if it has a valid id and name and the phrase is expected to be stored in the database
      */
     function is_valid(): bool
     {
         if ($this->db_ready()) {
-            return $this->obj()->db_ready();
+            return $this->obj()->db_ready()->is_ok();
         } else {
             return false;
         }
@@ -544,11 +541,20 @@ class phrase extends combine_named
      */
     function fill(phrase|db_object_seq_id $phr): user_message
     {
+        $usr_msg = new user_message();
         if ($this->is_word()) {
-            return $this->obj()->fill($phr->word());
+            if ($phr->is_word() == null) {
+                $usr_msg->add($this->obj()->fill($phr->word()));
+            } else {
+            }
         } else {
-            return $this->obj()->fill($phr->triple());
+            if ($phr->is_triple()) {
+                $usr_msg->add($this->obj()->fill($phr->triple()));
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_TRIPLE, [$phr->word()->name()]);
+            }
         }
+        return $usr_msg;
     }
 
 
@@ -1212,7 +1218,7 @@ class phrase extends combine_named
         }
         $sql_avoid_code_check_prefix = "SELECT";
         $sql = $sql_avoid_code_check_prefix . ' DISTINCT id, name
-              FROM ( ' . $sql_words . ' UNION ' . $sql_triples . ' ) AS p
+              FROM ( ' . $sql_words . ' ' . sql::UNION . ' ' . $sql_triples . ' ) AS p
              WHERE excluded = 0
           ORDER BY p.name;';
         log_debug($sql);

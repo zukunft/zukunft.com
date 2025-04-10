@@ -1660,6 +1660,18 @@
         "code_id": "change_values_geo_big",
         "description": "",
         "id": 107
+      },
+      {
+        "name": "value_texts",
+        "code_id": "value_texts",
+        "description": "",
+        "id": 108
+      },
+      {
+        "name": "value_texts_norm",
+        "code_id": "value_texts_norm",
+        "description": "",
+        "id": 109
       }
     ],
     "change_field_list": [
@@ -6392,10 +6404,22 @@
         "id": 789
       },
       {
+        "name": "108numeric_value",
+        "code_id": "108numeric_value",
+        "description": "",
+        "id": 790
+      },
+      {
+        "name": "109numeric_value",
+        "code_id": "109numeric_value",
+        "description": "",
+        "id": 791
+      },
+      {
         "name": "1NOW() AS db_now",
         "code_id": "1NOW() AS db_now",
         "description": "",
-        "id": 790
+        "id": 792
       }
     ],
     "verbs": [

@@ -318,9 +318,16 @@ class phrase_list extends sandbox_list_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param phr_ids $ids phrase ids that should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, phr_ids $ids): sql_par
+    function load_sql_by_ids(
+        sql_creator $sc,
+        phr_ids     $ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(phrase::FLD_ID, $ids->lst, sql_par_type::INT_LIST);
@@ -999,7 +1006,7 @@ class phrase_list extends sandbox_list_named
         $phr_lst = new phrase_list($this->user());
         foreach ($this->lst() as $phr) {
             if ($phr->id() == 0) {
-                $phr_lst->add($phr);
+                $phr_lst->add_by_name($phr);
             }
         }
         return $phr_lst;

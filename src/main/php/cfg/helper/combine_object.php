@@ -47,6 +47,7 @@ include_once DB_PATH . 'sql_db.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
@@ -62,6 +63,7 @@ use cfg\formula\formula;
 use cfg\result\result;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
+use cfg\user\user_message;
 use cfg\value\value_base;
 use cfg\verb\verb;
 use cfg\word\triple;
@@ -176,6 +178,14 @@ class combine_object extends CombineObject
     {
         $lib = new library();
         return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
+    }
+
+    /**
+     * @return user_message empty if all vars of the underlying object are set and the phrase can be stored in the database
+     */
+    function db_ready(): user_message
+    {
+        return $this->obj()->db_ready();
     }
 
 }

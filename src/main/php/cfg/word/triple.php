@@ -1825,7 +1825,7 @@ class triple extends sandbox_link_named
                 if ($this->from()->name() == '') {
                     $usr_msg->add_message('triple phrase from name is missing and id is 0');
                 } else {
-                    $usr_msg->add_message('triple phrase from id is 0');
+                    $usr_msg->add_info('triple phrase from id is 0');
                 }
             }
         }
@@ -1836,7 +1836,7 @@ class triple extends sandbox_link_named
                 if ($this->to()->name() == '') {
                     $usr_msg->add_message('triple phrase to name is missing and id is 0');
                 } else {
-                    $usr_msg->add_message('triple phrase to id is 0');
+                    $usr_msg->add_info('triple phrase to id is 0');
                 }
             }
         }
@@ -1844,12 +1844,15 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * @return bool true if the triple object can be added to the database
-     *              false e.g. if some parameters ar missing
+     * check if the triple can be added to the database
+     * @return user_message including suggested solutions
+     *       if something is missing e.g. a linked object
      */
-    function db_ready(): bool
+    function db_ready(): user_message
     {
-        return $this->check()->is_ok();
+        $usr_msg = parent::db_ready();
+        $usr_msg->add($this->check());
+        return $usr_msg;
     }
 
     /**

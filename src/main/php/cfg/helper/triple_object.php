@@ -30,7 +30,7 @@
 
 */
 
-namespace cfg;
+namespace cfg\helper;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 

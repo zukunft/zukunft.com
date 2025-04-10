@@ -54,7 +54,9 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_PHRASE_PATH . 'term_list.php';
 include_once MODEL_RESULT_PATH . 'result_list.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
@@ -73,7 +75,9 @@ use cfg\db\sql_type_list;
 use cfg\phrase\term_list;
 use cfg\result\result_list;
 use cfg\user\user;
+use cfg\user\user_message;
 use cfg\value\value_list;
+use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
 use shared\helper\TextIdObject;
@@ -135,6 +139,7 @@ class sandbox_list extends base_list
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
                     $obj_to_add = clone $sdb_obj;
                     $obj_to_add->row_mapper_sandbox($db_row);
+                    // TODO check if object direct should be used to save time
                     $this->add_obj($obj_to_add);
                     $result = true;
                 }
@@ -340,40 +345,79 @@ class sandbox_list extends base_list
      * add one object to the list of user sandbox objects, but only if it is not yet part of the list
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add the backend object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @returns bool true the formula has been added
+     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
      */
-    function add_obj(IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add, bool $allow_duplicates = false): bool
+    function add_obj(
+        IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add,
+        bool $allow_duplicates = false
+    ): user_message
     {
-        $result = false;
+        $usr_msg = new user_message();
 
-        // check parameters
+        // add only objects that have all mandatory values
+        $usr_msg->add($obj_to_add->db_ready());
+
         if ($obj_to_add->user() == null) {
             $obj_to_add->set_user($this->user());
-            log_warning('missing user set in ' . $this->dsp_id());
+            $usr_msg->add_id_with_vars(msg_id::USER_MISSING,
+                [msg_id::VAR_NAME => $this->dsp_id()]);
         }
         if ($obj_to_add->user() !== $this->user()) {
             if (!$this->user()->is_admin() and !$this->user()->is_system()) {
-                log_warning('Trying to add ' . $obj_to_add->dsp_id()
-                    . ' of user ' . $obj_to_add->user()->name()
-                    . ' to list of ' . $this->user()->name()
-                );
+                $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
+                    [
+                        msg_id::VAR_NAME => $obj_to_add->dsp_id(),
+                        msg_id::VAR_USER_NAME => $obj_to_add->user()->name(),
+                        msg_id::VAR_USER_LIST_NAME => $this->user()->name(),
+                    ]);
             }
         }
-        if ($obj_to_add->id() <> 0 or $obj_to_add->name() != '') {
+        if ($obj_to_add->id() <> 0) {
             if ($allow_duplicates) {
-                $result = parent::add_obj($obj_to_add, $allow_duplicates);
+                $usr_msg->add(parent::add_obj($obj_to_add, $allow_duplicates));
             } else {
-                if (!in_array($obj_to_add->id(), $this->ids())) {
-                    $result = parent::add_obj($obj_to_add);
-                } else {
-                    log_warning('Trying to add ' . $obj_to_add->dsp_id()
-                        . ' which is already part of the ' . $obj_to_add::class . 'list');
+                if ($obj_to_add->id() <> 0) {
+                    if (!in_array($obj_to_add->id(), $this->ids())) {
+                        $usr_msg->add(parent::add_obj($obj_to_add));
+                    } else {
+                        $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
+                            [
+                                msg_id::VAR_NAME => $obj_to_add->dsp_id(),
+                                msg_id::VAR_CLASS_NAME => $obj_to_add::class
+                            ]);
+                    }
                 }
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
+    /*
+     * check
+     */
+
+    /**
+     * check if the user of the object to add matches the user of the list
+     * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add
+     * @return user_message the warning message if the user of the object does not match with the list user
+     */
+    function same_user(IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add): user_message
+    {
+        $usr_msg = new user_message();
+        if ($obj_to_add->user() !== $this->user()) {
+            if ($obj_to_add->user() == null) {
+                $obj_to_add->set_user($this->user());
+            } else {
+                if (!$this->user()->is_admin() and !$this->user()->is_system()) {
+                    log_warning('Trying to add ' . $obj_to_add->dsp_id()
+                        . ' of user ' . $obj_to_add->user()->name()
+                        . ' to list of ' . $this->user()->name()
+                    );
+                }
+            }
+        }
+        return $usr_msg;
+    }
 
     /*
      * debug

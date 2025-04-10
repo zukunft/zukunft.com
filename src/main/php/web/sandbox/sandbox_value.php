@@ -41,6 +41,7 @@ include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use DateTime;
 use html\group\group;
 use html\phrase\phrase_list;
 use html\user\user_message;
@@ -50,7 +51,10 @@ class sandbox_value extends sandbox
 {
 
     private group $grp; // the phrase group with the list of words and triples (not the source words and triples)
-    private ?float $number; // the number calculated by the system
+    private ?float $number = null; // the number calculated by the system
+    private ?string $text_value = null; // a text value that is not expected to be included in selections
+    private ?DateTime $time_value = null; // a time value
+    // TODO add geo points
 
     // true if the user has done no personal overwrites which is the default case
     public bool $is_std;
@@ -85,6 +89,16 @@ class sandbox_value extends sandbox
         $this->number = $number;
     }
 
+    function set_text_value(?string $text_value): void
+    {
+        $this->text_value = $text_value;
+    }
+
+    function set_time_value(?DateTime $time_value): void
+    {
+        $this->time_value = $time_value;
+    }
+
     function set_is_std(bool $is_std = true): void
     {
         $this->is_std = $is_std;
@@ -95,9 +109,33 @@ class sandbox_value extends sandbox
         return $this->grp;
     }
 
+    // TODO review (split value objects?)
+    function value(): float|string|DateTime|null
+    {
+        if ($this->number() != null) {
+            return $this->number();
+        } elseif ($this->text_value() != null) {
+            return $this->text_value();
+        } elseif ($this->time_value() != null) {
+            return $this->time_value();
+        } else {
+            return null;
+        }
+    }
+
     function number(): ?float
     {
         return $this->number;
+    }
+
+    function text_value(): ?string
+    {
+        return $this->text_value;
+    }
+
+    function time_value(): ?DateTime
+    {
+        return $this->time_value;
     }
 
     /**
@@ -133,6 +171,11 @@ class sandbox_value extends sandbox
         }
         if (array_key_exists(json_fields::NUMBER, $json_array)) {
             $this->set_number($json_array[json_fields::NUMBER]);
+        } elseif (array_key_exists(json_fields::TEXT_VALUE, $json_array)) {
+            $this->set_text_value($json_array[json_fields::TEXT_VALUE]);
+        } elseif (array_key_exists(json_fields::TIME_VALUE, $json_array)) {
+            $this->set_time_value($json_array[json_fields::TIME_VALUE]);
+            // TODO add geo point
         } else {
             $this->set_number(null);
         }

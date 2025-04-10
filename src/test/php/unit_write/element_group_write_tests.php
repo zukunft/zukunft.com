@@ -150,13 +150,14 @@ class element_group_write_tests
             $t->header('Test the figure list class (classes/figure_lst.php)');
 
             // TODO fix it
+            $fig_lst->load_phrases();
             $result = htmlspecialchars($fig_lst->dsp_id());
             //$target = htmlspecialchars("<style class=\"' . styles::STYLE_USER . '\">35'481</style> (438)");
             $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
             //$target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
             $fig_lst = $elm_grp->figures();
             $fig_id = $fig_lst->get_first_id();
-            $target = ' 8.505251 {f18}'  . words::INHABITANTS . ','  . words::CH . ','  . words::MIO . '  (' . $fig_id . ')';
+            $target = ' 8.505251 {f18}'  . words::INHABITANTS . ','  . words::MIO . ','  . words::CH . '  (' . $fig_id . ')';
             $t->assert('figure_list->dsp_id', $result, $target);
 
             $fig_lst_dsp = new figure_list($fig_lst->api_json());

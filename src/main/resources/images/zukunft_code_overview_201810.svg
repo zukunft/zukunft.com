@@ -2671,7 +2671,7 @@ this._currentIndex++;
 
 if (this._string.charAt(this._currentIndex) == '+') {
 this._currentIndex++;
-} else if (this._string.charAt(this._currentIndex) == '-') {
+} elseif (this._string.charAt(this._currentIndex) == '-') {
 this._currentIndex++;
 expsign = -1;
 }

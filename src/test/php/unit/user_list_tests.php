@@ -60,8 +60,9 @@ class user_list_tests
          */
 
         // sql to load a list of value by ids
+        $test_name = 'load users by ids';
         $usr_lst = new user_list($usr);
-        $t->assert_sql_by_ids($sc, $usr_lst);
+        $t->assert_sql_by_ids($test_name, $sc, $usr_lst);
         $t->assert_sql_by_code_id($sc, $usr_lst);
         $this->assert_sql_by_profile_and_higher($t, $db_con, $usr_lst);
 

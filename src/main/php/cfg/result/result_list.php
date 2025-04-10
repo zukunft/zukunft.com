@@ -373,7 +373,14 @@ class result_list extends sandbox_value_list
      */
     function load_sql_by_frm_single(sql_creator $sc, formula $frm, array $sc_par_lst): sql_par
     {
-        $qp = $this->load_sql_init($sc, result::class, 'frm', $sc_par_lst, new sql_field_list());
+        $qp = $this->load_sql_init(
+            $sc,
+            result::class,
+            'frm',
+            $sc_par_lst,
+            new sql_field_list(),
+            new sql_type_list()
+        );
         $sc->add_where(formula::FLD_ID, $frm->id());
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
@@ -387,9 +394,16 @@ class result_list extends sandbox_value_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $ids result ids that should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    function load_sql_by_ids(
+        sql_creator $sc,
+        array       $ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(result::FLD_ID, $ids);

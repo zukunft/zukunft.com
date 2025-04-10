@@ -883,9 +883,21 @@ class change_log extends db_object_seq_id_user
             $sc_par_lst_chg = $sc_par_lst_used->remove(sql_type::USER);
             $qp = $sc->sql_par($this::class, $sc_par_lst_chg);
             $sc->set_class($this::class, $sc_par_lst_chg);
+            // TODO review temp solution to make query name unique
+            $fld_ext = '';
+            if ($this->old_value != null) {
+                $fld_ext .= 'o';
+            }
+            if ($this->new_value != null) {
+                $fld_ext .= 'n';
+            }
+            if ($fld_ext != '') {
+                $fld_ext = sql::NAME_SEP . $fld_ext;
+                $qp->name = $qp->name . $fld_ext;
+            }
             if ($sc_par_lst_used->is_list_tbl()) {
                 $lib = new library();
-                $qp->name = $lib->class_to_name($this::class) . $ext;
+                $qp->name = $lib->class_to_name($this::class) . $fld_ext . $ext;
             }
             $sc->set_name($qp->name);
             $qp->sql = $sc->create_sql_insert(

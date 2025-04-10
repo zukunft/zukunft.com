@@ -78,8 +78,9 @@ class word_list_tests
         $t->assert_sql_names($sc, $wrd_lst, new word($usr), words::MATH);
 
         // load by word ids
+        $test_name = 'load words by ids';
         $wrd_lst = new word_list($usr);
-        $t->assert_sql_by_ids($sc, $wrd_lst, array(3, 2, 4));
+        $t->assert_sql_by_ids($test_name, $sc, $wrd_lst, array(3, 2, 4));
 
         // load by word names
         $wrd_lst = new word_list($usr);

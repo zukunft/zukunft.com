@@ -115,6 +115,8 @@ class api_tests
     function run(test_cleanup $t): void
     {
 
+        $t->header('api tests');
+
         $t->assert_api_get(user::class, user::SYSTEM_TEST_ID);
         $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_NAME);
         $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_EMAIL, api::URL_VAR_EMAIL);
@@ -143,6 +145,9 @@ class api_tests
         $t->assert_api_get(language::class);
         $t->assert_api_get(language_form::class);
 
+
+        $t->subheader('api list tests');
+
         $t->assert_api_get_list(type_lists::class);
         $t->assert_api_get_list(word_list::class, [1, 2, words::PI_ID]);
         $t->assert_api_get_list(word_list::class, words::MATH, api::URL_VAR_PATTERN);
@@ -168,18 +173,13 @@ class api_tests
         // TODO add result_list tests
         // TODO add figure_list tests
 
+
+        $t->subheader('api config tests');
+
         $cfg = new config();
         $cfg->load();
-        $test_name = 'at least one frontend configuration value must be loaded via api message';
-        $t->assert_not($test_name, $cfg->count(), 0);
-        $test_name = 'the frontend configuration must at least contain some user number format settings';
-        $t->assert_not($test_name, $cfg->get_by([words::USER, triples::NUMBER_FORMAT]),
-            null);
-        $test_name = 'the frontend configuration must at least contain the user settings for the decimal places';
-        $t->assert($test_name, $cfg->get_by([triples::NUMBER_FORMAT, triples::PERCENT_DECIMAL]), shared_config::DEFAULT_PERCENT_DECIMALS);
-        $test_name = 'the frontend configuration should not contain the database block size settings';
-        // TODO activate
-        //$t->assert($test_name, $cfg->get_by([words::DATABASE, triples::BLOCK_SIZE]), null);
+        $test_name = 'the default configuration api message must at least contain the pod name';
+        $t->assert($test_name, $cfg->get_by([words::POD, words::URL]), POD_NAME);
 
         $cfg_all = new config();
         $cfg_all->load(api::CONFIG_ALL);
@@ -193,6 +193,34 @@ class api_tests
         // TODO get frontend configuration values and check if frontend and user config contains less values
         // TODO check if requesting an unknown config part returns an error message
 
+
+        $t->subheader('api frontend config tests');
+
+        $cfg = new config();
+        $cfg->load(api::CONFIG_FRONTEND);
+        $test_name = 'at least one frontend configuration value must be loaded via api message';
+        $t->assert_not($test_name, $cfg->count(), 0);
+        $test_name = 'the frontend configuration must at least contain some user number format settings';
+        // TODO activate
+        // $t->assert($test_name, $cfg->get_by([words::USER, triples::NUMBER_FORMAT]), null);
+        $test_name = 'the frontend configuration must at least contain the user settings for the decimal places';
+        // TODO activate
+        //$t->assert($test_name, $cfg->get_by([triples::NUMBER_FORMAT, triples::PERCENT_DECIMAL]), shared_config::DEFAULT_PERCENT_DECIMALS);
+        $test_name = 'the frontend configuration should not contain the database block size settings';
+        // TODO activate
+        //$t->assert($test_name, $cfg->get_by([words::DATABASE, triples::BLOCK_SIZE]), null);
+
+
+        $t->subheader('api user config tests');
+
+        $cfg = new config();
+        $cfg->load(api::CONFIG_USER);
+        $test_name = 'at least one frontend configuration value must be loaded via api message';
+        $t->assert_not($test_name, $cfg->count(), 0);
+        $test_name = 'the frontend configuration must at least contain some user number format settings';
+
+
+        $t->subheader('api id and name select tests');
 
         // load the frontend objects via api call
         $test_name = 'api id and name call of a word';

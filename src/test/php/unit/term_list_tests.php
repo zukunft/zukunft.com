@@ -86,9 +86,10 @@ class term_list_tests
         $t->assert_sql_names($sc, $phr_lst, new term($usr));
         $t->assert_sql_names($sc, $phr_lst, new term($usr), verbs::IS_NAME);
 
+        $test_name = 'load terms by ids';
         $trm_lst = new term_list($usr);
         $trm_ids = new trm_ids(array(3, -2, 4, -7));
-        $t->assert_sql_by_ids($sc, $trm_lst, $trm_ids);
+        $t->assert_sql_by_ids($test_name, $sc, $trm_lst, $trm_ids);
         $lst = $this->new_list();
         $t->assert_sql_like($sc, $lst);
 

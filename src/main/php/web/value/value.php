@@ -203,9 +203,17 @@ class value extends sandbox_value
     function value(): string
     {
         $html = new html_base();
-        $result = $this->val_formatted();
-        if (!$this->is_std()) {
-            $result = $html->span($result, styles::STYLE_USER);
+        if ($this->number() != null) {
+            $result = $this->val_formatted();
+            if (!$this->is_std()) {
+                $result = $html->span($result, styles::STYLE_USER);
+            }
+        } elseif ($this->text_value() != null) {
+            $result = $this->text_value();
+        } elseif ($this->time_value() != null) {
+            $result = $this->time_value();
+        } else {
+            $result = '';
         }
         return $result;
     }

@@ -31,7 +31,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -41,6 +41,7 @@
 namespace cfg\value;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
+include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_list.php';
@@ -52,6 +53,7 @@ include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
+include_once MODEL_HELPER_PATH . 'value_type_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_REF_PATH . 'source.php';
@@ -62,21 +64,16 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_ENUM_PATH . 'value_types.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
+use cfg\db\sql;
 use cfg\db\sql_field_list;
 use cfg\db\sql_type_list;
-use cfg\import\import;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_value_list;
-use cfg\user\user;
-use shared\json_fields;
-use shared\types\protection_type as protect_type_shared;
-use shared\types\share_type as share_type_shared;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
@@ -85,13 +82,22 @@ use cfg\db\sql_type;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
+use cfg\helper\value_type_list;
+use cfg\import\import;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\ref\source;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_value_list;
+use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\word;
 use cfg\word\word_list;
 use shared\enum\messages as msg_id;
+use shared\enum\value_types;
+use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
+use shared\json_fields;
 use shared\library;
 
 class value_list extends sandbox_value_list
@@ -119,7 +125,18 @@ class value_list extends sandbox_value_list
                     $excluded = $db_row[sandbox::FLD_EXCLUDED];
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
-                    $obj_to_add = new value($this->user());
+                    if (array_key_exists(value::FLD_VALUE, $db_row)) {
+                        $obj_to_add = new value($this->user());
+                    } elseif (array_key_exists(value_text::FLD_VALUE, $db_row)) {
+                        $obj_to_add = new value_text($this->user());
+                    } elseif (array_key_exists(value_time::FLD_VALUE, $db_row)) {
+                        $obj_to_add = new value_time($this->user());
+                    } elseif (array_key_exists(value_geo::FLD_VALUE, $db_row)) {
+                        $obj_to_add = new value_geo($this->user());
+                    } else {
+                        $obj_to_add = new value($this->user());
+                        log_err('Value type of value db_row cannot be detected');
+                    }
                     $obj_to_add->row_mapper_sandbox_multi($db_row, $ext);
                     $this->add_obj($obj_to_add);
                     $result = true;
@@ -167,9 +184,9 @@ class value_list extends sandbox_value_list
      * get the first value of the list that is related to all given phrase names
      * TODO use a memory db
      * @param array $names list of phrase names
-     * @return value|null this first matching value or null if no value is found
+     * @return value_base|null this first matching value or null if no value is found
      */
-    function get_by_names(array $names): ?value
+    function get_by_names(array $names): ?value_base
     {
         $result = null;
         foreach ($this->lst() as $val) {
@@ -231,19 +248,28 @@ class value_list extends sandbox_value_list
         global $db_con;
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_phr($sc, $phr, $limit, $page);
-        return $this->load($qp);
+        if ($this->load($qp)) {
+            // load additional the text config values
+            $sc->reset();
+            $qp = $this->load_sql_by_phr($sc, $phr, $limit, $page, value_types::TEXT);
+            return $this->load($qp);
+        } else {
+            return false;
+        }
     }
 
     /**
      * load a list of values by the given value ids
      *
      * @param array $val_ids an array of value ids which should be loaded
+     * @param value_types|null $val_typ if not null load only the values of this type
      * @return bool true if at least one value found
      */
-    function load_by_ids(array $val_ids): bool
+    function load_by_ids(array $val_ids, value_types|null $val_typ = null): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $val_ids);
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_ids($sc, $val_ids, 0, 0, false, $val_typ);
         return $this->load($qp);
     }
 
@@ -253,11 +279,12 @@ class value_list extends sandbox_value_list
      * load a list of values by the given value ids
      *
      * @param string|int $id the value / group id
+     * @param value_types|null $val_typ if not null load only the types of this list
      * @return bool true if at least one value found
      */
-    function load_by_id(string|int $id): bool
+    function load_by_id(string|int $id, value_types|null $val_typ = null): bool
     {
-        return $this->load_by_ids([$id]);
+        return $this->load_by_ids([$id], $val_typ);
     }
 
     // internal load
@@ -269,7 +296,11 @@ class value_list extends sandbox_value_list
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if at least one object has been loaded
      */
-    protected function load(sql_par $qp, bool $load_all = false, ?sql_db $db_con_given = null): bool
+    protected function load(
+        sql_par $qp,
+        bool $load_all = false,
+        ?sql_db $db_con_given = null
+    ): bool
     {
 
         global $db_con;
@@ -326,15 +357,27 @@ class value_list extends sandbox_value_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr(
-        sql_creator $sc,
-        phrase      $phr,
-        int         $limit = 0,
-        int         $page = 0
+        sql_creator      $sc,
+        phrase           $phr,
+        int              $limit = 0,
+        int              $page = 0,
+        value_types|null $val_typ = null
     ): sql_par
     {
         $lib = new library();
-        $qp = new sql_par(value::class);
-        $qp->name = $lib->class_to_name(value_list::class) . '_by_phr';
+
+        // set the default value type
+        if ($val_typ === null) {
+            $val_typ = value_types::NUMBER;
+        }
+        $sc_par_lst = new sql_type_list();
+        $sc_par_lst->add($val_typ->sql_type());
+        $val = $sc_par_lst->value_object($this->user());
+        $val_typ_lst = new value_type_list([$val_typ]);
+        $val_ext = $val_typ_lst->query_extension();
+
+        $qp = new sql_par($val::class);
+        $qp->name = $lib->class_to_name(value_list::class) . $val_ext . '_by_phr';
         $par_types = array();
 
         // prepare adding the parameters in order of expected usage
@@ -366,7 +409,7 @@ class value_list extends sandbox_value_list
         foreach (value_base::TBL_LIST as $tbl_typ) {
             // reset but keep the parameter list
             $sc->reset();
-            $qp_tbl = $this->load_sql_by_phr_single($sc, $pos_phr, $pos_grp, $pos_usr, $tbl_typ, $par_lst);
+            $qp_tbl = $this->load_sql_by_phr_single($sc, $pos_phr, $pos_grp, $pos_usr, $tbl_typ, $par_lst, $sc_par_lst);
             if ($sc->db_type() != sql_db::MYSQL) {
                 $qp->merge($qp_tbl, true);
             } else {
@@ -404,12 +447,13 @@ class value_list extends sandbox_value_list
         sql_type_list $sc_par_lst
     ): sql_par
     {
-        $qp = new sql_par(value::class, new sql_type_list(), $sc_par_lst->ext_ex_user());
+        $val = $sc_par_lst->value_object($this->user());
+
+        $qp = new sql_par($val::class, new sql_type_list(), $sc_par_lst->ext_ex_user());
         $qp->name .= $query_name;
 
-        $sc->set_class(value::class, $sc_par_lst);
+        $sc->set_class($val::class, $sc_par_lst);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
-        $val = new value($this->user());
         $sc->set_id_field($val->id_field());
         $sc->set_name($qp->name);
 
@@ -507,11 +551,17 @@ class value_list extends sandbox_value_list
      * create a query parameter object with a unique name
      *
      * @param array $ids array with the ids used to select the result
-     * @param string $query_name the "by" name extension to make the query name unique e.g. phr_lst
+     * @param string $select_ext the "by" name extension to make the query name unique e.g. phr_lst
+     * @param string $type_ext the value type list name extension to make the query name unique e.g. phr_lst
      * @param bool $count_phrases true if the number of phrases are relevant for the query name
      * @return sql_par
      */
-    private function load_sql_init_query_par(array $ids, string $query_name, bool $count_phrases = true): sql_par
+    private function load_sql_init_query_par(
+        array  $ids,
+        string $select_ext,
+        string $type_ext = '',
+        bool   $count_phrases = true
+    ): sql_par
     {
         $qp = new sql_par(value::class);
         $lib = new library();
@@ -521,13 +571,17 @@ class value_list extends sandbox_value_list
             $tbl_ext_uni[] = $tbl_typ->extension();
         }
         $phr_id_uni = $this->phrase_id_list_unique($ids);
+        $count_ext = sql::NAME_SEP . sql::NAME_PHRASE_COUNT;
         if ($count_phrases) {
-            $count_ext = '_r' . count($phr_id_uni);
+            $count_ext .= count($phr_id_uni);
         } else {
-            $count_ext = '_r' . count($ids);
+            $count_ext .= count($ids);
         }
-        $qp->name = $lib->class_to_name(value_list::class) .
-            '_by_' . $query_name . implode("", $tbl_ext_uni) . $count_ext;
+        $qp->name = $lib->class_to_name(value_list::class)
+            . $type_ext . sql::NAME_SEP
+            . sql::NAME_BY . sql::NAME_SEP
+            . $select_ext . implode("", $tbl_ext_uni)
+            . $count_ext;
         return $qp;
     }
 
@@ -537,18 +591,35 @@ class value_list extends sandbox_value_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $ids value ids that should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @param value_types|null $val_typ if not null load only the types of this list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $ids, bool $usr_tbl = false): sql_par
+    function load_sql_by_ids(
+        sql_creator      $sc,
+        array            $ids,
+        int              $limit = 0,
+        int              $offset = 0,
+        bool             $usr_tbl = false,
+        value_types|null $val_typ = null
+    ): sql_par
     {
         /*
          * 1. collect the potential source tables (maybe all)
          * 2. set the names based on the tables and
          */
 
+        // set the default value type
+        if ($val_typ === null) {
+            $val_typ = value_types::NUMBER;
+        }
+
         // get the matrix of the potential tables, the number of phrases of the table and the phrase id list
         $tbl_id_matrix = $this->extension_id_matrix($ids);
-        $qp = $this->load_sql_init_query_par($ids, 'ids', false);
+        $val_typ_lst = new value_type_list([$val_typ]);
+        $val_ext = $val_typ_lst->query_extension();
+        $qp = $this->load_sql_init_query_par($ids, 'ids', $val_ext, false);
 
         $par_offset = 0;
         $par_types = array();
@@ -556,6 +627,7 @@ class value_list extends sandbox_value_list
             $sc_par_lst = new sql_type_list();
             $tbl_typ = array_shift($matrix_row);
             $sc_par_lst->add($tbl_typ);
+            $sc_par_lst->add($val_typ->sql_type());
             // TODO add the union query creation for the other table types
             // combine the select statements with and instead of union if possible
             if ($tbl_typ == sql_type::PRIME) {
@@ -567,10 +639,17 @@ class value_list extends sandbox_value_list
                     $sc_par_lst->add(sql_type::USER);
                 }
                 $qp_tbl = $this->load_sql_multi($sc, '', $sc_par_lst);
+                $txt_fld_lst = $sc_par_lst->txt_user_fields();
+                $num_fld_lst = $sc_par_lst->num_user_fields();
+                $geo_fld_lst = $sc_par_lst->geo_user_fields();
                 if ($par_offset == 0) {
-                    $sc->set_usr_num_fields(value_base::FLD_NAMES_NUM_USR);
+                    $sc->set_usr_fields($txt_fld_lst);
+                    $sc->set_usr_num_fields($num_fld_lst);
+                    $sc->set_usr_geo_fields($geo_fld_lst);
                 } else {
-                    $sc->set_usr_num_fields(value_base::FLD_NAMES_NUM_USR, false);
+                    $sc->set_usr_fields($txt_fld_lst, false);
+                    $sc->set_usr_num_fields($num_fld_lst, false);
+                    $sc->set_usr_geo_fields($geo_fld_lst, false);
                 }
                 $sc->set_usr_only_fields(value_base::FLD_NAMES_USR_ONLY);
                 for ($pos = 1; $pos <= $max_row_ids; $pos++) {
@@ -592,7 +671,7 @@ class value_list extends sandbox_value_list
                 $par_offset = $par_offset + count($qp_tbl->par);
                 $par_types = array_merge($par_types, $sc->get_par_types());
 
-                $qp->merge($qp_tbl);
+                $qp->merge($qp_tbl, false, $sc_par_lst);
             }
         }
 
@@ -671,6 +750,7 @@ class value_list extends sandbox_value_list
      * @param int $usr_pos the array key of the query parameter for the user id
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @param sql_field_list $par_lst list of parameters use for all table types
+     * @param sql_type_list $sc_typ_lst
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_single(
@@ -679,12 +759,20 @@ class value_list extends sandbox_value_list
         int            $grp_pos,
         int            $usr_pos,
         array          $sc_par_lst,
-        sql_field_list $par_lst
+        sql_field_list $par_lst,
+        sql_type_list  $sc_typ_lst
     ): sql_par
     {
+        $val = $sc_typ_lst->value_object($this->user());
+
         $qp = $this->load_sql_init(
-            $sc, value::class, 'phr',
-            $sc_par_lst, $par_lst, $usr_pos);
+            $sc,
+            $val::class,
+            'phr',
+            $sc_par_lst,
+            $par_lst,
+            $sc_typ_lst,
+            $usr_pos);
         if ($this->is_prime($sc_par_lst)) {
             for ($i = 1; $i <= group_id::PRIME_PHRASES_STD; $i++) {
                 $sc->add_where_no_par('',
@@ -718,11 +806,11 @@ class value_list extends sandbox_value_list
 
     /**
      * add one value to the value list, but only if it is not yet part of the list
-     * @param value|null $val_to_add the value object to be added to the list
+     * @param value_base|null $val_to_add the value object to be added to the list
      * @param bool $allow_duplicates true if e.g. the group id is not yet set but the value should nevertheless be added
      * @returns bool true the value has been added
      */
-    function add(?value $val_to_add, bool $allow_duplicates = false): bool
+    function add(?value_base $val_to_add, bool $allow_duplicates = false): bool
     {
         $result = false;
         // check parameters
@@ -1375,7 +1463,9 @@ class value_list extends sandbox_value_list
             // load the values already in the database
             $grp_lst = $this->grp_ids();
             $db_lst = new value_list($this->user());
-            $db_lst->load_by_ids($grp_lst->ids());
+            foreach (value_types::cases() as $val_typ) {
+                $db_lst->load_by_ids($grp_lst->ids(), $val_typ);
+            }
             $imp->step_end($db_lst->count());
 
             // insert the new values

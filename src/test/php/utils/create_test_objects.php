@@ -4568,7 +4568,7 @@ class create_test_objects extends test_base
     function test_value(array $array_of_word_str, float $target): value
     {
         $val = $this->add_value($array_of_word_str, $target);
-        $result = $val->number();
+        $result = $val->value();
         $this->display(', value->load for ' . $val->name(), $target, $result);
         return $val;
     }

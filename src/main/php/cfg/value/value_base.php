@@ -97,15 +97,27 @@ include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_table_list.php';
 include_once MODEL_LOG_PATH . 'change_field_list.php';
 include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_value.php';
-include_once MODEL_LOG_PATH . 'change_values_big.php';
-include_once MODEL_LOG_PATH . 'change_values_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_prime.php';
 include_once MODEL_LOG_PATH . 'changes_big.php';
 include_once MODEL_LOG_PATH . 'changes_norm.php';
+include_once MODEL_LOG_PATH . 'change_value.php';
+include_once MODEL_LOG_PATH . 'change_values_prime.php';
+include_once MODEL_LOG_PATH . 'change_values_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_big.php';
+include_once MODEL_LOG_PATH . 'change_value_text.php';
+include_once MODEL_LOG_PATH . 'change_values_text_prime.php';
+include_once MODEL_LOG_PATH . 'change_values_text_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_text_big.php';
+include_once MODEL_LOG_PATH . 'change_value_time.php';
+include_once MODEL_LOG_PATH . 'change_values_time_prime.php';
+include_once MODEL_LOG_PATH . 'change_values_time_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_time_big.php';
+include_once MODEL_LOG_PATH . 'change_value_geo.php';
+include_once MODEL_LOG_PATH . 'change_values_geo_prime.php';
+include_once MODEL_LOG_PATH . 'change_values_geo_norm.php';
+include_once MODEL_LOG_PATH . 'change_values_geo_big.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
@@ -136,8 +148,17 @@ use cfg\formula\figure;
 use cfg\helper\data_object;
 use cfg\log\change;
 use cfg\log\change_values_big;
+use cfg\log\change_values_geo_big;
+use cfg\log\change_values_geo_norm;
+use cfg\log\change_values_geo_prime;
 use cfg\log\change_values_norm;
 use cfg\log\change_values_prime;
+use cfg\log\change_values_text_big;
+use cfg\log\change_values_text_norm;
+use cfg\log\change_values_text_prime;
+use cfg\log\change_values_time_big;
+use cfg\log\change_values_time_norm;
+use cfg\log\change_values_time_prime;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
 use cfg\ref\source;
@@ -220,7 +241,18 @@ class value_base extends sandbox_value
     const FLD_NAMES_DATE_USR_EX_STD = array(
         self::FLD_LAST_UPDATE
     );
-    // list of the user specific numeric database field names
+    // list of the user specific database text field names for numeric tables and queries
+    const FLD_NAMES_USR = array(
+    );
+    // list of the user specific database text field names for text tables and queries
+    const FLD_NAMES_USR_TEXT = array(
+        self::FLD_VALUE_TEXT,
+    );
+    // list of the user specific database text field names for geo point tables and queries
+    const FLD_NAMES_USR_GEO = array(
+        self::FLD_VALUE_GEO,
+    );
+    // list of the user specific numeric database field names for numeric tables and queries
     const FLD_NAMES_NUM_USR = array(
         self::FLD_VALUE,
         source::FLD_ID,
@@ -228,7 +260,14 @@ class value_base extends sandbox_value
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
-    // list of the user specific database field names for time values
+    // list of the user specific numeric database field names for text tables and queries
+    const FLD_NAMES_NUM_USR_TEXT = array(
+        source::FLD_ID,
+        self::FLD_LAST_UPDATE,
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_PROTECT
+    );
+    // list of the user specific numeric database field names for timetables and queries
     const FLD_NAMES_NUM_USR_TIME = array(
         self::FLD_VALUE_TIME,
         source::FLD_ID,
@@ -236,20 +275,7 @@ class value_base extends sandbox_value
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
-    // list of the user specific database field names for text values
-    const FLD_NAMES_USR_TEXT = array(
-        self::FLD_VALUE_TEXT,
-    );
-    const FLD_NAMES_NUM_USR_TEXT = array(
-        source::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
-    // list of the user specific database field names for geo values
-    const FLD_NAMES_USR_GEO = array(
-        self::FLD_VALUE_GEO,
-    );
+    // list of the user specific numeric database field names for geo point tables and queries
     const FLD_NAMES_NUM_USR_GEO = array(
         source::FLD_ID,
         self::FLD_LAST_UPDATE,
@@ -404,7 +430,17 @@ class value_base extends sandbox_value
         }
         $result = parent::row_mapper_sandbox_multi($db_row, $ext, $load_std, $allow_usr_protect, $id_fld, $one_id_fld);
         if ($result) {
-            $this->set_value($db_row[self::FLD_VALUE]);
+            if (array_key_exists($this::FLD_VALUE, $db_row)) {
+                $this->set_value($db_row[$this::FLD_VALUE]);
+            } elseif (array_key_exists($this::FLD_VALUE_TEXT, $db_row)) {
+                $this->set_value($db_row[$this::FLD_VALUE_TEXT]);
+            } elseif (array_key_exists($this::FLD_VALUE_TIME, $db_row)) {
+                $this->set_value($db_row[$this::FLD_VALUE_TIME]);
+            } elseif (array_key_exists($this::FLD_VALUE_GEO, $db_row)) {
+                $this->set_value($db_row[$this::FLD_VALUE_GEO]);
+            } else {
+                log_err('Value for ' . $this::FLD_VALUE . ' is undefined');
+            }
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific
             $this->set_source_id($db_row[source::FLD_ID]);
             $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE]));
@@ -1031,6 +1067,30 @@ class value_base extends sandbox_value
 
 
     /*
+     * select
+     */
+
+    /**
+     * to select the value if it matches all given phrase names
+     * @param array $names the phrase names for the selection
+     * @return bool true if this values is related to all phrase names
+     */
+    function match_all(array $names): bool
+    {
+        $result = true;
+        $phr_names = $this->phr_lst()->names();
+        foreach ($names as $name) {
+            if ($result) {
+                if (!in_array($name, $phr_names)) {
+                    $result = false;
+                }
+            }
+        }
+        return $result;
+    }
+
+
+    /*
      * check
      */
 
@@ -1627,12 +1687,38 @@ class value_base extends sandbox_value
     function log_upd(): change_value
     {
         log_debug('value->log_upd "' . $this->dsp_id());
-        if ($this->is_prime()) {
-            $log = new change_values_prime($this->user());
-        } elseif ($this->is_big()) {
-            $log = new change_values_big($this->user());
+        if ($this->is_text()) {
+            if ($this->is_prime()) {
+                $log = new change_values_text_prime($this->user());
+            } elseif ($this->is_big()) {
+                $log = new change_values_text_big($this->user());
+            } else {
+                $log = new change_values_text_norm($this->user());
+            }
+        } elseif ($this->is_time()) {
+            if ($this->is_prime()) {
+                $log = new change_values_time_prime($this->user());
+            } elseif ($this->is_big()) {
+                $log = new change_values_time_big($this->user());
+            } else {
+                $log = new change_values_time_norm($this->user());
+            }
+        } elseif ($this->is_geo()) {
+            if ($this->is_prime()) {
+                $log = new change_values_geo_prime($this->user());
+            } elseif ($this->is_big()) {
+                $log = new change_values_geo_big($this->user());
+            } else {
+                $log = new change_values_geo_norm($this->user());
+            }
         } else {
-            $log = new change_values_norm($this->user());
+            if ($this->is_prime()) {
+                $log = new change_values_prime($this->user());
+            } elseif ($this->is_big()) {
+                $log = new change_values_big($this->user());
+            } else {
+                $log = new change_values_norm($this->user());
+            }
         }
         $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
@@ -2100,7 +2186,9 @@ class value_base extends sandbox_value
 
                 if ($this->is_id_set()) {
                     // create an empty db_rec element to force saving of all set fields
-                    $db_val = new value($this->user());
+                    $db_val = clone $this;
+                    $db_val->reset();
+                    $db_val->set_user($this->user());
                     $db_val->set_id($this->id());
                     $db_val->set_value($this->value()); // ... but not the field saved already with the insert
                     $std_val = clone $db_val;
@@ -2133,7 +2221,9 @@ class value_base extends sandbox_value
         if (!$this->is_saved()) {
             log_debug('check if a value ' . $this->dsp_id() . ' is already in the database');
             // check if a value for these phrases is already in the database
-            $db_chk = new value($this->user());
+            $db_chk = clone $this;
+            $db_chk->reset();
+            $db_chk->set_user($this->user());
             $db_chk->load_by_id($this->grp()->id());
             if ($db_chk->is_saved()) {
                 $this->set_last_update($db_chk->last_update());

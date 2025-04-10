@@ -565,6 +565,19 @@ class verb extends type_object
 
 
     /*
+     * check
+     */
+
+    /**
+     * @return user_message empty if all vars of the phrase are set and the phrase can be stored in the database
+     */
+    function db_ready(): user_message
+    {
+        return new user_message();
+    }
+
+
+    /*
      * display
      */
 

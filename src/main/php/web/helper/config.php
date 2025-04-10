@@ -110,7 +110,7 @@ class config extends value_list
     function get_by(array $names, bool $no_zero = false): int|float|string|null
     {
         $val = $this->get_by_names($names);
-        $num = $val?->number();
+        $num = $val?->value();
         if ($no_zero) {
             if ($num == 0 or $num == null) {
                 $num = 1;

@@ -74,6 +74,11 @@ class user_message
     // in the language of the user frontend
     // to explain the result of a process
     private array $msg_id_lst;
+    // array of an array of a message id
+    // and a list of vars that should be added at the translated messages text
+    // at the predefined and language specific place
+    private array $msg_var_lst;
+
     // the prime database row that has caused the user message
     private int|string $db_row_id;
     // list of database names and id used for inserting a list
@@ -102,6 +107,7 @@ class user_message
         $this->db_row_id = 0;
         $this->db_row_id_lst = [];
         $this->msg_id_lst = [];
+        $this->msg_var_lst = [];
         $this->typ_lst = [];
     }
 
@@ -117,6 +123,16 @@ class user_message
     function set_not_ok(): void
     {
         $this->msg_status = self::NOK;
+
+    }
+
+    /**
+     * set the status to ok
+     * @return void
+     */
+    function set_ok(): void
+    {
+        $this->msg_status = self::OK;
 
     }
 
@@ -180,19 +196,50 @@ class user_message
      */
 
     /**
+     * add a message id
      * to offer the user to see more details without retry
-     * in the user specific language
-     * more than one message text can be added to a user message result
+     * more than one message id can be added to a user message result
+     * the message id is translated to the user interface language at the latest possible moment
      *
      * @param msg_id|null $msg_id the message text to add
      * @return void is never expected to fail
      */
-    function add_message_id(?msg_id $msg_id): void
+    function add_id(?msg_id $msg_id): void
     {
         if ($msg_id != null) {
             // do not repeat the same text more than once
             if (!in_array($msg_id, $this->msg_id_lst)) {
                 $this->msg_id_lst[] = $msg_id;
+            }
+            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            if ($this->is_ok()) {
+                $this->set_not_ok();
+            }
+        }
+    }
+
+    /**
+     * add a message id and a list of related variables
+     * to offer the user to see more details without retry
+     * more than one message id can be added to a user message result
+     * the message id is translated to the user interface language at the latest possible moment
+     * the vars are expected to be in the target language already
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_id_with_vars(?msg_id $msg_id, array $var_lst): void
+    {
+        if ($msg_id != null) {
+            $key_lst = [];
+            foreach ($this->msg_var_lst as $msg_row) {
+
+                $key_lst[] = $msg_row[0]->name . ':' . implode(",", $msg_row[1]);
+            }
+            // do not repeat the same text more than once
+            if (!in_array($msg_id->name . ':' . implode(",", $var_lst),
+                $key_lst)) {
+                $this->msg_var_lst[] = [$msg_id, $var_lst];
             }
             // if a message text is added it is expected that the result was not ok, but other stati are not changed
             if ($this->is_ok()) {
@@ -301,6 +348,12 @@ class user_message
         foreach ($msg_to_add->get_all_messages() as $msg_text) {
             $this->add_message($msg_text);
         }
+        foreach ($msg_to_add->get_all_id_messages() as $msg_id) {
+            $this->add_id($msg_id);
+        }
+        foreach ($msg_to_add->get_all_var_messages() as $msg_var) {
+            $this->add_id_with_vars($msg_var[0], $msg_var[1]);
+        }
         foreach ($msg_to_add->get_all_type_messages() as $key => $lst) {
             foreach ($lst as $entry) {
                 $this->add_type_message($entry, $key);
@@ -312,7 +365,7 @@ class user_message
 
     /**
      * add the database id and the related name to the id list of the user message
-     * @param user_message $msg_to_add  the user message that contains the db id of an object just added to the db
+     * @param user_message $msg_to_add the user message that contains the db id of an object just added to the db
      * @param string $name the name of the object that is related to the id
      * @return void
      */
@@ -351,14 +404,63 @@ class user_message
     }
 
     /**
-     * return the message text with all messages
-     * @return string simple the message text
+     * return the translated message text with all messages
+     * @return string the message text in the ui language
      */
     function all_message_text(): string
     {
+        global $mtr;
         $msg = implode(", ", $this->msg_text);
+        $part = '';
         foreach ($this->typ_lst as $key => $sub_lst) {
-            $msg .= $key . ': ' . implode(", ", $sub_lst) . '; ';
+            $part .= $key . ': ' . implode(", ", $sub_lst) . '; ';
+        }
+        if ($msg != '' and $part <> '') {
+            $msg .= $msg . '; ' . $part;
+        } else {
+            $msg .= $part;
+        }
+        $part = '';
+        foreach ($this->msg_id_lst as $msg_id) {
+            if ($part != '') {
+                $part .= ', ';
+            }
+            $part .= $mtr->txt($msg_id);
+        }
+        if ($msg != '' and $part <> '') {
+            $msg .= $msg . '; ' . $part;
+        } else {
+            $msg .= $part;
+        }
+        $part = '';
+        foreach ($this->msg_var_lst as $msg_var) {
+            if ($part != '') {
+                $part .= ', ';
+            }
+            $msg_txt = $mtr->txt($msg_var[0]);
+            foreach ($msg_var[1] as $key => $var) {
+                // avoid using escaped var makers (probably not 100% correct)
+                $msg_txt .= str_replace(
+                    msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END,
+                    msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END, $msg_txt);
+                // replace the var
+                $msg_txt .= str_replace(
+                    msg_id::VAR_START . $key . msg_id::VAR_END,
+                    $var, $msg_txt);
+                // undo escaped vars
+                $msg_txt .= str_replace(
+                    msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END,
+                    msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END, $msg_txt);
+            }
+            // replace the escaped var makers
+            $msg_txt .= str_replace(msg_id::VAR_ESC_START, msg_id::VAR_START, $msg_txt);
+            $msg_txt .= str_replace(msg_id::VAR_ESC_END, msg_id::VAR_END, $msg_txt);
+            $part .= $msg_txt;
+        }
+        if ($msg != '' and $part <> '') {
+            $msg .= $msg . '; ' . $part;
+        } else {
+            $msg .= $part;
         }
         return $msg;
     }
@@ -398,7 +500,7 @@ class user_message
     /**
      * @return bool true if the message is linked to a valid database row of just a database row has been created
      */
-    function has_row():bool
+    function has_row(): bool
     {
         if ($this->db_row_id == 0 or $this->db_row_id == '') {
             return false;
@@ -427,6 +529,22 @@ class user_message
     protected function get_all_messages(): array
     {
         return $this->msg_text;
+    }
+
+    /**
+     * @return array with all the translatable messages
+     */
+    protected function get_all_id_messages(): array
+    {
+        return $this->msg_id_lst;
+    }
+
+    /**
+     * @return array with all the translatable messages with vars
+     */
+    protected function get_all_var_messages(): array
+    {
+        return $this->msg_var_lst;
     }
 
     /**

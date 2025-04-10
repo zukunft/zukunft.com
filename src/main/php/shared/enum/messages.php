@@ -36,8 +36,25 @@ enum messages: string
 {
 
     // start and end maker for message id within a text to allow changing the order of vars within a message
-    const VAR_START = '<!mid';
-    const VAR_END = '!>';
+    const VAR_START = 'z$';
+    const VAR_END = '$z';
+
+    // to use the var makers without
+    const VAR_ESC_START = '\z$';
+    const VAR_ESC_END = '\$z';
+    const VAR_TEMP_START = '\zTemp$';
+    const VAR_TEMP_END = '\Temp$z';
+    const VAR_TEMP_VAR = 'VarPrefix';
+
+    // var names
+    // the name of a sandbox object
+    const VAR_NAME = 'VarObjName';
+    // the name of a user
+    const VAR_USER_NAME = 'VarUserName';
+    // the name of a user of a list
+    const VAR_USER_LIST_NAME = 'VarUserListName';
+    // the name of a class
+    const VAR_CLASS_NAME = 'VarClassName';
 
     // unique message keys
     // *_txt sample translation to test the English mapping
@@ -57,6 +74,43 @@ enum messages: string
     // special message id placeholders
     case ERROR = 'error';
     case NONE = '';
+
+    // messages with vars
+    case TRIM_NAME = 'trim "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case USER_MISSING = 'user in "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" missing';
+    case FROM_MISSING = 'from of link "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" missing';
+    case TO_MISSING = 'to of link "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" missing';
+    case FROM_ZERO_ID = 'id of from "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is missing';
+    case TO_ZERO_ID = 'id of to "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is missing';
+    case ID_AND_NAME_MISSING = 'id and name missing';
+    case LIST_DOUBLE_ENTRY = 'trying to add "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" which is already part of the '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' list';
+    case LIST_USER_NO_MATCH = 'trying to add "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" of user '
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . ' to list of user '
+        . self::VAR_START . self::VAR_USER_LIST_NAME . self::VAR_END
+        . ' list';
+    case FILL_WORD_WITH_TRIPLE = 'imported word "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" seems to be a triple already';
+
 
     // for the change log
     case LOG_ADD = 'added';
@@ -216,6 +270,6 @@ enum messages: string
                 return $msg_id;
             }
         }
-        throw new \ValueError("$name is not a valid backing value for enum " . self::class );
+        throw new \ValueError("$name is not a valid backing value for enum " . self::class);
     }
 }

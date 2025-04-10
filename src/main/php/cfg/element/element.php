@@ -444,6 +444,14 @@ class element extends db_object_seq_id_user
         }
     }
 
+    /**
+     * @return user_message empty if all vars of the underlying object are set and the phrase can be stored in the database
+     */
+    function db_ready(): user_message
+    {
+        return $this->obj->db_ready();
+    }
+
 
     /*
      * sql write

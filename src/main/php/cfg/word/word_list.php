@@ -290,9 +290,16 @@ class word_list extends sandbox_list_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $wrd_ids a list of int values with the word ids
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $wrd_ids): sql_par
+    function load_sql_by_ids(
+        sql_creator $sc,
+        array       $wrd_ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         if (count($wrd_ids) > 0) {
@@ -510,7 +517,7 @@ class word_list extends sandbox_list_named
      */
     function get_by_name(string $name): word|CombineObject|IdObject|TextIdObject|null
     {
-            return parent::get_by_name($name);
+        return parent::get_by_name($name);
     }
 
 
@@ -1644,7 +1651,7 @@ class word_list extends sandbox_list_named
         $save_per_sec = $cfg->get_by([words::WORDS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         if ($this->is_empty()) {
-            $usr_msg->add_message('no words to save');
+            $usr_msg->add_info('no words to save');
         } else {
             // load the words that are already in the database
             $step_time = $this->count() / $load_per_sec;

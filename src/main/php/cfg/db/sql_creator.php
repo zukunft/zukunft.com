@@ -196,6 +196,10 @@ class sql_creator
     private const FVT_VAL = 1;
     private const FVT_TYP = 2;
 
+    // parameters for the sql creation that might be used for the next query creation
+    private ?string $page;     // the LIMIT and OFFSET      SQL statement that is used for the next select query
+
+
     // parameters for the sql creation that are set step by step with the functions of the sql creator
     private ?int $usr_id;           // the user id of the person who request the database changes
     private ?int $usr_view_id;      // the user id of the person which values should be returned e.g. an admin might want to check the data of a user
@@ -227,7 +231,6 @@ class sql_creator
     private ?string $join;     // the JOIN                  SQL statement that is used for the next select query
     private ?string $where;    // the WHERE condition as an SQL statement that is used for the next select query
     private ?string $order;    // the ORDER                 SQL statement that is used for the next select query
-    private ?string $page;     // the LIMIT and OFFSET      SQL statement that is used for the next select query
     private ?string $end;      // the closing               SQL statement that is used for the next select query
     //private ?string $sub_sql;  // a complex sql statement used for the next select query
     private bool $use_page;    // true if the limit and offset statement should be added at the end
@@ -239,6 +242,7 @@ class sql_creator
     private ?array $field_lst_date_dummy;      // list of datetime fields filled with dummy values for a union query
     private ?array $usr_field_lst;             // list of user specific fields that should be returned to the next select query
     private ?array $usr_num_field_lst;         // list of user specific numeric fields that should be returned to the next select query
+    private ?array $usr_geo_field_lst;         // list of user specific geo point fields that should be returned to the next select query
     private ?array $usr_bool_field_lst;        // list of user specific boolean / tinyint fields that should be returned to the next select query
     private ?array $usr_only_field_lst;        // list of fields that are only in the user sandbox
     private ?array $grp_field_lst;             // list of fields where e.g. the min or max of a group should be calculated
@@ -281,6 +285,11 @@ class sql_creator
     //private ?array $join2_usr_count_field_lst; // same as $join_usr_count_field_lst but for the second join
     //private ?array $join3_usr_count_field_lst; // same as $join_usr_count_field_lst but for the third join
     //private ?array $join4_usr_count_field_lst; // same as $join_usr_count_field_lst but for the fourth join
+    private ?array $join_usr_geo_field_lst;    // list of fields that should be returned to the next select query that are taken from a joined table
+    // TODO activate or review
+    //private ?array $join2_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the second join
+    //private ?array $join3_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the third join
+    //private ?array $join4_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the fourth join
     private bool $join_usr_fields;             // true, if the joined query is also expected to retrieve user specific data
     private bool $join2_usr_fields;            // same as $join_usr_fields but for the second join
     private bool $join3_usr_fields;            // same as $join_usr_fields but for the third join
@@ -363,6 +372,7 @@ class sql_creator
         $this->field_lst_date_dummy = [];
         $this->usr_field_lst = [];
         $this->usr_num_field_lst = [];
+        $this->usr_geo_field_lst = [];
         $this->usr_bool_field_lst = [];
         $this->usr_only_field_lst = [];
         $this->grp_field_lst = [];
@@ -401,6 +411,7 @@ class sql_creator
         $this->join3_usr_num_field_lst = [];
         $this->join4_usr_num_field_lst = [];
         $this->join_usr_count_field_lst = [];
+        $this->join_usr_geo_field_lst = [];
         $this->join_usr_fields = false;
         $this->join2_usr_fields = false;
         $this->join3_usr_fields = false;
@@ -711,11 +722,17 @@ class sql_creator
      * which can be user specific
      *
      * @param array $usr_field_lst list of the user specific fields that should be loaded from the database
+     * @param bool $std_fld false if the standard fields e.g. the user id should not be added again
+     * @param string $usr_par the name of the user id parameter e.g. $1 for some postgres queries for correct merge in union queries
      */
-    function set_usr_fields(array $usr_field_lst): void
+    function set_usr_fields(
+        array $usr_field_lst,
+        bool  $std_fld = true,
+        string $usr_par = ''
+    ): void
     {
         $this->usr_field_lst = $usr_field_lst;
-        $this->set_usr_query();
+        $this->set_usr_query($std_fld, $usr_par);
     }
 
     /**
@@ -732,6 +749,23 @@ class sql_creator
         string $usr_par = ''): void
     {
         $this->usr_num_field_lst = $usr_field_lst;
+        $this->set_usr_query($std_fld, $usr_par);
+    }
+
+    /**
+     * set the SQL statement for the geo point user sandbox fields that should be returned in a select query
+     * which can be user specific
+     *
+     * @param array $usr_field_lst list of the geo point user specific fields that should be loaded from the database
+     * @param bool $std_fld false if the standard fields e.g. the user id should not be added again
+     * @param string $usr_par the name of the user id parameter e.g. $1 for some postgres queries for correct merge in union queries
+     */
+    function set_usr_geo_fields(
+        array  $usr_field_lst,
+        bool   $std_fld = true,
+        string $usr_par = ''): void
+    {
+        $this->usr_geo_field_lst = $usr_field_lst;
         $this->set_usr_query($std_fld, $usr_par);
     }
 
@@ -919,6 +953,29 @@ class sql_creator
             $this->join4_usr_fields = true;
         } else {
             log_err('Max four table joins expected in version ' . PRG_VERSION);
+        }
+    }
+
+    function set_join_usr_geo_fields(array  $join_field_lst,
+                                     string $join_type,
+                                     string $join_field = '',
+                                     string $join_to_field = '',
+                                     bool   $force_rename = false): void
+    {
+        $join_type = $this->class_to_name($join_type);
+        // fill up the join field places or add settings to a matching join link
+        // e.g. add the user fields to an existing not user specific join
+        if ($this->join_type == ''
+            or (($this->join_field == $join_field and $join_field != '')
+                and ($this->join_to_field == $join_to_field and $join_to_field != ''))) {
+            $this->join_type = $join_type;
+            $this->join_usr_geo_field_lst = $join_field_lst;
+            $this->join_field = $join_field;
+            $this->join_to_field = $join_to_field;
+            $this->join_force_rename = $force_rename;
+            $this->join_usr_fields = true;
+        } else {
+            log_err('Max one geo table joins expected in version ' . PRG_VERSION);
         }
     }
 
@@ -2707,10 +2764,7 @@ class sql_creator
     private function str_array_esc_comma(array $str_array): array
     {
         $result = [];
-        foreach  ($str_array as $key => $txt) {
-            if (str_contains($txt, "'")) {
-                $txt = str_replace("'", "''", $txt);
-            }
+        foreach ($str_array as $key => $txt) {
             if (str_contains($txt, ',')) {
                 $result[$key] = '"' . $txt . '"';
             } else {
@@ -2719,6 +2773,34 @@ class sql_creator
         }
         return $result;
     }
+
+    // TODO test where this is needed
+    private function str_array_esc_high_quote(array $str_array): array
+    {
+        $result = [];
+        foreach ($str_array as $key => $txt) {
+            if (str_contains($txt, "'")) {
+                $txt = str_replace("'", "''", $txt);
+            }
+            $result[$key] = $txt;
+        }
+        return $result;
+    }
+
+    /*
+    // TODO test where this is needed
+    private function str_array_esc_dollar(array $str_array): array
+    {
+        $result = [];
+        foreach ($str_array as $key => $txt) {
+            if (str_contains($txt, "$")) {
+                $txt = str_replace("'", "''", $txt);
+            }
+            $result[$key] = $txt;
+        }
+        return $result;
+    }
+    */
 
     /**
      * create the field statement based on the fields
@@ -3034,6 +3116,13 @@ class sql_creator
             $result .= $this->set_field_usr_num($field);
         }
 
+        // add user specific geo point fields
+        foreach ($this->usr_geo_field_lst as $field) {
+            $field = $this->name_sql_esc($field);
+            $result = $this->sep($result);
+            $result .= $this->set_field_usr_geo($field);
+        }
+
         // add user specific boolean fields
         foreach ($this->usr_bool_field_lst as $field) {
             $field = $this->name_sql_esc($field);
@@ -3049,6 +3138,17 @@ class sql_creator
                 $result .= $this->set_field_usr_text($field_esc, sql_db::LNK_TBL, sql_db::ULK_TBL, $this->name_sql_esc($field . '1'));
             } else {
                 $result .= $this->set_field_usr_text($field_esc, sql_db::LNK_TBL, sql_db::ULK_TBL);
+            }
+        }
+
+        // add user specific geo point join fields
+        foreach ($this->join_usr_geo_field_lst as $field) {
+            $field_esc = $this->name_sql_esc($field);
+            $result = $this->sep($result);
+            if ($this->join_force_rename) {
+                $result .= $this->set_field_usr_geo($field_esc, sql_db::LNK_TBL, sql_db::ULK_TBL, $this->name_sql_esc($field . '1'));
+            } else {
+                $result .= $this->set_field_usr_geo($field_esc, sql_db::LNK_TBL, sql_db::ULK_TBL);
             }
         }
 
@@ -5302,6 +5402,20 @@ class sql_creator
     }
 
     /**
+     * internal interface function for sql_usr_field using the class db type settings and geo point fields
+     * @param string $field the field name of the user specific field
+     * @param string $stb_tbl the table prefix for the table with the default values for all users
+     * @param string $usr_tbl the table prefix for the table with the user specific values
+     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
+     */
+    private function set_field_usr_geo(
+        string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL, string $as = ''): string
+    {
+        return $this->sql_usr_field($field, sql_db::FLD_FORMAT_GEO, $stb_tbl, $usr_tbl, $as);
+    }
+
+    /**
      * internal interface function for sql_usr_field using the class db type settings and number fields
      * @param string $field the field name of the user specific field
      * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
@@ -5382,6 +5496,12 @@ class sql_creator
                     . sql::THEN . " " . $stb_tbl . "." . $field . " "
                     . sql::ELSE . " " . $usr_tbl . "." . $field . " " . sql::END . " "
                     . sql::AS . " " . $as;
+            } elseif ($field_format == sql_db::FLD_FORMAT_GEO) {
+                $result = " "
+                    . sql::CASE . " (point_eq(" . $usr_tbl . "." . $field . ", " . sql::NULL . ")) "
+                    . sql::THEN . " " . $stb_tbl . "." . $field . " "
+                    . sql::ELSE . " " . $usr_tbl . "." . $field . " " . sql::END . " "
+                    . sql::AS . " " . $as;
             } elseif ($field_format == sql_db::FLD_FORMAT_BOOL) {
                 $result = " "
                     . sql::CASE . " (" . $usr_tbl . "." . $field . " " . sql::IS_NULL . ") "
@@ -5392,7 +5512,9 @@ class sql_creator
                 log_err('Unexpected field format ' . $field_format);
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
-            if ($field_format == sql_db::FLD_FORMAT_TEXT or $field_format == sql_db::FLD_FORMAT_VAL) {
+            if ($field_format == sql_db::FLD_FORMAT_TEXT
+                or $field_format == sql_db::FLD_FORMAT_VAL
+                or $field_format == sql_db::FLD_FORMAT_GEO) {
                 $result = ' '
                     . sql::CASE_MYSQL . $usr_tbl . '.' . $field . ' ' . sql::IS_NULL
                     . sql::THEN_MYSQL . ' ' . $stb_tbl . '.' . $field

@@ -74,6 +74,7 @@ include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -98,6 +99,7 @@ use cfg\user\user;
 use cfg\user\user_message;
 use Exception;
 use shared\enum\change_actions;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -485,21 +487,31 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * @return bool true if all mandatory vars of the object are set to save the object
+     * @return user_message true if all mandatory vars of the object are set to save the object
      */
-    function db_ready(): bool
+    function db_ready(): user_message
     {
-        $result = false;
-        if ($this->fob != null and $this->tob != null) {
-            if ($this->fob->id() > 0 and $this->tob->id() != 0) {
-                $result = true;
-            }
+        $usr_msg = parent::db_ready();
+
+        if ($this->fob == null) {
+            $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
+                [msg_id::VAR_NAME => $this->dsp_id()]);
+        } else {
+            $usr_msg->add($this->fob->db_ready());
+            // TODO review
+            // it is ok that the linked object is not yet complete
+            $usr_msg->set_ok();
         }
-        if (!$result) {
-            log_warning("The formula link " . $this->dsp_id()
-                . " is not unique", "formula_link->load");
+        if ($this->fob == null) {
+            $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
+                [msg_id::VAR_NAME => $this->dsp_id()]);
+        } else {
+            $usr_msg->add($this->tob->db_ready());
+            // TODO review
+            // it is ok that the linked object is not yet complete
+            $usr_msg->set_ok();
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**

@@ -50,6 +50,8 @@ include_once MODEL_LOG_PATH . 'change_value_time.php';
 include_once MODEL_LOG_PATH . 'change_values_time_prime.php';
 include_once MODEL_LOG_PATH . 'change_values_time_norm.php';
 include_once MODEL_LOG_PATH . 'change_values_time_big.php';
+include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -61,6 +63,8 @@ use cfg\log\change_value_time;
 use cfg\log\change_values_time_prime;
 use cfg\log\change_values_time_norm;
 use cfg\log\change_values_time_big;
+use cfg\ref\source;
+use cfg\sandbox\sandbox;
 use cfg\user\user;
 use DateTime;
 use shared\json_fields;
@@ -84,6 +88,24 @@ class value_time extends value_base
     );
     const FLD_ALL_VALUE_USER = array(
         [self::FLD_VALUE, sql_field_type::TIME, sql_field_default::NULL, '', '', self::FLD_USER_COM],
+    );
+
+    const FLD_NAMES_STD = array(
+        self::FLD_VALUE,
+        source::FLD_ID,
+    );
+
+    // list of the user specific database field names for time values
+    const FLD_NAMES_USR = array(
+        self::FLD_VALUE,
+    );
+    // list of the user specific database field names for time values
+    const FLD_NAMES_NUM_USR = array(
+        self::FLD_VALUE,
+        source::FLD_ID,
+        self::FLD_LAST_UPDATE,
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_PROTECT
     );
 
 
@@ -143,7 +165,7 @@ class value_time extends value_base
      * @param DateTime|null $time_val a DateTime value
      * @return void
      */
-    private function set_time_value(?DateTime $time_val): void
+    protected function set_time_value(?DateTime $time_val): void
     {
         $this->time_val = $time_val;
     }

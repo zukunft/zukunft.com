@@ -639,7 +639,11 @@ class user extends db_object_seq_id
     function load_by_profile_code(string $profile_code_id): bool
     {
         global $usr_pro_cac;
-        return $this->load_by_profile($usr_pro_cac->id($profile_code_id));
+        if ($usr_pro_cac != null) {
+            return $this->load_by_profile($usr_pro_cac->id($profile_code_id));
+        } else {
+            return false;
+        }
     }
 
     /**

@@ -64,8 +64,9 @@ class figure_list_tests
         $t->subheader('SQL statement creation tests');
 
         // load by figure ids
+        $test_name = 'load figures by ids';
         $fig_lst = new figure_list($usr);
-        $t->assert_sql_by_ids($sc, $fig_lst, new fig_ids([1, -1]));
+        $t->assert_sql_by_ids($test_name, $sc, $fig_lst, new fig_ids([1, -1]));
 
 
         $t->subheader('API unit tests');

@@ -48,9 +48,10 @@ class source_list_tests
         $t->name = 'source_list->';
 
         $t->subheader('source list sql read');
+        $test_name = 'load sources by ids';
         $src_lst = new source_list($usr);
         $trm_ids = array(1, 2, 3);
-        $t->assert_sql_by_ids($sc, $src_lst, $trm_ids);
+        $t->assert_sql_by_ids($test_name, $sc, $src_lst, $trm_ids);
         $src_lst = new source_list($usr);
         $t->assert_sql_like($sc, $src_lst);
 

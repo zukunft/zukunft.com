@@ -32,6 +32,20 @@
 
 namespace cfg\db;
 
+//include_once MODEL_USER_PATH . 'user.php';
+//include_once MODEL_VALUE_PATH . 'value_base.php';
+//include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VALUE_PATH . 'value_text.php';
+//include_once MODEL_VALUE_PATH . 'value_time.php';
+//include_once MODEL_VALUE_PATH . 'value_geo.php';
+
+use cfg\user\user;
+use cfg\value\value;
+use cfg\value\value_base;
+use cfg\value\value_geo;
+use cfg\value\value_text;
+use cfg\value\value_time;
+
 class sql_type_list
 {
 
@@ -252,6 +266,14 @@ class sql_type_list
     function get_all(): bool
     {
         return in_array(sql_type::COMPLETE, $this->lst);
+    }
+
+    /**
+     * @return bool true if sql uses geo point values
+     */
+    function is_geo(): bool
+    {
+        return in_array(sql_type::GEO, $this->lst);
     }
 
     /**
@@ -511,6 +533,53 @@ class sql_type_list
             }
         }
         return $ext;
+    }
+
+    public function value_object(user $usr): value|value_text|value_time|value_geo
+    {
+        if (in_array(sql_type::TEXT, $this->lst)) {
+            return new value_text($usr);
+        } elseif (in_array(sql_type::TIME, $this->lst)) {
+            return new value_time($usr);
+        } elseif (in_array(sql_type::GEO, $this->lst)) {
+            return new value_geo($usr);
+        } else {
+            return new value($usr);
+        }
+    }
+
+    // TODO use const overwrites
+    public function num_user_fields(): array
+    {
+        if (in_array(sql_type::TEXT, $this->lst)) {
+            return value_base::FLD_NAMES_NUM_USR_TEXT;
+        } elseif (in_array(sql_type::TIME, $this->lst)) {
+            return value_base::FLD_NAMES_NUM_USR_TIME;
+        } elseif (in_array(sql_type::GEO, $this->lst)) {
+            return value_base::FLD_NAMES_NUM_USR_GEO;
+        } else {
+            return value_base::FLD_NAMES_NUM_USR;
+        }
+    }
+
+    // TODO use const overwrites
+    public function txt_user_fields(): array
+    {
+        if (in_array(sql_type::TEXT, $this->lst)) {
+            return value_base::FLD_NAMES_USR_TEXT;
+        } else {
+            return [];
+        }
+    }
+
+    // TODO use const overwrites
+    public function geo_user_fields(): array
+    {
+        if (in_array(sql_type::GEO, $this->lst)) {
+            return value_base::FLD_NAMES_USR_GEO;
+        } else {
+            return [];
+        }
     }
 
 

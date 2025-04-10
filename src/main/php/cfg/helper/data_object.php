@@ -70,6 +70,7 @@ use cfg\ref\source_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
+use cfg\value\value_base;
 use cfg\value\value_list;
 use cfg\view\view_list;
 use cfg\word\word;
@@ -330,10 +331,10 @@ class data_object
 
     /**
      * add a value to the list
-     * @param value $val a value that might not yet have a group id
+     * @param value_base $val a value that might not yet have a group id
      * @return void
      */
-    function add_value(value $val): void
+    function add_value(value_base $val): void
     {
         $this->val_lst->add($val, true);
     }
@@ -357,6 +358,11 @@ class data_object
             $phr = $trp?->phrase();
         }
         return $phr;
+    }
+
+    function get_value_by_names(array $names): ?value_base
+    {
+        return $this->value_list()->get_by_names($names);
     }
 
     function expected_word_import_time(): int

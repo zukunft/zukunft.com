@@ -53,6 +53,9 @@ use cfg\system\sys_log_type;
 use cfg\system\system_time;
 use cfg\user\user_official_type;
 use cfg\value\value;
+use cfg\value\value_geo;
+use cfg\value\value_text;
+use cfg\value\value_time;
 use cfg\view\view_link_type;
 use cfg\word\word_db;
 use cfg\component\component;
@@ -1240,6 +1243,19 @@ class library
             }
         }
         return $a;
+    }
+
+    function is_value(string $class): bool
+    {
+        if ($class == value::class
+            or $class == value_text::class
+            or $class == value_time::class
+            or $class == value_geo::class) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /**

@@ -166,9 +166,16 @@ class formula_list extends sandbox_list_named
      * set the SQL query parameters to load a list of formulas by an array of formula ids
      * @param sql_creator $sc with the target db_type set
      * @param array $frm_ids an array of formula ids which should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $frm_ids): sql_par
+    function load_sql_by_ids(
+        sql_creator $sc,
+        array       $frm_ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_ids');
         if (count($frm_ids) > 0) {
@@ -585,7 +592,7 @@ class formula_list extends sandbox_list_named
      */
     function add(formula|sandbox_named|triple|phrase|term|null $to_add): bool
     {
-        return parent::add_obj($to_add);
+        return parent::add_obj($to_add)->is_ok();
     }
 
 

@@ -32,6 +32,10 @@
 
 namespace html\user;
 
+include_once SHARED_ENUM_PATH . 'messages.php';
+
+use shared\enum\messages as msg_id;
+
 class user_message
 {
     // the message types that defines what needs to be done next
@@ -49,6 +53,11 @@ class user_message
     private array $txt;
     // the prime database row that has caused the user message
     private int|string $db_row_id;
+
+    // array of the messages id that should be shown to the user
+    // in the language of the user frontend
+    // to explain the result of a process
+    private array $msg_id_lst;
 
     // a list of solutions suggested by the program
     //private user_actions $actions;
@@ -68,6 +77,7 @@ class user_message
             $this->msg_status = self::NOK;
         }
         $this->db_row_id = 0;
+        $this->msg_id_lst = [];
     }
 
 
@@ -112,6 +122,29 @@ class user_message
     /*
      * add
      */
+
+    /**
+     * add a message id
+     * to offer the user to see more details without retry
+     * more than one message id can be added to a user message result
+     * the message id is translated to the user interface language at the latest possible moment
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_id(?msg_id $msg_id): void
+    {
+        if ($msg_id != null) {
+            // do not repeat the same text more than once
+            if (!in_array($msg_id, $this->msg_id_lst)) {
+                $this->msg_id_lst[] = $msg_id;
+            }
+            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            if ($this->is_ok()) {
+                $this->set_not_ok();
+            }
+        }
+    }
 
     /**
      * add a message that is classified as an error

@@ -59,7 +59,7 @@ class ip_range_list extends base_list
      */
     protected function add(ip_range $range): bool
     {
-        return parent::add_obj($range);
+        return parent::add_obj($range)->is_ok();
     }
 
     /*

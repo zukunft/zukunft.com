@@ -592,6 +592,7 @@ class sql_db
     // formats to force the formatting of a value for an SQL statement e.g. convert true to 1 when using tinyint to save boolean values
     const FLD_FORMAT_TEXT = 'text';               // to force the text formatting of a value for the SQL statement formatting
     const FLD_FORMAT_VAL = 'number';              // to force the numeric formatting of a value for the SQL statement formatting
+    const FLD_FORMAT_GEO = 'geo';                 // to force the geo point formatting of a value for the SQL statement formatting
     const FLD_FORMAT_BOOL = 'boolean';            // to force the boolean formatting of a value for the SQL statement formatting
 
     const VAL_BOOL_TRUE = '1';

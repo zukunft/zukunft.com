@@ -386,9 +386,9 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
-     * @return float|null the numeric value
+     * @return float|string|null the numeric value
      */
-    function number(): ?float
+    function number(): float|string|null
     {
         return $this->value();
     }
@@ -566,6 +566,33 @@ class sandbox_value extends sandbox_multi
     function is_big(): bool
     {
         return $this->grp()->is_big();
+    }
+
+    function is_text(): bool
+    {
+        if ($this::class == value_text::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function is_time(): bool
+    {
+        if ($this::class == value_time::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function is_geo(): bool
+    {
+        if ($this::class == value_geo::class) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function id_lst(): array
@@ -1907,6 +1934,9 @@ class sandbox_value extends sandbox_multi
         $id_lst = $this->sql_id_val($id_fields);
         // add the user id if a user specific value should be saved
         if ($sc_par_lst->is_usr_tbl()) {
+            if (!is_array($id_fields)) {
+                $id_fields = [$id_fields];
+            }
             $id_fields[] = user::FLD_ID;
             if (!is_array($id_lst)) {
                 $id_lst = [$id_lst];

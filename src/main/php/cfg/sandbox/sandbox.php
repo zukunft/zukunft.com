@@ -1536,6 +1536,23 @@ class sandbox extends db_object_seq_id_user
         return $result;
     }
 
+    /**
+     * check if the sandbox can be added to the database
+     * @return user_message including suggested solutions
+     *       if something is missing e.g. the user
+     */
+    function db_ready(): user_message
+    {
+        $usr_msg = new user_message();
+
+        if ($this->user() == null) {
+            $this->set_user($this->user());
+            $usr_msg->add_id_with_vars(msg_id::USER_MISSING,
+                [msg_id::VAR_NAME => $this->dsp_id()]);
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * log

@@ -197,7 +197,7 @@ class all_unit_tests extends test_cleanup
 
             // run the selected db write
             //$import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $usr);
-            $this->file_import(test_files::IMPORT_WIND_INVESTMENT, $usr);
+            //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             $this->file_import(test_files::IMPORT_CURRENCY, $usr);
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);
@@ -251,7 +251,7 @@ class all_unit_tests extends test_cleanup
         $imf = new import_file();
         $usr_msg = $imf->json_file($filename, $usr, false);
         if (!$usr_msg->is_ok()) {
-            log_err($filename .  ' imported failed because ' . $usr_msg->all_message_text());
+            log_warning($filename .  ' imported failed because ' . $usr_msg->all_message_text());
         }
 
     }

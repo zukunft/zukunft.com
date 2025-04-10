@@ -53,6 +53,7 @@ use cfg\system\session;
 use cfg\system\sys_log;
 use cfg\system\sys_log_list;
 use cfg\system\sys_log_status_list;
+use cfg\user\user_message;
 use cfg\verb\verb;
 use DateTime;
 use html\system\sys_log as sys_log_dsp;
@@ -220,6 +221,13 @@ class system_tests
         // check if the sql to load the complete list of all ... types is created as expected
         $sys_log_status = new sys_log_status_list();
         $t->assert_sql_all($sc, $sys_log_status);
+
+        $t->subheader('user message tests');
+
+        $usr_msg = new user_message();
+        $test_name = 'message is translated';
+        $usr_msg->add_id(msg_id::CHECK);
+        $t->assert($test_name, $usr_msg->all_message_text(), msg_id::CHECK->value);
 
 
         $t->subheader('system config sql tests');

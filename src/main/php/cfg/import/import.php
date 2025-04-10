@@ -59,6 +59,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
+include_once MODEL_VALUE_PATH . 'value_text.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_VIEW_PATH . 'view.php';
@@ -85,6 +86,7 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_base;
 use cfg\value\value_list;
+use cfg\value\value_text;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\view\view_list;
@@ -1258,14 +1260,14 @@ class import
                     $dto = $this->get_data_object_yaml_loop($dto, $sub_phr_lst, $value, $wrd, $trp, $val, $usr_trigger);
                 } else {
                     // remember the value
-                    $val = new value($usr_trigger);
-                    $val->set_phrase_lst($sub_phr_lst);
+                    // TODO add percent, geo and time
                     if (is_string($value)) {
-                        // TODO Prio 1
-                        log_warning('string value not yet implemented');
+                        $val = new value_text($usr_trigger);
                     } else {
-                        $val->set_value($value);
+                        $val = new value($usr_trigger);
                     }
+                    $val->set_phrase_lst($sub_phr_lst);
+                    $val->set_value($value);
                 }
             }
         }

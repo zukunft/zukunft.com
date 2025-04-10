@@ -52,6 +52,9 @@ include_once MODEL_USER_PATH . 'user.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
+//include_once MODEL_VALUE_PATH . 'value_text.php';
+//include_once MODEL_VALUE_PATH . 'value_time.php';
+//include_once MODEL_VALUE_PATH . 'value_geo.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_creator;
@@ -71,7 +74,10 @@ use cfg\result\result_list;
 use cfg\user\user;
 use cfg\value\value;
 use cfg\value\value_base;
+use cfg\value\value_geo;
 use cfg\value\value_list;
+use cfg\value\value_text;
+use cfg\value\value_time;
 use shared\library;
 
 class sandbox_value_list extends sandbox_list
@@ -257,8 +263,13 @@ class sandbox_value_list extends sandbox_list
     ): sql_par
     {
         $qp = $this->load_sql_init(
-            $sc, $class, 'phr',
-            $sc_par_lst, $sc->par_list(), $usr_pos);
+            $sc,
+            $class,
+            'phr',
+            $sc_par_lst,
+            $sc->par_list(),
+            new sql_type_list(),
+            $usr_pos);
         if ($this->is_prime($sc_par_lst)) {
             $max_phr = group_id::PRIME_PHRASES_STD;
             if (($class == result::class
@@ -344,23 +355,31 @@ class sandbox_value_list extends sandbox_list
         string         $query_name,
         array          $tbl_types,
         sql_field_list $par_lst,
+        sql_type_list  $sc_typ_lst,
         ?int           $usr_pos = null
     ): sql_par
     {
+        $lib = new library();
+
         $is_std = $this->is_std($tbl_types);
         $is_prime = $this->is_prime($tbl_types);
         $is_main = $this->is_main($tbl_types);
 
         // differences between value and result list
+        // set the default settings for values
+        $val = $sc_typ_lst->value_object($this->user());
         $list_class = value_list::class;
         $fld_lst = value_base::FLD_NAMES;
-        $fld_lst_std = value_base::FLD_NAMES_STD;
+        $fld_lst_std = $val::FLD_NAMES_STD;
         $fld_lst_dummy = value_base::FLD_NAMES_STD_DUMMY;
         $fld_lst_usr_ex_std = value_base::FLD_NAMES_DATE_USR_EX_STD;
         $fld_lst_usr_num_ex_std = value_base::FLD_NAMES_NUM_USR_EX_STD;
-        $fld_lst_usr_num = value_base::FLD_NAMES_NUM_USR;
+        $fld_lst_usr_txt = $val::FLD_NAMES_USR;
+        $fld_lst_usr_num =  $val::FLD_NAMES_NUM_USR;
         $fld_lst_usr_only = value_base::FLD_NAMES_USR_ONLY;
-        if ($class != value::class) {
+
+        // overwrite the value settings for results
+        if (!$lib->is_value($class)) {
             $list_class = result_list::class;
             $fld_lst_std = result::FLD_NAMES_STD;
             if ($is_std) {
@@ -376,6 +395,8 @@ class sandbox_value_list extends sandbox_list
             }
             $fld_lst_usr_ex_std = result::FLD_NAMES_DATE_USR_EX_STD;
             $fld_lst_usr_num_ex_std = result::FLD_NAMES_NUM_USR_EX_STD;
+            // TODO use const overwrites for the result types a.g. for geo location results
+            $fld_lst_usr_txt = [];
             $fld_lst_usr_num = result::FLD_NAMES_NUM_USR;
             $fld_lst_usr_only = result::FLD_NAMES_USR_ONLY;
         }
@@ -389,10 +410,9 @@ class sandbox_value_list extends sandbox_list
             $sc->set_par_list($par_lst);
         }
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
-        $val = new value($this->user());
         if ($is_prime) {
             $sc->set_id_field_dummy($val->id_field_group(true));
-            if ($class == value::class) {
+            if ($lib->is_value($class)) {
                 $sc->set_id_field($val->id_fields_prime());
             } else {
                 $num_of_main_phrases = result_id::PRIME_SOURCE_PHRASES + result_id::PRIME_RESULT_PHRASES;
@@ -419,7 +439,7 @@ class sandbox_value_list extends sandbox_list
             if ($is_std) {
                 $sc->set_id_field_usr_dummy($val->id_field_group(false, true));
             }
-            if ($class == value::class) {
+            if ($lib->is_value($class)) {
                 $sc->set_id_field_num_dummy($val->id_fields_prime());
             } else {
                 $sc->set_id_field_num_dummy($val->id_fields_prime(1, result_id::MAIN_PHRASES_ALL));
@@ -431,7 +451,7 @@ class sandbox_value_list extends sandbox_list
         if ($is_std) {
             // TODO replace next line with union select field name synchronisation
             $sc->set_fields_num_dummy($fld_lst_dummy);
-            if ($class == value::class) {
+            if ($lib->is_value($class)) {
                 $sc->set_fields($fld_lst_std);
             } else {
                 if ($is_prime or $is_main) {
@@ -448,6 +468,9 @@ class sandbox_value_list extends sandbox_list
             if ($usr_pos != null) {
                 $usr_par = $par_lst->get($usr_pos);
                 $usr_par_name = $usr_par->name;
+            }
+            if ($fld_lst_usr_txt != []) {
+                $sc->set_usr_fields($fld_lst_usr_txt, true, $usr_par_name);
             }
             $sc->set_usr_num_fields($fld_lst_usr_num, true, $usr_par_name);
             $sc->set_usr_only_fields($fld_lst_usr_only);

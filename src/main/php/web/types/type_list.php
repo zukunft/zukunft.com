@@ -41,6 +41,7 @@ include_once WEB_HTML_PATH . 'html_selector.php';
 include_once WEB_TYPES_PATH . 'type_object.php';
 include_once WEB_USER_PATH . 'user_message.php';
 //include_once WEB_VERB_PATH . 'verb.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -49,6 +50,7 @@ use html\user\user_message;
 use html\html_selector;
 use html\types\type_object as type_object_dsp;
 use html\verb\verb;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\types\view_styles;
@@ -223,17 +225,19 @@ class type_list
 
     /**
      * add a phrase or ... to the list
-     * @returns bool true if the object has been added
+     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
      */
-    protected function add_obj(object $obj): bool
+    protected function add_obj(object $obj): user_message
     {
-        $result = false;
+        $usr_msg = new user_message();
+
         if (!in_array($obj->id(), $this->id_lst())) {
             $this->lst[] = $obj;
             $this->hash[$obj->code_id] = $obj->id();
-            $result = true;
+        } else {
+            $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**

@@ -32,19 +32,21 @@
 
 namespace shared\helper;
 
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_HELPER_PATH . 'ListOf.php';
 include_once SHARED_PATH . 'library.php';
 
+use cfg\user\user_message;
+use shared\enum\messages as msg_id;
 use shared\library;
 
-class ListOfIdObjects
+class ListOfIdObjects extends ListOf
 {
 
     /*
      *  object vars
      */
-
-    // the protected main var
-    private array $lst;
 
     // memory vs speed optimize vars for faster finding the list position by the database id
     private array $id_pos_lst;
@@ -57,19 +59,10 @@ class ListOfIdObjects
 
     function __construct(array $lst = [])
     {
-        $this->lst = [];
+        parent::__construct();
 
         $this->id_pos_lst = [];
         $this->lst_dirty = false;
-
-        if (count($lst) > 0) {
-            $this->set_lst($lst);
-        }
-    }
-
-    function reset(): void
-    {
-        $this->set_lst(array());
     }
 
 
@@ -78,32 +71,12 @@ class ListOfIdObjects
      */
 
     /**
-     * TODO check if a more specific return object can be used
-     * @param string|int $key the key of the lst array
-     * @return IdObject|TextIdObject|CombineObject|null the found user sandbox object or null if no id is found
-     */
-    function get(string|int $key): IdObject|TextIdObject|CombineObject|null
-    {
-        return $this->lst[$key];
-    }
-
-    /**
      * @return true if the list has been replaced
      */
     function set_lst(array $lst): bool
     {
-        $this->lst = $lst;
         $this->set_lst_dirty();
-        return true;
-    }
-
-    /**
-     * @returns array the list of items
-     * which is private to make sure the dirty handling always works
-     */
-    function lst(): array
-    {
-        return $this->lst;
+        return parent::set_lst($lst);
     }
 
     /**
@@ -131,32 +104,6 @@ class ListOfIdObjects
      */
 
     /**
-     * @returns int the number of elements in the list
-     */
-    function count(): int
-    {
-        if ($this->lst() == null) {
-            return 0;
-        } else {
-            return count($this->lst);
-        }
-    }
-
-    /**
-     * @return bool true if the list is already empty
-     */
-    function is_empty(): bool
-    {
-        $result = true;
-        if ($this->lst() != null) {
-            if (count($this->lst) > 0) {
-                $result = false;
-            }
-        }
-        return $result;
-    }
-
-    /**
      * @param ?int $limit the max number of ids to show
      * @return array with the database ids of all objects of this list
      */
@@ -164,7 +111,7 @@ class ListOfIdObjects
     {
         $result = array();
         $pos = 0;
-        foreach ($this->lst as $sbx_obj) {
+        foreach ($this->lst() as $sbx_obj) {
             if ($pos <= $limit or $limit == null) {
                 // use only valid ids
                 if ($sbx_obj->id() <> 0) {
@@ -194,7 +141,7 @@ class ListOfIdObjects
         $key_lst = $this->id_pos_lst();
         if (array_key_exists($id, $key_lst)) {
             $pos = $key_lst[$id];
-            return $this->lst[$pos];
+            return $this->lst()[$pos];
         } else {
             log_info($id . ' not found in ' . $lib->dsp_array_keys($key_lst));
             return null;
@@ -211,45 +158,28 @@ class ListOfIdObjects
      *
      * @param IdObject|TextIdObject|CombineObject $obj_to_add an object with a unique database id that should be added to the list
      * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
-     * @returns bool true if the object has been added
+     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
      */
-    function add_obj(IdObject|TextIdObject|CombineObject $obj_to_add, bool $allow_duplicates = false): bool
+    function add_obj(
+        IdObject|TextIdObject|CombineObject $obj_to_add,
+        bool $allow_duplicates = false
+    ): user_message
     {
-        $result = false;
+        $usr_msg = new user_message();
+
         // check boolean first because in_array might take longer
         if ($allow_duplicates) {
-            $this->lst[] = $obj_to_add;
+            $this->add_direct($obj_to_add);
             $this->set_lst_dirty();
-            $result = true;
         } else {
             if (!in_array($obj_to_add->id(), $this->ids())) {
-                $this->lst[] = $obj_to_add;
+                $this->add_direct($obj_to_add);
                 $this->set_lst_dirty();
-                $result = true;
+            } else {
+                $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
             }
         }
-        return $result;
-    }
-
-    protected function add_direct(object $obj_to_add): void
-    {
-        $this->lst[] = $obj_to_add;
-    }
-
-    /**
-     * unset an object of the list
-     * @param int|string $id the unique id of the entry
-     * @returns bool true if the object has been added
-     */
-    protected function unset(int|string $id): bool
-    {
-        $result = false;
-        $key_lst = $this->id_pos_lst();
-        if (array_key_exists($id, $key_lst)) {
-            unset ($this->lst[$id]);
-            $result = true;
-        }
-        return $result;
+        return $usr_msg;
     }
 
     /**

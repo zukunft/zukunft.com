@@ -125,11 +125,11 @@ class sandbox_list_named extends sandbox_list
         $result = false;
         if ($to_add != null) {
             if ($this->is_empty()) {
-                $result = $this->add_obj($to_add);
+                $result = $this->add_obj($to_add)->is_ok();
             } else {
                 if (!in_array($to_add->id(), $this->ids())) {
                     if ($to_add->id() != 0) {
-                        $result = $this->add_obj($to_add);
+                        $result = $this->add_obj($to_add)->is_ok();
                     }
                 }
             }

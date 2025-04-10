@@ -298,11 +298,18 @@ class sandbox_named extends sandbox
      * set and get of the name is needed to use the same function for phrase or term
      *
      * @param string $name the name of this named user sandbox object e.g. word set in the related object
-     * @return void
+     * @return user_message
      */
-    function set_name(string $name): void
+    function set_name(string $name): user_message
     {
+        $usr_msg = new user_message();
+        if (trim($name) <> $name) {
+            $usr_msg->add_id_with_vars(msg_id::TRIM_NAME,
+                [msg_id::VAR_NAME => $name]);
+            $name = trim($name);
+        }
         $this->name = $name;
+        return $usr_msg;
     }
 
     /**
@@ -552,16 +559,19 @@ class sandbox_named extends sandbox
     }
 
     /**
-     * @return bool true if the triple object can be added to the database
-     *              false e.g. if some parameters ar missing
+     * check if the named sandbox object can be added to the database
+     * @return user_message including suggested solutions
+     *       if e.g. the id and the name is something
      */
-    function db_ready(): bool
+    function db_ready(): user_message
     {
-        if ($this->id() != 0 or $this->name() != '') {
-            return true;
-        } else {
-            return false;
+        $usr_msg = parent::db_ready();
+        if ($this->id() == 0) {
+            if ($this->name() == '') {
+                $usr_msg->add_id(msg_id::ID_AND_NAME_MISSING);
+            }
         }
+        return $usr_msg;
     }
 
     /**

@@ -108,9 +108,17 @@ class source_list extends sandbox_list_named
      * create an SQL statement to retrieve a list of sources from the database
      *
      * @param sql_creator $sc with the target db_type set
+     * @param array $ids an array of source ids which should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    function load_sql_by_ids(
+        sql_creator $sc,
+        array       $ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(source::FLD_ID, $ids);

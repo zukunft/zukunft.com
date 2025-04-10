@@ -287,7 +287,12 @@ class group_list extends sandbox_list
      * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
+    function load_sql_by_ids(
+        sql_creator $sc,
+        array       $grp_ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(group::FLD_ID, $grp_ids);

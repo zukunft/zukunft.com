@@ -37,8 +37,10 @@ include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par_list.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_REF_PATH . 'source_list.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
@@ -56,8 +58,10 @@ use cfg\db\sql_creator;
 use cfg\db\sql_par_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\db_object_seq_id;
 use cfg\import\import;
 use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
 use cfg\phrase\term;
 use cfg\ref\source_list;
 use cfg\word\triple_list;
@@ -131,13 +135,22 @@ class sandbox_list_named extends sandbox_list
     function add(sandbox_named|triple|phrase|term|null $to_add): bool
     {
         $result = false;
+
+        // second line of defence
+        // TODO Prio 2 review
+        if ($this::class == triple_list::class and $to_add::class != triple::class) {
+            log_err('trying to add a none triple to a triple list');
+        }
+
         if ($to_add != null) {
             if ($this->is_empty()) {
-                $result = $this->add_obj($to_add);
+                $usr_msg = $this->add_obj($to_add);
+                $result = $usr_msg->is_ok();
             } else {
                 if (!in_array($to_add->id(), $this->ids())) {
                     if ($to_add->id() != 0) {
-                        $result = $this->add_obj($to_add);
+                        $usr_msg = $this->add_obj($to_add);
+                        $result = $usr_msg->is_ok();
                     }
                 }
             }
@@ -154,12 +167,21 @@ class sandbox_list_named extends sandbox_list
     function add_by_name(sandbox_named|triple|phrase|term|null $to_add, bool $allow_duplicates = false): bool
     {
         $result = false;
-        if (!in_array($to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {
-            // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
-            if ($to_add->id() == null) {
-                $this->set_lst_dirty();
+        if ($to_add != null) {
+            if (!in_array($to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {
+                // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
+                if ($to_add->id() == null) {
+                    $this->set_lst_dirty();
+                }
+                // add only objects that have all mandatory values
+                $result = $to_add->db_ready()->is_ok();
+
+                if ($result) {
+                    $this->add_direct($to_add);
+                }
             }
-            $result = parent::add_obj($to_add, $allow_duplicates);
+        } else {
+            $result = parent::add_obj($to_add, $allow_duplicates)->is_ok();
         }
         return $result;
     }
@@ -193,22 +215,22 @@ class sandbox_list_named extends sandbox_list
      * add the ids and other variables from the given list and add missing words, triples, ...
      * select the related object by the name
      *
-     * @param sandbox_list_named $lst_new a list of sandbox object e.g. that might have more vars set e.g. the db id
+     * @param sandbox_list_named $db_lst a list of sandbox objects that might have more vars set e.g. the db id
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill_by_name(sandbox_list_named $lst_new): user_message
+    function fill_by_name(sandbox_list_named $db_lst): user_message
     {
         $usr_msg = new user_message();
-        foreach ($lst_new->lst() as $sbx_new) {
-            if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
-                $sbx_old = $this->get_by_name($sbx_new->name());
-                if ($sbx_old != null) {
-                    $sbx_old->fill($sbx_new);
-                } else {
-                    $this->add($sbx_new);
+
+        // loop over the objects of theis list because it is expected to be smaller than tha cache list
+        foreach ($this->lst() as $obj_to_fill) {
+            if ($obj_to_fill->id() == 0 and $obj_to_fill->name() != '') {
+                $db_obj = $db_lst->get_by_name($obj_to_fill->name());
+                if ($db_obj != null) {
+                    $obj_to_fill->fill($db_obj);
                 }
             } else {
-                $usr_msg->add_message('id or name of word ' . $sbx_new->dsp_id() . ' missing');
+                $usr_msg->add_message('id or name of word ' . $obj_to_fill->dsp_id() . ' missing');
             }
         }
         return $usr_msg;
@@ -324,6 +346,56 @@ class sandbox_list_named extends sandbox_list
      */
 
     /**
+     * add one object to the list of user sandbox objects, but only if it is not yet part of the list
+     * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add the backend object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
+     */
+    function add_obj(
+        IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add,
+        bool                                                         $allow_duplicates = false
+    ): user_message
+    {
+        $usr_msg = new user_message();
+
+        // add only objects that have all mandatory values
+        $usr_msg->add($obj_to_add->db_ready());
+
+        // add only object with the same user
+        $usr_msg->add($this->same_user($obj_to_add));
+
+        // do not create duplicates if not explicitly allowed
+        if ($obj_to_add->id() <> 0 or $obj_to_add->name() != '') {
+            if ($allow_duplicates) {
+                $usr_msg->add(parent::add_obj($obj_to_add, $allow_duplicates));
+            } else {
+                if ($obj_to_add->id() <> 0) {
+                    if (!in_array($obj_to_add->id(), $this->ids())) {
+                        $usr_msg->add(parent::add_obj($obj_to_add));
+                    } else {
+                        $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
+                            [
+                                msg_id::VAR_NAME => $obj_to_add->dsp_id(),
+                                msg_id::VAR_CLASS_NAME => $obj_to_add::class
+                            ]);
+                    }
+                } elseif ($obj_to_add->name() != '') {
+                    if (!in_array($obj_to_add->name(), $this->names())) {
+                        $usr_msg->add(parent::add_obj($obj_to_add));
+                    } else {
+                        $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
+                            [
+                                msg_id::VAR_NAME => $obj_to_add->dsp_id(),
+                                msg_id::VAR_CLASS_NAME => $obj_to_add::class
+                            ]);
+                    }
+                }
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
      * TODO add a unit test
      * @returns array with all unique names of this list with the keys within this list
      */
@@ -366,17 +438,17 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * create any missing sql functions and queries to save the list objects
-     * @param word_list|triple_list|source_list $db_lst filled with the words or triples that are already in the db
+     * @param word_list|triple_list|phrase_list|source_list $db_lst filled with the words or triples that are already in the db so a kind of cache
      * @param bool $use_func true if sql function should be used to insert the named user sandbox objects
      * @param import|null $imp the import object e.g. with the ETA
      * @param string $class the object class that should be stored in the database
      * @return user_message
      */
     function insert(
-        word_list|triple_list|source_list $db_lst,
-        bool                              $use_func = true,
-        import                            $imp = null,
-        string                            $class = ''
+        word_list|triple_list|phrase_list|source_list $db_lst,
+        bool                                          $use_func = true,
+        import                                        $imp = null,
+        string                                        $class = ''
     ): user_message
     {
         global $db_con;

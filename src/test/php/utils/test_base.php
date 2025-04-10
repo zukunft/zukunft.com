@@ -130,6 +130,7 @@ use html\word\word as word_dsp;
 use shared\api;
 use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
+use shared\enum\value_types;
 use shared\library;
 use shared\const\triples;
 use shared\const\words;
@@ -1629,26 +1630,31 @@ class test_base
      * check the object load by id list SQL statements for all allowed SQL database dialects
      * similar to assert_sql_by_id but for an id list
      *
+     * @param string $test_name the description of the test
      * @param sql_creator $sc a sql creator object that can be empty
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param array|phr_ids|trm_ids|fig_ids|null $ids the ids that should be loaded
+     * @param value_types|null $val_types if not null load only the types of this list
      * @return bool true if all tests are fine
      */
     function assert_sql_by_ids(
+        string                             $test_name,
         sql_creator                        $sc,
         object                             $usr_obj,
-        array|phr_ids|trm_ids|fig_ids|null $ids = array(1, 2)): bool
+        array|phr_ids|trm_ids|fig_ids|null $ids = array(1, 2),
+        value_types|null                   $val_types = null
+    ): bool
     {
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->load_sql_by_ids($sc, $ids);
-        $result = $this->assert_qp($qp, $sc->db_type);
+        $qp = $usr_obj->load_sql_by_ids($sc, $ids, 0, 0, false, $val_types);
+        $result = $this->assert_qp($qp, $sc->db_type, $test_name);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->load_sql_by_ids($sc, $ids);
-            $result = $this->assert_qp($qp, $sc->db_type);
+            $qp = $usr_obj->load_sql_by_ids($sc, $ids, 0, 0, false, $val_types);
+            $result = $this->assert_qp($qp, $sc->db_type, $test_name);
         }
         return $result;
     }
@@ -1886,7 +1892,11 @@ class test_base
      * @param string $test_name description of the test without the sql name
      * @return bool true if the test is fine
      */
-    function assert_qp(sql_par $qp, string $dialect = '', string $test_name = ''): bool
+    function assert_qp(
+        sql_par $qp,
+        string  $dialect = '',
+        string  $test_name = ''
+    ): bool
     {
         $expected_sql = $this->assert_sql_expected($qp->name, $dialect);
         $result = $this->assert_sql(

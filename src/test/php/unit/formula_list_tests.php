@@ -71,7 +71,8 @@ class formula_list_tests
 
         // sql to load a list of formulas by the id, name or ...
         $frm_lst = new formula_list($usr);
-        $t->assert_sql_by_ids($sc, $frm_lst);
+        $test_name = 'load formulas by ids';
+        $t->assert_sql_by_ids($test_name, $sc, $frm_lst);
         $t->assert_sql_by_names($sc, $frm_lst, array(formulas::INCREASE, formulas::INCREASE));
         $t->assert_sql_like($sc, $frm_lst, 'i');
         $t->assert_sql_all_paged($db_con, $frm_lst);

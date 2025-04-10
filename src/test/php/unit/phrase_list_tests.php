@@ -93,7 +93,8 @@ class phrase_list_tests
         // load by phrase ids
         $phr_lst = new phrase_list($usr);
         $phr_ids = new phr_ids(array(3, -2, 4, -7));
-        $t->assert_sql_by_ids($sc, $phr_lst, $phr_ids);
+        $test_name = 'load phrases by ids';
+        $t->assert_sql_by_ids($test_name, $sc, $phr_lst, $phr_ids);
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
         $phr_names = array(words::MATH, triples::MATH_CONST);
         $t->assert_sql_by_names($sc, $phr_lst, $phr_names);

@@ -274,7 +274,7 @@ class term extends combine_named
                 } elseif ($this->type() == verb::class) {
                     $result = $this->get_verb()->row_mapper_verb($db_row, $id_fld, $name_fld);
                 } else {
-                    log_warning('Term ' . $this->dsp_id() . ' is of unknown type');
+                    log_err('Term ' . $this->dsp_id() . ' is of unknown type');
                 }
                 // overwrite the term id in the object with the real object id
                 $this->set_id($db_row[$id_fld]);

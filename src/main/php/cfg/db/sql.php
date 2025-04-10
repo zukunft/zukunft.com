@@ -92,12 +92,14 @@ class sql
     const THEN = 'THEN';
     const THEN_MYSQL = ',';
     const IS_NULL = 'IS NULL';
+    const NULL = 'NULL';
     const NOT_TRUE = 'IS NOT TRUE';
     const ELSE = 'ELSE';
     const ELSE_MYSQL = ',';
     const END = 'END';
     const END_MYSQL = ')';
     const UNION = 'UNION';
+    const UNION_ALL = 'UNION ALL';
     const IN = 'IN';
     const COALESCE = 'COALESCE';
 
@@ -122,6 +124,7 @@ class sql
     // query name extensions to make the query name unique
     const NAME_ALL = 'all'; // for queries that should return all rows without paging
     const NAME_SEP = '_'; // for snake case query and file names
+    const NAME_PHRASE_COUNT = 'r'; // the number of phrase ids used to select the values
     const NAME_BY = 'by'; // to separate the query selection in the query name e.g. for (load) word_by_name
     const NAME_EXT_USER = '_user';
     const NAME_EXT_MEDIAN_USER = 'median_user'; // to get the user that is owner of the most often used db row

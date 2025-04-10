@@ -296,9 +296,16 @@ class triple_list extends sandbox_list_named
      * set the SQL query parameters to load a list of triples by the ids
      * @param sql_creator $sc with the target db_type set
      * @param array $trp_ids a list of int values with the triple ids
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $trp_ids): sql_par
+    function load_sql_by_ids(
+        sql_creator $sc,
+        array       $trp_ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
         $qp = $this->load_sql($sc);
         if (count($trp_ids) > 0) {
@@ -567,7 +574,12 @@ class triple_list extends sandbox_list_named
     {
         $phr_lst = new phrase_list($this->user());
         foreach ($this->lst() as $lnk) {
-            $phr_lst->add_by_name($lnk->phrase());
+            if ($lnk::class == phrase::class) {
+                log_err('unexpected phrase instead of triple in triple list');
+                $phr_lst->add_by_name($lnk);
+            } else {
+                $phr_lst->add_by_name($lnk->phrase());
+            }
         }
         return $phr_lst;
     }
@@ -613,23 +625,15 @@ class triple_list extends sandbox_list_named
         if ($this->is_empty()) {
             log_info('no triples to save');
         } else {
-            // get names of the used phrases
-            $phr_lst = $this->phrase_parts();
+            // collect all phrases with names that are used
+            $phr_lst = $this->phrase_lst_of_names();
+            $phr_lst->merge($this->phrase_parts());
+
+            // add the database id to the list of used phrases from the cache
+            $phr_lst->fill_by_name($cache);
 
             // check if any needed phrases have not yet a db id
-            $phr_to_load = $phr_lst->missing_ids();
-            $names_to_load = $phr_to_load->names();
-            $phr_loaded = new phrase_list($this->user());
-            $phr_loaded->load_by_names($names_to_load);
-            $phr_to_load->fill_by_name($phr_loaded);
-            if (!$phr_to_load->is_empty()) {
-                log_err('Unexpected missing phrases ' . $phr_to_load->dsp_id());
-            }
-
-            // get the objects that need to be loaded
-            $cache_names = $cache->names();
-            $load_list = clone $this;
-            $load_list = $load_list->filter_by_name($cache_names);
+            $load_list = $phr_lst->missing_ids();
 
             // load the objects that are already in the database
             if (!$load_list->is_empty()) {
@@ -639,16 +643,24 @@ class triple_list extends sandbox_list_named
                 $db_lst->load_by_names($load_list->names());
                 $imp->step_end($load_list->count(), $load_per_sec);
 
+                // fill up cache
+                $cache = $cache->merge($db_lst);
+
+                // fill missing verbs
                 $this->fill_missing_verbs();
+
+                // fill the loaded database id to this list
+                $this->fill_by_name($db_lst);
+
+                // get the triples that still needs to be added
+                $add_phr_lst = $phr_lst->missing_ids();
+                $add_lst = $add_phr_lst->triples();
 
                 // create any missing sql functions and insert the missing triples
                 $step_time = $this->count() / $save_per_sec;
                 $imp->step_start(msg_id::SAVE, triple::class, $db_lst->count(), $step_time);
-                $usr_msg->add($this->insert($db_lst, true, $imp, triple::class));
+                $usr_msg->add($add_lst->insert($cache, true, $imp, triple::class));
                 $imp->step_end($db_lst->count(), $save_per_sec);
-
-                // fill up cache
-                $cache = $cache->merge($db_lst);
 
                 // update the existing triples
                 // loop over the triples and check if all needed functions exist

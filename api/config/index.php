@@ -87,7 +87,7 @@ if ($usr->id() > 0) {
         $usr_msg->add_message('configuration part ' . $part . ' cannot yet be selected');
     }
     if (!$usr_msg->is_ok()) {
-        $usr_msg->add_message(msg_id::CONFIG_NOT_LOADED->value);
+        $usr_msg->add_id(msg_id::CONFIG_NOT_LOADED);
     } else {
         if ($cfg_lst->is_empty()) {
             $usr_msg->add_message('config is empty');

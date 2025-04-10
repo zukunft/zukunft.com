@@ -142,12 +142,20 @@ class sql_par
      * @param bool $unique true if the parameters should be unique
      * @return sql_par
      */
-    function merge(sql_par $qp, bool $unique = false): sql_par
+    function merge(
+        sql_par $qp,
+        bool $unique = false,
+        sql_type_list $sc_par_typ = new sql_type_list()
+    ): sql_par
     {
         if ($this->sql == '') {
             $this->sql = $qp->sql;
         } else {
-            $this->sql .= ' UNION ' . $qp->sql;
+            if ($sc_par_typ->is_geo()) {
+                $this->sql .= ' ' . sql::UNION_ALL . ' ' . $qp->sql;
+            } else {
+                $this->sql .= ' ' . sql::UNION . ' ' . $qp->sql;
+            }
         }
         if ($unique) {
             $this->par = array_unique(array_merge($this->par, $qp->par));
