@@ -226,9 +226,9 @@ class change_value extends change_log
      */
     function sql_type(): sql_type
     {
-        if ($this->old_value == null) {
+        if ($this->old_value === null) {
             return sql_type::INSERT;
-        } elseif ($this->new_value == null) {
+        } elseif ($this->new_value === null) {
             return sql_type::DELETE;
         } else {
             return sql_type::UPDATE;

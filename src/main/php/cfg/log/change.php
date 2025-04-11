@@ -70,6 +70,7 @@ include_once SHARED_ENUM_PATH . 'change_fields.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\component\component;
 use cfg\db\sql;
@@ -95,6 +96,7 @@ use shared\enum\change_fields;
 use shared\enum\change_tables;
 use shared\enum\messages as msg_id;
 use shared\json_fields;
+use shared\library;
 use shared\types\api_type_list;
 
 class change extends change_log

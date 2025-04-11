@@ -884,20 +884,9 @@ class change_log extends db_object_seq_id_user
             $qp = $sc->sql_par($this::class, $sc_par_lst_chg);
             $sc->set_class($this::class, $sc_par_lst_chg);
             // TODO review temp solution to make query name unique
-            $fld_ext = '';
-            if ($this->old_value != null) {
-                $fld_ext .= 'o';
-            }
-            if ($this->new_value != null) {
-                $fld_ext .= 'n';
-            }
-            if ($fld_ext != '') {
-                $fld_ext = sql::NAME_SEP . $fld_ext;
-                $qp->name = $qp->name . $fld_ext;
-            }
             if ($sc_par_lst_used->is_list_tbl()) {
                 $lib = new library();
-                $qp->name = $lib->class_to_name($this::class) . $fld_ext . $ext;
+                $qp->name = $lib->class_to_name($this::class) . $ext;
             }
             $sc->set_name($qp->name);
             $qp->sql = $sc->create_sql_insert(
@@ -1022,7 +1011,14 @@ class change_log extends db_object_seq_id_user
         $db_type = $db_con->get_class();
         $sc = $db_con->sql_creator();
         $qp = $this->sql_insert($sc);
+        if ($qp->name == 'change_values_prime_insert') {
+            if (count($qp->par) > 5) {
+                log_debug('');
+                $qp = $this->sql_insert($sc);
+            }
+        }
         $usr_msg = $db_con->insert($qp, 'log change');
+        $log_id = 0;
         if ($usr_msg->is_ok()) {
             $log_id = $usr_msg->get_row_id();
         }
