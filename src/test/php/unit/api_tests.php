@@ -115,7 +115,9 @@ class api_tests
     function run(test_cleanup $t): void
     {
 
-        $t->header('api tests');
+        // start the test section (ts)
+        $ts = 'api ';
+        $t->header($ts);
 
         $t->assert_api_get(user::class, user::SYSTEM_TEST_ID);
         $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_NAME);
@@ -146,7 +148,7 @@ class api_tests
         $t->assert_api_get(language_form::class);
 
 
-        $t->subheader('api list tests');
+        $t->subheader($ts . 'api list');
 
         $t->assert_api_get_list(type_lists::class);
         $t->assert_api_get_list(word_list::class, [1, 2, words::PI_ID]);
@@ -174,7 +176,7 @@ class api_tests
         // TODO add figure_list tests
 
 
-        $t->subheader('api config tests');
+        $t->subheader($ts . 'api config');
 
         $cfg = new config();
         $cfg->load();
@@ -194,7 +196,7 @@ class api_tests
         // TODO check if requesting an unknown config part returns an error message
 
 
-        $t->subheader('api frontend config tests');
+        $t->subheader($ts . 'api frontend config');
 
         $cfg = new config();
         $cfg->load(api::CONFIG_FRONTEND);
@@ -211,7 +213,7 @@ class api_tests
         //$t->assert($test_name, $cfg->get_by([words::DATABASE, triples::BLOCK_SIZE]), null);
 
 
-        $t->subheader('api user config tests');
+        $t->subheader($ts . 'api user config');
 
         $cfg = new config();
         $cfg->load(api::CONFIG_USER);
@@ -220,7 +222,7 @@ class api_tests
         $test_name = 'the frontend configuration must at least contain some user number format settings';
 
 
-        $t->subheader('api id and name select tests');
+        $t->subheader($ts . 'api id and name select');
 
         // load the frontend objects via api call
         $test_name = 'api id and name call of a word';
@@ -298,7 +300,9 @@ class api_tests
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
 
 
-        $t->header('web frontend tests');
+        // start the test section (ts)
+        $ts = 'unit web frontend ';
+        $t->header($ts);
 
         $html = new html_base();
         $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../main/resources/style/style.css" /> </head> <body class="center_form">'));
@@ -441,7 +445,9 @@ class api_tests
         // init
         $t->name = 'api->';
 
-        $t->header('Test the open API definition versus the code');
+        // start the test section (ts)
+        $ts = 'unit open API definition versus the code ';
+        $t->header($ts);
 
         $test_name = 'check if a controller for each api tag exists';
         $result = '';

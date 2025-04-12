@@ -53,35 +53,37 @@ class view_tests
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
 
-        $t->header('view unit tests');
+        // start the test section (ts)
+        $ts = 'unit view ';
+        $t->header($ts);
 
-        $t->subheader('view sql setup');
+        $t->subheader($ts . 'sql setup');
         $msk = $t->view();
         $t->assert_sql_table_create($msk);
         $t->assert_sql_index_create($msk);
         $t->assert_sql_foreign_key_create($msk);
 
-        $t->subheader('view sql read');
+        $t->subheader($ts . 'sql read');
         $msk = new view($usr);
         $t->assert_sql_by_id($sc, $msk);
         $t->assert_sql_by_name($sc, $msk);
         $t->assert_sql_by_code_id($sc, $msk);
         $t->assert_sql_by_term($sc, $msk, $t->term());
 
-        $t->subheader('view sql read standard and user changes by id');
+        $t->subheader($ts . 'sql read standard and user changes by id');
         $msk = new view($usr);
         $msk->set_id(2);
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard($sc, $msk);
         $t->assert_sql_user_changes($sc, $msk);
 
-        $t->subheader('view sql read standard and user changes by name');
+        $t->subheader($ts . 'sql read standard and user changes by name');
         $msk = new view($usr);
         $msk->set_name(views::START_NAME);
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard($sc, $msk);
 
-        $t->subheader('view sql write insert');
+        $t->subheader($ts . 'sql write insert');
         $msk = $t->view_added();
         $t->assert_sql_insert($sc, $msk);
         $t->assert_sql_insert($sc, $msk, [sql_type::USER]);
@@ -92,7 +94,7 @@ class view_tests
         $msk = $t->view_filled();
         $t->assert_sql_insert($sc, $msk, [sql_type::LOG]);
 
-        $t->subheader('view sql write update');
+        $t->subheader($ts . 'sql write update');
         $msk = $t->view_added();
         $msk_renamed = $msk->cloned(views::TEST_RENAMED_NAME);
         $t->assert_sql_update($sc, $msk_renamed, $msk);
@@ -100,7 +102,7 @@ class view_tests
         $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG]);
         $t->assert_sql_update($sc, $msk_renamed, $msk, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('view sql write delete');
+        $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $msk);
         $t->assert_sql_delete($sc, $msk, [sql_type::USER]);
         $t->assert_sql_delete($sc, $msk, [sql_type::LOG]);
@@ -108,23 +110,23 @@ class view_tests
         $t->assert_sql_delete($sc, $msk, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $msk, [sql_type::USER, sql_type::EXCLUDE]);
 
-        $t->subheader('view base object handling');
+        $t->subheader($ts . 'base object handling');
         $msk = $t->view_filled();
         $t->assert_reset($msk);
 
-        $t->subheader('view api unit tests');
+        $t->subheader($ts . 'api');
         $msk = $t->view_filled();
         $t->assert_api_json($msk);
         $msk = $t->view_protected();
         $t->assert_api($msk);
         $t->assert_api_to_dsp($msk, new view_dsp());
 
-        $t->subheader('view with components api unit tests');
+        $t->subheader($ts . 'with components api');
         $msk = $t->view_with_components();
         $t->assert_api($msk, 'view_with_components');
         $t->assert_api_to_dsp($msk, new view_dsp());
 
-        $t->subheader('view im- and export unit tests');
+        $t->subheader($ts . 'im- and export');
         $t->assert_ex_and_import($t->view());
         $t->assert_ex_and_import($t->view_filled());
         $json_file = 'unit/view/car_costs.json';
@@ -163,7 +165,7 @@ class view_tests
          * Display tests
          */
 
-        $t->subheader('Display tests');
+        $t->subheader($ts . 'display');
 
         /*
          * needs database connection

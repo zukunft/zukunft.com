@@ -75,9 +75,11 @@ class sandbox_tests
 
         $lib = new library();
 
-        $t->header('Sandbox Unit test');
+        // start the test section (ts)
+        $ts = 'unit sandbox ';
+        $t->header($ts);
 
-        $t->subheader('Test user sandbox functions that does not need a database connection');
+        $t->subheader($ts . 'functions that does not need a database connection');
 
         // test if two sources are supposed to be the same
         $src1 = new source($usr);
@@ -116,7 +118,7 @@ class sandbox_tests
 
         // a word with the name 'millions' is similar to a formulas named 'millions', but not the same, so
 
-        $t->subheader('Test sql base functions');
+        $t->subheader($ts . 'sql base functions');
 
         // test sf (Sql Formatting) function
         $db_con = new sql_db();
@@ -183,12 +185,14 @@ class sandbox_tests
         $result = $db_con->sf($text);
         $t->assert(", sf: " . $text, $result, $target);
 
-        $t->subheader('Test the version control');
+        $t->subheader($ts . 'version control');
 
         prg_version_is_newer_test($t);
 
 
-        $t->header('Unit tests of the database connector');
+        // start the test section (ts)
+        $ts = 'unit database connector ';
+        $t->header($ts);
 
         $db_con = new sql_db();
 
@@ -1773,7 +1777,7 @@ class sandbox_tests
         $t->display('general phrase list query by type', $lib->trim($expected_sql), $lib->trim($created_sql));
 
 
-        $t->subheader('Test the user sandbox sql creation functions');
+        $t->subheader($ts . 'user sandbox sql creation');
 
         // init
         $t->name = '_sandbox->';

@@ -55,9 +55,11 @@ class component_tests
         $t->name = 'component->';
         $t->resource_path = 'db/component/';
 
-        $t->header('component unit tests');
+        // start the test section (ts)
+        $ts = 'unit component ';
+        $t->header($ts);
 
-        $t->subheader('component sql setup');
+        $t->subheader($ts . 'component sql setup');
         $cmp_typ = new component_type('');
         $t->assert_sql_table_create($cmp_typ);
         $t->assert_sql_index_create($cmp_typ);
@@ -66,25 +68,25 @@ class component_tests
         $t->assert_sql_index_create($cmp);
         $t->assert_sql_foreign_key_create($cmp);
 
-        $t->subheader('component sql read');
+        $t->subheader($ts . 'component sql read');
         $cmp = new component($usr);
         $t->assert_sql_by_id($sc, $cmp);
         $t->assert_sql_by_name($sc, $cmp);
 
-        $t->subheader('component sql read standard and user changes by id');
+        $t->subheader($ts . 'component sql read standard and user changes by id');
         $cmp = new component($usr);
         $cmp->set_id(2);
         //$t->assert_sql_all($db_con, $cmp);
         $t->assert_sql_standard($sc, $cmp);
         $t->assert_sql_user_changes($sc, $cmp);
 
-        $t->subheader('component sql read standard by name');
+        $t->subheader($ts . 'component sql read standard by name');
         $cmp = new component($usr);
         $cmp->set_name(views::START_NAME);
         //$t->assert_sql_all($db_con, $cmp);
         $t->assert_sql_standard($sc, $cmp);
 
-        $t->subheader('component sql write insert');
+        $t->subheader($ts . 'component sql write insert');
         $cmp = $t->component();
         $t->assert_sql_insert($sc, $cmp);
         $t->assert_sql_insert($sc, $cmp, [sql_type::USER]);
@@ -95,30 +97,30 @@ class component_tests
         $cmp = $t->component_filled();
         $t->assert_sql_insert($sc, $cmp, [sql_type::LOG]);
 
-        $t->subheader('component sql write update');
+        $t->subheader($ts . 'component sql write update');
         $cmp = $t->component();
         $cmp_renamed = $cmp->cloned(components::TEST_RENAMED_NAME);
         $t->assert_sql_update($sc, $cmp_renamed, $cmp);
         $t->assert_sql_update($sc, $cmp_renamed, $cmp, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('component sql delete');
+        $t->subheader($ts . 'component sql delete');
         $t->assert_sql_delete($sc, $cmp);
         $t->assert_sql_delete($sc, $cmp, [sql_type::LOG]);
 
-        $t->subheader('component base object handling');
+        $t->subheader($ts . 'component base object handling');
         $cmp = $t->component_filled();
         $t->assert_reset($cmp);
 
-        $t->subheader('component api unit tests');
+        $t->subheader($ts . 'component api');
         $cmp = $t->component_filled();
         $t->assert_api_json($cmp);
         $cmp = $t->component();
         $t->assert_api($cmp);
 
-        $t->subheader('component frontend unit tests');
+        $t->subheader($ts . 'component frontend');
         $t->assert_api_to_dsp($cmp, new component_dsp());
 
-        $t->subheader('component im- and export tests');
+        $t->subheader($ts . 'component im- and export');
         $t->assert_ex_and_import($t->component());
         $t->assert_ex_and_import($t->component_filled());
         $json_file = 'unit/view/component_import.json';

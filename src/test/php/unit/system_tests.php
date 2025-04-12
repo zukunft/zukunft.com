@@ -88,26 +88,27 @@ class system_tests
         $t->resource_path = 'db/system/';
 
 
-        $t->header('Unit tests of objects');
+        // start the test section (ts)
+        $ts = 'unit objects ';
+        $t->header($ts);
 
-
-        $t->subheader('Config SQL setup statements');
+        $t->subheader($ts . 'config SQL setup');
         $cfg = new config();
         $t->assert_sql_table_create($cfg);
         $t->assert_sql_index_create($cfg);
 
-        $t->subheader('IP range SQL setup statements');
+        $t->subheader($ts . 'ip range SQL setup');
         $ipr = new ip_range();
         $t->assert_sql_table_create($ipr);
         $t->assert_sql_index_create($ipr);
 
-        $t->subheader('Session SQL setup statements');
+        $t->subheader($ts . 'session SQL setup');
         $ses = new session();
         $t->assert_sql_table_create($ses);
         $t->assert_sql_index_create($ses);
 
 
-        $t->subheader('Debug function tests');
+        $t->subheader($ts . 'debug functions');
 
         // create a dummy object of each object and test that the dsp_id debug function does not cause an infinite loop
         // TODO check that all objects are included in this list
@@ -157,7 +158,9 @@ class system_tests
         $t->assert_dsp_id($t->job(), 'base_import for id 1 (1) for user 1 (zukunft.com system)');
 
 
-        $t->header('translation tests');
+        $ts = 'unit translation ';
+        $t->header($ts);
+
         $test_name = 'show a message in the system language';
         $t->assert($test_name, $mtr->txt(msg_id::DONE), msg_id::DONE->value);
         $test_name = 'translate a message in the system language';
@@ -165,17 +168,19 @@ class system_tests
         $test_name = 'translate a message';
         $t->assert($test_name, $mtr->txt(msg_id::DONE, language_codes::DE), "erledigt");
 
-        $t->subheader('System function tests');
+        $t->subheader($ts . 'system function');
         $t->assert('default log message', log_debug(), 'unit\system_tests->run');
 
-        $t->header('Unit tests of the system classes (src/main/php/model/system/ip_range.php)');
 
-        $t->subheader('System function tests');
+        $ts = 'unit system ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'log');
         $t->assert('default log message', log_debug(), 'unit\system_tests->run');
         $t->assert('debug log message', log_debug('additional info'), 'unit\system_tests->run: additional info');
 
 
-        $t->subheader('IP filter tests');
+        $t->subheader($ts . 'IP filter');
 
         /*
          * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
@@ -210,19 +215,19 @@ class system_tests
         $t->assert('ip_range->load_sql by id for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
 
-        $t->subheader('ip list sql tests');
+        $t->subheader($ts . 'ip list sql');
 
         $ip_lst = new ip_range_list();
         $t->assert_sql_by_obj_vars($db_con, $ip_lst);
 
 
-        $t->subheader('user list loading sql tests');
+        $t->subheader($ts . 'user list loading sql');
 
         // check if the sql to load the complete list of all ... types is created as expected
         $sys_log_status = new sys_log_status_list();
         $t->assert_sql_all($sc, $sys_log_status);
 
-        $t->subheader('user message tests');
+        $t->subheader($ts . 'user message');
 
         $usr_msg = new user_message();
         $test_name = 'message is translated';
@@ -230,7 +235,7 @@ class system_tests
         $t->assert($test_name, $usr_msg->all_message_text(), msg_id::CHECK->value);
 
 
-        $t->subheader('system config sql tests');
+        $t->subheader($ts . 'system config sql');
 
         $db_con->db_type = sql_db::POSTGRES;
         $cfg = new config();
@@ -291,7 +296,7 @@ class system_tests
          * im- and export tests
          */
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
 
         $json_in = json_decode(file_get_contents(test_files::RESOURCE_PATH . 'unit/system/ip_blacklist.json'), true);
         $ip_range = new ip_range();
@@ -306,7 +311,7 @@ class system_tests
          * ip range tests
          */
 
-        $t->subheader('ip range tests');
+        $t->subheader($ts . 'ip range');
 
         $json_in = json_decode(file_get_contents(test_files::RESOURCE_PATH . 'unit/system/ip_blacklist.json'), true);
         $ip_range = new ip_range();
@@ -331,7 +336,7 @@ class system_tests
          * system consistency SQL creation tests
          */
 
-        $t->subheader('System consistency tests');
+        $t->subheader($ts . 'system consistency');
 
         // sql to check the system consistency
         $db_con->set_class(formula::class);
@@ -362,7 +367,7 @@ class system_tests
          * database upgrade SQL creation tests
          */
 
-        $t->subheader('Database upgrade tests');
+        $t->subheader($ts . 'database upgrade');
 
         // sql to load by id
         $db_con->db_type = sql_db::POSTGRES;
@@ -387,7 +392,7 @@ class system_tests
          * system log SQL creation tests
          */
 
-        $t->subheader('System log list tests');
+        $t->subheader($ts . 'system log list');
 
         $log_lst = new sys_log_list();
         $log_lst->set_user($usr);
@@ -418,7 +423,7 @@ class system_tests
          * system log frontend API tests
          */
 
-        $t->subheader('System log frontend API tests');
+        $t->subheader($ts . 'system log frontend API');
 
 
         $log = $t->sys_log();
@@ -475,7 +480,7 @@ class system_tests
          * SQL database link unit tests
          */
 
-        $t->subheader('SQL database link tests');
+        $t->subheader($ts . 'sql database link');
 
         $db_con = new sql_db();
         $db_con->set_class(formula::class);

@@ -43,7 +43,9 @@ class formula_list_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('formula list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html formula list ';
+        $t->header($ts);
 
         // test the formula list display functions
         $lst = new formula_list_dsp($t->formula_list()->api_json());

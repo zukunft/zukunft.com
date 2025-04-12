@@ -45,7 +45,9 @@ class view_list_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('view list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html view list ';
+        $t->header($ts);
 
         // test the view list display functions
         $lst = new view_list_dsp($t->view_list()->api_json());

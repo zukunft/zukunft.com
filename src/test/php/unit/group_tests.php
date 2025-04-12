@@ -63,9 +63,11 @@ class group_tests
         $t->name = 'group->';
         $t->resource_path = 'db/group/';
 
-        $t->header('group unit tests');
+        // start the test section (ts)
+        $ts = 'unit group ';
+        $t->header($ts);
 
-        $t->subheader('Group id tests');
+        $t->subheader($ts . 'id');
         $grp_id = new group_id();
         $t->assert('64 bit group_id short word list', $grp_id->get_id($t->word_list_short()->phrase_lst()),
             262145);
@@ -147,7 +149,7 @@ class group_tests
             '1,-11,12,-37,38,-64,376,-2367,13108,-82124,505294,-2815273,17192845,-106841477,628779863,-3516593476');
         $grp_id = 0;
 
-        $t->subheader('Result id tests');
+        $t->subheader($ts . 'result id');
         // TODO assign the formula "increase" to the word inhabitants
         // TODO based on the formula the name of the formula and the phrases on the left side
         //      are always added to the result, so they do not need to be included in the phrase lists
@@ -169,21 +171,21 @@ class group_tests
             $res_id->get_id($t->phrase_list_17_plus(), $t->phrase_list_17_plus(), $t->formula_increase()),
             '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-.uraWl+');
 
-        $t->subheader('SQL statements - setup');
+        $t->subheader($ts . 'sql statements - setup');
         $grp = new group($usr);
         $t->assert_sql_table_create($grp);
         $t->assert_sql_index_create($grp);
         $t->assert_sql_foreign_key_create($grp);
         $t->assert_sql_truncate($sc, $grp);
 
-        $t->subheader('SQL statements - read');
+        $t->subheader($ts . 'sql statements - read');
         $grp = $t->group();
         $t->assert_sql_by_name($sc, $grp); // by name is always for all tables: prime, most and big
         $t->assert_sql_standard($sc, $grp);
         $t->assert_sql_standard_by_name($sc, $grp);
         $this->assert_sql_by_phrase_list($t, $db_con);
 
-        $t->subheader('SQL statements - write');
+        $t->subheader($ts . 'sql statements - write');
         $grp = new group($usr);
         $grp->set_phrase_list($t->phrase_list_prime());
         $t->assert_sql_insert($sc, $grp);
@@ -208,9 +210,11 @@ class group_tests
         $t->assert_sql_delete($sc, $grp, [sql_type::LOG, sql_type::USER]);
 
 
-        $t->header('Unit tests of the phrase group link class (src/main/php/model/group/group_link.php)');
+        // start the test section (ts)
+        $ts = 'unit phrase group list ';
+        $t->header($ts);
 
-        $t->subheader('SQL statement tests');
+        $t->subheader($ts . 'sql statement');
 
         // load the group by the phrase ids
 

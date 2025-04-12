@@ -47,7 +47,9 @@ class db_setup_tests
         global $usr;
         $lib = new library();
 
-        $t->subheader('DB setup unit tests');
+        // start the test section (ts)
+        $ts = 'unit db setup ';
+        $t->header($ts);
 
         $test_name_all = 'Combine the class SQL setup scripts and compare with the final sql setup script';
         $db = new sql_db();

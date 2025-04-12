@@ -69,10 +69,11 @@ class value_tests
         $t->name = 'value->';
         $t->resource_path = 'db/value/';
 
+        // start the test section (ts)
+        $ts = 'unit value ';
+        $t->header($ts);
 
-        $t->header('value unit tests');
-
-        $t->subheader('value object selection');
+        $t->subheader($ts . 'value object selection');
         $test_name = 'create a numeric value object';
         $val = (new value_obj())->get($usr, values::PI_LONG);
         $t->assert($test_name, $val::class, value::class);
@@ -86,13 +87,13 @@ class value_tests
         $val = (new value_obj())->get($usr, values::GEO);
         $t->assert($test_name, $val::class, value_geo::class);
 
-        $t->subheader('value sql setup');
+        $t->subheader($ts . 'value sql setup');
         $val = $t->value(); // one value object creates all tables (e.g. prime, big, time, text and geo)
         $t->assert_sql_table_create($val);
         $t->assert_sql_index_create($val);
         $t->assert_sql_foreign_key_create($val);
 
-        $t->subheader('value sql read');
+        $t->subheader($ts . 'value sql read');
         $val = $t->value();
         $val_16 = $t->value_16();
         $val_txt = $t->text_value();
@@ -102,7 +103,7 @@ class value_tests
         $this->assert_sql_by_grp($t, $db_con, $val_txt, $t->group_pod_url());
         $t->assert_sql_by_id($sc, $val_16);
 
-        $t->subheader('value sql read default and user changes');
+        $t->subheader($ts . 'value sql read default and user changes');
         $val = $t->value();
         $val_3 = $t->value_prime_3();
         $val_16 = $t->value_16();
@@ -122,7 +123,7 @@ class value_tests
         $t->assert_sql_standard($sc, $val_txt);
 
         // TODO activate db write
-        $t->subheader('value sql write');
+        $t->subheader($ts . 'value sql write');
         $val = $t->value();
         $db_val = $val->cloned(values::SAMPLE_FLOAT);
         $val_upd = $val->updated();
@@ -183,25 +184,25 @@ class value_tests
         $t->assert_sql_delete($sc, $val_txt, [sql_type::LOG]);
 
 
-        $t->subheader('Database query creation tests');
+        $t->subheader($ts . 'database query creation');
 
         // sql to load a user specific value by phrase group id
         $val->reset($usr);
         $val->grp()->set_id(2);
         //$t->assert_load_sql_obj_vars($db_con, $val);
 
-        $t->subheader('value base object handling');
+        $t->subheader($ts . 'value base object handling');
         $val = $t->value_16_filled();
         $t->assert_reset($val);
 
-        $t->subheader('value im- and export tests');
+        $t->subheader($ts . 'value im- and export');
         $t->assert_ex_and_import($t->value());
         $t->assert_ex_and_import($t->value_16_filled());
         $json_file = 'unit/value/speed_of_light.json';
         $t->assert_json_file(new value($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $val = $t->value();
         // TODO add class field to api message
@@ -211,7 +212,7 @@ class value_tests
         $val_dsp = new value_dsp($val->api_json([api_type::INCL_PHRASES]));
         $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32770" title="3.14">3.14</a>');
 
-        $t->subheader('Convert and API unit tests');
+        $t->subheader($ts . 'convert and api');
 
         // casting API
         $grp = $t->group();
@@ -234,10 +235,11 @@ class value_tests
         $fig = $val->figure();
         $t->assert($t->name . ' get figure', $fig->number(), $val->number());
 
+        // start the test section (ts)
+        $ts = 'unit value time series ';
+        $t->header($ts);
 
-        $t->header('Unit tests of the value time series class (src/main/php/model/value/value_time_series.php)');
-
-        $t->subheader('Database query creation tests');
+        $t->subheader($ts . 'database query creation');
 
         // sql to load a user specific time series by id
         $vts = new value_time_series($usr);
@@ -253,7 +255,7 @@ class value_tests
         $vts->grp()->set_id(2);
         $this->assert_sql_by_grp($t, $db_con, $vts, $vts->grp());
 
-        $t->subheader('Value time series data SQL setup statements');
+        $t->subheader($ts . 'data sql setup');
         $tsn = $t->value_ts_data();
         $t->assert_sql_table_create($tsn);
         $t->assert_sql_index_create($tsn);

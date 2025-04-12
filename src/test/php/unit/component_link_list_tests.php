@@ -54,9 +54,11 @@ class component_link_list_tests
         $t->name = 'component_link_list->';
         $t->resource_path = 'db/component/';
 
-        $t->header('component link list unit tests');
 
-        $t->subheader('Database query creation tests');
+        $ts = 'unit component link list ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'sql query');
 
         // load by component_link ids
         $lst = new component_link_list($usr);

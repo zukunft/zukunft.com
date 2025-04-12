@@ -46,12 +46,11 @@ class figure_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
+        // start the test section (ts)
+        $ts = 'unit figure ';
+        $t->header($ts);
 
-        $t->header('figure unit tests');
-
-
-        $t->subheader('SQL statement tests');
+        $t->subheader($ts . 'sql statement');
 
         // if the user has changed the formula, that related figure is not standard anymore
         /*
@@ -64,7 +63,7 @@ class figure_tests
         */
 
 
-        $t->subheader('set and get unit tests');
+        $t->subheader($ts . 'set and get');
 
         $fig = $t->figure_value();
         $t->assert('figure value id', $fig->id(), values::PI_ID);
@@ -82,7 +81,7 @@ class figure_tests
         //$t->assert('figure result symbol', $fig->symbol(), "{f1}");
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $fig = $t->figure_value();
         $t->assert_api($fig, 'figure_value_without_phrases');
@@ -93,7 +92,7 @@ class figure_tests
         $t->assert_api($fig, 'figure_result_with_phrases', [api_type::INCL_PHRASES]);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $fig = $t->figure_value();
         $t->assert_api_to_dsp($fig, new figure_dsp());

@@ -58,19 +58,21 @@ class pod_tests
         $t->name = 'pod->';
         $t->resource_path = 'db/pod/';
 
-        $t->header('Unit tests of the pod class (src/main/php/system/pod.php)');
+        // start the test section (ts)
+        $ts = 'unit pod ';
+        $t->header($ts);
 
-        $t->subheader('Pod type SQL setup statements');
+        $t->subheader($ts . 'type sql setup');
         $pod_typ = new pod_type('');
         $t->assert_sql_table_create($pod_typ);
         $t->assert_sql_index_create($pod_typ);
 
-        $t->subheader('Pod status SQL setup statements');
+        $t->subheader($ts . 'status sql setup');
         $pod_sta = new pod_status('');
         $t->assert_sql_table_create($pod_sta);
         $t->assert_sql_index_create($pod_sta);
 
-        $t->subheader('Pod SQL setup statements');
+        $t->subheader($ts . 'sql setup');
         $pod = new pod('');
         $t->assert_sql_table_create($pod);
         $t->assert_sql_index_create($pod);

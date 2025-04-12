@@ -61,20 +61,16 @@ class sys_log_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
-
-        $t->header('Unit tests of the system exception log display class (src/main/php/log/sys_log_*.php)');
-
-        $t->subheader('SQL statement tests');
-
         // init
-        $lib = new library();
         $sc = new sql_creator();
         $t->name = 'sys_log->';
         $t->resource_path = 'db/sys_log/';
 
+        // start the test section (ts)
+        $ts = 'unit log ';
+        $t->header($ts);
 
-        $t->subheader('System log SQL setup statements');
+        $t->subheader($ts . 'system sql setup');
         $log = new sys_log();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
@@ -86,18 +82,18 @@ class sys_log_tests
         $t->assert_sql_by_id($sc, $err);
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $log_lst = $t->sys_log_list();
         $t->assert_api($log_lst, '', [api_type::HEADER]);
 
 
-        $t->subheader('System time type SQL setup statements');
+        $t->subheader($ts . 'system time type sql setup');
         $sys_exe_typ = new system_time_type('');
         $t->assert_sql_table_create($sys_exe_typ);
         $t->assert_sql_index_create($sys_exe_typ);
 
-        $t->subheader('System time SQL setup statements');
+        $t->subheader($ts . 'system time sql setup');
         $sys_exe = new system_time();
         $t->assert_sql_table_create($sys_exe);
         $t->assert_sql_index_create($sys_exe);

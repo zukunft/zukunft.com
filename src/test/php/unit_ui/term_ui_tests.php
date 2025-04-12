@@ -42,7 +42,9 @@ class term_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('term tests');
+        // start the test section (ts)
+        $ts = 'unit ui html term ';
+        $t->header($ts);
 
         $wrd = new term_dsp($t->word()->term()->api_json());
         $trp = new term_dsp($t->triple_pi()->term()->api_json());

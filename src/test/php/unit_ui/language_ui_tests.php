@@ -50,7 +50,9 @@ class language_ui_tests
         global $usr;
         $html = new html_base();
 
-        $t->subheader('language tests');
+        // start the test section (ts)
+        $ts = 'unit ui html language ';
+        $t->header($ts);
 
         $src = new language_dsp($t->language()->api_json());
         $test_page = $html->text_h2('language display test');

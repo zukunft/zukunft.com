@@ -57,10 +57,11 @@ class triple_old
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
 
-        $t->header('triple unit tests');
+        // start the test section (ts)
+        $ts = 'unit triple ';
+        $t->header($ts);
 
-
-        $t->subheader('SQL statement tests');
+        $t->subheader($ts . 'sql statement');
 
         // sql to load a triple by id
         $trp = new triple($usr);
@@ -93,7 +94,7 @@ class triple_old
 
         // sql to check the usage of a triple
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
         $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($usr), $json_file);
     }

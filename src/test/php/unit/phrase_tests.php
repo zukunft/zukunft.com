@@ -60,18 +60,20 @@ class phrase_tests
         $t->name = 'phrase->';
         $t->resource_path = 'db/phrase/';
 
-        $t->header('phrase unit tests');
+        // start the test section (ts)
+        $ts = 'unit phrase ';
+        $t->header($ts);
 
-        $t->subheader('phrase sql setup');
+        $t->subheader($ts . 'sql setup');
         $phr = $t->phrase();
         $t->assert_sql_view_create($phr);
 
-        $t->subheader('phrase sql read');
+        $t->subheader($ts . 'sql read');
         $phr = new phrase($usr);
         $t->assert_sql_by_id($sc, $phr);
         $t->assert_sql_by_name($sc, $phr);
 
-        $t->subheader('phrase type api unit tests');
+        $t->subheader($ts . 'type api');
         $phr = $t->phrase();
         $t->assert_api_json($phr);
         $phr = $t->word_filled()->phrase();
@@ -85,7 +87,7 @@ class phrase_tests
         $phr = $t->phrase();
         $t->assert_api($phr, 'phrase_body');
 
-        $t->subheader('phrase html frontend unit tests');
+        $t->subheader($ts . 'html frontend');
         $phr = $t->word()->phrase();
         $t->assert_api_to_dsp($phr, new phrase_dsp());
         $phr = $t->triple_pi()->phrase();
@@ -102,26 +104,28 @@ class phrase_tests
         );
 
 
+        // start the test section (ts)
+        $ts = 'unit phrase type ';
+        $t->header($ts);
 
-        $t->header('phrase type unit tests');
-
-        $t->subheader('phrase type api unit tests');
+        $t->subheader($ts . 'type api');
         global $phr_typ_cac;
         $phr_typ = $phr_typ_cac->get_by_code_id(phrase_type_shared::PERCENT);
         $t->assert_api($phr_typ, 'phrase_type');
 
 
-        $t->subheader('Combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');
+        $t->subheader($ts . 'combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');
 
+        // start the test section (ts)
+        $ts = 'unit dynamic table ';
+        $t->header($ts);
 
-        $t->header('Unit tests of the dynamic table creation');
-
-        $t->subheader('Phrase table status SQL setup statements');
+        $t->subheader($ts . 'phrase table status sql setup');
         $phr_tbl_sta = new phrase_table_status('');
         $t->assert_sql_table_create($phr_tbl_sta);
         $t->assert_sql_index_create($phr_tbl_sta);
 
-        $t->subheader('Phrase table SQL setup statements');
+        $t->subheader($ts . 'phrase table sql setup');
         $phr_tbl = new phrase_table('');
         $t->assert_sql_table_create($phr_tbl);
         $t->assert_sql_index_create($phr_tbl);

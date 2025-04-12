@@ -78,14 +78,18 @@ class base_ui_tests
         $lib = new library();
         $html = new html_base();
 
-        $t->subheader('unit html login tests');
+        // start the test section (ts)
+        $ts = 'unit ui html base ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'login');
 
         $created_html = $html->about();
         $expected_html = $t->file('web/html/about.html');
         $t->display('about', $lib->trim_html($expected_html), $lib->trim_html($created_html));
 
 
-        $t->subheader('unit html selector tests');
+        $t->subheader($ts . 'selector');
 
         // TODO test the creation of a phrase list API JSON
         // TODO create a selector using a list an with a simple test page header an footer
@@ -113,7 +117,6 @@ class base_ui_tests
         // button add
         $url = $html->url(views::WORD_ADD);
         $t->html_test((new button($url))->add(msg_id::WORD_ADD), '', 'button_add', $t);
-
 
         $t->subheader('unit html table tests');
 

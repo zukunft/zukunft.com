@@ -60,9 +60,11 @@ class formula_list_tests
         $t->name = 'formula_list->';
         $t->resource_path = 'db/formula/';
 
-        $t->header('formula list unit tests');
+        // start the test section (ts)
+        $ts = 'unit formula list ';
+        $t->header($ts);
 
-        $t->subheader('SQL statement creation tests');
+        $t->subheader($ts . 'sql statement creation');
 
         // load only the names
         $frm_lst = new formula_list($usr);
@@ -86,18 +88,18 @@ class formula_list_tests
         //$t->assert_sql_all($db_con, $frm);
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $frm_lst = $t->formula_list();
         $t->assert_api($frm_lst);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
         $json_file = 'unit/formula/formula_list.json';
         $t->assert_json_file(new formula_list($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $trp_lst = $t->formula_list();
         $t->assert_api_to_dsp($trp_lst, new formula_list_dsp());

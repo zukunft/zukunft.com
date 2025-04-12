@@ -43,7 +43,9 @@ class term_list_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('term list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html term list ';
+        $t->header($ts);
 
         // test the term list display functions
         $lst = new term_list_dsp($t->term_list()->api_json());

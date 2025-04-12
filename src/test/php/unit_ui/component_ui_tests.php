@@ -44,7 +44,9 @@ class component_ui_tests
         global $usr;
         $html = new html_base();
 
-        $t->subheader('Component tests');
+        // start the test section (ts)
+        $ts = 'unit ui html component ';
+        $t->header($ts);
 
         //$wrd_pi = new word_dsp(2, words::TN_CONST);
         $test_page = $html->text_h2('Component display test');

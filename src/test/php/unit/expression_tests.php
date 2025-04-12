@@ -56,9 +56,11 @@ class expression_tests
         $t->name = 'expression->';
         $trm_lst = $t->term_list_all();
 
-        $t->header('Unit tests of the formula expression class (src/main/php/model/formula/expression.php)');
+        // start the test section (ts)
+        $ts = 'unit expression ';
+        $t->header($ts);
 
-        $t->subheader('convert user text to database ref text and the other way round');
+        $t->subheader($ts . 'convert user text to database ref text and the other way round');
 
         $this->frm_exp_convert($t,
             'including a triple',
@@ -80,7 +82,7 @@ class expression_tests
         );
 
 
-        $t->subheader('interface');
+        $t->subheader($ts . 'interface');
 
         // test the phrase list of the right side
 

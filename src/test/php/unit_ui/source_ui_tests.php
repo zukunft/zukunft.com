@@ -43,7 +43,9 @@ class source_ui_tests
         global $usr;
         $html = new html_base();
 
-        $t->subheader('source tests');
+        // start the test section (ts)
+        $ts = 'unit ui html source ';
+        $t->header($ts);
 
         $src = new source_dsp($t->source()->api_json());
         $test_page = $html->text_h2('source display test');

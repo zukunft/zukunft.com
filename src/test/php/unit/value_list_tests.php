@@ -63,23 +63,25 @@ class value_list_tests
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
 
-        $t->header('value list unit tests');
+        // start the test section (ts)
+        $ts = 'unit value list ';
+        $t->header($ts);
 
-        $t->subheader('info value list unit tests');
+        $t->subheader($ts . 'info value list');
         $test_name = 'test the grp_ids function';
         $val_ids = $t->value_list()->grp_ids()->dsp_id();
         $t->assert($test_name, $val_ids, 'Pi (math) / Zurich City inhabitants (2019)');
 
-        $t->subheader('modify value list unit tests');
+        $t->subheader($ts . 'modify value list');
         $time_val_lst = $t->value_list()->filter_by_time($t->phrase_list());
 
-        $t->subheader('api value list unit tests');
+        $t->subheader($ts . 'api value list');
         $test_name = 'test the api_json';
         $api_json = $t->value_list()->api_json();
         $val_lst_dsp = new value_list_dsp($api_json);
         $t->assert_json_string($test_name, $val_lst_dsp->api_json(), $api_json);
 
-        $t->subheader('sql creation value list unit tests');
+        $t->subheader($ts . 'sql creation value list');
         $test_names = 'sql to load a list of value by ... ';
         $val_lst = new value_list($usr);
         $test_name = $test_names . 'a related to a phrase e.g. all value related to the City of Zurich';
@@ -113,12 +115,12 @@ class value_list_tests
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->phrase_list(), true);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
         $json_file = 'unit/value/travel_scoring_value_list.json';
         $t->assert_json_file(new value_list($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $trp_lst = $t->value_list();
         $t->assert_api_to_dsp($trp_lst, new value_list_dsp());

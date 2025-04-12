@@ -46,7 +46,9 @@ class figure_list_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('figure list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html figure list ';
+        $t->header($ts);
 
         // test the figure list display functions
         $lst = new figure_list_dsp($t->figure_list()->api_json([api_type::TEST_MODE, api_type::INCL_PHRASES]));

@@ -63,7 +63,9 @@ class value_ui_tests
 
         global $usr;
 
-        $t->header('Test the value frontend scripts (e.g. /value_add.php)');
+        // start the test section (ts)
+        $ts = 'unit ui html value ';
+        $t->header($ts);
 
         /*
         // prepare the frontend testing

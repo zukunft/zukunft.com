@@ -54,22 +54,23 @@ class job_tests
         $t->name = 'job->';
         $t->resource_path = 'db/job/';
 
-        $t->header('job unit tests');
+        $ts = 'unit job ';
+        $t->header($ts);
 
-        $t->subheader('Job time SQL setup statements');
+        $t->subheader($ts . 'time sql setup');
         $job_tim = new job_time('');
         $t->assert_sql_table_create($job_tim);
         $t->assert_sql_index_create($job_tim);
         $t->assert_sql_foreign_key_create($job_tim);
 
-        $t->subheader('Job SQL setup statements');
+        $t->subheader($ts . 'sql setup');
         $job = new job($usr);
         $t->assert_sql_table_create($job);
         $t->assert_sql_index_create($job);
         $t->assert_sql_foreign_key_create($job);
 
 
-        $t->subheader('SQL statement tests');
+        $t->subheader($ts . 'sql query');
 
         // sql to load one batch job
         $job = new job($usr);
@@ -81,7 +82,7 @@ class job_tests
         $t->assert_sql_list_by_type($sc, $job_lst, job_type_list::BASE_IMPORT);
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $job = $t->job();
         $t->assert_api($job);

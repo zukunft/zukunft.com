@@ -47,7 +47,11 @@ class source_list_tests
         $sc = new sql_creator();
         $t->name = 'source_list->';
 
-        $t->subheader('source list sql read');
+        // start the test section (ts)
+        $ts = 'unit source list ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'sql read');
         $test_name = 'load sources by ids';
         $src_lst = new source_list($usr);
         $trm_ids = array(1, 2, 3);

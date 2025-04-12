@@ -61,9 +61,11 @@ class formula_link_tests
 
         // TODO use assert_sql_all if possible
 
-        $t->header('Unit tests of the formula link class (src/main/php/model/formula/formula_link.php)');
+        // start the test section (ts)
+        $ts = 'unit formula link ';
+        $t->header($ts);
 
-        $t->subheader('Formula link type SQL setup statements');
+        $t->subheader($ts . 'type sql setup');
         $frm_lnk_typ = new formula_link_type('');
         $t->assert_sql_table_create($frm_lnk_typ);
         $t->assert_sql_index_create($frm_lnk_typ);
@@ -72,7 +74,7 @@ class formula_link_tests
         $t->assert_sql_index_create($frm_lnk);
         $t->assert_sql_foreign_key_create($frm_lnk);
 
-        $t->subheader('SQL user sandbox statement tests');
+        $t->subheader($ts . 'sql user sandbox statement');
 
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
         $flk = new formula_link($usr);
@@ -80,7 +82,7 @@ class formula_link_tests
         $t->assert_sql_by_link($sc, $flk);
 
 
-        $t->subheader('SQL load default statement tests');
+        $t->subheader($ts . 'sql load default statement');
 
         // sql to load the standard formula link by id
         $lnk = new formula_link($usr);
@@ -94,7 +96,7 @@ class formula_link_tests
         $expected_sql = $t->file('db/formula/formula_link_by_usr_cfg.sql');
         $t->assert('formula_link->load_user_sql by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
-        $t->subheader('formula link sql write');
+        $t->subheader($ts . 'formula link sql write');
         $lnk = $t->formula_link();
         $t->assert_sql_insert($sc, $lnk);
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
@@ -109,12 +111,12 @@ class formula_link_tests
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('formula link base object handling');
+        $t->subheader($ts . 'formula link base object handling');
         $lnk = $t->formula_link();
         $t->assert_reset($lnk);
 
         /*
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
 
         $json_in = json_decode(file_get_contents(PATH_TEST_IMPORT_FILES . 'unit/formula/scale_second_to_minute.json'), true);
         $lnk = new formula($usr);
@@ -127,9 +129,11 @@ class formula_link_tests
 
         $t->name = 'formula_link_list->';
 
-        $t->header('Unit tests of the formula link list class (src/main/php/model/formula/formula_link_list.php)');
+        // start the test section (ts)
+        $ts = 'unit formula link list ';
+        $t->header($ts);
 
-        $t->subheader('SQL statement tests');
+        $t->subheader($ts . 'sql statement');
 
         // sql to load the formula link list by formula id
         $frm_lnk_lst = new formula_link_list($usr);

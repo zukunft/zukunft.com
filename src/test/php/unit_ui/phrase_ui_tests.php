@@ -42,7 +42,9 @@ class phrase_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('Phrase tests');
+        // start the test section (ts)
+        $ts = 'unit ui html phrase ';
+        $t->header($ts);
 
         $wrd = new phrase_dsp($t->word()->phrase()->api_json());
         $trp = new phrase_dsp($t->triple_pi()->phrase()->api_json());

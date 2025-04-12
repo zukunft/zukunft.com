@@ -61,10 +61,11 @@ class result_tests
         $t->name = 'result->';
         $t->resource_path = 'db/result/';
 
+        // start the test section (ts)
+        $ts = 'unit result ';
+        $t->header($ts);
 
-        $t->header('result unit tests');
-
-        $t->subheader('SQL creation tests');
+        $t->subheader($ts . 'sql creation');
         $res = $t->result_simple_1();
         $t->assert_sql_table_create($res);
         $t->assert_sql_index_create($res);
@@ -86,13 +87,13 @@ class result_tests
         $this->assert_sql_load_std_by_group_id($t, $db_con, $res);
 
 
-        $t->subheader('SQL load default statement tests');
+        $t->subheader($ts . 'sql load default statement');
 
         // sql to load the standard result by id
         $t->assert_sql_standard($sc, $res_prime);
         $t->assert_sql_user_changes($sc, $res_prime);
 
-        $t->subheader('result sql write');
+        $t->subheader($ts . 'result sql write');
         // result changes are not logged because potentially they can be reproduced
         // TODO check the move from prime and main if the source group does not fit the prime or main criterias (same for the formula id)
         $res_prime = $t->result_prime();
@@ -139,12 +140,12 @@ class result_tests
         $t->assert_sql_delete($sc, $res);
         $t->assert_sql_delete($sc, $res, [sql_type::USER]);
 
-        $t->subheader('result base object handling');
+        $t->subheader($ts . 'result base object handling');
         $res = $t->result_main_filled();
         $t->assert_reset($res);
 
 
-        $t->subheader('Display tests');
+        $t->subheader($ts . 'display');
 
         // test phrase based default formatter
         // ... for big values
@@ -164,14 +165,14 @@ class result_tests
         $t->assert('result->val_formatted test percent formatting', $res->val_formatted(), '1.23 %');
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
         $t->assert_ex_and_import($t->result());
         $t->assert_ex_and_import($t->result_main_filled());
         $json_file = 'unit/result/result_import_part.json';
         $t->assert_json_file(new result($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $res = $t->result_simple_1();
         $t->assert_api_to_dsp($res, new result_dsp());

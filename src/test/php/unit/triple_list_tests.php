@@ -60,9 +60,11 @@ class triple_list_tests
         $t->name = 'triple_list->';
         $t->resource_path = 'db/triple/';
 
-        $t->header('triple list unit tests');
+        // start the test section (ts)
+        $ts = 'unit triple list ';
+        $t->header($ts);
 
-        $t->subheader('Database query creation tests');
+        $t->subheader($ts . 'database query creation');
 
         // load only the names
         $trp_lst = new triple_list($usr);
@@ -101,12 +103,12 @@ class triple_list_tests
         // $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
         $json_file = 'unit/triple/triple_list.json';
         $t->assert_json_file(new triple_list($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $trp_lst = $t->triple_list();
         $t->assert_api_to_dsp($trp_lst, new triple_list_dsp());

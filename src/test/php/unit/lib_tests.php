@@ -51,10 +51,11 @@ class lib_tests
         global $debug;
         $lib = new library();
 
-        $t->header('Test the zukunft.com base functions (model/helper/library.php)');
+        // start the test section (ts)
+        $ts = 'unit lib ';
+        $t->header($ts);
 
-
-        $t->subheader('convert');
+        $t->subheader($ts . 'convert');
 
         // db date text to php datetime object
         $date_text = "2023-03-03 09:32:50.980518";
@@ -69,7 +70,7 @@ class lib_tests
         $t->assert("trim", $result, false);
 
 
-        $t->subheader('strings');
+        $t->subheader($ts . 'strings');
 
         // test trim (remove also double spaces)
         $text = "  This  text  has  many  spaces  ";
@@ -105,7 +106,7 @@ class lib_tests
         $t->assert("trim_html", $result, $target);
 
 
-        $t->subheader('string parts');
+        $t->subheader($ts . 'string parts');
 
         // test str_between
         $text = "The formula id of {f23}.";
@@ -201,7 +202,7 @@ class lib_tests
         $t->assert("camelize_ex_1", $result, "functionName");
 
 
-        $t->subheader('arrays and lists');
+        $t->subheader($ts . 'arrays and lists');
 
         $inner_array = ["a", "b", "c"];
         $test_array = [1, 2, $inner_array, 3];
@@ -267,7 +268,7 @@ class lib_tests
         $t->assert("ids_not_empty", $result, $target);
 
 
-        $t->subheader('display');
+        $t->subheader($ts . 'display');
 
         // test dsp_var
         $test_var = [1, 2, 3];
@@ -325,7 +326,7 @@ class lib_tests
         $debug = $mem_debug;
 
 
-        $t->subheader('diff');
+        $t->subheader($ts . 'diff');
 
         // test the diff supporting functions:
         // ... useful text split
@@ -479,7 +480,7 @@ class lib_tests
         $t->assert("diff_msg, with position in long html string", $result, $target);
 
 
-        $t->subheader('json');
+        $t->subheader($ts . 'json');
 
         // test json_clean
         $json_text = '{
@@ -635,7 +636,7 @@ class lib_tests
         $t->assert("array_recursive_diff - without array", $result, $expected);
 
 
-        $t->subheader('json remove volatile fields');
+        $t->subheader($ts . 'json remove volatile fields');
 
         // remove timestamp from main json
         $path = 'unit/json/';
@@ -688,7 +689,7 @@ class lib_tests
         $t->assert("json remove volatile id in a array of a sub array", $result, $target);
 
 
-        $t->subheader('user message tests');
+        $t->subheader($ts . 'user message');
 
         $usr_msg = new user_message();
         $t->assert("user_message - default ok", $usr_msg->is_ok(), true);

@@ -50,15 +50,17 @@ class view_term_link_tests
         $t->name = 'view->';
         $t->resource_path = 'db/view/';
 
-        $t->header('view term link unit tests');
+        // start the test section (ts)
+        $ts = 'unit view term link ';
+        $t->header($ts);
 
-        $t->subheader('view_term_link sql setup');
+        $t->subheader($ts . 'view_term_link sql setup');
         $dsp_trm_lnk = new view_term_link($usr);
         $t->assert_sql_table_create($dsp_trm_lnk);
         $t->assert_sql_index_create($dsp_trm_lnk);
         $t->assert_sql_foreign_key_create($dsp_trm_lnk);
 
-        $t->subheader('view_term_link sql read');
+        $t->subheader($ts . 'view_term_link sql read');
         $lnk = new view_term_link($usr);
         $t->assert_sql_by_id($sc, $lnk);
         $lnk = $t->view_term_link();
@@ -67,7 +69,7 @@ class view_term_link_tests
         $t->assert_sql_by_link($sc, $lnk);
         $t->assert_sql_user_changes($sc, $lnk);
 
-        $t->subheader('view_term_link sql write insert');
+        $t->subheader($ts . 'view_term_link sql write insert');
         $lnk = $t->view_term_link();
         $t->assert_sql_insert($sc, $lnk);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG]);
@@ -75,7 +77,7 @@ class view_term_link_tests
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
         $t->assert_sql_insert($sc, $lnk, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('view_term_link sql write update');
+        $t->subheader($ts . 'view_term_link sql write update');
         $lnk_described = $lnk->cloned();
         $lnk_described->description = views::LINK_COM;
         $t->assert_sql_update($sc, $lnk_described, $lnk);
@@ -83,7 +85,7 @@ class view_term_link_tests
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG]);
         $t->assert_sql_update($sc, $lnk_described, $lnk, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('view_term_link sql delete');
+        $t->subheader($ts . 'view_term_link sql delete');
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::USER]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG]);
@@ -91,7 +93,7 @@ class view_term_link_tests
         $t->assert_sql_delete($sc, $lnk, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::USER, sql_type::EXCLUDE]);
 
-        $t->subheader('triple api unit tests');
+        $t->subheader($ts . 'triple api');
         $lnk = $t->view_term_link();
         //$t->assert_api_json($lnk);
     }

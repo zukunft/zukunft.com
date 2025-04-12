@@ -60,87 +60,88 @@ class type_tests
         $t->name = 'type->';
         $t->resource_path = 'db/type/';
 
-
-        $t->header('Unit tests of the type classes');
+        // start the test section (ts)
+        $ts = 'unit type ';
+        $t->header($ts);
 
         // TODO job_types
 
-        $t->subheader('System log type sql setup');
+        $t->subheader($ts . 'system log type sql setup');
         $log_typ = new sys_log_type('');
         $t->assert_sql_table_create($log_typ);
         $t->assert_sql_index_create($log_typ);
 
-        $t->subheader('system log status sql setup');
+        $t->subheader($ts . 'system log status sql setup');
         $log_sta = new sys_log_status('');
         $t->assert_sql_table_create($log_sta);
         $t->assert_sql_index_create($log_sta);
 
-        $t->subheader('system log status sql setup');
+        $t->subheader($ts . 'system log status sql setup');
         $log_fuc = new sys_log_function('');
         $t->assert_sql_table_create($log_fuc);
         $t->assert_sql_index_create($log_fuc);
 
-        $t->subheader('job type sql setup');
+        $t->subheader($ts . 'job type sql setup');
         $job_typ = new job_type('');
         $t->assert_sql_table_create($job_typ);
         $t->assert_sql_index_create($job_typ);
 
-        $t->subheader('user type sql setup');
+        $t->subheader($ts . 'user type sql setup');
         $usr_typ = new user_type('');
         $t->assert_sql_table_create($usr_typ);
         $t->assert_sql_index_create($usr_typ);
 
-        $t->subheader('user profile sql setup');
+        $t->subheader($ts . 'user profile sql setup');
         $usr_prf = new user_profile('');
         $t->assert_sql_table_create($usr_prf);
         $t->assert_sql_index_create($usr_prf);
 
-        $t->subheader('user identification sql setup');
+        $t->subheader($ts . 'user identification sql setup');
         $usr_idt = new user_official_type('');
         $t->assert_sql_table_create($usr_idt);
         $t->assert_sql_index_create($usr_idt);
 
-        $t->subheader('protection type sql setup');
+        $t->subheader($ts . 'protection type sql setup');
         $prt_typ = new protection_type('');
         $t->assert_sql_table_create($prt_typ);
         $t->assert_sql_index_create($prt_typ);
 
-        $t->subheader('share type sql setup');
+        $t->subheader($ts . 'share type sql setup');
         $shr_typ = new share_type('');
         $t->assert_sql_table_create($shr_typ);
         $t->assert_sql_index_create($shr_typ);
 
-        $t->subheader('phrase type sql setup');
+        $t->subheader($ts . 'phrase type sql setup');
         $phr_typ = new phrase_type('');
         $t->assert_sql_table_create($phr_typ);
         $t->assert_sql_index_create($phr_typ);
 
-        $t->subheader('source type sql setup');
+        $t->subheader($ts . 'source type sql setup');
         $src_typ = new source_type('');
         $t->assert_sql_table_create($src_typ);
         $t->assert_sql_index_create($src_typ);
 
-        $t->subheader('reference type sql setup');
+        $t->subheader($ts . 'reference type sql setup');
         $ref_typ = new ref_type('');
         $t->assert_sql_table_create($ref_typ);
         $t->assert_sql_index_create($ref_typ);
 
-        $t->subheader('formula type sql setup');
+        $t->subheader($ts . 'formula type sql setup');
         $frm_typ = new formula_type('');
         $t->assert_sql_table_create($frm_typ);
         $t->assert_sql_index_create($frm_typ);
 
-        $t->subheader('view type sql setup');
+        $t->subheader($ts . 'view type sql setup');
         $dsp_typ = new view_type('');
         $t->assert_sql_table_create($dsp_typ);
         $t->assert_sql_index_create($dsp_typ);
 
-        $t->subheader('view style sql setup');
+        $t->subheader($ts . 'view style sql setup');
         $style = new view_style('');
         $t->assert_sql_table_create($style);
         $t->assert_sql_index_create($style);
 
-        $t->subheader('view term link type sql setup');
+        $t->subheader($ts . 'view term link type sql setup');
         $dsp_lnk_typ = new view_link_type('');
         $t->assert_sql_table_create($dsp_lnk_typ);
         $t->assert_sql_index_create($dsp_lnk_typ);

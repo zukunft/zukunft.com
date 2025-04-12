@@ -70,16 +70,16 @@ class term_list_tests
         $t->name = 'term_list->';
         $t->resource_path = 'db/term/';
 
-        $t->header('term list unit tests');
+        // start the test section (ts)
+        $ts = 'unit term list ';
+        $t->header($ts);
 
-        $html = new html_base();
-
-        $t->subheader('term list display tests');
+        $t->subheader($ts . 'term list display');
 
         $this->t = $t;
 
 
-        $t->subheader('SQL statement creation tests');
+        $t->subheader($ts . 'sql statement creation');
 
         // load only the names
         $phr_lst = new term_list($usr);
@@ -94,13 +94,13 @@ class term_list_tests
         $t->assert_sql_like($sc, $lst);
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $trm_lst = $t->term_list();
         $t->assert_api($trm_lst);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $trm_lst = $t->term_list();
         $t->assert_api_to_dsp($trm_lst, new term_list_dsp());

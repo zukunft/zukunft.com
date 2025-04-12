@@ -46,7 +46,9 @@ class triple_list_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('HTML triple list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html triple list ';
+        $t->header($ts);
 
         // fill the triple list based on the api message
         $db_lst = $t->triple_list();

@@ -46,7 +46,9 @@ class phrase_list_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('HTML phrase list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html phrase list ';
+        $t->header($ts);
 
         // fill the phrase list based on the api message
         $db_lst = $t->phrase_list();

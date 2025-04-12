@@ -68,9 +68,11 @@ class word_list_tests
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
 
-        $t->header('word list unit tests');
+        // start the test section (ts)
+        $ts = 'unit word list ';
+        $t->header($ts);
 
-        $t->subheader('Database query creation tests');
+        $t->subheader($ts . 'database query creation');
 
         // load only the names
         $wrd_lst = new word_list($usr);
@@ -131,7 +133,7 @@ class word_list_tests
         $vrb = $vrb_cac->get_verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
-        $t->subheader('Modify and filter word lists');
+        $t->subheader($ts . 'modify and filter word lists');
 
         // create words for unit testing
         // TODO used create dummy functions
@@ -295,12 +297,12 @@ class word_list_tests
         $t->assert('JSON export word list', $result, true);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
         $json_file = 'unit/word/word_list.json';
         $t->assert_json_file(new word_list($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $wrd_lst = $t->word_list();
         $t->assert_api_to_dsp($wrd_lst, new word_list_dsp());

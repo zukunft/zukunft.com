@@ -79,14 +79,16 @@ class all_ui_tests extends all_unit_tests
     function run(test_cleanup $t): void
     {
 
-        $t->header('unit html tests');
+        // start the test section (ts)
+        $ts = 'unit ui html ';
+        $t->header($ts);
 
-        $t->subheader('unit html base tests');
+        $t->subheader($ts . 'base');
         (new base_ui_tests)->run($t);
         (new type_lists_ui_tests)->run($t);
         (new user_ui_tests)->run($t);
 
-        $t->subheader('unit html page tests');
+        $t->subheader($ts . 'page');
         (new word_ui_tests)->run($t);
         (new word_list_ui_tests)->run($t);
         (new verb_ui_tests())->run($t);
@@ -120,7 +122,7 @@ class all_ui_tests extends all_unit_tests
         (new start_ui_tests)->run($t);
         (new system_views_ui_tests)->run($t);
 
-        $t->subheader('check about page e.g. to check the library');
+        $t->subheader($ts . 'check about page e.g. to check the library');
 
         $test_name = 'check about page e.g. to check the library';
         $result = file_get_contents(api::HOST_TESTING .  'http/about.php');

@@ -42,7 +42,9 @@ class formula_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('formula html ui tests');
+        // start the test section (ts)
+        $ts = 'unit ui html formula ';
+        $t->header($ts);
 
         $frm = new formula_dsp($t->formula()->api_json());
         $test_page = $html->text_h2('formula display test');

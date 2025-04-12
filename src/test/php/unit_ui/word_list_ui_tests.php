@@ -44,7 +44,9 @@ class word_list_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('word list html unit tests');
+        // start the test section (ts)
+        $ts = 'unit ui html word list ';
+        $t->header($ts);
 
         // create the word list test set
         $lst = new word_list_dsp($t->word_list_short()->api_json());

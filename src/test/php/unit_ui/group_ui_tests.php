@@ -43,7 +43,9 @@ class group_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('Phrase group tests');
+        // start the test section (ts)
+        $ts = 'unit ui html phrase group ';
+        $t->header($ts);
 
         $grp = new group($t->group_zh()->api_json());
         $grp_2019 = new group($t->group_zh_2020()->api_json([api_type::INCL_PHRASES]));

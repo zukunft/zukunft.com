@@ -53,17 +53,19 @@ class user_tests
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
 
-        $t->header('user unit tests');
 
+        // start the test section (ts)
+        $ts = 'unit user ';
+        $t->header($ts);
 
-        $t->subheader('Job time SQL setup statements');
+        $t->subheader($ts . 'sql setup');
         $test_usr = new user();
         $t->assert_sql_table_create($test_usr);
         $t->assert_sql_index_create($test_usr);
         $t->assert_sql_foreign_key_create($test_usr);
 
 
-        $t->subheader('SQL statement tests');
+        $t->subheader($ts . 'sql query');
 
         $test_usr = new user();
         $t->assert_sql_by_id($sc, $test_usr);
@@ -78,13 +80,13 @@ class user_tests
         $this->assert_sql_count_changes($t, $db_con, $test_usr_list);
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $test_usr = $t->user_sys_test();
         $t->assert_api($test_usr);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
         $json_file = 'unit/user/user_import.json';
         $t->assert_json_file(new user(), $json_file);
 

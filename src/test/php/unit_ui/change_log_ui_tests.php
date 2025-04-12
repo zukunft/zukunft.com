@@ -46,10 +46,13 @@ class change_log_ui_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
         $html = new html_base();
 
-        $t->subheader('Change log display unit tests');
+        // start the test section (ts)
+        $ts = 'unit ui change log ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'display');
 
         //$wrd_pi = new word_dsp(2, words::TN_CONST);
         $test_page = $html->text_h2('Change log display test');

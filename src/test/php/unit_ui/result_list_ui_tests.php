@@ -46,7 +46,9 @@ class result_list_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('result list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html result list ';
+        $t->header($ts);
 
         // test the result list display functions
         $lst = new result_list_dsp($t->result_list()->api_json([api_type::TEST_MODE, api_type::INCL_PHRASES]));

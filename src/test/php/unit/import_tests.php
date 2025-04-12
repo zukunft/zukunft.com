@@ -52,7 +52,9 @@ class import_tests
         $sc = new sql_creator();
         $imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
 
-        $t->subheader('Import unit tests');
+        // start the test section (ts)
+        $ts = 'unit import ';
+        $t->header($ts);
 
         $test_name = 'YAML import word count';
         $yaml_str = file_get_contents(test_files::SYSTEM_CONFIG_SAMPLE);
@@ -103,7 +105,7 @@ class import_tests
         $target = 'Unknown element test';
         $t->assert($test_name, $result->get_last_message(), $target);
 
-        $t->subheader('Convert unit tests');
+        $t->subheader($ts . 'convert');
 
         $test_name = 'wikipedia table to zukunft.com JSON string';
         $in_table = file_get_contents(test_files::IMPORT_DEMOCRACY_INDEX_TXT);

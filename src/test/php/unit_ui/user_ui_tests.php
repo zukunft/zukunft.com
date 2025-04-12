@@ -42,10 +42,10 @@ class user_ui_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
-        $html = new html_base();
 
-        $t->subheader('User tests');
+        // start the test section (ts)
+        $ts = 'unit ui html user ';
+        $t->header($ts);
 
         $usr_dsp = new user_dsp();
         $usr_dsp->id = 1;

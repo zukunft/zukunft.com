@@ -43,7 +43,9 @@ class reference_ui_tests
         global $usr;
         $html = new html_base();
 
-        $t->subheader('reference tests');
+        // start the test section (ts)
+        $ts = 'unit ui html reference ';
+        $t->header($ts);
 
         $ref = new ref_dsp($t->reference()->api_json());
         $test_page = $html->text_h2('reference display test');

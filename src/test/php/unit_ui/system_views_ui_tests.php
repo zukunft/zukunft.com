@@ -47,7 +47,9 @@ class system_views_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('System view tests');
+        // start the test section (ts)
+        $ts = 'unit ui html system view ';
+        $t->header($ts);
 
         // test the type list display functions
         $test_page = $html->text_h2('add word');

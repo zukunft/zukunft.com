@@ -55,9 +55,11 @@ class term_tests
         $t->name = 'term->';
         $t->resource_path = 'db/term/';
 
-        $t->header('term unit tests');
+        // start the test section (ts)
+        $ts = 'unit term ';
+        $t->header($ts);
 
-        $t->subheader('Set and get of the grouped object tests');
+        $t->subheader($ts . 'set and get of the grouped object');
 
         $wrd = $t->word();
         $trm = $wrd->term();
@@ -80,12 +82,12 @@ class term_tests
         $t->assert($t->name . 'verb name', $trm->name(), $vrb->name());
 
 
-        $t->subheader('Term SQL setup statements');
+        $t->subheader($ts . 'sql setup');
         $trm = $t->term();
         $t->assert_sql_view_create($trm);
 
 
-        $t->subheader('SQL statement tests');
+        $t->subheader($ts . 'sql query');
 
         // check the creation of the prepared sql statements to load a term by id or name
         // TODO use assert_load_sql_id for all objects
@@ -95,7 +97,7 @@ class term_tests
         $t->assert_sql_by_name($sc, $trm);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $trm = $t->term();
         $t->assert_api_to_dsp($trm, new term_dsp());

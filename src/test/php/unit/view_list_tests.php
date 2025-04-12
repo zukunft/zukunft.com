@@ -53,9 +53,11 @@ class view_list_tests
         $t->name = 'view_list->';
         $t->resource_path = 'db/view/';
 
-        $t->header('view list unit tests');
+        // start the test section (ts)
+        $ts = 'unit view list ';
+        $t->header($ts);
 
-        $t->subheader('Database query creation tests');
+        $t->subheader($ts . 'database query creation');
 
         // load the system views
         $sys_dsp_lst = new view_sys_list($usr);
@@ -70,7 +72,7 @@ class view_list_tests
         $this->assert_sql_by_component_id($t, $db_con, $msk_lst);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
         $json_file = 'unit/view/view_list.json';
         $t->assert_json_file(new view_list($usr), $json_file);
 

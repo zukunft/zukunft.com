@@ -53,9 +53,11 @@ class element_tests
         $t->name = 'element->';
         $t->resource_path = 'db/element/';
 
-        $t->header('element unit tests');
+        // start the test section (ts)
+        $ts = 'unit element ';
+        $t->header($ts);
 
-        $t->subheader('element sql setup');
+        $t->subheader($ts . 'element sql setup');
         $elm_typ = new element_type('');
         $t->assert_sql_table_create($elm_typ);
         $t->assert_sql_index_create($elm_typ);
@@ -64,12 +66,12 @@ class element_tests
         $t->assert_sql_index_create($elm);
         $t->assert_sql_foreign_key_create($elm);
 
-        $t->subheader('formula sql read');
+        $t->subheader($ts . 'formula sql read');
 
         $elm = $t->element();
         $t->assert_sql_by_id($sc, $elm);
 
-        $t->subheader('element sql write (no log needed because log is done by the formula)');
+        $t->subheader($ts . 'element sql write (no log needed because log is done by the formula)');
         // TODO activate db write
         //$t->assert_sql_insert($sc, $elm);
         //$t->assert_sql_insert($sc, $elm, [sql_type::USER]);
@@ -81,7 +83,7 @@ class element_tests
         //$t->assert_sql_delete($sc, $elm, [sql_type::USER]);
 
 
-        $t->subheader('element api unit tests');
+        $t->subheader($ts . 'element api');
         $elm = $t->element();
         $t->assert_api_json($elm);
 

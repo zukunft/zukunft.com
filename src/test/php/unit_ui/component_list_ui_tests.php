@@ -45,7 +45,9 @@ class component_list_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('component list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html component list ';
+        $t->header($ts);
 
         // test the component list display functions
         $lst = new component_list_dsp($t->component_list()->api_json());

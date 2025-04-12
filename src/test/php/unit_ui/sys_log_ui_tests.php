@@ -48,7 +48,9 @@ class sys_log_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('system log display unit tests');
+        // start the test section (ts)
+        $ts = 'unit ui html system log ';
+        $t->header($ts);
 
         // test the system log html display functions
         $test_page = $html->text_h2('system log display test');

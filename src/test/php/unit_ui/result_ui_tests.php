@@ -45,7 +45,9 @@ class result_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('result tests');
+        // start the test section (ts)
+        $ts = 'unit ui html result ';
+        $t->header($ts);
 
         $api_json = $t->result_simple()->api_json([api_type::TEST_MODE, api_type::INCL_PHRASES]);
         $res = new result_dsp($api_json);

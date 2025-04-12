@@ -47,7 +47,9 @@ class value_list_ui_tests
         global $usr;
         $html = new html_base();
 
-        $t->subheader('Value list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html value list ';
+        $t->header($ts);
 
         // create a test set of phrase
         $phr_inhabitant = $t->word_inhabitant()->phrase();

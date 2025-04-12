@@ -42,7 +42,9 @@ class verb_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('Verb tests');
+        // start the test section (ts)
+        $ts = 'unit ui html verb list ';
+        $t->header($ts);
 
         $vrb = new verb($t->verb()->api_json());
         $test_page = $html->text_h2('Verb display test');

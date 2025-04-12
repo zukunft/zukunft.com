@@ -51,9 +51,11 @@ class group_list_tests
         $t->name = 'group_list->';
         $t->resource_path = 'db/group/';
 
-        $t->header('Unit tests of the phrase group list class (src/main/php/model/group/group_list.php)');
+        // start the test section (ts)
+        $ts = 'unit group list ';
+        $t->header($ts);
 
-        $t->subheader('Database query creation tests');
+        $t->subheader($ts . 'database query creation');
 
         // load by triple ids
         $grp_lst = new group_list($usr);

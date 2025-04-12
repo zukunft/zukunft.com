@@ -52,10 +52,11 @@ class component_list_tests
         $t->name = 'component_list->';
         $t->resource_path = 'db/component/';
 
-        $t->header('component list unit tests');
+        // start the test section (ts)
+        $ts = 'unit component list ';
+        $t->header($ts);
 
-
-        $t->subheader('Database query creation tests');
+        $t->subheader($ts . 'database query creation');
 
         // load only the names
         $phr_lst = new component_list($usr);

@@ -53,10 +53,11 @@ class element_list_tests
         $t->resource_path = 'db/element/';
         $elm_lst = new element_list($t->usr1);
 
+        // start the test section (ts)
+        $ts = 'unit element list ';
+        $t->header($ts);
 
-        $t->header('element list unit tests');
-
-        $t->subheader('load tests');
+        $t->subheader($ts . 'load');
 
         $test_name = 'sql to load all elements of one formula';
         $frm = $t->formula();

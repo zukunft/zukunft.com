@@ -43,7 +43,9 @@ class math_tests
 {
     function run(test_cleanup $t): void
     {
-        $t->header('Test the internal math function (which should be replaced by REST R-Project call)');
+        // start the test section (ts)
+        $ts = 'unit math ';
+        $t->header($ts);
 
         // init
         $calc = new math();
@@ -51,29 +53,29 @@ class math_tests
         // test bracket finding
         $math_text = "(2 - 1) * 2";
         $result = $calc->has_bracket($math_text);
-        $t->assert('math has bracket in "' . $math_text . '"', $result, true);
+        $t->assert($ts . 'has bracket in "' . $math_text . '"', $result, true);
 
         // test bracket execute
         $math_text = "(3 - 1) * 2";
         $result = $calc->math_bracket($math_text);
-        $t->assert('math execute bracket in "' . $math_text . '"', $result, "2 * 2");
+        $t->assert($ts . 'execute bracket in "' . $math_text . '"', $result, "2 * 2");
 
         // test simple calc
-        $t->assert('math calc plus "2 + 2"', $calc->parse("2 + 2"), 4);
-        $t->assert('math calc minus "3 - 1"', $calc->parse("3 - 1"), 2);
-        $t->assert('math calc mul "3 * 2"', $calc->parse("3 * 2"), 6);
-        $t->assert('math calc div "4 / 2"', $calc->parse("4 / 2"), 2);
+        $t->assert($ts . 'calc plus "2 + 2"', $calc->parse("2 + 2"), 4);
+        $t->assert($ts . 'calc minus "3 - 1"', $calc->parse("3 - 1"), 2);
+        $t->assert($ts . 'calc mul "3 * 2"', $calc->parse("3 * 2"), 6);
+        $t->assert($ts . 'calc div "4 / 2"', $calc->parse("4 / 2"), 2);
 
         // test add/minus bracket rules
         $math_text = "(-10744--10744)/-10744";
         $target = 0;
         $result = $calc->parse($math_text);
-        $t->assert('math test add bracket rule with "' . $math_text . '"', $result, $target);
+        $t->assert($ts . 'test add bracket rule with "' . $math_text . '"', $result, $target);
 
         // test multiply bracket rules
         $math_text = "(2 - 1) * 2";
         $result = $calc->parse($math_text);
-        $t->assert('math test multiply bracket rule with "' . $math_text . '"', $result, 2);
+        $t->assert($ts . 'test multiply bracket rule with "' . $math_text . '"', $result, 2);
 
     }
 

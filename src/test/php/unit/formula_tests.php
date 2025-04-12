@@ -62,20 +62,22 @@ class formula_tests
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
 
-        $t->header('formula unit tests');
+        // start the test section (ts)
+        $ts = 'unit formula ';
+        $t->header($ts);
 
-        $t->subheader('formula sql setup');
+        $t->subheader($ts . 'sql setup');
         $frm = $t->formula();
         $t->assert_sql_table_create($frm);
         $t->assert_sql_index_create($frm);
         $t->assert_sql_foreign_key_create($frm);
 
-        $t->subheader('formula sql read');
+        $t->subheader($ts . 'sql read');
         $frm = new formula($usr);
         $t->assert_sql_by_id($sc, $frm);
         $t->assert_sql_by_name($sc, $frm);
 
-        $t->subheader('formula sql read default and user changes by id');
+        $t->subheader($ts . 'sql read default and user changes by id');
         $frm = new formula($usr);
         $frm->set_id(formulas::SCALE_HOUR_ID);
         $t->assert_sql_standard($sc, $frm);
@@ -83,12 +85,12 @@ class formula_tests
         $t->assert_sql_user_changes($sc, $frm);
         $this->assert_sql_user_changes_frm($t, $frm);
 
-        $t->subheader('formula sql read default by name');
+        $t->subheader($ts . 'sql read default by name');
         $frm = new formula($usr);
         $frm->set_name(formulas::SCALE_MIO_EXP);
         $t->assert_sql_standard($sc, $frm);
 
-        $t->subheader('formula sql write insert');
+        $t->subheader($ts . 'sql write insert');
         $frm = $t->formula_name_only();
         $t->assert_sql_insert($sc, $frm);
         $t->assert_sql_insert($sc, $frm, [sql_type::USER]);
@@ -100,7 +102,7 @@ class formula_tests
         $frm = $t->formula_filled();
         $t->assert_sql_insert($sc, $frm, [sql_type::LOG]);
 
-        $t->subheader('formula sql write update');
+        $t->subheader($ts . 'sql write update');
         $frm = $t->formula_name_only();
         $frm_renamed = $frm->cloned(formulas::SYSTEM_TEXT_RENAMED);
         $t->assert_sql_update($sc, $frm_renamed, $frm);
@@ -108,33 +110,33 @@ class formula_tests
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG]);
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('formula sql write delete');
+        $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $frm);
         $t->assert_sql_delete($sc, $frm, [sql_type::USER]);
         $t->assert_sql_delete($sc, $frm, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $frm, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('formula base object handling');
+        $t->subheader($ts . 'base object handling');
         $frm = $t->formula_filled();
         $t->assert_reset($frm);
 
-        $t->subheader('formula api unit tests');
+        $t->subheader($ts . 'api');
         $frm = $t->formula_filled();
         $t->assert_api_json($frm);
         $frm->include();
         $t->assert_api($frm, 'formula_body');
 
-        $t->subheader('formula frontend unit tests');
+        $t->subheader($ts . 'frontend');
         $frm = $t->formula();
         $t->assert_api_to_dsp($frm, new formula_dsp());
 
-        $t->subheader('formula im- and export unit tests');
+        $t->subheader($ts . 'im- and export');
         $t->assert_ex_and_import($t->formula());
         $t->assert_ex_and_import($t->formula_filled());
         $json_file = 'unit/formula/scale_second_to_minute.json';
         $t->assert_json_file(new formula($usr), $json_file);
 
-        $t->subheader('Expression tests');
+        $t->subheader($ts . 'expression');
 
         $test_name = 'formula increase expression';
         $frm = $t->formula_increase();
@@ -224,8 +226,8 @@ class formula_tests
 
 
         // TODO activate
-        //$t->assert_true('formula with at least one predefined formula', $t->formula_increase()->is_special());
-        $t->assert_false('formula without predefined formula', $t->formula()->is_special());
+        //$t->assert_true($ts . 'with at least one predefined formula', $t->formula_increase()->is_special());
+        $t->assert_false($ts . 'without predefined formula', $t->formula()->is_special());
 
         // get the id of the phrases that should be added to the result based on the formula reference text
         $target = new phrase_list($usr);

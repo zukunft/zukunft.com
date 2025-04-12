@@ -53,7 +53,9 @@ class user_list_tests
         $t->name = 'user_list->';
         $t->resource_path = 'db/user/';
 
-        $t->header('Unit tests of the user list class (src/main/php/model/user/user_list.php)');
+        // start the test section (ts)
+        $ts = 'unit user list ';
+        $t->header($ts);
 
         /*
          * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
@@ -67,12 +69,12 @@ class user_list_tests
         $this->assert_sql_by_profile_and_higher($t, $db_con, $usr_lst);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
 
         // $t->assert_json_file(new value_list($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         //$trp_lst = $t->dummy_value_list();
         //$t->assert_api_to_dsp($trp_lst, new value_list_dsp());

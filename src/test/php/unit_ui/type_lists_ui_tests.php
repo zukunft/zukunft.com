@@ -64,7 +64,9 @@ class type_lists_ui_tests
 
         $html = new html_base();
 
-        $t->Header('Test the HTML functions for the list preloaded in the Frontend');
+        // start the test section (ts)
+        $ts = 'unit ui html preloaded lists ';
+        $t->header($ts);
 
         // load the types from the api message
         $api_msg = $t->type_lists_api($t->usr1);

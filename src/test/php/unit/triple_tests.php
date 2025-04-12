@@ -26,33 +26,35 @@ class triple_tests
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
 
-        $t->header('triple unit tests');
+        // start the test section (ts)
+        $ts = 'unit triple ';
+        $t->header($ts);
 
-        $t->subheader('triple sql setup');
+        $t->subheader($ts . 'sql setup');
         $trp = $t->triple();
         $t->assert_sql_table_create($trp);
         $t->assert_sql_index_create($trp);
         $t->assert_sql_foreign_key_create($trp);
 
-        $t->subheader('triple sql read');
+        $t->subheader($ts . 'sql read');
         $trp = new triple($usr);
         $t->assert_sql_by_id($sc, $trp);
         $t->assert_sql_by_name($sc, $trp);
         $t->assert_sql_by_link($sc, $trp);
         $this->assert_sql_by_name_generated($sc, $trp, $t);
 
-        $t->subheader('triple sql read standard and user changes by id');
+        $t->subheader($ts . 'sql read standard and user changes by id');
         $trp = new triple($usr);
         $trp->set_id(2);
         $t->assert_sql_standard($sc, $trp);
         $t->assert_sql_user_changes($sc, $trp);
 
-        $t->subheader('triple sql read standard by name');
+        $t->subheader($ts . 'sql read standard by name');
         $trp = new triple($usr);
         $trp->set_name(triples::PI);
         $t->assert_sql_standard($sc, $trp);
 
-        $t->subheader('triple sql write insert');
+        $t->subheader($ts . 'sql write insert');
         $trp = $t->triple();
         $t->assert_sql_insert($sc, $trp);
         $t->assert_sql_insert($sc, $trp, [sql_type::USER]);
@@ -65,7 +67,7 @@ class triple_tests
         $trp_excl->set_type('');
         $t->assert_sql_insert($sc, $trp_excl, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('triple sql write update');
+        $t->subheader($ts . 'sql write update');
         $trp_renamed = $trp->cloned_named(words::TEST_RENAMED);
         $t->assert_sql_update($sc, $trp_renamed, $trp);
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::USER]);
@@ -73,7 +75,7 @@ class triple_tests
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_update($sc, $trp_excl, $trp, [sql_type::LOG]);
 
-        $t->subheader('triple sql delete');
+        $t->subheader($ts . 'sql delete');
         // TODO activate db write
         $t->assert_sql_delete($sc, $trp);
         $t->assert_sql_delete($sc, $trp, [sql_type::USER]);
@@ -82,20 +84,20 @@ class triple_tests
         $t->assert_sql_delete($sc, $trp, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $trp, [sql_type::USER, sql_type::EXCLUDE]);
 
-        $t->subheader('view base object handling');
+        $t->subheader($ts . 'view base object handling');
         $trp = $t->triple_filled_add();
         $t->assert_reset($trp);
 
-        $t->subheader('triple api unit tests');
+        $t->subheader($ts . 'api');
         $trp = $t->triple();
         $t->assert_api_json($trp);
         $t->assert_api($trp);
 
-        $t->subheader('triple frontend unit tests');
+        $t->subheader($ts . 'frontend');
         $trp = $t->triple_pi();
         $t->assert_api_to_dsp($trp, new triple_dsp());
 
-        $t->subheader('triple import and export tests');
+        $t->subheader($ts . 'import and export');
         $t->assert_ex_and_import($t->triple());
         $t->assert_ex_and_import($t->triple_filled_add());
         $json_file = 'unit/triple/pi.json';

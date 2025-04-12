@@ -67,21 +67,23 @@ class word_tests
         $t->name = 'word->';
         $t->resource_path = 'db/word/';
 
-        $t->header('word unit tests');
+        // start the test section (ts)
+        $ts = 'unit word ';
+        $t->header($ts);
 
-        $t->subheader('word sql setup');
+        $t->subheader($ts . 'sql setup');
         $wrd = $t->word();
         $t->assert_sql_table_create($wrd);
         $t->assert_sql_index_create($wrd);
         $t->assert_sql_foreign_key_create($wrd);
 
-        $t->subheader('word sql read');
+        $t->subheader($ts . 'sql read');
         $wrd = new word($usr);
         $t->assert_sql_by_id($sc, $wrd);
         $t->assert_sql_by_name($sc, $wrd);
         $this->assert_sql_formula_name($t, $sc, $wrd);
 
-        $t->subheader('word sql read default and user changes');
+        $t->subheader($ts . 'sql read default and user changes');
         $wrd = new word($usr);
         $wrd->set_id(words::CONST_ID);
         $t->assert_sql_standard($sc, $wrd);
@@ -90,21 +92,21 @@ class word_tests
         $t->assert_sql_changing_users($sc, $wrd);
         $this->assert_sql_view($t, $wrd);
 
-        $t->subheader('word sql write insert');
+        $t->subheader($ts . 'sql write insert');
         $wrd = $t->word();
         $t->assert_sql_insert($sc, $wrd);
         $t->assert_sql_insert($sc, $wrd, [sql_type::USER]);
         $t->assert_sql_insert($sc, $wrd, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $wrd, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('word sql write update');
+        $t->subheader($ts . 'sql write update');
         $wrd_renamed = $wrd->cloned(words::TEST_RENAMED);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::USER]);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG]);
         $t->assert_sql_update($sc, $wrd_renamed, $wrd, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('word sql write update failed cases e.g. description update');
+        $t->subheader($ts . 'sql write update failed cases e.g. description update');
         $wrd = $t->word();
         $wrd->description = words::MATH_COM;
         $wrd_updated = $t->word();
@@ -114,12 +116,12 @@ class word_tests
         $wrd_updated->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $t->assert_sql_update($sc, $wrd_updated, $wrd, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('word sql write update of all fields changed');
+        $t->subheader($ts . 'sql write update of all fields changed');
         $wrd_filled = $t->word_filled();
         $wrd_renamed->set_id($wrd->id());
         $t->assert_sql_update($sc, $wrd_renamed, $wrd_filled, [sql_type::LOG]);
 
-        $t->subheader('word sql write delete');
+        $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $wrd);
         $t->assert_sql_delete($sc, $wrd, [sql_type::USER]);
         $t->assert_sql_delete($sc, $wrd, [sql_type::LOG]);
@@ -127,11 +129,11 @@ class word_tests
         $t->assert_sql_delete($sc, $wrd, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $wrd, [sql_type::USER, sql_type::EXCLUDE]);
 
-        $t->subheader('word base object handling');
+        $t->subheader($ts . 'base object handling');
         $wrd = $t->word_filled();
         $t->assert_reset($wrd);
 
-        $t->subheader('word api unit tests');
+        $t->subheader($ts . 'api');
         $wrd = $t->word();
         $t->assert_api_json($wrd);
         $wrd = $t->word_filled();
@@ -141,18 +143,18 @@ class word_tests
         $wrd = $t->word();
         $t->assert_api($wrd, 'word_body');
 
-        $t->subheader('word html frontend unit tests');
+        $t->subheader($ts . 'html frontend');
         $wrd = $t->word();
         $t->assert_api_to_dsp($wrd, new word_dsp());
 
-        $t->subheader('word im- and export unit tests');
+        $t->subheader($ts . 'im- and export');
         // TODO check that all objects have a im and export test
         $t->assert_ex_and_import($t->word());
         $t->assert_ex_and_import($t->word_filled());
         $json_file = 'unit/word/second.json';
         $t->assert_json_file(new word($usr), $json_file);
 
-        $t->subheader('word sync and fill tests');
+        $t->subheader($ts . 'sync and fill');
         $test_name = 'check if the word fill function set all database fields';
         $wrd_imp = $t->word_filled();
         $wrd_db = $t->word();

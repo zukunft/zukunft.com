@@ -422,9 +422,9 @@ class test_base
     function header(string $header_text): void
     {
         if ($this->format == format::TEXT) {
-            echo $header_text . "\n";
+            echo $this->time_stamp() . $header_text . "\n";
         } else {
-            echo '<br><br><h2>' . $header_text . '</h2><br>' . "\n";
+            echo '<br><br><h2>' . $this->time_stamp() . $header_text . '</h2><br>' . "\n";
         }
     }
 
@@ -434,10 +434,15 @@ class test_base
     function subheader(string $header_text): void
     {
         if ($this->format == format::TEXT) {
-            echo $header_text . "\n";
+            echo $this->time_stamp() . $header_text . "\n";
         } else {
-            echo '<br><h3>' . $header_text . '</h3><br>' . "\n";
+            echo '<br><h3>' . $this->time_stamp() . $header_text . '</h3><br>' . "\n";
         }
+    }
+
+    private function time_stamp(): string
+    {
+        return sprintf('%08.4f', microtime(true) - $this->start_time, 4) . ' ';
     }
 
     /**
@@ -3368,6 +3373,7 @@ class test_base
 
         // show the execution time
         if ($final_msg != '') {
+            $final_msg = $this->time_stamp() . $final_msg;
             $final_msg .= ', took ';
             $final_msg .= round($since_start, 4) . ' seconds';
 

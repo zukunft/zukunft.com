@@ -71,7 +71,7 @@ if ($start_usr->id() > 0) {
         // init tests
         $errors = 0;
         $t = new all_tests();
-        $t->header('Run selected zukunft.com tests');
+        $t->header('Start zukunft.com unit tests');
 
         // run a list of selected tests
         $t->run_unit();

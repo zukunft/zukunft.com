@@ -58,10 +58,11 @@ class figure_list_tests
         $t->resource_path = 'db/figure/';
         $json_file = 'unit/figure/figure_list_import.json';
 
+        // start the test section (ts)
+        $ts = 'unit figure list ';
+        $t->header($ts);
 
-        $t->header('figure list unit tests');
-
-        $t->subheader('SQL statement creation tests');
+        $t->subheader($ts . 'sql statement');
 
         // load by figure ids
         $test_name = 'load figures by ids';
@@ -69,14 +70,14 @@ class figure_list_tests
         $t->assert_sql_by_ids($test_name, $sc, $fig_lst, new fig_ids([1, -1]));
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $fig_lst = $t->figure_list();
         $t->assert_api($fig_lst, 'figure_list_without_phrases');
         $t->assert_api($fig_lst, 'figure_list_with_phrases', [api_type::INCL_PHRASES]);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $fig_lst = $t->figure_list();
         $t->assert_api_to_dsp($fig_lst, new figure_list_dsp());

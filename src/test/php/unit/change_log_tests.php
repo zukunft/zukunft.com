@@ -81,62 +81,63 @@ class change_log_tests
         $t->resource_path = 'db/log/';
 
 
-        $t->header('log unit tests');
+        $ts = 'unit log ';
+        $t->header($ts);
 
-        $t->subheader('log action sql setup');
+        $t->subheader($ts . 'action sql setup');
         $act = new change_action('');
         $t->assert_sql_table_create($act);
         $t->assert_sql_index_create($act);
 
-        $t->subheader('log table sql setup');
+        $t->subheader($ts . 'table sql setup');
         $tbl = new change_table('');
         $t->assert_sql_table_create($tbl);
         $t->assert_sql_index_create($tbl);
 
-        $t->subheader('log field sql setup');
+        $t->subheader($ts . 'field sql setup');
         $fld = new change_field('');
         $t->assert_sql_table_create($fld);
         $t->assert_sql_index_create($fld);
         $t->assert_sql_foreign_key_create($fld);
 
-        $t->subheader('log table field view sql setup');
+        $t->subheader($ts . 'table field view sql setup');
         $tbl_fld = new change_table_field();
         $t->assert_sql_view_link_create($tbl_fld);
 
-        $t->subheader('log named sql setup');
+        $t->subheader($ts . 'named sql setup');
         $log = $t->change_log_named();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
         // TODO add auto increment test for all mysql tables
 
-        $t->subheader('log group name sql setup for values related to up to 16 phrases');
+        $t->subheader($ts . 'group name sql setup for values related to up to 16 phrases');
         $log = $t->change_log_norm();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
 
-        $t->subheader('log group name sql setup for values related to more than 16 phrases');
+        $t->subheader($ts . 'group name sql setup for values related to more than 16 phrases');
         $log = $t->change_log_big();
         $t->assert_sql_table_create($log);
         $t->assert_sql_index_create($log);
         $t->assert_sql_foreign_key_create($log);
 
         foreach (change_log::LOG_CLASSES as $class) {
-            $t->subheader('log ' . $lib->class_to_name($class) . ' sql setup');
+            $t->subheader($ts . '' . $lib->class_to_name($class) . ' sql setup');
             $log = $t->log_obj_from_class($class);
             $t->assert_sql_table_create($log);
             $t->assert_sql_index_create($log);
             $t->assert_sql_foreign_key_create($log);
         }
 
-        $t->subheader('log link sql setup');
+        $t->subheader($ts . 'link sql setup');
         $log_lnk = $t->change_log_link();
         $t->assert_sql_table_create($log_lnk);
         $t->assert_sql_index_create($log_lnk);
         $t->assert_sql_foreign_key_create($log_lnk);
 
-        $t->subheader('log named sql write');
+        $t->subheader($ts . 'named sql write');
         $log = $t->change_log_named();
         $t->assert_sql_insert($sc, $log);
         $t->assert_sql_insert($sc, $log, [sql_type::SUB]);
@@ -155,7 +156,7 @@ class change_log_tests
         $log = $t->change_log_big();
         $t->assert_sql_insert($sc, $log);
 
-        $t->subheader('log value sql write');
+        $t->subheader($ts . 'value sql write');
         $log_val = $t->change_log_value();
         $t->assert_sql_insert($sc, $log_val);
         $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
@@ -170,18 +171,18 @@ class change_log_tests
         $t->assert_sql_insert($sc, $log_val);
         $t->assert_sql_insert($sc, $log_val, [sql_type::SUB]);
 
-        $t->subheader('log link sql write');
+        $t->subheader($ts . 'link sql write');
         $log_lnk = $t->change_log_link();
         $t->assert_sql_insert($sc, $log_lnk);
         $t->assert_sql_insert($sc, $log_lnk, [sql_type::SUB]);
 
-        $t->subheader('log load by user');
+        $t->subheader($ts . 'load by user');
         $log = new change($usr);
         $t->assert_sql_by_user($sc, $log);
         $log = new change_link($usr);
         $t->assert_sql_by_user($sc, $log);
 
-        $t->subheader('log load list');
+        $t->subheader($ts . 'load list');
         $log_lst = new change_log_list();
         // TODO activate
         //$t->assert_sql_by_user($sc, $log_lst);
@@ -229,7 +230,7 @@ class change_log_tests
         $log = new change_link($usr);
         $this->assert_sql_link_by_table($t, $db_con, $log);
 
-        $t->subheader('SQL list statement tests');
+        $t->subheader($ts . 'sql list statement');
 
         // prepare the objects for the tests
         $wrd = $t->word();
@@ -237,7 +238,7 @@ class change_log_tests
         $trp->set(1, triples::PI);
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $log_lst = $t->change_log_list_named();
         $t->assert_api($log_lst);

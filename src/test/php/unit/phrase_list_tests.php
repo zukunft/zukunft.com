@@ -73,10 +73,11 @@ class phrase_list_tests
         $t->name = 'phrase_list->';
         $t->resource_path = 'db/phrase/';
 
-        $t->header('phrase list unit tests');
+        // start the test section (ts)
+        $ts = 'unit phrase list ';
+        $t->header($ts);
 
-
-        $t->subheader('Cast tests');
+        $t->subheader($ts . 'cast');
 
         $phr_lst = $this->get_phrase_list();
         $trm_lst = $phr_lst->term_list();
@@ -84,7 +85,7 @@ class phrase_list_tests
         $t->assert('cast phrase list to term list', $phr_lst->dsp_name(), $trm_lst->dsp_name());
 
 
-        $t->subheader('SQL statement creation tests');
+        $t->subheader($ts . 'sql statement creation');
 
         // load by name pattern (expected to be most often used)
         $phr_lst = new phrase_list($usr);
@@ -116,7 +117,7 @@ class phrase_list_tests
         //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
 
 
-        $t->subheader('Selection tests');
+        $t->subheader($ts . 'selection');
 
         // check that a time phrase is correctly removed from a phrase list
         $phr_lst = $this->get_phrase_list();
@@ -135,7 +136,7 @@ class phrase_list_tests
         // TODO add assume time sql statement test
 
 
-        $t->subheader('FOAF unit tests');
+        $t->subheader($ts . 'FOAF');
 
         $test_name = 'test the verb "are" by getting the phrases that are a city';
         $wrd_city = $t->word_city();
@@ -145,13 +146,13 @@ class phrase_list_tests
         //$t->assert_contains($test_name, $city_lst->names(), $target->names());
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $phr_lst = $t->phrase_list();
         $t->assert_api($phr_lst);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $phr_lst = $t->phrase_list();
         $t->assert_api_to_dsp($phr_lst, new phrase_list_dsp());
@@ -165,7 +166,7 @@ class phrase_list_tests
 
 
 
-        $t->subheader('Combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');
+        $t->subheader($ts . 'combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');
 
     }
 

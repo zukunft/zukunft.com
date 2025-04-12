@@ -55,20 +55,21 @@ class verb_tests
         $t->name = 'verb->';
         $t->resource_path = 'db/verb/';
 
-
-        $t->header('verb unit tests');
+        // start the test section (ts)
+        $ts = 'unit verb ';
+        $t->header($ts);
+        
+        $t->subheader($ts . 'sql setup');
         $vrb = new verb();
-
-        $t->subheader('verb sql setup');
         $t->assert_sql_table_create($vrb);
         $t->assert_sql_index_create($vrb);
 
-        $t->subheader('verb sql read');
+        $t->subheader($ts . 'sql read');
         $t->assert_sql_by_id($sc, $vrb);
         $t->assert_sql_by_name($sc, $vrb);
         $t->assert_sql_by_code_id($sc, $vrb);
 
-        $t->subheader('verb sql write');
+        $t->subheader($ts . 'sql write');
         // TODO activate db write
         //$t->assert_sql_insert($sc, $vrb);
         // TODO activate db write
@@ -77,7 +78,7 @@ class verb_tests
         //$t->assert_sql_delete($sc, $vrb);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
 
         $vrb = new verb();
         // set the admin user if this is needed for the import e.g. for verbs
@@ -86,15 +87,16 @@ class verb_tests
         $t->assert_json_file($vrb, $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $vrb = $t->verb();
         $t->assert_api_to_dsp($vrb, new verb_dsp());
 
+        // start the test section (ts)
+        $ts = 'unit verb list ';
+        $t->header($ts);
 
-        $t->header('Unit tests of the verb list class (src/main/php/model/verb/verb_list.php)');
-
-        $t->subheader('SQL statement tests');
+        $t->subheader($ts . 'sql statement');
 
         // sql to load a list with all verbs
         $vrb_lst = new verb_list($usr);
