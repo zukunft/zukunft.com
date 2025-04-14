@@ -1054,6 +1054,16 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return verb to narrow a selection
+     */
+    function verb_of(): verb
+    {
+        $vrb = new verb(verbs::OF_ID, verbs::OF, verbs::OF);
+        $vrb->set_user($this->usr1);
+        return $vrb;
+    }
+
+    /**
      * @return verb a standard verb with user null
      */
     function verb_with(): verb
@@ -2167,6 +2177,7 @@ class create_test_objects extends test_base
         $lst->add($this->word_this()->term());
         $lst->add($this->word_parts()->term());
         $lst->add($this->word_total()->term());
+        $lst->add($this->verb_of()->term());
         $lst->add($this->verb_with()->term());
         $lst->add($this->word_one()->term());
         $lst->add($this->word_mio()->term());

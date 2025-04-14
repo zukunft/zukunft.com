@@ -233,9 +233,10 @@ class source_list extends sandbox_list_named
      * store all sources from this list in the database using grouped calls of predefined sql functions
      *
      * @param import $imp the import object with the estimate of the total save time
+     * @param float $est_per_sec the expected number of sources that can be updated in the database per second
      * @return user_message
      */
-    function save(import $imp): user_message
+    function save(import $imp, float $est_per_sec = 0.0): user_message
     {
         global $cfg;
 

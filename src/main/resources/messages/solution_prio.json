@@ -79,7 +79,13 @@
       ]
     },
     {
-      "name": "loss"
+      "name": "loss",
+      "refs": [
+        {
+          "name": "Loss",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "percent",
@@ -152,7 +158,62 @@
       "name": "emissions"
     },
     {
-      "name": "populism"
+      "name": "populism",
+      "refs": [
+        {
+          "name": "Populism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q180490",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "right",
+      "refs": [
+        {
+          "name": "Right_(direction)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "left",
+      "refs": [
+        {
+          "name": "Left_(direction)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "wing"
+    },
+    {
+      "name": "simple"
+    },
+    {
+      "name": "ordinary"
+    },
+    {
+      "name": "least"
+    },
+    {
+      "name": "square"
+    },
+    {
+      "name": "OLS"
+    },
+    {
+      "name": "aftermath"
+    },
+    {
+      "name": "5-year"
+    },
+    {
+      "name": "15-year"
     },
     {
       "name": "avoid"
@@ -279,6 +340,9 @@
       "name": "m"
     },
     {
+      "name": "b"
+    },
+    {
       "name": "CHF",
       "type": "measure"
     },
@@ -290,7 +354,13 @@
       "name": "world"
     },
     {
+      "name": "annual"
+    },
+    {
       "name": "GDP"
+    },
+    {
+      "name": "decline"
     },
     {
       "name": "2024"
@@ -364,7 +434,7 @@
     },
     {
       "name": "world population",
-      "from": "Population",
+      "from": "population",
       "verb": "of",
       "to": "human",
       "refs": [
@@ -429,6 +499,12 @@
       "to": "global problem"
     },
     {
+      "name": "GDP decline",
+      "from": "GDP",
+      "verb": "can",
+      "to": "decline"
+    },
+    {
       "from": "poverty",
       "verb": "is a",
       "to": "global problem"
@@ -437,6 +513,36 @@
       "from": "education",
       "verb": "can be",
       "to": "global problem"
+    },
+    {
+      "name": "least squares",
+      "from": "square",
+      "verb": "can be",
+      "to": "least"
+    },
+    {
+      "name": "ordinary least squares",
+      "from": "least squares",
+      "verb": "can be",
+      "to": "ordinary"
+    },
+    {
+      "from": "OLS",
+      "verb": "is symbol for",
+      "to": "ordinary least squares"
+    },
+    {
+      "from": "populism",
+      "verb": "can cause",
+      "to": "GDP decline"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Populist Leaders and the Economy (Kiel Working Paper)",
+      "description": "Journal Article\nPopulist Leaders and the Economy\n\nAmerican Economic Review, 113 (2): 3249-3288 ",
+      "url": "https://www.ifw-kiel.de/fileadmin/Dateiverwaltung/IfW-Publications/fis-import/63738460-817f-4a88-837b-794a7c021251-KWP_2169_update_june_2022.pdf",
+      "type": "pdf"
     }
   ],
   "values": [
@@ -558,6 +664,34 @@
         "GDP"
       ],
       "number": "-13"
+    },
+    {
+      "words": [
+        "populism",
+        "annual",
+        "GDP",
+        "decline",
+        "percent",
+        "5-year",
+        "aftermath",
+        "OLS"
+      ],
+      "number": "-0.97",
+      "source": "Populist Leaders and the Economy (Kiel Working Paper)"
+    },
+    {
+      "words": [
+        "populism",
+        "annual",
+        "GDP",
+        "decline",
+        "percent",
+        "15-year",
+        "aftermath",
+        "OLS"
+      ],
+      "number": "-1.04",
+      "source": "Populist Leaders and the Economy (Kiel Working Paper)"
     }
   ],
   "formulas": [

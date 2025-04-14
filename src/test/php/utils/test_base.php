@@ -334,6 +334,8 @@ class test_base
     // max time expected for each function execution
     const TIMEOUT_LIMIT = 0.03; // time limit for normal functions
     const TIMEOUT_LIMIT_PAGE = 0.1;  // time limit for complete webpage
+    const TIMEOUT_LIMIT_FILE = 0.3;  // time limit for file reading function
+    const TIMEOUT_LIMIT_CALC = 0.5;  // time limit for calculations
     const TIMEOUT_LIMIT_PAGE_SEMI = 0.6;  // time limit for complete webpage
     const TIMEOUT_LIMIT_PAGE_LONG = 1.2;  // time limit for complete webpage
     const TIMEOUT_LIMIT_DB = 0.2;  // time limit for database modification functions

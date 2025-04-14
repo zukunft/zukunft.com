@@ -186,8 +186,8 @@ class all_unit_tests extends test_cleanup
 
             $sys_usr = new user;
             $sys_usr->load_by_id(SYSTEM_USER_ID);
-            $import = new import_file();
-            $import->import_config_yaml($sys_usr);
+            //$import = new import_file();
+            //$import->import_config_yaml($sys_usr);
 
             /*
              * db read testing - run
@@ -198,7 +198,8 @@ class all_unit_tests extends test_cleanup
             // run the selected db write
             //$import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $usr);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
-            $this->file_import(test_files::IMPORT_CURRENCY, $usr);
+            //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
+            $this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);
             //(new triple_read_tests())->run($this);
@@ -217,7 +218,7 @@ class all_unit_tests extends test_cleanup
             // run the selected db write
             //(new word_write_tests)->run($this);
             //(new word_list_write_tests)->run($this);
-            (new triple_write_tests)->run($this);
+            //(new triple_write_tests)->run($this);
             //(new group_write_tests)->run($this);
             //(new source_write_tests)->run($this);
             //(new ref_write_tests)->run($this);

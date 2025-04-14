@@ -349,14 +349,17 @@ class lib_tests
         $t->assert("str_split_for_humans, json", $result, $target);
         */
 
-        // test all expected diff cases:
-        // ... identical string
+        // start the test block (tb)
+        $tb = 'diff_msg ';
+
+        $test_name = $tb . 'identical string -> no diff';
         $test_result = 'Text';
         $test_target = 'Text';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '';
-        $t->assert("diff_msg, no diff", $result, $target);
-        // ... empty result
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'empty result -> no diff';
         $test_result = "";
         $test_target = "1";
         $result = $lib->diff_msg($test_result, $test_target);
@@ -366,19 +369,22 @@ class lib_tests
         } else {
             $target = '//-1//';
         }
-        $t->assert("empty result, no diff", $result, $target);
-        // ... null result
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'null result -> no diff';
         $test_result = null;
         $result = $lib->diff_msg($test_result, $test_target);
         $target = 'The type combination of string and NULL are not expected.';
-        $t->assert("empty result, no diff", $result, $target);
-        // ... empty result array
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'empty result array -> no diff';
         $test_result = [];
         $test_target = ['1'];
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '0//+1//';
-        $t->assert("empty result, no diff", $result, $target);
-        // ... json result to bool
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'json result to bool';
         $test_result = $lib->json_is_similar([1,2], [1]);
         $result = $lib->diff_msg($test_result, true);
         if ($result == '//-1////+//') {
@@ -386,98 +392,114 @@ class lib_tests
         } else {
             $target = '//-1//';
         }
-        $t->assert("empty result, no diff", $result, $target);
-        // ... code text with other beginning
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'code text with other beginning';
         $test_result = 'codeStartingWithMoreCharsText';
         $test_target = 'Text';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '//+codeStartingWithMoreChars//Text';
-        $t->assert("diff_msg, add chars before", $result, $target);
-        // ... string with more at the end
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'string with more at the end';
         $test_result = 'Text with more';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = 'Text//+ with more//';
-        $t->assert("diff_msg, with more at end", $result, $target);
-        // ... string with other beginning
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'string with other beginning';
         $test_result = 'more begin Text';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '//+more begin// Text';
-        $t->assert("diff_msg, add words before", $result, $target);
-        // ... string with different middle part
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'string with different middle part';
         $test_result = 'text add end';
         $test_target = 'text less end';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = 'text//- less////+ add// end';
-        $t->assert("diff_msg, replaced part", $result, $target);
-        // ... string with almost empty result
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'string with almost empty result';
         $test_result = '""';
         $test_target = '"System Test Word Share"';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '//-"System Test Word Share"////+""//';
-        $t->assert("diff_msg, replaced part", $result, $target);
-        // ... string that has caused an error in an earlier version
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'string that has caused an error in an earlier version';
         $test_result = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test View Renamed from System Test View Component';
         $test_target = user::SYSTEM_TEST_PARTNER_NAME . ' ';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = 'zukunft.com system test partner//-////+ unlinked System Test View Renamed from System Test View Component//';
-        $t->assert("diff_msg, replaced part", $result, $target);
-        // ... identical array
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'identical array';
         $test_result = [1, 2, 3];
         $test_target = [1, 2, 3];
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '';
-        $t->assert("diff_msg, no diff in array", $result, $target);
-        // ... html files
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'position in long html files';
         $test_result = $t->file('/web/system/result.html');
         $test_target = $t->file('/web/system/target.html');
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '433//- href="Test" title=""////+ href="/http/word_add.php" title="add new word"//';
-        $t->assert("diff_msg, with position in long html string", $result, $target);
-        // ... short json files
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'json in short json files';
         $test_result = $t->file('/web/system/result_short.json');
         $test_target = $t->file('/web/system/target_short.json');
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '95//+//';
-        $t->assert("diff_msg, json in long string", $result, $target);
-        // ... json files
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'json in json files';
         $test_result = json_decode($t->file('/web/system/result.json'), true);
         $test_target = json_decode($t->file('/web/system/target.json'), true);
         $result = $lib->diff_msg($test_result, $test_target);
         $target = 'pos  5: pos  20: 64//-{"id":65,"code_id":"18excluded","name":"18excluded","comment":""}//, 65//-{"id":66,"code_id":"14excluded","name":"14excluded","comment":""}// ... and 1 more';
-        $t->assert("diff_msg, json in long string", $result, $target);
-        // ... sql files
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'sql files';
         $test_result = $t->file('/web/system/result.sql');
         $test_target = $t->file('/web/system/target.sql');
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '165//-,s.phrase_type_id,l.verb_id////+,
             s.from_phrase_id,
             s.verb_id//931//- LEFT// and 147 more';
-        $t->assert("diff_msg, sql in long string", $result, $target);
-        // ... sql files
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'long sql files';
         $test_result = $t->file('/web/system/result_long.sql');
         $test_target = $t->file('/web/system/target_long.sql');
         $result = $lib->diff_msg($test_result, $test_target);
         $target = "6185//- values';////+ values numeric value';//8843//+ phrases numeric value'; COMMENT ON COLUMN user_values_big.user_id// and 8093 more";
-        $t->assert("diff_msg, sql in long string", $result, $target);
-        // html array size
+        // TODO speed up
+        $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_FILE);
+
+        $test_name = $tb . 'with position in long html string';
         $test_result = '<a href="/http/result_edit.php?id=12&back=1" title="1.55">1.55</a>';
         $test_target = '<a href="/http/value_edit.php?id=12&back=1" title="1.55">1.55</a>';
         $result = $lib->str_diff($test_result, $test_target);
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '<a href="/http///-value////+result//_edit.php?id=12&back=1" title="1.55">1.55</a>';
-        $t->assert("diff_msg, with position in long html string", $result, $target);
-        // json string
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'with position in short json string';
         $test_result = '{"user_id":2,"sys_log":[{"id":1,"user":"zukunft.com system test"},{"id":2,"user":"zukunft.com system test"}]}';
         $test_target = '{"user_id":3,"sys_log":[{"id":1,"user":"zukunft.com system test"},{"id":2,"user":"zukunft.com system test"}]}';
         $result = $lib->str_diff($test_result, $test_target);
         $target = '//-2zukunft.com system test////+31,zukunft.com system test,2,zukunft.com system test//';
-        $t->assert("diff_msg, with position in long html string", $result, $target);
-        // json string
+        $t->assert($test_name, $result, $target);
+
+        $test_name = $tb . 'with position in long json string';
         $test_result = '{"id":1,"time":"2023-01-03T20:59:59+00:00","user_id":0,"text":"the log text that describes the problem for the user or system admin","status":2,"trace":"the technical trace back description for debugging","prg_part":"name of the function that has caused the exception","owner":0}';
         $test_target = '{"id":1,"time":"2023-01-03 20:59:59","user":"zukunft.com system test","text":"the log text that describes the problem for the user or system admin","description":null,"trace":"the technical trace back description for debugging","prg_part":"name of the function that has caused the exception","owner":"","status":"2"}';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = '2//-2023-01-03 20:59:59zukunft.com system test////+2023-01-03T20:59:59+00:000//96//-////+2//197//-2////+0//';
-        $t->assert("diff_msg, with position in long html string", $result, $target);
+        $t->assert($test_name, $result, $target);
 
 
         $t->subheader($ts . 'json');

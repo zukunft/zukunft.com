@@ -979,10 +979,12 @@ class import
 
         $lib = new library();
         if ($nbr > 0) {
-            $part = $lib->class_to_table($this->class) . ' ' . $step . ': ' . $nbr;
             $this->display_progress($nbr, $est_per_sec);
             $expected_time = $nbr / $est_per_sec;
             $real_time = $end_time - $this->start_time;
+            $name = $mtr->txt($this->msg_id) . ' ' . basename($this->file_name);
+            $part = $lib->class_to_table($this->class) . ' ' . $step . ': ' . $nbr;
+            echo $name . ' ' . $part . "\n";
         }
     }
 

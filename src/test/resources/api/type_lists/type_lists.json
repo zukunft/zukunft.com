@@ -6457,6 +6457,17 @@
         "id": 3
       },
       {
+        "name": "of",
+        "code_id": "of",
+        "description": "to narrow a selection e.g. the world population is usually the population of all humans",
+        "plural": "of",
+        "reverse": "of",
+        "rev_plural": "of",
+        "frm_name": null,
+        "usage": 0,
+        "id": 4
+      },
+      {
         "name": "with",
         "code_id": "with",
         "description": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load",
@@ -6465,7 +6476,7 @@
         "rev_plural": null,
         "frm_name": null,
         "usage": 0,
-        "id": 4
+        "id": 5
       },
       {
         "name": "has a",
@@ -6476,7 +6487,7 @@
         "rev_plural": "is used for",
         "frm_name": null,
         "usage": 0,
-        "id": 5
+        "id": 6
       },
       {
         "name": "is time jump for",
@@ -6487,7 +6498,7 @@
         "rev_plural": "have the default time jump",
         "frm_name": "time jump",
         "usage": 0,
-        "id": 6
+        "id": 7
       },
       {
         "name": "is term jump for",
@@ -6498,7 +6509,7 @@
         "rev_plural": null,
         "frm_name": null,
         "usage": 0,
-        "id": 7
+        "id": 8
       },
       {
         "name": "term type needed",
@@ -6509,7 +6520,7 @@
         "rev_plural": null,
         "frm_name": null,
         "usage": 0,
-        "id": 8
+        "id": 9
       },
       {
         "name": "is follower of",
@@ -6520,7 +6531,7 @@
         "rev_plural": "is followed by",
         "frm_name": "follower",
         "usage": 0,
-        "id": 9
+        "id": 10
       },
       {
         "name": "uses",
@@ -6531,7 +6542,7 @@
         "rev_plural": "are used by",
         "frm_name": null,
         "usage": 0,
-        "id": 10
+        "id": 11
       },
       {
         "name": "issue",
@@ -6542,7 +6553,7 @@
         "rev_plural": "are issued by",
         "frm_name": null,
         "usage": 0,
-        "id": 11
+        "id": 12
       },
       {
         "name": "is measure type for",
@@ -6553,7 +6564,7 @@
         "rev_plural": "have the measure type",
         "frm_name": null,
         "usage": 0,
-        "id": 12
+        "id": 13
       },
       {
         "name": "is an acronym for",
@@ -6564,7 +6575,7 @@
         "rev_plural": "are an acronyms of",
         "frm_name": null,
         "usage": 0,
-        "id": 13
+        "id": 14
       },
       {
         "name": "can be used as a differentiator for",
@@ -6575,7 +6586,7 @@
         "rev_plural": "can be differentiated by",
         "frm_name": "differentiator",
         "usage": 0,
-        "id": 14
+        "id": 15
       },
       {
         "name": "influences",
@@ -6586,7 +6597,7 @@
         "rev_plural": "is influenced by",
         "frm_name": null,
         "usage": 0,
-        "id": 15
+        "id": 16
       },
       {
         "name": "is alias of",
@@ -6597,7 +6608,18 @@
         "rev_plural": "is alias of",
         "frm_name": null,
         "usage": 0,
-        "id": 16
+        "id": 17
+      },
+      {
+        "name": "can",
+        "code_id": "can",
+        "description": "to assign a behavior e.g. GDP can decline",
+        "plural": "can",
+        "reverse": null,
+        "rev_plural": null,
+        "frm_name": null,
+        "usage": 0,
+        "id": 18
       },
       {
         "name": "can be",
@@ -6608,7 +6630,7 @@
         "rev_plural": "can be",
         "frm_name": null,
         "usage": 0,
-        "id": 17
+        "id": 19
       },
       {
         "name": "can get",
@@ -6619,62 +6641,7 @@
         "rev_plural": null,
         "frm_name": null,
         "usage": 0,
-        "id": 18
-      },
-      {
-        "name": "can use",
-        "code_id": "can_use",
-        "description": "use indicates that a new result is created e.g. a turbine can use water or wind or any type of liquid or gas to convert energy",
-        "plural": "can use",
-        "reverse": "can be used by",
-        "rev_plural": "can be used by",
-        "frm_name": null,
-        "usage": 0,
-        "id": 19
-      },
-      {
-        "name": "scaled by",
-        "code_id": "scaled",
-        "description": "to define the usual scaling e.g. for watt hours usually the scaling kilo (kWh) is used",
-        "plural": "scaled by",
-        "reverse": "is scaling for",
-        "rev_plural": "are scaling for",
-        "frm_name": null,
-        "usage": 0,
         "id": 20
-      },
-      {
-        "name": "per",
-        "code_id": "per",
-        "description": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty",
-        "plural": "per",
-        "reverse": null,
-        "rev_plural": null,
-        "frm_name": null,
-        "usage": 0,
-        "id": 21
-      },
-      {
-        "name": "is selector for",
-        "code_id": "selector",
-        "description": "used to group a selection list to make it shorter",
-        "plural": "are selectors for",
-        "reverse": "is grouped by",
-        "rev_plural": "are grouped by",
-        "frm_name": null,
-        "usage": 0,
-        "id": 22
-      },
-      {
-        "name": "is symbol for",
-        "code_id": "symbol",
-        "description": "is used as a symbol for",
-        "plural": "are symbols for",
-        "reverse": "can have symbol",
-        "rev_plural": "can have symbols",
-        "frm_name": null,
-        "usage": 0,
-        "id": 23
       },
       {
         "name": "can cause",
@@ -6685,7 +6652,62 @@
         "rev_plural": "can be caused by",
         "frm_name": null,
         "usage": 0,
+        "id": 21
+      },
+      {
+        "name": "can use",
+        "code_id": "can_use",
+        "description": "use indicates that a new result is created e.g. a turbine can use water or wind or any type of liquid or gas to convert energy",
+        "plural": "can use",
+        "reverse": "can be used by",
+        "rev_plural": "can be used by",
+        "frm_name": null,
+        "usage": 0,
+        "id": 22
+      },
+      {
+        "name": "scaled by",
+        "code_id": "scaled",
+        "description": "to define the usual scaling e.g. for watt hours usually the scaling kilo (kWh) is used",
+        "plural": "scaled by",
+        "reverse": "is scaling for",
+        "rev_plural": "are scaling for",
+        "frm_name": null,
+        "usage": 0,
+        "id": 23
+      },
+      {
+        "name": "per",
+        "code_id": "per",
+        "description": "to define the usual quotient e.g. meter per second is normally used not seconds per meter, that why the reverse name is empty",
+        "plural": "per",
+        "reverse": null,
+        "rev_plural": null,
+        "frm_name": null,
+        "usage": 0,
         "id": 24
+      },
+      {
+        "name": "is selector for",
+        "code_id": "selector",
+        "description": "used to group a selection list to make it shorter",
+        "plural": "are selectors for",
+        "reverse": "is grouped by",
+        "rev_plural": "are grouped by",
+        "frm_name": null,
+        "usage": 0,
+        "id": 25
+      },
+      {
+        "name": "is symbol for",
+        "code_id": "symbol",
+        "description": "is used as a symbol for",
+        "plural": "are symbols for",
+        "reverse": "can have symbol",
+        "rev_plural": "can have symbols",
+        "frm_name": null,
+        "usage": 0,
+        "id": 26
       },
       {
         "name": "and",
@@ -6696,7 +6718,7 @@
         "rev_plural": "and",
         "frm_name": null,
         "usage": 0,
-        "id": 25
+        "id": 27
       }
     ],
     "system_views": [

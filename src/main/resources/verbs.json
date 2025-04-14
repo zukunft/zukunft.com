@@ -29,6 +29,14 @@
       "name_reverse": "contains"
     },
     {
+      "name": "of",
+      "code_id": "of",
+      "description": "to narrow a selection e.g. the world population is usually the population of all humans",
+      "name_plural_reverse": "of",
+      "name_plural": "of",
+      "name_reverse": "of"
+    },
+    {
       "name": "with",
       "code_id": "with",
       "description": "similar to 'is part of' but where the left phrase is expected to be several times the right phrase e.g. for comparing same by same: 1 hour with full load is the same as 2 hours with half load",
@@ -126,6 +134,12 @@
       "name_reverse": "is alias of"
     },
     {
+      "name": "can",
+      "code_id": "can",
+      "description": "to assign a behavior e.g. GDP can decline",
+      "name_plural": "can"
+    },
+    {
       "name": "can be",
       "code_id": "can_be",
       "description": "",
@@ -138,6 +152,12 @@
       "code_id": "can_get",
       "description": "",
       "name_plural": "can get"
+    },
+    {
+      "name": "can cause",
+      "code_id": "can_cause",
+      "description": "",
+      "name_plural": "can cause"
     },
     {
       "name": "can use",
