@@ -118,6 +118,7 @@ use shared\enum\user_profiles;
 use test\all_tests;
 use test\test_cleanup;
 use unit\import_tests as import_tests;
+use unit_read\word_list_read_tests;
 use unit_ui\all_ui_tests;
 use unit_ui\base_ui_tests;
 use const\files as test_files;
@@ -202,6 +203,7 @@ class all_unit_tests extends test_cleanup
             $this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);
+            (new word_list_read_tests())->run($this);
             //(new triple_read_tests())->run($this);
             //(new source_read_tests())->run($this);
             //(new formula_read_tests())->run($this);

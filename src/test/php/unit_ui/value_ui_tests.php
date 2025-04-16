@@ -123,7 +123,7 @@ class value_ui_tests
         $wrd = new word($usr);
         $wrd->load_by_name(words::TN_CH);
         $val_lst = $wrd->val_lst();
-        // build the phrase list to select the value Sales for 2014
+        // build the phrase list to select the value sales for 2014
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020));
         $wrd_time = $wrd_lst->assume_time();

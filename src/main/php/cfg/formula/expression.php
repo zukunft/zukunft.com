@@ -239,7 +239,7 @@ class expression extends shared_expression
     /**
      * a formula element group is a group of words, verbs, phrases or formula
      * that retrieve a value or a list of values
-     * e.g. with "Sector" "differentiator" all
+     * e.g. with "sector" "differentiator" all
      *
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return element_list|element_group_list with the formula element groups used in the expression
@@ -417,7 +417,7 @@ class expression extends shared_expression
 
     /**
      * @return array of the term names used in the expression based on the user text
-     * e.g. converts "'Sales' 'differentiator' / 'Total Sales'" to "Sales, differentiator, Total Sales"
+     * e.g. converts "'sales' 'differentiator' / 'Total sales'" to "sales, differentiator, Total sales"
      */
     function get_usr_names(): array
     {
@@ -682,7 +682,7 @@ class expression extends shared_expression
 
     /**
      * similar to phr_lst, but
-     * e.g. for "Sales" "differentiator" "Country" all "Country" words should be included
+     * e.g. for "sales" "differentiator" "Country" all "Country" words should be included
      * TODO should also include the words implied by the verbs
      */
     function phr_verb_lst(): phrase_list

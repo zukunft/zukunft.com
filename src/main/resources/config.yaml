@@ -178,6 +178,8 @@ zukunft.com:
         top level:
           pods: 16380
           tooltip-comment: "for a fast selection of the prime responding pod the number of pods should start low but mainly the number of levels should be low"
+      launch: 2025-06-07
+      point: 2025-06-07
       hardware:
         usage:
           CPU:

@@ -298,7 +298,7 @@ e.g. the global function load_ref_types load all possible reference type to exte
 - dsp_id                - like name, but with some ids for better debugging
 - name                  - to show a useful name of the object to the user e.g. in case of a formula result this includes the phrases
 - name_linked           - like name, but with HTML link to the single objects
-- display               - the result and the name of the object e.g. ABB, Sales: 46'000
+- display               - the result and the name of the object e.g. ABB, sales: 46'000
 - display_linked        - like display, but with HTML links to the related objects
 
 All objects needs to have the functions dsp_id and name. These two functions should never all any debug functionality, because they can be called from the debug functions

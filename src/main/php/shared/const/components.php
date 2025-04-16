@@ -45,7 +45,7 @@ class components
     const WORD_COM = 'simply show the word or triple name';
     const WORD_ID = 1;
     const MATRIX_NAME = 'spreadsheet';
-    const MATRIX_COM = 'sheet with words, number and formulas';
+    const MATRIX_COM = 'changeable sheet with words, number and formulas';
     const MATRIX_ID = 2;
 
     // persevered view component names for unit and integration tests

@@ -84,9 +84,17 @@ class triples
     // triple used in the default start view
     const GLOBAL_PROBLEM = 'global problem';
     const GLOBAL_PROBLEM_ID = 55;
-    const GLOBAL_WARMING = 'climate warming';
+    const GLOBAL_WARMING = 'global warming';
     const GLOBAL_WARMING_ID = 58;
     const GLOBAL_WARMING_PROBLEM_ID = 65;
+    const GWP = 'global warming potential';
+    const GWP_ID = 1145;
+    const CASH_FLOW = 'cash flow';
+    const CASH_FLOW_ID = 421;
+    const CASH_FLOW_STATEMENT = 'cash flow statement';
+    const CASH_FLOW_STATEMENT_ID = 421;
+    const INCOME_TAX = 'income taxes';
+    const INCOME_TAX_ID = 421;
     const POPULISM_PROBLEM_ID = 66;
     const POTENTIAL_HEALTH_PROBLEM_ID = 67;
     const POVERTY_PROBLEM_ID = 68;
@@ -113,7 +121,7 @@ class triples
     const COMPANY_VESTAS = "Vestas SA";
     const COMPANY_ABB = "ABB (Company)";
     const YEAR_2013_FOLLOW = "2014 is follower of 2013";
-    const TAXES_OF_CF = "Income taxes is part of cash flow statement";
+    const TAXES_OF_CF = "income taxes is part of cash flow statement";
 
     // list of predefined triple used for system testing that are expected to be never renamed
     const RESERVED_NAMES = array(
@@ -138,6 +146,11 @@ class triples
     const TEST_TRIPLE_STANDARD = array(
         self::SYSTEM_TEST_ADD,
         self::SYSTEM_TEST_EXCLUDED
+    );
+
+    // list of words where the id is used for system testing
+    const TEST_TRIPLE_IDS = array(
+        [self::CASH_FLOW_STATEMENT_ID, self::CASH_FLOW_STATEMENT],
     );
 
 }

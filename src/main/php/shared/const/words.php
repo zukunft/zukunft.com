@@ -49,7 +49,7 @@ class words
     // *_ID is the expected database id only used for system testing
     // this list is included in all preserved word names
 
-    // keyword to select the system configuration
+    // keywords to select the system configuration
     const THIS_SYSTEM = 'zukunft.com';
     const SYSTEM = 'system';
     const CONFIGURATION = 'configuration';
@@ -62,9 +62,9 @@ class words
 
     // for the system setup and all pods of zukunft.com
     const POD = 'pod';
-    const POD_ID = 298;
+    const POD_ID = 226;
     const MASTER_POD_NAME = 'zukunft.com';
-    const MASTER_POD_NAME_ID = 314;
+    const MASTER_POD_NAME_ID = 245;
     const JOB = 'job';
     const USER = 'user';
     const FRONTEND = 'frontend';
@@ -73,10 +73,10 @@ class words
 
     // e.g. one instance / pod of zukunft.com
     const URL = 'url';
-    const URL_ID = 309;
+    const URL_ID = 240;
     // e.g. the launch date of the first beta version of zukunft.com
     const LAUNCH = 'launch';
-    const LAUNCH_ID = 309;
+    const LAUNCH_ID = 284;
 
     // for the user settings
     const ROW = 'row';
@@ -95,7 +95,7 @@ class words
     const DECIMAL = 'decimal';
     // e.g. the geolocation of the development of zukunft.com
     const POINT = 'point';
-    const POINT_ID = 243;
+    const POINT_ID = 285;
 
     // general words used also for the system configuration that have a fixed tooltip
     const TIME = 'time';
@@ -191,7 +191,7 @@ class words
     const DIAMETER = 'diameter';
     const DIAMETER_ID = 6;
     const E = "Euler's constant";
-    const E_ID = 6;
+    const E_ID = 7;
     const SECOND = 'second';
     const SECOND_ID = 19;
     const MINUTE = 'minute';
@@ -201,38 +201,37 @@ class words
     const MIO_SHORT = 'mio';
     const COUNTRY = 'Country';
     const CH = 'Switzerland';
-    const CH_ID = 197;
+    const CH_ID = 295;
     const GERMANY = 'Germany';
     const CANTON = 'Canton';
-    const CANTON_ID = 198;
+    const CANTON_ID = 296;
     const CITY = 'City';
-    const CITY_ID = 199;
+    const CITY_ID = 297;
     const ZH = 'Zurich';
-    const ZH_ID = 200;
+    const ZH_ID = 298;
     const BE = 'Bern';
-    const BE_ID = 201;
+    const BE_ID = 299;
     const GE = 'Geneva';
-    const GE_ID = 202;
-    const INHABITANT = 'inhabitant';
-    const INHABITANT_ID = 204;
+    const GE_ID = 300;
+    const INHABITANT_ID = 302;
     // TODO add test to search for words in all language forms e.g. plural
     const INHABITANTS = 'inhabitants';
     const YEAR_2013 = '2013';
-    const YEAR_2013_ID = 326;
+    const YEAR_2013_ID = 426;
     const YEAR_2014 = '2014';
-    const YEAR_2014_ID = 325;
+    const YEAR_2014_ID = 425;
     const YEAR_2015 = '2015';
-    const YEAR_2015_ID = 205;
+    const YEAR_2015_ID = 304;
     const YEAR_2016 = '2016';
-    const YEAR_2016_ID = 206;
+    const YEAR_2016_ID = 305;
     const YEAR_2017 = '2017';
-    const YEAR_2017_ID = 207;
+    const YEAR_2017_ID = 306;
     const YEAR_2018 = '2018';
-    const YEAR_2018_ID = 208;
+    const YEAR_2018_ID = 307;
     const YEAR_2019 = '2019';
     const YEAR_2019_ID = 142;
     const YEAR_2020 = '2020';
-    const YEAR_2020_ID = 209;
+    const YEAR_2020_ID = 143;
     const YEAR_2020_COM = 'the year 2020';
     const PCT = 'percent';
     const PCT_ID = 172;
@@ -242,56 +241,64 @@ class words
     const PRIOR_NAME = 'prior';
     const PRIOR_ID = 194;
     const PARTS = 'parts';
-    const PARTS_ID = 265;
+    const PARTS_ID = 388;
     const TOTAL_PRE = 'total';
-    const TOTAL_ID = 266;
+    const TOTAL_ID = 254;
     const COMPANY = 'Company';
-    const COMPANY_ID = 322;
+    const COMPANY_ID = 303;
     const ABB = 'ABB';
-    const ABB_ID = 323;
+    const ABB_ID = 423;
     const VESTAS = 'Vestas';
-    const VESTAS_ID = 324;
+    const VESTAS_ID = 424;
     const CHF = 'CHF';
-    const CHF_ID = 316;
-    const SALES = 'Sales';
-    const SALES_ID = 317;
-    const CASH_FLOW = 'cash flow statement';
-    const CASH_FLOW_ID = 274;
-    const TAX = 'Income taxes';
-    const TAX_ID = 273;
+    const CHF_ID = 358;
+    const SALES = 'sales';
+    const SALES_ID = 382;
+    const CASH = 'cash';
+    const CASH_ID = 384;
+    const FLOW = 'flow';
+    const FLOW_ID = 385;
+    const STATEMENT = 'statement';
+    const STATEMENT_ID = 386;
+    const TAX = 'tax';
+    const TAX_ID = 390;
+    const INCOME = 'income';
+    const INCOME_ID = 389;
 
     const GLOBAL = 'global';
-    const GLOBAL_ID = 216;
+    const GLOBAL_ID = 313;
 
     const PROBLEM = 'problem';
-    const PROBLEM_ID = 215;
+    const PROBLEM_ID = 312;
+    const POTENTIAL = 'potential';
+    const POTENTIAL_ID = 316;
     const CLIMATE = 'climate';
-    const CLIMATE_ID = 222;
+    const CLIMATE_ID = 319;
     const WARMER = 'warmer';
-    const WARMER_ID = 225;
+    const WARMER_ID = 322;
     const HEALTH = 'health';
-    const HEALTH_ID = 235;
+    const HEALTH_ID = 343;
     const POPULISM = 'populism';
-    const POPULISM_ID = 229;
+    const POPULISM_ID = 326;
     const POVERTY = 'poverty';
-    const POVERTY_ID = 237;
+    const POVERTY_ID = 345;
     const EDUCATION = 'education';
-    const EDUCATION_ID = 239;
+    const EDUCATION_ID = 347;
     const HAPPY = 'happy';
-    const HAPPY_ID = 242;
+    const HAPPY_ID = 350;
     const POINTS = 'points';
-    const POINTS_ID = 244;
+    const POINTS_ID = 352;
     const TRILLION = 'trillion';
-    const TRILLION_ID = 248;
+    const TRILLION_ID = 356;
     const BILLION = 'billion';
     const BILLION_ID = 171;
     const USD = 'USD';
-    const USD_ID = 251;
+    const USD_ID = 424;
     const HTP = 'htp';
-    const HTP_ID = 247;
+    const HTP_ID = 355;
 
     const GWP = 'global warming potential';
-    const GWP_ID = 1070;
+    const GWP_ID = 1145;
 
     const BYTE = 'byte';
 
@@ -330,7 +337,7 @@ class words
     const TEST_TAX_REPORT = 'System Test Word Child without Inheritance e.g. Income Taxes';
     const TEST_ASSETS = 'System Test Word containing multi levels e.g. Assets';
     const TEST_ASSETS_CURRENT = 'System Test Word multi levels e.g. Current Assets';
-    const TEST_SECTOR = 'System Test Word with differentiator e.g. Sector';
+    const TEST_SECTOR = 'System Test Word with differentiator e.g. sector';
     const TEST_ENERGY = 'System Test Word usage as differentiator e.g. Energy';
     const TEST_WIND_ENERGY = 'System Test Word usage as differentiator e.g. Wind Energy';
     const TEST_CASH = 'System Test Word multi levels e.g. Cash';
@@ -377,7 +384,7 @@ class words
         self::ZH,
         self::BE,
         self::GE,
-        self::INHABITANT,
+        self::INHABITANTS,
         self::INHABITANTS,
         self::YEAR_CAP,
         self::YEAR_2015,
@@ -533,6 +540,72 @@ class words
         self::YEAR_2018,
         self::TEST_2021,
         self::TEST_2022
+    );
+
+    // list of words where the id is used for system testing
+    const TEST_WORD_IDS = array(
+        [self::ABB_ID, self::ABB],
+        [self::BE_ID, self::BE],
+        [self::BILLION_ID, self::BILLION],
+        [self::CANTON_ID, self::CANTON],
+        [self::CASH_ID, self::CASH],
+        [self::FLOW_ID, self::FLOW],
+        [self::STATEMENT_ID, self::STATEMENT],
+        [self::CH_ID, self::CH],
+        [self::CHF_ID, self::CHF],
+        [self::CIRCUMFERENCE_ID, self::CIRCUMFERENCE],
+        [self::CITY_ID, self::CITY],
+        [self::CLIMATE_ID, self::CLIMATE],
+        [self::COMPANY_ID, self::COMPANY],
+        [self::CONST_ID, self::CONST_NAME],
+        [self::DIAMETER_ID, self::DIAMETER],
+        [self::E_ID, self::E],
+        [self::EDUCATION_ID, self::EDUCATION],
+        [self::GE_ID, self::GE],
+        [self::GLOBAL_ID, self::GLOBAL],
+        [self::HAPPY_ID, self::HAPPY],
+        [self::HEALTH_ID, self::HEALTH],
+        [self::HTP_ID, self::HTP],
+        [self::INCOME_ID, self::INCOME],
+        [self::INHABITANT_ID, self::INHABITANTS],
+        [self::LAUNCH_ID, self::LAUNCH],
+        [self::MASTER_POD_NAME_ID, self::MASTER_POD_NAME],
+        [self::MATH_ID, self::MATH],
+        [self::MINUTE_ID, self::MINUTE],
+        [self::MIO_ID, self::MIO],
+        [self::ONE_ID, self::ONE],
+        [self::PARTS_ID, self::PARTS],
+        [self::PCT_ID, self::PCT],
+        [self::PI_ID, self::PI],
+        [self::POD_ID, self::POD],
+        [self::POINT_ID, self::POINT],
+        [self::POINTS_ID, self::POINTS],
+        [self::POPULISM_ID, self::POPULISM],
+        [self::POVERTY_ID, self::POVERTY],
+        [self::PRIOR_ID, self::PRIOR_NAME],
+        [self::POTENTIAL_ID, self::POTENTIAL],
+        [self::PROBLEM_ID, self::PROBLEM],
+        [self::SALES_ID, self::SALES],
+        [self::SECOND_ID, self::SECOND],
+        [self::TAX_ID, self::TAX],
+        [self::THIS_ID, self::THIS_NAME],
+        [self::TIME_ID, self::TIME],
+        [self::TOTAL_ID, self::TOTAL_PRE],
+        [self::TRILLION_ID, self::TRILLION],
+        [self::URL_ID, self::URL],
+        [self::USD_ID, self::USD],
+        [self::VESTAS_ID, self::VESTAS],
+        [self::WARMER_ID, self::WARMER],
+        [self::YEAR_2013_ID, self::YEAR_2013],
+        [self::YEAR_2014_ID, self::YEAR_2014],
+        [self::YEAR_2015_ID, self::YEAR_2015],
+        [self::YEAR_2016_ID, self::YEAR_2016],
+        [self::YEAR_2017_ID, self::YEAR_2017],
+        [self::YEAR_2018_ID, self::YEAR_2018],
+        [self::YEAR_2019_ID, self::YEAR_2019],
+        [self::YEAR_2020_ID, self::YEAR_2020],
+        [self::YEAR_CAP_ID, self::YEAR_CAP],
+        [self::ZH_ID, self::ZH],
     );
 
 }

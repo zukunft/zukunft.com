@@ -1068,9 +1068,9 @@ class formula extends sandbox_typed
         $res_init = $this->create_result($phr_lst); // maybe move the constructor of result_list?
 
         // load the formula element groups; similar parts is used in the explain method in result
-        // e.g. for "Sales differentiator Sector / Total Sales" the element groups are
-        //      "Sales differentiator Sector" and "Total Sales" where
-        //      the element group "Sales differentiator Sector" has the elements: "Sales" (of type word), "differentiator" (verb), "Sector" (word)
+        // e.g. for "sales differentiator sector / Total sales" the element groups are
+        //      "sales differentiator sector" and "Total sales" where
+        //      the element group "sales differentiator sector" has the elements: "sales" (of type word), "differentiator" (verb), "sector" (word)
         $exp = $this->expression($pre_trm_lst);
         $elm_grp_lst = $exp->element_grp_lst($pre_trm_lst);
         log_debug('in ' . $exp->ref_text() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');

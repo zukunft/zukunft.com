@@ -388,8 +388,8 @@ class group_list extends sandbox_list
 
     used to request an update for a formula result for each phrase group
     e.g. the formula is assigned to "Company" ($frm_linked) and the "operating income" formula result should be calculated
-         so "Sales" and "Cost" are words of the formula
-         if "Sales" and "Cost" for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. "ABB")
+         so "sales" and "Cost" are words of the formula
+         if "sales" and "Cost" for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. "ABB")
          the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
          so the result would be to add 4 results to the list:
          1. calculate "operating income" for "ABB", "EUR" and "2016"
@@ -419,7 +419,7 @@ class group_list extends sandbox_list
 
     /**
      * query to get the value or formula result phrase groups and time words that contains at least one phrase of two lists based on the user sandbox
-     * e.g. which value that have "Sales" and "2016"?
+     * e.g. which value that have "sales" and "2016"?
      */
     private function get_grp_by_phr($type, $phr_linked, $phr_used): array
     {
@@ -457,9 +457,9 @@ class group_list extends sandbox_list
                   GROUP BY l1.group_id';
         } else {
             log_warning('Phrases missing while loading the phrase groups');
-            // e.g. if "Sales" is assigned, but never  used in the formula no value needs to be calculated, so no group should be used
-            //   or if "Sales" is used, but never  assigned to the formula no value needs to be calculated, so no group should be used
-            //   or if "Sales" is not used and not assigned to the formula no value needs to be calculated, so no group should be used
+            // e.g. if "sales" is assigned, but never  used in the formula no value needs to be calculated, so no group should be used
+            //   or if "sales" is used, but never  assigned to the formula no value needs to be calculated, so no group should be used
+            //   or if "sales" is not used and not assigned to the formula no value needs to be calculated, so no group should be used
             // in all these cases only value selected by time needs to be updated
         }
 

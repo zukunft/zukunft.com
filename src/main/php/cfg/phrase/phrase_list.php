@@ -301,16 +301,16 @@ class phrase_list extends sandbox_list_named
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $names phrase names that should be loaded
+     * @param string $fld the name of the name field
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_names(sql_creator $sc, array $names): sql_par
+    function load_sql_by_names(
+        sql_creator $sc,
+        array $names,
+        string $fld = phrase::FLD_NAME
+    ): sql_par
     {
-        $qp = $this->load_sql($sc, 'names');
-        $sc->add_where(phrase::FLD_NAME, $names, sql_par_type::TEXT_LIST);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
+        return parent::load_sql_by_names($sc, $names, $fld);
     }
 
     /**
@@ -2102,13 +2102,13 @@ class phrase_list extends sandbox_list_named
 
     /**
      * get the best matching value or value list for this phrase list
-     * e.g. if for "ABB", "Sales" no direct number is found,
+     * e.g. if for "ABB", "sales" no direct number is found,
      *   1) try to get a formula result, if also no formula result,
      *   2) assume an additional phrase by getting the phrase with the most values for the phrase list
      *      which could be in this case "millions"
      *   3) repeat with 2)
      *
-     * e.g. if many numbers matches the phrase list e.g. Nestlé Sales million, CHF (and Water, and Coffee)
+     * e.g. if many numbers matches the phrase list e.g. Nestlé sales million, CHF (and Water, and Coffee)
      *      the value with the least additional phrases is selected
      *
      * @return value the best matching value

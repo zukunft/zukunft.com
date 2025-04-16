@@ -193,7 +193,7 @@ class expression
     /**
      * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string the formula expression converted to the user text from the database reference format
-     * e.g. converts "{w5}={w6}{l12}/{f19}" to "'percent' = 'Sales' 'differentiator'/'Total Sales'"
+     * e.g. converts "{w5}={w6}{l12}/{f19}" to "'percent' = 'sales' 'differentiator'/'Total sales'"
      */
     protected function get_usr_text(term_list|term_list_dsp|null $trm_lst = null): string
     {
@@ -260,7 +260,7 @@ class expression
 
     /**
      * converts a formula from the user text format to the database reference format
-     * e.g. converts "='Sales' 'differentiator'/'Total Sales'" to "={w6}{l12}/{f19}"
+     * e.g. converts "='sales' 'differentiator'/'Total sales'" to "={w6}{l12}/{f19}"
      *
      * @param string $frm_part_text the expression text in user format that should be converted
      * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
@@ -327,7 +327,7 @@ class expression
 
     /**
      * converts a formula from the database reference format to the human-readable format
-     * e.g. converts "{w6}{l12}/{f19}" to "'Sales' 'differentiator'/'Total Sales'"
+     * e.g. converts "{w6}{l12}/{f19}" to "'sales' 'differentiator'/'Total sales'"
      * @param string $frm_part_text the expression text in user format that should be converted
      * @param term_list|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
      * @return string the expression text in the database ref format

@@ -126,7 +126,7 @@ class word_list_write_tests
         $wrd_lst->grp_id = $wrd_grp_id;
         $wrd_lst->load();
         $result = $lib->dsp_array($wrd_lst->names());
-        $target = "million,Sales,wrd"; // order adjusted based on the number of usage
+        $target = "million,sales,wrd"; // order adjusted based on the number of usage
         $t->assert('word_list->load by word group id for "'.$wrd_grp_id.'"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI); */
 
         // test add by verb e.g. "Zurich" "is a" "Canton", "City" or "Company"
@@ -215,8 +215,8 @@ class word_list_write_tests
         $t->assert('word_list->contains "' . implode('","', $wrd_lst->names()) . '", which contains ' . words::TEST_TAX_REPORT, $result, true);
 
         // test "differentiators"
-        // e.g. a "Sector" "can contain" "Energy"
-        // or the other way round "Energy" "can be a (differentiator for)" "Sector"
+        // e.g. a "sector" "can contain" "Energy"
+        // or the other way round "Energy" "can be a (differentiator for)" "sector"
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::TEST_SECTOR));
         $lst_differentiators = $wrd_lst->differentiators();
@@ -225,7 +225,7 @@ class word_list_write_tests
         $t->assert('word_list->differentiators "' . implode('","', $wrd_lst->names()) . '", which contains ' . words::TEST_ENERGY, $result, true);
 
         // test "differentiators_all"
-        // e.g. a "Sector" "can contain" "Energy" and "Wind Energy"
+        // e.g. a "sector" "can contain" "Energy" and "Wind Energy"
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::TEST_SECTOR));
         $lst_differentiators = $wrd_lst->differentiators_all();
@@ -234,7 +234,7 @@ class word_list_write_tests
         $t->assert('word_list->differentiators_all "' . implode('","', $wrd_lst->names()) . '", which contains ' . words::TEST_WIND_ENERGY, $result, true);
 
         // test "differentiators_filtered"
-        // e.g. a "Sector" "can contain" "Wind Energy" and "Energy" can be filtered
+        // e.g. a "sector" "can contain" "Wind Energy" and "Energy" can be filtered
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::TEST_SECTOR));
         $wrd_lst_filter = new word_list($usr);

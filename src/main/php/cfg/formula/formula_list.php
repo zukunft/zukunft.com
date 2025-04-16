@@ -192,19 +192,16 @@ class formula_list extends sandbox_list_named
      * set the SQL query parameters to load a list of formulas by an array of formula names
      * @param sql_creator $sc with the target db_type set
      * @param array $names an array of formula names which should be loaded
+     * @param string $fld the name of the name field
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_names(sql_creator $sc, array $names): sql_par
+    function load_sql_by_names(
+        sql_creator $sc,
+        array $names,
+        string $fld = formula::FLD_NAME
+    ): sql_par
     {
-        $qp = $this->load_sql($sc, 'names');
-        if (count($names) > 0) {
-            $sc->add_where(formula::FLD_NAME, $names, sql_par_type::TEXT_LIST);
-            $qp->sql = $sc->sql();
-        } else {
-            $qp->name = '';
-        }
-        $qp->par = $sc->get_par();
-        return $qp;
+        return parent::load_sql_by_names($sc, $names, $fld);
     }
 
     /**

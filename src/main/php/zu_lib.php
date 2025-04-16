@@ -70,6 +70,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO move common api code parts to a separate class
     TODO include the field names in the openapi definition check
 
+    TODO validate the word id const used in the program
+    TODO make sure that import of a word without type does not overwrite the type defined in the database use e.g. percent as a test case
     TODO code review
     TODO check the order of the class sections
     TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change

@@ -276,20 +276,17 @@ class triple_list extends sandbox_list_named
     /**
      * set the SQL query parameters to load a list of triples by the names
      * @param sql_creator $sc with the target db_type set
-     * @param array $trp_names a list of strings with the word names
+     * @param array $names a list of strings with the word names
+     * @param string $fld the name of the name field
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_names(sql_creator $sc, array $trp_names): sql_par
+    function load_sql_by_names(
+        sql_creator $sc,
+        array $names,
+        string $fld = triple::FLD_NAME
+    ): sql_par
     {
-        $qp = $this->load_sql($sc, 'names');
-        if (count($trp_names) > 0) {
-            $sc->add_where(triple::FLD_NAME, $trp_names, sql_par_type::TEXT_LIST);
-            $qp->sql = $sc->sql();
-        } else {
-            $qp->name = '';
-        }
-        $qp->par = $sc->get_par();
-        return $qp;
+        return parent::load_sql_by_names($sc, $names, $fld);
     }
 
     /**

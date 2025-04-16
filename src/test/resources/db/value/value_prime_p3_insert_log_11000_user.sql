@@ -31,9 +31,9 @@ SELECT value_prime_p3_insert_log_11000_user
         1::smallint,
         1::smallint,
         3.1415926535898::numeric,
-        876186435726::bigint,
-        204::smallint,
-        200::smallint,
+        1297099653262::bigint,
+        302::smallint,
+        298::smallint,
         142::smallint,
         null::smallint,
         null::bigint);

@@ -31,9 +31,9 @@ SELECT value_text_prime_p4_insert_log_11000_user
         1::smallint,
         421::smallint,
         'zukunft.com'::text,
-        88384469851603017::bigint,
-        314::smallint,
-        309::smallint,
-        298::smallint,
+        68962400101105737::bigint,
+        245::smallint,
+        240::smallint,
+        226::smallint,
         -73::smallint,
         null::bigint);

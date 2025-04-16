@@ -93,7 +93,7 @@ class formulas
     const SYSTEM_TEXT_THIS_EXP = '= "System Test Formula This"';
     const SYSTEM_TEXT_RATIO = 'System Test Formula PE Ratio'; // to test a simple ration calculation like how many times Switzerland is bigger than the canton zurich or the price to earning ration for equity
     const SYSTEM_TEXT_RATIO_EXP = '"System Test Word PE Ratio" = "System Test Word Share Price" / "System Test Word Earnings"';
-    const SYSTEM_TEXT_SECTOR = 'System Test Formula Sector'; // to test the selection by a phrases and parents e.g. split all country totals by canton
+    const SYSTEM_TEXT_SECTOR = 'System Test Formula sector'; // to test the selection by a phrases and parents e.g. split all country totals by canton
     const SYSTEM_TEXT_SECTOR_EXP = '= "Country" "differentiator" "Canton" / "System Test Word Total"';
     const SYSTEM_TEXT_SCALE_K = 'System Test Formula scale thousand to one';
     const SYSTEM_TEXT_SCALE_K_EXP = '"one" = "System Test Scaling Word e.g. thousands" * 1000';

@@ -23,7 +23,7 @@
     {
       "name": "is part of",
       "code_id": "contains",
-      "description": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or Sectors and Regions are different splittings",
+      "description": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or sectors and Regions are different splittings",
       "name_plural_reverse": "contains",
       "name_plural": "is part of",
       "name_reverse": "contains"
@@ -214,6 +214,14 @@
       "name_plural": "and",
       "name_plural_reverse": "and",
       "name_reverse": "and"
+    },
+    {
+      "name": "on",
+      "code_id": "on",
+      "description": "to specify a subgroup e.g. taxes on income",
+      "name_plural_reverse": "distribute to",
+      "name_plural": "on",
+      "name_reverse": "distribute to"
     }
   ]
 }

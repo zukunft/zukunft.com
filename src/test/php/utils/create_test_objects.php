@@ -850,7 +850,7 @@ class create_test_objects extends test_base
     function word_inhabitant(): word
     {
         $wrd = new word($this->usr1);
-        $wrd->set(words::INHABITANT_ID, words::INHABITANT);
+        $wrd->set(words::INHABITANT_ID, words::INHABITANTS);
         $wrd->plural = words::INHABITANTS;
         return $wrd;
     }
@@ -880,6 +880,13 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::PROBLEM_ID, words::PROBLEM);
+        return $wrd;
+    }
+
+    function word_potential(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::POTENTIAL_ID, words::POTENTIAL);
         return $wrd;
     }
 
@@ -1305,6 +1312,20 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return triple that "global warming potential" "is a" "global warming" used for start view unit testing
+     */
+    function global_warming_potential(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triples::GWP_ID);
+        $trp->set_name(triples::GWP);
+        $trp->set_from($this->global_warming()->phrase());
+        $trp->set_verb($this->verb_is());
+        $trp->set_to($this->word_potential()->phrase());
+        return $trp;
+    }
+
+    /**
      * @return triple that "populism" "is a" "global problem" used for start view unit testing
      */
     function populism_problem(): triple
@@ -1566,6 +1587,7 @@ class create_test_objects extends test_base
         $lst->add($this->global_problem()->phrase());
         $lst->add($this->global_warming()->phrase());
         $lst->add($this->global_warming_problem()->phrase());
+        $lst->add($this->global_warming_potential()->phrase());
         $lst->add($this->populism_problem()->phrase());
         $lst->add($this->potential_health_problem()->phrase());
         $lst->add($this->poverty_problem()->phrase());

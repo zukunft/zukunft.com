@@ -60,6 +60,9 @@ class verbs
     const OF = "of";
     const OF_NAME = "of";
     const OF_ID = 4;
+    const ON = "on";
+    const ON_NAME = "on";
+    const ON_ID = 4;
     const WITH = "with";
     const WITH_NAME = "with";
     const WITH_ID = 5;

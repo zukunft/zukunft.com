@@ -745,8 +745,8 @@ class value_base extends sandbox_value
      * get the best matching value
      * 1. try to find a value with simply a different scaling e.g. if the number of share are requested, but this is in millions in the database use and scale it
      * 2. check if another measure type can be converted      e.g. if the share price in USD is requested, but only in EUR is in the database convert it
-     *    e.g. for "ABB","Sales","2014" the value for "ABB","Sales","2014","million","CHF" will be loaded,
-     *    because most values for "ABB", "Sales" are in ,"million","CHF"
+     *    e.g. for "ABB","sales","2014" the value for "ABB","sales","2014","million","CHF" will be loaded,
+     *    because most values for "ABB", "sales" are in ,"million","CHF"
      *
      * @param phrase_list $phr_lst with the phrases used for the selection
      */

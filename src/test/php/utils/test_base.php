@@ -95,6 +95,7 @@ use cfg\result\result_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_link_named;
+use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_multi;
 use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_value;
@@ -3139,6 +3140,45 @@ class test_base
         }
 
         return $result;
+    }
+
+    /**
+     * check if all test objects that are using a fixed db id for testing are at the expected row in the database
+     * @param string $test_name the name of the test
+     * @param array $id_lst a two-dimensional array with the id and the name of the objects
+     * @param sandbox_named $sbx the named object for compare
+     * @param sandbox_list_named $lst the named list object for db read
+     * @return bool
+     */
+    function assert_db_test_id_list(
+        string $test_name,
+        array $id_lst,
+        sandbox_named $sbx,
+        sandbox_list_named $lst
+    ): bool
+    {
+        // convert to a key value array
+        $in_lst = [];
+        foreach ($id_lst as $item) {
+            $in_lst[$item[0]] = $item[1];
+        }
+        natcasesort($in_lst);
+        $names = array_values($in_lst);
+
+        // load list by the names to get the ids
+        $lst->load_by_names($names);
+
+        // check
+        $db_lst = $lst->name_id_list();
+        natcasesort($db_lst);
+
+        $result = '';
+        if ($db_lst != $in_lst) {
+            $lib = new library();
+            $result = $lib->diff_msg($in_lst, $db_lst);
+        }
+
+        return $this->assert($test_name, $result, '');
     }
 
     /**

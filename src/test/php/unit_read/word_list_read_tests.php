@@ -35,6 +35,7 @@ namespace unit_read;
 include_once SHARED_CONST_PATH . 'formulas.php';
 include_once SHARED_CONST_PATH . 'words.php';
 
+use cfg\word\word;
 use cfg\word\word_list;
 use shared\const\formulas;
 use shared\const\words;
@@ -49,13 +50,13 @@ class word_list_read_tests
         // TODO change in all other tests and later here (like in element_list_tests):
         // TODO move the main object to init for all unit an read db tests
         // TODO start the test always with the test name
-        // TODO create const whereever possible
+        // TODO create const wherever possible
         // TODO use the test user instead of the global user
 
         global $usr;
 
         // init
-        $t->name = 'word list read db->';
+        $t->name = 'word list read db';
 
         $t->header('word list database read unit tests');
 
@@ -97,6 +98,9 @@ class word_list_read_tests
         $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_like('P');
         $t->assert_contains($test_name, $wrd_lst->names(), words::PI);
+
+        $test_name = 'all expected test words are in the database';
+        $t->assert_db_test_id_list($test_name, words::TEST_WORD_IDS, new word($t->usr1), new word_list($t->usr1));
 
     }
 

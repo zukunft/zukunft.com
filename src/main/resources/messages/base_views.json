@@ -13,7 +13,7 @@
     },
     {
       "name": "spreadsheet",
-      "description": "sheet with words, number and formulas",
+      "description": "changeable sheet with words, number and formulas",
       "type": "calc_sheet"
     },
     {

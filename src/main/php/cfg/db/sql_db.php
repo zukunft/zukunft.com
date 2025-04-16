@@ -1024,6 +1024,7 @@ class sql_db
             $import->import_base_config($usr);
             $this->create_internal_words($usr);
             $import->import_config_yaml($usr);
+            $import->import_pod_config($usr);
             $this->db_check_missing_owner();
 
             // create the test dataset to check the basic write functions

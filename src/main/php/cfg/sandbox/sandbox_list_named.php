@@ -34,7 +34,9 @@ namespace cfg\sandbox;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once DB_PATH . 'sql_creator.php';
+include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_list.php';
+include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
@@ -55,7 +57,9 @@ include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 
 use cfg\db\sql_creator;
+use cfg\db\sql_par;
 use cfg\db\sql_par_list;
+use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\db_object_seq_id;
@@ -120,6 +124,65 @@ class sandbox_list_named extends sandbox_list
     {
         parent::set_lst_clean();
         $this->lst_name_dirty = false;
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load a list by the names
+     * @param array $wrd_names a named object used for selection e.g. a word type
+     * @return bool true if at least one found
+     */
+    function load_by_names(array $wrd_names): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_names($db_con->sql_creator(), $wrd_names);
+        return $this->load($qp);
+    }
+
+    /**
+     * set the SQL query parameters to load a list by the names
+     * @param sql_creator $sc with the target db_type set
+     * @param array $names a list of strings with the names
+     * @param string $fld the name of the name field
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_names(
+        sql_creator $sc,
+        array       $names,
+        string      $fld = ''
+    ): sql_par
+    {
+        $qp = $this->load_sql($sc, 'names');
+        if (count($names) > 0) {
+            $sc->add_where($fld, $names, sql_par_type::TEXT_LIST);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
+        }
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * create the common part of an SQL statement to retrieve a list from the database
+     * expected to be overwritten by the child objects to set the specific vars
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name of the query use to prepare and call the query
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    protected function load_sql(sql_creator $sc, string $query_name): sql_par
+    {
+        $qp = new sql_par($this::class);
+        $qp->name .= $query_name;
+
+        $sc->set_name($qp->name);
+
+        return $qp;
     }
 
 
@@ -429,6 +492,15 @@ class sandbox_list_named extends sandbox_list
             $result[] = $this->lst()[$key];
         }
         $this->set_lst($result);
+    }
+
+    function name_id_list(): array
+    {
+        $result = array();
+        foreach ($this->lst() as $obj) {
+            $result[$obj->id()] = $obj->name();
+        }
+        return $result;
     }
 
 

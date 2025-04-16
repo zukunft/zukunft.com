@@ -5,16 +5,16 @@
     model/element/element_group.php - a group of formula elements that, in combination, return a value or a list of values
     -----------------------------
 
-    e.g. for for "ABB", "differentiator" and "Sector" (or "Sectors" "of" "ABB")
+    e.g. for for "ABB", "differentiator" and "sector" (or "sectors" "of" "ABB")
        a list of all sector values is returned
     or in other words for each element group a where clause for value retrieval is created
 
     phrases are always used to select the smallest set of value (in SQL by using "AND" in the where clause)
-    e.g. "ABB" "Sales" excludes the values for "ABB income tax" and "Danone Sales"
+    e.g. "ABB" "sales" excludes the values for "ABB income tax" and "Danone sales"
 
     verbs are always used to add a set of values
-    e.g. "ABB", "Sales", "differentiator" and "Sector" will return a list of Sector sales for ABB
-       so the SQL statement would be "... WHERE ("ABB" AND "Sales" AND "Sector1") OR ("ABB" AND "Sales" AND "Sector2") OR ....
+    e.g. "ABB", "sales", "differentiator" and "sector" will return a list of sector sales for ABB
+       so the SQL statement would be "... WHERE ("ABB" AND "sales" AND "sector1") OR ("ABB" AND "sales" AND "sector2") OR ....
 
     This file is part of zukunft.com - calc with words
 

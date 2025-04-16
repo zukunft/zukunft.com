@@ -314,7 +314,7 @@ class triple_write_tests
         $t->test_triple(words::VESTAS, verbs::IS, words::COMPANY, triples::COMPANY_VESTAS, triples::COMPANY_VESTAS);
         $t->test_triple(words::YEAR_2014, verbs::FOLLOW, words::YEAR_2013, triples::YEAR_2013_FOLLOW);
         // TODO check direction
-        $t->test_triple(words::TAX, verbs::PART_NAME, words::CASH_FLOW, triples::TAXES_OF_CF);
+        $t->test_triple(triples::INCOME_TAX, verbs::PART_NAME, triples::CASH_FLOW_STATEMENT, triples::TAXES_OF_CF);
 
         $t->header('Check if all base phrases are correct');
         $t->test_phrase(triples::COMPANY_ZURICH);

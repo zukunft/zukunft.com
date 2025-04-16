@@ -152,7 +152,7 @@ class result_write_tests
         //$t->display('value->val_scaling for a tern list ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         // test getting the "best guess" value
-        // e.g. if ABB,Sales,2014 is requested, but there is only a value for ABB,Sales,2014,CHF,million get it
+        // e.g. if ABB,sales,2014 is requested, but there is only a value for ABB,sales,2014,CHF,million get it
         //      based
         $phr_lst = new phrase_list($usr);
         $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::YEAR_2020));
@@ -258,7 +258,7 @@ class result_write_tests
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($frm);
         $result = $res_lst->dsp_id();
-        $target = '"Sales","' . words::PCT . '","increase","' . words::TEST_RENAMED . '","2017"';
+        $target = '"sales","' . words::PCT . '","increase","' . words::TEST_RENAMED . '","2017"';
         $target = words::INHABITANTS;
         $t->dsp_contains(', result_list->load of the formula results for ' . $frm->dsp_id() . ' is ' . $result . ' and should contain', $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 

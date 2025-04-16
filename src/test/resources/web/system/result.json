@@ -1236,7 +1236,7 @@
         "id": 3,
         "code_id": "contains",
         "name": "is part of",
-        "comment": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or Sectors and Regions are different splittings"
+        "comment": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or sectors and Regions are different splittings"
       },
       {
         "id": 4,

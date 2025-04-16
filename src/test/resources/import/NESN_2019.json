@@ -92,7 +92,7 @@
       "to": "Annual Report"
     },
     {
-      "from": "Sales",
+      "from": "sales",
       "verb": "is part of",
       "to": "Annual Report"
     },
@@ -273,7 +273,7 @@
         "2019",
         "CHF",
         "million",
-        "Sales"
+        "sales"
       ],
       "number": "92568",
       "protection": "admin_protection",
@@ -489,7 +489,7 @@
         "2018",
         "CHF",
         "million",
-        "Sales"
+        "sales"
       ],
       "number": "91439",
       "protection": "admin_protection",
@@ -705,7 +705,7 @@
         "2017",
         "CHF",
         "million",
-        "Sales"
+        "sales"
       ],
       "number": "89590",
       "protection": "admin_protection",
@@ -921,7 +921,7 @@
         "2016",
         "CHF",
         "million",
-        "Sales"
+        "sales"
       ],
       "number": "89469",
       "protection": "admin_protection",
@@ -1137,7 +1137,7 @@
         "2015",
         "CHF",
         "million",
-        "Sales"
+        "sales"
       ],
       "number": "88785",
       "protection": "admin_protection",
@@ -1353,7 +1353,7 @@
         "2014",
         "CHF",
         "million",
-        "Sales"
+        "sales"
       ],
       "number": "91612",
       "protection": "admin_protection",
@@ -1569,7 +1569,7 @@
         "2013",
         "CHF",
         "million",
-        "Sales"
+        "sales"
       ],
       "number": "92158",
       "protection": "admin_protection",

@@ -746,8 +746,8 @@ class result_list extends sandbox_value_list
      * - the user ($this->user()->id) to filter the results
      * and request on formula result for each word group
      * e.g. the formula is assigned to Company ($phr_id) and the "operating income" formula result should be calculated
-     *      so Sales and Cost are words of the formula
-     *      if Sales and Cost for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. ABB)
+     *      so sales and Cost are words of the formula
+     *      if sales and Cost for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. ABB)
      *      the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
      *      so the result would be to add 4 results to the list:
      *      1. calculate "operating income" for "ABB", "EUR" and "2016"
@@ -912,8 +912,8 @@ class result_list extends sandbox_value_list
 
             // get all values related to assigned word and to the formula words
             // and based on this value get the unique word list
-            // e.g. if the formula text contains the word "Sales" all values that are related to Sales should be taken into account
-            //      $frm_phr_ids is the list of words for the value selection, so in this case it would contain "Sales"
+            // e.g. if the formula text contains the word "sales" all values that are related to sales should be taken into account
+            //      $frm_phr_ids is the list of words for the value selection, so in this case it would contain "sales"
             $frm_phr_ids = zuf_phr_ids ($frm_row[api::URL_VAR_USER_EXPRESSION], $this->user()->id());
             zu_debug('res_lst->frm_upd_lst_usr -> frm_phr_ids1 ('.implode(",",$frm_phr_ids).')');
 
@@ -933,18 +933,18 @@ class result_list extends sandbox_value_list
             $collect_pos++;
 
             Sample:
-            update "Sales" "water" "annual growth rate"
+            update "sales" "water" "annual growth rate"
             -> get the formulas where any of the value words is used (zuv_frm_lst )
             -> formula "yearly forecast "estimate" "next" = "this" * (1 + "annual growth rate")" because "water" OR "annual growth rate" used
-            -> get the list of words of the updated value not used in the formula e.g. "Sales" "Water" ($val_wrd_ids_ex_frm_wrd)
-            -> get all values linked to the word list e.g. "Sales" AND "Water" (zuv_lst_of_wrd_ids -> $val_lst_of_wrd_ids)
-            -> get the word list for each value excluding the word used in the formula e.g. "Nestlé" "Sales" "Water" "2016" and  "Nestlé" "Sales" "Water" "2017" ($val_wrd_lst_ex_frm_wrd)
+            -> get the list of words of the updated value not used in the formula e.g. "sales" "Water" ($val_wrd_ids_ex_frm_wrd)
+            -> get all values linked to the word list e.g. "sales" AND "Water" (zuv_lst_of_wrd_ids -> $val_lst_of_wrd_ids)
+            -> get the word list for each value excluding the word used in the formula e.g. "Nestlé" "sales" "Water" "2016" and  "Nestlé" "sales" "Water" "2017" ($val_wrd_lst_ex_frm_wrd)
             -> calculate the formula result for each word list (zuc_frm)
-            -> return the list of formula results e.g. "Nestlé" "Sales" "Water" "2018" "estimate" that have been updated or created ($frm_result_upd_lst)
+            -> return the list of formula results e.g. "Nestlé" "sales" "Water" "2018" "estimate" that have been updated or created ($frm_result_upd_lst)
             -> r) check in which formula the formula results are used
             -> formula "yearly forecast "estimate" "next" = "this" * (1 + "annual growth rate"), because the formula is linked to year and 2018 is a Year
             -> calculate the formula result for each word list of the formula result
-            -> return the list of formula results e.g. "Nestlé" "Sales" "Water" "2019" "estimate"
+            -> return the list of formula results e.g. "Nestlé" "sales" "Water" "2019" "estimate"
             -> repeat at r)
 
           }
@@ -981,7 +981,7 @@ class result_list extends sandbox_value_list
         log_debug('formula "' . $frm->name() . '" is assigned to ' . $phr_lst_frm_assigned->dsp_name() . ' for user ' . $phr_lst_frm_assigned->user()->name . '');
 
         // get a list of all words, triples, formulas and verbs used in the formula
-        // e.g. for the formula "net profit" the word "Sales" & "cost of sales" is used
+        // e.g. for the formula "net profit" the word "sales" & "cost of sales" is used
         // for formulas the formula word is used
         $exp = $frm->expression();
         $phr_lst_frm_used = $exp->phr_verb_lst($back);
@@ -1021,7 +1021,7 @@ class result_list extends sandbox_value_list
         }
 
         // get the formula phrase name and the formula result phrases to exclude them already in the result phrase selection to avoid loops
-        // e.g. to calculate the "increase" of "ABB,Sales" the formula results for "ABB,Sales,increase" should not be used
+        // e.g. to calculate the "increase" of "ABB,sales" the formula results for "ABB,sales,increase" should not be used
         //      because the "increase" of an "increase" is a gradient not an "increase"
 
         /*

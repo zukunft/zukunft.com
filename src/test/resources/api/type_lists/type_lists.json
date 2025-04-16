@@ -6448,7 +6448,7 @@
       {
         "name": "is part of",
         "code_id": "contains",
-        "description": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or Sectors and Regions are different splittings",
+        "description": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or sectors and Regions are different splittings",
         "plural": "is part of",
         "reverse": "contains",
         "rev_plural": "contains",
@@ -6719,6 +6719,17 @@
         "frm_name": null,
         "usage": 0,
         "id": 27
+      },
+      {
+        "name": "on",
+        "code_id": "on",
+        "description": "to specify a subgroup e.g. taxes on income",
+        "plural": "on",
+        "reverse": "distribute to",
+        "rev_plural": "distribute to",
+        "frm_name": null,
+        "usage": 0,
+        "id": 28
       }
     ],
     "system_views": [
@@ -6743,7 +6754,7 @@
             "link_id": 2,
             "id": 2,
             "name": "spreadsheet",
-            "description": "sheet with words, number and formulas",
+            "description": "changeable sheet with words, number and formulas",
             "type_id": 35,
             "position": 2,
             "position_type": 1

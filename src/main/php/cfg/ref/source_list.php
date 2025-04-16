@@ -89,7 +89,7 @@ class source_list extends sandbox_list_named
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql_creator $sc, string $query_name): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -196,20 +196,17 @@ class source_list extends sandbox_list_named
     /**
      * set the SQL query parameters to load a list of sources by the names
      * @param sql_creator $sc with the target db_type set
-     * @param array $src_names a list of strings with the word names
+     * @param array $names a list of strings with the word names
+     * @param string $fld the name of the name field
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_names(sql_creator $sc, array $src_names): sql_par
+    function load_sql_by_names(
+        sql_creator $sc,
+        array $names,
+        string $fld = source::FLD_NAME
+    ): sql_par
     {
-        $qp = $this->load_sql($sc, 'names');
-        if (count($src_names) > 0) {
-            $sc->add_where(source::FLD_NAME, $src_names, sql_par_type::TEXT_LIST);
-            $qp->sql = $sc->sql();
-        } else {
-            $qp->name = '';
-        }
-        $qp->par = $sc->get_par();
-        return $qp;
+        return parent::load_sql_by_names($sc, $names, $fld);
     }
 
     /**

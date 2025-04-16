@@ -254,6 +254,31 @@ class import_file
     }
 
     /**
+     * import the default pod base configuration json files
+     * for an import it can be assumed that this base configuration is loaded
+     * even if a user has overwritten some of these definitions the technical import should be possible
+     */
+    function import_pod_config(user $usr, bool $direct = true): string
+    {
+        $result = '';
+        log_info('pod setup',
+            'import_pod_config',
+            'import of the pod base setup',
+            'import_pod_config',
+            $usr, true
+        );
+
+        foreach (files::POD_CONFIG_FILES_DIRECT as $filename) {
+            $this->echo('load ' . $filename);
+            $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
+        }
+
+        log_debug('load pod base config ... done');
+
+        return $result;
+    }
+
+    /**
      * display a message immediately to the user
      * @param string $txt the text that should be should to the user
      */

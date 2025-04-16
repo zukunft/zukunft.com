@@ -163,18 +163,6 @@ class word_list extends sandbox_list_named
     }
 
     /**
-     * load a list of words by the names
-     * @param array $wrd_names a named object used for selection e.g. a word type
-     * @return bool true if at least one word found
-     */
-    function load_by_names(array $wrd_names): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by_names($db_con->sql_creator(), $wrd_names);
-        return $this->load($qp);
-    }
-
-    /**
      * load a list of words by the ids
      * @param array $wrd_ids a list of int values with the word ids
      * @return bool true if at least one word found
@@ -315,20 +303,17 @@ class word_list extends sandbox_list_named
     /**
      * set the SQL query parameters to load a list of words by the names
      * @param sql_creator $sc with the target db_type set
-     * @param array $wrd_names a list of strings with the word names
+     * @param array $names a list of strings with the word names
+     * @param string $fld the name of the name field
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_names(sql_creator $sc, array $wrd_names): sql_par
+    function load_sql_by_names(
+        sql_creator $sc,
+        array       $names,
+        string      $fld = word_db::FLD_NAME
+    ): sql_par
     {
-        $qp = $this->load_sql($sc, 'names');
-        if (count($wrd_names) > 0) {
-            $sc->add_where(word_db::FLD_NAME, $wrd_names, sql_par_type::TEXT_LIST);
-            $qp->sql = $sc->sql();
-        } else {
-            $qp->name = '';
-        }
-        $qp->par = $sc->get_par();
-        return $qp;
+        return parent::load_sql_by_names($sc, $names, $fld);
     }
 
     /**

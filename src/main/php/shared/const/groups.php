@@ -53,9 +53,9 @@ class groups
     const TN_ADD_BIG_SQL = 'System Test Group big added via sql insert';
 
     const TN_ZH_2019 = self::ZH_CITY_INHABITANTS . ' (' . words::YEAR_2019 . ')';
-    const TN_CH_INCREASE_2020 = words::TEST_INCREASE . ' in ' . words::CH . '\'s ' . words::INHABITANT . 's from ' . words::YEAR_2019 . ' to ' . words::YEAR_2020 . ' in ' . words::PCT;
+    const TN_CH_INCREASE_2020 = words::TEST_INCREASE . ' in ' . words::CH . '\'s ' . words::INHABITANTS . ' from ' . words::YEAR_2019 . ' to ' . words::YEAR_2020 . ' in ' . words::PCT;
     const TN_ZH_2019_IN_MIO = self::TN_ZH_2019 . ' in ' . words::MIO;
-    const TN_CH_2019 = words::INHABITANT . ' of ' . words::CH . ' in Mio (' . words::YEAR_2019 . ')';
+    const TN_CH_2019 = words::INHABITANTS . ' of ' . words::CH . ' in Mio (' . words::YEAR_2019 . ')';
 
     const TN_TIME_VALUE = 'zukunft.com beta launch date';
     const TD_TIME_VALUE = 'the expected launch date of the first beta version of zukunft.com';

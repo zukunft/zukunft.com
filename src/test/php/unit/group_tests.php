@@ -74,8 +74,8 @@ class group_tests
         $t->assert('phrase ids of 64 bit group_id short', $grp_id->get_array(262145),
             $t->word_list_short()->phrase_lst()->ids());
         $t->assert('64 bit group_id word list', $grp_id->get_id($t->word_list()->phrase_lst()),
-            1688867040264193);
-        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(1688867040264193),
+            1970342016974849);
+        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(1970342016974849),
             $t->word_list()->phrase_lst()->ids());
 
         //$this->check_64_bit_key($t, [0,0,0,0], 0);
@@ -137,7 +137,7 @@ class group_tests
         $phr_lst->merge($t->word_list()->phrase_lst());
         $phr_lst->merge($t->triple_list()->phrase_lst());
         $t->assert('group_id combine phrase list', $grp_id->get_id($phr_lst),
-            '.....0-...../+.....0+.....2+.....4+......+......+......+......+......+......+......+......+......+......+......+');
+            '.....0-...../+.....0+.....2+.....5+......+......+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list', $grp_id->get_id($t->phrase_list()),
             '.....0-...../-...../+.....0+.....2+......+......+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t->phrase_list_16()),
@@ -159,11 +159,11 @@ class group_tests
         $t->assert('64 bit result_id for the formula increase, '
             . 'the phrases Zurich (City) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t->zh_inhabitants_2020(), $t->zh_inhabitants_2020(), $t->formula_increase()),
-            6051875221405905);
+            6051875217408302);
         $t->assert('128 bit result_id for the formula increase, '
             . 'the phrases Zurich (City), Geneva (City) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t->zh_ge_inhabitants_2020(), $t->zh_ge_inhabitants_2020(), $t->formula_increase()),
-            '9234445111013697024');
+            '9234445111019791872');
         $t->assert('512 bit result_id ',
             $res_id->get_id($t->phrase_list_14(), $t->phrase_list_14b(), $t->formula_increase()),
             '.....J=..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+1FajJ2(.4LYK3)1FajJ2)');
