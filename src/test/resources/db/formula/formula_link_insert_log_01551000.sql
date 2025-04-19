@@ -52,7 +52,7 @@ SELECT formula_link_insert_log_01551000
      12::smallint,
      'scale minute to sec'::text,
      'time period based'::text,
-     'Mathematics'::text,
+     'mathematics'::text,
      699::smallint,
      700::smallint,
      2::bigint);

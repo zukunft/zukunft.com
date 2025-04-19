@@ -3,12 +3,12 @@
   "phrases": [
     {
       "id": 2,
-      "name": "Pi (math)",
+      "name": "\u03c0 (unit symbol)",
       "description": "ratio of the circumference of a circle to its diameter",
       "type_id": 22,
-      "from_id": 4,
+      "from_id": 17,
       "from_phrase": {
-        "id": 4,
+        "id": 17,
         "protection": 3,
         "name": "Pi",
         "description": "ratio of the circumference of a circle to its diameter",
@@ -20,7 +20,7 @@
       "to_phrase": {
         "id": 1,
         "protection": 3,
-        "name": "Mathematical constant",
+        "name": "mathematical constant",
         "description": "A mathematical constant that never changes e.g. Pi",
         "type_id": 17,
         "from_id": 2,
@@ -37,7 +37,7 @@
         "to_phrase": {
           "id": 1,
           "protection": 3,
-          "name": "Mathematics",
+          "name": "mathematics",
           "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
           "type_id": 1,
           "plural": null

@@ -1,24 +1,24 @@
 {
-  "id": 68962400101105737,
+  "id": 88947428394958951,
   "description": "URL of this zukunft.com pod from the system configuration",
   "phrases": [
     {
-      "id": 245,
+      "id": 316,
       "name": "zukunft.com",
       "class": "word"
     },
     {
-      "id": 73,
+      "id": 103,
       "name": "system configuration",
       "class": "triple"
     },
     {
-      "id": 226,
+      "id": 298,
       "name": "pod",
       "class": "word"
     },
     {
-      "id": 240,
+      "id": 311,
       "name": "url",
       "class": "word"
     }

@@ -999,7 +999,7 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * @return phrase_list with all phrases that does not yet have a dadabase id
+     * @return phrase_list with all phrases that does not yet have a database id
      */
     function missing_ids(): phrase_list
     {
@@ -2496,6 +2496,21 @@ class phrase_list extends sandbox_list_named
         foreach ($this->lst() as $phr) {
             if ($phr->is_triple()) {
                 $trp_lst->add($phr->obj());
+            }
+        }
+        return $trp_lst;
+    }
+
+    /**
+     * get a triple list from the phrase list
+     * @return triple_list list of the triples from the phrase list
+     */
+    function triples_by_name(): triple_list
+    {
+        $trp_lst = new triple_list($this->user());
+        foreach ($this->lst() as $phr) {
+            if ($phr->is_triple()) {
+                $trp_lst->add_by_name($phr->obj());
             }
         }
         return $trp_lst;

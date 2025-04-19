@@ -395,7 +395,7 @@
       "to": "warm"
     },
     {
-      "name": "climate warming",
+      "name": "global warming",
       "from": "climate",
       "verb": "can get",
       "to": "warmer",
@@ -411,7 +411,7 @@
       ]
     },
     {
-      "name": "warming potential",
+      "name": "global warming potential",
       "from": "warming",
       "verb": "can use",
       "to": "potential"
@@ -483,7 +483,7 @@
       "to": "billion"
     },
     {
-      "from": "climate warming",
+      "from": "global warming",
       "verb": "is a",
       "to": "global problem"
     },
@@ -567,7 +567,7 @@
     },
     {
       "words": [
-        "climate warming",
+        "global warming",
         "potential",
         "loss",
         "percent",
@@ -577,7 +577,7 @@
     },
     {
       "words": [
-        "climate warming",
+        "global warming",
         "potential",
         "loss",
         "percent",
@@ -719,7 +719,7 @@
   "results": [
     {
       "context": [
-        "climate warming",
+        "global warming",
         "potential",
         "loss",
         "percent",
@@ -727,7 +727,7 @@
       ],
       "formula": "global happy time points",
       "words": [
-        "climate warming",
+        "global warming",
         "potential",
         "loss",
         "htp"

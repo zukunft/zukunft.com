@@ -38,7 +38,7 @@ SELECT triple_insert_log_1111500000001_user (
                1,
                1,
                18,
-               'Mathematical constant',
+               'mathematical constant',
                1,
                68,
                'A mathematical constant that never changes e.g. Pi',

@@ -487,7 +487,35 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * @return user_message true if all mandatory vars of the object are set to save the object
+     * check if the triple might be added to the database
+     * if all related objects have been added to the database
+     * @return user_message including suggested solutions
+     *       if something is missing e.g. a linked object
+     */
+    function can_be_ready(): user_message
+    {
+        $usr_msg = parent::db_ready();
+
+        if ($this->fob == null) {
+            $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
+                [msg_id::VAR_NAME => $this->dsp_id()]);
+        } else {
+            $usr_msg->add($this->fob->can_be_ready());
+        }
+        if ($this->fob == null) {
+            $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
+                [msg_id::VAR_NAME => $this->dsp_id()]);
+        } else {
+            $usr_msg->add($this->tob->can_be_ready());
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * returns ok message if this link e.g. triple can be added to the database
+     * if e.g. the database id of the from or the to object is missing
+     *         first the linked object needs to be added to the database
+     * @return user_message the explanation why the link cannot yet be added to the database
      */
     function db_ready(): user_message
     {
@@ -497,21 +525,36 @@ class sandbox_link extends sandbox
             $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
                 [msg_id::VAR_NAME => $this->dsp_id()]);
         } else {
-            $usr_msg->add($this->fob->db_ready());
-            // TODO review
-            // it is ok that the linked object is not yet complete
-            $usr_msg->set_ok();
+            if (!$this->fob->is_valid()) {
+                $usr_msg->add_id_with_vars(msg_id::FROM_ZERO_ID,
+                    [msg_id::VAR_NAME => $this->dsp_id()]);
+
+            }
         }
         if ($this->fob == null) {
             $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
                 [msg_id::VAR_NAME => $this->dsp_id()]);
         } else {
-            $usr_msg->add($this->tob->db_ready());
-            // TODO review
-            // it is ok that the linked object is not yet complete
-            $usr_msg->set_ok();
+            if (!$this->tob->is_valid()) {
+                $usr_msg->add_id_with_vars(msg_id::FROM_ZERO_ID,
+                    [msg_id::VAR_NAME => $this->dsp_id()]);
+
+            }
         }
         return $usr_msg;
+    }
+
+    /**
+     * @return bool true if the triple object probably has already been added to the database
+     *              false e.g. if some parameters are missing
+     */
+    function is_valid(): bool
+    {
+        if ($this->id() != 0 and $this->name() != '') {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

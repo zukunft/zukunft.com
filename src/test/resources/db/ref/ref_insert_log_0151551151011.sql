@@ -69,7 +69,7 @@ SELECT ref_insert_log_0151551151011
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21);
 
 SELECT ref_insert_log_0151551151011 (
-               4::bigint,
+               17::bigint,
                2::smallint,
                'Q167'::text,
                1::bigint,

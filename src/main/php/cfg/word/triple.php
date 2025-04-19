@@ -94,6 +94,7 @@ include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'word_list.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
@@ -135,6 +136,7 @@ use shared\const\triples;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
 use shared\enum\messages as msg_id;
+use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -1126,10 +1128,10 @@ class triple extends sandbox_link_named
      * if the given name is not set (null) the given name is not remove
      * if the given name is an empty string the given name is removed
      *
-     * @param triple|db_object_seq_id $sbx word with the values that should been updated e.g. based on the import
+     * @param triple|CombineObject|db_object_seq_id $sbx word with the values that should been updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(triple|db_object_seq_id $sbx): user_message
+    function fill(triple|CombineObject|db_object_seq_id $sbx): user_message
     {
         $usr_msg = parent::fill($sbx);
         if ($sbx->name_given != null) {
@@ -1844,6 +1846,19 @@ class triple extends sandbox_link_named
     }
 
     /**
+     * check if the triple might be added to the database
+     * if all related objects have been added to the database
+     * @return user_message including suggested solutions
+     *       if something is missing e.g. a linked object
+     */
+    function can_be_ready(): user_message
+    {
+        $usr_msg = parent::can_be_ready();
+        $usr_msg->add($this->check());
+        return $usr_msg;
+    }
+
+    /**
      * check if the triple can be added to the database
      * @return user_message including suggested solutions
      *       if something is missing e.g. a linked object
@@ -1936,7 +1951,7 @@ class triple extends sandbox_link_named
     function not_changed_sql(sql_creator $sc): sql_par
     {
         $sc->set_class(triple::class);
-        return $sc->load_sql_not_changed($this->id(), $this->owner_id);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
     }
 
     /**
@@ -1944,7 +1959,7 @@ class triple extends sandbox_link_named
      */
     function not_changed(): bool
     {
-        log_debug('triple->not_changed (' . $this->id() . ') by someone else than the owner (' . $this->owner_id . ')');
+        log_debug('triple->not_changed (' . $this->id() . ') by someone else than the owner (' . $this->owner_id() . ')');
 
         global $db_con;
         $result = true;
@@ -2287,7 +2302,7 @@ class triple extends sandbox_link_named
                 if ($usr_msg->is_ok()) {
                     // ... and use it for the update
                     $this->set_id($db_chk->id());
-                    $this->owner_id = $db_chk->owner_id;
+                    $this->set_owner_id($db_chk->owner_id());
                     // force including again
                     $this->include();
                     $db_rec->exclude();
@@ -2314,7 +2329,7 @@ class triple extends sandbox_link_named
 
                     // ... and create a new triple
                     $this->set_id(0);
-                    $this->owner_id = $this->user()->id();
+                    $this->set_owner_id($this->user()->id());
                     $usr_msg->add($this->add());
                     log_debug('triple->save_id_if_updated recreate the triple del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                 }
@@ -2507,8 +2522,8 @@ class triple extends sandbox_link_named
                 log_debug('standard triple settings for "' . $std_rec->name() . '" (' . $std_rec->id() . ') loaded');
 
                 // for a correct user triple detection (function can_change) set the owner even if the triple has not been loaded before the save
-                if ($this->owner_id <= 0) {
-                    $this->owner_id = $std_rec->owner_id;
+                if ($this->owner_id() <= 0) {
+                    $this->set_owner_id($std_rec->owner_id());
                 }
 
                 // check if the id parameters are supposed to be changed

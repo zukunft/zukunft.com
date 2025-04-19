@@ -30,7 +30,7 @@ SELECT view_term_link_delete_log
      89::smallint,
      'Start view'::text,
      'default'::text,
-     'Mathematics'::text,
+     'mathematics'::text,
      1::bigint,
      1::smallint,
      1::bigint,

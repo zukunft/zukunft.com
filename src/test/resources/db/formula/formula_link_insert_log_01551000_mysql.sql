@@ -47,7 +47,7 @@ SELECT formula_link_insert_log_01551000
         12,
         'scale minute to sec',
         'time period based',
-        'Mathematics',
+        'mathematics',
         699,
         700,
         2);

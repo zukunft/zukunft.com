@@ -54,7 +54,7 @@ class sources
     const SIB_COM = 'Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards';
     const SIB_URL = 'https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf';
     const SIB_CODE = 'BIPM';
-    const MATH_CONST = 'Mathematical constant';
+    const MATH_CONST = 'mathematical constant';
     const WIKIDATA = 'wikidata';
     const WIKIDATA_ID = 2;
     const SYSTEM_TEST_ADD = 'System Test Source';

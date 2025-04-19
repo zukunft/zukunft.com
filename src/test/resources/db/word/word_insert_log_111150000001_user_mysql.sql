@@ -36,7 +36,7 @@ SELECT word_insert_log_111150000001_user
         (1,
          1,
          10,
-         'Mathematics',
+         'mathematics',
          1,
          11,
          'Mathematics is an area of knowledge that includes the topics of numbers and formulas',

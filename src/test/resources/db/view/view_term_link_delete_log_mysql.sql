@@ -31,7 +31,7 @@ SELECT view_term_link_delete_log
      89,
      'Start view',
      'default',
-     'Mathematics',
+     'mathematics',
      1,
      1,
      1,

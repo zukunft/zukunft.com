@@ -76,7 +76,7 @@ include_once DB_PATH . 'sql_type.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_FORMULA_PATH . 'formula_link.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
@@ -277,12 +277,12 @@ class phrase extends combine_named
                     $wrd->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
                 }
                 if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
-                    $wrd->share_id = $db_row[sandbox::FLD_SHARE . $fld_ext];
+                    $wrd->set_share_id($db_row[sandbox::FLD_SHARE . $fld_ext]);
                 }
                 if (array_key_exists(sandbox::FLD_PROTECT . $fld_ext, $db_row)) {
-                    $wrd->protection_id = $db_row[sandbox::FLD_PROTECT . $fld_ext];
+                    $wrd->set_protection_id($db_row[sandbox::FLD_PROTECT . $fld_ext]);
                 }
-                //$wrd->owner_id = $db_row[_user::FLD_ID . $fld_ext];
+                //$wrd->set_owner_id($db_row[_user::FLD_ID . $fld_ext]);
                 $this->obj = $wrd;
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
@@ -303,14 +303,14 @@ class phrase extends combine_named
                     $trp->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
                 }
                 if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
-                    $trp->share_id = $db_row[sandbox::FLD_SHARE . $fld_ext];
+                    $trp->set_share_id($db_row[sandbox::FLD_SHARE . $fld_ext]);
                 }
                 if (array_key_exists(sandbox::FLD_PROTECT . $fld_ext, $db_row)) {
-                    $trp->protection_id = $db_row[sandbox::FLD_PROTECT . $fld_ext];
+                    $trp->set_protection_id($db_row[sandbox::FLD_PROTECT . $fld_ext]);
                 }
                 // not yet loaded with initial load
                 // $trp->name = $db_row[triple::FLD_NAME_GIVEN . $fld_ext];
-                // $trp->owner_id = $db_row[_user::FLD_ID . $fld_ext];
+                // $trp->set_owner_id($db_row[_user::FLD_ID . $fld_ext]);
                 // $trp->from->set_id($db_row[triple::FLD_FROM]);
                 // $trp->to->set_id($db_row[triple::FLD_TO]);
                 // $trp->verb->set_id($db_row[verb::FLD_ID]);
@@ -451,6 +451,32 @@ class phrase extends combine_named
     }
 
     /**
+     * @return int the id of the user or 0 if the user is not set
+     */
+    function user_id(): int
+    {
+        return $this->obj()->user_id();
+    }
+
+    /**
+     * @return int|null the id of the owner if the user is not set
+     */
+    function owner_id(): ?int
+    {
+        return $this->obj()->owner_id();
+    }
+
+    function share_id(): ?int
+    {
+        return $this->obj()->share_id();
+    }
+
+    function protection_id(): ?int
+    {
+        return $this->obj()->protection_id();
+    }
+
+    /**
      * set the value to rank the words by usage
      *
      * @param int|null $usage a higher value moves the word to the top of the selection list
@@ -517,15 +543,27 @@ class phrase extends combine_named
     }
 
     /**
+     * @return user_message ok message if this word or triple might be read to be added to the database
+     */
+    function can_be_ready(): user_message
+    {
+        return $this->obj()->can_be_ready();
+    }
+
+    /**
+     * @return user_message ok message if this word or triple can be added to the database
+     */
+    function db_ready(): user_message
+    {
+        return $this->obj()->db_ready();
+    }
+
+    /**
      * @return bool true if it has a valid id and name and the phrase is expected to be stored in the database
      */
     function is_valid(): bool
     {
-        if ($this->db_ready()) {
-            return $this->obj()->db_ready()->is_ok();
-        } else {
-            return false;
-        }
+        return $this->obj()->is_valid();
     }
 
 

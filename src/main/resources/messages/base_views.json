@@ -221,17 +221,17 @@
       ]
     },
     {
-      "name": "Science",
+      "name": "science",
       "description": "show mainly related words that are relevant in sciences",
       "assigned": [
-        "Mathematics"
+        "mathematics"
       ]
     },
     {
       "name": "Historic",
       "description": "show the related words in historic order",
       "assigned": [
-        "Mathematics"
+        "mathematics"
       ]
     },
     {
@@ -245,28 +245,28 @@
       "name": "Education",
       "description": "sort related topics by difficulty",
       "assigned": [
-        "Mathematics"
+        "mathematics"
       ]
     },
     {
       "name": "Touristic",
       "description": "show things to see",
       "assigned": [
-        "Mathematics"
+        "mathematics"
       ]
     },
     {
       "name": "Graph",
       "description": "show the related topics as a visual graph",
       "assigned": [
-        "Mathematics"
+        "mathematics"
       ]
     },
     {
       "name": "Simple",
       "description": "show only the most relevant facts",
       "assigned": [
-        "Mathematics"
+        "mathematics"
       ]
     },
     {

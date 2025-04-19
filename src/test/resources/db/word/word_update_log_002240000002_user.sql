@@ -48,7 +48,7 @@ SELECT word_update_log_002240000002_user
        (1::bigint,
         2::smallint,
         10::smallint,
-        'Mathematics'::text,
+        'mathematics'::text,
         'System Test Word Renamed'::text,
         1::bigint,
         11::smallint,

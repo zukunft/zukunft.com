@@ -56,6 +56,9 @@ enum messages: string
     // the name of a class
     const VAR_CLASS_NAME = 'VarClassName';
 
+    const VAR_JSON_TEXT = 'VarJsonText';
+    const VAR_SOURCE_NAME = 'VarSourceName';
+
     // unique message keys
     // *_txt sample translation to test the English mapping
     case IS_RESERVED = 'is_reserved';
@@ -111,6 +114,15 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" seems to be a triple already';
 
+    case JSON_DECODE = 'error trying to decode json "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '"';
+
+    case SOURCE_MISSING_IMPORT = 'source "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '" is missing in the import message '
+        . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END;
+
 
     // for the change log
     case LOG_ADD = 'added';
@@ -134,7 +146,7 @@ enum messages: string
     case PHRASE_MISSING_FROM = 'phrase missing from';
     case PHRASE_MISSING_TO = 'phrase missing to';
     case PHRASE_MISSING_ID = 'phrase id is zero';
-    case PHRASE_ID_NOT_FOUND = 'phrase id not fount';
+    case PHRASE_ID_NOT_FOUND = 'phrase id not found';
 
     // config
     case CONFIG_NOT_LOADED = 'cannot load config';

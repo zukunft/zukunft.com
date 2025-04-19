@@ -1025,6 +1025,7 @@ class sql_db
             $this->create_internal_words($usr);
             $import->import_config_yaml($usr);
             $import->import_pod_config($usr);
+            $import->import_test_config($usr);
             $this->db_check_missing_owner();
 
             // create the test dataset to check the basic write functions
@@ -5650,14 +5651,14 @@ class sql_db
                 $wrd = new word($usr);
                 $wrd->set_name($name);
                 $wrd->set_code_id($name);
-                $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
                 $usr_msg->add($wrd->save());
             }
             foreach (config_numbers::HIDDEN_KEYWORDS as $name) {
                 $wrd = new word($usr);
                 $wrd->set_name($name);
                 $wrd->set_code_id($name);
-                $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
                 $wrd->set_type(phrase_type_shared::SYSTEM_HIDDEN);
                 $usr_msg->add($wrd->save());
             }
@@ -5668,7 +5669,7 @@ class sql_db
                 if (!$wrd->load_by_name($name)) {
                     $wrd->set_name($name);
                 }
-                $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
                 $wrd->description = $com;
                 $wrd->set_code_id($name);
                 $usr_msg->add($wrd->save());
@@ -5686,7 +5687,7 @@ class sql_db
                 $trp->set_verb($vrb);
                 $trp->set_to($to);
                 $trp->set_name($from_name . ' ' . $to_name);
-                $trp->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $trp->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
                 $trp->set_type(phrase_type_shared::SYSTEM_HIDDEN);
                 //$trp->set_code_id($from_name . ' ' . $to_name);
                 $usr_msg->add($trp->save());
@@ -5704,7 +5705,7 @@ class sql_db
                 $trp->set_verb($vrb);
                 $trp->set_to($to);
                 $trp->set_name($from_name . ' ' . $to_name);
-                $trp->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $trp->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
                 //$trp->set_code_id($from_name . ' ' . $to_name);
                 $usr_msg->add($trp->save());
             }

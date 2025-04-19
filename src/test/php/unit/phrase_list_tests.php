@@ -128,7 +128,7 @@ class phrase_list_tests
         $target = $this->get_phrase_list_ex_time()->dsp_id();
         $t->display('phrase_list->ex_time names', $target, $result);
 
-        $test_name = 'get all words related to a phrase list: Mathematics, constant, Mathematical constant, Pi and Pi (Math) results in Mathematics, constant and Pi';
+        $test_name = 'get all words related to a phrase list: mathematics, constant, mathematical constant, Pi and Pi (Math) results in mathematics, constant and Pi';
         $phr_lst = $t->phrase_list();
         $wrd_lst = $phr_lst->wrd_lst_all();
         $t->assert($test_name, $wrd_lst->count(), 3);

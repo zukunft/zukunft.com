@@ -45,7 +45,7 @@ SELECT triple_update_log_0022400000002_user
        (1,
         2,
         18,
-        'Mathematical constant',
+        'mathematical constant',
         'System Test Word Renamed',
         1,
         68,

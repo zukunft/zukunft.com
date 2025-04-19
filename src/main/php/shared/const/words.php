@@ -62,9 +62,9 @@ class words
 
     // for the system setup and all pods of zukunft.com
     const POD = 'pod';
-    const POD_ID = 226;
+    const POD_ID = 298;
     const MASTER_POD_NAME = 'zukunft.com';
-    const MASTER_POD_NAME_ID = 245;
+    const MASTER_POD_NAME_ID = 316;
     const JOB = 'job';
     const USER = 'user';
     const FRONTEND = 'frontend';
@@ -73,10 +73,10 @@ class words
 
     // e.g. one instance / pod of zukunft.com
     const URL = 'url';
-    const URL_ID = 240;
+    const URL_ID = 311;
     // e.g. the launch date of the first beta version of zukunft.com
     const LAUNCH = 'launch';
-    const LAUNCH_ID = 284;
+    const LAUNCH_ID = 354;
 
     // for the user settings
     const ROW = 'row';
@@ -95,16 +95,16 @@ class words
     const DECIMAL = 'decimal';
     // e.g. the geolocation of the development of zukunft.com
     const POINT = 'point';
-    const POINT_ID = 285;
+    const POINT_ID = 205;
 
     // general words used also for the system configuration that have a fixed tooltip
     const TIME = 'time';
     const TIME_COM = 'Time is the continued sequence of existence and events that occurs in an apparently irreversible succession from the past, through the present, into the future';
-    const TIME_ID = 100;
+    const TIME_ID = 103;
     const YEAR = 'year';
     const YEAR_COM = 'A year is the time taken for astronomical objects to complete one orbit. For example, a year on Earth is the time taken for Earth to revolve around the Sun.';
     const YEAR_CAP = 'Year';
-    const YEAR_CAP_ID = 137;
+    const YEAR_CAP_ID = 134;
     const CALCULATION = 'calculation';
     const CALCULATION_COM = 'A calculation is a deliberate mathematical process that transforms one or more inputs into one or more outputs or results';
     const MIN = 'min';
@@ -174,131 +174,131 @@ class words
     // TN_* is the name of the word used for testing created with the initial setup (see also TWN_*)
     // TI_* is the database id based on the initial load
     // TD_* is the tooltip/description of the word
-    const MATH = 'Mathematics';
+    const MATH = 'mathematics';
     const MATH_COM = 'Mathematics is an area of knowledge that includes the topics of numbers and formulas';
     const MATH_ID = 1;
-    const MATH_PLURAL = 'Mathematics';
+    const MATH_PLURAL = 'mathematics';
     const CONST_NAME = 'constant';
     const CONST_COM = 'fixed and well-defined number';
     const CONST_ID = 2;
     const ONE = 'one';
-    const ONE_ID = 3;
+    const ONE_ID = 4;
     const PI = 'Pi';
-    const PI_ID = 4;
+    const PI_ID = 17;
     const PI_COM = 'ratio of the circumference of a circle to its diameter';
     const CIRCUMFERENCE = 'circumference';
-    const CIRCUMFERENCE_ID = 5;
+    const CIRCUMFERENCE_ID = 15;
     const DIAMETER = 'diameter';
-    const DIAMETER_ID = 6;
+    const DIAMETER_ID = 16;
     const E = "Euler's constant";
-    const E_ID = 7;
+    const E_ID = 19;
     const SECOND = 'second';
-    const SECOND_ID = 19;
+    const SECOND_ID = 24;
     const MINUTE = 'minute';
-    const MINUTE_ID = 101;
+    const MINUTE_ID = 104;
     const MIO = 'million';
-    const MIO_ID = 170;
+    const MIO_ID = 143;
     const MIO_SHORT = 'mio';
     const COUNTRY = 'Country';
     const CH = 'Switzerland';
-    const CH_ID = 295;
+    const CH_ID = 260;
     const GERMANY = 'Germany';
     const CANTON = 'Canton';
-    const CANTON_ID = 296;
+    const CANTON_ID = 261;
     const CITY = 'City';
-    const CITY_ID = 297;
+    const CITY_ID = 262;
     const ZH = 'Zurich';
-    const ZH_ID = 298;
+    const ZH_ID = 251;
     const BE = 'Bern';
-    const BE_ID = 299;
+    const BE_ID = 252;
     const GE = 'Geneva';
-    const GE_ID = 300;
-    const INHABITANT_ID = 302;
+    const GE_ID = 253;
+    const INHABITANT_ID = 255;
     // TODO add test to search for words in all language forms e.g. plural
     const INHABITANTS = 'inhabitants';
     const YEAR_2013 = '2013';
-    const YEAR_2013_ID = 426;
+    const YEAR_2013_ID = 257;
     const YEAR_2014 = '2014';
-    const YEAR_2014_ID = 425;
+    const YEAR_2014_ID = 258;
     const YEAR_2015 = '2015';
-    const YEAR_2015_ID = 304;
+    const YEAR_2015_ID = 259;
     const YEAR_2016 = '2016';
-    const YEAR_2016_ID = 305;
+    const YEAR_2016_ID = 260;
     const YEAR_2017 = '2017';
-    const YEAR_2017_ID = 306;
+    const YEAR_2017_ID = 261;
     const YEAR_2018 = '2018';
-    const YEAR_2018_ID = 307;
+    const YEAR_2018_ID = 262;
     const YEAR_2019 = '2019';
-    const YEAR_2019_ID = 142;
+    const YEAR_2019_ID = 139;
     const YEAR_2020 = '2020';
-    const YEAR_2020_ID = 143;
+    const YEAR_2020_ID = 140;
     const YEAR_2020_COM = 'the year 2020';
     const PCT = 'percent';
-    const PCT_ID = 172;
+    const PCT_ID = 145;
     // _PRE are the predefined words
     const THIS_NAME = 'this'; // the test name for the predefined word 'this'
-    const THIS_ID = 192;
+    const THIS_ID = 162;
     const PRIOR_NAME = 'prior';
-    const PRIOR_ID = 194;
+    const PRIOR_ID = 164;
     const PARTS = 'parts';
-    const PARTS_ID = 388;
+    const PARTS_ID = 242;
     const TOTAL_PRE = 'total';
-    const TOTAL_ID = 254;
+    const TOTAL_ID = 243;
     const COMPANY = 'Company';
-    const COMPANY_ID = 303;
+    const COMPANY_ID = 256;
     const ABB = 'ABB';
-    const ABB_ID = 423;
+    const ABB_ID = 988;
     const VESTAS = 'Vestas';
-    const VESTAS_ID = 424;
+    const VESTAS_ID = 991;
     const CHF = 'CHF';
-    const CHF_ID = 358;
+    const CHF_ID = 211;
     const SALES = 'sales';
-    const SALES_ID = 382;
+    const SALES_ID = 237;
     const CASH = 'cash';
-    const CASH_ID = 384;
+    const CASH_ID = 239;
     const FLOW = 'flow';
-    const FLOW_ID = 385;
+    const FLOW_ID = 101;
     const STATEMENT = 'statement';
-    const STATEMENT_ID = 386;
+    const STATEMENT_ID = 240;
     const TAX = 'tax';
-    const TAX_ID = 390;
+    const TAX_ID = 245;
     const INCOME = 'income';
-    const INCOME_ID = 389;
+    const INCOME_ID = 244;
 
     const GLOBAL = 'global';
-    const GLOBAL_ID = 313;
+    const GLOBAL_ID = 167;
 
     const PROBLEM = 'problem';
-    const PROBLEM_ID = 312;
+    const PROBLEM_ID = 166;
     const POTENTIAL = 'potential';
-    const POTENTIAL_ID = 316;
+    const POTENTIAL_ID = 170;
     const CLIMATE = 'climate';
-    const CLIMATE_ID = 319;
+    const CLIMATE_ID = 173;
     const WARMER = 'warmer';
-    const WARMER_ID = 322;
+    const WARMER_ID = 176;
     const HEALTH = 'health';
-    const HEALTH_ID = 343;
+    const HEALTH_ID = 196;
     const POPULISM = 'populism';
-    const POPULISM_ID = 326;
+    const POPULISM_ID = 180;
     const POVERTY = 'poverty';
-    const POVERTY_ID = 345;
+    const POVERTY_ID = 198;
     const EDUCATION = 'education';
-    const EDUCATION_ID = 347;
+    const EDUCATION_ID = 200;
     const HAPPY = 'happy';
-    const HAPPY_ID = 350;
+    const HAPPY_ID = 203;
     const POINTS = 'points';
-    const POINTS_ID = 352;
+    const POINTS_ID = 355;
     const TRILLION = 'trillion';
-    const TRILLION_ID = 356;
+    const TRILLION_ID = 209;
     const BILLION = 'billion';
-    const BILLION_ID = 171;
+    const BILLION_ID = 144;
     const USD = 'USD';
-    const USD_ID = 424;
+    const USD_ID = 212;
     const HTP = 'htp';
-    const HTP_ID = 355;
+    const HTP_ID = 208;
 
     const GWP = 'global warming potential';
-    const GWP_ID = 1145;
+    const GWP_ID = 91;
 
     const BYTE = 'byte';
 

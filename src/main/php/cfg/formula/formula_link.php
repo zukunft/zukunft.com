@@ -524,7 +524,7 @@ class formula_link extends sandbox_link
     function not_changed_sql(sql_creator $sc): sql_par
     {
         $sc->set_class(formula_link::class);
-        return $sc->load_sql_not_changed($this->id(), $this->owner_id);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
     }
 
     /**
@@ -532,7 +532,7 @@ class formula_link extends sandbox_link
      */
     function not_changed(): bool
     {
-        log_debug($this->id() . ' by someone else than the owner (' . $this->owner_id . ')');
+        log_debug($this->id() . ' by someone else than the owner (' . $this->owner_id() . ')');
 
         global $db_con;
         $result = true;
@@ -660,8 +660,8 @@ class formula_link extends sandbox_link
             log_debug("standard formula settings loaded (" . $std_rec->id() . ")");
 
             // for a correct user formula link detection (function can_change) set the owner even if the formula link has not been loaded before the save
-            if ($this->owner_id <= 0) {
-                $this->owner_id = $std_rec->owner_id;
+            if ($this->owner_id() <= 0) {
+                $this->set_owner_id($std_rec->owner_id());
             }
 
             // it should not be possible to change the formula or the word, but nevertheless check

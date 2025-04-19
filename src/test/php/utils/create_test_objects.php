@@ -235,8 +235,6 @@ class create_test_objects extends test_base
      */
     function type_lists_api(user $usr): string
     {
-        $is_ok = true;
-
         $usr_pro_cac = new user_profile_list();
         $phr_typ_cac = new phrase_types();
         $frm_typ_cac = new formula_type_list();
@@ -491,7 +489,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return word "Mathematics" as the main word for unit testing
+     * @return word "mathematics" as the main word for unit testing
      */
     function word(): word
     {
@@ -500,12 +498,12 @@ class create_test_objects extends test_base
         $wrd->description = words::MATH_COM;
         $wrd->set_type(phrase_type_shared::NORMAL);
         global $ptc_typ_cac;
-        $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+        $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $wrd;
     }
 
     /**
-     * @return word "Mathematics" without the id e.g. as given by the import
+     * @return word "mathematics" without the id e.g. as given by the import
      */
     function word_name_only(): word
     {
@@ -515,7 +513,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return word "Mathematics" with all object variables set for complete unit testing
+     * @return word "mathematics" with all object variables set for complete unit testing
      */
     function word_filled(): word
     {
@@ -530,8 +528,8 @@ class create_test_objects extends test_base
         $wrd->set_view_id(views::START_ID);
         $wrd->set_usage(2);
         $wrd->exclude();
-        $wrd->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
-        $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
+        $wrd->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
+        $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
         return $wrd;
     }
 
@@ -580,7 +578,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return word_dsp the word "Mathematics" for frontend unit testing
+     * @return word_dsp the word "mathematics" for frontend unit testing
      */
     function word_dsp(): word_dsp
     {
@@ -598,7 +596,7 @@ class create_test_objects extends test_base
         $wrd->description = words::CONST_COM;
         $wrd->set_type(phrase_type_shared::MATH_CONST);
         global $ptc_typ_cac;
-        $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+        $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $wrd;
     }
 
@@ -612,7 +610,7 @@ class create_test_objects extends test_base
         $wrd->description = words::PI_COM;
         $wrd->set_type(phrase_type_shared::MATH_CONST);
         global $ptc_typ_cac;
-        $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+        $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $wrd;
     }
 
@@ -1097,7 +1095,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return triple "Mathematical constant" used for unit testing
+     * @return triple "mathematical constant" used for unit testing
      */
     function triple(): triple
     {
@@ -1109,7 +1107,7 @@ class create_test_objects extends test_base
         $trp->set_to($this->word()->phrase());
         $trp->set_type(phrase_type_shared::MATH_CONST);
         global $ptc_typ_cac;
-        $trp->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+        $trp->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $trp;
     }
 
@@ -1128,7 +1126,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return triple "Mathematical constant" with only the name set as it may be created by the import
+     * @return triple "mathematical constant" with only the name set as it may be created by the import
      */
     function triple_name_only(): triple
     {
@@ -1138,7 +1136,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return triple "Mathematical constant" with only the link names set as it may be created by the import
+     * @return triple "mathematical constant" with only the link names set as it may be created by the import
      */
     function triple_link_only(): triple
     {
@@ -1286,7 +1284,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return triple "climate warming" used for start view unit testing
+     * @return triple "global warming" used for start view unit testing
      */
     function global_warming(): triple
     {
@@ -2309,8 +2307,8 @@ class create_test_objects extends test_base
         $val = new value($this->usr1, round(values::PI_LONG, 13), $grp);
         $val->set_source_id($this->source()->id());
         $val->exclude();
-        $val->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
-        $val->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
+        $val->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
+        $val->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
         return $val;
     }
 
@@ -2405,8 +2403,8 @@ class create_test_objects extends test_base
         $frm->set_view_id(views::START_ID);
         $frm->set_usage(2);
         $frm->exclude();
-        $frm->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
-        $frm->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
+        $frm->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
+        $frm->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
         return $frm;
     }
 
@@ -2481,8 +2479,8 @@ class create_test_objects extends test_base
         global $ptc_typ_cac;
         $lnk = $this->formula_link();
         $lnk->exclude();
-        $lnk->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
-        $lnk->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
+        $lnk->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
+        $lnk->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
         return $lnk;
     }
 
@@ -2609,8 +2607,8 @@ class create_test_objects extends test_base
         global $ptc_typ_cac;
         $res = $this->result_main_max();
         $res->exclude();
-        $res->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
-        $res->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
+        $res->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
+        $res->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
         return $res;
     }
 
@@ -2695,8 +2693,8 @@ class create_test_objects extends test_base
         global $ptc_typ_cac;
         $src = $this->source();
         $src->exclude();
-        $src->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
-        $src->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
+        $src->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
+        $src->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
         return $src;
     }
 
@@ -2824,8 +2822,8 @@ class create_test_objects extends test_base
         $ref->source = $this->source();
         $ref->url = refs::PI_URL;
         $ref->include();
-        $ref->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
-        $ref->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
+        $ref->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
+        $ref->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
         return $ref;
     }
 
@@ -2842,8 +2840,8 @@ class create_test_objects extends test_base
         $ref->source = $this->source();
         $ref->description = refs::PI_COM;
         $ref->exclude();
-        $ref->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
-        $ref->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
+        $ref->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
+        $ref->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
         return $ref;
     }
 
@@ -2873,7 +2871,7 @@ class create_test_objects extends test_base
         $msk->description = views::START_COM;
         $msk->code_id = views::START_CODE;
         $msk->set_type(view_type::ENTRY);
-        $msk->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+        $msk->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $msk;
     }
 
@@ -2979,8 +2977,8 @@ class create_test_objects extends test_base
         $msk->set_type(view_type::DETAIL);
         $msk->set_style(view_styles::COL_SM_4);
         $msk->exclude();
-        $msk->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
-        $msk->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
+        $msk->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
+        $msk->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
         return $msk;
     }
 
@@ -3100,8 +3098,8 @@ class create_test_objects extends test_base
         global $ptc_typ_cac;
         $lnk = $this->view_link();
         $lnk->exclude();
-        $lnk->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
-        $lnk->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
+        $lnk->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
+        $lnk->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
         return $lnk;
     }
 
@@ -3151,8 +3149,8 @@ class create_test_objects extends test_base
         $cmp->set_formula($this->formula());
         $cmp->set_link_type(component_link_type::EXPRESSION);
         $cmp->exclude();
-        $cmp->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
-        $cmp->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
+        $cmp->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
+        $cmp->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
         return $cmp;
     }
 
@@ -3331,8 +3329,8 @@ class create_test_objects extends test_base
         $lnk->set_pos_type(position_types::SIDE);
         $lnk->set_style(view_styles::COL_SM_4);
         $lnk->exclude();
-        $lnk->share_id = $shr_typ_cac->id(share_type_shared::GROUP);
-        $lnk->protection_id = $ptc_typ_cac->id(protect_type_shared::USER);
+        $lnk->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
+        $lnk->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
         return $lnk;
     }
 

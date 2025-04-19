@@ -26,5 +26,5 @@ SELECT word_delete_log
        (1::bigint,
         3::smallint,
         10::smallint,
-        'Mathematics'::text,
+        'mathematics'::text,
         1::bigint);

@@ -77,7 +77,7 @@ class list_sort
         if ($phr_lst->is_empty()) {
             $phr_lst = new phrase_list();
             $trp = new triple();
-            $trp->load_by_name('climate warming');
+            $trp->load_by_name('global warming');
             $phr_lst->add($trp->phrase());
             $wrd = new word();
             $wrd->load_by_name('populism');

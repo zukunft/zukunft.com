@@ -36,11 +36,13 @@ include_once MODEL_CONST_PATH . 'files.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
+include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\const\files;
 use cfg\helper\config_numbers;
 use cfg\user\user;
 use cfg\user\user_message;
+use const\files as test_files;
 use shared\const\triples;
 use shared\const\words;
 use shared\enum\messages as msg_id;
@@ -233,7 +235,7 @@ class import_file
      * TODO load this configuration on first start of zukunft
      * TODO add a check bottom for admin to reload the base configuration
      */
-    function import_base_config(user $usr, bool $direct = true): string
+    function import_base_config(user $usr, bool $direct = false): string
     {
         $result = '';
         log_info('base setup',
@@ -243,9 +245,15 @@ class import_file
             $usr, true
         );
 
-        foreach (files::BASE_CONFIG_FILES_DIRECT as $filename) {
+        foreach (files::BASE_CONFIG_FILES as $filename) {
             $this->echo('load ' . $filename);
             $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
+        }
+
+        // config files that cannot yet be loaded via list saving
+        foreach (files::BASE_CONFIG_FILES_DIRECT as $filename) {
+            $this->echo('load ' . $filename);
+            $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, true)->get_last_message();
         }
 
         log_debug('load base config ... done');
@@ -258,7 +266,7 @@ class import_file
      * for an import it can be assumed that this base configuration is loaded
      * even if a user has overwritten some of these definitions the technical import should be possible
      */
-    function import_pod_config(user $usr, bool $direct = true): string
+    function import_pod_config(user $usr, bool $direct = false): string
     {
         $result = '';
         log_info('pod setup',
@@ -271,6 +279,31 @@ class import_file
         foreach (files::POD_CONFIG_FILES_DIRECT as $filename) {
             $this->echo('load ' . $filename);
             $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
+        }
+
+        log_debug('load pod base config ... done');
+
+        return $result;
+    }
+
+    /**
+     * import the default pod base configuration json files
+     * for an import it can be assumed that this base configuration is loaded
+     * even if a user has overwritten some of these definitions the technical import should be possible
+     */
+    function import_test_config(user $usr, bool $direct = false): string
+    {
+        $result = '';
+        log_info('test setup',
+            'import_test_config',
+            'import of the pod test setup',
+            'import_test_config',
+            $usr, true
+        );
+
+        foreach (test_files::TEST_IMPORT_FILE_LIST as $filename) {
+            $this->echo('load ' . $filename);
+            $result .= $this->json_file($filename, $usr, $direct)->get_last_message();
         }
 
         log_debug('load pod base config ... done');

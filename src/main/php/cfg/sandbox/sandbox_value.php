@@ -942,7 +942,7 @@ class sandbox_value extends sandbox_multi
     function load_sql_changer(sql_creator $sc): sql_par
     {
         $ext = 'changer';
-        if ($this->owner_id > 0) {
+        if ($this->owner_id() > 0) {
             $ext .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
         }
         $sc_par_lst = [sql_type::COMPLETE, sql_type::USER];
@@ -1057,7 +1057,7 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst->add($this->value_type());
         $sc_par_lst->add(sql_type::USER);
         $ext = sql::NAME_EXT_MEDIAN_USER;
-        if ($this->owner_id > 0) {
+        if ($this->owner_id() > 0) {
             $ext .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
         }
         $id_ext = $this->table_extension();

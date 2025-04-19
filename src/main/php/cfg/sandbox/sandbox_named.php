@@ -82,6 +82,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -111,6 +112,7 @@ use cfg\word\word;
 use Exception;
 use shared\enum\change_actions;
 use shared\enum\messages as msg_id;
+use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -375,10 +377,10 @@ class sandbox_named extends sandbox
      * if the given description is not set (null) the description is not removed
      * if the given description is an empty string (not null) the description is removed
      *
-     * @param sandbox_named|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param sandbox_named|CombineObject|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(sandbox_named|db_object_seq_id $sbx): user_message
+    function fill(sandbox_named|CombineObject|db_object_seq_id $sbx): user_message
     {
         $usr_msg = parent::fill($sbx);
         if ($sbx->name() != null) {
@@ -556,6 +558,17 @@ class sandbox_named extends sandbox
             }
         }
         return $result;
+    }
+
+    /**
+     * check if this might be added to the database
+     * which is for named objects without dependencies the same as db_reday
+     * @return user_message including suggested solutions
+     *       if something is missing e.g. a linked object
+     */
+    function can_be_ready(): user_message
+    {
+        return $this->db_ready();
     }
 
     /**

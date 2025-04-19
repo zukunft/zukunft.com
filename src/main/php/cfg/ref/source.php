@@ -570,7 +570,7 @@ class source extends sandbox_typed
     function not_changed_sql(sql_creator $sc): sql_par
     {
         $sc->set_class(source::class);
-        return $sc->load_sql_not_changed($this->id(), $this->owner_id);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
     }
 
     /**
@@ -578,7 +578,7 @@ class source extends sandbox_typed
      */
     function not_changed(): bool
     {
-        log_debug($this->dsp_id() . ' by someone else than the owner (' . $this->owner_id . ')');
+        log_debug($this->dsp_id() . ' by someone else than the owner (' . $this->owner_id() . ')');
 
         global $db_con;
         $result = true;

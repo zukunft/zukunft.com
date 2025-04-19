@@ -59,6 +59,7 @@ include_once MODEL_HELPER_PATH . 'db_object.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 //include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
@@ -72,6 +73,7 @@ use cfg\sandbox\sandbox;
 use cfg\user\user;
 use cfg\user\user_message;
 use controller\api_message;
+use shared\helper\CombineObject;
 use shared\types\api_type_list;
 use shared\json_fields;
 
@@ -331,10 +333,10 @@ class db_object_seq_id extends db_object
      * if the given id is zero the id is never overwritten
      * if the given id is not zero the id is set if not yet done
      *
-     * @param db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param CombineObject|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(db_object_seq_id $sbx): user_message
+    function fill(CombineObject|db_object_seq_id $sbx): user_message
     {
         $usr_msg = new user_message();
         if ($sbx->id() != 0) {

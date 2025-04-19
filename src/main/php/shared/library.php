@@ -1037,6 +1037,7 @@ class library
             'cfg\component' => 'MODEL_COMPONENT_PATH',
             'cfg\component\sheet' => 'MODEL_SHEET_PATH',
             'cfg\export' => 'EXPORT_PATH',
+            'const' => 'TEST_CONST_PATH',
             'html' => 'WEB_HTML_PATH',
             'html\log' => 'WEB_LOG_PATH',
             'html\user' => 'WEB_USER_PATH',

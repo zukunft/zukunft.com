@@ -498,9 +498,9 @@ class word_list extends sandbox_list_named
      * should be cast by the child function get_by_name
      *
      * @param string $name the unique name of the object that should be returned
-     * @return word|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
+     * @return word|phrase|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string $name): word|CombineObject|IdObject|TextIdObject|null
+    function get_by_name(string $name): word|phrase|CombineObject|IdObject|TextIdObject|null
     {
         return parent::get_by_name($name);
     }

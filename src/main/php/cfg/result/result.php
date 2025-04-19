@@ -360,7 +360,7 @@ class result extends sandbox_value
                 $this->src_grp->set_id($db_row[self::FLD_SOURCE_GRP]);
             }
             $this->set_number($db_row[self::FLD_VALUE]);
-            $this->owner_id = $db_row[user::FLD_ID];
+            $this->set_owner_id($db_row[user::FLD_ID]);
             $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
             $this->last_val_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE]);
 

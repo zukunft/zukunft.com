@@ -288,7 +288,7 @@ class sys_log extends log_dsp
     function owner(): user
     {
         $usr = new user();
-        $usr->load_by_id($this->owner_id);
+        $usr->load_by_id($this->owner_id());
         return $usr;
     }
 

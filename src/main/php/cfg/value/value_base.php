@@ -135,6 +135,7 @@ include_once SHARED_CONST_PATH . 'chars.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_ENUM_PATH . 'change_fields.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
@@ -193,6 +194,7 @@ use cfg\result\result_list;
 use cfg\sandbox\sandbox_value;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\messages as msg_id;
 use shared\library;
 use shared\types\phrase_type as phrase_type_shared;
 use DateTime;
@@ -242,8 +244,7 @@ class value_base extends sandbox_value
         self::FLD_LAST_UPDATE
     );
     // list of the user specific database text field names for numeric tables and queries
-    const FLD_NAMES_USR = array(
-    );
+    const FLD_NAMES_USR = array();
     // list of the user specific database text field names for text tables and queries
     const FLD_NAMES_USR_TEXT = array(
         self::FLD_VALUE_TEXT,
@@ -546,7 +547,12 @@ class value_base extends sandbox_value
             $src_name = $in_ex_json[json_fields::SOURCE_NAME];
             $src = $dto->source_list()->get_by_name($src_name);
             if ($src == null) {
-                $usr_msg->add_message('source of ' . $src_name . ' is missing in the import message');
+                $usr_msg->add_id_with_vars(msg_id::SOURCE_MISSING_IMPORT,
+                    [
+                        msg_id::VAR_SOURCE_NAME => $src_name,
+                        msg_id::VAR_JSON_TEXT => $in_ex_json
+                    ],
+                );
                 $src = new source($this->user());
                 $src->set_name($src_name);
                 $dto->source_list()->add_by_name($src);
@@ -1578,7 +1584,7 @@ class value_base extends sandbox_value
         $sc_par_lst->add($this->value_type());
         $sc->set_class($this::class, $sc_par_lst);
         $ext = $this->table_extension();
-        return $sc->load_sql_not_changed_multi($this->id(), $this->owner_id, $this->id_field(), $ext, $sc_par_lst);
+        return $sc->load_sql_not_changed_multi($this->id(), $this->owner_id(), $this->id_field(), $ext, $sc_par_lst);
     }
 
     /**
@@ -1586,7 +1592,7 @@ class value_base extends sandbox_value
      */
     function not_changed(): bool
     {
-        log_debug('value->not_changed id ' . $this->id() . ' by someone else than the owner (' . $this->owner_id . ')');
+        log_debug('value->not_changed id ' . $this->id() . ' by someone else than the owner (' . $this->owner_id() . ')');
 
         global $db_con;
         $result = true;
@@ -1628,7 +1634,7 @@ class value_base extends sandbox_value
     function is_std(): bool
     {
         $result = false;
-        if ($this->owner_id == $this->user()->id() or $this->owner_id <= 0) {
+        if ($this->owner_id() == $this->user()->id() or $this->owner_id() <= 0) {
             $result = true;
         }
 
@@ -2125,7 +2131,7 @@ class value_base extends sandbox_value
 
                     // ... and create a new display component link
                     $this->set_id(0);
-                    $this->owner_id = $this->user()->id();
+                    $this->set_owner_id($this->user()->id());
                     $result .= $this->add($use_func)->get_last_message();
                     log_debug('value->save_id_if_updated recreate the value "' . $db_rec->dsp_id() . '" as ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                 }
@@ -2249,8 +2255,8 @@ class value_base extends sandbox_value
             log_debug("standard value settings loaded (" . $std_rec->value() . ")");
 
             // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save
-            if ($this->owner_id <= 0) {
-                $this->owner_id = $std_rec->owner_id;
+            if ($this->owner_id() <= 0) {
+                $this->set_owner_id($std_rec->owner_id());
             }
 
             // check if the id parameters are supposed to be changed

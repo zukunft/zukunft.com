@@ -53,7 +53,7 @@ include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_VERB_PATH . 'verb.php';
@@ -256,8 +256,8 @@ class term extends combine_named
         string $id_fld = term::FLD_ID,
         string $name_fld = term::FLD_NAME,
         string $type_fld = term::FLD_TYPE,
-        bool $load_std = false,
-        bool $allow_usr_protect = true
+        bool   $load_std = false,
+        bool   $allow_usr_protect = true
     ): bool
     {
         $result = false;

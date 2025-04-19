@@ -62,6 +62,7 @@ class combine_object extends CombineObject
      */
     function __construct(?string $api_json = null)
     {
+        parent::__construct(new word());
         if ($api_json != null) {
             $this->set_from_json($api_json);
         } else {

@@ -29,6 +29,14 @@
       "name_reverse": "contains"
     },
     {
+      "name": "can be part of",
+      "code_id": "can_be_part_of",
+      "description": "if the assigment is optional in both directions e.g. a base unit can be a SI unit but not all SI units are base units",
+      "name_plural_reverse": "contains",
+      "name_plural": "can be part of",
+      "name_reverse": "contains"
+    },
+    {
       "name": "of",
       "code_id": "of",
       "description": "to narrow a selection e.g. the world population is usually the population of all humans",
@@ -160,6 +168,12 @@
       "name_plural": "can cause"
     },
     {
+      "name": "can have",
+      "code_id": "can_have",
+      "description": "",
+      "name_plural": "can have"
+    },
+    {
       "name": "can use",
       "code_id": "can_use",
       "description": "use indicates that a new result is created e.g. a turbine can use water or wind or any type of liquid or gas to convert energy",
@@ -182,6 +196,14 @@
       "name_plural": "per",
       "name_plural_reverse": "",
       "name_reverse": ""
+    },
+    {
+      "name": "times",
+      "code_id": "times",
+      "description": "to multiply the two given phrases to one unit e.g. Joule times second (J⋅s) for the Plank constant",
+      "name_plural": "times",
+      "name_plural_reverse": "times",
+      "name_reverse": "times"
     },
     {
       "name": "is selector for",

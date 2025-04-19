@@ -52,7 +52,7 @@ SELECT word_insert_log_011150000001
     ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
 
 SELECT word_insert_log_011150000001
-        ('Mathematics'::text,
+        ('mathematics'::text,
          1::bigint,
          1::smallint,
          10::smallint,

@@ -48,17 +48,22 @@ namespace cfg\sandbox;
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_REF_PATH . 'source.php';
+//include_once MODEL_PHRASE_PATH . 'phrase.php';
+//include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+//include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_db;
 use cfg\helper\db_object_seq_id;
+use cfg\phrase\phrase;
 use cfg\ref\source;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\types\api_type_list;
 
@@ -221,10 +226,10 @@ class sandbox_typed extends sandbox_named
      * if the given type is not set (null) the type is not removed
      * if the given type is zero (not null) the type is removed
      *
-     * @param sandbox_typed|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param sandbox_typed|CombineObject|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(sandbox_typed|db_object_seq_id $sbx): user_message
+    function fill(sandbox_typed|CombineObject|db_object_seq_id $sbx): user_message
     {
         $usr_msg = parent::fill($sbx);
         if ($sbx->type_id() != null) {

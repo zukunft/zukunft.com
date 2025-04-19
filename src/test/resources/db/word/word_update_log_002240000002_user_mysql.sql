@@ -45,7 +45,7 @@ SELECT word_update_log_002240000002_user
        (1,
         2,
         10,
-        'Mathematics',
+        'mathematics',
         'System Test Word Renamed',
         1,
         11,

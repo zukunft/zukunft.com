@@ -90,7 +90,7 @@ class sheet
       <td>';
         // temp code
         $trp = new triple();
-        $trp->load_by_name('climate warming');
+        $trp->load_by_name('global warming');
         $result .= $trp->name_link();
         $result .= '</td>
       <td class="text-right">31.5</td>

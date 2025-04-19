@@ -325,7 +325,7 @@
       "to": "warm"
     },
     {
-      "name": "climate warming",
+      "name": "global warming",
       "from": "climate",
       "verb": "can get",
       "to": "warmer",
@@ -413,7 +413,7 @@
       "to": "billion"
     },
     {
-      "from": "climate warming",
+      "from": "global warming",
       "verb": "is a",
       "to": "global problem"
     },

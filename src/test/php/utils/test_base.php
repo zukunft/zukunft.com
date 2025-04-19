@@ -133,7 +133,6 @@ use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
 use shared\enum\value_types;
 use shared\library;
-use shared\const\triples;
 use shared\const\words;
 use shared\types\api_type;
 use shared\types\verbs;
@@ -2156,21 +2155,21 @@ class test_base
     function assert_sql_not_changed(sql_creator $sc, sandbox|sandbox_value $usr_obj): bool
     {
         // check the Postgres query syntax
-        $usr_obj->owner_id = 0;
+        $usr_obj->set_owner_id(0);
         $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->not_changed_sql($sc);
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check with owner
         if ($result) {
-            $usr_obj->owner_id = 1;
+            $usr_obj->set_owner_id(1);
             $qp = $usr_obj->not_changed_sql($sc);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
 
         // ... and check the MySQL query syntax
         if ($result) {
-            $usr_obj->owner_id = 0;
+            $usr_obj->set_owner_id(0);
             $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->not_changed_sql($sc);
             $result = $this->assert_qp($qp, $sc->db_type);
@@ -2178,7 +2177,7 @@ class test_base
 
         // ... and check with owner
         if ($result) {
-            $usr_obj->owner_id = 1;
+            $usr_obj->set_owner_id(1);
             $qp = $usr_obj->not_changed_sql($sc);
             $result = $this->assert_qp($qp, $sc->db_type);
         }
@@ -3146,14 +3145,14 @@ class test_base
      * check if all test objects that are using a fixed db id for testing are at the expected row in the database
      * @param string $test_name the name of the test
      * @param array $id_lst a two-dimensional array with the id and the name of the objects
-     * @param sandbox_named $sbx the named object for compare
+     * @param sandbox_named|sandbox_link_named $sbx the named object for compare
      * @param sandbox_list_named $lst the named list object for db read
      * @return bool
      */
     function assert_db_test_id_list(
         string $test_name,
         array $id_lst,
-        sandbox_named $sbx,
+        sandbox_named|sandbox_link_named $sbx,
         sandbox_list_named $lst
     ): bool
     {

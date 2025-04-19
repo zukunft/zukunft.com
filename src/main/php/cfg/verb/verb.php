@@ -936,7 +936,7 @@ class verb extends type_object
                   $result .= $to_del->del();
                   // .. and use it for the update
                   $this->id = $db_chk->id();
-                  $this->owner_id = $db_chk->owner_id;
+                  $this->set_owner_id($db_chk->owner_id());
                   // force the include again
                   $this->excluded = null;
                   $db_rec->excluded = '1';
@@ -960,7 +960,7 @@ class verb extends type_object
 
                   // ... and create a new display component link
                   $this->set_id(0);
-                  $this->owner_id = $this->user()->id();
+                  $this->set_owner_id($this->user()->id());
                   $result .= $this->add($db_con);
                   zu_debug('verb->save_id_if_updated recreate the display component link del "'.$db_rec->dsp_id().'" add '.$this->dsp_id().' (standard "'.$std_rec->dsp_id().'")');
                 }

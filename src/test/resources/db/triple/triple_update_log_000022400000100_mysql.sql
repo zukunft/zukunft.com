@@ -47,7 +47,7 @@ SELECT triple_update_log_000022400000100
        (1,
         2,
         18,
-        'Mathematical constant',
+        'mathematical constant',
         '',
         1,
         68,

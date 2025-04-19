@@ -178,7 +178,7 @@ class views
     const TEST_FORM_COM = 'system form to add a word';
     const TEST_FORM = 'word_add';
     const TEST_FORM_ID = 3;
-    const SCIENCE = 'Science';
+    const SCIENCE = 'science';
     const SCIENCE_NAME = 'show mainly related words that are relevant in sciences';
     const SCIENCE_ID = 50;
     const HISTORIC_NAME = 'Historic';

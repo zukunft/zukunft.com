@@ -47,7 +47,7 @@ PREPARE word_insert_log_011150000001_call FROM
     'SELECT word_insert_log_011150000001 (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT word_insert_log_011150000001
-    ('Mathematics',
+    ('mathematics',
      1,
      1,
      10,

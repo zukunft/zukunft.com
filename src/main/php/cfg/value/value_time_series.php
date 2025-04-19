@@ -408,8 +408,8 @@ class value_time_series extends sandbox_value
             $std_rec->load_standard();
 
             // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save
-            if ($this->owner_id <= 0) {
-                $this->owner_id = $std_rec->owner_id;
+            if ($this->owner_id() <= 0) {
+                $this->set_owner_id($std_rec->owner_id());
             }
 
             // check if the id parameters are supposed to be changed

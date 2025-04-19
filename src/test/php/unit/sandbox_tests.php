@@ -1797,7 +1797,7 @@ class sandbox_tests
         $t->assert_qp($qp, $sc->db_type);
 
         // ... and the word changer ex owner query (used in _sandbox->changer_sql)
-        $wrd->owner_id = 2;
+        $wrd->set_owner_id(2);
         $sc->db_type = sql_db::POSTGRES;
         $qp = $wrd->load_sql_changer($sc);
         $t->assert_qp($qp, $sc->db_type);

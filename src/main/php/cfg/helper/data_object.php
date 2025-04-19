@@ -464,16 +464,12 @@ class data_object
         // report missing triples
         foreach ($this->triple_list()->lst() as $trp) {
             $phr = $trp->from();
-            if ($phr->id() == 0) {
-                if ($phr->name() != '') {
-                    $usr_msg->add_type_message($phr->name(), msg_id::PHRASE_ID_NOT_FOUND->value);
-                }
+            if (!$phr->is_valid()) {
+                $usr_msg->add_type_message($phr->name(), msg_id::PHRASE_ID_NOT_FOUND->value);
             }
             $phr = $trp->to();
-            if ($phr->id() == 0) {
-                if ($phr->name() != '') {
-                    $usr_msg->add_type_message($phr->name(), msg_id::PHRASE_ID_NOT_FOUND->value);
-                }
+            if (!$phr->is_valid()) {
+                $usr_msg->add_type_message($phr->name(), msg_id::PHRASE_ID_NOT_FOUND->value);
             }
         }
 
@@ -527,11 +523,11 @@ class data_object
      * @return bool
      */
     private function check_triple_phrase(
-        triple $trp,
-        phrase $phr,
-        phrase_list $phr_lst,
+        triple       $trp,
+        phrase       $phr,
+        phrase_list  $phr_lst,
         user_message $usr_msg,
-        bool $trp_self_ref
+        bool         $trp_self_ref
     ): bool
     {
         if ($phr->id() == 0) {

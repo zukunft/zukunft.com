@@ -26,5 +26,5 @@ SELECT triple_delete_log
        (1,
         3,
         18,
-        'Mathematical constant',
+        'mathematical constant',
         1);

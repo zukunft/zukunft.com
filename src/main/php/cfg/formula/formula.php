@@ -1999,7 +1999,7 @@ class formula extends sandbox_typed
     {
         $lib = new library();
         $sc->set_class($lib->class_to_name(self::class));
-        return $sc->load_sql_not_changed($this->id(), $this->owner_id);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
     }
 
     /**
@@ -2370,7 +2370,7 @@ class formula extends sandbox_typed
                         $usr_msg->add($msg);
                         // ... and use it for the update
                         $this->set_id($db_chk->id());
-                        $this->owner_id = $db_chk->owner_id;
+                        $this->set_owner_id($db_chk->owner_id());
                         // force including again
                         $this->include();
                         $db_rec->exclude();
@@ -2397,7 +2397,7 @@ class formula extends sandbox_typed
 
                         // ... and create a new display component link
                         $this->set_id(0);
-                        $this->owner_id = $this->user()->id();
+                        $this->set_owner_id($this->user()->id());
                         // TODO check the usr_msg values and if the id is needed
                         $usr_msg->add($this->add());
                         log_debug('->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
@@ -2555,8 +2555,8 @@ class formula extends sandbox_typed
                 log_debug('standard formula "' . $std_rec->name() . '" (' . $std_rec->id() . ') loaded');
 
                 // for a correct user formula detection (function can_change) set the owner even if the formula has not been loaded before the save
-                if ($this->owner_id <= 0) {
-                    $this->owner_id = $std_rec->owner_id;
+                if ($this->owner_id() <= 0) {
+                    $this->set_owner_id($std_rec->owner_id());
                 }
 
                 // ... and convert the formula text to db format (any error messages should have been returned from the calling user script)

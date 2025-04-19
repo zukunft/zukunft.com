@@ -42,11 +42,13 @@
 namespace cfg\helper;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\helper\CombineObject;
 
 class db_object_seq_id_user extends db_object_seq_id
 {
@@ -112,10 +114,10 @@ class db_object_seq_id_user extends db_object_seq_id
      * fill this db user object based on the given object
      * if the given user id is not set (null) the user id is set
      *
-     * @param db_object_seq_id_user|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param CombineObject|db_object_seq_id_user|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(db_object_seq_id_user|db_object_seq_id $sbx): user_message
+    function fill(CombineObject|db_object_seq_id_user|db_object_seq_id $sbx): user_message
     {
         $usr_msg = parent::fill($sbx);
         if ($sbx->user_id() != null) {

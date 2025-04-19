@@ -101,7 +101,7 @@ zukunft.com:
             tooltip-comment: "reaction settings e.g. the expected response time"
             response time:
               min:
-                sys-conf-value: 0.1
+                sys-conf-value: 0.5
                 tooltip-comment: "the minimal time in seconds between a screen updates to avoid flickering e.g. during long calculations every 2 sec the user should seen the screen updated"
               max:
                 sys-conf-value: 2

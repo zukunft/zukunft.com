@@ -42,5 +42,5 @@ SELECT view_term_link_insert_log_015505 (
                89,
                'Start view',
                'default',
-               'Mathematics',
+               'mathematics',
                725);

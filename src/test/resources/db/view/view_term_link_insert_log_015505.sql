@@ -44,5 +44,5 @@ SELECT view_term_link_insert_log_015505
      89::smallint,
      'Start view'::text,
      'default'::text,
-     'Mathematics'::text,
+     'mathematics'::text,
      725::smallint);

@@ -229,9 +229,9 @@ class sandbox_multi extends db_object_multi_user
 
     // database fields that are used in all objects and that have a specific behavior
     public ?int $usr_cfg_id = null;    // the database id if there is already some user specific configuration for this object
-    public ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
-    public ?int $share_id = null;      // id for public, personal, group or private
-    public ?int $protection_id = null; // id for no, user, admin or full protection
+    private ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
+    private ?int $share_id = null;      // id for public, personal, group or private
+    private ?int $protection_id = null; // id for no, user, admin or full protection
     public bool $excluded = false;     // the user sandbox for object is implemented, but can be switched off for the complete instance
     // but for calculation, use and display an excluded should not be used
     // when loading the word and saving the excluded field is handled as a normal user sandbox field,
@@ -277,9 +277,9 @@ class sandbox_multi extends db_object_multi_user
     {
         $this->id = 0;
         $this->usr_cfg_id = null;
-        $this->owner_id = null;
-        $this->share_id = null;
-        $this->protection_id = null;
+        $this->set_owner_id(null);
+        $this->set_share_id(null);
+        $this->set_protection_id(null);
         $this->excluded = false;
     }
 
@@ -311,7 +311,7 @@ class sandbox_multi extends db_object_multi_user
         }
         $result = parent::row_mapper_multi($db_row, $ext, $id_fld, $one_id_fld);
         if ($result) {
-            $this->owner_id = $db_row[user::FLD_ID];
+            $this->set_owner_id($db_row[user::FLD_ID]);
             // e.g. the list of names does not include the field excluded
             // TODO instead the excluded rows are filtered out on SQL level
             if (array_key_exists(sandbox_multi::FLD_EXCLUDED, $db_row)) {
@@ -501,6 +501,36 @@ class sandbox_multi extends db_object_multi_user
     {
         log_err('dummy grp() function called in sandbox_multi, which should never happen');
         return new group($this->user());
+    }
+
+    function set_owner_id(?int $id): void
+    {
+        $this->owner_id = $id;
+    }
+
+    function owner_id(): ?int
+    {
+        return $this->owner_id;
+    }
+
+    function set_share_id(?int $id): void
+    {
+        $this->share_id = $id;
+    }
+
+    function share_id(): ?int
+    {
+        return $this->share_id;
+    }
+
+    function set_protection_id(?int $id): void
+    {
+        $this->protection_id = $id;
+    }
+
+    function protection_id(): ?int
+    {
+        return $this->protection_id;
     }
 
 
@@ -721,9 +751,9 @@ class sandbox_multi extends db_object_multi_user
         if ($this->id() > 0) {
 
             // TODO: try to avoid using load_test_user
-            if ($this->owner_id > 0) {
+            if ($this->owner_id() > 0) {
                 $usr = new user;
-                if ($usr->load_by_id($this->owner_id)) {
+                if ($usr->load_by_id($this->owner_id())) {
                     $this->set_user($usr);
                     $result = true;
                 }
@@ -926,7 +956,7 @@ class sandbox_multi extends db_object_multi_user
     {
         $qp = new sql_par($this::class);
         $qp->name .= sql::NAME_EXT_MEDIAN_USER;
-        if ($this->owner_id > 0) {
+        if ($this->owner_id() > 0) {
             $qp->name .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
         }
         $sc->set_class($this::class);
@@ -946,7 +976,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function median_user(): int
     {
-        log_debug($this->dsp_id() . ' beside the owner (' . $this->owner_id . ')');
+        log_debug($this->dsp_id() . ' beside the owner (' . $this->owner_id() . ')');
 
         global $db_con;
         $result = 0;
@@ -956,8 +986,8 @@ class sandbox_multi extends db_object_multi_user
         if ($db_row[user::FLD_ID] > 0) {
             $result = $db_row[user::FLD_ID];
         } else {
-            if ($this->owner_id > 0) {
-                $result = $this->owner_id;
+            if ($this->owner_id() > 0) {
+                $result = $this->owner_id();
             } else {
                 if ($this->user()->id() > 0) {
                     $result = $this->user()->id();
@@ -975,7 +1005,7 @@ class sandbox_multi extends db_object_multi_user
     function is_standard(): bool
     {
         if ($this->usr_cfg_id == null
-            and $this->owner_id == null
+            and $this->owner_id() == null
             and !$this->excluded) {
             return true;
         } else {
@@ -1054,7 +1084,7 @@ class sandbox_multi extends db_object_multi_user
                 }
             }
 
-            $this->owner_id = $new_owner_id;
+            $this->set_owner_id($new_owner_id);
             $new_owner = new user;
             if ($new_owner->load_by_id($new_owner_id)) {
                 $this->set_user($new_owner);
@@ -1072,7 +1102,7 @@ class sandbox_multi extends db_object_multi_user
     function not_changed(): bool
     {
         $result = true;
-        log_debug($this->id() . ' by someone else than the owner ' . $this->owner_id);
+        log_debug($this->id() . ' by someone else than the owner ' . $this->owner_id());
 
         $other_usr_id = $this->changer();
         if ($other_usr_id > 0) {
@@ -1111,14 +1141,14 @@ class sandbox_multi extends db_object_multi_user
     {
         $qp = new sql_par($this::class);
         $qp->name .= 'changer';
-        if ($this->owner_id > 0) {
+        if ($this->owner_id() > 0) {
             $qp->name .= sql::NAME_SEP . sql::NAME_EXT_EX_OWNER;
         }
         $db_con->set_class($this::class, true);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(array(user::FLD_ID));
-        $qp->sql = $db_con->select_by_id_not_owner($this->id(), $this->owner_id);
+        $qp->sql = $db_con->select_by_id_not_owner($this->id(), $this->owner_id());
 
         $qp->par = $db_con->get_par();
 
@@ -1192,7 +1222,7 @@ class sandbox_multi extends db_object_multi_user
         $result = new user_list($this->user());
 
         // add object owner
-        $usr_id_lst[] = $this->owner_id;
+        $usr_id_lst[] = $this->owner_id();
         $qp = $this->load_sql_of_users_that_changed($db_con->sql_creator());
         $db_usr_lst = $db_con->get($qp);
         foreach ($db_usr_lst as $db_usr) {
@@ -1214,8 +1244,8 @@ class sandbox_multi extends db_object_multi_user
         $result = true;
         log_debug($this->id());
 
-        log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id());
-        if ($this->owner_id == $this->user()->id() or $this->owner_id <= 0) {
+        log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->user()->id());
+        if ($this->owner_id() == $this->user()->id() or $this->owner_id() <= 0) {
             $changer_id = $this->changer();
             // removed "OR $changer_id <= 0" because if no one has changed the object jet does not mean that it can be changed
             log_debug('changer is ' . $changer_id . ' and the change is requested by ' . $this->user()->id());
@@ -1239,8 +1269,8 @@ class sandbox_multi extends db_object_multi_user
 
         // if the user who wants to change it, is the owner, he can do it
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
-        log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id());
-        if ($this->owner_id == $this->user()->id() or $this->owner_id <= 0) {
+        log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->user()->id());
+        if ($this->owner_id() == $this->user()->id() or $this->owner_id() <= 0) {
             $result = true;
         }
 
@@ -2429,7 +2459,7 @@ class sandbox_multi extends db_object_multi_user
                         // .. and use it for the update
                         // TODO review the logging: from the user view this is a change not a delete and update
                         $this->id = $db_chk->id();
-                        $this->owner_id = $db_chk->owner_id;
+                        $this->set_owner_id($db_chk->owner_id());
                         // TODO check which links needs to be updated, because this is a kind of combine objects
                         // force the include again
                         $this->include();
@@ -2471,7 +2501,7 @@ class sandbox_multi extends db_object_multi_user
                     if ($result = '') {
                         // ... and create a new display component link
                         $this->set_id(0);
-                        $this->owner_id = $this->user()->id();
+                        $this->set_owner_id($this->user()->id());
                         $result .= $this->add()->get_last_message();
                     }
                 }
@@ -2763,8 +2793,8 @@ class sandbox_multi extends db_object_multi_user
                     if ($usr_msg->is_ok()) {
                         log_debug('standard loaded');
 
-                        if ($this->owner_id <= 0) {
-                            $this->owner_id = $std_rec->owner_id;
+                        if ($this->owner_id() <= 0) {
+                            $this->set_owner_id($std_rec->owner_id());
                         }
                     }
 
@@ -2969,7 +2999,7 @@ class sandbox_multi extends db_object_multi_user
                     $msg .= $this->del_exe();
                 } else {
                     // if the owner deletes the object find a new owner or delete the object completely
-                    if ($this->owner_id == $this->user()->id()) {
+                    if ($this->owner_id() == $this->user()->id()) {
                         log_debug('owner has requested the deletion');
                         // get median user
                         $new_owner_id = $this->median_user();
@@ -3996,7 +4026,7 @@ class sandbox_multi extends db_object_multi_user
         $dsp_obj->set_id($this->id());
         $dsp_obj->usr_cfg_id = $this->usr_cfg_id;
         $dsp_obj->usr = $this->user();
-        $dsp_obj->owner_id = $this->owner_id;
+        $dsp_obj->set_owner_id($this->owner_id());
         $dsp_obj->excluded = $this->is_excluded();
     }
 

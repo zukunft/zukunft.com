@@ -651,7 +651,10 @@ class triple_list extends sandbox_list_named
 
                 // get the triples that still needs to be added
                 $add_phr_lst = $phr_lst->missing_ids();
-                $add_lst = $add_phr_lst->triples();
+                $add_lst = $add_phr_lst->triples_by_name();
+
+                // select the triples that are ready to be added to the database
+                $add_lst = $add_lst->get_ready();
 
                 // create any missing sql functions and insert the missing triples
                 $step_time = $this->count() / $save_per_sec;
@@ -701,6 +704,21 @@ class triple_list extends sandbox_list_named
             }
         }
         return $usr_msg;
+    }
+
+    /**
+     * get a list of triples that are ready to be added to the database
+     * @return triple_list list of the triples that have an id or a name
+     */
+    function get_ready(): triple_list
+    {
+        $trp_lst = new triple_list($this->user());
+        foreach ($this->lst() as $trp) {
+            if ($trp->db_ready()->is_ok()) {
+                $trp_lst->add_by_name($trp);
+            }
+        }
+        return $trp_lst;
     }
 
 }

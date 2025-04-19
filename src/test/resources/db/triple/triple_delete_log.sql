@@ -26,5 +26,5 @@ SELECT triple_delete_log
        (1::bigint,
         3::smallint,
         18::smallint,
-        'Mathematical constant'::text,
+        'mathematical constant'::text,
         1::bigint);

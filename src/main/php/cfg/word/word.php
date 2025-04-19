@@ -99,6 +99,7 @@ include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
@@ -132,6 +133,7 @@ use cfg\verb\verb_list;
 use cfg\view\view;
 use shared\enum\change_actions;
 use shared\enum\foaf_direction;
+use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\library;
 use shared\const\words;
@@ -1004,10 +1006,10 @@ class word extends sandbox_typed
      * if the given description is not set (null) the description is not remove
      * if the given description is an empty string the description is removed
      *
-     * @param word|db_object_seq_id $sbx word with the values that should have been updated e.g. based on the import
+     * @param word|CombineObject|db_object_seq_id $sbx word with the values that should have been updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(word|db_object_seq_id $sbx): user_message
+    function fill(word|CombineObject|db_object_seq_id $sbx): user_message
     {
         $usr_msg = parent::fill($sbx);
         if ($sbx->code_id() != null) {
@@ -1428,7 +1430,7 @@ class word extends sandbox_typed
     }
 
     /**
-     * return a list of downward related verbs e.g. 'contains' for Mathematical constant because Mathematical constant contains Pi
+     * return a list of downward related verbs e.g. 'contains' for mathematical constant because mathematical constant contains Pi
      */
     private function verb_list_down(): verb_list
     {
@@ -1517,7 +1519,7 @@ class word extends sandbox_typed
     function not_changed_sql(sql_creator $sc): sql_par
     {
         $sc->set_class(word::class);
-        return $sc->load_sql_not_changed($this->id(), $this->owner_id);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
     }
 
     /**
@@ -1526,7 +1528,7 @@ class word extends sandbox_typed
      */
     function not_changed(): bool
     {
-        log_debug($this->id() . ' by someone else than the owner (' . $this->owner_id);
+        log_debug($this->id() . ' by someone else than the owner (' . $this->owner_id());
 
         global $db_con;
         $result = true;

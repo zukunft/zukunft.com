@@ -72,6 +72,7 @@ use cfg\word\triple_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\triple;
+use cfg\word\word;
 use cfg\word\word_list;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
@@ -237,7 +238,7 @@ class sandbox_list_named extends sandbox_list
                     $this->set_lst_dirty();
                 }
                 // add only objects that have all mandatory values
-                $result = $to_add->db_ready()->is_ok();
+                $result = $to_add->can_be_ready()->is_ok();
 
                 if ($result) {
                     $this->add_direct($to_add);
@@ -327,9 +328,9 @@ class sandbox_list_named extends sandbox_list
      * should be cast by the child function get_by_name
      *
      * @param string $name the unique name of the object that should be returned
-     * @return phrase|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
+     * @return word|phrase|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string $name): phrase|CombineObject|IdObject|TextIdObject|null
+    function get_by_name(string $name): word|phrase|CombineObject|IdObject|TextIdObject|null
     {
         $key_lst = $this->name_pos_lst();
         $pos = null;

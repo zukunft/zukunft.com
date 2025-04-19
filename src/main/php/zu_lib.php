@@ -129,7 +129,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO fix error in upgrade process for MySQL
     TODO fix syntax suggestions in existing code
     TODO add the view result at least as simple text to the JSON export
-    TODO split Mathematical constant in Math and constant
+    TODO split mathematical constant in Math and constant
     TODO per km in 'one' 'per' 'km'
     TODO split acronym in 'one to one' and 'one to many'
     TODO replace db field 'triple_name' with a virtual field based on name_generated and name_given

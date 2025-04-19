@@ -34,6 +34,7 @@ namespace unit_read;
 
 include_once SHARED_CONST_PATH . 'triples.php';
 
+use cfg\word\triple;
 use cfg\word\triple_list;
 use shared\const\triples;
 use test\test_cleanup;
@@ -75,6 +76,9 @@ class triple_list_read_tests
         $wrd_lst->load_like('P');
         $t->assert_contains($test_name, $wrd_lst->names(), triples::TN_PI);
         */
+
+        $test_name = 'all expected test triples are in the database';
+        $t->assert_db_test_id_list($test_name, triples::TEST_TRIPLE_IDS, new triple($t->usr1), new triple_list($t->usr1));
 
     }
 
