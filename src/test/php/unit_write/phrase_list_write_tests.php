@@ -97,14 +97,14 @@ class phrase_list_write_tests
         $lib = new library();
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::ABB));
-        $phr_lst = $wrd_lst->phrase_lst();
+        $phr_lst = $wrd_lst->phrase_list();
         $lst_parents = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::IS));
         $result = $lib->dsp_array($lst_parents->names());
         $target = words::COMPANY; // order adjusted based on the number of usage
         $t->display('phrase_list->foaf_parents for ' . $phr_lst->dsp_name() . ' up', $target, $result);
 
         // ... same using is
-        $phr_lst = $wrd_lst->phrase_lst();
+        $phr_lst = $wrd_lst->phrase_list();
         $lst_is = $phr_lst->is();
         $result = $lib->dsp_array($lst_is->names());
         $t->display('phrase_list->is for ' . $phr_lst->dsp_name() . ' up', $target, $result);
@@ -112,7 +112,7 @@ class phrase_list_write_tests
         // ... same with Vestas
         $wrd_lst = new word_list($usr);
         $phr_lst->load_by_names(array(words::VESTAS));
-        $phr_lst = $wrd_lst->phrase_lst();
+        $phr_lst = $wrd_lst->phrase_list();
         $lst_is = $phr_lst->is();
         $result = $lib->dsp_array($lst_is->names());
         // TODO activate Prio 1

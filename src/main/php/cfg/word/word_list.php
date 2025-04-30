@@ -1253,7 +1253,7 @@ class word_list extends sandbox_list_named
      * convert the word list object into a phrase list object
      * @return phrase_list with all words of this list
      */
-    function phrase_lst(): phrase_list
+    function phrase_list(): phrase_list
     {
         $phr_lst = new phrase_list($this->user());
         foreach ($this->lst() as $phr) {
@@ -1297,7 +1297,7 @@ class word_list extends sandbox_list_named
     function value(): value
     {
         $val = new value($this->user());
-        $phr_lst = $this->phrase_lst();
+        $phr_lst = $this->phrase_list();
         $phr_grp = new group($this->user());
         $phr_grp->load_by_phr_lst($phr_lst);
         $val->load_by_grp($phr_grp);
@@ -1500,7 +1500,7 @@ class word_list extends sandbox_list_named
         if ($trm_lst == null) {
             // load the list of all value related to the word list
             $val_lst = new value_list($this->user());
-            $val_lst->load_by_phr_lst($this->phrase_lst());
+            $val_lst->load_by_phr_lst($this->phrase_list());
             log_debug($lib->dsp_count($val_lst->lst()) . ' values for ' . $this->dsp_id());
 
             $time_ids = array();

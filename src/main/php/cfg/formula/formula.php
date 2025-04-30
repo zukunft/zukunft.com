@@ -101,6 +101,7 @@ include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_CALC_PATH . 'parameter_type.php';
 include_once SHARED_CONST_PATH . 'chars.php';
 include_once SHARED_CONST_PATH . 'formulas.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -141,6 +142,7 @@ use math;
 use shared\calc\parameter_type;
 use shared\const\chars;
 use shared\const\formulas;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -544,7 +546,6 @@ class formula extends sandbox_typed
     }
 
 
-
     /*
      * preloaded
      */
@@ -772,6 +773,35 @@ class formula extends sandbox_typed
     /*
      * info
      */
+
+    /**
+     * returns ok message if this formula can be added to the database
+     * e.g. a formula without expression should not be added to the database
+     * @return user_message the explanation why the link cannot yet be added to the database
+     */
+    function db_ready(): user_message
+    {
+        $usr_msg = parent::db_ready();
+
+        if ($this->ref_text == null and $this->usr_text == null) {
+            $usr_msg->add_id_with_vars(msg_id::FORMULA_EXPRESSION_MISSING,
+                [msg_id::VAR_FORMULA => $this->dsp_id()]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return bool true if the formula object probably has already been added to the database
+     *              false e.g. if some parameters are missing
+     */
+    function is_valid(): bool
+    {
+        $result = parent::is_valid();
+        if ($this->ref_text == null and $this->usr_text == null) {
+            $result = false;
+        }
+        return $result;
+    }
 
     /**
      * return the true if the formula has a special type and the result is a kind of hardcoded
@@ -1326,7 +1356,7 @@ class formula extends sandbox_typed
             // the phrase left of the equation sign should be added to the result
             // e.g. percent for the increase formula
             $has_result_phrases = false;
-            $res_add_phr_lst = $exp->res_phr_lst();
+            $res_add_phr_lst = $exp->result_phrases();
             if (isset($res_add_phr_lst)) {
                 log_debug('use words ' . $res_add_phr_lst->dsp_id() . ' for the result');
                 $has_result_phrases = true;
@@ -1646,6 +1676,24 @@ class formula extends sandbox_typed
         }
 
         return $result;
+    }
+
+    /**
+     * get all terms used in this formula
+     * including the phrases that should be added to the result
+     * @param term_list $cache with the terms already loaded
+     * @return term_list list of all terms used in the formula expression
+     */
+    function term_list(term_list $cache): term_list
+    {
+        $trm_lst = new term_list($this->user());
+        $exp = $this->expression($cache);
+        $elm_lst = $exp->element_list($cache);
+        foreach ($elm_lst->lst() as $elm) {
+            $trm_lst->add($elm->term());
+        }
+        $res_phr_lst = $exp->result_phrases($cache);
+        return $trm_lst->merge($res_phr_lst->term_list());
     }
 
     /**

@@ -42,12 +42,14 @@ use cfg\formula\expression;
 use cfg\formula\formula;
 use cfg\phrase\phrase_list;
 use cfg\phrase\term_list;
+use cfg\word\word;
 use html\element\element_group as element_group_dsp;
 use html\formula\formula as formula_dsp;
 use html\phrase\term_list as term_list_dsp;
 use shared\const\formulas;
 use shared\const\values;
 use shared\const\words;
+use shared\library;
 use test\test_cleanup;
 
 class formula_tests
@@ -58,6 +60,7 @@ class formula_tests
         global $usr;
 
         // init
+        $lib = new library();
         $sc = new sql_creator();
         $t->name = 'formula->';
         $t->resource_path = 'db/formula/';
@@ -237,7 +240,7 @@ class formula_tests
         $trm_lst->add($frm->term());
         $exp = new expression($usr);
         $exp->set_ref_text('{w' . words::ONE_ID . '}={w' . words::MIO_ID . '}*1000000', $t->term_list_scale());
-        $result = $exp->res_phr_lst($trm_lst);
+        $result = $exp->result_phrases($trm_lst);
         $t->assert('Expression->res_phr_lst for ' . formulas::SCALE_MIO_EXP, $result->dsp_id(), $target->dsp_id());
 
         // get the special formulas used in a formula to calculate the result
@@ -251,6 +254,14 @@ class formula_tests
         $frm_has_next->usr_text = '=next';
         $t->assert('Expression->res_phr_lst for ' . formulas::TF_SCALE_MIO, $result->dsp_id(), $target->dsp_id());
         */
+
+        $test_name = 'formula term list';
+        $frm = $t->formula();
+        $trm_lst = $frm->term_list($t->term_list_time());
+        $t->assert($test_name, $trm_lst->dsp_id(),
+            '"' . words::MINUTE . '","' . words::SECOND . '" ('
+            . $lib->term_id(words::SECOND_ID, word::class) . ','
+            . $lib->term_id(words::MINUTE_ID, word::class) . ')');
 
         // TODO add result display test
 

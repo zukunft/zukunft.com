@@ -69,14 +69,14 @@ class group_tests
 
         $t->subheader($ts . 'id');
         $grp_id = new group_id();
-        $t->assert('64 bit group_id short word list', $grp_id->get_id($t->word_list_short()->phrase_lst()),
+        $t->assert('64 bit group_id short word list', $grp_id->get_id($t->word_list_short()->phrase_list()),
             1114113);
         $t->assert('phrase ids of 64 bit group_id short', $grp_id->get_array(1114113),
-            $t->word_list_short()->phrase_lst()->ids());
-        $t->assert('64 bit group_id word list', $grp_id->get_id($t->word_list()->phrase_lst()),
-            5348097572077569);
-        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(5348097572077569),
-            $t->word_list()->phrase_lst()->ids());
+            $t->word_list_short()->phrase_list()->ids());
+        $t->assert('64 bit group_id word list', $grp_id->get_id($t->word_list()->phrase_list()),
+            1688871335231489);
+        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(1688871335231489),
+            $t->word_list()->phrase_list()->ids());
 
         //$this->check_64_bit_key($t, [0,0,0,0], 0);
         $this->check_64_bit_key($t, [1], 1);
@@ -131,15 +131,15 @@ class group_tests
         $this->check_int2alpha($t, -12, '.....A(', true, );
         $this->check_int2alpha($t, -12, '.....A)', false, true);
 
-        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list()->phrase_lst()),values::PI_ID);
-        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(values::PI_ID), $t->triple_list()->phrase_lst()->ids());
+        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list()->phrase_list()),values::PI_ID);
+        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(values::PI_ID), $t->triple_list()->phrase_list()->ids());
         $phr_lst = new phrase_list($usr);
-        $phr_lst->merge($t->word_list()->phrase_lst());
-        $phr_lst->merge($t->triple_list()->phrase_lst());
+        $phr_lst->merge($t->word_list()->phrase_list());
+        $phr_lst->merge($t->triple_list()->phrase_list());
         $t->assert('group_id combine phrase list', $grp_id->get_id($phr_lst),
-            '.....0-...../+.....0+.....F+.....H+......+......+......+......+......+......+......+......+......+......+......+');
+            '.....0-...../+.....0+.....3+.....4+......+......+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list', $grp_id->get_id($t->phrase_list()),
-            '.....0-...../-...../+.....0+.....F+......+......+......+......+......+......+......+......+......+......+......+');
+            '.....0-...../-...../+.....0+.....3+......+......+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t->phrase_list_16()),
             '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t->phrase_list_17_plus()),
@@ -159,11 +159,11 @@ class group_tests
         $t->assert('64 bit result_id for the formula increase, '
             . 'the phrases Zurich (City) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t->zh_inhabitants_2020(), $t->zh_inhabitants_2020(), $t->formula_increase()),
-            6052059900805375);
+            6052115735380224);
         $t->assert('128 bit result_id for the formula increase, '
             . 'the phrases Zurich (City), Geneva (City) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t->zh_ge_inhabitants_2020(), $t->zh_ge_inhabitants_2020(), $t->formula_increase()),
-            '9234726920116711680');
+            '9234812118216777216');
         $t->assert('512 bit result_id ',
             $res_id->get_id($t->phrase_list_14(), $t->phrase_list_14b(), $t->formula_increase()),
             '.....J=..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+1FajJ2(.4LYK3)1FajJ2)');

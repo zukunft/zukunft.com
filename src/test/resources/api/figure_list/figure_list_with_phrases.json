@@ -6,43 +6,24 @@
         "id": 2,
         "name": "\u03c0 (unit symbol)",
         "description": "ratio of the circumference of a circle to its diameter",
-        "type_id": 22,
-        "from_id": 17,
+        "from_id": 5,
         "from_phrase": {
-          "id": 17,
+          "id": 5,
           "protection": 3,
-          "name": "Pi",
-          "description": "ratio of the circumference of a circle to its diameter",
+          "name": "\u03c0",
+          "description": "Symbol for the ratio of the circumference of a circle to its diameter",
           "type_id": 17,
           "plural": null
         },
-        "verb_id": 2,
-        "to_id": -1,
+        "verb_id": 18,
+        "to_id": 17,
         "to_phrase": {
-          "id": 1,
+          "id": 17,
           "protection": 3,
-          "name": "mathematical constant",
-          "description": "A mathematical constant that never changes e.g. Pi",
+          "name": "Pi",
+          "description": "Ratio of the circumference of a circle to its diameter",
           "type_id": 17,
-          "from_id": 2,
-          "from_phrase": {
-            "id": 2,
-            "protection": 3,
-            "name": "constant",
-            "description": "fixed and well-defined number",
-            "type_id": 17,
-            "plural": null
-          },
-          "verb_id": 3,
-          "to_id": 1,
-          "to_phrase": {
-            "id": 1,
-            "protection": 3,
-            "name": "mathematics",
-            "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
-            "type_id": 1,
-            "plural": null
-          }
+          "plural": null
         },
         "class": "triple"
       }

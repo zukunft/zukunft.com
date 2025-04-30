@@ -275,6 +275,21 @@ class term_list extends sandbox_list_named
     }
 
     /**
+     * get the terms of the list selected by the given ids
+     * @param trm_ids $ids list of term ids to select the terms of this list
+     * @return term_list the terms that have been found
+     */
+    function get_by_ids(trm_ids $ids): term_list
+    {
+        $trm_lst = new term_list($this->user());
+        foreach ($ids->lst as $id) {
+            $trm = $trm_lst->get_by_id($id);
+            $trm_lst->add($trm);
+        }
+        return $trm_lst;
+    }
+
+    /**
      * get a word from the term list selected by the word id
      *
      * @param int $id the word id (not the term id!)
@@ -427,6 +442,54 @@ class term_list extends sandbox_list_named
             $this->set_lst($remain_lst->lst());
         }
         return $this;
+    }
+
+    /**
+     * add the terms of the given list to this list but avoid duplicates
+     * merge as a function, because the array_merge does not create an object
+     * @param term_list $lst_to_add with the terms to be added
+     * @return term_list with all terms of this list and the given list
+     */
+    function merge(term_list $lst_to_add): term_list
+    {
+        if (!$lst_to_add->is_empty()) {
+            foreach ($lst_to_add->lst() as $trm_to_add) {
+                $this->add($trm_to_add);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * add the terms of the given list to this list
+     * but avoid duplicates by the name
+     * merge as a function, because the array_merge does not create an object
+     * @param term_list $lst_to_add with the terms to be added by the name
+     * @return term_list with all terms of this list and the given list
+     */
+    function merge_by_name(term_list $lst_to_add): term_list
+    {
+        if (!$lst_to_add->is_empty()) {
+            foreach ($lst_to_add->lst() as $trm_to_add) {
+                $this->add_by_name($trm_to_add);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * leave only the valid words, triples, verbs and formulas in this list
+     * @return void
+     */
+    function filter_valid(): void
+    {
+        $lst = [];
+        foreach ($this->lst() as $trm) {
+            if ($trm->is_valid()) {
+                $lst[] = $trm;
+            }
+        }
+        $this->set_lst($lst);
     }
 
 

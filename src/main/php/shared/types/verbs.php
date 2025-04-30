@@ -69,6 +69,9 @@ class verbs
     const FOLLOW = "follow";
     const FOLLOW_NAME = "is follower of";
     const FOLLOW_ID = 10;
+    const ALIAS = "alias";
+    const ALIAS_NAME = "is alias of";
+    const ALIAS_ID = 18;
     const CAN_CONTAIN = "can_contain";
     const CAN_CONTAIN_NAME = "differentiator";
     const CAN_CONTAIN_NAME_REVERSE = "of";

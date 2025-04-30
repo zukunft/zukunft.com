@@ -106,7 +106,7 @@ class expression_write_tests
         $t->assert('get_usr_text for "' . $exp_db->ref_text() . '"', $result, $target);
 
         // test getting phrases that should be added to the result of a formula
-        $phr_lst_res = $exp->res_phr_lst();
+        $phr_lst_res = $exp->result_phrases();
         if ($phr_lst_res != null) {
             $result = $phr_lst_res->dsp_name();
         }

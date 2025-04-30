@@ -1409,7 +1409,7 @@
     {
       "name": "\uD835\uDC52 (math)",
       "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
-      "from": "Euler's constant",
+      "from": "Euler's number",
       "verb": "is a",
       "to": "mathematical constant",
       "type": "hidden_triple"
@@ -1426,7 +1426,7 @@
       "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
       "from": "\uD835\uDC52",
       "verb": "is alias of",
-      "to": "Euler's constant",
+      "to": "Euler's number",
       "type": "hidden_triple"
     },
     {

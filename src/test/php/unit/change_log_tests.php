@@ -235,7 +235,7 @@ class change_log_tests
         // prepare the objects for the tests
         $wrd = $t->word();
         $trp = new triple($usr);
-        $trp->set(1, triples::PI);
+        $trp->set(triples::PI_ID, triples::PI_NAME);
 
 
         $t->subheader($ts . 'api');

@@ -23,6 +23,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO move the remaining html function from the backend to the frontend
 
     TODO add a short group id that leaves out the leading "." space holders
+    TODO name all functions with the long name e.g. result_phrases because execution may cost time
+    TODO but name all vars with the short form e.g. res_phr_lst
 
     TODO make sure that unit tests does not start any api call
     TODO move all user configuration settings to the config yaml

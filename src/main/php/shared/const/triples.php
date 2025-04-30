@@ -43,7 +43,7 @@ class triples
 
     // keyword to select the system configuration
     const SYSTEM_CONFIG = 'system configuration';
-    const SYSTEM_CONFIG_ID = 103;
+    const SYSTEM_CONFIG_ID = 116;
 
     // triple names used for the system configuration
     const NUMBER_FORMAT = 'number format';
@@ -68,12 +68,15 @@ class triples
     const MATH_CONST = 'mathematical constant';
     const MATH_CONST_ID = 1;
     const MATH_CONST_COM = 'A mathematical constant that never changes e.g. Pi';
-    const PI = 'Pi';
-    const PI_NAME = 'π (unit symbol)';
-    const PI_ID = 2;
+    const PI = 'Pi (math)';
+    const PI_NAME = 'Pi (math)';
+    const PI_ID = 40;
     const PI_COM = 'ratio of the circumference of a circle to its diameter';
-    const E = '𝑒 (math)';
-    const E_NAME = '𝑒 (unit symbol)';
+    const PI_SYMBOL = 'π (unit symbol)';
+    const PI_SYMBOL_NAME = 'π (unit symbol)';
+    const PI_SYMBOL_ID = 2;
+    const PI_SYMBOL_COM = 'ratio of the circumference of a circle to its diameter';
+    const E = '𝑒 (unit symbol)';
     const E_ID = 3;
     const E_COM = 'Is the limit of (1 + 1/n)^n as n approaches infinity';
     const SYSTEM_TEST_ADD = 'System Test Triple';
@@ -84,44 +87,44 @@ class triples
 
     // triple used in the default start view
     const GLOBAL_PROBLEM = 'global problem';
-    const GLOBAL_PROBLEM_ID = 43;
+    const GLOBAL_PROBLEM_ID = 56;
     const GLOBAL_WARMING = 'global warming';
-    const GLOBAL_WARMING_ID = 46;
-    const GLOBAL_WARMING_PROBLEM = 'global warming (global problem)';
-    const GLOBAL_WARMING_PROBLEM_ID = 54;
+    const GLOBAL_WARMING_ID = 59;
     const GWP = 'global warming potential';
-    const GWP_ID = 47;
-    const CASH_FLOW = 'cash flow';
-    const CASH_FLOW_ID = 74;
-    const CASH_FLOW_STATEMENT = 'cash flow statement';
-    const CASH_FLOW_STATEMENT_ID = 75;
-    const INCOME_TAX = 'income taxes';
-    const INCOME_TAX_ID = 76;
-    const POPULISM_PROBLEM = 'populism (global problem)';
-    const POPULISM_PROBLEM_ID = 55;
-    const POTENTIAL_HEALTH_PROBLEM = 'health can be a global problem';
-    const POTENTIAL_HEALTH_PROBLEM_ID = 56;
-    const POVERTY_PROBLEM = 'poverty (global problem)';
-    const POVERTY_PROBLEM_ID = 58;
-    const POTENTIAL_EDUCATION_PROBLEM = 'education can be global problem';
-    const POTENTIAL_EDUCATION_PROBLEM_ID = 59;
+    const GWP_ID = 60;
     const TIME_POINTS = 'time points';
-    const TIME_POINTS_ID = 50;
+    const TIME_POINTS_ID = 63;
     const HAPPY_TIME_POINTS = 'happy time points';
-    const HAPPY_TIME_POINTS_ID = 51;
+    const HAPPY_TIME_POINTS_ID = 64;
+    const GLOBAL_WARMING_PROBLEM = 'global warming (global problem)';
+    const GLOBAL_WARMING_PROBLEM_ID = 67;
+    const POPULISM_PROBLEM = 'populism (global problem)';
+    const POPULISM_PROBLEM_ID = 68;
+    const POTENTIAL_HEALTH_PROBLEM = 'health can be a global problem';
+    const POTENTIAL_HEALTH_PROBLEM_ID = 69;
+    const POVERTY_PROBLEM = 'poverty (global problem)';
+    const POVERTY_PROBLEM_ID = 71;
+    const POTENTIAL_EDUCATION_PROBLEM = 'education can be global problem';
+    const POTENTIAL_EDUCATION_PROBLEM_ID = 72;
+    const CASH_FLOW = 'cash flow';
+    const CASH_FLOW_ID = 87;
+    const CASH_FLOW_STATEMENT = 'cash flow statement';
+    const CASH_FLOW_STATEMENT_ID = 88;
+    const INCOME_TAX = 'income taxes';
+    const INCOME_TAX_ID = 89;
 
     const TN_CUBIC_METER = 'm3';
 
+    const CANTON_ZURICH = 'Zurich (Canton)';
+    const CANTON_ZURICH_ID = 93;
     const CITY_ZH = 'Zurich (City)';
-    const CITY_ZH_ID = 81;
+    const CITY_ZH_ID = 94;
     const CITY_ZH_NAME = 'City of Zurich';
     const CITY_ZH_COM = 'the city of Zurich';
     const CITY_BE = 'Bern (City)';
-    const CITY_BE_ID = 83;
+    const CITY_BE_ID = 95;
     const CITY_GE = 'Geneva (City)';
-    const CITY_GE_ID = 83;
-    const CANTON_ZURICH = 'Zurich (Canton)';
-    const CANTON_ZURICH_ID = 80;
+    const CITY_GE_ID = 96;
     const CANTON_ZURICH_NAME = 'Canton Zurich';
     const COMPANY_ZURICH = "Zurich Insurance";
     const COMPANY_VESTAS = "Vestas SA";
@@ -162,7 +165,7 @@ class triples
         [self::CITY_BE_ID, self::CITY_BE],
         [self::CITY_GE_ID, self::CITY_GE],
         [self::CITY_ZH_ID, self::CITY_ZH],
-        [self::E_ID, self::E_NAME],
+        [self::E_ID, self::E],
         [self::GLOBAL_PROBLEM_ID, self::GLOBAL_PROBLEM],
         [self::GLOBAL_WARMING_ID, self::GLOBAL_WARMING],
         [self::GLOBAL_WARMING_PROBLEM_ID, self::GLOBAL_WARMING_PROBLEM],
@@ -171,6 +174,7 @@ class triples
         [self::INCOME_TAX_ID, self::INCOME_TAX],
         [self::MATH_CONST_ID, self::MATH_CONST],
         [self::PI_ID, self::PI_NAME],
+        [self::PI_SYMBOL_ID, self::PI_SYMBOL_NAME],
         [self::POPULISM_PROBLEM_ID, self::POPULISM_PROBLEM],
         [self::POTENTIAL_EDUCATION_PROBLEM_ID, self::POTENTIAL_EDUCATION_PROBLEM],
         [self::POTENTIAL_HEALTH_PROBLEM_ID, self::POTENTIAL_HEALTH_PROBLEM],

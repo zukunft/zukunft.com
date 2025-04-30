@@ -100,4 +100,17 @@ class phr_ids
         return $trp_ids;
     }
 
+    /**
+     * TODO check if not the id convert function needs to be used
+     * @return trm_ids with the term ids
+     */
+    function trm_ids(): trm_ids
+    {
+        $id_lst = [];
+        foreach ($this->lst as $phr_id) {
+            $id_lst[] = $phr_id;
+        }
+        return new trm_ids($id_lst);
+    }
+
 }

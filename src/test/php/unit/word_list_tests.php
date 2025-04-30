@@ -247,12 +247,12 @@ class word_list_tests
         $t->assert($t->name . '->sorted', $wrd_lst_filtered->name(), '"word3","word2"');
 
         // filter by name
-        $test_name = 'filtered word list by name does not contain ' . words::E . ' any more';
+        $test_name = 'filtered word list by name does not contain ' . words::E_SYMBOL . ' any more';
         $wrd_lst = $t->word_list();
-        $filtered = $wrd_lst->filter_by_name([words::E]);
-        $t->assert_contains_not($test_name, $filtered->names(), words::E);
-        $test_name = 'filtered word list by name still contains ' . words::PI;
-        $t->assert_contains($test_name, $filtered->names(), words::PI);
+        $filtered = $wrd_lst->filter_by_name([words::E_SYMBOL]);
+        $t->assert_contains_not($test_name, $filtered->names(), words::E_SYMBOL);
+        $test_name = 'filtered word list by name still contains ' . words::PI_SYMBOL;
+        $t->assert_contains($test_name, $filtered->names(), words::PI_SYMBOL);
 
         // time list
         $wrd_lst = new word_list($usr);

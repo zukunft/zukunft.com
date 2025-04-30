@@ -328,7 +328,7 @@ class word_list_write_tests
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::ZH, words::TEST_2021, words::TEST_CHF, words::MIO));
         $grp = new group($usr);
-        $grp->load_by_phr_lst($wrd_lst->phrase_lst());
+        $grp->load_by_phr_lst($wrd_lst->phrase_list());
         $result = $grp->get_id();
         $target = 1; // the creation should be tested, but how?
         if ($result > 0) {

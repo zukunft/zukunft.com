@@ -222,11 +222,16 @@ class phrase extends combine_named
      */
     function __construct(user|word|triple|null $obj = null, int|null $id = null)
     {
-        if ($obj::class == user::class) {
+        if ($obj == null) {
             // create a dummy word object to remember the user
-            parent::__construct(new word($obj));
+            parent::__construct(new word($this->user()));
         } else {
-            parent::__construct($obj);
+            if ($obj::class == user::class) {
+                // create a dummy word object to remember the user
+                parent::__construct(new word($obj));
+            } else {
+                parent::__construct($obj);
+            }
         }
         if ($id != null) {
             $this->set_obj_from_id($id);

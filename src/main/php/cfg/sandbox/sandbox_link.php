@@ -531,7 +531,7 @@ class sandbox_link extends sandbox
 
             }
         }
-        if ($this->fob == null) {
+        if ($this->tob == null) {
             $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
                 [msg_id::VAR_NAME => $this->dsp_id()]);
         } else {

@@ -99,30 +99,34 @@ class expression
 
     /**
      * update the expression by setting the human-readable format and try to update the database reference format
-     * @param string $usr_txt the formula expression in the human-readable format
+     * @param string|null $usr_txt the formula expression in the human-readable format
      * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return void
      */
-    function set_user_text(string $usr_txt, term_list|term_list_dsp|null $trm_lst = null): void
+    function set_user_text(?string $usr_txt, term_list|term_list_dsp|null $trm_lst = null): void
     {
-        $this->usr_text = $usr_txt;
-        $this->usr_text_dirty = false;
-        $this->ref_text_dirty = true;
-        $this->ref_text($trm_lst);
+        if ($usr_txt != null) {
+            $this->usr_text = $usr_txt;
+            $this->usr_text_dirty = false;
+            $this->ref_text_dirty = true;
+            $this->ref_text($trm_lst);
+        }
     }
 
     /**
      * update the expression by setting the database reference format and try to update the human-readable format
-     * @param string $ref_txt the formula expression in the database reference format
+     * @param string|null $ref_txt the formula expression in the database reference format
      * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return void
      */
-    function set_ref_text(string $ref_txt, term_list|term_list_dsp|null $trm_lst = null): void
+    function set_ref_text(?string $ref_txt, term_list|term_list_dsp|null $trm_lst = null): void
     {
-        $this->ref_text = $ref_txt;
-        $this->ref_text_dirty = false;
-        $this->usr_text_dirty = true;
-        $this->user_text($trm_lst);
+        if ($ref_txt != null) {
+            $this->ref_text = $ref_txt;
+            $this->ref_text_dirty = false;
+            $this->usr_text_dirty = true;
+            $this->user_text($trm_lst);
+        }
     }
 
     /**

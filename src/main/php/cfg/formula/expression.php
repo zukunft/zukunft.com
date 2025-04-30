@@ -217,20 +217,37 @@ class expression extends shared_expression
     }
 
     /**
+     * get all terms used for this formula expression
+     *
+     * @param term_list|null $cac_trm_lst cache of the terns to avoid multiple db loading
+     * @return term_list with all terms used in this expression
+     */
+    function terms(?term_list $cac_trm_lst = null): term_list
+    {
+        $trm_lst = $this->element_list($cac_trm_lst)->term_list();
+        $trm_lst->merge($this->result_phrases($cac_trm_lst)->term_list());
+        return $trm_lst;
+    }
+
+    /**
      * get the phrases that should be added to the result of a formula
      *
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @returns phrase_list with the phrases that should be added to the result of a formula
      * e.g. for >"percent" = ( "this" - "prior" ) / "prior"< a list with the phrase "percent" will be returned
      */
-    function res_phr_lst(?term_list $trm_lst = null): phrase_list
+    function result_phrases(?term_list $trm_lst = null): phrase_list
     {
         $phr_lst = new phrase_list($this->usr);
         $phr_ids = $this->phr_id_lst($this->res_part());
         if ($trm_lst == null) {
             $phr_lst->load_names_by_ids($phr_ids);
         } else {
-            $phr_lst->load_by_ids($phr_ids, $trm_lst->phrase_list());
+            $cac_lst = $trm_lst->get_by_ids($phr_ids->trm_ids());
+            $ids_to_load = array_diff($phr_ids->lst, $cac_lst->id_lst());
+            if (count($ids_to_load) > 0) {
+                $phr_lst->load_by_ids($phr_ids, $trm_lst->phrase_list());
+            }
         }
 
         return $phr_lst;
@@ -802,7 +819,7 @@ class expression extends shared_expression
     protected function load_word(int $id): word
     {
         $wrd = new word($this->usr);
-        $wrd->load_by_id($id, word::class);
+        $wrd->load_by_id($id);
         if ($wrd->id() == 0) {
             $wrd = null;
         }

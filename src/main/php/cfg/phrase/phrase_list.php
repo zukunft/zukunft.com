@@ -306,8 +306,8 @@ class phrase_list extends sandbox_list_named
      */
     function load_sql_by_names(
         sql_creator $sc,
-        array $names,
-        string $fld = phrase::FLD_NAME
+        array       $names,
+        string      $fld = phrase::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);
@@ -807,7 +807,7 @@ class phrase_list extends sandbox_list_named
     {
         $trp_lst = new triple_list($this->user());
         $trp_lst->load_by_phr_lst($this, $vrb, $direction);
-        return $trp_lst->phrase_lst();
+        return $trp_lst->phrase_list();
     }
 
 
@@ -822,7 +822,7 @@ class phrase_list extends sandbox_list_named
         log_debug($vrb->dsp_id());
         $wrd_lst = $this->wrd_lst_all();
         $added_wrd_lst = $wrd_lst->parents($vrb, $level);
-        $added_phr_lst = $added_wrd_lst->phrase_lst();
+        $added_phr_lst = $added_wrd_lst->phrase_list();
 
         log_debug($added_phr_lst->name());
         return $added_phr_lst;
@@ -839,7 +839,7 @@ class phrase_list extends sandbox_list_named
     {
         $wrd_lst = $this->wrd_lst_all();
         $added_wrd_lst = $wrd_lst->children($vrb);
-        $added_phr_lst = $added_wrd_lst->phrase_lst();
+        $added_phr_lst = $added_wrd_lst->phrase_list();
 
         log_debug($added_phr_lst->name());
         return $added_phr_lst;
@@ -920,7 +920,7 @@ class phrase_list extends sandbox_list_named
     {
         $wrd_lst = $this->wrd_lst_all();
         $added_wrd_lst = $wrd_lst->direct_children($vrb);
-        $added_phr_lst = $added_wrd_lst->phrase_lst();
+        $added_phr_lst = $added_wrd_lst->phrase_list();
 
         log_debug($added_phr_lst->dsp_id());
         return $added_phr_lst;
@@ -1387,29 +1387,33 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
+     * add the phrases of the given list to this list but avoid duplicates
      * merge as a function, because the array_merge does not create an object
+     * @param phrase_list $lst_to_add with the phrases to be added
+     * @return phrase_list with all phrases of this list and the given list
      */
-    function merge($new_phr_lst): phrase_list
+    function merge(phrase_list $lst_to_add): phrase_list
     {
-        log_debug($new_phr_lst->dsp_id() . ' to ' . $this->dsp_id());
-        if (!$new_phr_lst->is_empty()) {
-            foreach ($new_phr_lst->lst() as $new_phr) {
-                $this->add($new_phr);
+        if (!$lst_to_add->is_empty()) {
+            foreach ($lst_to_add->lst() as $phr_to_add) {
+                $this->add($phr_to_add);
             }
         }
         return $this;
     }
 
     /**
+     * add the phrases of the given list to this list
+     * but avoid duplicates by the name
      * merge as a function, because the array_merge does not create an object
+     * @param phrase_list $lst_to_add with the phrases to be added by the name
      * @return phrase_list this all phrases of this and the given list
      */
-    function merge_by_name($new_phr_lst): phrase_list
+    function merge_by_name(phrase_list $lst_to_add): phrase_list
     {
-        log_debug($new_phr_lst->dsp_id() . ' to ' . $this->dsp_id());
-        if (!$new_phr_lst->is_empty()) {
-            foreach ($new_phr_lst->lst() as $new_phr) {
-                $this->add_by_name($new_phr);
+        if (!$lst_to_add->is_empty()) {
+            foreach ($lst_to_add->lst() as $phr_to_add) {
+                $this->add_by_name($phr_to_add);
             }
         }
         return $this;
@@ -1429,7 +1433,7 @@ class phrase_list extends sandbox_list_named
 
         // check and adjust the parameters
         if (get_class($filter_lst) == word_list::class) {
-            $filter_phr_lst = $filter_lst->phrase_lst();
+            $filter_phr_lst = $filter_lst->phrase_list();
         } else {
             $filter_phr_lst = $filter_lst;
         }
@@ -1900,7 +1904,7 @@ class phrase_list extends sandbox_list_named
     {
         log_debug($this->dsp_id());
         $del_wrd_lst = $this->time_word_list();
-        $del_phr_lst = $del_wrd_lst->phrase_lst();
+        $del_phr_lst = $del_wrd_lst->phrase_list();
         $this->diff($del_phr_lst);
     }
 
@@ -2276,6 +2280,21 @@ class phrase_list extends sandbox_list_named
         }
 
         return $result;
+    }
+
+    /**
+     * get the phrases of the list selected by the given ids
+     * @param phr_ids $ids list of phrase ids to select the terms of this list
+     * @return phrase_list the phrases that have been found
+     */
+    function get_by_ids(phr_ids $ids): phrase_list
+    {
+        $phr_lst = new phrase_list($this->user());
+        foreach ($ids as $id) {
+            $phr = $phr_lst->get_by_id($id);
+            $phr_lst->add($phr);
+        }
+        return $phr_lst;
     }
 
 

@@ -48,6 +48,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\formula\formula;
+use cfg\phrase\term_list;
 use cfg\sandbox\sandbox_list;
 use cfg\system\sys_log_level;
 use cfg\user\user;
@@ -71,6 +72,20 @@ class element_list extends sandbox_list
     protected function rows_mapper(array $db_rows, bool $load_all = false): bool
     {
         return parent::rows_mapper_obj(new element($this->user()), $db_rows, $load_all);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function term_list(): term_list
+    {
+        $trm_lst = new term_list($this->user());
+        foreach ($this->lst() as $elm) {
+            $trm_lst->add($elm->term());
+        }
+        return $trm_lst;
     }
 
 

@@ -58,12 +58,13 @@ class formulas
     const SCALE_TO_SEC = 'scale minute to sec';
     const SCALE_TO_SEC_EXP = '"second" = "minute" * 60';
     const SCALE_TO_SEC_COM = 'to convert times in minutes to seconds and the other way round';
+    const SCALE_TO_SEC_ID = 1;
     const SCALE_HOUR = 'scale hour to sec';
     const SCALE_HOUR_ID = 2;
     const DIAMETER = '= "circumference" / "Pi"';
     const DIAMETER_DB = '={w' . words::CIRCUMFERENCE_ID . '}/{w' . words::PI_ID . '}';
     const THIS_NAME = 'this';
-    const THIS_ID = 18;
+    const THIS_ID = 1;
     const THIS_EXP = '="Now"';
     const PRIOR = 'prior';
     const PRIOR_ID = 20;

@@ -552,7 +552,7 @@ class triple_list extends sandbox_list_named
      * convert this triple list object into a phrase list object
      * @return phrase_list with all triples of this list as a phrase
      */
-    function phrase_lst(): phrase_list
+    function phrase_list(): phrase_list
     {
         $phr_lst = new phrase_list($this->user());
         foreach ($this->lst() as $lnk) {
@@ -641,7 +641,7 @@ class triple_list extends sandbox_list_named
                 $imp->step_end($load_list->count(), $load_per_sec);
 
                 // fill up cache
-                $cache = $cache->merge($db_lst);
+                $cache = $cache->merge($db_lst->phrase_list());
 
                 // fill missing verbs
                 $this->fill_missing_verbs();

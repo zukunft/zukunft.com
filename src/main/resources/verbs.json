@@ -136,7 +136,7 @@
     },
     {
       "name": "is alias of",
-      "code_id": "",
+      "code_id": "alias",
       "name_plural_reverse": "is alias of",
       "name_plural": "is alias of",
       "name_reverse": "is alias of"

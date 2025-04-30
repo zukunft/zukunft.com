@@ -118,7 +118,7 @@ class term_list_tests
         $lst->add($this->t->new_word(words::MATH)->term());
         $lst->add($this->t->new_triple(
             triples::PI_NAME,
-            triples::PI, verbs::IS, words::MATH)->term());
+            words::PI, verbs::IS, words::MATH)->term());
         $lst->add($this->t->new_formula(formulas::INCREASE)->term());
         $lst->add($this->t->new_verb(verbs::IS)->term());
         return $lst;

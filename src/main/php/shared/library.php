@@ -56,7 +56,9 @@ use cfg\value\value;
 use cfg\value\value_geo;
 use cfg\value\value_text;
 use cfg\value\value_time;
+use cfg\verb\verb;
 use cfg\view\view_link_type;
+use cfg\word\triple;
 use cfg\word\word_db;
 use cfg\component\component;
 use cfg\component\component_link;
@@ -200,6 +202,38 @@ class library
         } else {
             return false;
         }
+    }
+
+    /**
+     * recreate the term id for testing
+     * @return int the id of the term witch is  (corresponding to id_obj())
+     * must have the same logic as the database view and the frontend
+     *
+     * e.g.  1 for a word with id 1
+     *  and  3 for a word with id 2
+     *  and -1 for a triple with id 1
+     *  and -3 for a triple with id 2
+     *  and  2 for a formula with id 1
+     *  and  4 for a formula with id 2
+     *  and -2 for a verb with id 1
+     *  and -4 for a verb with id 2
+     * , -1 for a triple, 2 for a formula and -2 for a verb
+     */
+    function term_id(int $obj_id, string $class): int
+    {
+        $id = 0;
+        if ($class == word::class) {
+            $id = ($obj_id * 2) - 1;
+        } elseif ($class == triple::class) {
+            $id = ($obj_id * -2) + 1;
+        } elseif ($class == verb::class) {
+            $id = ($obj_id * -2);
+        } elseif ($class == formula::class) {
+            $id = ($obj_id * 2);
+        } else {
+            log_err('Unexpected class ' . $class . ' for ' . $obj_id . ' in lib.term_id()');
+        }
+        return $id;
     }
 
 

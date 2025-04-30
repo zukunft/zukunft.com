@@ -1035,7 +1035,7 @@ class result_list extends sandbox_value_list
 
         // get the phrase name of the formula e.g. "percent"
         $exp = $frm->expression();
-        $phr_lst_res = $exp->res_phr_lst();
+        $phr_lst_res = $exp->result_phrases();
         if (isset($phr_lst_res)) {
             log_debug('For ' . $frm->usr_text . ' formula results with the result phrases ' . $phr_lst_res->dsp_name() . ' should not be used for calculation to avoid loops');
         }

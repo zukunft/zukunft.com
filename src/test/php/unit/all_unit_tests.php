@@ -201,7 +201,7 @@ class all_unit_tests extends test_cleanup
             //$import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $usr);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
-            //$this->file_import(files::MESSAGE_PATH . files::UNITS_FILE, $usr);
+            $this->file_import(files::MESSAGE_PATH . files::UNITS_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);

@@ -112,7 +112,7 @@ class group_write_tests
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::ZH, words::CANTON, words::INHABITANTS, words::MIO, words::YEAR_2020));
         $phr_grp = new group($usr);
-        $phr_grp->load_by_phr_lst($wrd_lst->phrase_lst());
+        $phr_grp->load_by_phr_lst($wrd_lst->phrase_list());
         $result = $phr_grp->id();
         //if ($result > 0 and $result != $id_without_year) {
         // actually the group id with time word is supposed to be the same as the phrase group id without time word because the time word is not included in the phrase group

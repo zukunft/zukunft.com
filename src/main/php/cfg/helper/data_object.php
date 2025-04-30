@@ -65,6 +65,8 @@ use cfg\formula\formula_list;
 use cfg\import\import;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
+use cfg\phrase\term;
+use cfg\phrase\term_list;
 use cfg\ref\source;
 use cfg\ref\source_list;
 use cfg\user\user;
@@ -101,6 +103,8 @@ class data_object
     private source_list $src_lst;
     private value_list $val_lst;
     private formula_list $frm_lst;
+    private term_list $trm_lst;
+    private bool $trm_lst_dirty;
     private view_list $msk_lst;
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
@@ -126,6 +130,8 @@ class data_object
         $this->src_lst = new source_list($usr);
         $this->val_lst = new value_list($usr);
         $this->frm_lst = new formula_list($usr);
+        $this->trm_lst = new term_list($usr);
+        $this->trm_lst_dirty = false;
         $this->msk_lst = new view_list($usr);
         $this->usr_msg = new user_message();
     }
@@ -232,6 +238,22 @@ class data_object
             $this->phr_lst_dirty = false;
         }
         return $this->phr_lst;
+    }
+
+    /**
+     * the term list merged by the name, not the database id
+     * @return term_list with the words, triples, verbs and formulas of this data object
+     */
+    function term_list(): term_list
+    {
+        if ($this->phr_lst_dirty) {
+            $trm_lst = $this->phrase_list()->term_list();
+            // TODO prio 2 add verb list
+            $trm_lst->merge_by_name($this->formula_list()->term_lst_of_names());
+            $this->trm_lst = $trm_lst;
+            $this->trm_lst_dirty = false;
+        }
+        return $this->trm_lst;
     }
 
     /**
@@ -412,6 +434,7 @@ class data_object
         $trp_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $src_per_sec = $cfg->get_by([words::SOURCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $val_per_sec = $cfg->get_by([words::VALUES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $frm_per_sec = $cfg->get_by([words::FORMULAS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
 
         // save the data lists in order of the dependencies
@@ -423,9 +446,11 @@ class data_object
         $usr_msg->add($wrd_lst->save($imp));
         $imp->step_end($wrd_lst->count(), $wrd_per_sec);
 
+        // import the triples
+
         // clone the list as cache to filter the phrases already fine
         // without removing the fine words or triples from the original lists
-        $phr_lst = clone $wrd_lst->phrase_lst();
+        $phr_lst = clone $wrd_lst->phrase_list();
 
         // add the id of the words and triples just added to the triples
         // repeat this id assign until all triples have an id
@@ -436,8 +461,13 @@ class data_object
             $trp_self_ref = false;
             $trp_add = false;
             foreach ($this->triple_list()->lst() as $trp) {
-                $trp_self_ref = $this->check_triple_phrase($trp, $trp->from(), $phr_lst, $usr_msg, $trp_self_ref);
-                $trp_self_ref = $this->check_triple_phrase($trp, $trp->to(), $phr_lst, $usr_msg, $trp_self_ref);
+                if (!$trp->db_ready()) {
+                    $usr_msg->add_id_with_vars(msg_id::TRIPLE_NOT_VALID,
+                        [msg_id::VAR_TRIPLE => $trp->dsp_id()]);
+                } else {
+                    $trp_self_ref = $this->check_triple_phrase($trp, $trp->from(), $phr_lst, $usr_msg, $trp_self_ref);
+                    $trp_self_ref = $this->check_triple_phrase($trp, $trp->to(), $phr_lst, $usr_msg, $trp_self_ref);
+                }
             }
 
             // import the triples
@@ -450,7 +480,7 @@ class data_object
                 // estimate the time for the import
                 $trp_est = $trp_lst->count() / $trp_per_sec;
                 $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
-                $usr_msg->add($trp_lst->save($phr_lst, $imp));
+                $usr_msg->add($trp_lst->save($cache, $imp));
                 $imp->step_end($trp_lst->count(), $trp_per_sec);
                 if ($trp_lst->count() > 0) {
                     $trp_add = true;
@@ -494,18 +524,86 @@ class data_object
         if ($usr_msg->is_ok()) {
             $src_lst = $this->source_list();
             $src_est = $src_lst->count() / $src_per_sec;
-            $imp->step_start(msg_id::SAVE, value::class, $src_lst->count(), $src_est);
+            $imp->step_start(msg_id::SAVE, source::class, $src_lst->count(), $src_est);
             $usr_msg->add($src_lst->save($imp, $src_per_sec));
             $imp->step_end($src_lst->count(), $src_per_sec);
         }
 
         // import the values
+        // TODO Prio 1 review and use predefined functions
         if ($usr_msg->is_ok()) {
             $val_lst = $this->value_list();
             $val_est = $val_lst->count() / $val_per_sec;
             $imp->step_start(msg_id::SAVE, value::class, $val_lst->count(), $val_est);
             $usr_msg->add($val_lst->save($imp, $val_per_sec));
             $imp->step_end($val_lst->count(), $val_per_sec);
+        }
+
+        // import the formulas
+
+        // clone the term list as cache to filter the terms already fine
+        // without removing the fine words, triples, verbs and formulas from the original lists
+        $trm_lst = clone $phr_lst->term_list();
+        // TODO add the verbs
+
+        // add the id of the formulas just added to the terms
+        // repeat this id assign until all formulas have an id
+        // or until it is clear that a terms is missing
+        $frm_self_ref = true;
+        $frm_add = true;
+        while ($frm_self_ref and $frm_add) {
+            $frm_self_ref = false;
+            $frm_add = false;
+            foreach ($this->formula_list()->lst() as $frm) {
+                if (!$frm->db_ready()) {
+                    $usr_msg->add_id_with_vars(msg_id::FORMULA_NOT_VALID,
+                        [msg_id::VAR_FORMULA => $frm->dsp_id()]);
+                } else {
+                    $exp = $frm->expression($trm_lst);
+                    $frm_trm_lst = $exp->terms($trm_lst);
+                    foreach ($frm_trm_lst->lst() as $trm) {
+                        $frm_self_ref = $this->check_formula_term($frm, $trm, $frm_trm_lst, $usr_msg, $trp_self_ref);
+                    }
+                }
+            }
+
+            // save the formulas that are ready which means that does not use a formula that is not yet saved in the database
+            if ($usr_msg->is_ok()) {
+                // get the list of formulas that should be imported
+                $frm_lst = $this->formula_list();
+                // clone the list to filter the phrases already fine without removing the fine triples from the original list
+                $cache = clone $trm_lst;
+                $cache->filter_valid();
+                // estimate the time for the import
+                $frm_est = $frm_lst->count() / $frm_per_sec;
+                $imp->step_start(msg_id::SAVE, triple::class, $frm_lst->count(), $frm_est);
+                $usr_msg->add($frm_lst->save($cache, $imp));
+                $imp->step_end($frm_lst->count(), $frm_per_sec);
+                if ($frm_lst->count() > 0) {
+                    $frm_add = true;
+                }
+
+                // prepare adding the id of the triples just added to the triples
+                $trm_lst = $this->term_list();
+            }
+        }
+
+        // report missing formulas
+        foreach ($this->formula_list()->lst() as $frm) {
+            $exp = $frm->expression($trm_lst);
+            $frm_trm_lst = $exp->terms($trm_lst);
+            foreach ($frm_trm_lst->lst() as $trm) {
+                $usr_msg->add_type_message($trm->name(), msg_id::TERM_ID_NOT_FOUND->value);
+            }
+        }
+
+        // TODO Prio 1 review and use predefined functions
+        if ($usr_msg->is_ok()) {
+            $frm_lst = $this->formula_list();
+            $frm_est = $frm_lst->count() / $frm_per_sec;
+            $imp->step_start(msg_id::SAVE, value::class, $frm_lst->count(), $frm_est);
+            $usr_msg->add($frm_lst->save($imp, $frm_per_sec));
+            $imp->step_end($frm_lst->count(), $frm_per_sec);
         }
 
         return $usr_msg;
@@ -546,6 +644,40 @@ class data_object
     }
 
     /**
+     * check if the term related to a formula is fine
+     * and if not indicate a self reference by returning true
+     *
+     * @param formula $frm the formula that should be checked
+     * @param term $trm either the from or to phrase of the triple
+     * @param term_list $trm_lst the cache of all terms that are fine until now
+     * @param user_message $usr_msg all user messages of the import up to this check
+     * @param bool $trp_self_ref the status to the self reference before this check
+     * @return bool
+     */
+    private function check_formula_term(
+        formula      $frm,
+        term         $trm,
+        term_list    $trm_lst,
+        user_message $usr_msg,
+        bool         $trp_self_ref
+    ): bool
+    {
+        if ($trm->id() == 0) {
+            if ($trm->name() == '') {
+                $usr_msg->add_type_message($frm->dsp_id(), msg_id::PHRASE_MISSING_FROM->value);
+            } else {
+                $trm_reloaded = $trm_lst->get_by_name($trm->name());
+                if ($trm_reloaded == null) {
+                    $trp_self_ref = true;
+                } else {
+                    $usr_msg->add($this->set_term_id($trm, $trm_reloaded));
+                }
+            }
+        }
+        return $trp_self_ref;
+    }
+
+    /**
      * set the missing id in the phrase based on the given database phrase
      * @param phrase $phr which might have a missing id
      * @param phrase|null $db_phr which might have the missing id
@@ -557,6 +689,23 @@ class data_object
         if ($phr->id() == 0) {
             if ($db_phr != null) {
                 $phr->set_id($db_phr->id());
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the missing id in the term based on the given database term
+     * @param term $trm which might have a missing id
+     * @param term|null $db_trm which might have the missing id
+     * @return user_message warning if something has been missing
+     */
+    private function set_term_id(term $trm, term|null $db_trm): user_message
+    {
+        $usr_msg = new user_message();
+        if ($trm->id() == 0) {
+            if ($db_trm != null) {
+                $trm->set_id($db_trm->id());
             }
         }
         return $usr_msg;

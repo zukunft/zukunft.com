@@ -1036,6 +1036,19 @@ class term extends combine_named
 
 
     /*
+     * modify
+     */
+
+    /**
+     * @return bool true if it has a valid id and name and the phrase is expected to be stored in the database
+     */
+    function is_valid(): bool
+    {
+        return $this->obj()->is_valid();
+    }
+
+
+    /*
      * debug
      */
 

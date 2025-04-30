@@ -91,7 +91,7 @@ class term_read_tests
 
         // test load by term by a formula db row
         $frm = new formula($t->usr1);
-        $qp = $frm->load_sql_by_id($db_con->sql_creator(),1);
+        $qp = $frm->load_sql_by_id($db_con->sql_creator(),formulas::SCALE_TO_SEC_ID);
         $db_row = $db_con->get1($qp);
         $trm = new term($t->usr1);
         $trm->set_obj_from_class(formula::class);

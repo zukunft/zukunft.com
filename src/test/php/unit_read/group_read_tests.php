@@ -57,7 +57,7 @@ class group_read_tests
         $wrd_lst->load_by_names($t->words_canton_zh_inhabitants());
         $test_name .= ' for ' . $wrd_lst->dsp_id();
         $phr_grp = new group($usr);
-        $phr_grp->load_by_phr_lst($wrd_lst->phrase_lst());
+        $phr_grp->load_by_phr_lst($wrd_lst->phrase_list());
         $result = $phr_grp->id();
         $target = 0;
         if ($result > 0) {

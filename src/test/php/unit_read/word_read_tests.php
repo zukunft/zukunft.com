@@ -108,8 +108,8 @@ class word_read_tests
         $wrd_scale = new word ($t->usr1);
         $wrd_scale->load_by_name(words::MIO);
         $phr = new phrase ($t->usr1);
-        $phr->load_by_name(triples::PI_NAME);
-        $phr_grp = $t->load_phrase_group(array(triples::PI));
+        $phr->load_by_name(words::PI_SYMBOL);
+        $phr_grp = $t->load_phrase_group(array(words::PI_SYMBOL));
 
         // load a word list by the word id
         $wrd_lst = new word_list ($t->usr1);
@@ -135,7 +135,7 @@ class word_read_tests
         if ($phr_grp != null) {
             $wrd_lst = new word_list ($t->usr1);
             $wrd_lst->load_by_grp_id($phr_grp->id());
-            $t->assert('load_by_group', $wrd_lst->name(), '"' . triples::PI . '"');
+            $t->assert('load_by_group', $wrd_lst->name(), '"' . words::PI_SYMBOL . '"');
         }
 
         // load a word list by type
@@ -147,7 +147,7 @@ class word_read_tests
         $wrd_lst = new word_list ($t->usr1);
         $wrd_lst->load_like('S');
         $t->assert_contains('load_by_pattern', $wrd_lst->names(),
-            array("S", "September", "Share", "Share Price", "SI base unit", "Sv"));
+            array("S", "September", "Share", "Share Price", "Samoa", "Sv"));
 
         // add a word to a list by the word id
         $wrd_lst = new word_list ($t->usr1);

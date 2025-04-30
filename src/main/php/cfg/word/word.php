@@ -169,7 +169,7 @@ class word extends sandbox_typed
     // database fields additional to the user sandbox fields
     private ?string $code_id;  // to select single words used by the system without using the type that can potentially select more than one word
     public ?string $plural;    // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
-    public ?int $values;       // the total number of values linked to this word as an indication how common the word is and to sort the words
+    private ?int $values;       // the total number of values linked to this word as an indication how common the word is and to sort the words
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
@@ -208,8 +208,8 @@ class word extends sandbox_typed
 
         $this->link_type_id = null;
 
-        $this->share_id = null;
-        $this->protection_id = null;
+        $this->set_share_id(null);
+        $this->set_protection_id(null);
 
         $this->view = null;
         $this->ref_lst = [];

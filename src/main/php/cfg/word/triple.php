@@ -57,7 +57,6 @@
 namespace cfg\word;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
@@ -94,6 +93,7 @@ include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'word_list.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
@@ -1134,14 +1134,23 @@ class triple extends sandbox_link_named
     function fill(triple|CombineObject|db_object_seq_id $sbx): user_message
     {
         $usr_msg = parent::fill($sbx);
-        if ($sbx->name_given != null) {
-            $this->name_given = $sbx->name_given;
+        // TODO use set and get function to enable phrase fill
+        $trp = null;
+        if ($sbx::class == triple::class) {
+            $trp = $sbx;
+        } elseif ($sbx->obj()::class == triple::class) {
+            $trp = $sbx->obj();
         }
-        if ($sbx->name_generated != '') {
-            $this->name_generated = $sbx->name_generated;
+        if ($trp != null) {
+            if ($trp->name_given != null) {
+                $this->name_given = $trp->name_given;
+            }
+            if ($trp->name_generated != '') {
+                $this->name_generated = $trp->name_generated;
+            }
         }
-        if ($sbx->values != null) {
-            $this->values = $sbx->values;
+        if ($sbx->usage() != null) {
+            $this->set_usage($sbx->usage());
         }
         return $usr_msg;
     }

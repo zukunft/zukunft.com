@@ -1217,7 +1217,7 @@ class value_base extends sandbox_value
                                     $r_part = $lib->str_right_of($formula_text, chars::CHAR_CALC);
                                     $exp = new expression($this->user());
                                     $exp->set_ref_text($frm->ref_text);
-                                    $res_phr_lst = $exp->res_phr_lst();
+                                    $res_phr_lst = $exp->result_phrases();
                                     $phr_lst = $exp->phr_lst();
                                     if (!$res_phr_lst->is_empty()) {
                                         $res_wrd_lst = $res_phr_lst->wrd_lst_all();

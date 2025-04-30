@@ -300,6 +300,11 @@ class element extends db_object_seq_id_user
         return $this->obj?->id();
     }
 
+    function term(): term
+    {
+        return $this->obj?->term();
+    }
+
 
     /*
      * load

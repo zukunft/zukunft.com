@@ -63,6 +63,7 @@ use cfg\element\element;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\phrase\term;
+use cfg\phrase\term_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_named;
@@ -647,6 +648,25 @@ class formula_list extends sandbox_list_named
     function count_db(sql_db $db_con): ?int
     {
         return $db_con->count(formula::class);
+    }
+
+    /**
+     * convert this formula list object into a term list object
+     * and use the name as the unique key instead of the database id
+     * used for the data_object based import
+     * @return term_list with all triples of this list as a phrase
+     */
+    function term_lst_of_names(): term_list
+    {
+        $trm_lst = new term_list($this->user());
+        foreach ($this->lst() as $frm) {
+            if ($frm::class != formula::class) {
+                log_err('unexpected class ' . $frm::class . ' in formula list');
+            } else {
+                $trm_lst->add_by_name($frm->term());
+            }
+        }
+        return $trm_lst;
     }
 
 

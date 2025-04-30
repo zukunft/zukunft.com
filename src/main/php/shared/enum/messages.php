@@ -59,6 +59,10 @@ enum messages: string
     const VAR_JSON_TEXT = 'VarJsonText';
     const VAR_SOURCE_NAME = 'VarSourceName';
 
+    // for the object main parameters created by the dsp_id function
+    const VAR_TRIPLE = 'VarObjTriple';
+    const VAR_FORMULA = 'VarObjFormula';
+
     // unique message keys
     // *_txt sample translation to test the English mapping
     case IS_RESERVED = 'is_reserved';
@@ -122,6 +126,8 @@ enum messages: string
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
         . '" is missing in the import message '
         . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END;
+    case FORMULA_EXPRESSION_MISSING = 'formula expression is missing in '
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
 
 
     // for the change log
@@ -147,6 +153,11 @@ enum messages: string
     case PHRASE_MISSING_TO = 'phrase missing to';
     case PHRASE_MISSING_ID = 'phrase id is zero';
     case PHRASE_ID_NOT_FOUND = 'phrase id not found';
+    case TERM_ID_NOT_FOUND = 'term id not found';
+
+    // e.g. if an import formula does not contain all needed parameters
+    case FORMULA_NOT_VALID = 'formula is not valid';
+    case TRIPLE_NOT_VALID = 'triple is not valid';
 
     // config
     case CONFIG_NOT_LOADED = 'cannot load config';

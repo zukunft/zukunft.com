@@ -603,6 +603,20 @@ class create_test_objects extends test_base
     /**
      * @return word "Pi" to test the const behavior
      */
+    function word_pi_symbol(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::PI_SYMBOL_ID, words::PI_SYMBOL);
+        $wrd->description = words::PI_SYMBOL_COM;
+        $wrd->set_type(phrase_type_shared::MATH_CONST);
+        global $ptc_typ_cac;
+        $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
+        return $wrd;
+    }
+
+    /**
+     * @return word "Pi" to test the const behavior
+     */
     function word_pi(): word
     {
         $wrd = new word($this->usr1);
@@ -635,7 +649,18 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return word "Euler's constant" to test the handling of >'<
+     * @return word "Euler's number" to test the handling of >'<
+     */
+    function word_e_symbol(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::E_SYMBOL_ID, words::E_SYMBOL);
+        $wrd->set_type(phrase_type_shared::MATH_CONST);
+        return $wrd;
+    }
+
+    /**
+     * @return word "Euler's number" to test the handling of >'<
      */
     function word_e(): word
     {
@@ -999,8 +1024,8 @@ class create_test_objects extends test_base
         $lst = new word_list($this->usr1);
         $lst->add($this->word());
         $lst->add($this->word_const());
-        $lst->add($this->word_pi());
-        $lst->add($this->word_e());
+        $lst->add($this->word_pi_symbol());
+        $lst->add($this->word_e_symbol());
         return $lst;
     }
 
@@ -1048,6 +1073,14 @@ class create_test_objects extends test_base
     function verb_is(): verb
     {
         return new verb(verbs::IS_ID, verbs::IS_NAME, verbs::IS);
+    }
+
+    /**
+     * @return verb alias
+     */
+    function verb_alias(): verb
+    {
+        return new verb(verbs::ALIAS_ID, verbs::ALIAS_NAME, verbs::ALIAS);
     }
 
     /**
@@ -1144,6 +1177,20 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_const()->phrase());
         $trp->set_verb($this->verb_part());
         $trp->set_to($this->word()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple "pi (unit symbol)" used for unit testing
+     */
+    function triple_pi_symbol(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triples::PI_SYMBOL_ID, triples::PI_SYMBOL_NAME);
+        $trp->description = triples::PI_COM;
+        $trp->set_from($this->word_pi_symbol()->phrase());
+        $trp->set_verb($this->verb_alias());
+        $trp->set_to($this->word_pi()->phrase());
         return $trp;
     }
 
@@ -1404,7 +1451,7 @@ class create_test_objects extends test_base
     function triple_list(): triple_list
     {
         $lst = new triple_list($this->usr1);
-        $lst->add($this->triple_pi());
+        $lst->add($this->triple_pi_symbol());
         return $lst;
     }
 
@@ -1452,9 +1499,9 @@ class create_test_objects extends test_base
         $lst = new phrase_list($this->usr1);
         $lst->add($this->word()->phrase());
         $lst->add($this->word_const()->phrase());
-        $lst->add($this->word_pi()->phrase());
+        $lst->add($this->word_pi_symbol()->phrase());
         $lst->add($this->triple()->phrase());
-        $lst->add($this->triple_pi()->phrase());
+        $lst->add($this->triple_pi_symbol()->phrase());
         return $lst;
     }
 
@@ -1464,7 +1511,7 @@ class create_test_objects extends test_base
         $lst->add($this->word()->phrase());
         $lst->add($this->word_const()->phrase());
         $lst->add($this->triple()->phrase());
-        $lst->add($this->triple_pi()->phrase());
+        $lst->add($this->triple_pi_symbol()->phrase());
         return $lst;
     }
 
@@ -1487,7 +1534,7 @@ class create_test_objects extends test_base
         $lst = new phrase_list($this->usr1);
         $lst->add($this->word()->phrase());
         $lst->add($this->word_const()->phrase());
-        $lst->add($this->word_pi()->phrase());
+        $lst->add($this->word_pi_symbol()->phrase());
         $lst->add($this->word_e()->phrase());
         $lst->add($this->word_2019()->phrase());
         $lst->add($this->word_one()->phrase());
@@ -1504,7 +1551,7 @@ class create_test_objects extends test_base
     function phrase_list_pi(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->triple_pi()->phrase());
+        $lst->add($this->triple_pi_symbol()->phrase());
         return $lst;
     }
 
