@@ -601,16 +601,16 @@ class sandbox_list_named extends sandbox_list
     function sql_call_with_par(sql_creator $sc, bool $use_func = true): sql_par_list
     {
         $sql_list = new sql_par_list();
-        foreach ($this->lst() as $trp) {
+        foreach ($this->lst() as $sbx) {
             // another validation check as a second line of defence
-            if ($trp->db_ready()) {
+            if ($sbx->db_ready()) {
                 // check always user sandbox and normal name, because reading from database for check would take longer
                 $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
                 if ($use_func) {
                     $sc_par_lst->add(sql_type::LOG);
                 }
-                $qp = $trp->sql_insert($sc, $sc_par_lst);
-                $qp->obj_name = $trp->name();
+                $qp = $sbx->sql_insert($sc, $sc_par_lst);
+                $qp->obj_name = $sbx->name();
                 $sql_list->add($qp);
             }
         }

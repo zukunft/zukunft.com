@@ -44,6 +44,8 @@ include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_REF_PATH . 'source_list.php';
 //include_once MODEL_PHRASE_PATH . 'phrase.php';
 //include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+//include_once MODEL_PHRASE_PATH . 'term.php';
+//include_once MODEL_PHRASE_PATH . 'term_list.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
@@ -441,79 +443,95 @@ class data_object
 
         // import first the words
         $wrd_lst = $this->word_list();
-        $wrd_est = $wrd_lst->count() / $wrd_per_sec;
-        $imp->step_start(msg_id::SAVE, word::class, $wrd_lst->count(), $wrd_est);
-        $usr_msg->add($wrd_lst->save($imp));
-        $imp->step_end($wrd_lst->count(), $wrd_per_sec);
+        if (!$wrd_lst->is_empty()) {
+            $wrd_est = $wrd_lst->count() / $wrd_per_sec;
+            $imp->step_start(msg_id::SAVE, word::class, $wrd_lst->count(), $wrd_est);
+            $usr_msg->add($wrd_lst->save($imp));
+            $imp->step_end($wrd_lst->count(), $wrd_per_sec);
+        }
 
         // import the triples
+        $trp_lst = $this->triple_list();
+        if (!$trp_lst->is_empty()) {
 
-        // clone the list as cache to filter the phrases already fine
-        // without removing the fine words or triples from the original lists
-        $phr_lst = clone $wrd_lst->phrase_list();
+            // clone the list as cache to filter the phrases already fine
+            // without removing the fine words or triples from the original lists
+            $phr_lst = clone $wrd_lst->phrase_list();
 
-        // add the id of the words and triples just added to the triples
-        // repeat this id assign until all triples have an id
-        // or until it is clear that a triple is missing
-        $trp_self_ref = true;
-        $trp_add = true;
-        while ($trp_self_ref and $trp_add) {
-            $trp_self_ref = false;
-            $trp_add = false;
-            foreach ($this->triple_list()->lst() as $trp) {
-                if (!$trp->db_ready()) {
-                    $usr_msg->add_id_with_vars(msg_id::TRIPLE_NOT_VALID,
-                        [msg_id::VAR_TRIPLE => $trp->dsp_id()]);
+            // add the id of the words and triples just added to the triples
+            // repeat this id assign until all triples have an id
+            // or until it is clear that a triple is missing
+            $trp_self_ref = true;
+            $trp_add = true;
+            while ($trp_self_ref and $trp_add) {
+                $trp_self_ref = false;
+                $trp_add = false;
+                foreach ($this->triple_list()->lst() as $trp) {
+                    if (!$trp->db_ready()) {
+                        $usr_msg->add_id_with_vars(msg_id::TRIPLE_NOT_VALID,
+                            [msg_id::VAR_TRIPLE => $trp->dsp_id()]);
+                    } else {
+                        $trp_self_ref = $this->check_triple_phrase($trp, $trp->from(), $phr_lst, $usr_msg, $trp_self_ref);
+                        $trp_self_ref = $this->check_triple_phrase($trp, $trp->to(), $phr_lst, $usr_msg, $trp_self_ref);
+                    }
+                }
+
+                // import the triples
+                if ($usr_msg->is_ok()) {
+                    // get the list of triples that should be imported
+                    $trp_lst = $this->triple_list();
+                    // clone the list to filter the phrases already fine without removing the fine triples from the original list
+                    $cache = clone $phr_lst;
+                    $cache->filter_valid();
+                    // estimate the time for the import
+                    $trp_est = $trp_lst->count() / $trp_per_sec;
+                    $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
+                    $usr_msg->add($trp_lst->save($cache, $imp));
+                    $imp->step_end($trp_lst->count(), $trp_per_sec);
+                    if ($trp_lst->count() > 0) {
+                        $trp_add = true;
+                    }
+
+                    // prepare adding the id of the triples just added to the triples
+                    $phr_lst = $this->phrase_list();
                 } else {
-                    $trp_self_ref = $this->check_triple_phrase($trp, $trp->from(), $phr_lst, $usr_msg, $trp_self_ref);
-                    $trp_self_ref = $this->check_triple_phrase($trp, $trp->to(), $phr_lst, $usr_msg, $trp_self_ref);
+                    log_debug('triples not imported because ' . $usr_msg->all_message_text());
                 }
             }
 
-            // import the triples
+            // read the triple id of the last added phrases
+            // get the list of triples that have been imported with the last add loop
+            $trp_lst = $this->triple_list();
+            // clone the list to filter the phrases already fine without removing the fine triples from the original list
+            $cache = clone $phr_lst;
+            $cache->filter_valid();
+            // call the save function but it is expected just to load the database id of the last added triples
+            $usr_msg->add($trp_lst->save($cache, $imp));
+
+            // report missing triples
+            foreach ($this->triple_list()->lst() as $trp) {
+                $phr = $trp->from();
+                if (!$phr->is_valid()) {
+                    $usr_msg->add_type_message($phr->name(), msg_id::PHRASE_ID_NOT_FOUND->value);
+                }
+                $phr = $trp->to();
+                if (!$phr->is_valid()) {
+                    $usr_msg->add_type_message($phr->name(), msg_id::PHRASE_ID_NOT_FOUND->value);
+                }
+            }
+
+            // add the id of the triples just added to the values
             if ($usr_msg->is_ok()) {
-                // get the list of triples that should be imported
-                $trp_lst = $this->triple_list();
-                // clone the list to filter the phrases already fine without removing the fine triples from the original list
-                $cache = clone $phr_lst;
-                $cache->filter_valid();
-                // estimate the time for the import
-                $trp_est = $trp_lst->count() / $trp_per_sec;
-                $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
-                $usr_msg->add($trp_lst->save($cache, $imp));
-                $imp->step_end($trp_lst->count(), $trp_per_sec);
-                if ($trp_lst->count() > 0) {
-                    $trp_add = true;
-                }
-
-                // prepare adding the id of the triples just added to the triples
                 $phr_lst = $this->phrase_list();
-            }
-        }
-
-        // report missing triples
-        foreach ($this->triple_list()->lst() as $trp) {
-            $phr = $trp->from();
-            if (!$phr->is_valid()) {
-                $usr_msg->add_type_message($phr->name(), msg_id::PHRASE_ID_NOT_FOUND->value);
-            }
-            $phr = $trp->to();
-            if (!$phr->is_valid()) {
-                $usr_msg->add_type_message($phr->name(), msg_id::PHRASE_ID_NOT_FOUND->value);
-            }
-        }
-
-        // add the id of the triples just added to the values
-        if ($usr_msg->is_ok()) {
-            $phr_lst = $this->phrase_list();
-            foreach ($this->value_list()->lst() as $val) {
-                foreach ($val->phrase_list()->lst() as $phr) {
-                    if ($phr->id() == 0) {
-                        if ($phr->name() == '') {
-                            $usr_msg->add_warning('phrase id and name missing in ' . $phr->dsp_id());
-                        } else {
-                            $phr_reloaded = $phr_lst->get_by_name($phr->name());
-                            $usr_msg->add($this->set_phrase_id($phr, $phr_reloaded));
+                foreach ($this->value_list()->lst() as $val) {
+                    foreach ($val->phrase_list()->lst() as $phr) {
+                        if ($phr->id() == 0) {
+                            if ($phr->name() == '') {
+                                $usr_msg->add_warning('phrase id and name missing in ' . $phr->dsp_id());
+                            } else {
+                                $phr_reloaded = $phr_lst->get_by_name($phr->name());
+                                $usr_msg->add($this->set_phrase_id($phr, $phr_reloaded));
+                            }
                         }
                     }
                 }
@@ -527,6 +545,8 @@ class data_object
             $imp->step_start(msg_id::SAVE, source::class, $src_lst->count(), $src_est);
             $usr_msg->add($src_lst->save($imp, $src_per_sec));
             $imp->step_end($src_lst->count(), $src_per_sec);
+        } else {
+            log_debug('sources not imported because ' . $usr_msg->all_message_text());
         }
 
         // import the values
@@ -537,63 +557,69 @@ class data_object
             $imp->step_start(msg_id::SAVE, value::class, $val_lst->count(), $val_est);
             $usr_msg->add($val_lst->save($imp, $val_per_sec));
             $imp->step_end($val_lst->count(), $val_per_sec);
+        } else {
+            log_debug('values not imported because ' . $usr_msg->all_message_text());
         }
 
         // import the formulas
+        if (!$this->formula_list()->is_empty()) {
 
-        // clone the term list as cache to filter the terms already fine
-        // without removing the fine words, triples, verbs and formulas from the original lists
-        $trm_lst = clone $phr_lst->term_list();
-        // TODO add the verbs
+            // clone the term list as cache to filter the terms already fine
+            // without removing the fine words, triples, verbs and formulas from the original lists
+            $trm_lst = clone $phr_lst->term_list();
+            // TODO add the verbs
 
-        // add the id of the formulas just added to the terms
-        // repeat this id assign until all formulas have an id
-        // or until it is clear that a terms is missing
-        $frm_self_ref = true;
-        $frm_add = true;
-        while ($frm_self_ref and $frm_add) {
-            $frm_self_ref = false;
-            $frm_add = false;
-            foreach ($this->formula_list()->lst() as $frm) {
-                if (!$frm->db_ready()) {
-                    $usr_msg->add_id_with_vars(msg_id::FORMULA_NOT_VALID,
-                        [msg_id::VAR_FORMULA => $frm->dsp_id()]);
-                } else {
-                    $exp = $frm->expression($trm_lst);
-                    $frm_trm_lst = $exp->terms($trm_lst);
-                    foreach ($frm_trm_lst->lst() as $trm) {
-                        $frm_self_ref = $this->check_formula_term($frm, $trm, $frm_trm_lst, $usr_msg, $trp_self_ref);
+            // add the id of the formulas just added to the terms
+            // repeat this id assign until all formulas have an id
+            // or until it is clear that a terms is missing
+            $frm_self_ref = true;
+            $frm_add = true;
+            while ($frm_self_ref and $frm_add) {
+                $frm_self_ref = false;
+                $frm_add = false;
+                foreach ($this->formula_list()->lst() as $frm) {
+                    if (!$frm->db_ready()) {
+                        $usr_msg->add_id_with_vars(msg_id::FORMULA_NOT_VALID,
+                            [msg_id::VAR_FORMULA => $frm->dsp_id()]);
+                    } else {
+                        $exp = $frm->expression($trm_lst);
+                        $frm_trm_lst = $exp->terms($trm_lst);
+                        foreach ($frm_trm_lst->lst() as $trm) {
+                            $frm_self_ref = $this->check_formula_term($frm, $trm, $frm_trm_lst, $usr_msg, $trp_self_ref);
+                        }
                     }
                 }
-            }
 
-            // save the formulas that are ready which means that does not use a formula that is not yet saved in the database
-            if ($usr_msg->is_ok()) {
-                // get the list of formulas that should be imported
-                $frm_lst = $this->formula_list();
-                // clone the list to filter the phrases already fine without removing the fine triples from the original list
-                $cache = clone $trm_lst;
-                $cache->filter_valid();
-                // estimate the time for the import
-                $frm_est = $frm_lst->count() / $frm_per_sec;
-                $imp->step_start(msg_id::SAVE, triple::class, $frm_lst->count(), $frm_est);
-                $usr_msg->add($frm_lst->save($cache, $imp));
-                $imp->step_end($frm_lst->count(), $frm_per_sec);
-                if ($frm_lst->count() > 0) {
-                    $frm_add = true;
+                // save the formulas that are ready which means that does not use a formula that is not yet saved in the database
+                if ($usr_msg->is_ok()) {
+                    // get the list of formulas that should be imported
+                    $frm_lst = $this->formula_list();
+                    // clone the list to filter the phrases already fine without removing the fine triples from the original list
+                    $cache = clone $trm_lst;
+                    $cache->filter_valid();
+                    // estimate the time for the import
+                    $frm_est = $frm_lst->count() / $frm_per_sec;
+                    $imp->step_start(msg_id::SAVE, triple::class, $frm_lst->count(), $frm_est);
+                    $usr_msg->add($frm_lst->save($cache, $imp));
+                    $imp->step_end($frm_lst->count(), $frm_per_sec);
+                    if ($frm_lst->count() > 0) {
+                        $frm_add = true;
+                    }
+
+                    // prepare adding the id of the triples just added to the triples
+                    $trm_lst = $this->term_list();
+                } else {
+                    log_debug('formulas not imported because ' . $usr_msg->all_message_text());
                 }
-
-                // prepare adding the id of the triples just added to the triples
-                $trm_lst = $this->term_list();
             }
-        }
 
-        // report missing formulas
-        foreach ($this->formula_list()->lst() as $frm) {
-            $exp = $frm->expression($trm_lst);
-            $frm_trm_lst = $exp->terms($trm_lst);
-            foreach ($frm_trm_lst->lst() as $trm) {
-                $usr_msg->add_type_message($trm->name(), msg_id::TERM_ID_NOT_FOUND->value);
+            // report missing formulas
+            foreach ($this->formula_list()->lst() as $frm) {
+                $exp = $frm->expression($trm_lst);
+                $frm_trm_lst = $exp->terms($trm_lst);
+                foreach ($frm_trm_lst->lst() as $trm) {
+                    $usr_msg->add_type_message($trm->name(), msg_id::TERM_ID_NOT_FOUND->value);
+                }
             }
         }
 
@@ -604,6 +630,8 @@ class data_object
             $imp->step_start(msg_id::SAVE, value::class, $frm_lst->count(), $frm_est);
             $usr_msg->add($frm_lst->save($imp, $frm_per_sec));
             $imp->step_end($frm_lst->count(), $frm_per_sec);
+        } else {
+            log_debug('formulas not imported because ' . $usr_msg->all_message_text());
         }
 
         return $usr_msg;

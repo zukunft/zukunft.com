@@ -498,6 +498,26 @@ class library
     }
 
     /**
+     * merge two array and ignore if the key is numeric
+     * @param array $array1
+     * @param array $array2
+     * @return array
+     */
+    function array_merge_by_key(array $array1, array $array2): array
+    {
+        $result = [];
+        foreach ($array1 as $key => $value) {
+            $result[$key] = $value;
+        }
+        foreach ($array2 as $key => $value) {
+            if (!array_key_exists($key, $result)) {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * recursive count of the number of elements in an array but limited to a given level
      * @param array $json_array the array that should be analysed
      * @param int $levels the number of levels that should be taken into account (-1 or empty for unlimited levels)

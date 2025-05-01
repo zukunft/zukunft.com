@@ -42,8 +42,10 @@
 namespace cfg\user;
 
 include_once SHARED_ENUM_PATH . 'messages.php';
+//include_once SHARED_PATH . 'library.php';
 
 use shared\enum\messages as msg_id;
+use shared\library;
 
 class user_message
 {
@@ -360,7 +362,9 @@ class user_message
             }
         }
         $this->combine_status($msg_to_add);
-        $this->db_row_id_lst = array_merge($this->db_row_id_lst, $msg_to_add->db_row_id_lst);
+
+        $lib = new library();
+        $this->db_row_id_lst = $lib->array_merge_by_key($this->db_row_id_lst, $msg_to_add->db_row_id_lst);
     }
 
     /**
