@@ -1505,6 +1505,17 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    function phrase_list_pi_const(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word()->phrase());
+        $lst->add($this->word_const()->phrase());
+        $lst->add($this->word_pi()->phrase());
+        $lst->add($this->triple()->phrase());
+        $lst->add($this->triple_pi()->phrase());
+        return $lst;
+    }
+
     function phrase_list_prime(): phrase_list
     {
         $lst = new phrase_list($this->usr1);

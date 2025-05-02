@@ -85,6 +85,8 @@ class group_tests
         $this->check_64_bit_key($t, [4], 4);
         $this->check_64_bit_key($t, [7], 7);
         $this->check_64_bit_key($t, [-2], 32770);
+        $this->check_64_bit_key($t, [-3], 32771);
+        $this->check_64_bit_key($t, [-44], 32812);
         $this->check_64_bit_key($t, [32767], 32767);
         $this->check_64_bit_key($t, [-32767], 65535);
         $this->check_64_bit_key($t, [1,32767], 2147418113);
@@ -131,8 +133,8 @@ class group_tests
         $this->check_int2alpha($t, -12, '.....A(', true, );
         $this->check_int2alpha($t, -12, '.....A)', false, true);
 
-        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list()->phrase_list()),values::PI_ID);
-        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(values::PI_ID), $t->triple_list()->phrase_list()->ids());
+        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list()->phrase_list()),values::PI_SYMBOL_ID);
+        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(values::PI_SYMBOL_ID), $t->triple_list()->phrase_list()->ids());
         $phr_lst = new phrase_list($usr);
         $phr_lst->merge($t->word_list()->phrase_list());
         $phr_lst->merge($t->triple_list()->phrase_list());

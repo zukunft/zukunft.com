@@ -60,16 +60,16 @@ class value_list_read_tests
         $val_lst = new value_list($t->usr1);
         $val_lst->load_by_phr($t->phrase_pi());
         $result = $val_lst->dsp_id();
-        $target = '3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 3 (zukunft.com system test)';
+        $target = '3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -44,,,) for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // load by ids
         $val_lst = new value_list($t->usr1);
-        $val_lst->load_by_ids([4,7]);
+        $val_lst->load_by_ids([values::PI_ID,values::E_ID]);
         $pi = new value($t->usr1);
-        $pi->load_by_id(4);
+        $pi->load_by_id(values::PI_ID);
         $e = new value($t->usr1);
-        $e->load_by_id(7);
+        $e->load_by_id(values::E_ID);
         $target_lst = new value_list($t->usr1);
         $target_lst->add($pi);
         $target_lst->add($e);
@@ -81,7 +81,7 @@ class value_list_read_tests
             $target = '"" 0.57721566490153 / "" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 4,,, / -2,,,) for user 3 (zukunft.com system test)';
         }
         $t->assert($test_name, $result, $target);
-        $target = '3.1415926535898 / 0.57721566490153 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 4,,, / 7,,,) for user 3 (zukunft.com system test)';
+        $target = '3.1415926535898 / 0.57721566490153 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -44,,, / -3,,,) for user 3 (zukunft.com system test)';
         $test_name = 'A value list with pi and e matches the expected result';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
 
@@ -102,9 +102,9 @@ class value_list_read_tests
         $phr_lst = $t->phrase_list_math_const();
         $val_lst->load_by_phr_lst($phr_lst, true);
         $result = $val_lst->dsp_id();
-        $target = '3.1415926535898 / 0.57721566490153 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / -3,,,) for user 3 (zukunft.com system test)';
+        $target = '3.1415926535898 / 0.57721566490153 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -44,,, / -3,,,) for user 3 (zukunft.com system test)';
         if ($target != $result) {
-            $target = '0.57721566490153 / 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -3,,, / -2,,,) for user 3 (zukunft.com system test)';
+            $target = '0.57721566490153 / 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -3,,, / -44,,,) for user 3 (zukunft.com system test)';
         }
         $t->assert($test_name, $result, $target);
 
@@ -123,12 +123,12 @@ class value_list_read_tests
         //$t->assert_contains($test_name, $val_lst->numbers(), [$target]);
 
         // ... based on the phrase list
-        $phr_lst = $t->phrase_list();
+        $phr_lst = $t->phrase_list_pi_const();
         $val_lst = $phr_lst->val_lst();
         $result = $val_lst->dsp_id();
         $target = '3.1415926535898 / 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 4,,,) for user 3 (zukunft.com system test)';
         if ($target != $result) {
-            $target = '3.1415926535898 / 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 4,,, / -2,,,) for user 3 (zukunft.com system test)';
+            $target = '3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -44,,,) for user 3 (zukunft.com system test)';
         }
         $t->assert($test_name, $result, $target);
 
