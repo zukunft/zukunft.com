@@ -1,4 +1,4 @@
-PREPARE view_sys_list_by_sys_views (bigint) AS
+PREPARE view_list_by_sys_views (bigint) AS
     SELECT s.view_id,
            u.view_id AS user_view_id,
            s.user_id,
@@ -12,5 +12,5 @@ PREPARE view_sys_list_by_sys_views (bigint) AS
            CASE WHEN (u.protect_id        IS     NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id
       FROM views s
  LEFT JOIN user_views u ON s.view_id = u.view_id AND u.user_id = $1
-     WHERE code_id IS NOT NULL
+     WHERE s.code_id IS NOT NULL
   ORDER BY s.view_id;

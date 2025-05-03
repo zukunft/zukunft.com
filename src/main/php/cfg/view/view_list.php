@@ -32,7 +32,7 @@
 
 namespace cfg\view;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
@@ -42,7 +42,6 @@ include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -58,14 +57,14 @@ use cfg\db\sql_par_type;
 use cfg\helper\combine_named;
 use cfg\helper\type_list;
 use cfg\sandbox\sandbox_link_named;
-use cfg\sandbox\sandbox_list;
+use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\user\user_message;
 
 global $sys_msk_cac;
 
-class view_list extends sandbox_list
+class view_list extends sandbox_list_named
 {
 
     public user $usr;   // the user object of the person for whom the verb list is loaded, so to say the viewer
@@ -152,41 +151,42 @@ class view_list extends sandbox_list
 
     /**
      * set the SQL query parameters to load a list of views
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param string $class the name of this class from where the call has been triggered
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_db $db_con, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name = ''): sql_par
     {
-        $qp = new sql_par($class);
-        $db_con->set_class(view::class);
-        $db_con->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(view::FLD_NAMES);
-        $db_con->set_usr_fields(view::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(view::FLD_NAMES_NUM_USR);
+        $sc->set_class(view::class);
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
+        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(view::FLD_NAMES);
+        $sc->set_usr_fields(view::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(view::FLD_NAMES_NUM_USR);
         return $qp;
     }
 
     /**
      * set the SQL query parameters to load a list of views by the component id
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
+     * @param sql_creator $sc with the target db_type set
      * @param int $id the id of the component to which the views should be loaded
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_component_id(sql_db $db_con, int $id): sql_par
+    function load_sql_by_component_id(sql_creator $sc, int $id): sql_par
     {
-        $qp = $this->load_sql($db_con);
-        $qp->name .= 'component_id';
-        $db_con->set_name($qp->name);
-        $db_con->set_join_fields(
+        $qp = $this->load_sql($sc, 'component_id');
+        $sc->set_name($qp->name);
+        $sc->set_join_fields(
             component_link::FLD_NAMES,
             component_link::class,
             view::FLD_ID,
             view::FLD_ID);
-        $db_con->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
-        $qp->sql = $db_con->select_by_join_field(component::FLD_ID, $id);
-        $qp->par = $db_con->get_par();
+        $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
+        $sc->add_where(component::FLD_ID, $id, sql_par_type::INT, sql_db::LNK_TBL);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
 
         return $qp;
     }
@@ -215,22 +215,6 @@ class view_list extends sandbox_list
         log_debug($id);
         $qp = $this->load_sql_by_component_id($db_con, $id);
         return parent::load($qp);
-    }
-
-    /**
-     * add one view to the view list, but only if it is not yet part of the phrase list
-     * @param view $msk_to_add the view that should be added to the list
-     */
-    function add(view $msk_to_add): void
-    {
-        log_debug($msk_to_add->dsp_id());
-        if (!in_array($msk_to_add->id(), $this->ids())) {
-            if ($msk_to_add->id() <> 0) {
-                $this->add_obj($msk_to_add);
-            }
-        } else {
-            log_debug($msk_to_add->dsp_id() . ' not added, because it is already in the list');
-        }
     }
 
 

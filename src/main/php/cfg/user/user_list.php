@@ -253,7 +253,7 @@ class user_list
         $sub_sql = '(' . $this->load_sql_count_sum_changes() . ')';
         $qp = $this->load_sql($sc, 'count_changes');
         $sc->set_join_sql($sub_sql, array(self::FLD_CHANGES), user::FLD_ID);
-        $sc->add_where(self::FLD_CHANGES, '', sql_par_type::NOT_NULL);
+        $sc->add_where(self::FLD_CHANGES, '', sql_par_type::NOT_NULL, sql_db::LNK_TBL);
         $sc->set_order(self::FLD_CHANGES, sql::ORDER_DESC, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

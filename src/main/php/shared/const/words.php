@@ -90,6 +90,8 @@ class words
     const SOURCES = 'sources';
     const VALUES = 'values';
     const FORMULAS = 'formulas';
+    const VIEWS = 'views';
+    const COMPONENTS = 'components';
     const CHANGES = 'changes';
     const PERCENT = 'percent';
     const DECIMAL = 'decimal';

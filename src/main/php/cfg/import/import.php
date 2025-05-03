@@ -762,6 +762,8 @@ class import
         $src_per_sec = $cfg->get_by([words::SOURCES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $val_per_sec = $cfg->get_by([words::VALUES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $frm_per_sec = $cfg->get_by([words::FORMULAS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $msk_per_sec = $cfg->get_by([words::VIEWS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $cmp_per_sec = $cfg->get_by([words::COMPONENTS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         // estimate the time for each object type
         // where 5 is the number of data objects that are filled with this function
@@ -812,8 +814,22 @@ class import
             }
             // TODO add json_fields::RESULTS
             // TODO add json_fields::CALC_VALIDATION
-            // TODO add json_fields::VIEWS
             // TODO add json_fields::COMPONENTS
+            /*
+            if (key_exists(json_fields::COMPONENTS, $json_array)) {
+                $cmp_array = $json_array[json_fields::COMPONENTS];
+                $this->step_start(msg_id::COUNT, component::class, count($cmp_array), $step_time);
+                $usr_msg->add($this->dto_get_components($cmp_array, $usr_trigger, $dto, $cmp_per_sec));
+                $this->step_end($dto->component_list()->count(), $cmp_per_sec);
+            }
+            // TODO add json_fields::VIEWS
+            if (key_exists(json_fields::VIEWS, $json_array)) {
+                $msk_array = $json_array[json_fields::VIEWS];
+                $this->step_start(msg_id::COUNT, view::class, count($msk_array), $step_time);
+                $usr_msg->add($this->dto_get_views($msk_array, $usr_trigger, $dto, $msk_per_sec));
+                $this->step_end($dto->view_list()->count(), $msk_per_sec);
+            }
+            */
             // TODO add json_fields::VIEW_VALIDATION
         }
         return $dto;
@@ -1046,7 +1062,7 @@ class import
 
     /**
      * add the triples from the json array to the data object
-     * @param array $json_array the word part of the import json
+     * @param array $json_array the triple part of the import json
      * @param user $usr_trigger the user who has started the import
      * @param data_object $dto the data object that should be filled
      * @param float $per_sec the expected number of triples that can be analysed per second
@@ -1073,7 +1089,7 @@ class import
     }
 
     /**
-     * add the source from the json array to the data object
+     * add the sources from the json array to the data object
      * @param array $json_array the source part of the import json
      * @param user $usr_trigger the user who has started the import
      * @param data_object $dto the data object that should be filled
@@ -1101,8 +1117,8 @@ class import
     }
 
     /**
-     * add the source from the json array to the data object
-     * @param array $json_array the source part of the import json
+     * add the values from the json array to the data object
+     * @param array $json_array the value part of the import json
      * @param user $usr_trigger the user who has started the import
      * @param data_object $dto the data object that should be filled
      * @param float $per_sec the expected number of values that can be analysed per second
@@ -1129,8 +1145,8 @@ class import
     }
 
     /**
-     * add the triples from the json array to the data object
-     * @param array $json_array the word part of the import json
+     * add the formulas from the json array to the data object
+     * @param array $json_array the formula part of the import json
      * @param user $usr_trigger the user who has started the import
      * @param data_object $dto the data object that should be filled
      * @param float $per_sec the expected number of formulas that can be analysed per second
@@ -1152,6 +1168,62 @@ class import
             $dto->add_formula($frm);
             $i++;
             $this->display_progress($i, $per_sec, $frm->dsp_id());
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add the views from the json array to the data object
+     * @param array $json_array the view part of the import json
+     * @param user $usr_trigger the user who has started the import
+     * @param data_object $dto the data object that should be filled
+     * @param float $per_sec the expected number of formulas that can be analysed per second
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function dto_get_views(
+        array       $json_array,
+        user        $usr_trigger,
+        data_object $dto,
+        float       $per_sec = 0
+    ): user_message
+    {
+        $usr_msg = new user_message();
+
+        $i = 0;
+        foreach ($json_array as $msk_json) {
+            $msk = new view($usr_trigger);
+            $usr_msg->add($msk->import_mapper($msk_json, $dto));
+            $dto->add_view($msk);
+            $i++;
+            $this->display_progress($i, $per_sec, $msk->dsp_id());
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add the components from the json array to the data object
+     * @param array $json_array the component part of the import json
+     * @param user $usr_trigger the user who has started the import
+     * @param data_object $dto the data object that should be filled
+     * @param float $per_sec the expected number of formulas that can be analysed per second
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function dto_get_components(
+        array       $json_array,
+        user        $usr_trigger,
+        data_object $dto,
+        float       $per_sec = 0
+    ): user_message
+    {
+        $usr_msg = new user_message();
+
+        $i = 0;
+        foreach ($json_array as $cmp_json) {
+            $cmp = new component($usr_trigger);
+            $usr_msg->add($cmp->import_mapper($cmp_json, $dto));
+            $dto->add_component($cmp);
+            $i++;
+            $this->display_progress($i, $per_sec, $cmp->dsp_id());
         }
         return $usr_msg;
     }

@@ -3520,7 +3520,7 @@ class sql_creator
             // set the opening bracket around a or field list if needed
             $is_or = $typ->is_or();
 
-            // check if the next is an or and if yes open the braket now
+            // check if the next is an or and if yes open the bracket now
             if (!$typ->is_or()) {
                 if (isset($this->par_where->lst[$key + 1])) {
                     $next_where_fld = $this->par_where->lst[$key + 1];
@@ -3659,8 +3659,7 @@ class sql_creator
                 $sql_where .= $tbl . $fld . ' IS NULL ';
             } elseif ($typ == sql_par_type::NOT_NULL) {
                 //$par_offset--;
-                // TODO review table prefix
-                $sql_where .= sql_db::LNK_TBL . '.' . $fld . ' IS NOT NULL ';
+                $sql_where .= $tbl . $fld . ' IS NOT NULL ';
             } elseif ($typ == sql_par_type::INT_NOT) {
                 $sql_where .= $tbl . $fld . ' <> ' . $par->name;
             } elseif ($typ == sql_par_type::INT_NOT_OR_NULL) {

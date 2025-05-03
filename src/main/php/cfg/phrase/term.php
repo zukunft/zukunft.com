@@ -58,6 +58,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
 include_once MODEL_WORD_PATH . 'triple.php';
@@ -78,6 +79,7 @@ use cfg\helper\db_object_seq_id;
 use cfg\formula\formula;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
+use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\user\user;
 use cfg\word\word;
@@ -1036,8 +1038,24 @@ class term extends combine_named
 
 
     /*
-     * modify
+     * info
      */
+
+    /**
+     * @return user_message ok message if this word or triple might be read to be added to the database
+     */
+    function can_be_ready(): user_message
+    {
+        return $this->obj()->can_be_ready();
+    }
+
+    /**
+     * @return user_message ok message if this word or triple can be added to the database
+     */
+    function db_ready(): user_message
+    {
+        return $this->obj()->db_ready();
+    }
 
     /**
      * @return bool true if it has a valid id and name and the phrase is expected to be stored in the database

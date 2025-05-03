@@ -655,7 +655,7 @@ class formula_list extends sandbox_list_named
      * convert this formula list object into a term list object
      * and use the name as the unique key instead of the database id
      * used for the data_object based import
-     * @return term_list with all triples of this list as a phrase
+     * @return term_list with all formulas of this list as a term
      */
     function term_lst_of_names(): term_list
     {

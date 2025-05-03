@@ -260,6 +260,12 @@ class type_list
         }
     }
 
+    function add_direct(type_object|ref|view $item): void
+    {
+        $this->lst[] = $item;
+    }
+
+
     /*
      * database (dao) functions
      */
@@ -682,6 +688,15 @@ class type_list
             } else {
                 log_debug('Type id ' . $id . ' not found');
             }
+        }
+        return $result;
+    }
+
+    function names(): array
+    {
+        $result = [];
+        foreach ($this->lst as $item) {
+            $result[] = $item->name();
         }
         return $result;
     }

@@ -38,6 +38,7 @@ include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
+//include_once MODEL_PHRASE_PATH . 'term_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -51,6 +52,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\helper\type_list;
 use cfg\phrase\phrase;
+use cfg\phrase\term_list;
 use cfg\sandbox\sandbox;
 use cfg\system\system_time_type;
 use cfg\user\user;
@@ -270,6 +272,29 @@ class verb_list extends type_list
 
 
     /*
+     * information
+     */
+
+    /**
+     * convert this verb list object into a term list object
+     * and use the name as the unique key instead of the database id
+     * used for the data_object based import
+     * @return term_list with all verbs of this list as a term
+     */
+    function term_lst_of_names(user $usr): term_list
+    {
+        $trm_lst = new term_list($usr);
+        foreach ($this->lst() as $vrb) {
+            if ($vrb::class != verb::class) {
+                log_err('unexpected class ' . $vrb::class . ' in verb list');
+            } else {
+                $trm_lst->add_by_name($vrb->term());
+            }
+        }
+        return $trm_lst;
+    }
+
+    /*
      * modify
      */
 
@@ -281,6 +306,21 @@ class verb_list extends type_list
     {
         //$type_obj = new type_object($vrb->code_id, $vrb->name(), '', $vrb->id());
         $this->add($vrb);
+    }
+
+    /**
+     * add a verb to the list that does not yet have an id but has a name
+     * @param verb $to_add the named verb that should be added
+     * @returns bool true if the object has been added
+     */
+    function add_by_name(verb $to_add): bool
+    {
+        $result = false;
+        if (!in_array($to_add->name(), array_keys($this->names()))) {
+            $this->add_direct($to_add);
+            $result = true;
+        }
+        return $result;
     }
 
     /**
@@ -305,6 +345,7 @@ class verb_list extends type_list
         $sys_times->switch();
         return $result;
     }
+
 
     /*
      * extract

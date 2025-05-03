@@ -3911,20 +3911,6 @@ class sql_db
 
     /**
      * create a SQL select statement for the connected database and force to use the ids of the linked objects instead of the id
-     * and select by a given field
-     * @param string $field_name the field name of the database index field that should be used for the selection
-     * @param int $id the database id of the row that should be selected
-     * @return string the created SQL statement in the previous set dialect
-     */
-    function select_by_join_field(string $field_name, int $id): string
-    {
-        $this->join_select_field = $field_name;
-        $this->join_select_id = $id;
-        return $this->select_by();
-    }
-
-    /**
-     * create a SQL select statement for the connected database and force to use the ids of the linked objects instead of the id
      * and select by a list of given fields
      * @param bool $has_id to be able to create also SQL statements for tables that does not have a single unique key
      * @return string the created SQL statement in the previous set dialect

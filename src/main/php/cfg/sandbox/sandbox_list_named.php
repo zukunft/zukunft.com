@@ -39,6 +39,8 @@ include_once DB_PATH . 'sql_par_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'component.php';
+include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
@@ -48,6 +50,8 @@ include_once MODEL_REF_PATH . 'source_list.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
@@ -56,6 +60,8 @@ include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 
+use cfg\component\component;
+use cfg\component\component_list;
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\db\sql_par_list;
@@ -68,6 +74,8 @@ use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\phrase\term;
 use cfg\ref\source_list;
+use cfg\view\view;
+use cfg\view\view_list;
 use cfg\word\triple_list;
 use cfg\user\user;
 use cfg\user\user_message;
@@ -205,6 +213,12 @@ class sandbox_list_named extends sandbox_list
         if ($this::class == triple_list::class and $to_add::class != triple::class) {
             log_err('trying to add a none triple to a triple list');
         }
+        if ($this::class == view_list::class and $to_add::class != view::class) {
+            log_err('trying to add a none view to a view list');
+        }
+        if ($this::class == component_list::class and $to_add::class != component::class) {
+            log_err('trying to add a none component to a component list');
+        }
 
         if ($to_add != null) {
             if ($this->is_empty()) {
@@ -216,6 +230,8 @@ class sandbox_list_named extends sandbox_list
                         $usr_msg = $this->add_obj($to_add);
                         $result = $usr_msg->is_ok();
                     }
+                } else {
+                    log_debug($to_add->dsp_id() . ' not added, because it is already in the list');
                 }
             }
         }

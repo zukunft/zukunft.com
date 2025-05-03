@@ -33,15 +33,21 @@
 namespace cfg\view;
 
 include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once SHARED_CONST_PATH . 'views.php';
 
+use cfg\db\sql;
+use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
+use cfg\db\sql_par_type;
 use cfg\helper\type_list;
 use cfg\user\user;
 use shared\const\views as view_shared;
@@ -85,27 +91,8 @@ class view_sys_list extends type_list
 
 
     /*
-     * loading functions
+     * load
      */
-
-    /**
-     * set the SQL query parameters to load a list of views from the database that have a used code id
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_list(sql_db $db_con): sql_par
-    {
-        $this->reset();
-        $dsp_lst = new view_list($this->usr);
-        $qp = $dsp_lst->load_sql($db_con, self::class);
-        $qp->name .= 'sys_views';
-        $db_con->set_name($qp->name);
-        $db_con->set_where_text('code_id IS NOT NULL');
-        $db_con->set_order(view::FLD_ID);
-        $qp->sql = $db_con->select_by_set_id();
-        $qp->par = $db_con->get_par();
-        return $qp;
-    }
 
     /**
      * force to reload the list of views from the database that have a used code id
@@ -116,7 +103,8 @@ class view_sys_list extends type_list
     protected function load_list(sql_db $db_con, string $class): array
     {
         $this->reset();
-        $qp = $this->load_sql_list($db_con);
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_list($sc);
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
@@ -127,6 +115,26 @@ class view_sys_list extends type_list
             }
         }
         return $this->lst();
+    }
+
+    /**
+     * set the SQL query parameters to load a list of views from the database that have a used code id
+     * @param sql_creator $sc with the target db_type set
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_list(sql_creator $sc): sql_par
+    {
+        $this->reset();
+        $dsp_lst = new view_list($this->usr);
+        $qp = $dsp_lst->load_sql($sc, 'sys_views');
+        $sc->set_name($qp->name);
+        $msk = new view($this->user());
+        $sc->set_id_field($msk->id_field());
+        $sc->add_where(sql::FLD_CODE_ID, '', sql_par_type::NOT_NULL);
+        $sc->set_order(view::FLD_ID);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
     }
 
     /**

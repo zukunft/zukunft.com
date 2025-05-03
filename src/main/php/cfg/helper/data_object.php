@@ -35,6 +35,8 @@
 namespace cfg\helper;
 
 // more specific includes are switched off to avoid circular includes
+//include_once MODEL_COMPONENT_PATH . 'component.php';
+//include_once MODEL_COMPONENT_PATH . 'component_list.php';
 //include_once MODEL_FORMULA_PATH . 'formula.php';
 //include_once MODEL_FORMULA_PATH . 'formula_list.php';
 //include_once MODEL_IMPORT_PATH . 'import.php';
@@ -50,6 +52,10 @@ include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
 //include_once MODEL_VIEW_PATH . 'view_list.php';
+//include_once MODEL_VERB_PATH . 'verb.php';
+//include_once MODEL_VERB_PATH . 'verb_list.php';
+//include_once MODEL_VIEW_PATH . 'view.php';
+//include_once MODEL_VIEW_PATH . 'view_list.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'word_list.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
@@ -62,6 +68,8 @@ include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
+use cfg\component\component;
+use cfg\component\component_list;
 use cfg\formula\formula;
 use cfg\formula\formula_list;
 use cfg\import\import;
@@ -76,6 +84,9 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_base;
 use cfg\value\value_list;
+use cfg\verb\verb;
+use cfg\verb\verb_list;
+use cfg\view\view;
 use cfg\view\view_list;
 use cfg\word\word;
 use cfg\word\word_list;
@@ -86,7 +97,6 @@ use shared\const\triples;
 use shared\const\words;
 use shared\enum\messages as msg_id;
 use shared\json_fields;
-use shared\library;
 use shared\types\api_type_list;
 
 class data_object
@@ -99,6 +109,7 @@ class data_object
     private user $usr; // the person for whom the list has been created
 
     private word_list $wrd_lst;
+    private verb_list $vrb_lst;
     private triple_list $trp_lst;
     private phrase_list $phr_lst;
     private bool $phr_lst_dirty;
@@ -108,6 +119,7 @@ class data_object
     private term_list $trm_lst;
     private bool $trm_lst_dirty;
     private view_list $msk_lst;
+    private component_list $cmp_lst;
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
 
@@ -126,6 +138,7 @@ class data_object
     {
         $this->set_user($usr);
         $this->wrd_lst = new word_list($usr);
+        $this->vrb_lst = new verb_list();
         $this->trp_lst = new triple_list($usr);
         $this->phr_lst = new phrase_list($usr);
         $this->phr_lst_dirty = false;
@@ -135,6 +148,7 @@ class data_object
         $this->trm_lst = new term_list($usr);
         $this->trm_lst_dirty = false;
         $this->msk_lst = new view_list($usr);
+        $this->cmp_lst = new component_list($usr);
         $this->usr_msg = new user_message();
     }
 
@@ -179,11 +193,13 @@ class data_object
     {
         $vars = [];
         $vars[json_fields::WORDS] = $this->wrd_lst->api_json_array($typ_lst);
+        $vars[json_fields::VERBS] = $this->vrb_lst->api_json_array();
         $vars[json_fields::TRIPLES] = $this->trp_lst->api_json_array($typ_lst);
         $vars[json_fields::SOURCES] = $this->src_lst->api_json_array($typ_lst);
         $vars[json_fields::VALUES] = $this->val_lst->api_json_array($typ_lst);
         $vars[json_fields::FORMULAS] = $this->frm_lst->api_json_array($typ_lst);
         $vars[json_fields::VIEWS] = $this->msk_lst->api_json_array($typ_lst);
+        $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_json_array($typ_lst);
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -220,6 +236,14 @@ class data_object
     }
 
     /**
+     * @return verb_list with the verbs of this data object
+     */
+    function verb_list(): verb_list
+    {
+        return $this->vrb_lst;
+    }
+
+    /**
      * @return triple_list with the triples of this data object
      */
     function triple_list(): triple_list
@@ -248,9 +272,9 @@ class data_object
      */
     function term_list(): term_list
     {
-        if ($this->phr_lst_dirty) {
+        if ($this->trm_lst_dirty) {
             $trm_lst = $this->phrase_list()->term_list();
-            // TODO prio 2 add verb list
+            $trm_lst->merge_by_name($this->verb_list()->term_lst_of_names($this->user()));
             $trm_lst->merge_by_name($this->formula_list()->term_lst_of_names());
             $this->trm_lst = $trm_lst;
             $this->trm_lst_dirty = false;
@@ -292,11 +316,19 @@ class data_object
     }
 
     /**
-     * @return view_list with the view of this data object
+     * @return view_list with the views of this data object
      */
     function view_list(): view_list
     {
         return $this->msk_lst;
+    }
+
+    /**
+     * @return component_list with the components of this data object
+     */
+    function component_list(): component_list
+    {
+        return $this->cmp_lst;
     }
 
     /**
@@ -319,7 +351,19 @@ class data_object
     function add_word(word $wrd): void
     {
         $this->phr_lst_dirty = true;
+        $this->trm_lst_dirty = true;
         $this->wrd_lst->add_by_name($wrd);
+    }
+
+    /**
+     * add a name verb without db id to the list
+     * @param verb $vrb with the name set
+     * @return void
+     */
+    function add_verb(verb $vrb): void
+    {
+        $this->trm_lst_dirty = true;
+        $this->vrb_lst->add_by_name($vrb);
     }
 
     /**
@@ -330,6 +374,7 @@ class data_object
     function add_triple(triple $trp): void
     {
         $this->phr_lst_dirty = true;
+        $this->trm_lst_dirty = true;
         $this->trp_lst->add_by_name($trp);
     }
 
@@ -350,7 +395,28 @@ class data_object
      */
     function add_formula(formula $frm): void
     {
+        $this->trm_lst_dirty = true;
         $this->frm_lst->add_by_name($frm);
+    }
+
+    /**
+     * add a view with name but without db id to the list
+     * @param view $frm with the name and parameters set
+     * @return void
+     */
+    function add_view(view $frm): void
+    {
+        $this->msk_lst->add_by_name($frm);
+    }
+
+    /**
+     * add a component with name but without db id to the list
+     * @param component $frm with the name and parameters set
+     * @return void
+     */
+    function add_component(component $frm): void
+    {
+        $this->cmp_lst->add_by_name($frm);
     }
 
     /**
@@ -437,6 +503,8 @@ class data_object
         $src_per_sec = $cfg->get_by([words::SOURCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $val_per_sec = $cfg->get_by([words::VALUES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $frm_per_sec = $cfg->get_by([words::FORMULAS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $msk_per_sec = $cfg->get_by([words::VIEWS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $cmp_per_sec = $cfg->get_by([words::COMPONENTS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
 
         // save the data lists in order of the dependencies

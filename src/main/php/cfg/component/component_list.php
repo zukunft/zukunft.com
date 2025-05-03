@@ -46,6 +46,7 @@ include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
@@ -59,7 +60,7 @@ use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\sandbox\sandbox_list;
+use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_link_named;
 use cfg\helper\combine_named;
@@ -68,7 +69,7 @@ use cfg\user\user_message;
 use cfg\view\view;
 use shared\types\component_type as comp_type_shared;
 
-class component_list extends sandbox_list
+class component_list extends sandbox_list_named
 {
 
     /*
@@ -209,8 +210,7 @@ class component_list extends sandbox_list
      */
     function load_sql_by_view_id(sql_creator $sc, int $id): sql_par
     {
-        $qp = $this->load_sql($sc);
-        $qp->name .= 'view_id';
+        $qp = $this->load_sql($sc, 'view_id');
         $sc->set_name($qp->name);
         $sc->set_join_fields(
             component_link::FLD_NAMES,
@@ -227,14 +227,15 @@ class component_list extends sandbox_list
 
     /**
      * set the common SQL query parameters to load a list of components
-     * @param sql_creator $sc the db connection object as a function parameter for unit testing
-     * @param string $class the name of this class from where the call has been triggered
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql(sql_creator $sc, string $class = self::class): sql_par
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
-        $qp = new sql_par($class);
         $sc->set_class(component::class);
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
         $sc->set_fields(component::FLD_NAMES);
@@ -279,28 +280,6 @@ class component_list extends sandbox_list
             $cmp_lst[] = $cmp->export_json($do_load);
         }
         return $cmp_lst;
-    }
-
-
-    /*
-     * modify
-     */
-
-    /**
-     * TODO check if the position is set and if not set it
-     * add one component to the component list, but only if it is not yet part of the component list
-     * @param component $cmp_to_add the component that should be added to the list
-     */
-    function add(component $cmp_to_add): void
-    {
-        log_debug($cmp_to_add->dsp_id());
-        if (!in_array($cmp_to_add->id(), $this->ids())) {
-            if ($cmp_to_add->id() <> 0) {
-                $this->add_obj($cmp_to_add);
-            }
-        } else {
-            log_debug($cmp_to_add->dsp_id() . ' not added, because it is already in the list');
-        }
     }
 
 }

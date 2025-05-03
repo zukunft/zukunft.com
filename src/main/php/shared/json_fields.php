@@ -310,6 +310,7 @@ class json_fields
 
     // for results
     const WORDS = 'words';
+    const VERBS = 'verbs';
     const TRIPLES = 'triples';
 
     // for ip ranges
