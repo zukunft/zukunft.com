@@ -450,6 +450,11 @@ class data_object
         return $phr;
     }
 
+    function get_component_by_name(string $name): ?component
+    {
+        return $this->component_list()->get_by_name($name);
+    }
+
     function get_value_by_names(array $names): ?value_base
     {
         return $this->value_list()->get_by_names($names);
@@ -698,6 +703,28 @@ class data_object
             $imp->step_start(msg_id::SAVE, value::class, $frm_lst->count(), $frm_est);
             $usr_msg->add($frm_lst->save($imp, $frm_per_sec));
             $imp->step_end($frm_lst->count(), $frm_per_sec);
+        } else {
+            log_debug('formulas not imported because ' . $usr_msg->all_message_text());
+        }
+
+        // TODO Prio 1 review and use predefined functions
+        if ($usr_msg->is_ok()) {
+            $cmp_lst = $this->component_list();
+            $cmp_est = $cmp_lst->count() / $cmp_per_sec;
+            $imp->step_start(msg_id::SAVE, value::class, $cmp_lst->count(), $cmp_est);
+            $usr_msg->add($cmp_lst->save($imp, $cmp_per_sec));
+            $imp->step_end($cmp_lst->count(), $cmp_per_sec);
+        } else {
+            log_debug('formulas not imported because ' . $usr_msg->all_message_text());
+        }
+
+        // TODO Prio 1 review and use predefined functions
+        if ($usr_msg->is_ok()) {
+            $msk_lst = $this->view_list();
+            $msk_est = $msk_lst->count() / $msk_per_sec;
+            $imp->step_start(msg_id::SAVE, value::class, $msk_lst->count(), $msk_est);
+            $usr_msg->add($msk_lst->save($imp, $msk_per_sec));
+            $imp->step_end($msk_lst->count(), $msk_per_sec);
         } else {
             log_debug('formulas not imported because ' . $usr_msg->all_message_text());
         }

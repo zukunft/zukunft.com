@@ -61,6 +61,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_LOG_PATH . 'change.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
@@ -68,6 +69,7 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -83,6 +85,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\data_object;
 use cfg\log\change;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
@@ -91,6 +94,7 @@ use cfg\helper\type_object;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\view\view;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -207,7 +211,7 @@ class component_link extends sandbox_link
 
         // set the default values
         $this->set_predicate(component_link_type::ALWAYS);
-        $this->set_pos(1);
+        $this->set_pos(null);
         $this->set_pos_type(position_types::BELOW);
         $this->set_style(null);
 
@@ -281,6 +285,79 @@ class component_link extends sandbox_link
         }
 
         return $msg;
+    }
+
+    /**
+     * set the vars of this component link object based on the given json without writing to the database
+     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto the data object that contains the already imported components
+     * @param object|null $test_obj if not null the unit testing object
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        log_debug();
+
+        // reset the all parameters for the view object but keep the user
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+
+        // if for the component only the position and name is defined
+        // do not overwrite an existing component
+        // instead just add the existing component
+        if ((count($in_ex_json) == 2
+                and array_key_exists(json_fields::POSITION, $in_ex_json)
+                and array_key_exists(json_fields::NAME, $in_ex_json))
+            or (count($in_ex_json) == 3
+                and array_key_exists(json_fields::POSITION, $in_ex_json)
+                and array_key_exists(json_fields::NAME, $in_ex_json)
+                and array_key_exists(json_fields::POS_TYPE, $in_ex_json))
+            or (count($in_ex_json) == 3
+                and array_key_exists(json_fields::POSITION, $in_ex_json)
+                and array_key_exists(json_fields::NAME, $in_ex_json)
+                and array_key_exists(json_fields::STYLE, $in_ex_json))
+            or (count($in_ex_json) == 4
+                and array_key_exists(json_fields::POSITION, $in_ex_json)
+                and array_key_exists(json_fields::NAME, $in_ex_json)
+                and array_key_exists(json_fields::POS_TYPE, $in_ex_json)
+                and array_key_exists(json_fields::STYLE, $in_ex_json))) {
+
+            // get component from dto by name
+            $cmp = $dto->get_component_by_name($in_ex_json[json_fields::NAME]);
+            if ($cmp == null) {
+                $usr_msg->add_id_with_vars(msg_id::COMPONENT_MISSING, [
+                    msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME],
+                    msg_id::VAR_JSON_TEXT => $in_ex_json
+                ]);
+                $cmp = new component($usr);
+                $cmp->set_name($in_ex_json[json_fields::NAME]);
+            }
+            $this->set_component($cmp);
+
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::COMPONENT_CREATED, [
+                msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME]
+            ]);
+            $cmp = new component($usr);
+            $cmp->import_obj($in_ex_json, $test_obj);
+        }
+
+        // set the link position and type
+        if (array_key_exists(json_fields::POSITION, $in_ex_json)) {
+            $this->set_pos($in_ex_json[json_fields::POSITION]);
+        }
+        if (array_key_exists(json_fields::POS_TYPE, $in_ex_json)) {
+            $this->set_pos_type($in_ex_json[json_fields::POS_TYPE]);
+        }
+        if (array_key_exists(json_fields::STYLE, $in_ex_json)) {
+            $this->set_style($in_ex_json[json_fields::STYLE]);
+        }
+
+        return $usr_msg;
     }
 
 
@@ -377,9 +454,9 @@ class component_link extends sandbox_link
 
     /**
      * set the position of this link
-     * @param int $pos
+     * @param int|null $pos
      */
-    function set_pos(int $pos): void
+    function set_pos(int|null $pos): void
     {
         $this->order_nbr = $pos;
     }

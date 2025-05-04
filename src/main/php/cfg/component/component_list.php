@@ -53,6 +53,9 @@ include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
 
 use cfg\db\sql;
@@ -67,6 +70,9 @@ use cfg\helper\combine_named;
 use cfg\helper\type_list;
 use cfg\user\user_message;
 use cfg\view\view;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 use shared\types\component_type as comp_type_shared;
 
 class component_list extends sandbox_list_named
@@ -246,6 +252,24 @@ class component_list extends sandbox_list_named
 
 
     /*
+     * search
+     */
+
+    /**
+     * overwrite of the parent function just to add the component as a return type
+     * find an object from the loaded list by name using the hash
+     * should be cast by the child function get_by_name
+     *
+     * @param string $name the unique name of the object that should be returned
+     * @return component|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
+     */
+    function get_by_name(string $name): component|CombineObject|IdObject|TextIdObject|null
+    {
+        return parent::get_by_name($name);
+    }
+
+
+    /*
      * im- and export
      */
 
@@ -280,6 +304,21 @@ class component_list extends sandbox_list_named
             $cmp_lst[] = $cmp->export_json($do_load);
         }
         return $cmp_lst;
+    }
+
+    /**
+     * save all components of this list
+     * TODO create one SQL and commit statement for faster execution
+     *
+     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     */
+    function save(): user_message
+    {
+        $result = new user_message();
+        foreach ($this->lst() as $cmp) {
+            $result->add($cmp->save());
+        }
+        return $result;
     }
 
 }

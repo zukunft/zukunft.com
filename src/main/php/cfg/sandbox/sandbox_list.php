@@ -349,7 +349,7 @@ class sandbox_list extends base_list
      */
     function add_obj(
         IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add,
-        bool $allow_duplicates = false
+        bool                                                         $allow_duplicates = false
     ): user_message
     {
         $usr_msg = new user_message();
@@ -391,6 +391,43 @@ class sandbox_list extends base_list
         }
         return $usr_msg;
     }
+
+    /**
+     * add one object to the list of user sandbox objects, but only if it is not yet part of the list
+     * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add the backend object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
+     */
+    function add_link_by_name(
+        IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add,
+        bool                                                         $allow_duplicates = false
+    ): user_message
+    {
+        $usr_msg = new user_message();
+
+        // add only objects that have all mandatory values
+        $usr_msg->add($obj_to_add->db_ready());
+
+        if ($obj_to_add->user() == null) {
+            $obj_to_add->set_user($this->user());
+            $usr_msg->add_id_with_vars(msg_id::USER_MISSING,
+                [msg_id::VAR_NAME => $this->dsp_id()]);
+        }
+        if ($obj_to_add->user() !== $this->user()) {
+            if (!$this->user()->is_admin() and !$this->user()->is_system()) {
+                $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
+                    [
+                        msg_id::VAR_NAME => $obj_to_add->dsp_id(),
+                        msg_id::VAR_USER_NAME => $obj_to_add->user()->name(),
+                        msg_id::VAR_USER_LIST_NAME => $this->user()->name(),
+                    ]);
+            }
+        }
+        $usr_msg->add(parent::add_obj($obj_to_add, $allow_duplicates));
+
+        return $usr_msg;
+    }
+
 
     /*
      * check

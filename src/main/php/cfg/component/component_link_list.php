@@ -272,6 +272,20 @@ class component_link_list extends sandbox_list
     }
 
     /**
+     * add a view component link to the list without saving it to the database
+     * @return true if the link has been added
+     */
+    function add_by_name(component_link $lnk_to_add): bool
+    {
+        $added = false;
+        if ($this->can_add($lnk_to_add)) {
+            $this->add_link_by_name($lnk_to_add);
+            $added = true;
+        }
+        return $added;
+    }
+
+    /**
      * delete all loaded view component links e.g. to delete all the links assigned to a view
      * @return user_message
      */

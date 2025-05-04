@@ -815,7 +815,6 @@ class import
             // TODO add json_fields::RESULTS
             // TODO add json_fields::CALC_VALIDATION
             // TODO add json_fields::COMPONENTS
-            /*
             if (key_exists(json_fields::COMPONENTS, $json_array)) {
                 $cmp_array = $json_array[json_fields::COMPONENTS];
                 $this->step_start(msg_id::COUNT, component::class, count($cmp_array), $step_time);
@@ -829,7 +828,6 @@ class import
                 $usr_msg->add($this->dto_get_views($msk_array, $usr_trigger, $dto, $msk_per_sec));
                 $this->step_end($dto->view_list()->count(), $msk_per_sec);
             }
-            */
             // TODO add json_fields::VIEW_VALIDATION
         }
         return $dto;

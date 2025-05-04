@@ -344,9 +344,9 @@ class sandbox_list_named extends sandbox_list
      * should be cast by the child function get_by_name
      *
      * @param string $name the unique name of the object that should be returned
-     * @return word|phrase|term|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
+     * @return phrase|term|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string $name): word|phrase|term|CombineObject|IdObject|TextIdObject|null
+    function get_by_name(string $name): phrase|term|CombineObject|IdObject|TextIdObject|null
     {
         $key_lst = $this->name_pos_lst();
         $pos = null;

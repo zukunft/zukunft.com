@@ -349,57 +349,15 @@ class view extends sandbox_typed
             }
         }
 
+        // TODO get component from the dto object
         // TODO check if it is working that after saving (or remembering) add the view components
         if (key_exists(json_fields::COMPONENTS, $in_ex_json)) {
             $json_lst = $in_ex_json[json_fields::COMPONENTS];
             $cmp_pos = 1;
             foreach ($json_lst as $json_cmp) {
-                $cmp = new component($usr);
-                $style_code_id = null;
-                $pos_type_code_id = null;
-                // if for the component only the position and name is defined
-                // do not overwrite an existing component
-                // instead just add the existing component
-                if ((count($json_cmp) == 2
-                        and array_key_exists(json_fields::POSITION, $json_cmp)
-                        and array_key_exists(json_fields::NAME, $json_cmp))
-                    or (count($json_cmp) == 3
-                        and array_key_exists(json_fields::POSITION, $json_cmp)
-                        and array_key_exists(json_fields::NAME, $json_cmp)
-                        and array_key_exists(json_fields::POS_TYPE, $json_cmp))
-                    or (count($json_cmp) == 3
-                        and array_key_exists(json_fields::POSITION, $json_cmp)
-                        and array_key_exists(json_fields::NAME, $json_cmp)
-                        and array_key_exists(json_fields::STYLE, $json_cmp))
-                    or (count($json_cmp) == 4
-                        and array_key_exists(json_fields::POSITION, $json_cmp)
-                        and array_key_exists(json_fields::NAME, $json_cmp)
-                        and array_key_exists(json_fields::POS_TYPE, $json_cmp)
-                        and array_key_exists(json_fields::STYLE, $json_cmp))) {
-                    $cmp->load_by_name($json_cmp[json_fields::NAME]);
-                    if (array_key_exists(json_fields::POS_TYPE, $json_cmp)) {
-                        $pos_type_code_id = $json_cmp[json_fields::POS_TYPE];
-                    }
-                    if (array_key_exists(json_fields::STYLE
-                        , $json_cmp)) {
-                        $style_code_id = $json_cmp[json_fields::STYLE];
-                    }
-                    // if the component does not jet exist
-                    // nevertheless create the component
-                    // but send a warning message
-                    if ($cmp->id() <= 0) {
-                        log_warning('Component ' . $json_cmp[json_fields::NAME]
-                            . ' has not yet been created, but is supposed to be at position '
-                            . $json_cmp[json_fields::POSITION] . ' of a view ');
-                        $cmp->import_obj($json_cmp, $test_obj);
-                    }
-                } else {
-                    log_warning('overwriting the component by the view');
-                    $cmp->import_obj($json_cmp, $test_obj);
-                }
-                // on import first add all view components to the view object and save them all at once
-                // TODO overwrite the style or position type
-                $usr_msg->add_message($this->add_cmp($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj));
+                $lnk = new component_link($usr);
+                $lnk->import_mapper($json_cmp, $dto, $test_obj);
+                $this->add_component($lnk, $cmp_pos);
                 $cmp_pos++;
             }
         }
@@ -569,7 +527,7 @@ class view extends sandbox_typed
                     }
                     // on import first add all view components to the view object and save them all at once
                     // TODO overwrite the style or position type
-                    $result->add_message($this->add_cmp($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj));
+                    $result->add_message($this->save_component($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj));
                     $cmp_pos++;
                 }
             }
@@ -1040,13 +998,43 @@ class view extends sandbox_typed
 
     /**
      * add a new component to this view
+     * @param component_link $lnk the component link with the component object
+     * @return user_message an empty string if the new component link has been saved to the database
+     *                      or the message that should be shown to the user
+     */
+    function add_component(component_link $lnk, int $pos = null): user_message
+    {
+        $result = new user_message();
+
+        // if no position is requested add the component at the end
+        if ($lnk->pos() == null) {
+            if ($pos != null) {
+                $lnk->set_pos($pos);
+            } else {
+                $lnk->set_pos($this->component_links() + 1);
+            }
+        }
+        if ($lnk->pos_type() == null) {
+            $lnk->set_pos_type(position_types::BELOW);
+        }
+        if ($this->cmp_lnk_lst == null) {
+            $this->cmp_lnk_lst = new component_link_list($this->user());
+        }
+        $lnk->set_view($this);
+        $this->cmp_lnk_lst->add_link_by_name($lnk);
+
+        return $result;
+    }
+
+    /**
+     * save a new component to the database and add it to this view
      * @param component $cmp the view component that should be added
      * @param int|null $pos is set the position, where the
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return string an empty string if the new component link has been saved to the database
      *                or the message that should be shown to the user
      */
-    function add_cmp(
+    function save_component(
         component $cmp,
         ?int      $pos = null,
         ?string   $pos_type_code_id = null,

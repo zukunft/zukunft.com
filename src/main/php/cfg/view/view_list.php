@@ -241,5 +241,20 @@ class view_list extends sandbox_list_named
         return $usr_msg;
     }
 
+    /**
+     * save all views of this list
+     * TODO create one SQL and commit statement for faster execution
+     *
+     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     */
+    function save(): user_message
+    {
+        $result = new user_message();
+        foreach ($this->lst() as $msk) {
+            $result->add($msk->save());
+        }
+        return $result;
+    }
+
 }
 

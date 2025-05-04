@@ -58,10 +58,12 @@ enum messages: string
 
     const VAR_JSON_TEXT = 'VarJsonText';
     const VAR_SOURCE_NAME = 'VarSourceName';
+    const VAR_COMPONENT_NAME = 'VarComponentName';
 
     // for the object main parameters created by the dsp_id function
     const VAR_TRIPLE = 'VarObjTriple';
     const VAR_FORMULA = 'VarObjFormula';
+    const VAR_JSON_PART = 'VarJsonPart';
 
     // unique message keys
     // *_txt sample translation to test the English mapping
@@ -128,6 +130,13 @@ enum messages: string
         . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END;
     case FORMULA_EXPRESSION_MISSING = 'formula expression is missing in '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
+    case COMPONENT_MISSING = 'component with name "'
+        . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
+        . '" missing when importing json part '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case COMPONENT_CREATED = 'component with name "'
+        . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
+        . '" created';
 
 
     // for the change log
