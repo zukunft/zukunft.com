@@ -684,9 +684,9 @@ class view extends sandbox_typed
     }
 
     /**
-     * @return component_link_list the list of the component links of this view
+     * @return component_link_list|null the list of the component links of this view
      */
-    function component_link_list(): component_link_list
+    function component_link_list(): component_link_list|null
     {
         return $this->cmp_lnk_lst;
     }
@@ -707,7 +707,12 @@ class view extends sandbox_typed
      */
     function component_links(): int
     {
-        return $this->component_link_list()->count();
+        $lst = $this->component_link_list();
+        if ($lst == null) {
+            return 0;
+        } else {
+            return $lst->count();
+        }
     }
 
 
@@ -1170,10 +1175,48 @@ class view extends sandbox_typed
         return $result;
     }
 
+    /**
+     * @return bool true if the view has at least one component
+     */
+    function has_components(): bool
+    {
+        if ($this->component_links() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
 
     /*
      * save
      */
+
+    /**
+     * add or update a view in the database or create a user view
+     * overwrite the _sandbox function to save also the related component links
+     *
+     * @param bool $use_func if true a predefined function is used that also creates the log entries
+     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     */
+    function save(?bool $use_func = null): user_message
+    {
+        $usr_msg = parent::save($use_func);
+        if ($this->has_components()) {
+            $usr_msg->add($this->save_component_links());
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add or update the component links of this view in the database or create a user view
+     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     */
+    function save_component_links(): user_message
+    {
+        return $this->component_link_list()->save();
+    }
 
     /**
      * create an SQL statement to retrieve the user changes of the current view

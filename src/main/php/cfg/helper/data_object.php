@@ -672,7 +672,7 @@ class data_object
                     $cache->filter_valid();
                     // estimate the time for the import
                     $frm_est = $frm_lst->count() / $frm_per_sec;
-                    $imp->step_start(msg_id::SAVE, triple::class, $frm_lst->count(), $frm_est);
+                    $imp->step_start(msg_id::SAVE, formula::class, $frm_lst->count(), $frm_est);
                     $usr_msg->add($frm_lst->save($cache, $imp));
                     $imp->step_end($frm_lst->count(), $frm_per_sec);
                     if ($frm_lst->count() > 0) {
@@ -700,7 +700,7 @@ class data_object
         if ($usr_msg->is_ok()) {
             $frm_lst = $this->formula_list();
             $frm_est = $frm_lst->count() / $frm_per_sec;
-            $imp->step_start(msg_id::SAVE, value::class, $frm_lst->count(), $frm_est);
+            $imp->step_start(msg_id::SAVE, formula::class, $frm_lst->count(), $frm_est);
             $usr_msg->add($frm_lst->save($imp, $frm_per_sec));
             $imp->step_end($frm_lst->count(), $frm_per_sec);
         } else {
@@ -711,22 +711,47 @@ class data_object
         if ($usr_msg->is_ok()) {
             $cmp_lst = $this->component_list();
             $cmp_est = $cmp_lst->count() / $cmp_per_sec;
-            $imp->step_start(msg_id::SAVE, value::class, $cmp_lst->count(), $cmp_est);
+            $imp->step_start(msg_id::SAVE, component::class, $cmp_lst->count(), $cmp_est);
             $usr_msg->add($cmp_lst->save($imp, $cmp_per_sec));
             $imp->step_end($cmp_lst->count(), $cmp_per_sec);
+
+            // add the id of the components just added to the views
+            if ($usr_msg->is_ok()) {
+                $cmp_lst = $this->component_list();
+                foreach ($this->view_list()->lst() as $msk) {
+                    if ($msk->has_components()) {
+                        foreach ($msk->component_link_list()->lst() as $lnk) {
+                            $cmp = $lnk->component();
+                            if ($cmp->id() == 0) {
+                                if ($cmp->name() == '') {
+                                    $usr_msg->add_warning('component id and name missing in ' . $cmp->dsp_id());
+                                } else {
+                                    $cmp_reloaded = $cmp_lst->get_by_name($cmp->name());
+                                    if ($cmp_reloaded == null) {
+                                        $usr_msg->add_warning('component id and name missing in ' . $cmp->dsp_id());
+                                    } else {
+                                        $cmp->set_id($cmp_reloaded->id());
+                                        $lnk->set_component_id($cmp_reloaded->id());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         } else {
-            log_debug('formulas not imported because ' . $usr_msg->all_message_text());
+            log_debug('components not imported because ' . $usr_msg->all_message_text());
         }
 
         // TODO Prio 1 review and use predefined functions
         if ($usr_msg->is_ok()) {
             $msk_lst = $this->view_list();
             $msk_est = $msk_lst->count() / $msk_per_sec;
-            $imp->step_start(msg_id::SAVE, value::class, $msk_lst->count(), $msk_est);
+            $imp->step_start(msg_id::SAVE, source::class, $msk_lst->count(), $msk_est);
             $usr_msg->add($msk_lst->save($imp, $msk_per_sec));
             $imp->step_end($msk_lst->count(), $msk_per_sec);
         } else {
-            log_debug('formulas not imported because ' . $usr_msg->all_message_text());
+            log_debug('views not imported because ' . $usr_msg->all_message_text());
         }
 
         return $usr_msg;

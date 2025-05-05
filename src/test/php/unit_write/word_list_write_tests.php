@@ -374,7 +374,7 @@ class word_list_write_tests
         $wrd_lst->name_sort();
         $target = '"' . words::CANTON . '","' . words::CITY . '","' . words::COMPANY . '"';
         $result = $wrd_lst->dsp_name();
-        $t->display('word_list->sort for "' . words::ZH . '"', $target, $result);
+        $t->assert_text_contains('word_list->sort for "' . words::ZH . '"', $result, $target);
 
         /*
          * test the class functions not yet tested above

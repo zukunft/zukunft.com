@@ -27,6 +27,26 @@
       "type": "triples_related"
     },
     {
+      "name": "triple name",
+      "description": "simply show the name of a triple",
+      "type": "triple_name"
+    },
+    {
+      "name": "source name",
+      "description": "simply show the name of a source",
+      "type": "source_name"
+    },
+    {
+      "name": "reference name",
+      "description": "simply show the name of a reference",
+      "type": "reference_name"
+    },
+    {
+      "name": "language name",
+      "description": "simply show the name of a language",
+      "type": "language_name"
+    },
+    {
       "name": "Term",
       "description": "simply show the name of a word, triple, verb or formula",
       "type": "term_name"
@@ -100,7 +120,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Triple"
+          "name": "triple name"
         },
         {
           "position": "2",
@@ -115,7 +135,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Source"
+          "name": "source name"
         },
         {
           "position": "2",
@@ -130,7 +150,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Reference"
+          "name": "reference name"
         },
         {
           "position": "2",
@@ -145,7 +165,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Language"
+          "name": "language name"
         },
         {
           "position": "2",

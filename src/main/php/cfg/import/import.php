@@ -366,7 +366,8 @@ class import
         $this->step_main_end();
 
         if ($json_array == null) {
-            $usr_msg->add_id_with_vars(msg_id::JSON_DECODE, [msg_id::VAR_JSON_TEXT => $json_str]);
+            $usr_msg->add_id_with_vars(msg_id::JSON_DECODE,
+                [msg_id::VAR_JSON_TEXT => $json_str]);
         } else {
 
 

@@ -331,7 +331,7 @@ class component_link extends sandbox_link
             if ($cmp == null) {
                 $usr_msg->add_id_with_vars(msg_id::COMPONENT_MISSING, [
                     msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME],
-                    msg_id::VAR_JSON_TEXT => $in_ex_json
+                    msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
                 ]);
                 $cmp = new component($usr);
                 $cmp->set_name($in_ex_json[json_fields::NAME]);
@@ -450,6 +450,15 @@ class component_link extends sandbox_link
     function set_component(component $cmp): void
     {
         $this->set_tob($cmp);
+    }
+
+    /**
+     * rename to standard link to object to component
+     * @param int $id
+     */
+    function set_component_id(int $id): void
+    {
+        $this->component()->set_id($id);
     }
 
     /**

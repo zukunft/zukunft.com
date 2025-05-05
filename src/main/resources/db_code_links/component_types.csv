@@ -53,3 +53,8 @@ component_type_id, type_name, description, code_id
 52, 'system form field formula text', 'the form field the formula expression', 'system_form_field_formula_expression'
 53, 'form field name', 'the form flag to set the formula to need all variables for a valid result', 'system_form_field_formula_all_vars'
 54, 'form field plural', 'fixed form field the language form plural', 'system_form_field_plural'
+55, 'word results', 'show the results related to a word', 'word_results'
+56, 'triple name', 'show the name of a triple and give the admin user the possibility to change the name', 'triple_name'
+57, 'source name', 'show the name of a source and give the admin user the possibility to change the name', 'source_name'
+58, 'reference name', 'show the name of a reference and give the admin user the possibility to change the name', 'reference_name'
+59, 'language name', 'show the name of a language and give the admin user the possibility to change the name', 'language_name'

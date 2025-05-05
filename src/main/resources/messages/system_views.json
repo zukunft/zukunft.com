@@ -437,6 +437,30 @@
       "code_id": "ref_list_word"
     },
     {
+      "name": "formulas list word",
+      "description": "changeable list of formulas related to this word",
+      "type": "formula_list",
+      "code_id": "formula_list_word"
+    },
+    {
+      "name": "result list word",
+      "description": "list of result related to this word",
+      "type": "word_results",
+      "code_id": "word_results"
+    },
+    {
+      "name": "JSON Export",
+      "description": "export this word and the related value in the JSON format",
+      "type": "json_export",
+      "code_id": "json_export"
+    },
+    {
+      "name": "XML Export",
+      "description": "export this word and the related value in the XML format",
+      "type": "xml_export",
+      "code_id": "xml_export"
+    },
+    {
       "name": "usage word",
       "description": "show where this word has been used e.g. how many values are related",
       "type": "usage",
@@ -1837,20 +1861,19 @@
       "components": [
         {
           "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
+          "name": "Word"
         },
         {
           "position": "2",
-          "name": "Words related"
+          "name": "link list word"
         },
         {
           "position": "3",
-          "name": "Formulas"
+          "name": "formulas list word"
         },
         {
           "position": "4",
-          "name": "Calculated Results"
+          "name": "result list word"
         },
         {
           "position": "5",

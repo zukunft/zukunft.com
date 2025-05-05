@@ -2423,7 +2423,7 @@ class triple extends sandbox_link_named
 
     /**
      * add or update a triple in the database or create a user triple
-     * overwrite the sandbox save becuse for triple the reverse order should be checked
+     * overwrite the sandbox save because for triple the reverse order should be checked
      *
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return user_message the message that should be shown to the user in case something went wrong

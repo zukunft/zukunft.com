@@ -361,8 +361,28 @@ class component_link_list extends sandbox_list
 
 
     /*
-     * internal
+    * save
+    */
+
+    /**
+     * simple but slow function to add of update all list items in the database
+     * TODO faster mass db update
+     *
+     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
+    function save(): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($this->lst() as $sbx) {
+            $usr_msg->add($sbx->save());
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+      * internal
+      */
 
     private function can_add(component_link $lnk_to_add): bool
     {

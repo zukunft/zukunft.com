@@ -42,6 +42,7 @@
 namespace cfg\user;
 
 include_once SHARED_ENUM_PATH . 'messages.php';
+
 //include_once SHARED_PATH . 'library.php';
 
 use shared\enum\messages as msg_id;
@@ -238,6 +239,14 @@ class user_message
 
                 $key_lst[] = $msg_row[0]->name . ':' . implode(",", $msg_row[1]);
             }
+
+            // check the var list
+            foreach ($var_lst as $var) {
+                if (is_array($var)) {
+                    log_warning('var ' . implode(",", $var) . 'is an array');
+                }
+            }
+
             // do not repeat the same text more than once
             if (!in_array($msg_id->name . ':' . implode(",", $var_lst),
                 $key_lst)) {

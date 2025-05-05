@@ -213,7 +213,7 @@ class view_list extends sandbox_list_named
         global $db_con;
 
         log_debug($id);
-        $qp = $this->load_sql_by_component_id($db_con, $id);
+        $qp = $this->load_sql_by_component_id($db_con->sql_creator(), $id);
         return parent::load($qp);
     }
 
