@@ -452,6 +452,7 @@ class user_message
             }
             $msg_txt = $mtr->txt($msg_var[0]);
             foreach ($msg_var[1] as $key => $var) {
+                // TODO use a library function for this
                 // avoid using escaped var makers (probably not 100% correct)
                 $msg_txt .= str_replace(
                     msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END,

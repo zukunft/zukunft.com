@@ -328,6 +328,18 @@ class library
         return preg_replace('/> </', '><', $result);
     }
 
+    function escape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
+    {
+        // avoid using escaped var makers (probably not 100% correct)
+        return str_replace($chr_to_esc,$esc_chr . $chr_to_esc, $txt_to_esc);
+    }
+
+    function unescape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
+    {
+        // undo escaped vars
+        return str_replace($esc_chr . $chr_to_esc, $chr_to_esc, $txt_to_esc);
+    }
+
 
     /*
      * select string part functions

@@ -42,6 +42,8 @@ namespace cfg\helper;
 //include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+//include_once MODEL_REF_PATH . 'ref.php';
+include_once MODEL_REF_PATH . 'ref_list.php';
 //include_once MODEL_REF_PATH . 'source.php';
 //include_once MODEL_REF_PATH . 'source_list.php';
 //include_once MODEL_PHRASE_PATH . 'phrase.php';
@@ -77,6 +79,8 @@ use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\phrase\term;
 use cfg\phrase\term_list;
+use cfg\ref\ref;
+use cfg\ref\ref_list;
 use cfg\ref\source;
 use cfg\ref\source_list;
 use cfg\user\user;
@@ -114,6 +118,7 @@ class data_object
     private phrase_list $phr_lst;
     private bool $phr_lst_dirty;
     private source_list $src_lst;
+    private ref_list $ref_lst;
     private value_list $val_lst;
     private formula_list $frm_lst;
     private term_list $trm_lst;
@@ -143,6 +148,7 @@ class data_object
         $this->phr_lst = new phrase_list($usr);
         $this->phr_lst_dirty = false;
         $this->src_lst = new source_list($usr);
+        $this->ref_lst = new ref_list($usr);
         $this->val_lst = new value_list($usr);
         $this->frm_lst = new formula_list($usr);
         $this->trm_lst = new term_list($usr);
@@ -196,6 +202,7 @@ class data_object
         $vars[json_fields::VERBS] = $this->vrb_lst->api_json_array();
         $vars[json_fields::TRIPLES] = $this->trp_lst->api_json_array($typ_lst);
         $vars[json_fields::SOURCES] = $this->src_lst->api_json_array($typ_lst);
+        $vars[json_fields::REFERENCES] = $this->ref_lst->api_json_array($typ_lst);
         $vars[json_fields::VALUES] = $this->val_lst->api_json_array($typ_lst);
         $vars[json_fields::FORMULAS] = $this->frm_lst->api_json_array($typ_lst);
         $vars[json_fields::VIEWS] = $this->msk_lst->api_json_array($typ_lst);
@@ -288,6 +295,14 @@ class data_object
     function source_list(): source_list
     {
         return $this->src_lst;
+    }
+
+    /**
+     * @return ref_list with the references of this data object
+     */
+    function reference_list(): ref_list
+    {
+        return $this->ref_lst;
     }
 
     /**
@@ -386,6 +401,16 @@ class data_object
     function add_source(source $src): void
     {
         $this->src_lst->add_by_name($src);
+    }
+
+    /**
+     * add a reference with the names but without db id to the list
+     * @param ref $ref with the phrase (or later term) name, reference type and the external key set
+     * @return void
+     */
+    function add_reference(ref $ref): void
+    {
+        $this->ref_lst->add_by_name_type_and_key($ref);
     }
 
     /**
@@ -506,6 +531,7 @@ class data_object
         $wrd_per_sec = $cfg->get_by([words::WORDS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $trp_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $src_per_sec = $cfg->get_by([words::SOURCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $ref_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $val_per_sec = $cfg->get_by([words::VALUES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $frm_per_sec = $cfg->get_by([words::FORMULAS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $msk_per_sec = $cfg->get_by([words::VIEWS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -578,7 +604,7 @@ class data_object
             // clone the list to filter the phrases already fine without removing the fine triples from the original list
             $cache = clone $phr_lst;
             $cache->filter_valid();
-            // call the save function but it is expected just to load the database id of the last added triples
+            // call the save function, but it is expected just to load the database id of the last added triples
             $usr_msg->add($trp_lst->save($cache, $imp));
 
             // report missing triples
@@ -618,6 +644,17 @@ class data_object
             $imp->step_start(msg_id::SAVE, source::class, $src_lst->count(), $src_est);
             $usr_msg->add($src_lst->save($imp, $src_per_sec));
             $imp->step_end($src_lst->count(), $src_per_sec);
+        } else {
+            log_debug('sources not imported because ' . $usr_msg->all_message_text());
+        }
+
+        // import the references
+        if ($usr_msg->is_ok()) {
+            $ref_lst = $this->reference_list();
+            $ref_est = $ref_lst->count() / $src_per_sec;
+            $imp->step_start(msg_id::SAVE, source::class, $ref_lst->count(), $ref_est);
+            $usr_msg->add($ref_lst->save($imp, $src_per_sec));
+            $imp->step_end($ref_lst->count(), $src_per_sec);
         } else {
             log_debug('sources not imported because ' . $usr_msg->all_message_text());
         }

@@ -1,0 +1,20 @@
+{
+  "version": "0.0.4",
+  "time": "2025-05-06 11:25:00",
+  "user": "roman",
+  "selection": [
+    "JSON test file to check the im- and export of the reference section"
+  ],
+  "words": [
+    {
+      "name": "universe"
+    }
+  ],
+  "references": [
+    {
+      "phrase": "universe",
+      "name": "Q1",
+      "type": "wikidata"
+    }
+  ]
+}

@@ -285,6 +285,11 @@ class json_fields
 
     const PHRASE_VALUES = 'phrase-values';
     const SOURCES = 'sources';
+    const REFERENCES = 'references';
+    // the alpha key to select the internal phrase (or later the term)
+    const REF_INTERN = 'phrase';
+    // the external unique key for this reference
+    const REF_EXTERN = 'name';
 
 
     // the phrase to select the row name of a view component

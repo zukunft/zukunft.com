@@ -169,13 +169,13 @@ class source_list extends sandbox_list_named
 
     /**
      * load a list of sources by the names
-     * @param array $src_names a named object used for selection e.g. a source type
+     * @param array $names a named object used for selection e.g. a source type
      * @return bool true if at least one source found
      */
-    function load_by_names(array $src_names): bool
+    function load_by_names(array $names): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_names($db_con->sql_creator(), $src_names);
+        $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
         return $this->load($qp);
     }
 

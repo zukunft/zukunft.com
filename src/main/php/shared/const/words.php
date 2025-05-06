@@ -88,6 +88,7 @@ class words
     const WORDS = 'words';
     const TRIPLES = 'triples';
     const SOURCES = 'sources';
+    const REFERENCES = 'references';
     const VALUES = 'values';
     const FORMULAS = 'formulas';
     const VIEWS = 'views';

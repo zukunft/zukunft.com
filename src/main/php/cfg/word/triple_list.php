@@ -145,13 +145,13 @@ class triple_list extends sandbox_list_named
 
     /**
      * load a list of words by the names
-     * @param array $wrd_names a named object used for selection e.g. a word type
+     * @param array $names a named object used for selection e.g. a word type
      * @return bool true if at least one word found
      */
-    function load_by_names(array $wrd_names): bool
+    function load_by_names(array $names): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_names($db_con->sql_creator(), $wrd_names);
+        $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
         return $this->load($qp);
     }
 

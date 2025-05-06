@@ -34,6 +34,7 @@
     - debug:             internal support functions for debugging
 
     TODO add to UI; add unit tests
+    TODO allow to reference terms instead of phrases so that also formulas can be referenced
 
 
     This file is part of zukunft.com - calc with words
@@ -97,6 +98,7 @@ include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 
 use cfg\db\sql;
@@ -122,6 +124,7 @@ use cfg\user\user_message;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
 use shared\json_fields;
+use shared\library;
 use shared\types\api_type_list;
 
 class ref extends sandbox_link
@@ -147,6 +150,9 @@ class ref extends sandbox_link
     const FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
     const FLD_SOURCE = 'source_id';
     const FLD_PHRASE_COM = 'the phrase for which the external data should be synchronised';
+    // char used to create one unique key string for the reference
+    private const SEP = '|';
+    private const ESC_CHR = '|';
 
     // field names that cannot be user specific
     const FLD_NAMES = array(
@@ -513,6 +519,19 @@ class ref extends sandbox_link
     }
 
     /**
+     * @return int the phrase id and null if the phrase is not set
+     */
+    function phrase_name(): int
+    {
+        $name = '';
+        $phr = $this->phrase();
+        if ($phr != null) {
+            $name = $phr->name();
+        }
+        return $name;
+    }
+
+    /**
      * interface function to overwrite the corresponding parent function
      * @return int the id of the linked object with is in this case the phrase id (or maybe later the group_id)
      */
@@ -564,9 +583,18 @@ class ref extends sandbox_link
         }
     }
 
+    function type_name(): string
+    {
+        if ($this->predicate_id() >= 0) {
+            return $this->predicate_code_id();
+        } else {
+            return '';
+        }
+    }
+
     /**
      * TODO use always a function like this to set an object
-     * TODO use a cache to reducte database access because an id will necer change and due to that no database refresh is needed
+     * TODO use a cache to reduce database access because an id will never change and due to that no database refresh is needed
      * @param int|null $id
      * @return void
      */
@@ -618,6 +646,27 @@ class ref extends sandbox_link
         $obj_cpy->set_predicate_id($this->predicate_id());
         $obj_cpy->external_key = $external_key;
         return $obj_cpy;
+    }
+
+    /**
+     * @return string with the unique key of this reference
+     */
+    function key(): string
+    {
+        return
+            $this->escape_key_part($this->phrase_name()) .
+            $this->escape_key_part($this->type_name()) .
+            $this->escape_key_part($this->external_key);
+    }
+
+    /**
+     * @param string $key the original key part
+     * @return string the key with the separator char escaped
+     */
+    private function escape_key_part(string $key): string
+    {
+        $lib = new library();
+        return $lib->escape($key, self::SEP, self::ESC_CHR);
     }
 
 
