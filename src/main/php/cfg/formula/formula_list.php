@@ -37,6 +37,7 @@ include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_ELEMENT_PATH . 'element.php';
+include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
@@ -61,6 +62,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\element\element;
+use cfg\import\import;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\phrase\term;
@@ -743,15 +745,18 @@ class formula_list extends sandbox_list_named
      * save all formulas of this list
      * TODO create one SQL and commit statement for faster execution
      *
+     * @param term_list $cache the cached phrases that does not need to be loaded from the db again
+     * @param import $imp the import object with the filename and the estimated time of arrival
      * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(): user_message
+    function save(term_list $cache, import $imp): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         foreach ($this->lst() as $frm) {
-            $result->add($frm->save());
+            $usr_msg->add($frm->save());
+            $cache->add($frm->term());
         }
-        return $result;
+        return $usr_msg;
     }
 
 }

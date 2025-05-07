@@ -18,7 +18,7 @@
   {
     "id": 4,
     "name": "Pi",
-    "description": "Ratio of the circumference of a circle to its diameter",
+    "description": "ratio of the circumference of a circle to its diameter",
     "type_id": 17,
     "protection": 3,
     "class": "word"

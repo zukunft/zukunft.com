@@ -191,7 +191,7 @@ class words
     const PI_SYMBOL_COM = 'Symbol for the ratio of the circumference of a circle to its diameter';
     const PI = 'Pi';
     const PI_ID = 17;
-    const PI_COM = 'Ratio of the circumference of a circle to its diameter';
+    const PI_COM = 'ratio of the circumference of a circle to its diameter';
     const E_SYMBOL = "𝑒";
     const E_SYMBOL_ID = 6;
     const E = "Euler's number";

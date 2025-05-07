@@ -58,3 +58,5 @@ component_type_id, type_name, description, code_id
 57, 'source name', 'show the name of a source and give the admin user the possibility to change the name', 'source_name'
 58, 'reference name', 'show the name of a reference and give the admin user the possibility to change the name', 'reference_name'
 59, 'language name', 'show the name of a language and give the admin user the possibility to change the name', 'language_name'
+60, 'results related to', 'display all results that are related to a defined term', 'results_related'
+61, 'expression', 'display expression of a formula', 'expression'

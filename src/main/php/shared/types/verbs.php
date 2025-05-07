@@ -69,6 +69,9 @@ class verbs
     const FOLLOW = "follow";
     const FOLLOW_NAME = "is follower of";
     const FOLLOW_ID = 10;
+    const MEASURE = "measure_type";
+    const MEASURE_NAME = "is measure type for";
+    const MEASURE_ID = 14;
     const ALIAS = "alias";
     const ALIAS_NAME = "is alias of";
     const ALIAS_ID = 18;
@@ -81,16 +84,25 @@ class verbs
     const CAN_GET = "can_get";
     const CAN_GET_NAME = "can get";
     const CAN_GET_ID = 19;
+    const CAN_CAUSE = "can_cause";
+    const CAN_CAUSE_NAME = "can cause";
+    const CAN_CAUSE_ID = 22;
     const CAN_USE = "can_use";
+    const CAN_USE_NAME = "can use";
+    const CAN_USE_ID = 24;
+    const SYMBOL = "symbol";
+    const SYMBOL_NAME = "is symbol for";
+    const SYMBOL_ID = 29;
+    const AND = "and";
+    const AND_NAME = "and";
+    const AND_ID = 30;
     const SELECTOR = "selector"; // the from_phrase of a selector can be used more than once so the description of the to_phrase should be shown to the user
     const TO = 'to'; // to define a time period e.g. "12:00 to 13:00" or "1. March 2024 to 3. March 2024"
 
     // directional forms of verbs (maybe move to verb_api or test if only used for testing)
     const FOLLOWED_BY = "is followed by";
     const FOLLOWER_OF = "is follower of";
-    const SYMBOL = "symbol";
     const TIME_STEP = "time jump";
-    const SYMBOL_NAME = 'is symbol for';
     const TEST_ADD_NAME = "System Test Verb";
 
     // search directions to get related words (phrases)

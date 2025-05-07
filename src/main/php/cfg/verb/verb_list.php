@@ -244,6 +244,11 @@ class verb_list extends type_list
         $vrb->code_id = verbs::IS;
         $this->add_verb($vrb);
         $vrb = new verb();
+        $vrb->set_id(verbs::OF_ID);
+        $vrb->set_name(verbs::OF_NAME);
+        $vrb->code_id = verbs::OF;
+        $this->add_verb($vrb);
+        $vrb = new verb();
         $vrb->set_id(verbs::PART_ID);
         $vrb->set_name(verbs::PART_NAME);
         $vrb->code_id = verbs::PART;
@@ -259,6 +264,11 @@ class verb_list extends type_list
         $vrb->code_id = verbs::FOLLOW;
         $this->add_verb($vrb);
         $vrb = new verb();
+        $vrb->set_id(verbs::MEASURE_ID);
+        $vrb->set_name(verbs::MEASURE_NAME);
+        $vrb->code_id = verbs::MEASURE;
+        $this->add_verb($vrb);
+        $vrb = new verb();
         $vrb->set_id(verbs::CAN_BE_ID);
         $vrb->set_name(verbs::CAN_BE_NAME);
         $vrb->code_id = verbs::CAN_BE;
@@ -267,6 +277,26 @@ class verb_list extends type_list
         $vrb->set_id(verbs::CAN_GET_ID);
         $vrb->set_name(verbs::CAN_GET_NAME);
         $vrb->code_id = verbs::CAN_GET;
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->set_id(verbs::CAN_USE_ID);
+        $vrb->set_name(verbs::CAN_USE_NAME);
+        $vrb->code_id = verbs::CAN_USE;
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->set_id(verbs::CAN_CAUSE_ID);
+        $vrb->set_name(verbs::CAN_CAUSE_NAME);
+        $vrb->code_id = verbs::CAN_CAUSE;
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->set_id(verbs::SYMBOL_ID);
+        $vrb->set_name(verbs::SYMBOL_NAME);
+        $vrb->code_id = verbs::SYMBOL;
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->set_id(verbs::AND_ID);
+        $vrb->set_name(verbs::AND_NAME);
+        $vrb->code_id = verbs::AND;
         $this->add_verb($vrb);
     }
 

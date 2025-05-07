@@ -82,6 +82,7 @@ use cfg\user\user_message;
 use cfg\word\triple;
 use cfg\word\word;
 use cfg\word\word_list;
+use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
@@ -522,6 +523,32 @@ class sandbox_list_named extends sandbox_list
 
 
     /*
+     * select
+     */
+
+    /**
+     * select the triples that needs to be updated in the database
+     * @param sandbox_list_named $db_lst list of triples as loaded from the database
+     * @return triple_list with the triples that needs to be updated
+     */
+    function update_list(sandbox_list_named $db_lst): sandbox_list_named
+    {
+        $upd_lst = clone $this;
+        $upd_lst->reset();
+        foreach ($this->lst() as $sbx) {
+            // TODO test if get_by_obj_id is faster
+            $db_trp = $db_lst->get_by_name($sbx->name());
+            if ($db_trp != null) {
+                if ($sbx->needs_db_update($db_trp)) {
+                    $upd_lst->add($sbx);
+                }
+            }
+        }
+        return $upd_lst;
+    }
+
+
+    /*
      * save
      */
 
@@ -556,7 +583,8 @@ class sandbox_list_named extends sandbox_list
         $imp->step_end(count($db_names));
 
         // get the sql call to add the missing objects
-        $ins_calls = $add_lst->sql_call_with_par($sc, $use_func);
+        // TODO use sql_insert ?
+        $ins_calls = $add_lst->sql_insert_call_with_par($sc, $use_func);
         $imp->step_start(msg_id::PREPARE, $class, $ins_calls->count());
 
         // get the functions that are already in the database
@@ -571,15 +599,15 @@ class sandbox_list_named extends sandbox_list
         $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
 
         // create the missing sql functions and add the first missing word
-        $func_to_create = $func_create_obj->sql($sc);
-        $func_to_create->exe();
+        $func_to_create = $func_create_obj->sql_insert($sc);
+        $func_to_create->exe($class);
         $imp->step_end($func_to_create->count());
 
         // add the remaining missing words or triples
         $imp->step_start(msg_id::ADD, $class, $add_lst->count());
         $add_lst = $add_lst->filter_by_name($func_create_obj_names);
-        $ins_calls = $add_lst->sql_call_with_par($sc, $use_func);
-        $usr_msg->add($ins_calls->exe());
+        $ins_calls = $add_lst->sql_insert_call_with_par($sc, $use_func);
+        $usr_msg->add($ins_calls->exe($class));
         $imp->step_end($add_lst->count());
 
         // TODO create a loop to add depending triples
@@ -590,21 +618,110 @@ class sandbox_list_named extends sandbox_list
     }
 
     /**
+     * create any missing sql functions and queries to update the list objects
+     * TODO create blocks of update function calls
+     *
+     * @param word_list|triple_list|phrase_list|source_list $db_lst filled with the objects that are already in the db
+     * @param bool $use_func true if sql function should be used to insert the named user sandbox objects
+     * @param import|null $imp the import object e.g. with the ETA
+     * @param string $class the object class that should be stored in the database
+     * @param float $upd_per_sec the expected updates per second used for the progress bar calculation
+     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     */
+    function update(
+        word_list|triple_list|phrase_list|source_list $db_lst,
+        bool                                          $use_func = true,
+        import                                        $imp = null,
+        string                                        $class = '',
+        float                                         $upd_per_sec = 0.1
+    ): user_message
+    {
+        global $db_con;
+
+        $sc = $db_con->sql_creator();
+        $usr_msg = new user_message();
+
+        // get the objects that need to be added
+        $imp->step_start(msg_id::CHECK, $class, $db_lst->count());
+        $upd_lst = $this->update_list($db_lst);
+        $imp->step_end($db_lst->count());
+
+        // get the sql call to add the missing objects
+        $upd_calls = $upd_lst->sql_update($sc, $db_lst, $use_func);
+        $imp->step_start(msg_id::PREPARE, $class, $upd_calls->count());
+
+        // get the functions that are already in the database
+        $db_func_lst = $db_con->get_functions();
+
+        // get the sql functions that have not yet been created
+        $func_to_create = $upd_calls->sql_functions_missing($db_func_lst);
+
+        // get the first object that have requested the missing function
+        $func_create_obj = clone $upd_lst;
+        $func_create_obj_names = $func_to_create->object_names();
+        $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
+
+        // create the missing sql functions and add the first missing object
+        $func_to_create = $func_create_obj->sql_update($sc, $db_lst);
+        $func_to_create->exe_update($class);
+        $imp->step_end($func_to_create->count());
+
+        // add the remaining missing words or triples
+        $step_time = $db_lst->count() / $upd_per_sec;
+        $imp->step_start(msg_id::SAVE, triple::class, $db_lst->count(), $step_time);
+        $upd_calls = $upd_lst->sql_update_call_with_par($sc, $db_lst, $use_func);
+        $usr_msg->add($upd_calls->exe_update($class));
+        $imp->step_end($upd_lst->count());
+
+        // TODO create a loop to add depending triples
+        // add the just added words or triples id to this list
+        $this->add_id_by_name($usr_msg->db_row_id_lst());
+
+        $imp->step_end($db_lst->count(), $upd_per_sec);
+
+        return $usr_msg;
+    }
+
+    /**
      * get a list of all sql functions that are needed to add all triples of this list to the database
      * @return sql_par_list with the sql function names
      */
-    function sql(sql_creator $sc, bool $use_func = true): sql_par_list
+    function sql_insert(sql_creator $sc, bool $use_func = true): sql_par_list
     {
         $sql_list = new sql_par_list();
-        foreach ($this->lst() as $trp) {
+        foreach ($this->lst() as $sbx) {
             // check always user sandbox and normal name, because reading from database for check would take longer
             $sc_par_lst = new sql_type_list();
             if ($use_func) {
                 $sc_par_lst->add(sql_type::LOG);
             }
-            $qp = $trp->sql_insert($sc, $sc_par_lst);
-            $qp->obj_name = $trp->name();
+            $qp = $sbx->sql_insert($sc, $sc_par_lst);
+            $qp->obj_name = $sbx->name();
             $sql_list->add($qp);
+        }
+        return $sql_list;
+    }
+
+    /**
+     * get a list of all sql functions that are needed to update all objects of this list to the database
+     * @return sql_par_list with the sql function names
+     */
+    function sql_update(sql_creator $sc, sandbox_list_named $db_lst, bool $use_func = true): sql_par_list
+    {
+        $sql_list = new sql_par_list();
+        foreach ($this->lst() as $sbx) {
+            $db_row = $db_lst->get_by_name($sbx->name());
+            // another validation check as a second line of defence
+            if ($db_row != null) {
+                // check always user sandbox and normal name, because reading from database for check would take longer
+                $sc_par_lst = new sql_type_list();
+                if ($use_func) {
+                    $sc_par_lst->add(sql_type::LOG);
+                }
+                $qp = $sbx->sql_update($sc, $db_row, $sc_par_lst);
+                $qp->obj_name = $sbx->name();
+                $sql_list->add_by_name($qp);
+            }
         }
         return $sql_list;
     }
@@ -614,7 +731,7 @@ class sandbox_list_named extends sandbox_list
      * @param bool $use_func true if sql function should be used to write the named user sandbox objects to the database
      * @return sql_par_list with the sql function names
      */
-    function sql_call_with_par(sql_creator $sc, bool $use_func = true): sql_par_list
+    function sql_insert_call_with_par(sql_creator $sc, bool $use_func = true): sql_par_list
     {
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
@@ -626,6 +743,31 @@ class sandbox_list_named extends sandbox_list
                     $sc_par_lst->add(sql_type::LOG);
                 }
                 $qp = $sbx->sql_insert($sc, $sc_par_lst);
+                $qp->obj_name = $sbx->name();
+                $sql_list->add($qp);
+            }
+        }
+        return $sql_list;
+    }
+
+    /**
+     * get a list of all sql function names that are needed to update all loaded of this list to the database
+     * @param bool $use_func true if sql function should be used to write the named user sandbox objects to the database
+     * @return sql_par_list with the sql function names
+     */
+    function sql_update_call_with_par(sql_creator $sc, sandbox_list_named $db_lst, bool $use_func = true): sql_par_list
+    {
+        $sql_list = new sql_par_list();
+        foreach ($this->lst() as $sbx) {
+            $db_row = $db_lst->get_by_name($sbx->name());
+            // another validation check as a second line of defence
+            if ($db_row != null) {
+                // check always user sandbox and normal name, because reading from database for check would take longer
+                $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
+                if ($use_func) {
+                    $sc_par_lst->add(sql_type::LOG);
+                }
+                $qp = $sbx->sql_update($sc, $db_row, $sc_par_lst);
                 $qp->obj_name = $sbx->name();
                 $sql_list->add($qp);
             }

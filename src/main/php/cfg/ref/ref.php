@@ -519,9 +519,9 @@ class ref extends sandbox_link
     }
 
     /**
-     * @return int the phrase id and null if the phrase is not set
+     * @return string the phrase name or an empty string phrase name is not set
      */
-    function phrase_name(): int
+    function phrase_name(): string
     {
         $name = '';
         $phr = $this->phrase();

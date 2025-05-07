@@ -197,7 +197,7 @@
     },
     {
       "name": "Pi",
-      "description": "Ratio of the circumference of a circle to its diameter",
+      "description": "ratio of the circumference of a circle to its diameter",
       "type": "constant",
       "protection": "admin_protection",
       "refs": [
@@ -2353,6 +2353,13 @@
       "source": "The International System of Units"
     }
   ],
+  "components": [
+    {
+      "name": "Word",
+      "description": "simply show the word or triple name",
+      "type": "phrase_name"
+    }
+  ],
   "views": [
     {
       "name": "base units",
@@ -2361,8 +2368,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
+          "name": "Word"
         }
       ]
     }

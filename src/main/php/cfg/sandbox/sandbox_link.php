@@ -506,7 +506,10 @@ class sandbox_link extends sandbox
             $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
                 [msg_id::VAR_NAME => $this->dsp_id()]);
         } else {
-            $usr_msg->add($this->tob->can_be_ready());
+            // a reference have only an external key but not a target object
+            if ($this::class != ref::class) {
+                $usr_msg->add($this->tob->can_be_ready());
+            }
         }
         return $usr_msg;
     }

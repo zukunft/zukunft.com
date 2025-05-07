@@ -17,6 +17,10 @@
       "type": "calc_sheet"
     },
     {
+      "name": "Expression",
+      "type": "expression"
+    },
+    {
       "name": "Verb",
       "description": "simply show the verb name",
       "type": "verb_name"
@@ -52,6 +56,11 @@
       "type": "term_name"
     },
     {
+      "name": "formulas",
+      "description": "simply show all related formulas",
+      "type": "formula_list"
+    },
+    {
       "name": "related words",
       "description": "show the most relevant and related words or triples",
       "type": "word_list_down"
@@ -65,6 +74,11 @@
       "name": "related values",
       "description": "show the most relevant and related values",
       "type": "values_related"
+    },
+    {
+      "name": "related results",
+      "description": "show the most relevant and related results",
+      "type": "results_related"
     },
     {
       "name": "phrase",
@@ -180,7 +194,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Value"
+          "name": "main value"
         }
       ]
     },
@@ -190,8 +204,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
+          "name": "Word"
         },
         {
           "position": "2",
@@ -199,7 +212,7 @@
         },
         {
           "position": "3",
-          "name": "Results related"
+          "name": "related results"
         }
       ],
       "assigned": [
@@ -214,7 +227,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Result"
+          "name": "related results"
         }
       ]
     },
@@ -295,16 +308,15 @@
       "components": [
         {
           "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
+          "name": "Word"
         },
         {
           "position": "2",
-          "name": "Words related"
+          "name": "related words"
         },
         {
           "position": "3",
-          "name": "Formulas"
+          "name": "formulas"
         }
       ],
       "assigned": [

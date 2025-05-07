@@ -252,6 +252,8 @@ class source_list extends sandbox_list_named
             $db_lst->load_by_names($this->names());
             $imp->step_end($this->count(), $load_per_sec);
 
+            // TODO add only the sources that needs to be added
+
             // create any missing sql functions and insert the missing words
             $step_time = $this->count() / $save_per_sec;
             $imp->step_start(msg_id::SAVE, source::class, $this->count(), $step_time);

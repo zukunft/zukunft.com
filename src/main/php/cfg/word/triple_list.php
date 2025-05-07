@@ -106,6 +106,10 @@ class triple_list extends sandbox_list_named
     public ?verb $vrb = null;     // show the graph elements related to this verb
     public foaf_direction $direction = foaf_direction::DOWN;  // either up, down or both
 
+    // cache for speed vs. memory optimisation
+    private ?phrase_list $phr_lst = null;
+    private bool $phrase_list_dirty = false;
+
 
     /*
      * construct and map
@@ -618,6 +622,7 @@ class triple_list extends sandbox_list_named
 
         $load_per_sec = $cfg->get_by([words::TRIPLES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $save_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $upd_per_sec = $cfg->get_by([words::TRIPLES, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         if ($this->is_empty()) {
             log_info('no triples to save');
@@ -656,16 +661,14 @@ class triple_list extends sandbox_list_named
                 // select the triples that are ready to be added to the database
                 $add_lst = $add_lst->get_ready();
 
-                // create any missing sql functions and insert the missing triples
-                $step_time = $this->count() / $save_per_sec;
-                $imp->step_start(msg_id::SAVE, triple::class, $db_lst->count(), $step_time);
+                // create any missing sql insert functions and insert the missing triples
+                $step_time = $add_lst->count() / $save_per_sec;
+                $imp->step_start(msg_id::SAVE, triple::class, $add_lst->count(), $step_time);
                 $usr_msg->add($add_lst->insert($cache, true, $imp, triple::class));
-                $imp->step_end($db_lst->count(), $save_per_sec);
+                $imp->step_end($add_lst->count(), $save_per_sec);
 
-                // update the existing triples
-                // loop over the triples and check if all needed functions exist
-                // create the missing functions
-                // create blocks of update function calls
+                // create any missing sql update functions and update the triples
+                $usr_msg->add($this->update($db_lst, true, $imp, triple::class, $upd_per_sec));
             }
         }
 
@@ -699,8 +702,10 @@ class triple_list extends sandbox_list_named
         $usr_msg = new user_message();
         foreach ($this->lst() as $phr) {
             if ($phr::class == triple::class) {
-                $phr->set_verb($vrb_cac->get_verb(verbs::IS));
-                $usr_msg->add_message('verb for triple ' . $phr->dsp_id() . ' set to ' . verbs::IS);
+                if ($phr->verb() == null) {
+                    $phr->set_verb($vrb_cac->get_verb(verbs::NOT_SET));
+                    $usr_msg->add_message('verb for triple ' . $phr->dsp_id() . ' set to ' . verbs::NOT_SET);
+                }
             }
         }
         return $usr_msg;

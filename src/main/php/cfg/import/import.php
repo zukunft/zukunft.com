@@ -1051,7 +1051,7 @@ class import
         $i = 0;
         foreach ($json_array as $wrd_json) {
             $wrd = new word($usr_trigger);
-            $usr_msg->add($wrd->import_mapper($wrd_json));
+            $usr_msg->add($wrd->import_mapper($wrd_json, $dto));
             $dto->add_word($wrd);
             $i++;
             $this->display_progress($i, $per_sec, $wrd->dsp_id());

@@ -343,6 +343,20 @@ class word extends sandbox_typed
             }
         }
 
+        // remember the references
+        if (key_exists(json_fields::REFS, $in_ex_json)) {
+            if ($in_ex_json[json_fields::REFS] <> '') {
+                $ref_json = $in_ex_json[json_fields::REFS];
+                foreach ($ref_json as $ref_data) {
+                    $ref_obj = new ref($this->user());
+                    $ref_obj->set_phrase($this->phrase());
+                    $usr_msg->add($ref_obj->import_mapper($ref_data, $dto, $test_obj));
+                    // TODO $dto should never be null if no direct import is used
+                    $dto?->add_reference($ref_obj);
+                }
+            }
+        }
+
         // TODO change to view object like in triple
         if (key_exists(json_fields::VIEW, $in_ex_json)) {
             $msk_name = $in_ex_json[json_fields::VIEW];

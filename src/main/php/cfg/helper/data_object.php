@@ -549,13 +549,13 @@ class data_object
             $imp->step_end($wrd_lst->count(), $wrd_per_sec);
         }
 
+        // clone the list as cache to filter the phrases already fine
+        // without removing the fine words or triples from the original lists
+        $phr_lst = clone $wrd_lst->phrase_list();
+
         // import the triples
         $trp_lst = $this->triple_list();
         if (!$trp_lst->is_empty()) {
-
-            // clone the list as cache to filter the phrases already fine
-            // without removing the fine words or triples from the original lists
-            $phr_lst = clone $wrd_lst->phrase_list();
 
             // add the id of the words and triples just added to the triples
             // repeat this id assign until all triples have an id
@@ -648,13 +648,29 @@ class data_object
             log_debug('sources not imported because ' . $usr_msg->all_message_text());
         }
 
+        // add the id of the phrases just added to the references
+        if ($usr_msg->is_ok()) {
+            $phr_lst = $this->phrase_list();
+            foreach ($this->reference_list()->lst() as $ref) {
+                $phr = $ref->phrase();
+                if ($phr->id() == 0) {
+                    if ($phr->name() == '') {
+                        $usr_msg->add_warning('phrase id and name missing in ' . $phr->dsp_id());
+                    } else {
+                        $phr_reloaded = $phr_lst->get_by_name($phr->name());
+                        $usr_msg->add($this->set_phrase_id($phr, $phr_reloaded));
+                    }
+                }
+            }
+        }
+
         // import the references
         if ($usr_msg->is_ok()) {
             $ref_lst = $this->reference_list();
-            $ref_est = $ref_lst->count() / $src_per_sec;
-            $imp->step_start(msg_id::SAVE, source::class, $ref_lst->count(), $ref_est);
-            $usr_msg->add($ref_lst->save($imp, $src_per_sec));
-            $imp->step_end($ref_lst->count(), $src_per_sec);
+            $ref_est = $ref_lst->count() / $ref_per_sec;
+            $imp->step_start(msg_id::SAVE, ref::class, $ref_lst->count(), $ref_est);
+            $usr_msg->add($ref_lst->save($imp, $ref_per_sec));
+            $imp->step_end($ref_lst->count(), $ref_per_sec);
         } else {
             log_debug('sources not imported because ' . $usr_msg->all_message_text());
         }
@@ -671,13 +687,14 @@ class data_object
             log_debug('values not imported because ' . $usr_msg->all_message_text());
         }
 
-        // import the formulas
-        if (!$this->formula_list()->is_empty()) {
+        // clone the term list as cache to filter the terms already fine
+        // without removing the fine words, triples, verbs and formulas from the original lists
+        $trm_lst = clone $phr_lst->term_list();
+        // TODO add the verbs
 
-            // clone the term list as cache to filter the terms already fine
-            // without removing the fine words, triples, verbs and formulas from the original lists
-            $trm_lst = clone $phr_lst->term_list();
-            // TODO add the verbs
+        // import the formulas
+        $frm_lst = $this->formula_list();
+        if (!$frm_lst->is_empty()) {
 
             // add the id of the formulas just added to the terms
             // repeat this id assign until all formulas have an id
@@ -728,20 +745,12 @@ class data_object
                 $exp = $frm->expression($trm_lst);
                 $frm_trm_lst = $exp->terms($trm_lst);
                 foreach ($frm_trm_lst->lst() as $trm) {
-                    $usr_msg->add_type_message($trm->name(), msg_id::TERM_ID_NOT_FOUND->value);
+                    $frm_trm = $trm_lst->get_by_name($trm->name());
+                    if ($frm_trm == null) {
+                        $usr_msg->add_type_message($trm->name(), msg_id::TERM_ID_NOT_FOUND->value);
+                    }
                 }
             }
-        }
-
-        // TODO Prio 1 review and use predefined functions
-        if ($usr_msg->is_ok()) {
-            $frm_lst = $this->formula_list();
-            $frm_est = $frm_lst->count() / $frm_per_sec;
-            $imp->step_start(msg_id::SAVE, formula::class, $frm_lst->count(), $frm_est);
-            $usr_msg->add($frm_lst->save($imp, $frm_per_sec));
-            $imp->step_end($frm_lst->count(), $frm_per_sec);
-        } else {
-            log_debug('formulas not imported because ' . $usr_msg->all_message_text());
         }
 
         // TODO Prio 1 review and use predefined functions

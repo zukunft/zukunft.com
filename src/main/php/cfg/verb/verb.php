@@ -569,48 +569,22 @@ class verb extends type_object
      */
 
     /**
+     * check if this might be added to the database
+     * which is for named objects without dependencies the same as db_ready
+     * @return user_message including suggested solutions
+     *       if something is missing e.g. a linked object
+     */
+    function can_be_ready(): user_message
+    {
+        return $this->db_ready();
+    }
+
+    /**
      * @return user_message empty if all vars of the phrase are set and the phrase can be stored in the database
      */
     function db_ready(): user_message
     {
         return new user_message();
-    }
-
-
-    /*
-     * display
-     */
-
-    function name(): string
-    {
-        return $this->name;
-    }
-
-    // create the HTML code to display the formula name with the HTML link
-    function display(?string $back = ''): string
-    {
-        return '<a href="/http/verb_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->name . '</a>';
-    }
-
-    // returns the html code to select a verb link type
-    // database link must be open
-    function dsp_selector($side, $form, $class, $back): string
-    {
-        global $html_verbs;
-
-        $result = "Verb:";
-        $result .= $html_verbs->selector('verb', $form, $this->id(), $class);
-
-        log_debug('admin id ' . $this->id());
-        if ($this->user() != null) {
-            if ($this->user()->is_admin()) {
-                // admin users should always have the possibility to create a new verb / link type
-                $result .= \html\btn_add('add new verb', '/http/verb_add.php?back=' . $back);
-            }
-        }
-
-        log_debug('done verb id ' . $this->id());
-        return $result;
     }
 
 
@@ -641,9 +615,10 @@ class verb extends type_object
         return $trm;
     }
 
+
     /*
-    save functions
-    */
+     * save
+     */
 
     // TODO to review: additional check the database foreign keys
     function not_used_sql(sql_db $db_con): sql_par
@@ -1174,6 +1149,43 @@ class verb extends type_object
                 $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
             }
         }
+        return $result;
+    }
+
+
+    /*
+     * display
+     */
+
+    function name(): string
+    {
+        return $this->name;
+    }
+
+    // create the HTML code to display the formula name with the HTML link
+    function display(?string $back = ''): string
+    {
+        return '<a href="/http/verb_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->name . '</a>';
+    }
+
+    // returns the html code to select a verb link type
+    // database link must be open
+    function dsp_selector($side, $form, $class, $back): string
+    {
+        global $html_verbs;
+
+        $result = "Verb:";
+        $result .= $html_verbs->selector('verb', $form, $this->id(), $class);
+
+        log_debug('admin id ' . $this->id());
+        if ($this->user() != null) {
+            if ($this->user()->is_admin()) {
+                // admin users should always have the possibility to create a new verb / link type
+                $result .= \html\btn_add('add new verb', '/http/verb_add.php?back=' . $back);
+            }
+        }
+
+        log_debug('done verb id ' . $this->id());
         return $result;
     }
 

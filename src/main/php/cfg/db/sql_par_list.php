@@ -55,6 +55,19 @@ class sql_par_list
     }
 
     /**
+     * add a sql call with the parameters to the list if the call name is not yet in the list
+     *
+     * @param sql_par|null $par the sql call with the parameters for the sql function call
+     * @return void
+     */
+    function add_by_name(?sql_par $par): void
+    {
+        if (!in_array($par->name, $this->names())) {
+            $this->lst[] = $par;
+        }
+    }
+
+    /**
      * @return array with the field names of the list
      */
     function names(): array
@@ -93,14 +106,31 @@ class sql_par_list
     /**
      * @return user_message with the parameter names formatted for sql
      */
-    function exe(): user_message
+    function exe(string $class = ''): user_message
     {
         global $db_con;
 
         $usr_msg = new user_message();
 
         foreach ($this->lst as $qp) {
-            $ins_msg = $db_con->insert($qp, 'add word from list');
+            $ins_msg = $db_con->insert($qp, 'add ' . $class . ' from list');
+            $usr_msg->add($ins_msg);
+            $usr_msg->add_list_name_id($ins_msg, $qp->obj_name);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return user_message with the parameter names formatted for sql
+     */
+    function exe_update(string $class = ''): user_message
+    {
+        global $db_con;
+
+        $usr_msg = new user_message();
+
+        foreach ($this->lst as $qp) {
+            $ins_msg = $db_con->update($qp, 'update ' . $class . ' from list');
             $usr_msg->add($ins_msg);
             $usr_msg->add_list_name_id($ins_msg, $qp->obj_name);
         }

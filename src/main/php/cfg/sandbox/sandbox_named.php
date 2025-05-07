@@ -562,7 +562,7 @@ class sandbox_named extends sandbox
 
     /**
      * check if this might be added to the database
-     * which is for named objects without dependencies the same as db_reday
+     * which is for named objects without dependencies the same as db_ready
      * @return user_message including suggested solutions
      *       if something is missing e.g. a linked object
      */

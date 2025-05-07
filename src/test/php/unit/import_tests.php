@@ -66,7 +66,7 @@ class import_tests
         $test_name = 'YAML import value count';
         $t->assert($test_name, $dto->value_list()->count(), 47);
         $test_name = 'YAML import sql function count';
-        $t->assert($test_name, $dto->word_list()->sql_call_with_par($sc)->count(), 1);
+        $t->assert($test_name, $dto->word_list()->sql_insert_call_with_par($sc)->count(), 1);
 
         $test_name = 'JSON import word count';
         $json_str = file_get_contents(test_files::IMPORT_WORDS);

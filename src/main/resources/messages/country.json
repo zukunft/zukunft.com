@@ -78,7 +78,7 @@
     {"from": "2018", "verb": "is follower of", "to": "2017"},
     {"from": "2019", "verb": "is follower of", "to": "2018"},
     {"from": "2020", "verb": "is follower of", "to": "2019"},
-    {"from": "k", "verb": "is a shortcut of", "to": "thousand", "type": "scaling"}
+    {"from": "k", "verb": "is symbol for", "to": "thousand", "type": "scaling"}
   ],
   "values": [
     {

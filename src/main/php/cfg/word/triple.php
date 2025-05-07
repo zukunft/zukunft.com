@@ -457,6 +457,7 @@ class triple extends sandbox_link_named
     function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
     {
         global $phr_typ_cac;
+        global $vrb_cac;
 
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
@@ -503,29 +504,41 @@ class triple extends sandbox_link_named
                 }
             }
         }
+
         if (key_exists(json_fields::EX_VERB, $in_ex_json)) {
-            $value = $in_ex_json[json_fields::EX_VERB];
-            $vrb = new verb;
-            $vrb->set_user($this->user());
-            if (!$test_obj) {
-                if ($usr_msg->is_ok()) {
-                    $vrb->load_by_name($value);
-                    if ($vrb->id() <= 0) {
-                        $usr_msg->add_message('verb "' . $value . '" not found');
-                        if ($this->name <> '') {
-                            $usr_msg->add_message('for triple "' . $this->name . '"');
-                        }
+            $name = $in_ex_json[json_fields::EX_VERB];
+            $vrb = $vrb_cac->get_by_name($name);
+            if ($vrb == null) {
+                if ($name <> '') {
+                    $usr_msg->add_message('verb "' . $name . '" for triple "' . $this->dsp_id() . '" created');
+                    $vrb = new verb();
+                    $vrb->set_name($name);
+                    $vrb->set_user($this->user());
+                    // TODO remove this exception
+                    $vrb->save();
+                    if ($dto != null) {
+                        $dto->add_verb($vrb);
                     }
+                } else {
+                    $vrb = $vrb_cac->get_verb(verbs::NOT_SET);
+                    $usr_msg->add_message('verb for triple "' . $this->dsp_id() . '" missing');
                 }
             } else {
-                $vrb->set_name($value);
+                if ($vrb->id() <= 0) {
+                    $usr_msg->add_message('verb "' . $name . '" not found');
+                    if ($this->name <> '') {
+                        $usr_msg->add_message('for triple "' . $this->name . '"');
+                    }
+                }
             }
             $this->set_verb($vrb);
         }
+
         if (key_exists(json_fields::VIEW, $in_ex_json)) {
             $value = $in_ex_json[json_fields::VIEW];
             $trp_view = new view($this->user());
             if (!$test_obj) {
+                // TODO replace all load in the import mapper with get functions
                 $trp_view->load_by_name($value);
                 if ($trp_view->id() == 0) {
                     $usr_msg->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
@@ -901,7 +914,11 @@ class triple extends sandbox_link_named
         $id = $this->predicate_id();
         if ($id > 0) {
             $vrb = $vrb_cac->get($this->predicate_id());
-            return $vrb->name();
+            if ($vrb != null) {
+                return $vrb->name();
+            } else {
+                return '';
+            }
         } elseif ($id < 0) {
             $vrb = $vrb_cac->get($this->predicate_id() * -1);
             return $vrb->reverse();
