@@ -705,6 +705,18 @@
         "code_id": "language_name",
         "description": "show the name of a language and give the admin user the possibility to change the name",
         "id": 59
+      },
+      {
+        "name": "results related to",
+        "code_id": "results_related",
+        "description": "display all results that are related to a defined term",
+        "id": 60
+      },
+      {
+        "name": "expression",
+        "code_id": "expression",
+        "description": "display expression of a formula",
+        "id": 61
       }
     ],
     "position_types": [
@@ -6598,7 +6610,7 @@
       },
       {
         "name": "is measure type for",
-        "code_id": "",
+        "code_id": "measure_type",
         "description": "is the default measure type for",
         "plural": "are measure type for",
         "reverse": "has the measure type",
@@ -9844,14 +9856,14 @@
         "components": []
       },
       {
-        "id": 43,
+        "id": 44,
         "name": "Word",
         "description": "the default view for words",
         "type_id": null,
         "code_id": "word",
         "components": [
           {
-            "link_id": 262,
+            "link_id": 263,
             "id": 1,
             "name": "Word",
             "description": "simply show the word or triple name",
@@ -9860,8 +9872,8 @@
             "position_type": 1
           },
           {
-            "link_id": 263,
-            "id": 82,
+            "link_id": 264,
+            "id": 83,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -9871,14 +9883,14 @@
         ]
       },
       {
-        "id": 44,
+        "id": 45,
         "name": "Verb",
         "description": "the default view for verbs",
         "type_id": null,
         "code_id": "verb",
         "components": [
           {
-            "link_id": 264,
+            "link_id": 265,
             "id": 73,
             "name": "Verb",
             "description": "simply show the verb name",
@@ -9887,7 +9899,7 @@
             "position_type": 1
           },
           {
-            "link_id": 265,
+            "link_id": 266,
             "id": 74,
             "name": "related triples",
             "description": "triples where this verb is used",
@@ -9898,14 +9910,14 @@
         ]
       },
       {
-        "id": 45,
+        "id": 46,
         "name": "Triple",
         "description": "the default view for triples",
         "type_id": null,
         "code_id": "triple",
         "components": [
           {
-            "link_id": 266,
+            "link_id": 267,
             "id": 75,
             "name": "triple name",
             "description": "simply show the name of a triple",
@@ -9914,35 +9926,8 @@
             "position_type": 1
           },
           {
-            "link_id": 267,
-            "id": 82,
-            "name": "related values",
-            "description": "show the most relevant and related values",
-            "type_id": 11,
-            "position": 2,
-            "position_type": 1
-          }
-        ]
-      },
-      {
-        "id": 46,
-        "name": "Source",
-        "description": "the default view for sources",
-        "type_id": null,
-        "code_id": "source",
-        "components": [
-          {
             "link_id": 268,
-            "id": 76,
-            "name": "source name",
-            "description": "simply show the name of a source",
-            "type_id": 57,
-            "position": 1,
-            "position_type": 1
-          },
-          {
-            "link_id": 269,
-            "id": 82,
+            "id": 83,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -9953,23 +9938,23 @@
       },
       {
         "id": 47,
-        "name": "Reference",
-        "description": "the default view for references",
+        "name": "Source",
+        "description": "the default view for sources",
         "type_id": null,
-        "code_id": "ref",
+        "code_id": "source",
         "components": [
           {
-            "link_id": 270,
-            "id": 77,
-            "name": "reference name",
-            "description": "simply show the name of a reference",
-            "type_id": 58,
+            "link_id": 269,
+            "id": 76,
+            "name": "source name",
+            "description": "simply show the name of a source",
+            "type_id": 57,
             "position": 1,
             "position_type": 1
           },
           {
-            "link_id": 271,
-            "id": 82,
+            "link_id": 270,
+            "id": 83,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -9980,23 +9965,23 @@
       },
       {
         "id": 48,
-        "name": "Language",
-        "description": "the default view for languages",
+        "name": "Reference",
+        "description": "the default view for references",
         "type_id": null,
-        "code_id": "language",
+        "code_id": "ref",
         "components": [
           {
-            "link_id": 272,
-            "id": 78,
-            "name": "language name",
-            "description": "simply show the name of a language",
-            "type_id": 59,
+            "link_id": 271,
+            "id": 77,
+            "name": "reference name",
+            "description": "simply show the name of a reference",
+            "type_id": 58,
             "position": 1,
             "position_type": 1
           },
           {
-            "link_id": 273,
-            "id": 82,
+            "link_id": 272,
+            "id": 83,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -10007,31 +9992,44 @@
       },
       {
         "id": 49,
+        "name": "Language",
+        "description": "the default view for languages",
+        "type_id": null,
+        "code_id": "language",
+        "components": [
+          {
+            "link_id": 273,
+            "id": 78,
+            "name": "language name",
+            "description": "simply show the name of a language",
+            "type_id": 59,
+            "position": 1,
+            "position_type": 1
+          },
+          {
+            "link_id": 274,
+            "id": 83,
+            "name": "related values",
+            "description": "show the most relevant and related values",
+            "type_id": 11,
+            "position": 2,
+            "position_type": 1
+          }
+        ]
+      },
+      {
+        "id": 50,
         "name": "Display Number",
         "description": "the default view for values",
         "type_id": null,
         "code_id": "value",
         "components": [
           {
-            "link_id": 274,
-            "id": 86,
-            "name": "Value",
-            "position": 1,
-            "position_type": 1
-          }
-        ]
-      },
-      {
-        "id": 51,
-        "name": "Result",
-        "description": "the default view for results",
-        "type_id": null,
-        "code_id": "result",
-        "components": [
-          {
-            "link_id": 278,
-            "id": 89,
-            "name": "Result",
+            "link_id": 275,
+            "id": 82,
+            "name": "main value",
+            "description": "show one most relevant value",
+            "type_id": 38,
             "position": 1,
             "position_type": 1
           }
@@ -10039,14 +10037,32 @@
       },
       {
         "id": 52,
+        "name": "Result",
+        "description": "the default view for results",
+        "type_id": null,
+        "code_id": "result",
+        "components": [
+          {
+            "link_id": 279,
+            "id": 84,
+            "name": "related results",
+            "description": "show the most relevant and related results",
+            "type_id": 60,
+            "position": 1,
+            "position_type": 1
+          }
+        ]
+      },
+      {
+        "id": 53,
         "name": "Ranking",
         "description": "the default view for all phrases where a better could be selected",
         "type_id": null,
         "code_id": "ranking",
         "components": [
           {
-            "link_id": 279,
-            "id": 83,
+            "link_id": 280,
+            "id": 85,
             "name": "phrase",
             "description": "simply show the name of a word or triple",
             "type_id": 8,
@@ -10054,8 +10070,8 @@
             "position_type": 1
           },
           {
-            "link_id": 280,
-            "id": 84,
+            "link_id": 281,
+            "id": 86,
             "name": "ranking parameters",
             "description": "the parameters used to calculate a ranking",
             "type_id": 45,
@@ -10063,8 +10079,8 @@
             "position_type": 1
           },
           {
-            "link_id": 281,
-            "id": 85,
+            "link_id": 282,
+            "id": 87,
             "name": "ranking list",
             "description": "list sorted by the calculated ranking",
             "type_id": 46,

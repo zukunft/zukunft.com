@@ -64,7 +64,7 @@ class formulas
     const DIAMETER = '= "circumference" / "Pi"';
     const DIAMETER_DB = '={w' . words::CIRCUMFERENCE_ID . '}/{w' . words::PI_ID . '}';
     const THIS_NAME = 'this';
-    const THIS_ID = 1;
+    const THIS_ID = 18;
     const THIS_EXP = '="Now"';
     const PRIOR = 'prior';
     const PRIOR_ID = 20;

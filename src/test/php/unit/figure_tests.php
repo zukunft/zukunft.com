@@ -66,8 +66,8 @@ class figure_tests
         $t->subheader($ts . 'set and get');
 
         $fig = $t->figure_value();
-        $t->assert('figure value id', $fig->id(), values::PI_SYMBOL_ID);
-        $t->assert('figure value obj id', $fig->obj_id(), values::PI_SYMBOL_ID);
+        $t->assert('figure value id', $fig->id(), values::PI_ID);
+        $t->assert('figure value obj id', $fig->obj_id(), values::PI_ID);
         $t->assert('figure value number', $fig->number(), values::PI_SHORT);
         $fig = $t->figure_result();
         $t->assert('figure result id', $fig->id(), -1);

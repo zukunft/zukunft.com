@@ -27,6 +27,24 @@
     { "name": "2020", "type": "time"},
     { "name": "Year", "type": "time"},
     {
+      "name": "one",
+      "description": "1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit",
+      "type": "scaling_hidden",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "1",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "percent",
+      "comment": "to specify numbers in percent",
+      "type": "percent",
+      "protection": "admin_protection"
+    },
+    {
       "name": "thousand",
       "comment": "to specify numbers in thousand",
       "type": "scaling",
@@ -109,6 +127,30 @@
     }
   ],
   "formulas": [
+    {
+      "name": "this",
+      "expression": "=\"Now\"",
+      "type": "time_this",
+      "description": "hardcoded formula to select now, today, this year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "next",
+      "expression": "=value[\"time jump\"->,\"follower\"->\"Now\"]",
+      "type": "time_next",
+      "description": "hardcoded formula to select tomorrow, next week, next year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "prior",
+      "expression": "=value[\"time jump\"->,\"Now\"->\"follower\"]",
+      "type": "time_prior",
+      "description": "hardcoded formula to select yesterday, previous week, last year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
     {
       "name": "scale thousand to one",
       "expression": "\"one\" = \"thousand\" * 1000",

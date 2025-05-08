@@ -62,9 +62,9 @@ class words
 
     // for the system setup and all pods of zukunft.com
     const POD = 'pod';
-    const POD_ID = 312;
+    const POD_ID = 313;
     const MASTER_POD_NAME = 'zukunft.com';
-    const MASTER_POD_NAME_ID = 330;
+    const MASTER_POD_NAME_ID = 331;
     const JOB = 'job';
     const USER = 'user';
     const FRONTEND = 'frontend';
@@ -73,10 +73,10 @@ class words
 
     // e.g. one instance / pod of zukunft.com
     const URL = 'url';
-    const URL_ID = 325;
+    const URL_ID = 326;
     // e.g. the launch date of the first beta version of zukunft.com
     const LAUNCH = 'launch';
-    const LAUNCH_ID = 368;
+    const LAUNCH_ID = 369;
 
     // for the user settings
     const ROW = 'row';
@@ -98,7 +98,7 @@ class words
     const DECIMAL = 'decimal';
     // e.g. the geolocation of the development of zukunft.com
     const POINT = 'point';
-    const POINT_ID = 369;
+    const POINT_ID = 370;
 
     // general words used also for the system configuration that have a fixed tooltip
     const TIME = 'time';
@@ -209,33 +209,33 @@ class words
     const MIO_SHORT = 'mio';
     const COUNTRY = 'Country';
     const CH = 'Switzerland';
-    const CH_ID = 263;
+    const CH_ID = 264;
     const GERMANY = 'Germany';
     const CANTON = 'Canton';
-    const CANTON_ID = 264;
+    const CANTON_ID = 265;
     const CITY = 'City';
-    const CITY_ID = 265;
+    const CITY_ID = 266;
     const ZH = 'Zurich';
-    const ZH_ID = 266;
+    const ZH_ID = 267;
     const BE = 'Bern';
-    const BE_ID = 267;
+    const BE_ID = 268;
     const GE = 'Geneva';
-    const GE_ID = 268;
-    const INHABITANT_ID = 270;
+    const GE_ID = 269;
+    const INHABITANT_ID = 271;
     // TODO add test to search for words in all language forms e.g. plural
     const INHABITANTS = 'inhabitants';
     const YEAR_2013 = '2013';
-    const YEAR_2013_ID = 272;
+    const YEAR_2013_ID = 273;
     const YEAR_2014 = '2014';
-    const YEAR_2014_ID = 273;
+    const YEAR_2014_ID = 274;
     const YEAR_2015 = '2015';
-    const YEAR_2015_ID = 274;
+    const YEAR_2015_ID = 275;
     const YEAR_2016 = '2016';
-    const YEAR_2016_ID = 275;
+    const YEAR_2016_ID = 276;
     const YEAR_2017 = '2017';
-    const YEAR_2017_ID = 276;
+    const YEAR_2017_ID = 277;
     const YEAR_2018 = '2018';
-    const YEAR_2018_ID = 277;
+    const YEAR_2018_ID = 278;
     const YEAR_2019 = '2019';
     const YEAR_2019_ID = 139;
     const YEAR_2020 = '2020';
@@ -253,11 +253,11 @@ class words
     const TOTAL_PRE = 'total';
     const TOTAL_ID = 258;
     const COMPANY = 'Company';
-    const COMPANY_ID = 271;
+    const COMPANY_ID = 272;
     const ABB = 'ABB';
-    const ABB_ID = 1002;
+    const ABB_ID = 1003;
     const VESTAS = 'Vestas';
-    const VESTAS_ID = 1005;
+    const VESTAS_ID = 1006;
     const CHF = 'CHF';
     const CHF_ID = 228;
     const SALES = 'sales';

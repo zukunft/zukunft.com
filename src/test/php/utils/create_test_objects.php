@@ -1562,7 +1562,7 @@ class create_test_objects extends test_base
     function phrase_list_pi(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->triple_pi_symbol()->phrase());
+        $lst->add($this->triple_pi()->phrase());
         return $lst;
     }
 

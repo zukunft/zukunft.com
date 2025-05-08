@@ -79,6 +79,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change
 
     TODO for user_values allow a source 0=not set or exclude the source_id from the prime index?
+    TODO add import fail test to check the error message creation
+    TODO on import create a fail message if the import tries to import a word that exists already as a formula (or create a user specific word and rename the formula)
     TODO test if a table with 1, 2, 4, 8, 16, 32 or 64 smallint key is faster and more efficient than a table with one bigger index
     TODO create an use the figure database view
     TODO clean up the phrase_list (and triple_list and word_list) cfg/class and add unit and db read tests for all

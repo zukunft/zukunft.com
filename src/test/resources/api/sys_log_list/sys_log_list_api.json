@@ -6,21 +6,12 @@
   "version": "0.0.3",
   "body": [
     {
-      "id": 4,
-      "user": "zukunft.com system test",
-      "text": "'test import'",
-      "description": "'import of the some test json files'",
-      "trace": "'import_test_files'",
-      "prg_part": "import_test_files",
-      "status": 1
-    },
-    {
       "id": 3,
       "user": "zukunft.com system test",
-      "text": "'base setup'",
-      "description": "'import of the base setup'",
-      "trace": "'import_base_config'",
-      "prg_part": "import_base_config",
+      "text": "'test setup'",
+      "description": "'import of the pod test setup'",
+      "trace": "'import_test_config'",
+      "prg_part": "import_test_config",
       "status": 1
     },
     {

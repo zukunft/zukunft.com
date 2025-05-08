@@ -153,7 +153,7 @@ class api_tests
         $t->assert_api_get_list(type_lists::class);
         $t->assert_api_get_list(word_list::class, [1, 2, words::PI_ID]);
         $t->assert_api_get_list(word_list::class, words::MATH, api::URL_VAR_PATTERN);
-        $t->assert_api_get_list(phrase_list::class, [1, 2, words::PI_ID, -1, -2]);
+        $t->assert_api_get_list(phrase_list::class, [words::MATH_ID, words::CONST_ID, words::PI_SYMBOL_ID, -1, -2]);
         $t->assert_api_get_list(phrase_list::class, words::MATH, api::URL_VAR_PATTERN);
         $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $t->assert_api_get_list(formula_list::class, [1]);

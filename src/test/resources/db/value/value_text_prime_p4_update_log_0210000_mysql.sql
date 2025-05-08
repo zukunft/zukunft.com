@@ -37,8 +37,8 @@ SELECT value_text_prime_p4_update_log_0210000
         421,
         'old db text sample value',
         'zukunft.com',
-        92888138199367808,
-        330,
-        325,
-        312,
-        -128);
+        93169617471111297,
+        331,
+        326,
+        313,
+        -129);

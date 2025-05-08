@@ -210,7 +210,7 @@ class value_tests
 
         // TODO move to ui tests
         $val_dsp = new value_dsp($val->api_json([api_type::INCL_PHRASES]));
-        $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32770" title="3.14">3.14</a>');
+        $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32812" title="3.14">3.14</a>');
 
         $t->subheader($ts . 'convert and api');
 

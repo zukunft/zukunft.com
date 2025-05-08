@@ -43,7 +43,7 @@ class triples
 
     // keyword to select the system configuration
     const SYSTEM_CONFIG = 'system configuration';
-    const SYSTEM_CONFIG_ID = 128;
+    const SYSTEM_CONFIG_ID = 129;
 
     // triple names used for the system configuration
     const NUMBER_FORMAT = 'number format';

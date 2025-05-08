@@ -226,7 +226,7 @@
     },
     {
       "name": "scale pence to Pound",
-      "expression": "\"Pound\" = \"pence\" * 100",
+      "expression": "\"Pound sterling\" = \"pence\" * 100",
       "assigned_word": "pence"
     }
   ],
