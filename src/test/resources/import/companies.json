@@ -675,8 +675,7 @@
         },
         {
           "position": "3",
-          "name": "JSON Export",
-          "type": "json_export"
+          "name": "JSON Export"
         }
       ]
     },
@@ -697,13 +696,11 @@
         },
         {
           "position": "3",
-          "name": "JSON Export",
-          "type": "json_export"
+          "name": "JSON Export"
         },
         {
           "position": "4",
-          "name": "XML Export",
-          "type": "xml_export"
+          "name": "XML Export"
         }
       ]
     },

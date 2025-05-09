@@ -94,6 +94,8 @@ class sandbox_list_named extends sandbox_list
     // memory vs speed optimize vars for faster finding the list position by the object name
     private array $name_pos_lst;
     private bool $lst_name_dirty;
+    private array $name_pos_lst_all;
+    private bool $lst_name_dirty_all;
 
     /*
      * construct and map
@@ -107,6 +109,8 @@ class sandbox_list_named extends sandbox_list
     {
         $this->name_pos_lst = array();
         $this->lst_name_dirty = false;
+        $this->name_pos_lst_all = array();
+        $this->lst_name_dirty_all = false;
 
         parent::__construct($usr, $lst);
     }
@@ -124,6 +128,7 @@ class sandbox_list_named extends sandbox_list
     {
         parent::set_lst_dirty();
         $this->lst_name_dirty = true;
+        $this->lst_name_dirty_all = true;
     }
 
     /**
@@ -134,6 +139,7 @@ class sandbox_list_named extends sandbox_list
     {
         parent::set_lst_clean();
         $this->lst_name_dirty = false;
+        $this->lst_name_dirty_all = false;
     }
 
 
@@ -297,16 +303,17 @@ class sandbox_list_named extends sandbox_list
      * select the related object by the name
      *
      * @param sandbox_list_named $db_lst a list of sandbox objects that might have more vars set e.g. the db id
+     * @param bool $fill_all force to include also the excluded names e.g. for import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill_by_name(sandbox_list_named $db_lst): user_message
+    function fill_by_name(sandbox_list_named $db_lst, bool $fill_all = false): user_message
     {
         $usr_msg = new user_message();
 
         // loop over the objects of theis list because it is expected to be smaller than tha cache list
         foreach ($this->lst() as $obj_to_fill) {
-            if ($obj_to_fill->id() == 0 and $obj_to_fill->name() != '') {
-                $db_obj = $db_lst->get_by_name($obj_to_fill->name());
+            if ($obj_to_fill->id() == 0 and $obj_to_fill->name($fill_all) != '') {
+                $db_obj = $db_lst->get_by_name($obj_to_fill->name($fill_all), $fill_all);
                 if ($db_obj != null) {
                     $obj_to_fill->fill($db_obj);
                 }
@@ -345,11 +352,16 @@ class sandbox_list_named extends sandbox_list
      * should be cast by the child function get_by_name
      *
      * @param string $name the unique name of the object that should be returned
+     * @param bool $use_all force to include also the excluded names e.g. for import
      * @return phrase|term|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string $name): phrase|term|CombineObject|IdObject|TextIdObject|null
+    function get_by_name(string $name, bool $use_all = false): phrase|term|CombineObject|IdObject|TextIdObject|null
     {
-        $key_lst = $this->name_pos_lst();
+        if ($use_all) {
+            $key_lst = $this->name_pos_lst_all();
+        } else {
+            $key_lst = $this->name_pos_lst();
+        }
         $pos = null;
         if (key_exists($name, $key_lst)) {
             $pos = $key_lst[$name];
@@ -493,6 +505,28 @@ class sandbox_list_named extends sandbox_list
             $this->lst_name_dirty = false;
         } else {
             $result = $this->name_pos_lst;
+        }
+        return $result;
+    }
+
+    /**
+     * TODO add a unit test
+     * like name_pos_lst but include also the excluded names e.g. for import
+     * @returns array with all unique names of this list with the keys within this list
+     */
+    protected function name_pos_lst_all(): array
+    {
+        $result = array();
+        if ($this->lst_name_dirty_all) {
+            foreach ($this->lst() as $key => $obj) {
+                if (!in_array($obj->name(true), $result)) {
+                    $result[$obj->name(true)] = $key;
+                }
+            }
+            $this->name_pos_lst_all = $result;
+            $this->lst_name_dirty_all = false;
+        } else {
+            $result = $this->name_pos_lst_all;
         }
         return $result;
     }

@@ -74,6 +74,7 @@ include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -92,6 +93,7 @@ use shared\const\triples;
 use shared\const\words;
 use shared\enum\foaf_direction;
 use shared\enum\messages as msg_id;
+use shared\json_fields;
 use shared\types\verbs;
 
 class triple_list extends sandbox_list_named
@@ -150,13 +152,14 @@ class triple_list extends sandbox_list_named
     /**
      * load a list of words by the names
      * @param array $names a named object used for selection e.g. a word type
+     * @param bool $load_all force to include also the excluded triples e.g. for admins
      * @return bool true if at least one word found
      */
-    function load_by_names(array $names): bool
+    function load_by_names(array $names, bool $load_all = false): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
-        return $this->load($qp);
+        return $this->load($qp, $load_all);
     }
 
     /**
@@ -235,6 +238,8 @@ class triple_list extends sandbox_list_named
                         // fill to
                         $trp->set_tob(new phrase($this->user()));
                         $trp->tob()->row_mapper_sandbox($db_row, triple::FLD_TO, '2');
+                    } else {
+                        log_info($trp->dsp_id() . ' is excluded');
                     }
                 }
             }
@@ -639,23 +644,27 @@ class triple_list extends sandbox_list_named
 
             // load the objects that are already in the database
             if (!$load_list->is_empty()) {
-                $step_time = $this->count() / $load_per_sec;
+                $step_time = $load_list->count() / $load_per_sec;
                 $imp->step_start(msg_id::LOAD, triple::class, $load_list->count(), $step_time);
                 $db_lst = new triple_list($this->user());
-                $db_lst->load_by_names($load_list->names());
+                // force to load all names including the triples excluded by the user to potential include the triples due to the import
+                // TODO add load_all = true also to the other objects
+                $db_lst->load_by_names($load_list->names(), true);
                 $imp->step_end($load_list->count(), $load_per_sec);
 
                 // fill up cache
+                // TODO increase speed!
                 $cache = $cache->merge($db_lst->phrase_list());
 
                 // fill missing verbs
-                $this->fill_missing_verbs();
+                $load_list->fill_missing_verbs();
 
                 // fill the loaded database id to this list
-                $this->fill_by_name($db_lst);
+                $load_list->fill_by_name($db_lst, true);
 
                 // get the triples that still needs to be added
-                $add_phr_lst = $phr_lst->missing_ids();
+                // TODO check if other list save function are using the cache instead of this here
+                $add_phr_lst = $load_list->missing_ids();
                 $add_lst = $add_phr_lst->triples_by_name();
 
                 // select the triples that are ready to be added to the database

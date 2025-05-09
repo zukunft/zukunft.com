@@ -261,11 +261,12 @@ class component_list extends sandbox_list_named
      * should be cast by the child function get_by_name
      *
      * @param string $name the unique name of the object that should be returned
+     * @param bool $use_all force to include also the excluded names e.g. for import
      * @return component|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
      */
-    function get_by_name(string $name): component|CombineObject|IdObject|TextIdObject|null
+    function get_by_name(string $name, bool $use_all = false): component|CombineObject|IdObject|TextIdObject|null
     {
-        return parent::get_by_name($name);
+        return parent::get_by_name($name, $use_all);
     }
 
 

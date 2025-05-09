@@ -66,6 +66,7 @@ include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -97,6 +98,7 @@ use shared\const\words;
 use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
+use shared\types\verbs;
 
 class import
 {
@@ -1371,6 +1373,7 @@ class import
         user        $usr_trigger
     ): triple
     {
+        global $vrb_cac;
         $names = explode(' ', $key);
         // create the single words and add them to the data_object
         $from = null;
@@ -1395,6 +1398,7 @@ class import
         $trp = new triple($usr_trigger);
         if ($from != null and $to != null) {
             $trp->set_from($from->phrase());
+            $trp->set_verb($vrb_cac->get_verb(verbs::NOT_SET));
             $trp->set_to($to->phrase());
             $trp->set_name($key);
         } else {

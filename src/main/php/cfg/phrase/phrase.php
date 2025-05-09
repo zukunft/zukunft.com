@@ -122,7 +122,6 @@ use cfg\word\word_db;
 use cfg\word\word_list;
 use cfg\word\triple;
 use shared\enum\foaf_direction;
-use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\helper\IdObject;
 use shared\helper\TextIdObject;
@@ -520,6 +519,7 @@ class phrase extends combine_named
     }
 
     /**
+     * @param bool $ignore_excluded force to include also the excluded names e.g. for import
      * @return string the name of the phrase
      */
     function name(bool $ignore_excluded = false): string
@@ -586,15 +586,44 @@ class phrase extends combine_named
     {
         $usr_msg = new user_message();
         if ($this->is_word()) {
-            if ($phr->is_word() == null) {
-                $usr_msg->add($this->obj()->fill($phr->word()));
+            if ($phr::class == phrase::class) {
+                if ($phr->is_word()) {
+                    $usr_msg->add($this->obj()->fill($phr->word()));
+                } else {
+                    $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
+                        [
+                            msg_id::VAR_WORD_NAME => $this->dsp_id(),
+                            msg_id::VAR_NAME => $phr->dsp_id(),
+                        ]);
+                }
+            } elseif ($phr::class == word::class) {
+                $usr_msg->add($this->obj()->fill($phr));
             } else {
+                $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
+                    [
+                        msg_id::VAR_WORD_NAME => $this->dsp_id(),
+                        msg_id::VAR_NAME => $phr->dsp_id(),
+                    ]);
             }
         } else {
-            if ($phr->is_triple()) {
-                $usr_msg->add($this->obj()->fill($phr->triple()));
+            if ($phr::class == phrase::class) {
+                if ($phr->is_triple()) {
+                    $usr_msg->add($this->obj()->fill($phr->triple()));
+                } else {
+                    $usr_msg->add_id_with_vars(msg_id::FILL_TRIPLE_WITH_OTHER,
+                        [
+                            msg_id::VAR_TRIPLE_NAME => $this->dsp_id(),
+                            msg_id::VAR_NAME => $phr->dsp_id(),
+                        ]);
+                }
+            } elseif ($phr::class == triple::class) {
+                $usr_msg->add($this->obj()->fill($phr));
             } else {
-                $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_TRIPLE, [$phr->word()->name()]);
+                $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
+                    [
+                        msg_id::VAR_TRIPLE_NAME => $this->dsp_id(),
+                        msg_id::VAR_NAME => $phr->dsp_id(),
+                    ]);
             }
         }
         return $usr_msg;

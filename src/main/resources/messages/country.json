@@ -60,7 +60,8 @@
       "name": "ranking",
       "comment": "relationship between a set of items, often recorded in a list, such that, for any two items, the first is either 'higher than', 'lower than', or 'equal to' the second. The default criteria is here 'good' and 'bad'."
     },
-    { "name": "k" }
+    { "name": "k" },
+    { "name": "Now" }
   ],
   "triples": [
     {"from": "Country", "verb": "can use", "to": "ranking"},

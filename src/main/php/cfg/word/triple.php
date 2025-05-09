@@ -364,6 +364,7 @@ class triple extends sandbox_link_named
                     $this->set_verb_id($db_row[verb::FLD_ID]);
                 }
             }
+            // TODO use json_fields object
             if (array_key_exists(self::FLD_NAME_GIVEN, $db_row)) {
                 $this->set_name_given($db_row[self::FLD_NAME_GIVEN]);
             }

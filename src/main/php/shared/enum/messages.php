@@ -49,6 +49,10 @@ enum messages: string
     // var names
     // the name of a sandbox object
     const VAR_NAME = 'VarObjName';
+    // the name and if of a word
+    const VAR_WORD_NAME = 'VarWordName';
+    // the name and if of a triple
+    const VAR_TRIPLE_NAME = 'VarTripleName';
     // the name of a user
     const VAR_USER_NAME = 'VarUserName';
     // the name of a user of a list
@@ -116,9 +120,16 @@ enum messages: string
         . ' to list of user '
         . self::VAR_START . self::VAR_USER_LIST_NAME . self::VAR_END
         . ' list';
-    case FILL_WORD_WITH_TRIPLE = 'imported word "'
+    case FILL_WORD_WITH_OTHER = 'word "'
+        . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
+        . '" cannot be filled with '
         . self::VAR_START . self::VAR_NAME . self::VAR_END
-        . '" seems to be a triple already';
+        . '"';
+    case FILL_TRIPLE_WITH_OTHER = 'triple "'
+        . self::VAR_START . self::VAR_TRIPLE_NAME . self::VAR_END
+        . '" cannot be filled with '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
 
     case JSON_DECODE = 'error trying to decode json "'
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END

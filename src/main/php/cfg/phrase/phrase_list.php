@@ -480,6 +480,12 @@ class phrase_list extends sandbox_list_named
      * set and get
      */
 
+    function fill_missing_verbs(): user_message
+    {
+        $trp_lst = $this->triples();
+        return $trp_lst->fill_missing_verbs();
+    }
+
 
     /*
      * im- and export

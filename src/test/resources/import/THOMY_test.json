@@ -96,8 +96,7 @@
         },
         {
           "position": "4",
-          "name": "JSON Export",
-          "type": "json_export"
+          "name": "JSON Export"
         }
       ]
     }

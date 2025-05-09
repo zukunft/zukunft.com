@@ -86,6 +86,7 @@ include_once MODEL_SANDBOX_PATH . 'share_type.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_RESULT_PATH . 'result_list.php';
@@ -135,6 +136,7 @@ use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\view\view;
+use cfg\word\triple;
 use cfg\word\word;
 use DateTime;
 use Exception;
@@ -2544,6 +2546,7 @@ class formula extends sandbox_typed
         log_debug($this->dsp_id());
 
         global $db_con;
+        global $mtr;
         global $phr_typ_cac;
 
         // decide which db write method should be used
@@ -2582,45 +2585,101 @@ class formula extends sandbox_typed
                     }
                 }
             }
+        }
 
-            // create a new formula or update an existing
+        // create an object to check possible duplicates
+        $similar = null;
+
+        // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
+        if ($this->id() == 0) {
+            log_debug('check possible duplicates before adding ' . $this->dsp_id());
+            $similar = $this->get_similar();
+            if ($similar->id() <> 0) {
+                // check that the get_similar function has really found a similar object and report potential program errors
+                if (!$this->is_similar($similar)) {
+                    $msg_not = $mtr->txt(msg_id::NOT_SIMILAR);
+                    $usr_msg->add_message($this->dsp_id() . ' ' . $msg_not . ' ' . $similar->dsp_id());
+                } else {
+                    // if similar is found set the id to trigger the updating instead of adding
+                    $similar->load_by_id($similar->id()); // e.g. to get the type_id
+                    // prevent that the id of a formula is used for the word with the type formula link
+                    if (get_class($this) == get_class($similar)) {
+                        $this->set_id($similar->id());
+                    } else {
+                        if (!((get_class($this) == word::class and get_class($similar) == formula::class)
+                            or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
+                            $usr_msg->add_message($similar->id_used_msg($this));
+                        }
+                    }
+                }
+            } else {
+                $similar = null;
+            }
+
+        }
+
+        // create a new formula or update an existing
+        if ($usr_msg->is_ok()) {
             if ($this->id() <= 0) {
                 // convert the formula text to db format (any error messages should have been returned from the calling user script)
                 $usr_msg->add_message($this->generate_ref_text());
                 if ($usr_msg->is_ok()) {
-                    $usr_msg->add_message($this->add($use_func)->get_last_message());
+
+                    log_debug('add');
+                    $usr_msg->add($this->add($use_func));
                 }
             } else {
-                log_debug('update ' . $this->id());
-                // read the database values to be able to check if something has been changed; done first,
-                // because it needs to be done for user and general formulas
-                $db_rec = new formula($this->user());
-                $db_rec->load_by_id($this->id());
-                log_debug('database formula "' . $db_rec->name() . '" (' . $db_rec->id() . ') loaded');
-                $std_rec = new formula($this->user()); // must also be set to allow to take the ownership
-                $std_rec->set_id($this->id());
-                $std_rec->load_standard();
-                log_debug('standard formula "' . $std_rec->name() . '" (' . $std_rec->id() . ') loaded');
-
-                // for a correct user formula detection (function can_change) set the owner even if the formula has not been loaded before the save
-                if ($this->owner_id() <= 0) {
-                    $this->set_owner_id($std_rec->owner_id());
+                // if the similar object is not the same as $this object, suggest renaming $this object
+                if ($similar != null) {
+                    log_debug('got similar and suggest renaming or merge');
+                    // e.g. if a source already exists update the source
+                    // but if a word with the same name of a formula already exists suggest a new formula name
+                    if (!$this->is_same($similar)) {
+                        $usr_msg->add_message($similar->id_used_msg($this));
+                    }
                 }
 
-                // ... and convert the formula text to db format (any error messages should have been returned from the calling user script)
-                $usr_msg->add_message($this->generate_ref_text());
+                // update the existing object
                 if ($usr_msg->is_ok()) {
+                    log_debug('update ' . $this->id());
+                    // read the database values to be able to check if something has been changed; done first,
+                    // because it needs to be done for user and general formulas
+                    $db_rec = new formula($this->user());
+                    $db_rec->load_by_id($this->id());
+                    log_debug('database formula "' . $db_rec->name() . '" (' . $db_rec->id() . ') loaded');
 
-                    // check if the id parameters are supposed to be changed
-                    $usr_msg->add($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
+                    // relevant is if there is a user config in the database
+                    // so use this information to prevent
+                    // the need to forward the db_rec to all functions
+                    if ($db_rec->has_usr_cfg() and !$this->has_usr_cfg()) {
+                        $this->usr_cfg_id = $db_rec->usr_cfg_id;
+                    }
 
-                    // if a problem has appeared up to here, don't try to save the values
-                    // the problem is shown to the user by the calling interactive script
+                    $std_rec = new formula($this->user()); // must also be set to allow to take the ownership
+                    $std_rec->set_id($this->id());
+                    $std_rec->load_standard();
+                    log_debug('standard formula "' . $std_rec->name() . '" (' . $std_rec->id() . ') loaded');
+
+                    // for a correct user formula detection (function can_change) set the owner even if the formula has not been loaded before the save
+                    if ($this->owner_id() <= 0) {
+                        $this->set_owner_id($std_rec->owner_id());
+                    }
+
+                    // ... and convert the formula text to db format (any error messages should have been returned from the calling user script)
+                    $usr_msg->add_message($this->generate_ref_text());
                     if ($usr_msg->is_ok()) {
-                        if ($use_func) {
-                            $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
-                        } else {
-                            $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
+
+                        // check if the id parameters are supposed to be changed
+                        $usr_msg->add($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
+
+                        // if a problem has appeared up to here, don't try to save the values
+                        // the problem is shown to the user by the calling interactive script
+                        if ($usr_msg->is_ok()) {
+                            if ($use_func) {
+                                $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
+                            } else {
+                                $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
+                            }
                         }
                     }
                 }
