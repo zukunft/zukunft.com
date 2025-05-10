@@ -566,10 +566,12 @@ class data_object
                 $trp_self_ref = false;
                 $trp_add = false;
                 foreach ($this->triple_list()->lst() as $trp) {
+                    // report triples where e.g. the linked phrases are missing
                     if (!$trp->db_ready()) {
                         $usr_msg->add_id_with_vars(msg_id::TRIPLE_NOT_VALID,
                             [msg_id::VAR_TRIPLE => $trp->dsp_id()]);
                     } else {
+                        // set the id of the linked phrases or remember that they need to be added with the next round
                         $trp_self_ref = $this->check_triple_phrase($trp, $trp->from(), $phr_lst, $usr_msg, $trp_self_ref);
                         $trp_self_ref = $this->check_triple_phrase($trp, $trp->to(), $phr_lst, $usr_msg, $trp_self_ref);
                     }

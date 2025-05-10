@@ -644,6 +644,11 @@ class value_base extends sandbox_value
         return $this->grp()->id();
     }
 
+    function set_source(source|null $src): void
+    {
+        $this->source = $src;
+    }
+
     function source(): source|null
     {
         return $this->source;

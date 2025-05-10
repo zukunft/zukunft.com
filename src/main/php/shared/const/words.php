@@ -59,6 +59,8 @@ class words
     const TOOLTIP_COMMENT = 'tooltip-comment';
     const SYS_CONF_VALUE_COM = 'keyword to read the numeric value from the config.yaml';
     const SYS_CONF_VALUE = 'sys-conf-value';
+    const SYS_CONF_SOURCE = 'source-name';
+    const SYS_CONF_SOURCE_COM = 'source-description';
 
     // for the system setup and all pods of zukunft.com
     const POD = 'pod';
@@ -76,7 +78,7 @@ class words
     const URL_ID = 326;
     // e.g. the launch date of the first beta version of zukunft.com
     const LAUNCH = 'launch';
-    const LAUNCH_ID = 369;
+    const LAUNCH_ID = 370;
 
     // for the user settings
     const ROW = 'row';
@@ -98,7 +100,7 @@ class words
     const DECIMAL = 'decimal';
     // e.g. the geolocation of the development of zukunft.com
     const POINT = 'point';
-    const POINT_ID = 370;
+    const POINT_ID = 371;
 
     // general words used also for the system configuration that have a fixed tooltip
     const TIME = 'time';
@@ -255,9 +257,9 @@ class words
     const COMPANY = 'Company';
     const COMPANY_ID = 272;
     const ABB = 'ABB';
-    const ABB_ID = 1003;
+    const ABB_ID = 1004;
     const VESTAS = 'Vestas';
-    const VESTAS_ID = 1006;
+    const VESTAS_ID = 1007;
     const CHF = 'CHF';
     const CHF_ID = 228;
     const SALES = 'sales';

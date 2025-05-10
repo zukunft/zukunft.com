@@ -13,24 +13,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
     3. create and fix the database read, write and integration test for the new feature
     4. commit
 
-    but first this needs to be fixed:
-    TODO review the start view functionality
-    TODO create the missing system views
+    but first this needs to be prioritized:
 
-    TODO use the config object in the frontend
-
-    TODO add missing unit tests to frontend classes and check teh test coverage
-    TODO move the remaining html function from the backend to the frontend
-
-    TODO add a short group id that leaves out the leading "." space holders
-    TODO name all functions with the long name e.g. result_phrases because execution may cost time
-    TODO but name all vars with the short form e.g. res_phr_lst
-
-    TODO make sure that unit tests does not start any api call
-    TODO move all user configuration settings to the config yaml
-    TODO test the single html frontend function like $wrd->btn_edit() with the html_tests e.g. word_html_tests
-    TODO create an test the html frontend masks using run_ui_test in unit/api_tests
-    TODO remove all other frontend tests
+    TODO Release 0.0.3
+    TODO Release 0.0.4
 
     TODO Substeps: create insert, update and delete sql create tests for the main objects (TODO activate db write)
                    include the log in the prepared sql write statement

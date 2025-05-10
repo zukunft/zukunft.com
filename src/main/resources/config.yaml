@@ -2,6 +2,8 @@ zukunft.com:
   tooltip-comment: "zukunft.com is the keyword to select the global settings for all zukunft.com pods"
   system configuration:
     tooltip-comment: "keyword to separate the internal system configuration"
+    source-name: "config.yaml"
+    source-description: "internal system configuration yaml file"
     database:
       version: 0.0.3
       tooltip-comment: "the version of the database of the master pod"
@@ -32,7 +34,7 @@ zukunft.com:
           bytes second:
             file read:
               sys-conf-value: 300
-              tooltip-comment: "the estimated MB per second for pur reading the import file"
+              tooltip-comment: "the estimated MB per second for pure reading the import file"
             decode:
               sys-conf-value: 130
               tooltip-comment: "the estimated MB per second for decoding the import json file"

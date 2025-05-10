@@ -1242,9 +1242,10 @@ class import
         $wrd = null;
         $trp = null;
         $val = null;
+        $src = null;
         $phr_lst = new phrase_list($usr_trigger);
-        $dto = $this->get_data_object_yaml_loop($dto, $phr_lst, $yml_arr, $wrd, $trp, $val, $usr_trigger);
-        // add the last word, triple or value to the lists
+        $dto = $this->get_data_object_yaml_loop($dto, $phr_lst, $yml_arr, $wrd, $trp, $val, $src, $usr_trigger);
+        // add the last word, triple, source or value to the lists
         if ($wrd != null) {
             $dto->add_word($wrd);
             $phr_lst->add($wrd->phrase());
@@ -1256,8 +1257,12 @@ class import
         if ($val != null) {
             // TODO add any last phrase to the value phrase list
             $val = new value($usr_trigger);
+            $val->set_source($src);
             $val->set_phrase_lst($phr_lst);
             $dto->add_value($val);
+        }
+        if ($src != null) {
+            $dto->add_source($src);
         }
         return $dto;
     }
@@ -1269,6 +1274,7 @@ class import
         ?word       $wrd,
         ?triple     $trp,
         ?value_base $val,
+        ?source     $src,
         user        $usr_trigger
     ): data_object
     {
@@ -1295,6 +1301,20 @@ class import
                         $dto->add_value($val);
                         $val = null;
                     }
+                }
+            } elseif ($key == words::SYS_CONF_SOURCE) {
+                // assumes that always first the source name is given
+                if ($src != null) {
+                    $dto->add_source($src);
+                }
+                $src = new source($usr_trigger);
+                $src->set_name($value);
+            } elseif ($key == words::SYS_CONF_SOURCE_COM) {
+                // assumes that always a source description is given to force adding the source
+                if ($src == null) {
+                    $dto->add_message('source-description is given without source-name');
+                } else {
+                    $src->set_description($value);
                 }
             } else {
                 // add the previous set word or triple to the lists
@@ -1339,7 +1359,7 @@ class import
                 }
                 // add the sub array
                 if (is_array($value)) {
-                    $dto = $this->get_data_object_yaml_loop($dto, $sub_phr_lst, $value, $wrd, $trp, $val, $usr_trigger);
+                    $dto = $this->get_data_object_yaml_loop($dto, $sub_phr_lst, $value, $wrd, $trp, $val, $src, $usr_trigger);
                 } else {
                     // remember the value
                     // TODO add percent, geo and time
@@ -1348,10 +1368,15 @@ class import
                     } else {
                         $val = new value($usr_trigger);
                     }
+                    $val->set_source($src);
                     $val->set_phrase_lst($sub_phr_lst);
                     $val->set_value($value);
                 }
             }
+        }
+        // add the previous source to the lists
+        if ($src != null) {
+            $dto->add_source($src);
         }
         // add the previous value to the lists
         if ($val != null) {
