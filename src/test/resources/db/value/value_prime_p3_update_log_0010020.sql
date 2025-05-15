@@ -12,8 +12,8 @@ CREATE OR REPLACE FUNCTION value_prime_p3_update_log_0010020
 $$
 BEGIN
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,        old_value,         row_id)
-         SELECT          _user_id,_change_action_id,_field_id_share_type_id,_share_type_id_old,_group_id ;
+    INSERT INTO change_values_prime ( user_id, change_action_id, change_field_id,        old_value,         group_id)
+         SELECT                      _user_id,_change_action_id,_field_id_share_type_id,_share_type_id_old,_group_id ;
 
     UPDATE values_prime
        SET share_type_id = _share_type_id,

@@ -3677,7 +3677,8 @@ class test_base
         bool                  $usr_only = false
     ): string
     {
-        $log = $sbx->log_object();
+        // TODO maybe use log_object?
+        $log = $sbx->log_value_object();
         $log->load_by_field_row($sbx::class, $fld, $id, $usr_only);
         $log_dsp = new change_dsp($log->api_json());
         return $log_dsp->dsp($ex_time);

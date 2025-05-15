@@ -3,7 +3,11 @@ PREPARE result_prime_p1_by_usr_cfg FROM
            phrase_id_1,
            phrase_id_2,
            phrase_id_3,
-           phrase_id_4
+           phrase_id_4,
+           last_update,
+           excluded,
+           share_type_id,
+           protect_id
       FROM user_results_prime
      WHERE formula_id = ?
        AND phrase_id_1 = ?

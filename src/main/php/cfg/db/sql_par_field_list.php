@@ -530,6 +530,21 @@ class sql_par_field_list
     }
 
     /**
+     * @param array $names_to_select list of field names that should be excluded for the result list
+     * @return sql_par_field_list with the sql parameter fields that matches none of the field names
+     */
+    function get_diff(array $names_to_select): sql_par_field_list
+    {
+        $result = new sql_par_field_list();
+        foreach ($this->lst as $fld) {
+            if (!in_array($fld->name, $names_to_select)) {
+                $result->add($fld);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * get the value for the given field name
      * @param string $name the name of the field to select
      * @param bool $can_be_missing if true no error log message is created if the field does not exists

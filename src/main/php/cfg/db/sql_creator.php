@@ -1538,9 +1538,13 @@ class sql_creator
             log_err('SQL statement is not yet named');
         }
 
+        // exclude the id fields from the list of changed fields
+        $fvt_lst_chg = clone $fvt_lst;
+        $fvt_lst_chg = $fvt_lst_chg->get_diff($fvt_lst_id->names());
+
         // get the value parameter types
         $par_pos = 1;
-        foreach ($fvt_lst->lst as $fvt) {
+        foreach ($fvt_lst_chg->lst as $fvt) {
             $fld = $fvt->name;
             $val = $fvt->value;
             if ($fvt->type_id != null) {
@@ -1632,7 +1636,7 @@ class sql_creator
             $sql .= ' ' . $this->name_sql_esc($this->table);
             $sql_set = '';
             $i = 0;
-            foreach ($fvt_lst->lst as $fvt) {
+            foreach ($fvt_lst_chg->lst as $fvt) {
                 $fld = $fvt->name;
                 $val = $fvt->value;
                 if ($sql_set == '') {
@@ -1708,7 +1712,7 @@ class sql_creator
         array              $fld_lst,
         sql_par_field_list $fvt_lst,
         sql_type_list      $sc_par_lst,
-        value_base|null    $val = null
+        sandbox_multi|null $val = null
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1737,7 +1741,11 @@ class sql_creator
         // create the log sql statements for each field
         foreach ($fld_lst as $fld) {
             // init the log object
-            $log = new change($usr);
+            if ($this->is_value_class($class)) {
+                $log = $val->log_object();
+            } else {
+                $log = new change($usr);
+            }
             $log->set_class($class);
             $log->set_field($fld);
             $log->new_value = $fvt_lst->get_value($fld);

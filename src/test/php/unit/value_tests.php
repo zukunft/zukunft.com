@@ -41,6 +41,7 @@ use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\group\group;
+use cfg\sandbox\sandbox_multi;
 use cfg\sandbox\sandbox_value;
 use cfg\value\value;
 use cfg\value\value_geo;

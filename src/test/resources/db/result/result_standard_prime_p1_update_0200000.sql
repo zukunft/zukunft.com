@@ -1,4 +1,4 @@
-PREPARE result_standard_prime_p1_update_020
+PREPARE result_standard_prime_p1_update_0200000
     (numeric, smallint, smallint, smallint, smallint) AS
     UPDATE results_standard_prime
        SET numeric_value = $1

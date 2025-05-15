@@ -890,7 +890,8 @@ class change_log extends db_object_seq_id_user
             }
             $sc->set_name($qp->name);
             $qp->sql = $sc->create_sql_insert(
-                $this->db_field_values_types($sc, $sc_par_lst_used), $sc_par_lst_used, true, $val_tbl, $add_fld, $row_fld, '', $par_name);
+                $this->db_field_values_types(
+                    $sc, $sc_par_lst_used), $sc_par_lst_used, true, $val_tbl, $add_fld, $row_fld, '', $par_name);
             $qp->par = $this->db_values();
 
             return $qp;

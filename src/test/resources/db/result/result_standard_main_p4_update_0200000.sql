@@ -1,4 +1,4 @@
-PREPARE result_standard_main_p4_update_020
+PREPARE result_standard_main_p4_update_0200000
     (numeric, smallint, smallint, smallint, smallint, smallint, smallint, smallint, smallint) AS
     UPDATE results_standard_main
        SET numeric_value = $1

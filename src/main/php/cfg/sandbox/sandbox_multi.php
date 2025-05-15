@@ -1566,13 +1566,7 @@ class sandbox_multi extends db_object_multi_user
     function log_add(): change|change_value|changes_norm|changes_big
     {
         log_debug($this->dsp_id());
-        if ($this->is_prime()) {
-            $log = $this->log_prime();
-        } elseif ($this->is_big()) {
-            $log = $this->log_big();
-        } else {
-            $log = $this->log_norm();
-        }
+        $log = $this->log_object();
         return $this->log_add_common($log);
     }
 
@@ -1621,6 +1615,12 @@ class sandbox_multi extends db_object_multi_user
     function log_upd(): change|change_value|changes_norm|changes_big
     {
         log_debug($this->dsp_id());
+        $log = $this->log_object();
+        return $this->log_upd_common($log);
+    }
+
+    function log_object(): change|change_value|changes_norm|changes_big
+    {
         if ($this->is_prime()) {
             $log = $this->log_prime();
         } elseif ($this->is_big()) {
@@ -1628,7 +1628,7 @@ class sandbox_multi extends db_object_multi_user
         } else {
             $log = $this->log_norm();
         }
-        return $this->log_upd_common($log);
+        return $log;
     }
 
     /**
@@ -1829,7 +1829,7 @@ class sandbox_multi extends db_object_multi_user
     /**
      * @return change_log the object that is used to log the user changes
      */
-    function log_object(): change_log
+    function log_value_object(): change_log
     {
         if ($this->is_prime()) {
             return new change_values_prime($this->user());
@@ -3206,10 +3206,6 @@ class sandbox_multi extends db_object_multi_user
         $fvt_lst->add_list($this->db_fields_changed($sdb_row, $sc_par_lst));
         // get the list of all fields that can be changed by the user
         $fld_lst_ex_id = array_diff($fld_lst_all, $fvt_lst_id->names());
-        // select the changes that should be written e.g. exclude th id in case of an update
-        if ($sc_par_lst->is_update()) {
-            $fvt_lst = $fvt_lst->get_intersect($fld_lst_ex_id);
-        }
 
         // make the query name unique based on the changed fields
         $lib = new library();
@@ -3319,7 +3315,7 @@ class sandbox_multi extends db_object_multi_user
 
         // ... and log the value parameter changes if needed
         if (count($fld_lst_ex_id_and_val) > 0) {
-            $qp_log = $sc->sql_func_log($this::class, $this->user(), $fld_lst_ex_id_and_val, $fvt_lst_log, $sc_par_lst_log);
+            $qp_log = $sc->sql_func_log($this::class, $this->user(), $fld_lst_ex_id_and_val, $fvt_lst_log, $sc_par_lst_log, $this);
             $sql .= ' ' . $qp_log->sql;
             $par_lst_out->add_list($qp_log->par_fld_lst);
 
@@ -3623,7 +3619,7 @@ class sandbox_multi extends db_object_multi_user
         ]);
 
         // create the query parameters for the log entries for the single fields
-        $qp_log = $sc->sql_func_log($this::class, $this->user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log);
+        $qp_log = $sc->sql_func_log($this::class, $this->user(), $fld_lst_log, $fvt_lst, $sc_par_lst_log, $this);
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);
 

@@ -1,4 +1,4 @@
-PREPARE result_standard_main_p4_update_020 FROM
+PREPARE result_standard_main_p4_update_0200000 FROM
     'UPDATE results_standard_main
         SET numeric_value = ?
       WHERE formula_id = ?
