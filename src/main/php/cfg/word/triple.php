@@ -413,10 +413,10 @@ class triple extends sandbox_link_named
                 }
             }
             if ($key == json_fields::SHARE) {
-                $this->share_id = $shr_typ_cac->id($value);
+                $this->set_share_id($shr_typ_cac->id($value));
             }
             if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $ptc_typ_cac->id($value);
+                $this->set_protection_id($ptc_typ_cac->id($value));
             }
             if ($key == exp_obj::FLD_VIEW) {
                 $wrd_view = new view($this->user());

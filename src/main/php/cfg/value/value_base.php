@@ -363,8 +363,8 @@ class value_base extends sandbox_value
         $this->time_stamp = null;
 
         $this->set_last_update(null);
-        $this->share_id = null;
-        $this->protection_id = null;
+        $this->set_share_id(null);
+        $this->set_protection_id(null);
 
         $this->usr_value = '';
     }
@@ -499,11 +499,11 @@ class value_base extends sandbox_value
             }
 
             if ($key == json_fields::SHARE) {
-                $this->share_id = $shr_typ_cac->id($value);
+                $this->set_share_id($shr_typ_cac->id($value));
             }
 
             if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $ptc_typ_cac->id($value);
+                $this->set_protection_id($ptc_typ_cac->id($value));
                 if ($value <> protect_type_shared::NO_PROTECT) {
                     $get_ownership = true;
                 }
@@ -911,7 +911,7 @@ class value_base extends sandbox_value
 
     function all_sandbox_fields(): array
     {
-        return self::ALL_SANDBOX_FLD_NAMES;
+        return $this::ALL_SANDBOX_FLD_NAMES;
     }
 
 
@@ -1450,11 +1450,11 @@ class value_base extends sandbox_value
         }
 
         if ($key == json_fields::SHARE) {
-            $this->share_id = $shr_typ_cac->id($value);
+            $this->set_share_id($shr_typ_cac->id($value));
         }
 
         if ($key == json_fields::PROTECTION) {
-            $this->protection_id = $ptc_typ_cac->id($value);
+            $this->set_protection_id($ptc_typ_cac->id($value));
             if ($value <> protect_type_shared::NO_PROTECT) {
                 $get_ownership = true;
             }
@@ -2227,6 +2227,11 @@ class value_base extends sandbox_value
         global $db_con;
         $usr_msg = new user_message();
 
+        // decide which db write method should be used
+        if ($use_func === null) {
+            $use_func = $this->sql_default_script_usage();
+        }
+
         // check if a new value is supposed to be added or updated
         // TODO combine this db call with the add or update to one SQL sequence with one commit at the end
         if (!$this->is_saved()) {
@@ -2251,10 +2256,14 @@ class value_base extends sandbox_value
 
             // read the database value to be able to check if something has been changed
             // done first, because it needs to be done for user and general values
-            $db_rec = new value($this->user());
+            $db_rec = clone $this;
+            $db_rec->reset();
+            $db_rec->set_user($this->user());
             $db_rec->load_by_id($this->grp()->id());
             log_debug("old database value loaded (" . $db_rec->value() . ") with group " . $db_rec->grp()->id() . ".");
-            $std_rec = new value($this->user()); // user must also be set to allow to take the ownership
+            $std_rec = clone $this;
+            $std_rec->reset();
+            $std_rec->set_user($this->user()); // user must also be set to allow to take the ownership
             $std_rec->set_grp($this->grp());
             $std_rec->load_standard();
             log_debug("standard value settings loaded (" . $std_rec->value() . ")");
@@ -2271,10 +2280,15 @@ class value_base extends sandbox_value
 
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
-            // TODO add db write via function
             if ($usr_msg->is_ok()) {
                 // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                if ($use_func) {
+                    $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
+                } else {
+                    $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                }
+            } else {
+                log_warning('value ' . $this->dsp_id() . ' not saved');
             }
 
         }
@@ -2326,19 +2340,22 @@ class value_base extends sandbox_value
         $lst = parent::db_fields_changed($sbx, $sc_par_lst);
 
         // in the user table the source is part of the index to allow several sources for the same value
-        if ($sbx->source_id() <> $this->source_id() or $sc_par_lst->is_usr_tbl()) {
-            if ($sc_par_lst->incl_log()) {
+        // but only if any other field has been updated, update the last_update field also
+        if (!$lst->is_empty_except_internal_fields()) {
+            if ($sbx->source_id() <> $this->source_id() or $sc_par_lst->is_usr_tbl()) {
+                if ($sc_par_lst->incl_log()) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
+                        $cng_fld_cac->id($table_id . source::FLD_ID),
+                        change::FLD_FIELD_ID_SQL_TYP
+                    );
+                }
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
-                    $cng_fld_cac->id($table_id . source::FLD_ID),
-                    change::FLD_FIELD_ID_SQL_TYP
+                    source::FLD_ID,
+                    $this->source_id(),
+                    sql_field_type::INT
                 );
             }
-            $lst->add_field(
-                source::FLD_ID,
-                $this->source_id(),
-                sql_field_type::INT
-            );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));
     }

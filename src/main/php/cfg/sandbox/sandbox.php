@@ -940,7 +940,7 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * function that must be overwritten by the child object
+     * function that can be overwritten or extended by the child object
      * @return array with all field names of the user sandbox object excluding the prime id field
      */
     protected function all_sandbox_fields(): array
@@ -1778,6 +1778,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * save all updated fields with one sql function
+     * similar to the sandbox_multi save_fields_func function but for only one table
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sandbox $db_obj the database record before saving the changes whereas $this is the record with the changes
@@ -1839,6 +1840,7 @@ class sandbox extends db_object_seq_id_user
                     if ($this->is_excluded()) {
                         $sc_par_lst->add(sql_type::EXCLUDE);
                     }
+                    // for a new user record compare with the norm db_row
                     $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
                     $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
                     $usr_msg->add($db_con->update($qp, 'update user ' . $obj_name));
@@ -1847,7 +1849,7 @@ class sandbox extends db_object_seq_id_user
                 if (!$this->no_diff($norm_obj)) {
                     $sc_par_lst->add(sql_type::INSERT);
                     $sc_par_lst->add(sql_type::NO_ID_RETURN);
-                    // recreate the field list to include the id for the user table
+                    // recreate the field list to include the id for the user table and to create the diff vs the norm db_row
                     $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
                     $qp = $this->sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
                     $usr_msg->add($db_con->insert($qp, 'add user ' . $obj_name, true));
@@ -3621,6 +3623,8 @@ class sandbox extends db_object_seq_id_user
     /**
      * create the sql statement to change or exclude a sandbox object e.g. word to the database
      * either via a prepared SQL statement or via a function that includes the logging
+     * similar to sandbox_multi->sql_write but for objects that are stored in one tables like words
+     *                                     and only to update whereas sql_write is for insert and update switch
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
@@ -3642,6 +3646,7 @@ class sandbox extends db_object_seq_id_user
         // create the main query parameter object and set the query name
         $qp = $this->sql_common($sc, $sc_par_lst, $ext);
 
+        // actually create the sql statement
         if ($sc_par_lst->incl_log()) {
             // log functions must always use named parameters
             $sc_par_lst->add(sql_type::NAMED_PAR);
@@ -3652,7 +3657,8 @@ class sandbox extends db_object_seq_id_user
                 $qp->sql = $sc->create_sql_update(
                     [$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fvt_lst);
             } else {
-                $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
+                $qp->sql = $sc->create_sql_update(
+                    $this->id_field(), $this->id(), $fvt_lst);
             }
             $qp->par = $sc->par_values();
         }
@@ -3661,9 +3667,12 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
+     * create the sql statement to update a named sandbox object like a word or formula in the database
+     * similar to sandbox_multi->sql_update_switch but for objects that are stored in one tables like words
+     *
      * @param sql_creator $sc the sql creator object with the db type set
      * @param sql_par $qp the query parameter with the name already set
-     * @param sql_par_field_list $fvt_lst
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
      * @param array $fld_lst_all
      * @param sql_type_list $sc_par_lst
      * @return sql_par

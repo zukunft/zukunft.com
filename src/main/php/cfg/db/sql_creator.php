@@ -41,8 +41,9 @@ include_once MODEL_DB_PATH . 'sql_where_list.php';
 include_once MODEL_DB_PATH . 'sql_pg.php';
 include_once MODEL_DB_PATH . 'sql.php';
 //include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_ELEMENT_PATH . 'element.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once MODEL_LOG_PATH . 'change_value.php';
 include_once MODEL_FORMULA_PATH . 'formula_link.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
@@ -52,6 +53,7 @@ include_once MODEL_SYSTEM_PATH . 'job.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
+include_once MODEL_LOG_PATH . 'change_log.php';
 include_once MODEL_LOG_PATH . 'change_values_big.php';
 include_once MODEL_LOG_PATH . 'change_values_norm.php';
 include_once MODEL_LOG_PATH . 'change_values_prime.php';
@@ -73,6 +75,7 @@ include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log.php';
 include_once MODEL_WORD_PATH . 'triple.php';
@@ -95,6 +98,8 @@ use cfg\element\element;
 use cfg\formula\formula_link;
 use cfg\group\group;
 use cfg\group\group_id;
+use cfg\log\change_log;
+use cfg\log\change_value;
 use cfg\log\change_values_geo_big;
 use cfg\log\change_values_geo_norm;
 use cfg\log\change_values_geo_prime;
@@ -104,7 +109,7 @@ use cfg\log\change_values_text_prime;
 use cfg\log\change_values_time_big;
 use cfg\log\change_values_time_norm;
 use cfg\log\change_values_time_prime;
-use cfg\sandbox\sandbox_value;
+use cfg\sandbox\sandbox_multi;
 use cfg\system\ip_range;
 use cfg\system\ip_range_list;
 use cfg\system\job;
@@ -603,6 +608,11 @@ class sql_creator
         $this->query_name = substr($query_name, 0, sql_db::SQL_QUERY_NAME_MAX_LEN);
     }
 
+    function name(): string
+    {
+        return $this->query_name;
+    }
+
     /**
      * set the user id of the user who has requested the database access
      * by default the user also should see his/her/its data
@@ -726,8 +736,8 @@ class sql_creator
      * @param string $usr_par the name of the user id parameter e.g. $1 for some postgres queries for correct merge in union queries
      */
     function set_usr_fields(
-        array $usr_field_lst,
-        bool  $std_fld = true,
+        array  $usr_field_lst,
+        bool   $std_fld = true,
         string $usr_par = ''
     ): void
     {
@@ -1265,12 +1275,12 @@ class sql_creator
                     if ($par_name == change::FLD_OLD_ID) {
                         $par_name = $chg_add_fld . change::FLD_OLD_EXT;
                     }
-                    if ($par_name == change::FLD_ROW_ID
+                    if ($par_name == change_log::FLD_ROW_ID
                         and $val_tbl != ''
                         and !$sc_par_lst->use_select_for_insert()) {
                         $par_name = $val_tbl . '.' . $chg_row_fld;
                     } else {
-                        if ($par_name == change::FLD_ROW_ID
+                        if ($par_name == change_log::FLD_ROW_ID
                             and ($usr_tbl or $insert_part or $update_part or $delete_part)) {
                             if ($this->db_type == sql_db::MYSQL
                                 and !$usr_tbl
@@ -1682,11 +1692,14 @@ class sql_creator
 
     /**
      * create the sql function part to log the insert changes
+     * TODO combine with sql_func_log_update function or move common parts to private functions
+     *
      * @param string $class the class name of the calling object
      * @param user $usr the user who has requested the change
      * @param array $fld_lst list of field names that should be logged (excluding internal field like last_update)
      * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change (including internal fields)
-     * @param sql_type_list $sc_par_lst
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
+     * @param value_base|null $val the value object e.g. the select the correct log table
      * @return sql_par with the sql and the list of parameters actually used
      */
     function sql_func_log(
@@ -1694,7 +1707,8 @@ class sql_creator
         user               $usr,
         array              $fld_lst,
         sql_par_field_list $fvt_lst,
-        sql_type_list      $sc_par_lst
+        sql_type_list      $sc_par_lst,
+        value_base|null    $val = null
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1702,7 +1716,9 @@ class sql_creator
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $ext = sql::NAME_SEP . self::FILE_INSERT;
         if ($this->is_value_class($class)) {
-            $id_fld_new = sql::NAME_SEP . $this->id_field_name();
+            // to log changes of values or results always the group id is used instead e.g. the four id phrase fields
+            $id_fld = group::FLD_ID;
+            $id_fld_new = sql::NAME_SEP . $id_fld;
         } else {
             $id_fld_new = $this->var_name_new_id($sc_par_lst);
         }
@@ -1743,10 +1759,12 @@ class sql_creator
             if (!str_ends_with($qp->sql, ';')) {
                 $qp->sql .= '; ';
             }
+            // add the user id to the field list
             $par_lst_out->add_field(
                 user::FLD_ID,
                 $fvt_lst->get_value(user::FLD_ID),
                 sql_par_type::INT);
+            // add the action id to the field list
             $par_lst_out->add_field(
                 change_action::FLD_ID,
                 $fvt_lst->get_value(change_action::FLD_ID),
@@ -1821,12 +1839,15 @@ class sql_creator
 
     /**
      * create the sql function part to log the update changes
+     * TODO combine with sql_func_log function or move common parts to private functions
+     *
      * @param string $class the class name of the calling object
      * @param user $usr the user who has requested the change
      * @param array $fld_lst list of field names that should be logged (excluding internal field like last_update)
      * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change (including internal fields)
-     * @param sql_type_list $sc_par_lst
-     * @param int $id the id of the
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param int|string $id the id of the db row that should be updated
+     * @param value_base|null $val the value object e.g. the select the correct log table
      * @return sql_par with the sql and the list of parameters actually used
      */
     function sql_func_log_update(
@@ -1835,7 +1856,8 @@ class sql_creator
         array              $fld_lst,
         sql_par_field_list $fvt_lst,
         sql_type_list      $sc_par_lst,
-        int                $id
+        int|string         $id,
+        value_base|null    $val = null
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1844,7 +1866,7 @@ class sql_creator
         $ext = sql::NAME_SEP . self::FILE_INSERT;
 
         // init the result
-        $qp = new sql_par($class);
+        $qp = new sql_par($class, $sc_par_lst);
         $par_lst_out = new sql_par_field_list();
         $qp->sql = ' ';
 
@@ -1860,7 +1882,11 @@ class sql_creator
         foreach ($fld_lst as $fld) {
 
             // create the insert log statement for the field of the loop
-            $log = new change($usr);
+            if ($val != null) {
+                $log = $this->log_value_object($val, $usr, $sc_par_lst);
+            } else {
+                $log = new change($usr);
+            }
             $log->set_class($class);
             $log->set_field($fld);
             $log->old_value = $fvt_lst->get_old($fld);
@@ -1949,10 +1975,12 @@ class sql_creator
             if ($log_id == null) {
                 $log_id = $id;
             }
+
+            $id_type = $fvt_lst->get_type($id_fld);
             $par_lst_out->add_field(
                 $id_fld,
                 $log_id,
-                db_object_seq_id::FLD_ID_SQL_TYP);
+                $id_type);
 
         }
 
@@ -1968,7 +1996,7 @@ class sql_creator
      * @param sandbox|sandbox_link|sandbox_link_named $dbo the sandbox object as in db without user updates
      * @param user $usr
      * @param sql_par_field_list $fvt_lst
-     * @param sql_type_list $sc_par_lst
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return sql_par
      */
     function sql_func_log_link(
@@ -2052,7 +2080,7 @@ class sql_creator
      * @param sandbox|sandbox_link|sandbox_link_named $sbx the name of the calling class use for the query names
      * @param user $usr
      * @param sql_par_field_list $fvt_lst
-     * @param sql_type_list $sc_par_lst
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return sql_par
      */
     function sql_func_log_user_link(
@@ -2121,23 +2149,26 @@ class sql_creator
     }
 
     /**
-     * create the sql function part to log adding a link
-     * @param sandbox_value $sbx the name of the calling class use for the query names
+     * create the sql function part to log adding or updating only a value in the database
+     * the value parameters are logged with the sql_func_log and sql_func_log_update function
+     *
+     * @param sandbox_multi $sbx the name of the calling class use for the query names
      * @param user $usr the user who has requested the change
      * @param sql_par_field_list $fvt_lst list of fields, values and types to fill the log entry
      * @param sql_type_list $sc_par_lst sql parameters e.g. if the prime table should be used
      * @return sql_par the sql statement with the parameter to add the log entry
      */
     function sql_func_log_value(
-        sandbox_value      $sbx,
+        sandbox_multi      $sbx,
         user               $usr,
         sql_par_field_list $fvt_lst,
         sql_type_list      $sc_par_lst
     ): sql_par
     {
-        // get the change table id
         global $cng_tbl_cac;
         global $cng_fld_cac;
+
+        // get the change table id
         $lib = new library();
         $table_name = $lib->class_to_table($sbx::class);
         $table_id = $cng_tbl_cac->id($table_name);
@@ -2145,43 +2176,7 @@ class sql_creator
         // select which log to use and set the parameters
         $num_fld = $sbx::FLD_VALUE;
         $num_fld_typ = $sbx->sql_field_type();
-        if ($sc_par_lst->is_prime()) {
-            if ($sbx->is_numeric()) {
-                $log = new change_values_prime($usr);
-            } elseif ($sbx->is_time_value()) {
-                $log = new change_values_time_prime($usr);
-            } elseif ($sbx->is_text_value()) {
-                $log = new change_values_text_prime($usr);
-            } elseif ($sbx->is_geo_value()) {
-                $log = new change_values_geo_prime($usr);
-            } else {
-                $log = new change_values_prime($usr);
-            }
-        } elseif ($sc_par_lst->is_big()) {
-            if ($sbx->is_numeric()) {
-                $log = new change_values_big($usr);
-            } elseif ($sbx->is_time_value()) {
-                $log = new change_values_time_big($usr);
-            } elseif ($sbx->is_text_value()) {
-                $log = new change_values_text_big($usr);
-            } elseif ($sbx->is_geo_value()) {
-                $log = new change_values_geo_big($usr);
-            } else {
-                $log = new change_values_big($usr);
-            }
-        } else {
-            if ($sbx->is_numeric()) {
-                $log = new change_values_norm($usr);
-            } elseif ($sbx->is_time_value()) {
-                $log = new change_values_time_norm($usr);
-            } elseif ($sbx->is_text_value()) {
-                $log = new change_values_text_norm($usr);
-            } elseif ($sbx->is_geo_value()) {
-                $log = new change_values_geo_norm($usr);
-            } else {
-                $log = new change_values_norm($usr);
-            }
-        }
+        $log = $this->log_value_object($sbx, $usr, $sc_par_lst);
         $log->set_class($sbx::class);
         $log->set_field($num_fld);
 
@@ -2250,6 +2245,63 @@ class sql_creator
         $qp->par_fld_lst = $par_lst_out;
 
         return $qp;
+    }
+
+    /**
+     * gat the log object for a value because e.g. the group_id db key field type differs
+     * for changing parameters of a prime value the log table with the bigint group_id can be used
+     * but for changing parameters of a value with a 512-bit key the log table with the 512-bit key group_id must be used
+     *
+     * @param sandbox_multi $sbx
+     * @param user $usr
+     * @param sql_type_list $sc_par_lst
+     * @return change_value
+     */
+    private function log_value_object(
+        sandbox_multi $sbx,
+        user          $usr,
+        sql_type_list $sc_par_lst
+    ): change_value
+    {
+        if ($sc_par_lst->is_prime()) {
+            if ($sbx->is_numeric()) {
+                $log = new change_values_prime($usr);
+            } elseif ($sbx->is_time_value()) {
+                $log = new change_values_time_prime($usr);
+            } elseif ($sbx->is_text_value()) {
+                $log = new change_values_text_prime($usr);
+            } elseif ($sbx->is_geo_value()) {
+                $log = new change_values_geo_prime($usr);
+            } else {
+                $log = new change_values_prime($usr);
+            }
+        } elseif ($sc_par_lst->is_big()) {
+            if ($sbx->is_numeric()) {
+                $log = new change_values_big($usr);
+            } elseif ($sbx->is_time_value()) {
+                $log = new change_values_time_big($usr);
+            } elseif ($sbx->is_text_value()) {
+                $log = new change_values_text_big($usr);
+            } elseif ($sbx->is_geo_value()) {
+                $log = new change_values_geo_big($usr);
+            } else {
+                $log = new change_values_big($usr);
+            }
+        } else {
+            if ($sbx->is_numeric()) {
+                $log = new change_values_norm($usr);
+            } elseif ($sbx->is_time_value()) {
+                $log = new change_values_time_norm($usr);
+            } elseif ($sbx->is_text_value()) {
+                $log = new change_values_text_norm($usr);
+            } elseif ($sbx->is_geo_value()) {
+                $log = new change_values_geo_norm($usr);
+            } else {
+                $log = new change_values_norm($usr);
+            }
+        }
+
+        return $log;
     }
 
     /**
@@ -4993,6 +5045,10 @@ class sql_creator
         if ($name == 'change_values_geo_big_geo_big') {
             $name = 'change_values_geo_big';
         }
+        // no extra table for prime value changes is used at the moment
+        if ($name == 'changes_prime') {
+            $name = 'changes';
+        }
         return $name;
     }
 
@@ -5603,7 +5659,6 @@ class sql_creator
     {
         return $this->id_field;
     }
-
 
 
     /*

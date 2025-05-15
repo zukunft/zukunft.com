@@ -184,6 +184,8 @@ class config_numbers extends value_list
         if ($num == 0 or $num == null) {
             if ($fallback != null) {
                 $num = $fallback;
+                log_warning('use fallback configuration value for '
+                    . implode(', ', $names) . ': ' . $fallback);
             }
         }
         return $num;

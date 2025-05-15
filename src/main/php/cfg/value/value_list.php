@@ -896,11 +896,11 @@ class value_list extends sandbox_value_list
             }
 
             if ($key == json_fields::SHARE) {
-                $val->share_id = $shr_typ_cac->id($value);
+                $val->set_share_id($shr_typ_cac->id($value));
             }
 
             if ($key == json_fields::PROTECTION) {
-                $val->protection_id = $ptc_typ_cac->id($value);
+                $val->set_protection_id($ptc_typ_cac->id($value));
             }
 
             if ($key == json_fields::SOURCE_NAME) {
@@ -1018,12 +1018,12 @@ class value_list extends sandbox_value_list
             }
 
             // add the share type
-            if ($val0->share_id > 0 and $val0->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
+            if ($val0->share_id() > 0 and $val0->share_id() <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
                 $vars[json_fields::SHARE] = $val0->share_type_code_id();
             }
 
             // add the protection type
-            if ($val0->protection_id > 0 and $val0->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+            if ($val0->protection_id() > 0 and $val0->protection_id() <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
                 $vars[json_fields::PROTECTION] = $val0->protection_type_code_id();
             }
 

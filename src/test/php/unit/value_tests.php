@@ -87,13 +87,13 @@ class value_tests
         $val = (new value_obj())->get($usr, values::GEO);
         $t->assert($test_name, $val::class, value_geo::class);
 
-        $t->subheader($ts . 'value sql setup');
+        $t->subheader($ts . 'sql setup');
         $val = $t->value(); // one value object creates all tables (e.g. prime, big, time, text and geo)
         $t->assert_sql_table_create($val);
         $t->assert_sql_index_create($val);
         $t->assert_sql_foreign_key_create($val);
 
-        $t->subheader($ts . 'value sql read');
+        $t->subheader($ts . 'sql read');
         $val = $t->value();
         $val_16 = $t->value_16();
         $val_txt = $t->text_value();
@@ -103,16 +103,18 @@ class value_tests
         $this->assert_sql_by_grp($t, $db_con, $val_txt, $t->group_pod_url());
         $t->assert_sql_by_id($sc, $val_16);
 
-        $t->subheader($ts . 'value sql read default and user changes');
+        $t->subheader($ts . 'sql read default and user changes');
         $val = $t->value();
         $val_3 = $t->value_prime_3();
         $val_16 = $t->value_16();
         $val_17 = $t->value_17_plus();
         $val_txt = $t->text_value();
+        $val_txt_4 = $t->text_value();
         $t->assert_sql_not_changed($sc, $val_3);
         $t->assert_sql_not_changed($sc, $val_17);
         $t->assert_sql_user_changes($sc, $val_3);
         $t->assert_sql_user_changes($sc, $val_17);
+        $t->assert_sql_user_changes($sc, $val_txt_4);
         $t->assert_sql_changer($sc, $val_3);
         $t->assert_sql_changer($sc, $val_17);
         $t->assert_sql_median_user($sc, $val_3);
@@ -123,14 +125,17 @@ class value_tests
         $t->assert_sql_standard($sc, $val_txt);
 
         // TODO activate db write
-        $t->subheader($ts . 'value sql write');
+        $t->subheader($ts . 'sql write insert');
         $val = $t->value();
         $db_val = $val->cloned(values::SAMPLE_FLOAT);
         $val_upd = $val->updated();
         $val_0 = $t->value_zero();
         $val_3 = $t->value_prime_3();
         $db_val_3 = $val_3->cloned(values::SAMPLE_FLOAT);
+        $db_val_3_share = $t->value_shared($val_3);
         $val_4 = $t->value_prime_max();
+        $val_main = $t->value_main();
+        $db_val_main_share = $t->value_shared($val_3);
         $val_16 = $t->value_16();
         $db_val_16 = $val_16->cloned(values::SAMPLE_FLOAT);
         $val_fill = $t->value_16_filled();
@@ -158,22 +163,32 @@ class value_tests
         $t->assert_sql_insert($sc, $val_txt);
         $t->assert_sql_insert($sc, $val_txt, [sql_type::USER]);
         $t->assert_sql_insert($sc, $val_txt, [sql_type::LOG, sql_type::USER]);
+
         // TODO for 1 given phrase fill the others with 0 because usually only one value is expected to be changed
         // TODO for update fill the missing phrase id with zeros because only one row should be updated
         // TODO add test to change owner of the normal (not user specific) value
         // TODO add tests for time, text and geo values
+        $t->subheader($ts . 'sql write update');
         $t->assert_sql_update($sc, $val, $db_val);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::USER]);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::LOG]);
         $t->assert_sql_update($sc, $val, $db_val, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_update($sc, $val_3, $db_val_3);
         $t->assert_sql_update($sc, $val_3, $db_val_3, [sql_type::USER]);
+        $t->assert_sql_update($sc, $val_3, $db_val_3_share, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $val_main, $db_val_main_share, [sql_type::LOG]);
         $t->assert_sql_update($sc, $val_16, $db_val_16);
+        $t->assert_sql_update($sc, $val_16, $db_val_16, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $val_16, $db_val_16, [sql_type::LOG, sql_type::USER]);
+        $t->assert_sql_update($sc, $val_16, $val_fill, [sql_type::LOG]);
+        $t->assert_sql_update($sc, $val_16, $val_fill, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_update($sc, $val_17, $db_val_17);
         $t->assert_sql_update($sc, $val_txt, $db_val_txt);
         $t->assert_sql_update($sc, $val_txt, $db_val_txt, [sql_type::LOG]);
-        // update only the last_update date to trigger recalc
+        // update only the last_update date to trigger calculation
         $this->assert_sql_update_trigger($t, $db_con, $val_upd, $val);
+
+        $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $val);
         $t->assert_sql_delete($sc, $val, [sql_type::USER]);
         $t->assert_sql_delete($sc, $val, [sql_type::LOG]);
@@ -303,7 +318,7 @@ class value_tests
     function assert_sql_update_trigger(test_cleanup $t, sql_db $db_con, value $val, value $db_val): bool
     {
         $sc = $db_con->sql_creator();
-        $fields = array(sandbox_value::FLD_LAST_UPDATE);
+        $fields = array(sandbox_multi::FLD_LAST_UPDATE);
         $values = array(sql::NOW);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);

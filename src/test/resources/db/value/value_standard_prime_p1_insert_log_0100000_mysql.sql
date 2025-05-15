@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS value_standard_prime_p1_insert_log_010;
-CREATE PROCEDURE value_standard_prime_p1_insert_log_010
+DROP PROCEDURE IF EXISTS value_standard_prime_p1_insert_log_0100000;
+CREATE PROCEDURE value_standard_prime_p1_insert_log_0100000
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_numeric_value  smallint,
@@ -20,12 +20,12 @@ BEGIN
 
 END;
 
-PREPARE value_standard_prime_p1_insert_log_010_call FROM
+PREPARE value_standard_prime_p1_insert_log_0100000_call FROM
 
-    'SELECT value_standard_prime_p1_insert_log_010
+    'SELECT value_standard_prime_p1_insert_log_0100000
        (?,?, ?, ?, ?, ?, ?, ?, ?)';
 
-SELECT value_standard_prime_p1_insert_log_010
+SELECT value_standard_prime_p1_insert_log_0100000
        (1,
         1,
         1,

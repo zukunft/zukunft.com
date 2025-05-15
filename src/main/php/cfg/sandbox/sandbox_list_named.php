@@ -55,6 +55,8 @@ include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
+include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
@@ -80,9 +82,9 @@ use cfg\word\triple_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\triple;
-use cfg\word\word;
 use cfg\word\word_list;
-use shared\enum\messages;
+use shared\const\triples;
+use shared\const\words;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
@@ -602,9 +604,13 @@ class sandbox_list_named extends sandbox_list
     ): user_message
     {
         global $db_con;
+        global $cfg;
 
         $sc = $db_con->sql_creator();
         $usr_msg = new user_message();
+
+        // get the configuration values
+        $save_per_sec = $cfg->get_by([words::WORDS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         // get the db id from the loaded objects
         $usr_msg->add($this->fill_by_name($db_lst));
@@ -638,15 +644,17 @@ class sandbox_list_named extends sandbox_list
         $imp->step_end($func_to_create->count());
 
         // add the remaining missing words or triples
-        $imp->step_start(msg_id::ADD, $class, $add_lst->count());
+        $step_time = $this->count() / $save_per_sec;
+        $imp->step_start(msg_id::ADD, $class, $add_lst->count(), $step_time);
         $add_lst = $add_lst->filter_by_name($func_create_obj_names);
         $ins_calls = $add_lst->sql_insert_call_with_par($sc, $use_func);
         $usr_msg->add($ins_calls->exe($class));
-        $imp->step_end($add_lst->count());
 
         // TODO create a loop to add depending triples
         // add the just added words or triples id to this list
         $this->add_id_by_name($usr_msg->db_row_id_lst());
+
+        $imp->step_end($add_lst->count(), $save_per_sec);
 
         return $usr_msg;
     }

@@ -528,7 +528,6 @@ class data_object
 
         // get the relevant config values
         $time_object = $cfg->get_by([triples::OBJECT_CREATION, words::PERCENT, triples::EXPECTED_TIME, words::IMPORT]);
-        $wrd_per_sec = $cfg->get_by([words::WORDS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $trp_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $src_per_sec = $cfg->get_by([words::SOURCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $ref_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -541,17 +540,11 @@ class data_object
         // save the data lists in order of the dependencies
 
         // import first the words
-        $wrd_lst = $this->word_list();
-        if (!$wrd_lst->is_empty()) {
-            $wrd_est = $wrd_lst->count() / $wrd_per_sec;
-            $imp->step_start(msg_id::SAVE, word::class, $wrd_lst->count(), $wrd_est);
-            $usr_msg->add($wrd_lst->save($imp));
-            $imp->step_end($wrd_lst->count(), $wrd_per_sec);
-        }
+        $usr_msg->add($this->save_words($imp));
 
         // clone the list as cache to filter the phrases already fine
         // without removing the fine words or triples from the original lists
-        $phr_lst = clone $wrd_lst->phrase_list();
+        $phr_lst = clone $this->word_list()->phrase_list();
 
         // import the triples
         $trp_lst = $this->triple_list();
@@ -802,6 +795,28 @@ class data_object
             log_debug('views not imported because ' . $usr_msg->all_message_text());
         }
 
+        return $usr_msg;
+    }
+
+    /**
+     * add or update all words to the database
+     * @param import $imp the import object that includes the start time of the import
+     * @return user_message ok or the error message for the user with the suggested solution
+     */
+    private function save_words(import $imp): user_message
+    {
+        global $cfg;
+        $usr_msg = new user_message();
+
+        $wrd_per_sec = $cfg->get_by([words::WORDS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+
+        $wrd_lst = $this->word_list();
+        if (!$wrd_lst->is_empty()) {
+            $wrd_est = $wrd_lst->count() / $wrd_per_sec;
+            $imp->step_start(msg_id::SAVE, word::class, $wrd_lst->count(), $wrd_est);
+            $usr_msg->add($wrd_lst->save($imp));
+            $imp->step_end($wrd_lst->count(), $wrd_per_sec);
+        }
         return $usr_msg;
     }
 

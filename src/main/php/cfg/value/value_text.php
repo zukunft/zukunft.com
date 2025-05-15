@@ -105,6 +105,14 @@ class value_text extends value_base
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
+    // all database field names excluding the id used to identify if there are some user specific changes
+    const ALL_SANDBOX_FLD_NAMES = array(
+        self::FLD_VALUE,
+        source::FLD_ID,
+        self::FLD_LAST_UPDATE,
+        sandbox::FLD_EXCLUDED,
+        sandbox::FLD_PROTECT
+    );
 
 
     /*

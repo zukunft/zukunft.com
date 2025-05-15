@@ -2318,6 +2318,12 @@ class create_test_objects extends test_base
         return new value_text($this->usr1, values::TEXT, $grp);
     }
 
+    function text_value_prime(): value_text
+    {
+        $grp = $this->group_prime_max();
+        return new value_text($this->usr1, values::TEXT, $grp);
+    }
+
     function geo_value(): value_geo
     {
         $grp = $this->group_pod_point();
@@ -2348,6 +2354,26 @@ class create_test_objects extends test_base
     function value_prime_max(): value
     {
         $grp = $this->group_prime_max();
+        return new value($this->usr1, round(values::PI_LONG, 13), $grp);
+    }
+
+    /**
+     * @return value with the share type set
+     */
+    function value_shared(value $val): value
+    {
+        global $shr_typ_cac;
+        $val_upd = clone $val;
+        $val_upd->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
+        return $val_upd;
+    }
+
+    /**
+     * @return value with the maximal number of prime phrase
+     */
+    function value_main(): value
+    {
+        $grp = $this->group_main_max();
         return new value($this->usr1, round(values::PI_LONG, 13), $grp);
     }
 

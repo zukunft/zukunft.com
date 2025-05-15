@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION value_standard_prime_p1_insert_log_010
+CREATE OR REPLACE FUNCTION value_standard_prime_p1_insert_log_0100000
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_numeric_value  smallint,
@@ -20,12 +20,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE value_standard_prime_p1_insert_log_010_call
+PREPARE value_standard_prime_p1_insert_log_0100000_call
         (bigint, smallint, smallint, numeric, bigint, smallint, smallint, smallint, smallint) AS
-    SELECT value_standard_prime_p1_insert_log_010
+    SELECT value_standard_prime_p1_insert_log_0100000
         ($1,$2, $3, $4, $5, $6, $7, $8, $9);
 
-SELECT value_standard_prime_p1_insert_log_010
+SELECT value_standard_prime_p1_insert_log_0100000
        (1::bigint,
         1::smallint,
         1::smallint,

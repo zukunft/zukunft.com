@@ -265,7 +265,7 @@ class result extends sandbox_value
         [sandbox_value::FLD_ID_PREFIX . '8', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
     );
     const FLD_ALL_CHANGED = array(
-        [value_base::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
+        [sandbox_multi::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
         [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, 'the id of the formula which has been used to calculate this result'],
     );
     const FLD_ALL_SOURCE = array();
@@ -1466,7 +1466,7 @@ class result extends sandbox_value
             // updates of results are not logged because they could be reproduced
             if ($row_id > 0) {
                 if ($db_con->sf($db_val) <> $db_con->sf($this->number())) {
-                    $msg = 'update result ' . sandbox_value::FLD_VALUE . ' to ' . $this->number()
+                    $msg = 'update result ' . sandbox_multi::FLD_VALUE . ' to ' . $this->number()
                         . ' from ' . $db_val . ' for ' . $this->dsp_id();
                     log_debug($msg);
                     $db_con->set_class(result::class);
@@ -1477,7 +1477,7 @@ class result extends sandbox_value
                         $usr_msg->set_db_row_id($row_id);
                     }
                 } else {
-                    $msg = 'update of result ' . sandbox_value::FLD_VALUE . ' ' . $this->dsp_id() . ' not needed';
+                    $msg = 'update of result ' . sandbox_multi::FLD_VALUE . ' ' . $this->dsp_id() . ' not needed';
                     log_debug($msg);
                     $this->id = $row_id;
                     $usr_msg->set_db_row_id($row_id);
@@ -1488,7 +1488,7 @@ class result extends sandbox_value
                 $field_values = array();
                 $field_names[] = formula::FLD_ID;
                 $field_values[] = $this->frm->id();
-                $field_names[] = sandbox_value::FLD_VALUE;
+                $field_names[] = sandbox_multi::FLD_VALUE;
                 $field_values[] = $this->number();
                 $field_names[] = result::FLD_GRP;
                 $field_values[] = $this->grp()->id();
@@ -1498,7 +1498,7 @@ class result extends sandbox_value
                     $field_names[] = user::FLD_ID;
                     $field_values[] = $this->user()->id();
                 }
-                $field_names[] = sandbox_value::FLD_LAST_UPDATE;
+                $field_names[] = sandbox_multi::FLD_LAST_UPDATE;
                 //$field_values[] = sql::NOW; // replaced with time of last change that has been included in the calculation
                 $field_values[] = $this->last_val_update->format('Y-m-d H:i:s');
                 $db_con->set_class(result::class);

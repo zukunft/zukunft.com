@@ -435,6 +435,15 @@ use html\phrase\phrase_group as phrase_group_dsp;
         this is limited by the pod settings for much phrase tables e.g. 3 for testing
         and by the max db columns e.g. 256
 
+    TODO test the table optimizer based on the system configuration
+        1. the able optimizer should detect that tha triple "system configuration" creates a value group with clear borders
+        2.
+
+    TODO import the system configuration of other pods with the "slave" keyword means
+         that the system configuration is read only in this pod
+         but can be used e.g. to detect if the messages should use the database id (if the phrases are in sync)
+         or if im- and export messages should be used because the database id are not in sync e.g. because teh other pod uses different prime phrases
+
     TODO When saving (or loading) data do these checks
          is table phrase
             -> if yes: is row and col phrase -> get from table

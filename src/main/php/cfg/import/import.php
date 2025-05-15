@@ -275,7 +275,7 @@ class import
                 $part = ' ' . $class . $step;
             } else {
                 $class = $lib->class_to_table($this->class);
-                $part = ' ' . $class . $step . ': ' . $processed;
+                $part = ' ' . $step . ' ' . $processed  . ' ' . $class;
             }
             $times = ' ' . round($total_time, 3) . 's / ' . round($this->time_exp_act, 3) . 's';
             $final_time = ' ' . round($total_time, 3) . 's ' . $this->time_exp_act;
@@ -315,8 +315,23 @@ class import
      */
     function put_yaml(string $yaml_str, user $usr_trigger): user_message
     {
+        global $cfg;
+
+        // get the relevant config values
+        $decode_per_sec = $cfg->get_by([words::DECODE, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $store_per_sec = $cfg->get_by([triples::OBJECT_STORING, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+
         $usr_msg = new user_message();
+
+
+        // parse the yaml
+        $size = strlen($yaml_str);
+        $this->step_main_start(msg_id::READ, $this->est_time_decode);
+        $this->step_start(msg_id::DECODED, words::BYTE);
         $yaml_array = yaml_parse($yaml_str);
+        $this->step_end($size, $decode_per_sec);
+        $this->step_main_end();
+
         if ($yaml_array == null) {
             if ($yaml_str != '') {
                 $usr_msg->add_message('YAML decode failed of ' . $yaml_str);
@@ -324,9 +339,17 @@ class import
                 $usr_msg->add_warning('YAML string is empty');
             }
         } else {
+
+            // analyse the import file
+            $this->step_main_start(msg_id::COUNT, $this->est_time_create);
             $dto = $this->get_data_object_yaml($yaml_array, $usr_trigger);
+            $this->step_main_end();
+
+            // write to the database
+            $this->step_main_start(msg_id::SAVE, $this->est_time_store);
             $usr_msg = $dto->save($this);
             $usr_msg->set_checksum($dto->value_list()->count());
+            $this->step_main_end();
         }
         return $usr_msg;
     }
@@ -371,7 +394,6 @@ class import
             $usr_msg->add_id_with_vars(msg_id::JSON_DECODE,
                 [msg_id::VAR_JSON_TEXT => $json_str]);
         } else {
-
 
             // analyse the import file
             $this->step_main_start(msg_id::COUNT, $this->est_time_create);
@@ -903,7 +925,6 @@ class import
                 $this->step = msg_id::LOADED;
                 $used_est_per_sec = $est_per_sec * 1000000;
             } else {
-                $this->step = msg_id::TOTAL;
                 $used_est_per_sec = $est_per_sec;
             }
             if ($used_est_per_sec != 0) {

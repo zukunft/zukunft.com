@@ -918,7 +918,7 @@ class change_log extends db_object_seq_id_user
     /**
      * dummy function overwritten by the child object
      * @param sql_creator $sc
-     * @param sql_type_list $sc_par_lst
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @param sandbox_link|null $sbx
      * @return sql_par
      */

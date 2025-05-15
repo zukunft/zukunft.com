@@ -1634,7 +1634,7 @@ class word_list extends sandbox_list_named
         $usr_msg = new user_message();
 
         $load_per_sec = $cfg->get_by([words::WORDS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $save_per_sec = $cfg->get_by([words::WORDS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $upd_per_sec = $cfg->get_by([words::WORDS, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         if ($this->is_empty()) {
             $usr_msg->add_info('no words to save');
@@ -1647,16 +1647,12 @@ class word_list extends sandbox_list_named
             $imp->step_end($db_lst->count(), $load_per_sec);
 
             // create any missing sql functions and insert the missing words
-            $step_time = $this->count() / $save_per_sec;
-            $imp->step_start(msg_id::SAVE, word::class, $db_lst->count(), $step_time);
             $usr_msg->add($this->insert($db_lst, true, $imp, word::class));
-            $imp->step_end($db_lst->count(), $save_per_sec);
 
-            // update the existing words
+            // create any missing sql update functions and update the words
             // TODO create a test that fields not included in the import message are not updated, but e.g. an empty descrption is updated
-            // loop over the words and check if all needed functions exist
-            // create the missing functions
-            // create blocks of update function calls
+            // TODO create blocks of update function calls
+            $usr_msg->add($this->update($db_lst, true, $imp, word::class, $upd_per_sec));
         }
 
         return $usr_msg;

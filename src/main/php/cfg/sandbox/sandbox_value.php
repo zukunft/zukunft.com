@@ -151,9 +151,6 @@ class sandbox_value extends sandbox_multi
     // the database field names used for all value tables e.g. also for results
     const FLD_ID_PREFIX = 'phrase_id_';
 
-    // database fields used for user values and results
-    const FLD_VALUE = 'numeric_value';
-    const FLD_LAST_UPDATE = 'last_update';
 
     // field lists for the table creation
     // the group is not a foreign key, because if the name is not changed by the user an entry in the group table is not needed
@@ -1072,17 +1069,6 @@ class sandbox_value extends sandbox_multi
     }
 
     /*
-     * sql helper
-     */
-
-    public function sql_field_type(): sql_field_type
-    {
-        log_err('overwrite for sql_field_type() missing for ' . $this->dsp_id());
-        return sql_field_type::NUMERIC_FLOAT;
-    }
-
-
-    /*
      * information
      */
 
@@ -1109,6 +1095,7 @@ class sandbox_value extends sandbox_multi
         $lst = new sql_par_field_list();
         if ($this->is_prime()) {
             if ($this::class == result::class) {
+                // results are always depending on a formula
                 $lst->add_field(
                     formula::FLD_ID,
                     $this->formula_id(),
@@ -1527,9 +1514,13 @@ class sandbox_value extends sandbox_multi
         string        $id_ext = ''
     ): sql_par
     {
+        $qp = new sql_par($this::class, $sc_par_lst, $ext, $id_ext);
+
         // the value table name is not yet using the number of phrase keys as extension
         $sc->set_class($this::class, $sc_par_lst);
-        return new sql_par($this::class, $sc_par_lst, $ext, $id_ext);
+        $sc->set_name($qp->name);
+
+        return $qp;
     }
 
     /**
@@ -1662,7 +1653,9 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst_used->add(sql_type::INSERT);
         // create an empty sandbox object but of the same type and with the same user to detect the fields that should be written
         $db_row = $this->cloned(null);
-        return $this->sql_write($sc, $db_row, $sc_par_lst_used);
+        // get a list of all fields that could potentially be updated
+        $all_fields = $this->db_fields_all();
+        return $this->sql_write($sc, $db_row, $all_fields, $sc_par_lst_used);
     }
 
     /**
@@ -1684,213 +1677,9 @@ class sandbox_value extends sandbox_multi
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
         $sc_par_lst_used->add(sql_type::UPDATE);
-        return $this->sql_write($sc, $db_row, $sc_par_lst_used);
-    }
-
-    /**
-     * create a sql statement to insert or update a sandbox object in the database
-     * TODO move the code to an object used by sandbox and sandbox_value
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sandbox_value|null $db_row the sandbox object with the database values before the update
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_write(
-        sql_creator        $sc,
-        sandbox_value|null $db_row,
-        sql_type_list      $sc_par_lst = new sql_type_list()
-    ): sql_par
-    {
-        // set the target sql table type for this value
-        $sc_par_lst->add($this->table_type());
-        // set the target sql table type for numeric, text or geo values
-        $sc_par_lst->add($this->value_type());
-        // get the name indicator how many id fields are user
-        $id_ext = $this->table_extension();
-        // get the prime db key list for this sandbox object
-        $fvt_lst_id = $this->id_fvt_lst($sc_par_lst);
-        // clone to keep the db key list unchanged
-        $fvt_lst = clone $fvt_lst_id;
-        // add the list of the changed fields to the id list
-        $fvt_lst->add_list($this->db_fields_changed($db_row, $sc_par_lst));
-        // get the list of all fields that can be changed by the user
-        $fld_lst_all = $this->db_fields_all($sc_par_lst);
-        $fld_lst_ex_id = array_diff($fld_lst_all, $fvt_lst_id->names());
-        // select the changes that should be written e.g. exclude th id in case of an update
-        if ($sc_par_lst->is_update()) {
-            $fvt_lst = $fvt_lst->get_intersect($fld_lst_ex_id);
-        }
-        // make the query name unique based on the changed fields
-        $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_ex_id);
-        // create the main query parameter object and set the query name
-        $qp = $this->sql_common($sc, $sc_par_lst, $ext, $id_ext);
-        // overwrite the standard auto increase id field name
-        $sc->set_id_field($this->id_field($sc_par_lst));
-        // use the query name for the sql creation
-        $sc->set_name($qp->name);
-        // actually create the sql statement
-        if ($sc_par_lst->incl_log()) {
-            // log functions must always use named parameters
-            $sc_par_lst->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_write_with_log($sc, $qp, $fvt_lst_id, $fvt_lst, $fld_lst_all, $sc_par_lst);
-        } else {
-            if ($sc_par_lst->is_insert()) {
-                $qp->sql = $sc->create_sql_insert($fvt_lst);
-                // set the parameters for the query execution
-                $qp->par = $fvt_lst->db_values();
-            } else {
-                $qp->sql = $sc->create_sql_update_fvt($fvt_lst_id, $fvt_lst, $sc_par_lst);
-                // and remember the parameters used
-                $qp->par = $sc->par_values();
-            }
-        }
-        return $qp;
-    }
-
-    /**
-     * create the sql statement to add a new value and log the changes
-     *
-     * @param sql_creator $sc sql creator with the target db_type already set
-     * @param sql_par_field_list $fvt_lst_id list of id field names, values and sql types additional to the standard id fields
-     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id fields
-     * @param array $fld_lst_all list of all potential field names of the given object that can be changed by the user
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
-     */
-    function sql_write_with_log(
-        sql_creator        $sc,
-        sql_par            $qp,
-        sql_par_field_list $fvt_lst_id,
-        sql_par_field_list $fvt_lst,
-        array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list()
-    ): sql_par
-    {
-        // init the function body
-        $sql = $sc->sql_func_start('', $sc_par_lst);
-
-        // don't use the log parameter for the sub queries
-        $sc_par_lst->add(sql_type::NO_ID_RETURN);
-        $sc_par_lst_sub = $sc_par_lst->remove(sql_type::LOG);
-        $sc_par_lst_sub->add(sql_type::SUB);
-        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
-        $sc_par_lst_log = $sc_par_lst_sub->remove(sql_type::STANDARD);
-
-        // add the change action field to the field list for the log entries
-        global $cng_act_cac;
-        $fvt_lst->add_field(
-            change_action::FLD_ID,
-            $cng_act_cac->id(change_actions::ADD),
-            type_object::FLD_ID_SQL_TYP
-        );
-
-        // get the fields for the value log entry
-        $fvt_lst_log = clone $fvt_lst;
-        $fvt_lst_log->add_field(group::FLD_ID, $this->grp()->id());
-
-        // for standard prime values add the user only for the log
-        if ($sc_par_lst->is_standard() and $sc_par_lst->is_prime()) {
-            $fvt_lst_log->add_field(user::FLD_ID, $this->user_id(), sql_par_type::INT);
-        }
-
-        // create the log entry for the value
-        $qp_log = $sc->sql_func_log_value($this, $this->user(), $fvt_lst_log, $sc_par_lst_log);
-        $sql .= ' ' . $qp_log->sql;
-
-        // list of parameters actually used in order of the function usage
-        $par_lst_out = new sql_par_field_list();
-        $par_lst_out->add_list($qp_log->par_fld_lst);
-
-        // get the data fields and move the unique db key field to the first entry
-        $fld_lst_ex_log = array_intersect($fvt_lst->names(), $fld_lst_all);
-
-        // check if other vars than the value have been changed
-        $fld_lst_ex_id = array_diff($fld_lst_ex_log, $fvt_lst_id->names());
-        $fld_lst_ex_id_and_val = array_diff($fld_lst_ex_id, [
-            change_action::FLD_ID,
-            sandbox_value::FLD_VALUE,
-            value_base::FLD_VALUE_TIME,
-            value_base::FLD_VALUE_TEXT,
-            value_base::FLD_VALUE_GEO,
-            sandbox_value::FLD_LAST_UPDATE
-        ]);
-
-        // ... and log the value parameter changes if needed
-        if (count($fld_lst_ex_id_and_val) > 0) {
-            $qp_log = $sc->sql_func_log($this::class, $this->user(), $fld_lst_ex_id_and_val, $fvt_lst_log, $sc_par_lst_log);
-            $sql .= ' ' . $qp_log->sql;
-            $par_lst_out->add_list($qp_log->par_fld_lst);
-        }
-
-        // insert a new row
-        $sc_write = clone $sc;
-        $qp_write = $this->sql_common($sc_write, $sc_par_lst_sub);
-        $sc_write->set_name($qp_write->name);
-
-        // collect the fields that should be written to the database
-        $fvt_lst_write = new sql_par_field_list();
-        // add the id to the changes
-        // TODO maybe net out with calling function and / or make list correct from beginning
-        $fvt_lst_all = clone $fvt_lst;
-        if ($sc_par_lst->is_update()) {
-            $fvt_lst_all->add_list($fvt_lst_id);
-        }
-        if ($sc_par_lst->is_insert()) {
-            foreach ($fvt_lst_id->names() as $fld) {
-                $fvt_lst_write->add($fvt_lst_all->get($fld));
-            }
-        }
-        if (!$sc_par_lst->is_standard()) {
-            if ($fvt_lst_all->has_name(user::FLD_ID) and $sc_par_lst->is_insert()) {
-                $fvt_lst_write->add($fvt_lst_all->get(user::FLD_ID));
-            }
-        }
-        if ($this->is_numeric()) {
-            $fvt_lst_write->add($fvt_lst_all->get(sandbox_value::FLD_VALUE));
-        } elseif ($this->is_time_value()) {
-            $fvt_lst_write->add($fvt_lst_all->get(value_base::FLD_VALUE_TIME));
-        } elseif ($this->is_text_value()) {
-            $fvt_lst_write->add($fvt_lst_all->get(value_base::FLD_VALUE_TEXT));
-        } elseif ($this->is_geo_value()) {
-            $fvt_lst_write->add($fvt_lst_all->get(value_base::FLD_VALUE_GEO));
-        } else {
-            $fvt_lst_write->add($fvt_lst_all->get(sandbox_value::FLD_VALUE));
-        }
-        if (!$sc_par_lst->is_standard()) {
-            $fvt_lst_write->add($fvt_lst_all->get(sandbox_value::FLD_LAST_UPDATE));
-        }
-
-        if ($sc_par_lst->is_insert()) {
-            // create the sql to actually add the value to the database
-            $qp_write->sql = $sc_write->create_sql_insert($fvt_lst_write, $sc_par_lst_sub);
-        } else {
-            // create the sql to actually update the value to the database
-            $qp_write->sql = $sc_write->create_sql_update_fvt($fvt_lst_id, $fvt_lst_write, $sc_par_lst_sub);
-        }
-        // add the insert row to the function body
-        $sql .= ' ' . $qp_write->sql . ' ';
-        // add the fields used to the parameter list except the sql Now() function call
-        $fvt_lst_write->del(sandbox_value::FLD_LAST_UPDATE);
-        $par_lst_out->add_list($fvt_lst_write);
-        if ($sc_par_lst->is_update()) {
-            $par_lst_out->add_list($fvt_lst_id);
-        }
-
-        // close the sql function statement
-        $sql .= $sc->sql_func_end();
-
-        // create the query parameters for the actual change
-        $qp_chg = clone $qp;
-        $qp_chg->sql = $sc->create_sql_insert($par_lst_out, $sc_par_lst);
-
-        // merge all together and create the function
-        $qp->sql = $qp_chg->sql . $sql . ';';
-        $qp->par = $par_lst_out->values();
-
-        // create the call sql statement
-        return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
+        // get a list of all fields that could potentially be updated
+        $all_fields = $this->db_fields_all();
+        return $this->sql_write($sc, $db_row, $all_fields, $sc_par_lst_used);
     }
 
     /**
@@ -2180,8 +1969,11 @@ class sandbox_value extends sandbox_multi
         sql_type_list               $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
+        global $cng_fld_cac;
+
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
+        $usr_tbl = $sc_par_lst->is_usr_tbl();
         $is_insert = $sc_par_lst->is_insert();
         $is_update = $sc_par_lst->is_update();
         $table_id = $sc->table_id($this::class);
@@ -2193,6 +1985,7 @@ class sandbox_value extends sandbox_multi
          */
 
         $lst = new sql_par_field_list();
+
         if ($is_insert) {
             if ($this::class == result::class and $this->is_main()) {
                 $lst = $this->grp()->id_fvt_main();
@@ -2208,6 +2001,13 @@ class sandbox_value extends sandbox_multi
         // TODO check that all numeric fields are checked with !== to force writing the value zero
         if ($this->is_numeric()) {
             if ($sbx->value() !== $this->value()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUE,
+                        $cng_fld_cac->id($table_id . self::FLD_VALUE),
+                        change::FLD_FIELD_ID_SQL_TYP
+                    );
+                }
                 if ($is_update) {
                     $lst->add_field(
                         self::FLD_VALUE,
@@ -2225,6 +2025,13 @@ class sandbox_value extends sandbox_multi
             }
         } elseif ($this->is_time_value()) {
             if ($sbx->value() !== $this->value()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . value_base::FLD_VALUE_TIME,
+                        $cng_fld_cac->id($table_id . value_base::FLD_VALUE_TIME),
+                        change::FLD_FIELD_ID_SQL_TYP
+                    );
+                }
                 if ($is_update) {
                     $lst->add_field(
                         value_base::FLD_VALUE_TIME,
@@ -2242,6 +2049,13 @@ class sandbox_value extends sandbox_multi
             }
         } elseif ($this->is_text_value()) {
             if ($sbx->value() !== $this->value()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . value_base::FLD_VALUE_TEXT,
+                        $cng_fld_cac->id($table_id . value_base::FLD_VALUE_TEXT),
+                        change::FLD_FIELD_ID_SQL_TYP
+                    );
+                }
                 if ($is_update) {
                     $lst->add_field(
                         value_base::FLD_VALUE_TEXT,
@@ -2259,6 +2073,13 @@ class sandbox_value extends sandbox_multi
             }
         } elseif ($this->is_geo_value()) {
             if ($sbx->value() !== $this->value()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . value_base::FLD_VALUE_GEO,
+                        $cng_fld_cac->id($table_id . value_base::FLD_VALUE_GEO),
+                        change::FLD_FIELD_ID_SQL_TYP
+                    );
+                }
                 if ($is_update) {
                     $lst->add_field(
                         value_base::FLD_VALUE_GEO,
@@ -2276,6 +2097,13 @@ class sandbox_value extends sandbox_multi
             }
         } else {
             if ($sbx->number() !== $this->number()) {
+                if ($do_log) {
+                    $lst->add_field(
+                        sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUE,
+                        $cng_fld_cac->id($table_id . self::FLD_VALUE),
+                        change::FLD_FIELD_ID_SQL_TYP
+                    );
+                }
                 if ($is_update) {
                     $lst->add_field(
                         self::FLD_VALUE,

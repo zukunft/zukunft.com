@@ -45,6 +45,7 @@ use cfg\log\change_values_time_big;
 use cfg\log\change_values_time_norm;
 use cfg\log\change_values_time_prime;
 use cfg\ref\source_type;
+use cfg\sandbox\sandbox_multi;
 use cfg\sandbox\sandbox_value;
 use cfg\system\session;
 use cfg\system\sys_log_status;
@@ -2407,12 +2408,12 @@ class library
                 value_base::FLD_ID => 'grp',
                 user::FLD_ID => 'usr',
                 source::FLD_ID => 'src',
-                sandbox_value::FLD_VALUE => 'val',
-                sandbox_value::FLD_LAST_UPDATE => 'upd',
-                phrase::FLD_ID . '_1' => '',
-                phrase::FLD_ID . '_2' => '',
-                phrase::FLD_ID . '_3' => '',
-                phrase::FLD_ID . '_4' => '',
+                sandbox_multi::FLD_VALUE => 'val',
+                sandbox_multi::FLD_LAST_UPDATE => 'upd',
+                phrase::FLD_ID . '_1',
+                    phrase::FLD_ID . '_2',
+                    phrase::FLD_ID . '_3',
+                    phrase::FLD_ID . '_4' => '',
                 default => $name
             };
         }

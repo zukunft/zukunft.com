@@ -532,13 +532,16 @@ class sql_par_field_list
     /**
      * get the value for the given field name
      * @param string $name the name of the field to select
+     * @param bool $can_be_missing if true no error log message is created if the field does not exists
      * @return sql_par_field|null the name, value and type selected by the name
      */
-    function get(string $name): ?sql_par_field
+    function get(string $name, bool $can_be_missing = false): ?sql_par_field
     {
         $key = array_search($name, $this->names());
         if ($key === false) {
-            log_err('field "' . $name . '" missing in "' . implode(',', $this->names())) . '"';
+            if (!$can_be_missing) {
+                log_err('field "' . $name . '" missing in "' . implode(',', $this->names())) . '"';
+            }
             return null;
         } else {
             return $this->lst[$key];
