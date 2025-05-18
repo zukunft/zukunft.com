@@ -1,0 +1,29 @@
+{
+  "version": "0.0.3",
+  "time": "2024-03-26 19:58:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "double formulas"
+  ],
+  "words": [
+    {
+      "name": "one"
+    },
+    {
+      "name": "million"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "scale million to one",
+      "expression": "\"one\" = \"million\" * 1000000",
+      "assigned_word": "million"
+    },
+    {
+      "name": "scale million to one",
+      "expression": "\"one\" = 1000000 * \"million\"",
+      "assigned_word": "one"
+    }
+  ]
+}
+

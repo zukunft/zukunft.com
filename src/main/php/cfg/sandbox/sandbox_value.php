@@ -1107,12 +1107,12 @@ class sandbox_value extends sandbox_multi
             } else {
                 $fld_lst = $this->id_fields_prime();
             }
-            $id_lst = $this->grp()->id_lst();
+            $id_lst = $this->grp()->id_lst(true);
             if (count($fld_lst) < count($id_lst)) {
                 log_err('the number if id fields and id values differ for ' . $this->dsp_id());
             } else {
                 foreach ($fld_lst as $key => $fld) {
-                    $id = null;
+                    $id = 0;
                     if (array_key_exists($key, $id_lst)) {
                         $id = $id_lst[$key];
                         $lst->add_field($fld, $id, sql_field_type::INT_SMALL);

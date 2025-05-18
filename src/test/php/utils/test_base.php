@@ -3678,7 +3678,11 @@ class test_base
     ): string
     {
         // TODO maybe use log_object?
-        $log = $sbx->log_value_object();
+        if ($sbx->is_value_obj()) {
+            $log = $sbx->log_value_object();
+        } else {
+            $log = $sbx->log_object();
+        }
         $log->load_by_field_row($sbx::class, $fld, $id, $usr_only);
         $log_dsp = new change_dsp($log->api_json());
         return $log_dsp->dsp($ex_time);

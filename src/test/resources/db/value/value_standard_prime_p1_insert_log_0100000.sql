@@ -32,6 +32,6 @@ SELECT value_standard_prime_p1_insert_log_0100000
         3.1415926535898::numeric,
         32812::bigint,
         -44::smallint,
-        null::smallint,
-        null::smallint,
-        null::smallint);
+        0::smallint,
+        0::smallint,
+        0::smallint);

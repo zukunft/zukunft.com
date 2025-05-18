@@ -3963,6 +3963,15 @@ class sandbox extends db_object_seq_id_user
         return false;
     }
 
+    /**
+     * @return bool true if this sandbox object is a value or result
+     * final function overwritten by the child object
+     */
+    function is_value_obj(): bool
+    {
+        return false;
+    }
+
 
     /*
      *  check functions

@@ -32,7 +32,7 @@ SELECT value_prime_p1_delete_log_user
         1::smallint,
         32812::bigint,
         -44::smallint,
-        null::smallint,
-        null::smallint,
-        null::smallint,
+        0::smallint,
+        0::smallint,
+        0::smallint,
         null::bigint);

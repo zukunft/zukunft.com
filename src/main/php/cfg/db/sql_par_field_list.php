@@ -181,9 +181,9 @@ class sql_par_field_list
         $fld->value = $value;
         if ($type === null) {
             if (is_string($value)) {
-                $type = sql_par_type::TEXT;
+                $fld->type = sql_par_type::TEXT;
             } else {
-                $type = sql_par_type::INT;
+                $fld->type = sql_par_type::INT;
             }
         } else {
             if ($type::class === sql_field_type::class) {

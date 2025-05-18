@@ -29,6 +29,6 @@ SELECT value_prime_p1_delete_log
         1,
         32812,
         -44,
-        null,
-        null,
-        null);
+        0,
+        0,
+        0);

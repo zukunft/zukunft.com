@@ -104,6 +104,16 @@ class value_list extends sandbox_value_list
 {
 
     /*
+     * object vars
+     */
+
+    private array $id_hash = [];
+    private bool $id_hash_dirty = true;
+    private array $name_hash = [];
+    private bool $name_hash_dirty = true;
+
+
+    /*
      * construct and map
      */
 
@@ -173,6 +183,17 @@ class value_list extends sandbox_value_list
         }
         return $grp_lst;
 
+    }
+
+    /**
+     * to be called after the lists have been updated
+     * but the index list have not yet been updated
+     */
+    protected function set_lst_dirty(): void
+    {
+        $this->id_hash_dirty = true;
+        $this->name_hash_dirty = true;
+        parent::set_lst_dirty();
     }
 
 
@@ -298,7 +319,7 @@ class value_list extends sandbox_value_list
      */
     protected function load(
         sql_par $qp,
-        bool $load_all = false,
+        bool    $load_all = false,
         ?sql_db $db_con_given = null
     ): bool
     {
@@ -819,19 +840,64 @@ class value_list extends sandbox_value_list
                 parent::add_obj($val_to_add, $allow_duplicates);
             } else {
                 if ($val_to_add->is_id_set() or $val_to_add->grp()->name() != '') {
+                    $id = $val_to_add->id();
                     if (count($this->id_lst()) > 0) {
-                        if (!in_array($val_to_add->id(), $this->id_lst())) {
+                        if (!in_array($id, $this->id_lst())) {
                             parent::add_obj($val_to_add);
+                            $this->add_hash_id($id);
                             $result = true;
                         }
                     } else {
                         parent::add_obj($val_to_add);
+                        $this->add_hash_id($id);
                         $result = true;
                     }
                 }
             }
         }
         return $result;
+    }
+
+    /**
+     * add one value to the value list, but only if it is not yet part of the list
+     * @param value_base|null $val_to_add the value object to be added to the list
+     * @returns bool true the value has been added
+     */
+    function add_by_group(?value_base $val_to_add): bool
+    {
+        $result = false;
+        // check parameters
+        if ($val_to_add != null) {
+            $name = $val_to_add->grp()->name();
+            if ($name != '') {
+                if (count($this->name_lst()) > 0) {
+                    if (!in_array($name, $this->name_lst())) {
+                        parent::add_obj($val_to_add);
+                        $this->add_hash_name($name);
+                        $result = true;
+                    }
+                } else {
+                    parent::add_obj($val_to_add);
+                    $this->add_hash_name($name);
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * add a value to the list without checking for duplicates
+     * @param value_base|null $val_to_add the value object to be added to the list
+     */
+    function add_value_direct(?value_base $val_to_add): void
+    {
+        // check parameters
+        if ($val_to_add != null) {
+            $lst = $this->lst();
+            $lst[] = $val_to_add;
+            $this->set_lst($lst);
+        }
     }
 
     /**
@@ -847,6 +913,28 @@ class value_list extends sandbox_value_list
             $result = true;
         }
         return $result;
+    }
+
+    private function add_hash_id(int|string $id): void
+    {
+        if ($this->count() != count($this->id_hash)) {
+            $this->id_lst();
+        } else {
+            $this->id_hash[] = $id;
+            // assuming that in most cases either the id or the names has is needed for building up the list but not both
+            $this->name_hash_dirty = true;
+        }
+    }
+
+    private function add_hash_name(string $name): void
+    {
+        if ($this->count() != count($this->name_hash)) {
+            $this->name_lst();
+        } else {
+            $this->name_hash[] = $name;
+            // assuming that in most cases either the id or the names has is needed for building up the list but not both
+            $this->id_hash_dirty = true;
+        }
     }
 
 
@@ -1173,16 +1261,43 @@ class value_list extends sandbox_value_list
     function id_lst(): array
     {
         $lst = array();
-        if ($this->count() > 0) {
-            foreach ($this->lst() as $val) {
-                // use only valid ids
-                if ($val->id() <> 0) {
-                    $lst[] = $val->id();
+        if ($this->name_hash_dirty) {
+            if ($this->count() > 0) {
+                foreach ($this->lst() as $val) {
+                    // use only valid ids
+                    if ($val->id() <> 0) {
+                        $lst[] = $val->id();
+                    }
                 }
             }
+            asort($lst);
+            $this->id_hash = $lst;
+            $this->id_hash_dirty = false;
         }
-        asort($lst);
-        return $lst;
+        return $this->id_hash;
+    }
+
+    /**
+     * @return array with the value group names
+     */
+    function name_lst(): array
+    {
+        $lst = array();
+        if ($this->name_hash_dirty) {
+            if ($this->count() > 0) {
+                foreach ($this->lst() as $val) {
+                    // use only valid ids
+                    $name = $val->grp()->name();
+                    if ($name <> '') {
+                        $lst[] = $val->grp()->name();
+                    }
+                }
+            }
+            asort($lst);
+            $this->name_hash = $lst;
+            $this->name_hash_dirty = false;
+        }
+        return $this->name_hash;
     }
 
 

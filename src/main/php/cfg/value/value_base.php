@@ -1550,13 +1550,13 @@ class value_base extends sandbox_value
     7.
 
     cases for user
-    1) user a creates a value -> he can change it
-    2) user b changes the value -> the change is saved only for this user
-    3a) user a changes the original value -> the change is save in the original record -> user is still the owner
-    3b) user a changes the original value to the same value as b -> the user specific record is removed -> user is still the owner
-    3c) user b changes the value -> the user specific record is updated
-    3d) user b changes the value to the same value as a -> the user specific record is removed
-    3e) user a excludes the value -> b gets the owner and a user specific exclusion for a is created
+    1) user A creates a value -> he can change it
+    2) user B changes the value -> the change is saved only for this user
+    3a) user A changes the original value -> the change is saved in the original record -> user is still the owner
+    3b) user A changes the original value to the same value as b -> the user specific record is removed -> user is still the owner
+    3c) user B changes the value -> the user specific record is updated
+    3d) user B changes the value to the same value as a -> the user specific record is removed
+    3e) user A excludes the value -> b gets the owner and a user specific exclusion for A is created
 
     */
 
@@ -2164,51 +2164,59 @@ class value_base extends sandbox_value
         global $db_con;
         $usr_msg = new user_message();
 
-        // log the insert attempt first
-        $log = $this->log_add();
-        if ($log->id() > 0) {
-            // insert the value
-            $ins_result = $db_con->insert($this->sql_insert($db_con->sql_creator()), 'add value');
-            // the id of value is the given group id not a sequence
-            //if ($ins_result->has_row()) {
-            //    $this->set_id($ins_result->get_row_id());
-            //}
-            //$db_con->set_type(self::class);
-            //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp()->id(), $this->user()->id, $this->number, sql::NOW)));
-            if ($this->is_id_set()) {
-                // update the reference in the log
-                if ($this->grp()->is_prime()) {
-                    if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_message('adding the value reference in the system log failed');
-                    }
-                } else {
-                    // TODO: save in the value or value big change log
-                    $log = $this->log_add_value();
-                }
+        if ($use_func) {
+            $sc = $db_con->sql_creator();
+            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
+            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id(), false, true);
+            $usr_msg->add($ins_msg);
+        } else {
 
-                // update the phrase links for fast searching
-                /*
-                $upd_result = $this->upd_phr_links();
-                if ($upd_result != '') {
-                    $result->add_message('Adding the phrase links of the value failed because ' . $upd_result);
-                    $this->set_id(0);
-                }
-                */
-
+            // log the insert attempt first
+            $log = $this->log_add();
+            if ($log->id() > 0) {
+                // insert the value
+                $ins_result = $db_con->insert($this->sql_insert($db_con->sql_creator()), 'add value');
+                // the id of value is the given group id not a sequence
+                //if ($ins_result->has_row()) {
+                //    $this->set_id($ins_result->get_row_id());
+                //}
+                //$db_con->set_type(self::class);
+                //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp()->id(), $this->user()->id, $this->number, sql::NOW)));
                 if ($this->is_id_set()) {
-                    // create an empty db_rec element to force saving of all set fields
-                    $db_val = clone $this;
-                    $db_val->reset();
-                    $db_val->set_user($this->user());
-                    $db_val->set_id($this->id());
-                    $db_val->set_value($this->value()); // ... but not the field saved already with the insert
-                    $std_val = clone $db_val;
-                    // save the value fields
-                    $usr_msg->add_message($this->save_fields($db_con, $db_val, $std_val));
-                }
+                    // update the reference in the log
+                    if ($this->grp()->is_prime()) {
+                        if (!$log->add_ref($this->id())) {
+                            $usr_msg->add_message('adding the value reference in the system log failed');
+                        }
+                    } else {
+                        // TODO: save in the value or value big change log
+                        $log = $this->log_add_value();
+                    }
 
-            } else {
-                $usr_msg->add_message("Adding value " . $this->id() . " failed.");
+                    // update the phrase links for fast searching
+                    /*
+                    $upd_result = $this->upd_phr_links();
+                    if ($upd_result != '') {
+                        $result->add_message('Adding the phrase links of the value failed because ' . $upd_result);
+                        $this->set_id(0);
+                    }
+                    */
+
+                    if ($this->is_id_set()) {
+                        // create an empty db_rec element to force saving of all set fields
+                        $db_val = clone $this;
+                        $db_val->reset();
+                        $db_val->set_user($this->user());
+                        $db_val->set_id($this->id());
+                        $db_val->set_value($this->value()); // ... but not the field saved already with the insert
+                        $std_val = clone $db_val;
+                        // save the value fields
+                        $usr_msg->add_message($this->save_fields($db_con, $db_val, $std_val));
+                    }
+
+                } else {
+                    $usr_msg->add_message("Adding value " . $this->id() . " failed.");
+                }
             }
         }
 
@@ -2306,7 +2314,7 @@ class value_base extends sandbox_value
      */
 
     /**
-     * get a list of database fields that might be used to create an sql insert or update statement
+     * get a list of database fields that might be used to create a sql insert or update statement
      *
      * @return array list of the database field names that have been updated
      */

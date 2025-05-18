@@ -41,4 +41,4 @@ SELECT value_prime_p3_update_log_0010020
         271,
         267,
         139,
-        null);
+        0);

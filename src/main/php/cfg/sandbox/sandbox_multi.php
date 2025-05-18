@@ -3154,10 +3154,6 @@ class sandbox_multi extends db_object_multi_user
                     $usr_msg->add($db_con->update($qp, 'update user ' . $obj_name));
                 }
             } else {
-                // TODO remove temp
-                if ($this->id() == 78814178907717896) {
-                    log_info('ds');
-                }
                 if (!$this->no_diff($norm_obj)) {
                     $sc_par_lst->add(sql_type::INSERT);
                     $sc_par_lst->add(sql_type::NO_ID_RETURN);
@@ -3376,7 +3372,7 @@ class sandbox_multi extends db_object_multi_user
         $fvt_lst_write->add($fvt_lst_all->get(sandbox::FLD_PROTECT, true));
 
         if (!$sc_par_lst->is_standard()) {
-            $fvt_lst_write->add($fvt_lst_all->get(sandbox_multi::FLD_LAST_UPDATE));
+            $fvt_lst_write->add($fvt_lst_all->get(sandbox_multi::FLD_LAST_UPDATE, true));
         }
 
         if ($sc_par_lst->is_insert()) {
@@ -4276,7 +4272,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function is_value_obj(): bool
     {
-        return false;
+        return true;
     }
 
 

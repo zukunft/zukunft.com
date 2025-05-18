@@ -451,7 +451,7 @@ class data_object
      */
     function add_value(value_base $val): void
     {
-        $this->val_lst->add($val, true);
+        $this->val_lst->add_value_direct($val);
     }
 
     function add_message(string $msg): void

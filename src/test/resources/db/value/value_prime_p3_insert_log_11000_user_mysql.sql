@@ -35,5 +35,5 @@ SELECT value_prime_p3_insert_log_11000_user
         271,
         267,
         139,
-        null,
+        0,
         null);

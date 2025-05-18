@@ -124,7 +124,7 @@ class figure extends combine_named_dsp
         return $this->obj()->grp();
     }
 
-    function number(): float
+    function number(): float|null
     {
         return $this->obj()->number();
     }

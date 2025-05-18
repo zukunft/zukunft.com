@@ -33,7 +33,7 @@ SELECT value_prime_p1_insert_log_11000_user
         3.1415926535898,
         32812,
         -44,
-        null,
-        null,
-        null,
+        0,
+        0,
+        0,
         null);

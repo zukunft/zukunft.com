@@ -32,6 +32,6 @@ SELECT value_standard_prime_p1_insert_log_0100000
         3.1415926535898,
         32812,
         -44,
-        null,
-        null,
-        null);
+        0,
+        0,
+        0);

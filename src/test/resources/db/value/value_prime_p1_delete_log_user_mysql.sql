@@ -32,7 +32,7 @@ SELECT value_prime_p1_delete_log_user
         1,
         32812,
         -44,
-        null,
-        null,
-        null,
+        0,
+        0,
+        0,
         null);

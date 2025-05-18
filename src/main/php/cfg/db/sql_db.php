@@ -4245,9 +4245,10 @@ class sql_db
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
      * @param bool $usr_tbl true if a row in the user table is added which implies that no new id is returned
+     * @param bool $is_val if true the row to be added to the database is a value or result and is using the group id, so no database id needs to be returned
      * @return user_message
      */
-    function insert(sql_par $qp, string $description, bool $usr_tbl = false): user_message
+    function insert(sql_par $qp, string $description, bool $usr_tbl = false, bool $is_val = false): user_message
     {
         global $sys_times;
 
@@ -4273,9 +4274,12 @@ class sql_db
                 }
             }
             if (!$usr_tbl) {
+
                 if ($db_id == 0 or $db_id == '') {
-                    log_err($err_msg);
-                    $usr_msg->add_message($err_msg);
+                    if (!$is_val) {
+                        log_err($err_msg);
+                        $usr_msg->add_message($err_msg);
+                    }
                 } else {
                     $usr_msg->set_db_row_id($db_id);
                 }
