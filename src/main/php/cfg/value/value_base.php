@@ -2224,16 +2224,26 @@ class value_base extends sandbox_value
     }
 
     /**
-     * insert or update a number in the database or save a user specific number
+     * insert or update a value in the database or save a user specific number
+     * similar to sandbox->save but does not return the id because the id is predefined by the group id
+     *
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return user_message in case of a problem the message that should be shown to the user
      */
     function save(?bool $use_func = null): user_message
     {
-        log_debug();
+        log_debug($this->dsp_id());
 
         global $db_con;
+        global $mtr;
+
         $usr_msg = new user_message();
+
+        // init
+        $msg_reload = $mtr->txt(msg_id::RELOAD);
+        $msg_fail = $mtr->txt(msg_id::FAILED);
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
 
         // decide which db write method should be used
         if ($use_func === null) {
@@ -2254,55 +2264,69 @@ class value_base extends sandbox_value
             }
         }
 
-        if (!$this->is_saved()) {
-            log_debug('add ' . $this->dsp_id());
-            $usr_msg->add($this->add($use_func));
-        } else {
-            log_debug('update id ' . $this->id() . ' to save "' . $this->value() . '" for user ' . $this->user()->id());
-            // update a value
-            // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
+        // create a new object if nothing similar has been found
+        if ($usr_msg->is_ok()) {
+            if (!$this->is_saved()) {
 
-            // read the database value to be able to check if something has been changed
-            // done first, because it needs to be done for user and general values
-            $db_rec = clone $this;
-            $db_rec->reset();
-            $db_rec->set_user($this->user());
-            $db_rec->load_by_id($this->grp()->id());
-            log_debug("old database value loaded (" . $db_rec->value() . ") with group " . $db_rec->grp()->id() . ".");
-            $std_rec = clone $this;
-            $std_rec->reset();
-            $std_rec->set_user($this->user()); // user must also be set to allow to take the ownership
-            $std_rec->set_grp($this->grp());
-            $std_rec->load_standard();
-            log_debug("standard value settings loaded (" . $std_rec->value() . ")");
-
-            // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save
-            if ($this->owner_id() <= 0) {
-                $this->set_owner_id($std_rec->owner_id());
-            }
-
-            // check if the id parameters are supposed to be changed
-            if ($usr_msg->is_ok()) {
-                $usr_msg->add_message($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
-            }
-
-            // if a problem has appeared up to here, don't try to save the values
-            // the problem is shown to the user by the calling interactive script
-            if ($usr_msg->is_ok()) {
-                // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                if ($use_func) {
-                    $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
-                } else {
-                    $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
-                }
+                log_debug('add ' . $this->dsp_id());
+                $usr_msg->add($this->add($use_func));
             } else {
-                log_warning('value ' . $this->dsp_id() . ' not saved');
+                log_debug('update id ' . $this->id() . ' to save "' . $this->value() . '" for user ' . $this->user()->id());
+                // update a value
+                // TODO: if no one else has ever changed the value, change to default value, else create a user overwrite
+
+                // read the database value to be able to check if something has been changed
+                // done first, because it needs to be done for user and general values
+                $db_rec = clone $this;
+                $db_rec->reset();
+                $db_rec->set_user($this->user());
+                // TODO for the user sandbox load by phrase group id and source because one user can say, that one value has different number from different sources
+                $db_rec->load_by_id($this->grp()->id());
+                if ($db_rec->id() != $this->id()) {
+                    $usr_msg->add_message($msg_reload . ' ' . $class_name . ' ' . $msg_fail);
+                }
+                log_debug("old database value loaded (" . $db_rec->value() . ") with group " . $db_rec->grp()->id() . ".");
+
+                // load the common object
+                $std_rec = clone $this;
+                $std_rec->reset();
+                $std_rec->set_user($this->user()); // user must also be set to allow to take the ownership
+                $std_rec->set_grp($this->grp());
+                $std_rec->load_standard();
+                log_debug("standard value settings loaded (" . $std_rec->value() . ")");
+
+                // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save
+                if ($usr_msg->is_ok()) {
+                    log_debug('standard loaded');
+
+                    if ($this->owner_id() <= 0) {
+                        $this->set_owner_id($std_rec->owner_id());
+                    }
+                }
+
+                // check if the id parameters are supposed to be changed
+                if ($usr_msg->is_ok()) {
+                    $usr_msg->add_message($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
+                }
+
+                // if a problem has appeared up to here, don't try to save the values
+                // the problem is shown to the user by the calling interactive script
+                if ($usr_msg->is_ok()) {
+                    // if the user is the owner and no other user has adjusted the value, really delete the value in the database
+                    if ($use_func) {
+                        $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
+                    } else {
+                        $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                    }
+                } else {
+                    log_warning('value ' . $this->dsp_id() . ' not saved');
+                }
+
             }
 
-        }
-
-        if (!$usr_msg->is_ok()) {
-            log_err($usr_msg->get_last_message());
+            if (!$usr_msg->is_ok()) {
+                log_err($usr_msg->get_last_message());
+            }
         }
 
         return $usr_msg;

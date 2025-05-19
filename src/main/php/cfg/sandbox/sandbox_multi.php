@@ -101,6 +101,7 @@ include_once MODEL_LOG_PATH . 'changes_big.php';
 include_once MODEL_LOG_PATH . 'changes_norm.php';
 //include_once MODEL_PHRASE_PATH . 'phrase.php';
 //include_once MODEL_RESULT_PATH . 'result.php';
+include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -110,6 +111,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
+include_once SHARED_CONST_PATH . 'sources.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
@@ -161,6 +163,7 @@ use cfg\log\change_values_time_prime;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
 use cfg\phrase\phrase;
+use cfg\ref\source;
 use cfg\result\result;
 use cfg\user\user;
 use cfg\user\user_list;
@@ -171,6 +174,7 @@ use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\word;
 use cfg\word\triple;
+use shared\const\sources;
 use shared\enum\change_actions;
 use shared\enum\messages as msg_id;
 use shared\types\api_type_list;
@@ -543,6 +547,16 @@ class sandbox_multi extends db_object_multi_user
     function protection_id(): ?int
     {
         return $this->protection_id;
+    }
+
+    function set_source(source|null $src): void
+    {
+        log_warning('missing overwrite for set_source in ' . $this::class);
+    }
+
+    function source_id(): ?int
+    {
+        return null;
     }
 
 
@@ -3141,7 +3155,8 @@ class sandbox_multi extends db_object_multi_user
             }
         } else {
             $sc_par_lst->add(sql_type::USER);
-            if ($this->has_usr_cfg()) {
+            // TODO review if $this or $db_obj must be used here because in sandbox $this is used
+            if ($db_obj->has_usr_cfg()) {
                 if ($this->no_diff($norm_obj)) {
                     $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER]));
                     $usr_msg->add($db_con->delete($qp, 'remove user overwrites of ' . $this->dsp_id()));
@@ -3157,6 +3172,13 @@ class sandbox_multi extends db_object_multi_user
                 if (!$this->no_diff($norm_obj)) {
                     $sc_par_lst->add(sql_type::INSERT);
                     $sc_par_lst->add(sql_type::NO_ID_RETURN);
+                    // because one user can link a value to more than one source the source id is part of the user value prime key
+                    // and due to that the source id in the user table cannot be null instead 0 is used
+                    if ($this->source_id() == null) {
+                        $src = new source($this->user());
+                        $src->set_id(sources::TRUST_ME_BRO_ID);
+                        $this->set_source($src);
+                    }
                     // use the norm db_row to recreate the field list to include the id for the user table and to create the diff vs the norm db_row
                     $qp = $this->sql_write($sc, $norm_obj, $all_fields, $sc_par_lst);
                     // TODO compare sql_write with sql_insert_switch

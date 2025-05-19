@@ -57,6 +57,8 @@ class sources
     const MATH_CONST = 'mathematical constant';
     const WIKIDATA = 'wikidata';
     const WIKIDATA_ID = 2;
+    const TRUST_ME_BRO = 'my estimates';
+    const TRUST_ME_BRO_ID = 9;
     const SYSTEM_TEST_ADD = 'System Test Source';
     const SYSTEM_TEST_ADD_COM = 'System Test Source Description';
     const SYSTEM_TEST_ADD_URL = 'https://www.zukunft.com/';

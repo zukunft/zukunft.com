@@ -1830,6 +1830,7 @@ class sandbox extends db_object_seq_id_user
             }
         } else {
             $sc_par_lst->add(sql_type::USER);
+            // TODO check why $this seems to be here updated but not in the sandbox multi object
             if ($this->has_usr_cfg()) {
                 if ($this->no_diff($norm_obj)) {
                     $qp = $this->sql_delete($sc, new sql_type_list([sql_type::USER]));
@@ -2389,7 +2390,8 @@ class sandbox extends db_object_seq_id_user
      */
 
     /**
-     * add or update a user sandbox object (word, value, formula or ...) in the database
+     * add or update a user sandbox object (word, triple, formula or ...) in the database
+     * similar to value_base->save but
      * returns either the id of the updated or created object or a message with the reason why it has failed that can be shown to the user
      *
      * the save used cases are
@@ -2432,8 +2434,8 @@ class sandbox extends db_object_seq_id_user
         // check the preserved names
         $usr_msg = $this->check_save();
 
+        // load the objects if needed e.g. to log the names of the link
         if ($usr_msg->is_ok()) {
-            // load the objects if needed e.g. to log the names of the link
             if ($this->is_link_obj()) {
                 $this->load_objects();
 
@@ -2483,7 +2485,7 @@ class sandbox extends db_object_seq_id_user
         if ($usr_msg->is_ok()) {
             if ($this->id() == 0) {
 
-                log_debug('add');
+                log_debug('add ' . $this->dsp_id());
                 $usr_msg->add($this->add($use_func));
 
             } else {
