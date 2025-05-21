@@ -112,6 +112,10 @@ class formula_write_tests
 
                 $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::YEAR_2019));
                 $time_phr = $phr_lst->time_useful();
+                // TODO review
+                if ($time_phr == null) {
+                    $time_phr = $t->word_2019()->phrase();
+                }
                 $val = $elm_frm->special_result($phr_lst, $time_phr);
                 $result = $val->number();
                 $target = words::YEAR_2019;

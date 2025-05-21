@@ -66,10 +66,11 @@ class view_read_tests
         $t->name = 'view read->';
         $t->resource_path = 'db/view/';
 
+        // start the test section (ts)
+        $ts = 'read view ';
+        $t->header($ts);
 
-        $t->header('view db read tests');
-
-        $t->subheader('view load');
+        $t->subheader($ts . 'load');
         $msk = new view($t->usr1);
         $t->assert_load($msk, views::START_NAME);
 
@@ -117,8 +118,9 @@ class view_read_tests
 
         $t->subheader('View API object creation tests');
 
+        $test_name = views::START_NAME;
         $cmp = $t->load_word(views::START_NAME, $t->usr1);
-        $t->assert_export_reload($cmp);
+        $t->assert_export_reload($ts . $test_name, $cmp);
 
 
         $t->subheader('System view tests');

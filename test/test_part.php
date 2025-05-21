@@ -74,7 +74,7 @@ if ($start_usr->id() > 0) {
         $t->header('Run selected zukunft.com tests');
 
         // run a list of selected tests
-        $t->run_single();
+        $t->run_single($t);
 
         // display the test results
         if ($t->format == format::HTML) {

@@ -3127,6 +3127,9 @@ class sandbox_multi extends db_object_multi_user
 
         // if the user is allowed to change the norm row e.g. because no other user has used it, change the norm row directly
         if ($this->can_change()) {
+            // TODO check if the update of the standard db row will lead to unexpected changes for other users
+            // TODO get a list of all user that have used the standard more than the threshold
+            // TODO create a user db row for all these users that undo the expected changes of the standard db row
             // if there is no difference between the user row and the norm row remove all fields from the user row
             if ($this->no_diff($norm_obj)) {
                 if ($this->has_usr_cfg()) {
@@ -3165,7 +3168,7 @@ class sandbox_multi extends db_object_multi_user
                     // call sql_write instead of sql_update_switch function to add the multi key fields based on the value type
                     // for a new user record compare with the norm db_row
                     // TODO compare sql_write with sql_update_switch
-                    $qp = $this->sql_write($sc, $norm_obj, $all_fields, $sc_par_lst);
+                    $qp = $this->sql_write($sc, $db_obj, $all_fields, $sc_par_lst);
                     $usr_msg->add($db_con->update($qp, 'update user ' . $obj_name));
                 }
             } else {
@@ -3180,7 +3183,7 @@ class sandbox_multi extends db_object_multi_user
                         $this->set_source($src);
                     }
                     // use the norm db_row to recreate the field list to include the id for the user table and to create the diff vs the norm db_row
-                    $qp = $this->sql_write($sc, $norm_obj, $all_fields, $sc_par_lst);
+                    $qp = $this->sql_write($sc, $db_obj, $all_fields, $sc_par_lst);
                     // TODO compare sql_write with sql_insert_switch
                     $usr_msg->add($db_con->insert($qp, 'add user ' . $obj_name, true));
                 }
@@ -3198,14 +3201,14 @@ class sandbox_multi extends db_object_multi_user
      * TODO move the code to an object used by sandbox and sandbox_value
      *
      * @param sql_creator $sc with the target db_type set
-     * @param sandbox_multi|null $sdb_row the sandbox object with the database values before the update or the standard db_row
+     * @param sandbox_multi|null $db_obj the user sandbox object with the database values before the update or the standard db_row
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param array $fld_lst_all list of field names of the given object
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_write(
         sql_creator        $sc,
-        sandbox_multi|null $sdb_row,
+        sandbox_multi|null $db_obj,
         array              $fld_lst_all = [],
         sql_type_list      $sc_par_lst = new sql_type_list()
     ): sql_par
@@ -3221,36 +3224,38 @@ class sandbox_multi extends db_object_multi_user
         // clone to keep the db key list unchanged
         $fvt_lst = clone $fvt_lst_id;
         // add the list of the changed fields to the id list
-        $fvt_lst->add_list($this->db_fields_changed($sdb_row, $sc_par_lst));
+        $fvt_lst->add_list($this->db_fields_changed($db_obj, $sc_par_lst));
         // get the list of all fields that can be changed by the user
         $fld_lst_ex_id = array_diff($fld_lst_all, $fvt_lst_id->names());
 
-        // make the query name unique based on the changed fields
-        $lib = new library();
-        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_ex_id);
+        if (count($fld_lst_ex_id) > 0) {
+            // make the query name unique based on the changed fields
+            $lib = new library();
+            $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_ex_id);
 
-        // create the main query parameter object and set the query name
-        $qp = $this->sql_common($sc, $sc_par_lst, $ext, $id_ext);
+            // create the main query parameter object and set the query name
+            $qp = $this->sql_common($sc, $sc_par_lst, $ext, $id_ext);
 
-        // overwrite the standard auto increase id field name (added for multi tables)
-        $sc->set_id_field($this->id_field($sc_par_lst));
-        // use the query name for the sql creation (added for multi tables)
-        $sc->set_name($qp->name);
+            // overwrite the standard auto increase id field name (added for multi tables)
+            $sc->set_id_field($this->id_field($sc_par_lst));
+            // use the query name for the sql creation (added for multi tables)
+            $sc->set_name($qp->name);
 
-        // actually create the sql statement
-        if ($sc_par_lst->incl_log()) {
-            // log functions must always use named parameters
-            $sc_par_lst->add(sql_type::NAMED_PAR);
-            $qp = $this->sql_write_with_log($sc, $qp, $fvt_lst_id, $fvt_lst, $fld_lst_all, $sc_par_lst);
-        } else {
-            if ($sc_par_lst->is_insert()) {
-                $qp->sql = $sc->create_sql_insert($fvt_lst);
-                // set the parameters for the query execution
-                $qp->par = $fvt_lst->db_values();
+            // actually create the sql statement
+            if ($sc_par_lst->incl_log()) {
+                // log functions must always use named parameters
+                $sc_par_lst->add(sql_type::NAMED_PAR);
+                $qp = $this->sql_write_with_log($sc, $qp, $fvt_lst_id, $fvt_lst, $fld_lst_all, $sc_par_lst);
             } else {
-                $qp->sql = $sc->create_sql_update_fvt($fvt_lst_id, $fvt_lst, $sc_par_lst);
-                // and remember the parameters used
-                $qp->par = $sc->par_values();
+                if ($sc_par_lst->is_insert()) {
+                    $qp->sql = $sc->create_sql_insert($fvt_lst);
+                    // set the parameters for the query execution
+                    $qp->par = $fvt_lst->db_values();
+                } else {
+                    $qp->sql = $sc->create_sql_update_fvt($fvt_lst_id, $fvt_lst, $sc_par_lst);
+                    // and remember the parameters used
+                    $qp->par = $sc->par_values();
+                }
             }
         }
         return $qp;

@@ -121,11 +121,13 @@ use test\all_tests;
 use test\test_cleanup;
 use unit\import_tests as import_tests;
 use unit_read\triple_list_read_tests;
+use unit_read\value_read_tests;
 use unit_read\word_list_read_tests;
 use unit_ui\all_ui_tests;
 use unit_ui\base_ui_tests;
 use const\files as test_files;
 use unit_write\triple_write_tests;
+use unit_write\value_write_tests;
 
 class all_unit_tests extends test_cleanup
 {
@@ -135,7 +137,7 @@ class all_unit_tests extends test_cleanup
     /**
      * run a single test for faster debugging
      */
-    function run_single(): void
+    function run_single(all_tests $t): void
     {
 
         /*
@@ -164,7 +166,7 @@ class all_unit_tests extends test_cleanup
         //(new import_tests)->run($this);
         //(new formula_link_tests())->run($this);
 
-        // restore the global vars
+        // restore the global vars that may be overwritten if additional tests are activated
         $db_con = $global_db_con;
         $sql_names = $global_sql_names;
         $usr = $global_usr;
@@ -194,13 +196,18 @@ class all_unit_tests extends test_cleanup
             //$import->import_config_yaml($sys_usr);
 
             /*
-             * db read testing - run
+             * prepare db testing
              */
 
+            $this->create_test_db_entries($t);
 
-            // run the selected db write
+            /*
+             * import
+             */
+
+            // run the selected db import tests
             $imf = new import_file();
-            $import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $sys_usr);
+            //$import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $sys_usr);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::SYSTEM_VIEWS_FILE, $usr);
@@ -208,32 +215,39 @@ class all_unit_tests extends test_cleanup
             //$this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr);
             //$this->file_import(test_files::IMPORT_COUNTRY_ISO, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
-            $this->file_import(test_files::IMPORT_WIND_INVESTMENT, $usr);
+            //$this->file_import(test_files::IMPORT_WIND_INVESTMENT, $usr);
+
+
+            /*
+             * db read
+             */
+
+            // run the selected db read tests
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);
-            (new word_list_read_tests())->run($this);
+            //(new word_list_read_tests())->run($this);
             //(new triple_read_tests())->run($this);
-            (new triple_list_read_tests())->run($this);
+            //(new triple_list_read_tests())->run($this);
             //(new source_read_tests())->run($this);
             //(new formula_read_tests())->run($this);
             //(new view_read_tests())->run($this);
             //(new component_read_tests())->run($this);
             //(new graph_tests())->run($this);
-            //(new value_read_tests())->run($this);
+            (new value_read_tests())->run($this);
 
 
             /*
-             * db write testing - run
+             * db write
              */
 
-            // run the selected db write
+            // run the selected db write tests
             //(new word_write_tests)->run($this);
             //(new word_list_write_tests)->run($this);
             //(new triple_write_tests)->run($this);
             //(new group_write_tests)->run($this);
             //(new source_write_tests)->run($this);
             //(new ref_write_tests)->run($this);
-            //(new value_write_tests)->run($this);
+            (new value_write_tests)->run($this);
             //(new formula_write_tests)->run($this);
             //(new formula_link_write_tests)->run($this);
             //(new expression_write_tests)->run($this);

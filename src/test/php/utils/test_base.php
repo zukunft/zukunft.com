@@ -450,6 +450,7 @@ class test_base
     /**
      * check if the test result is as expected and display the test result to an admin user
      * TODO replace all dsp calls with this but the
+     * TODO the first parameter should almost always be $ts . $test_name
      *
      * @param string $test_name (unique) description of the test
      * @param string|array|null $result the actual result
@@ -726,7 +727,7 @@ class test_base
      * @param object $usr_obj the object which frontend API functions should be tested
      * @return bool true if the reloaded backend object has no relevant differences
      */
-    function assert_export_reload(object $usr_obj): bool
+    function assert_export_reload(string $test_name, object $usr_obj): bool
     {
         $lib = new library();
         $original_json = $usr_obj->export_json();
@@ -738,7 +739,7 @@ class test_base
         // TODO remove, for faster debugging only
         $json_in_txt = json_encode($original_json);
         $json_ex_txt = json_encode($recreated_json);
-        return $this->assert_json('reloaded export json of ' . $usr_obj::class, $recreated_json, $original_json);
+        return $this->assert_json($test_name . ' reloaded export json of ' . $usr_obj::class, $recreated_json, $original_json);
     }
 
     /**
@@ -3245,6 +3246,7 @@ class test_base
 
     /**
      * display the result of one test e.g. if adding a value has been successful
+     * should be replaced with the assert function
      *
      * @param string $test_name the message show to the admin / developer to identify the test
      * @param string|array|null $target the expected result

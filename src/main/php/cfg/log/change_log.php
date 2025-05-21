@@ -689,6 +689,7 @@ class change_log extends db_object_seq_id_user
         $result = false;
 
         $db_con->set_class($class, $usr_only);
+        // TODO the table for the log should never be the user table because from the user point of view the change is always done on the original table
         $this->set_class($class, $usr_only);
         $this->set_field($fld);
         $qp = $this->load_sql_by_field_row($db_con->sql_creator(), $this->field_id, $id);

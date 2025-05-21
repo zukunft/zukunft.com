@@ -822,7 +822,7 @@ class formula extends sandbox_typed
      * return the result of a special formula
      * e.g. "this" or "next" where the value of this or the following time word is returned
      */
-    function special_result(phrase_list $phr_lst, phrase $time_phr): value
+    function special_result(phrase_list $phr_lst, ?phrase $time_phr = null): value
     {
         log_debug("formula->special_result (" . $this->id() . ",t" . $phr_lst->dsp_id() . ",time" . $time_phr->name() . " and user " . $this->user()->name . ")");
         $val = null;

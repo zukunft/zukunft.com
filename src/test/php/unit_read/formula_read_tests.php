@@ -53,9 +53,12 @@ class formula_read_tests
         // init
         $t->name = 'formula read db->';
 
-        $t->header('formula db read tests');
+        // start the test section (ts)
+        $ts = 'read formula ';
+        $t->header($ts);
 
-        $t->subheader('formula load');
+        $t->subheader($ts . 'load' );
+        $test_name = formulas::SCALE_TO_SEC;
         $frm = new formula($t->usr1);
         $t->assert_load($frm, formulas::SCALE_TO_SEC);
 
@@ -94,9 +97,12 @@ class formula_read_tests
 
         $t->subheader('Frontend API tests');
 
+        $test_name = formulas::INCREASE;
         $frm = $t->load_formula(formulas::INCREASE);
         if ($frm->name() != '') {
-            $t->assert_export_reload($frm);
+            $t->assert_export_reload($ts . $test_name, $frm);
+        } else {
+            log_err($ts . $test_name . ' failed');
         }
     }
 

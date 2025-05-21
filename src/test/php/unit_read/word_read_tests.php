@@ -59,13 +59,15 @@ class word_read_tests
         $t->name = 'word read->';
         $t->resource_path = 'db/word/';
 
+        // start the test section (ts)
+        $ts = 'read word ';
+        $t->header($ts);
 
-        $t->header('word db read tests');
-
-        $t->subheader('word load');
+        $t->subheader($ts . 'load');
+        $test_name = words::MATH;
         $wrd = new word($t->usr1);
         $t->assert_load($wrd, words::MATH);
-        $t->assert('word description ', $wrd->description, words::MATH_COM);
+        $t->assert($ts . $test_name . 'description', $wrd->description, words::MATH_COM);
 
         // TODO load plural, type and view
 
@@ -84,8 +86,9 @@ class word_read_tests
 
         $t->subheader('word API object creation tests');
 
+        $test_name = words::MATH;
         $wrd = $t->load_word(words::MATH, $t->usr1);
-        $t->assert_export_reload($wrd);
+        $t->assert_export_reload($ts . $test_name, $wrd);
 
         $t->subheader('Word frontend tests');
 
@@ -171,13 +174,16 @@ class word_read_tests
         $t->assert_contains($test_name, $foaf_lst, $fixed_lst);
 
 
-        $t->header('triple database read tests');
         $t->name = 'triple read db->';
 
-        $t->subheader('triple export tests');
+        // start the test section (ts)
+        $ts = 'read triple ';
+        $t->header($ts);
 
+        $t->subheader($ts . 'export');
+        $test_name = triples::PI_NAME;
         $trp = $t->triple_pi();
-        $t->assert_export_reload($trp);
+        $t->assert_export_reload($ts . $test_name, $trp);
     }
 
 }
