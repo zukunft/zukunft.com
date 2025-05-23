@@ -514,10 +514,15 @@ class change extends change_log
     {
         $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst, $val_typ);
 
-        if ($this->old_value !== null or ($sc_par_lst->is_update_part() and $this->new_value !== null)) {
+        // if the id is used always include the name even if it null
+        if ($this->old_value !== null
+            or $this->old_id > 0
+            or ($sc_par_lst->is_update_part() and $this->new_value !== null)) {
             $fvt_lst->add_field(change::FLD_OLD_VALUE, $this->old_value, $sc->get_sql_par_type($this->old_value));
         }
-        if ($this->new_value !== null or ($sc_par_lst->is_update_part() and !$sc_par_lst->exclude_name_only() and $this->old_value !== null)) {
+        if ($this->new_value !== null
+            or $this->new_id > 0
+            or ($sc_par_lst->is_update_part() and !$sc_par_lst->exclude_name_only() and $this->old_value !== null)) {
             $fvt_lst->add_field(change::FLD_NEW_VALUE, $this->new_value, $sc->get_sql_par_type($this->new_value));
         }
 

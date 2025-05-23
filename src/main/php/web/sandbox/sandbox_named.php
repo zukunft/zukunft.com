@@ -121,7 +121,7 @@ class sandbox_named extends sandbox
         } else {
             $this->set_name('');
             if ($this::class != group::class) {
-                log_err('Mandatory field name missing in API JSON ' . json_encode($json_array));
+                $usr_msg->add_message('Mandatory field name missing in API JSON ' . json_encode($json_array));
             }
         }
         if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {

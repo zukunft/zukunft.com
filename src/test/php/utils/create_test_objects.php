@@ -513,6 +513,32 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return word "Company" with a suggested view
+     */
+    function word_view_set(): word
+    {
+        global $ptc_typ_cac;
+        $wrd = new word($this->usr1);
+        $wrd->set(words::COMPANY_ID, words::COMPANY);
+        $msk = new view($this->usr1);
+        $msk->set(views::HISTORIC_ID, '');
+        $wrd->set_view($msk);
+        $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
+        return $wrd;
+    }
+
+    /**
+     * @return word "mathematics" without the id e.g. as given by the import
+     */
+    function word_view_not_4_user(): word
+    {
+        $wrd = $this->word_view_set();
+        $wrd->set_view(null);
+        $wrd->set_protection_id(null);
+        return $wrd;
+    }
+
+    /**
      * @return word "mathematics" with all object variables set for complete unit testing
      */
     function word_filled(): word

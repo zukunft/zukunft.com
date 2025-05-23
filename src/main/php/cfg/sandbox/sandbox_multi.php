@@ -3169,7 +3169,9 @@ class sandbox_multi extends db_object_multi_user
                     // for a new user record compare with the norm db_row
                     // TODO compare sql_write with sql_update_switch
                     $qp = $this->sql_write($sc, $db_obj, $all_fields, $sc_par_lst);
-                    $usr_msg->add($db_con->update($qp, 'update user ' . $obj_name));
+                    if ($qp != null) {
+                        $usr_msg->add($db_con->update($qp, 'update user ' . $obj_name));
+                    }
                 }
             } else {
                 if (!$this->no_diff($norm_obj)) {
@@ -3211,7 +3213,7 @@ class sandbox_multi extends db_object_multi_user
         sandbox_multi|null $db_obj,
         array              $fld_lst_all = [],
         sql_type_list      $sc_par_lst = new sql_type_list()
-    ): sql_par
+    ): sql_par|null
     {
         // set the target sql table type for this value
         $sc_par_lst->add($this->table_type());
@@ -3227,8 +3229,10 @@ class sandbox_multi extends db_object_multi_user
         $fvt_lst->add_list($this->db_fields_changed($db_obj, $sc_par_lst));
         // get the list of all fields that can be changed by the user
         $fld_lst_ex_id = array_diff($fld_lst_all, $fvt_lst_id->names());
+        // get the changed fields
+        $chg_lst_ex_id = array_diff($fvt_lst->names(), $fvt_lst_id->names());
 
-        if (count($fld_lst_ex_id) > 0) {
+        if (count($chg_lst_ex_id) > 0) {
             // make the query name unique based on the changed fields
             $lib = new library();
             $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_ex_id);
@@ -3257,6 +3261,8 @@ class sandbox_multi extends db_object_multi_user
                     $qp->par = $sc->par_values();
                 }
             }
+        } else {
+            $qp = null;
         }
         return $qp;
     }

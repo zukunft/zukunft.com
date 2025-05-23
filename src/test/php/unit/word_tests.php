@@ -98,6 +98,10 @@ class word_tests
         $t->assert_sql_insert($sc, $wrd, [sql_type::USER]);
         $t->assert_sql_insert($sc, $wrd, [sql_type::LOG]);
         $t->assert_sql_insert($sc, $wrd, [sql_type::LOG, sql_type::USER]);
+        $wrd_view = $t->word_view_set();
+        $t->assert_sql_insert($sc, $wrd_view, [sql_type::LOG, sql_type::USER]);
+        $wrd_no_view = $t->word_view_not_4_user();
+        $t->assert_sql_save_fields($sc, $wrd_no_view, $wrd_view, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'sql write update');
         $wrd_renamed = $wrd->cloned(words::TEST_RENAMED);

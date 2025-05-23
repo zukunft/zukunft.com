@@ -595,7 +595,7 @@ class word extends sandbox_typed
         }
     }
 
-    function set_view(view $msk): void
+    function set_view(?view $msk): void
     {
         $this->view = $msk;
     }

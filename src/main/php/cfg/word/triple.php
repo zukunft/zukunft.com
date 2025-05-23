@@ -859,7 +859,11 @@ class triple extends sandbox_link_named
             if ($vrb->name() != '') {
                 global $vrb_cac;
                 $vrb_selected = $vrb_cac->get_by_name($vrb->name());
-                $this->set_predicate_id($vrb_selected->id());
+                if ($vrb_selected == null) {
+                    log_err('verb for ' . $vrb->name() . ' not found');
+                } else {
+                    $this->set_predicate_id($vrb_selected->id());
+                }
             }
         }
     }

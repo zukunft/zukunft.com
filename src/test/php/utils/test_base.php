@@ -71,6 +71,7 @@ use cfg\config;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
+use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\element\element_list;
 use cfg\formula\fig_ids;
@@ -1124,6 +1125,40 @@ class test_base
             $expected_sql = $this->assert_sql_expected($name, $sc->db_type);
             $actual_sql = $usr_obj->sql_view_link($sc, $usr_obj::FLD_LST_VIEW);
             $result = $this->assert_sql($name, $actual_sql, $expected_sql);
+        }
+        return $result;
+    }
+
+    /**
+     * check the SQL statement creation to save fields
+     * via function in the database
+     * for all allowed SQL database dialects
+     *
+     * @param sql_creator $sc a sql creator object that can be empty
+     * @param object $usr_obj the user sandbox object e.g. a word
+     * @param object $norm_obj the normal sandbox object for all new users
+     * @param array $sc_par_lst_in the parameters for the sql statement creation
+     * @return bool true if all tests are fine
+     */
+    function assert_sql_save_fields(sql_creator $sc, object $usr_obj, object $norm_obj, array $sc_par_lst_in = []): bool
+    {
+        // prepare like in save_fields_func
+        $sc_par_lst = new sql_type_list($sc_par_lst_in);
+        $sc_par_lst->add(sql_type::INSERT);
+        $sc_par_lst->add(sql_type::NO_ID_RETURN);
+        $all_fields = $usr_obj->db_fields_all();
+        $fvt_lst = $usr_obj->db_fields_changed($norm_obj, $sc_par_lst);
+
+        // check the Postgres query syntax
+        $sc->reset(sql_db::POSTGRES);
+        $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
+        $result = $this->assert_qp($qp, $sc->db_type);
+
+        // ... and check the MySQL query syntax
+        if ($result) {
+            $sc->reset(sql_db::MYSQL);
+            $qp = $usr_obj->sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
+            $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
     }

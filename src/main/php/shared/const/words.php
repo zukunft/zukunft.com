@@ -48,6 +48,8 @@ class words
     // *_COM is the tooltip for the word; to have the comments on one place the yaml is the preferred place
     // *_ID is the expected database id only used for system testing
     // this list is included in all preserved word names
+    //
+    // if words have a predefined behaviour instead of the code_id the phrase type is used
 
     // keywords to select the system configuration
     const THIS_SYSTEM = 'zukunft.com';

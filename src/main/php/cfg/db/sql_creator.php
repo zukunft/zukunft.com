@@ -1781,7 +1781,7 @@ class sql_creator
                 sql::FLD_LOG_FIELD_PREFIX . $fld,
                 $fvt_lst->get_value(sql::FLD_LOG_FIELD_PREFIX . $fld),
                 sql_par_type::INT_SMALL);
-            if ($fvt_lst->get_old($fld) != null) {
+            if ($fvt_lst->get_old($fld) != null or $fvt_lst->get_old_id($fld) != null) {
                 if ($fvt_lst->get_old_id($fld) != null) {
                     $par_lst_out->add_field(
                         $fvt_lst->get_par_name($fld) . change::FLD_OLD_EXT,
@@ -1798,11 +1798,14 @@ class sql_creator
                         $fvt_lst->get_type($fld));
                 }
             }
-            if ($fvt_lst->get_id($fld) != null) {
+            if ($fvt_lst->get_id($fld) != null or $fvt_lst->get_old_id($fld) != null) {
+                // a null text value does not need to be included in the parameter list because null is anyway the default value for the log
+                //if ($fvt_lst->get_value($fld) != null) {
                 $par_lst_out->add_field(
                     $fvt_lst->get_par_name($fld),
                     $fvt_lst->get_value($fld),
                     $fvt_lst->get_type($fld));
+                //}
                 $par_lst_out->add_field(
                     $fld,
                     $fvt_lst->get_id($fld),

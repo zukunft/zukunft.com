@@ -125,14 +125,16 @@ class sql_par_field_list
         }
     }
 
-    function add_id_part(sql_par_field $fld): void
+    function add_id_part(?sql_par_field $fld): void
     {
-        $this->add_field(
-            $fld->name,
-            $fld->id,
-            $fld->type_id,
-            $fld->old_id
-        );
+        if ($fld != null) {
+            $this->add_field(
+                $fld->name,
+                $fld->id,
+                $fld->type_id,
+                $fld->old_id
+            );
+        }
     }
 
     function add_name_part(sql_par_field $fld): void
@@ -193,12 +195,12 @@ class sql_par_field_list
             }
         }
         $fld->old = $old;
-        if ($par_name != '') {
+        if ($par_name !== null) {
             $fld->par_name = $par_name;
         }
         $fld->id = $id;
         $fld->old_id = $old_id;
-        if ($type_id != null) {
+        if ($type_id !== null) {
             if ($type_id::class === sql_field_type::class) {
                 $fld->type_id = $type_id->par_type();
             } else {
@@ -479,7 +481,7 @@ class sql_par_field_list
     {
         $result = [];
         foreach ($this->lst as $fld) {
-            if ($fld->id != null) {
+            if ($fld->id !== null) {
                 $result[] = $fld->id;
             } else {
                 if ($fld->value != sql::NOW) {
@@ -675,7 +677,7 @@ class sql_par_field_list
             } else {
                 if ($par_typ == sql_par_type::TEXT
                     or $par_typ == sql_field_type::TEXT
-                    OR $par_typ == sql_par_type::KEY_512
+                    or $par_typ == sql_par_type::KEY_512
                     or $par_typ == sql_field_type::NAME) {
                     $sql .= "'" . $fld->value . "'";
                 } elseif ($fld->value instanceof DateTime) {
