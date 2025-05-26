@@ -334,7 +334,7 @@ class view extends sandbox_typed
             if ($in_ex_json[json_fields::TYPE_NAME] != '') {
                 $type_id = $this->type_id_by_code_id($in_ex_json[json_fields::TYPE_NAME]);
                 if ($type_id == type_list::CODE_ID_NOT_FOUND) {
-                    $usr_msg->add_message('view type "'
+                    $usr_msg->add_message_text('view type "'
                         . $in_ex_json[json_fields::TYPE_NAME] . '" not found');
                 } else {
                     $this->type_id = $type_id;
@@ -382,7 +382,7 @@ class view extends sandbox_typed
 
         if (!$usr_msg->is_ok()) {
             $lib = new library();
-            $usr_msg->add_message(' when importing ' . $lib->dsp_array($in_ex_json));
+            $usr_msg->add_message_text(' when importing ' . $lib->dsp_array($in_ex_json));
         }
 
         return $usr_msg;
@@ -447,7 +447,7 @@ class view extends sandbox_typed
                 if ($value != '') {
                     $type_id = $this->type_id_by_code_id($value);
                     if ($type_id == type_list::CODE_ID_NOT_FOUND) {
-                        $result->add_message('view type "' . $value . '" not found');
+                        $result->add_message_text('view type "' . $value . '" not found');
                     } else {
                         $this->type_id = $type_id;
                     }
@@ -464,7 +464,7 @@ class view extends sandbox_typed
 
         if (!$test_obj) {
             if ($this->name == '') {
-                $result->add_message('name in view missing');
+                $result->add_message_text('name in view missing');
             } else {
                 $result->add($this->save());
 
@@ -527,7 +527,7 @@ class view extends sandbox_typed
                     }
                     // on import first add all view components to the view object and save them all at once
                     // TODO overwrite the style or position type
-                    $result->add_message($this->save_component($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj));
+                    $result->add_message_text($this->save_component($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj));
                     $cmp_pos++;
                 }
             }
@@ -554,7 +554,7 @@ class view extends sandbox_typed
 
         if (!$result->is_ok()) {
             $lib = new library();
-            $result->add_message(' when importing ' . $lib->dsp_array($in_ex_json));
+            $result->add_message_text(' when importing ' . $lib->dsp_array($in_ex_json));
         }
 
         return $result;
@@ -1149,7 +1149,7 @@ class view extends sandbox_typed
     {
         $usr_msg = new user_message();
         // TODO implement
-        $usr_msg->add_message('not yet implemented');
+        $usr_msg->add_message_text('not yet implemented');
         return $usr_msg;
     }
 

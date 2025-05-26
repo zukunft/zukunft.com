@@ -63,6 +63,10 @@ enum messages: string
     const VAR_JSON_TEXT = 'VarJsonText';
     const VAR_SOURCE_NAME = 'VarSourceName';
     const VAR_COMPONENT_NAME = 'VarComponentName';
+    const VAR_FILE_TYPE = 'VarFileType';
+    const VAR_FILE_NAME = 'VarFileName';
+    const VAR_SUMMARY = 'VarSummary';
+    const VAR_ERROR_TEXT = 'VarErrorText';
 
     // for the object main parameters created by the dsp_id function
     const VAR_TRIPLE = 'VarObjTriple';
@@ -148,6 +152,22 @@ enum messages: string
     case COMPONENT_CREATED = 'component with name "'
         . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
         . '" created';
+
+    // messages with vars for import
+    case IMPORT_READ_ERROR = 'error reading to decode json '
+        . self::VAR_START . self::VAR_FILE_TYPE . self::VAR_END
+        . ' file "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '"';
+    case IMPORT_EMPTY = 'import file "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" is empty';
+    case IMPORT_DONE = 'finished successful "'
+        . self::VAR_START . self::VAR_SUMMARY . self::VAR_END
+        . '" is empty';
+    case IMPORT_FAILED = 'failed because '
+        . self::VAR_START . self::VAR_SUMMARY . self::VAR_END
+        . '.';
 
 
     // for the change log

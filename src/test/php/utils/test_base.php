@@ -3186,10 +3186,10 @@ class test_base
      * @return bool
      */
     function assert_db_test_id_list(
-        string $test_name,
-        array $id_lst,
+        string                           $test_name,
+        array                            $id_lst,
         sandbox_named|sandbox_link_named $sbx,
-        sandbox_list_named $lst
+        sandbox_list_named               $lst
     ): bool
     {
         // convert to a key value array

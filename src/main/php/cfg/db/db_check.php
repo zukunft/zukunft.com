@@ -118,7 +118,7 @@ class db_check
                     NEXT_VERSION => $this->db_upgrade_0_0_4($db_con),
                     FIRST_VERSION => $this->db_upgrade_0_0_3($db_con),
                 };
-                $usr_msg->add_message($diff_txt);
+                $usr_msg->add_message_text($diff_txt);
             }
         } else {
             $last_consistency_check = $cfg->get_db(config::LAST_CONSISTENCY_CHECK, $db_con);

@@ -343,7 +343,7 @@ class db_object_seq_id extends db_object
             if ($this->id() == 0) {
                 $this->set_id($sbx->id());
             } elseif ($sbx->id() != $this->id()) {
-                $usr_msg->add_message(
+                $usr_msg->add_message_text(
                     'Unexpected conflict of the database id. '
                     . $this->dsp_id() . ' != ' . $this->dsp_id());
             }

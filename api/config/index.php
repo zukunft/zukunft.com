@@ -71,7 +71,7 @@ $result = ''; // reset the html code var
 
 // load the session user parameters
 $usr = new user;
-$usr_msg->add_message($usr->get());
+$usr_msg->add_message_text($usr->get());
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
@@ -84,13 +84,13 @@ if ($usr->id() > 0) {
     } elseif ($part == api::CONFIG_USER) {
         $usr_msg = $cfg_lst->load_usr_cfg($usr);
     } else {
-        $usr_msg->add_message('configuration part ' . $part . ' cannot yet be selected');
+        $usr_msg->add_message_text('configuration part ' . $part . ' cannot yet be selected');
     }
     if (!$usr_msg->is_ok()) {
         $usr_msg->add_id(msg_id::CONFIG_NOT_LOADED);
     } else {
         if ($cfg_lst->is_empty()) {
-            $usr_msg->add_message('config is empty');
+            $usr_msg->add_message_text('config is empty');
         }
     }
     if ($with_phr == api::URL_VAR_TRUE) {

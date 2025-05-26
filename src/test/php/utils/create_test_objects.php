@@ -1030,13 +1030,6 @@ class create_test_objects extends test_base
         return $wrd;
     }
 
-    function word_gwp(): word
-    {
-        $wrd = new word($this->usr1);
-        $wrd->set(words::GWP_ID, words::GWP);
-        return $wrd;
-    }
-
     function words_canton_zh_inhabitants(): array
     {
         return [words::ZH, words::CANTON, words::INHABITANTS, words::MIO];
@@ -1232,6 +1225,31 @@ class create_test_objects extends test_base
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->triple()->phrase());
         $trp->set_type(phrase_type_shared::TRIPLE_HIDDEN);
+        return $trp;
+    }
+
+    /**
+     * @return triple Global Warming Potential used for unit testing
+     */
+    function triple_global_warming(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set_from($this->word_global()->phrase());
+        $trp->set_verb($this->verb_is());
+        $trp->set_to($this->word_warmer()->phrase());
+        return $trp;
+    }
+
+    /**
+     * @return triple Global Warming Potential used for unit testing
+     */
+    function triple_gwp(): triple
+    {
+        $trp = new triple($this->usr1);
+        $trp->set(triples::GWP_ID, triples::GWP);
+        $trp->set_from($this->triple_global_warming()->phrase());
+        $trp->set_verb($this->verb_is());
+        $trp->set_to($this->word_potential()->phrase());
         return $trp;
     }
 
@@ -2916,7 +2934,7 @@ class create_test_objects extends test_base
         global $ref_typ_cac;
         $ref = new ref($this->usr1);
         $ref->set(12,
-            $this->word_gwp()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::CHANGE_NEW_KEY);
+            $this->triple_gwp()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::CHANGE_NEW_KEY);
         $ref->description = refs::CHANGE_OLD_KEY;
         return $ref;
     }

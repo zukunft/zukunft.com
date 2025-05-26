@@ -747,7 +747,7 @@ class sandbox_link extends sandbox
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
                     if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_message('Updating the reference in the log failed');
+                        $usr_msg->add_message_text('Updating the reference in the log failed');
                         // TODO do rollback or retry?
                     } else {
                         //$usr_msg->add_message($this->set_owner($new_owner_id));
@@ -764,7 +764,7 @@ class sandbox_link extends sandbox
                     }
 
                 } else {
-                    $usr_msg->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                    $usr_msg->add_message_text('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed due to logging error.');
                 }
             }
         }

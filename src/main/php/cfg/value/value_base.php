@@ -486,7 +486,7 @@ class value_base extends sandbox_value
                 if (strtotime($value)) {
                     $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
                 } else {
-                    $usr_msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
+                    $usr_msg->add_message_text('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
                 }
             }
 
@@ -494,7 +494,7 @@ class value_base extends sandbox_value
                 if (is_numeric($value)) {
                     $this->set_value($value);
                 } else {
-                    $usr_msg->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+                    $usr_msg->add_message_text('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
                 }
             }
 
@@ -583,7 +583,7 @@ class value_base extends sandbox_value
             if (strtotime($value)) {
                 $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
             } else {
-                $usr_msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
+                $usr_msg->add_message_text('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
             }
         }
 
@@ -592,7 +592,7 @@ class value_base extends sandbox_value
             if (is_numeric($value)) {
                 $this->set_value($value);
             } else {
-                $usr_msg->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+                $usr_msg->add_message_text('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
             }
         }
 
@@ -1437,7 +1437,7 @@ class value_base extends sandbox_value
             if (strtotime($value)) {
                 $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
             } else {
-                $msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
+                $msg->add_message_text('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
             }
         }
 
@@ -1445,7 +1445,7 @@ class value_base extends sandbox_value
             if (is_numeric($value)) {
                 $this->set_value($value);
             } else {
-                $msg->add_message('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+                $msg->add_message_text('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
             }
         }
 
@@ -2186,7 +2186,7 @@ class value_base extends sandbox_value
                     // update the reference in the log
                     if ($this->grp()->is_prime()) {
                         if (!$log->add_ref($this->id())) {
-                            $usr_msg->add_message('adding the value reference in the system log failed');
+                            $usr_msg->add_message_text('adding the value reference in the system log failed');
                         }
                     } else {
                         // TODO: save in the value or value big change log
@@ -2211,11 +2211,11 @@ class value_base extends sandbox_value
                         $db_val->set_value($this->value()); // ... but not the field saved already with the insert
                         $std_val = clone $db_val;
                         // save the value fields
-                        $usr_msg->add_message($this->save_fields($db_con, $db_val, $std_val));
+                        $usr_msg->add_message_text($this->save_fields($db_con, $db_val, $std_val));
                     }
 
                 } else {
-                    $usr_msg->add_message("Adding value " . $this->id() . " failed.");
+                    $usr_msg->add_message_text("Adding value " . $this->id() . " failed.");
                 }
             }
         }
@@ -2283,7 +2283,7 @@ class value_base extends sandbox_value
                 // TODO for the user sandbox load by phrase group id and source because one user can say, that one value has different number from different sources
                 $db_rec->load_by_id($this->grp()->id());
                 if ($db_rec->id() != $this->id()) {
-                    $usr_msg->add_message($msg_reload . ' ' . $class_name . ' ' . $msg_fail);
+                    $usr_msg->add_message_text($msg_reload . ' ' . $class_name . ' ' . $msg_fail);
                 }
                 log_debug("old database value loaded (" . $db_rec->value() . ") with group " . $db_rec->grp()->id() . ".");
 
@@ -2306,7 +2306,7 @@ class value_base extends sandbox_value
 
                 // check if the id parameters are supposed to be changed
                 if ($usr_msg->is_ok()) {
-                    $usr_msg->add_message($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
+                    $usr_msg->add_message_text($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
                 }
 
                 // if a problem has appeared up to here, don't try to save the values
@@ -2314,9 +2314,9 @@ class value_base extends sandbox_value
                 if ($usr_msg->is_ok()) {
                     // if the user is the owner and no other user has adjusted the value, really delete the value in the database
                     if ($use_func) {
-                        $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
+                        $usr_msg->add_message_text($this->save_fields_func($db_con, $db_rec, $std_rec));
                     } else {
-                        $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                        $usr_msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec));
                     }
                 } else {
                     log_warning('value ' . $this->dsp_id() . ' not saved');

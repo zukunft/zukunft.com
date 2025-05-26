@@ -341,7 +341,7 @@ class ref extends sandbox_link
             if (!$test_obj) {
                 $src->load_by_name($src_name);
                 if ($src->id() == 0) {
-                    $usr_msg->add_message('Cannot find source "' . $src_name . '" when importing ' . $this->dsp_id());
+                    $usr_msg->add_message_text('Cannot find source "' . $src_name . '" when importing ' . $this->dsp_id());
                 }
             } else {
                 $src->set_name($src_name);
@@ -352,7 +352,7 @@ class ref extends sandbox_link
             $this->set_predicate_id($ref_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]));
 
             if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
-                $usr_msg->add_message('Reference type for '
+                $usr_msg->add_message_text('Reference type for '
                     . $in_ex_json[json_fields::TYPE_NAME] . ' not found');
             }
         }
@@ -1108,7 +1108,7 @@ class ref extends sandbox_link
                 if ($this->id() > 0) {
                     // update the id in the log for the correct reference
                     if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_message('Adding reference ' . $this->dsp_id() . ' in the log failed.');
+                        $usr_msg->add_message_text('Adding reference ' . $this->dsp_id() . ' in the log failed.');
                         log_err($usr_msg->get_message(), 'ref->add');
                     } else {
                         // create an empty db_rec element to force saving of all set fields
@@ -1122,7 +1122,7 @@ class ref extends sandbox_link
                         $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                     }
                 } else {
-                    $usr_msg->add_message('Adding reference ' . $this->dsp_id() . ' failed.');
+                    $usr_msg->add_message_text('Adding reference ' . $this->dsp_id() . ' failed.');
                     log_err($usr_msg->get_message(), 'ref->add');
                 }
             }
@@ -1219,7 +1219,7 @@ class ref extends sandbox_link
             // update the
             if ($usr_msg->is_ok()) {
                 if ($use_func) {
-                    $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
+                    $usr_msg->add_message_text($this->save_fields_func($db_con, $db_rec, $std_rec));
                 } else {
                     $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }

@@ -121,6 +121,7 @@ use test\all_tests;
 use test\test_cleanup;
 use unit\import_tests as import_tests;
 use unit_read\triple_list_read_tests;
+use unit_read\triple_read_tests;
 use unit_read\value_read_tests;
 use unit_read\word_list_read_tests;
 use unit_ui\all_ui_tests;
@@ -214,7 +215,7 @@ class all_unit_tests extends test_cleanup
             //$this->file_import(files::MESSAGE_PATH . files::UNITS_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr, true);
-            $this->file_import(files::MESSAGE_PATH . files::COMPANY_FILE, $usr);
+            //$this->file_import(files::MESSAGE_PATH . files::COMPANY_FILE, $usr);
             //$this->file_import(test_files::IMPORT_COUNTRY_ISO, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
             //$this->file_import(test_files::IMPORT_WIND_INVESTMENT, $usr);
@@ -227,8 +228,8 @@ class all_unit_tests extends test_cleanup
             // run the selected db read tests
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);
-            //(new word_list_read_tests())->run($this);
-            //(new triple_read_tests())->run($this);
+            (new word_list_read_tests())->run($this);
+            (new triple_read_tests())->run($this);
             //(new triple_list_read_tests())->run($this);
             //(new source_read_tests())->run($this);
             //(new formula_read_tests())->run($this);

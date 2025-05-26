@@ -364,7 +364,7 @@ class word extends sandbox_typed
             if (!$test_obj) {
                 $wrd_view->load_by_name($msk_name);
                 if ($wrd_view->id() == 0) {
-                    $usr_msg->add_message(
+                    $usr_msg->add_message_text(
                         'Cannot find view "' . $msk_name
                         . '" when importing ' . $this->dsp_id());
                 } else {
@@ -442,7 +442,7 @@ class word extends sandbox_typed
             log_debug('saved ' . $this->dsp_id());
 
             if ($this->id() <= 0) {
-                $result->add_message('Word ' . $this->dsp_id() . ' cannot be saved');
+                $result->add_message_text('Word ' . $this->dsp_id() . ' cannot be saved');
             } else {
                 foreach ($in_ex_json as $key => $value) {
                     if ($result->is_ok()) {
@@ -1654,7 +1654,7 @@ class word extends sandbox_typed
                 } else {
                     if (!$this->has_usr_cfg()) {
                         if (!$this->add_usr_cfg()) {
-                            $usr_msg->add_message('adding of user configuration failed');
+                            $usr_msg->add_message_text('adding of user configuration failed');
                         }
                     }
                     if ($usr_msg == '') {

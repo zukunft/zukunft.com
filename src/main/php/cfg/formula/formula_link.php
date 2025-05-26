@@ -643,7 +643,7 @@ class formula_link extends sandbox_link
         if ($this->id() <= 0) {
             if ($this->db_ready()) {
                 log_debug('new formula link from "' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '"');
-                $usr_msg->add_message($this->add($use_func)->get_last_message());
+                $usr_msg->add_message_text($this->add($use_func)->get_last_message());
             }
         } else {
             log_debug('update "' . $this->id() . '"');
@@ -670,7 +670,7 @@ class formula_link extends sandbox_link
                 if ($db_rec->formula()->id() <> $this->formula()->id()
                     or $db_rec->phrase()->id() <> $this->phrase()->id()) {
                     log_debug("update link settings for id " . $this->id() . ": change formula " . $db_rec->formula_id() . " to " . $this->formula_id() . " and " . $db_rec->phrase_id() . " to " . $this->phrase_id());
-                    $usr_msg->add_message(log_info('The formula link "' . $db_rec->formula()->name() . '" with "' . $db_rec->phrase()->name() . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->formula()->name() . '" with "' . $this->phrase()->name() . '" (id ' . $this->formula()->id() . ',' . $this->phrase()->id() . '). Instead the program should have created a new link.', "formula_link->save"));
+                    $usr_msg->add_message_text(log_info('The formula link "' . $db_rec->formula()->name() . '" with "' . $db_rec->phrase()->name() . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->formula()->name() . '" with "' . $this->phrase()->name() . '" (id ' . $this->formula()->id() . ',' . $this->phrase()->id() . '). Instead the program should have created a new link.', "formula_link->save"));
                 }
             }
 
@@ -684,7 +684,7 @@ class formula_link extends sandbox_link
             // the problem is shown to the user by the calling interactive script
             if ($usr_msg->is_ok()) {
                 if ($use_func) {
-                    $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
+                    $usr_msg->add_message_text($this->save_fields_func($db_con, $db_rec, $std_rec));
                 } else {
                     $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }

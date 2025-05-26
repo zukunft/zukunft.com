@@ -477,12 +477,12 @@ class ip_range extends db_object_seq_id
                 // update the id in the log for the correct reference
                 if (!$log->add_ref($this->id())) {
                     $msg = 'Adding reference for ' . $this->dsp_id() . ' in the log failed.';
-                    $usr_msg->add_message($msg);
+                    $usr_msg->add_message_text($msg);
                     log_err($msg, self::class . '->add');
                 }
             } else {
                 $msg = 'Adding reference ' . $this->dsp_id() . ' failed.';
-                $usr_msg->add_message($msg);
+                $usr_msg->add_message_text($msg);
                 log_err($msg, self::class . '->add');
             }
         }
@@ -557,7 +557,7 @@ class ip_range extends db_object_seq_id
             $db_rec->set_user($this->user());
             $qp = $this->load_sql_by_vars($db_con);
             if ($db_rec->load($qp) > 0) {
-                $usr_msg->add_message($this->save_fields($db_con, $db_rec));
+                $usr_msg->add_message_text($this->save_fields($db_con, $db_rec));
             }
         }
         return $usr_msg;

@@ -720,16 +720,16 @@ class lib_tests
         $t->assert("construct with message", $usr_msg->get_message(), 'first message text');
         $t->assert("if a message text is given, the result is by default NOT ok", $usr_msg->is_ok(), false);
 
-        $usr_msg->add_message('second message text');
+        $usr_msg->add_message_text('second message text');
         $t->assert("after adding a message the first message stays the same", $usr_msg->get_message(), 'first message text');
         $t->assert("... and the second message can be shown", $usr_msg->get_message(2), 'second message text');
         $t->assert("... which is also the last message", $usr_msg->get_last_message(), 'second message text');
         $t->assert("a too high position simply returns an empty message", $usr_msg->get_message(3), '');
 
         $msg_2 = new user_message();
-        $msg_2->add_message('');
+        $msg_2->add_message_text('');
         $t->assert("adding an empty test does not change the status", $msg_2->is_ok(), true);
-        $msg_2->add_message('error text');
+        $msg_2->add_message_text('error text');
         $t->assert("but adding an error text does", $msg_2->is_ok(), false);
 
         $usr_msg->add($msg_2);

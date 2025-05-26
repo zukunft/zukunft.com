@@ -132,7 +132,7 @@ class ip_range_list extends base_list
                     . $mtr->txt(msg_id::IP_BLOCK_POST_ADDR)
                     . $range->reason
                     . $mtr->txt(msg_id::IP_BLOCK_SOLUTION);
-                $result->add_message($msg);
+                $result->add_message_text($msg);
             }
         }
         return $result;

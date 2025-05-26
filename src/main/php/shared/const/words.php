@@ -74,6 +74,7 @@ class words
     const FRONTEND = 'frontend';
     const BACKEND = 'backend';
     const LANGUAGE = 'language';
+    const BYTE = 'byte';
 
     // e.g. one instance / pod of zukunft.com
     const URL = 'url';
@@ -173,6 +174,7 @@ class words
     const OPEN_API = 'OpenAPI';
     const DEFINITION = 'definition';
 
+
     /*
      * const for system testing
      */
@@ -181,6 +183,8 @@ class words
     // TN_* is the name of the word used for testing created with the initial setup (see also TWN_*)
     // TI_* is the database id based on the initial load
     // TD_* is the tooltip/description of the word
+
+    // words from import file units.json in order of appearance
     const MATH = 'mathematics';
     const MATH_COM = 'Mathematics is an area of knowledge that includes the topics of numbers and formulas';
     const MATH_ID = 1;
@@ -206,11 +210,80 @@ class words
     const DIAMETER_ID = 16;
     const SECOND = 'second';
     const SECOND_ID = 24;
+    const FLOW = 'flow';
+    const FLOW_ID = 101;
     const MINUTE = 'minute';
     const MINUTE_ID = 104;
+    const YEAR_2019 = '2019';
+    const YEAR_2019_ID = 139;
+    const YEAR_2020 = '2020';
+    const YEAR_2020_ID = 140;
+    const YEAR_2020_COM = 'the year 2020';
+
+    // words from import file scaling.json in order of appearance
     const MIO = 'million';
     const MIO_ID = 157;
     const MIO_SHORT = 'mio';
+    const BILLION = 'billion';
+    const BILLION_ID = 158;
+    const PCT = 'percent';
+    const PCT_ID = 159;
+
+    // words from import file time_definition.json in order of appearance
+    const THIS_NAME = 'this'; // the test name for the predefined word 'this'
+    const THIS_ID = 179;
+    const PRIOR_NAME = 'prior';
+    const PRIOR_ID = 181;
+
+    // words from import file solution_prio.json used for the start page in order of appearance
+    const PROBLEM = 'problem';
+    const PROBLEM_ID = 183;
+    const GLOBAL = 'global';
+    const GLOBAL_ID = 184;
+    const POTENTIAL = 'potential';
+    const POTENTIAL_ID = 187;
+    const CLIMATE = 'climate';
+    const CLIMATE_ID = 190;
+    const WARMER = 'warmer';
+    const WARMER_ID = 193;
+    const POPULISM = 'populism';
+    const POPULISM_ID = 197;
+    const HEALTH = 'health';
+    const HEALTH_ID = 213;
+    const POVERTY = 'poverty';
+    const POVERTY_ID = 215;
+    const EDUCATION = 'education';
+    const EDUCATION_ID = 217;
+    const HAPPY = 'happy';
+    const HAPPY_ID = 220;
+    const POINTS = 'points';
+    const POINTS_ID = 222;
+    const HTP = 'htp';
+    const HTP_ID = 225;
+    const TRILLION = 'trillion';
+    const TRILLION_ID = 226;
+    const CHF = 'CHF';
+    const CHF_ID = 228;
+    const USD = 'USD';
+    const USD_ID = 229;
+
+    // words from import file company.json used for the start page in order of appearance
+    const SALES = 'sales';
+    const SALES_ID = 252;
+    const CASH = 'cash';
+    const CASH_ID = 254;
+    const STATEMENT = 'statement';
+    const STATEMENT_ID = 255;
+    const PARTS = 'parts';
+    const PARTS_ID = 257;
+    const TOTAL_PRE = 'total';
+    const TOTAL_ID = 258;
+    const INCOME = 'income';
+    const INCOME_ID = 259;
+    const TAX = 'tax';
+    const TAX_ID = 260;
+
+    // words from import file country.json used for the start page in order of appearance
     const COUNTRY = 'Country';
     const CH = 'Switzerland';
     const CH_ID = 264;
@@ -228,6 +301,8 @@ class words
     const INHABITANT_ID = 271;
     // TODO add test to search for words in all language forms e.g. plural
     const INHABITANTS = 'inhabitants';
+    const COMPANY = 'Company';
+    const COMPANY_ID = 272;
     const YEAR_2013 = '2013';
     const YEAR_2013_ID = 273;
     const YEAR_2014 = '2014';
@@ -240,79 +315,12 @@ class words
     const YEAR_2017_ID = 277;
     const YEAR_2018 = '2018';
     const YEAR_2018_ID = 278;
-    const YEAR_2019 = '2019';
-    const YEAR_2019_ID = 139;
-    const YEAR_2020 = '2020';
-    const YEAR_2020_ID = 140;
-    const YEAR_2020_COM = 'the year 2020';
-    const PCT = 'percent';
-    const PCT_ID = 159;
-    // _PRE are the predefined words
-    const THIS_NAME = 'this'; // the test name for the predefined word 'this'
-    const THIS_ID = 179;
-    const PRIOR_NAME = 'prior';
-    const PRIOR_ID = 181;
-    const PARTS = 'parts';
-    const PARTS_ID = 257;
-    const TOTAL_PRE = 'total';
-    const TOTAL_ID = 258;
-    const COMPANY = 'Company';
-    const COMPANY_ID = 272;
+
+    // words from import test file companies.json used for the start page in order of appearance
     const ABB = 'ABB';
     const ABB_ID = 1004;
     const VESTAS = 'Vestas';
     const VESTAS_ID = 1007;
-    const CHF = 'CHF';
-    const CHF_ID = 228;
-    const SALES = 'sales';
-    const SALES_ID = 252;
-    const CASH = 'cash';
-    const CASH_ID = 254;
-    const FLOW = 'flow';
-    const FLOW_ID = 101;
-    const STATEMENT = 'statement';
-    const STATEMENT_ID = 255;
-    const TAX = 'tax';
-    const TAX_ID = 260;
-    const INCOME = 'income';
-    const INCOME_ID = 259;
-
-    const PROBLEM = 'problem';
-    const PROBLEM_ID = 183;
-    const GLOBAL = 'global';
-    const GLOBAL_ID = 184;
-
-    const POTENTIAL = 'potential';
-    const POTENTIAL_ID = 187;
-    const CLIMATE = 'climate';
-    const CLIMATE_ID = 190;
-    const WARMER = 'warmer';
-    const WARMER_ID = 193;
-    const HEALTH = 'health';
-    const HEALTH_ID = 213;
-    const POPULISM = 'populism';
-    const POPULISM_ID = 197;
-    const POVERTY = 'poverty';
-    const POVERTY_ID = 215;
-    const EDUCATION = 'education';
-    const EDUCATION_ID = 217;
-    const HAPPY = 'happy';
-    const HAPPY_ID = 220;
-    const POINTS = 'points';
-    const POINTS_ID = 222;
-    const TRILLION = 'trillion';
-    const TRILLION_ID = 226;
-    const BILLION = 'billion';
-    const BILLION_ID = 158;
-    const USD = 'USD';
-    const USD_ID = 229;
-    const HTP = 'htp';
-    const HTP_ID = 225;
-
-    const GWP = 'global warming potential';
-    const GWP_ID = 91;
-
-    const BYTE = 'byte';
 
     // for the config.yaml
     const TEST = 'test';

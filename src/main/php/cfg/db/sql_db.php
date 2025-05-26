@@ -999,7 +999,7 @@ class sql_db
         } catch (Exception $e) {
             $msg = ' creation of the database failed due to ' . $e->getMessage();
             log_fatal($msg, 'setup_db');
-            $usr_msg->add_message($msg);
+            $usr_msg->add_message_text($msg);
         }
 
         // fill the tables with the essential data
@@ -2480,7 +2480,7 @@ class sql_db
             log_fatal('Unknown database type "' . $this->db_type . '"', 'exe_script');
         }
         if ($result === false) {
-            $usr_msg->add_message(pg_last_error($this->postgres_link));
+            $usr_msg->add_message_text(pg_last_error($this->postgres_link));
         }
         return $usr_msg;
     }
@@ -4262,7 +4262,7 @@ class sql_db
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     log_err($sql_error . ' while executing ' . $qp->sql);
-                    $usr_msg->add_message($err_msg);
+                    $usr_msg->add_message_text($err_msg);
                 } else {
                     if (!$usr_tbl) {
                         $db_id = pg_fetch_array($sql_result)[0];
@@ -4278,7 +4278,7 @@ class sql_db
                 if ($db_id == 0 or $db_id == '') {
                     if (!$is_val) {
                         log_err($err_msg);
-                        $usr_msg->add_message($err_msg);
+                        $usr_msg->add_message_text($err_msg);
                     }
                 } else {
                     $usr_msg->set_db_row_id($db_id);
@@ -4286,7 +4286,7 @@ class sql_db
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $usr_msg->add_message($trace_link);
+            $usr_msg->add_message_text($trace_link);
         }
         $sys_times->switch();
 
@@ -4318,12 +4318,12 @@ class sql_db
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
                     log_err($err_msg);
-                    $usr_msg->add_message($err_msg);
+                    $usr_msg->add_message_text($err_msg);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $usr_msg->add_message($trace_link);
+            $usr_msg->add_message_text($trace_link);
         }
         $sys_times->switch();
 
@@ -4355,12 +4355,12 @@ class sql_db
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
                     log_err($err_msg);
-                    $usr_msg->add_message($err_msg);
+                    $usr_msg->add_message_text($err_msg);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $usr_msg->add_message($trace_link);
+            $usr_msg->add_message_text($trace_link);
         }
         $sys_times->switch();
 
@@ -5121,7 +5121,7 @@ class sql_db
             // actually add the column
             $sql = 'ALTER TABLE IF EXISTS ' . $this->name_sql_esc($table_name) .
                 ' DROP COLUMN IF EXISTS ' . $this->name_sql_esc($field_name) . ';';
-            $usr_msg->add_message($this->exe_try('Deleting column ' . $field_name . ' of ' . $table_name, $sql));
+            $usr_msg->add_message_text($this->exe_try('Deleting column ' . $field_name . ' of ' . $table_name, $sql));
         }
 
         return $usr_msg;

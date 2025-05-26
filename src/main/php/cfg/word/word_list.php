@@ -1637,7 +1637,7 @@ class word_list extends sandbox_list_named
         $upd_per_sec = $cfg->get_by([words::WORDS, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         if ($this->is_empty()) {
-            $usr_msg->add_info('no words to save');
+            $usr_msg->add_info_text('no words to save');
         } else {
             // load the words that are already in the database
             $step_time = $this->count() / $load_per_sec;

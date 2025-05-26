@@ -318,7 +318,7 @@ class import
         global $cfg;
 
         // get the relevant config values
-        $decode_per_sec = $cfg->get_by([words::DECODE, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $decode_per_sec = $cfg->get_by([words::DECODE, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 100);
         $store_per_sec = $cfg->get_by([triples::OBJECT_STORING, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         $usr_msg = new user_message();
@@ -334,9 +334,9 @@ class import
 
         if ($yaml_array == null) {
             if ($yaml_str != '') {
-                $usr_msg->add_message('YAML decode failed of ' . $yaml_str);
+                $usr_msg->add_message_text('YAML decode failed of ' . $yaml_str);
             } else {
-                $usr_msg->add_warning('YAML string is empty');
+                $usr_msg->add_warning_text('YAML string is empty');
             }
         } else {
 
@@ -429,9 +429,9 @@ class import
         $json_array = json_decode($json_str, true);
         if ($json_array == null) {
             if ($json_str != '') {
-                $usr_msg->add_message('JSON decode failed of ' . $json_str);
+                $usr_msg->add_message_text('JSON decode failed of ' . $json_str);
             } else {
-                $usr_msg->add_warning('JSON string is empty');
+                $usr_msg->add_warning_text('JSON string is empty');
             }
         } else {
             $usr_msg = $this->put($json_array, $usr_trigger);
@@ -493,7 +493,7 @@ class import
             $pos++;
             if ($key == json_fields::VERSION) {
                 if (prg_version_is_newer($json_obj)) {
-                    $usr_msg->add_message('Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION);
+                    $usr_msg->add_message_text('Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION);
                 }
             } elseif ($key == json_fields::POD) {
                 // TODO set the source pod
@@ -736,7 +736,7 @@ class import
                     $pos++;
                 }
             } else {
-                $usr_msg->add_message('Unknown element ' . $key);
+                $usr_msg->add_message_text('Unknown element ' . $key);
             }
         }
 
@@ -1043,7 +1043,7 @@ class import
         $usr_msg = new user_message();
         if (key_exists(json_fields::VERSION, $json_array)) {
             if (prg_version_is_newer($json_array[json_fields::VERSION])) {
-                $usr_msg->add_message('Import file has been created with version ' . $json_array[json_fields::VERSION] . ', which is newer than this, which is ' . PRG_VERSION);
+                $usr_msg->add_message_text('Import file has been created with version ' . $json_array[json_fields::VERSION] . ', which is newer than this, which is ' . PRG_VERSION);
             }
         }
         // TODO add json_fields::POD
@@ -1469,8 +1469,20 @@ class import
         $msg_txt .= $this->status_text_entry('components', $this->components_done, $this->components_failed);
         $msg_txt .= $this->status_text_entry('results validated', $this->calc_validations_done, $this->calc_validations_failed);
         $msg_txt .= $this->status_text_entry('views validated', $this->view_validations_done, $this->view_validations_failed);
-        $usr_msg->add_message($msg_txt);
+        $usr_msg->add_message_text($msg_txt);
         return $usr_msg;
+    }
+
+    function summary(): string
+    {
+        $msg_txt = $this->status_text()->get_last_message();
+        if ($this->users_done > 0) {
+            $msg_txt .= ' ... and ' . $this->users_done . ' $users';
+        }
+        if ($this->system_done > 0) {
+            $msg_txt .= ' ... and ' . $this->system_done . ' $system objects';
+        }
+        return $msg_txt;
     }
 
     private function status_text_entry(string $name, int $done, int $failed): string

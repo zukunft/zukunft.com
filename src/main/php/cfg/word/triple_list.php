@@ -713,7 +713,7 @@ class triple_list extends sandbox_list_named
             if ($phr::class == triple::class) {
                 if ($phr->verb() == null) {
                     $phr->set_verb($vrb_cac->get_verb(verbs::NOT_SET));
-                    $usr_msg->add_message('verb for triple ' . $phr->dsp_id() . ' set to ' . verbs::NOT_SET);
+                    $usr_msg->add_message_text('verb for triple ' . $phr->dsp_id() . ' set to ' . verbs::NOT_SET);
                 }
             }
         }

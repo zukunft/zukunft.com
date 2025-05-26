@@ -201,7 +201,7 @@ class element_list extends sandbox_list
         $usr_msg = new user_message();
         $sc = $db_con->sql_creator();
         $qp = $this->del_sql_without_log($sc);
-        $usr_msg->add_message(
+        $usr_msg->add_message_text(
             $db_con->exe_try('del elements', $qp->sql, '', array(), sys_log_level::FATAL));
         return $usr_msg;
     }

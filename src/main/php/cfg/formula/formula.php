@@ -1574,10 +1574,10 @@ class formula extends sandbox_typed
                     if ($key == self::FLD_ASSIGN) {
                         if (is_array($value)) {
                             foreach ($value as $lnk_phr_name) {
-                                $usr_msg->add_message($this->assign_name($lnk_phr_name, $test_obj));
+                                $usr_msg->add_message_text($this->assign_name($lnk_phr_name, $test_obj));
                             }
                         } else {
-                            $usr_msg->add_message($this->assign_name($value, $test_obj));
+                            $usr_msg->add_message_text($this->assign_name($value, $test_obj));
                         }
                     }
                 }
@@ -2179,7 +2179,7 @@ class formula extends sandbox_typed
         $this->last_update = new DateTime();
         $db_con->set_class(formula::class);
         if (!$db_con->update_old($this->id(), self::FLD_LAST_UPDATE, sql::NOW)) {
-            $usr_msg->add_message('saving the update trigger for formula ' . $this->dsp_id() . ' failed');
+            $usr_msg->add_message_text('saving the update trigger for formula ' . $this->dsp_id() . ' failed');
         }
 
         log_debug('->save_field_trigger_update timestamp of ' .
@@ -2402,7 +2402,7 @@ class formula extends sandbox_typed
             // check if a word, triple or verb with the same name is already in the database
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and !$this->is_term_the_same($trm)) {
-                $usr_msg->add_message($trm->id_used_msg($this));
+                $usr_msg->add_message_text($trm->id_used_msg($this));
                 log_debug('->save_id_if_updated name "' . $trm->name() . '" used already as "' . $trm->type() . '"');
             } else {
 
@@ -2427,7 +2427,7 @@ class formula extends sandbox_typed
                         $this->save_field_excluded($db_con, $db_rec, $std_rec);
                         log_debug('->save_id_if_updated found a display component link with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());
                     } else {
-                        $usr_msg->add_message('A view component with the name "' . $this->name() . '" already exists. Please use another name.');
+                        $usr_msg->add_message_text('A view component with the name "' . $this->name() . '" already exists. Please use another name.');
                     }
                 } else {
                     // the formula can be renamed (either for this user or for all users)
@@ -2436,7 +2436,7 @@ class formula extends sandbox_typed
                         // in this case change is allowed and done
                         log_debug('->save_id_if_updated change the existing display component link ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
                         //$this->load_objects();
-                        $usr_msg->add_message($this->save_id_fields($db_con, $db_rec, $std_rec));
+                        $usr_msg->add_message_text($this->save_id_fields($db_con, $db_rec, $std_rec));
                     } else {
                         // if the target link has not yet been created
                         // ... request to delete the old
@@ -2500,12 +2500,12 @@ class formula extends sandbox_typed
                     log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id());
                     // update the id in the log for the correct reference
                     if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_message('Updating the reference in the log failed');
+                        $usr_msg->add_message_text('Updating the reference in the log failed');
                         $this->set_id(0);
                         // TODO do rollback or retry?
                     }
                 } else {
-                    $usr_msg->add_message("Adding formula " . $this->name . " failed.");
+                    $usr_msg->add_message_text("Adding formula " . $this->name . " failed.");
                 }
             }
         }
@@ -2522,13 +2522,13 @@ class formula extends sandbox_typed
                 $std_rec = clone $db_rec;
                 // save the formula fields
                 if ($use_func) {
-                    $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
+                    $usr_msg->add_message_text($this->save_fields_func($db_con, $db_rec, $std_rec));
                 } else {
                     $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }
             }
         } else {
-            $usr_msg->add_message("Adding formula " . $this->name . " failed.");
+            $usr_msg->add_message_text("Adding formula " . $this->name . " failed.");
         }
 
         return $usr_msg;
@@ -2574,10 +2574,10 @@ class formula extends sandbox_typed
                             if ($trm->obj()->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
                                 log_debug('adding formula name ' . $this->dsp_id() . ' has just a matching formula word');
                             } else {
-                                $usr_msg->add_message($trm->id_used_msg($this));
+                                $usr_msg->add_message_text($trm->id_used_msg($this));
                             }
                         } else {
-                            $usr_msg->add_message($trm->id_used_msg($this));
+                            $usr_msg->add_message_text($trm->id_used_msg($this));
                         }
                     } else {
                         $this->set_id($trm->id_obj());
@@ -2598,7 +2598,7 @@ class formula extends sandbox_typed
                 // check that the get_similar function has really found a similar object and report potential program errors
                 if (!$this->is_similar($similar)) {
                     $msg_not = $mtr->txt(msg_id::NOT_SIMILAR);
-                    $usr_msg->add_message($this->dsp_id() . ' ' . $msg_not . ' ' . $similar->dsp_id());
+                    $usr_msg->add_message_text($this->dsp_id() . ' ' . $msg_not . ' ' . $similar->dsp_id());
                 } else {
                     // if similar is found set the id to trigger the updating instead of adding
                     $similar->load_by_id($similar->id()); // e.g. to get the type_id
@@ -2608,7 +2608,7 @@ class formula extends sandbox_typed
                     } else {
                         if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                             or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                            $usr_msg->add_message($similar->id_used_msg($this));
+                            $usr_msg->add_message_text($similar->id_used_msg($this));
                         }
                     }
                 }
@@ -2622,7 +2622,7 @@ class formula extends sandbox_typed
         if ($usr_msg->is_ok()) {
             if ($this->id() <= 0) {
                 // convert the formula text to db format (any error messages should have been returned from the calling user script)
-                $usr_msg->add_message($this->generate_ref_text());
+                $usr_msg->add_message_text($this->generate_ref_text());
                 if ($usr_msg->is_ok()) {
 
                     log_debug('add');
@@ -2635,7 +2635,7 @@ class formula extends sandbox_typed
                     // e.g. if a source already exists update the source
                     // but if a word with the same name of a formula already exists suggest a new formula name
                     if (!$this->is_same($similar)) {
-                        $usr_msg->add_message($similar->id_used_msg($this));
+                        $usr_msg->add_message_text($similar->id_used_msg($this));
                     }
                 }
 
@@ -2666,7 +2666,7 @@ class formula extends sandbox_typed
                     }
 
                     // ... and convert the formula text to db format (any error messages should have been returned from the calling user script)
-                    $usr_msg->add_message($this->generate_ref_text());
+                    $usr_msg->add_message_text($this->generate_ref_text());
                     if ($usr_msg->is_ok()) {
 
                         // check if the id parameters are supposed to be changed
@@ -2676,7 +2676,7 @@ class formula extends sandbox_typed
                         // the problem is shown to the user by the calling interactive script
                         if ($usr_msg->is_ok()) {
                             if ($use_func) {
-                                $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
+                                $usr_msg->add_message_text($this->save_fields_func($db_con, $db_rec, $std_rec));
                             } else {
                                 $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                             }
@@ -2690,7 +2690,7 @@ class formula extends sandbox_typed
             // a '1' in the result only indicates that an update has been done for testing; '1' doesn't mean that there has been an error
             if ($usr_msg->is_ok()) {
                 if (!$this->element_refresh($this->ref_text)) {
-                    $usr_msg->add_message('Refresh of the formula elements failed');
+                    $usr_msg->add_message_text('Refresh of the formula elements failed');
                 }
             }
         }
@@ -2745,7 +2745,7 @@ class formula extends sandbox_typed
         $frm_lnk_lst = new formula_link_list($this->user());
         if ($frm_lnk_lst->load_by_frm_id($this->id())) {
             $msg = $frm_lnk_lst->del_without_log();
-            $usr_msg->add_message($msg);
+            $usr_msg->add_message_text($msg);
         }
 
         // and the corresponding formula elements
@@ -2758,7 +2758,7 @@ class formula extends sandbox_typed
             $db_con->set_class(element::class);
             $db_con->set_usr($this->user()->id());
             $msg = $db_con->delete_old($this->id_field(), $this->id());
-            $usr_msg->add_message($msg);
+            $usr_msg->add_message_text($msg);
         }
 
         // and the corresponding results
@@ -2766,7 +2766,7 @@ class formula extends sandbox_typed
             $db_con->set_class(result::class);
             $db_con->set_usr($this->user()->id());
             $msg = $db_con->delete_old($this->id_field(), $this->id());
-            $usr_msg->add_message($msg);
+            $usr_msg->add_message_text($msg);
         }
 
         // and the corresponding word if possible

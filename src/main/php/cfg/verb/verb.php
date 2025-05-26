@@ -1005,7 +1005,7 @@ class verb extends type_object
             if (in_array($this->name, verbs::RESERVED_WORDS)) {
                 // the admin user needs to add the read test word during initial load
                 if (!$usr->is_admin()) {
-                    $usr_msg->add_message('"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for);
+                    $usr_msg->add_message_text('"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for);
                 }
             }
         }
@@ -1035,7 +1035,7 @@ class verb extends type_object
             // check if a word, triple or formula with the same name is already in the database
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
-                $usr_msg->add_message($trm->id_used_msg($this));
+                $usr_msg->add_message_text($trm->id_used_msg($this));
             } else {
                 $this->set_id($trm->id_obj());
                 log_debug('verb->save adding verb name ' . $this->dsp_id() . ' is OK');
@@ -1045,7 +1045,7 @@ class verb extends type_object
         // create a new verb or update an existing
         if ($usr_msg->is_ok()) {
             if ($this->id() <= 0) {
-                $usr_msg->add_message($this->add($db_con));
+                $usr_msg->add_message_text($this->add($db_con));
             } else {
                 log_debug('update "' . $this->id() . '"');
                 // read the database values to be able to check if something has been changed; done first,
@@ -1060,10 +1060,10 @@ class verb extends type_object
                     // check if a verb, formula or verb with the same name is already in the database
                     $trm = $this->get_term();
                     if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
-                        $usr_msg->add_message($trm->id_used_msg($this));
+                        $usr_msg->add_message_text($trm->id_used_msg($this));
                     } else {
                         if ($this->can_change()) {
-                            $usr_msg->add_message($this->save_field_name($db_con, $db_rec));
+                            $usr_msg->add_message_text($this->save_field_name($db_con, $db_rec));
                         } else {
                             // TODO: create a new verb and request to delete the old
                             log_err('Creating a new verb is not yet possible');
@@ -1072,13 +1072,13 @@ class verb extends type_object
                 }
 
                 if ($db_rec->code_id <> $this->code_id) {
-                    $usr_msg->add_message($this->save_field_code_id($db_con, $db_rec));
+                    $usr_msg->add_message_text($this->save_field_code_id($db_con, $db_rec));
                 }
 
                 // if a problem has appeared up to here, don't try to save the values
                 // the problem is shown to the user by the calling interactive script
                 if ($usr_msg->is_ok()) {
-                    $usr_msg->add_message($this->save_fields($db_con, $db_rec));
+                    $usr_msg->add_message_text($this->save_fields($db_con, $db_rec));
                 }
             }
         }

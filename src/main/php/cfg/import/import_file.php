@@ -36,6 +36,7 @@ include_once MODEL_CONST_PATH . 'files.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_TYPES_PATH . 'file_types.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\const\files;
@@ -46,6 +47,7 @@ use const\files as test_files;
 use shared\const\triples;
 use shared\const\words;
 use shared\enum\messages as msg_id;
+use shared\types\file_types;
 
 class import_file
 {
@@ -106,10 +108,10 @@ class import_file
         $imp->step_main_end($size, $read_bytes_per_sec);
 
         if (!$json_str) {
-            log_err('Error reading JSON resource ' . $filename);
+            $this->read_error($filename, file_types::JSOM, $usr_msg);
         } else {
             if ($json_str == '') {
-                $usr_msg->add_message(' failed because message file is empty of not found.');
+                $usr_msg->add_message_text(' failed because message file is empty of not found.');
             } else {
 
                 // analyse the import file and update the database
@@ -121,7 +123,7 @@ class import_file
 
                 // show the summery to the user
                 if ($import_result->is_ok()) {
-                    $usr_msg->add_info(' done ('
+                    $usr_msg->add_info_text(' done ('
                         . $imp->words_done . ' words, '
                         . $imp->verbs_done . ' verbs, '
                         . $imp->triples_done . ' triples, '
@@ -135,10 +137,10 @@ class import_file
                         . $imp->calc_validations_done . ' results validated, '
                         . $imp->view_validations_done . ' views validated)');
                     if ($imp->users_done > 0) {
-                        $usr_msg->add_info(' ... and ' . $imp->users_done . ' $users');
+                        $usr_msg->add_info_text(' ... and ' . $imp->users_done . ' $users');
                     }
                     if ($imp->system_done > 0) {
-                        $usr_msg->add_info(' ... and ' . $imp->system_done . ' $system objects');
+                        $usr_msg->add_info_text(' ... and ' . $imp->system_done . ' $system objects');
                     }
                 } else {
                     $usr_msg->add($import_result);
@@ -153,9 +155,9 @@ class import_file
     /**
      * import a single yaml file
      *
-     * @param string $filename
-     * @param user $usr
-     * @return user_message
+     * @param string $filename the file name including the local path of the file that should be imported
+     * @param user $usr the user who has triggered the import
+     * @return user_message the result of the import with suggested solution in case of a problem
      */
     function yaml_file(string $filename, user $usr): user_message
     {
@@ -163,23 +165,17 @@ class import_file
 
         $yaml_str = file_get_contents($filename);
         if (!$yaml_str) {
-            log_err('Error reading JSON resource ' . $filename);
+            $this->read_error($filename, file_types::YAML, $usr_msg);
         } else {
             if ($yaml_str == '') {
-                $usr_msg->add_message(' failed because message file is empty of not found.');
+                $this->empty_warning($filename, $usr_msg);
             } else {
                 $imp = new import($filename);
                 $import_result = $imp->put_yaml($yaml_str, $usr);
                 if ($import_result->is_ok()) {
-                    $usr_msg->add_info(' done (' . $imp->status_text()->get_last_message() . ' )');
-                    if ($imp->users_done > 0) {
-                        $usr_msg->add_message(' ... and ' . $imp->users_done . ' $users');
-                    }
-                    if ($imp->system_done > 0) {
-                        $usr_msg->add_message(' ... and ' . $imp->system_done . ' $system objects');
-                    }
+                    $this->done($imp->summary(), $usr_msg);
                 } else {
-                    $usr_msg->add_message(' failed because ' . $import_result->all_message_text() . '.');
+                    $this->failed($import_result->all_message_text(), $usr_msg);
                 }
             }
         }
@@ -192,9 +188,10 @@ class import_file
      * TODO validate the import by comparing the import with the api message to tne frontend
      *
      * @param user $usr who has triggered the function
+     * @param bool $verify if true it is tested if the export matches the import
      * @return bool true if the configuration has imported
      */
-    function import_config_yaml(user $usr): bool
+    function import_config_yaml(user $usr, bool $verify = false): bool
     {
         $result = false;
 
@@ -319,6 +316,61 @@ class import_file
     {
         echo $txt;
         echo "\n";
+    }
+
+
+    /*
+     * internal message creation
+     */
+
+    /**
+     * add the file read error to the user message
+     * @param string $name the filename and path of the import file
+     * @param string $type the file type
+     * @param user_message $usr_msg the user message object
+     */
+    private function read_error(string $name, string $type, user_message $usr_msg): void
+    {
+        $usr_msg->add_id_with_vars(msg_id::IMPORT_READ_ERROR, [
+            msg_id::VAR_FILE_TYPE => $type,
+            msg_id::VAR_FILE_NAME => $name
+        ]);
+    }
+
+    /**
+     * add a warning that the file is empty to the user message
+     * @param string $name the filename and path of the import file
+     * @param user_message $usr_msg the user message object
+     */
+    private function empty_warning(string $name, user_message $usr_msg): void
+    {
+        $usr_msg->add_id_with_vars(msg_id::IMPORT_EMPTY, [
+            msg_id::VAR_FILE_NAME => $name
+        ]);
+    }
+
+    /**
+     * add the final import result to the user message
+     * @param string $err_txt a description of the errors and warning due to the import
+     * @param user_message $usr_msg the user message object
+     */
+    private function failed(string $err_txt, user_message $usr_msg): void
+    {
+        $usr_msg->add_id_with_vars(msg_id::IMPORT_FAILED, [
+            msg_id::VAR_ERROR_TEXT => $err_txt
+        ]);
+    }
+
+    /**
+     * add the final import result to the user message
+     * @param string $summary a description of what has been imported
+     * @param user_message $usr_msg the user message object
+     */
+    private function done(string $summary, user_message $usr_msg): void
+    {
+        $usr_msg->add_id_with_vars(msg_id::IMPORT_DONE, [
+            msg_id::VAR_SUMMARY => $summary
+        ]);
     }
 
 }

@@ -401,7 +401,7 @@ class result extends sandbox_value
                 if (is_numeric($value)) {
                     $this->set_value($value);
                 } else {
-                    $usr_msg->add_message('Import result: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+                    $usr_msg->add_message_text('Import result: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
                 }
             }
 

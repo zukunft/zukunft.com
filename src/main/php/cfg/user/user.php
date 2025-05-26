@@ -997,7 +997,7 @@ class user extends db_object_seq_id
                 // TODO use the right level of the profile
                 if ($profile_id >= $this->profile_id) {
                     global $db_con;
-                    $usr_msg->add_message($this->save($db_con));
+                    $usr_msg->add_message_text($this->save($db_con));
                 }
             }
         }

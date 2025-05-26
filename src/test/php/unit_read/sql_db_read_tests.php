@@ -83,14 +83,14 @@ class sql_db_read_tests
             if (!$this->table_no_change_log($tbl)) {
                 $tbl_id = $cng_tbl_cac->id($tbl);
                 if ($tbl_id == -1) {
-                    $tbl_msg->add_message($next_tbl_id . ",'" . $tbl . "',,'" . $tbl . "'");
+                    $tbl_msg->add_message_text($next_tbl_id . ",'" . $tbl . "',,'" . $tbl . "'");
                     $next_tbl_id++;
                 } else {
                     $fld_lst = $db_con->get_fields($tbl);
                     foreach ($fld_lst as $fld) {
                         $fld_id = $cng_fld_cac->id($tbl_id . $fld);
                         if ($fld_id == -1) {
-                            $fld_msg->add_message($next_fld_id . "," . $fld . "," . $tbl_id . ",,");
+                            $fld_msg->add_message_text($next_fld_id . "," . $fld . "," . $tbl_id . ",,");
                             $next_fld_id++;
                         } else {
                             log_debug('found field ' . $tbl_id . $tbl);

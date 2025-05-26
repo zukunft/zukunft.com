@@ -783,16 +783,16 @@ class change_link extends change_log
             $fvt_lst->add_field(self::FLD_NEW_TO_TEXT, $this->new_text_to, $sc->get_sql_par_type($this->new_text_to));
         }
 
-        if ($this->old_from_id > 0) {
+        if ($this->old_from_id != 0) {
             $fvt_lst->add_field(self::FLD_OLD_FROM_ID, $this->old_from_id, sql_par_type::INT);
         }
-        if ($this->old_link_id > 0) {
+        if ($this->old_link_id != 0) {
             $fvt_lst->add_field(self::FLD_OLD_LINK_ID, $this->old_link_id, sql_par_type::INT);
         }
-        if ($this->old_to_id > 0) {
+        if ($this->old_to_id != 0) {
             $fvt_lst->add_field(self::FLD_OLD_TO_ID, $this->old_to_id, sql_par_type::INT);
         }
-        if ($this->new_from_id > 0) {
+        if ($this->new_from_id != 0) {
             $par_name = '';
             if ($sbx != null) {
                 $par_name = sql::PAR_PREFIX . $sbx->from_field();
@@ -804,7 +804,7 @@ class change_link extends change_log
                 $fvt_lst->add_field(self::FLD_NEW_FROM_ID, $this->new_from_id, sql_par_type::INT, null, $par_name);
             }
         }
-        if ($this->new_link_id > 0) {
+        if ($this->new_link_id != 0) {
             $par_name = '';
             if ($sbx != null) {
                 $par_name = sql::PAR_PREFIX . $sbx->type_field();
@@ -816,7 +816,7 @@ class change_link extends change_log
                 $fvt_lst->add_field(self::FLD_NEW_LINK_ID, $this->new_link_id, sql_par_type::INT, null, $par_name);
             }
         }
-        if ($this->new_to_id > 0) {
+        if ($this->new_to_id != 0) {
             $par_name = '';
             if ($sbx != null) {
                 $par_name = sql::PAR_PREFIX . $sbx->to_field();

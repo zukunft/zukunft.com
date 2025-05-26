@@ -456,7 +456,7 @@ class data_object
 
     function add_message(string $msg): void
     {
-        $this->usr_msg->add_message($msg);
+        $this->usr_msg->add_message_text($msg);
     }
 
     /**
@@ -621,7 +621,7 @@ class data_object
                     foreach ($val->phrase_list()->lst() as $phr) {
                         if ($phr->id() == 0) {
                             if ($phr->name() == '') {
-                                $usr_msg->add_warning('phrase id and name missing in ' . $phr->dsp_id());
+                                $usr_msg->add_warning_text('phrase id and name missing in ' . $phr->dsp_id());
                             } else {
                                 $phr_reloaded = $phr_lst->get_by_name($phr->name());
                                 $usr_msg->add($this->set_phrase_id($phr, $phr_reloaded));
@@ -650,7 +650,7 @@ class data_object
                 $phr = $ref->phrase();
                 if ($phr->id() == 0) {
                     if ($phr->name() == '') {
-                        $usr_msg->add_warning('phrase id and name missing in ' . $phr->dsp_id());
+                        $usr_msg->add_warning_text('phrase id and name missing in ' . $phr->dsp_id());
                     } else {
                         $phr_reloaded = $phr_lst->get_by_name($phr->name());
                         $usr_msg->add($this->set_phrase_id($phr, $phr_reloaded));
@@ -765,11 +765,11 @@ class data_object
                             $cmp = $lnk->component();
                             if ($cmp->id() == 0) {
                                 if ($cmp->name() == '') {
-                                    $usr_msg->add_warning('component id and name missing in ' . $cmp->dsp_id());
+                                    $usr_msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
                                 } else {
                                     $cmp_reloaded = $cmp_lst->get_by_name($cmp->name());
                                     if ($cmp_reloaded == null) {
-                                        $usr_msg->add_warning('component id and name missing in ' . $cmp->dsp_id());
+                                        $usr_msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
                                     } else {
                                         $cmp->set_id($cmp_reloaded->id());
                                         $lnk->set_component_id($cmp_reloaded->id());

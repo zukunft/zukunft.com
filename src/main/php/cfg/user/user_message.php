@@ -291,11 +291,12 @@ class user_message
     /**
      * to offer the user to see more details without retry
      * more than one message text can be added to a user message result
+     * TODO replace with add_id add_id_with_vars
      *
      * @param string $msg_text the message text to add
      * @return void is never expected to fail
      */
-    function add_message(string $msg_text): void
+    function add_message_text(string $msg_text): void
     {
         if ($msg_text != '') {
             // do not repeat the same text more than once
@@ -315,7 +316,7 @@ class user_message
      * @param string $msg_text the warning text to add
      * @return void is never expected to fail
      */
-    function add_warning(string $msg_text): void
+    function add_warning_text(string $msg_text): void
     {
         if ($msg_text != '') {
             // do not repeat the same text more than once
@@ -335,7 +336,7 @@ class user_message
      * @param string $info_text the warning text to add
      * @return void is never expected to fail
      */
-    function add_info(string $info_text): void
+    function add_info_text(string $info_text): void
     {
         if ($info_text != '') {
             // do not repeat the same text more than once
@@ -354,10 +355,10 @@ class user_message
     function add(user_message $msg_to_add): void
     {
         foreach ($msg_to_add->get_all_info() as $msg_text) {
-            $this->add_info($msg_text);
+            $this->add_info_text($msg_text);
         }
         foreach ($msg_to_add->get_all_messages() as $msg_text) {
-            $this->add_message($msg_text);
+            $this->add_message_text($msg_text);
         }
         foreach ($msg_to_add->get_all_id_messages() as $msg_id) {
             $this->add_id($msg_id);

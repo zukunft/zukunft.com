@@ -979,7 +979,7 @@ class value_list extends sandbox_value_list
                 if (strtotime($value)) {
                     $val->time_stamp = $lib->get_datetime($value, $val->dsp_id(), 'JSON import');
                 } else {
-                    $usr_msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $val->dsp_id());
+                    $usr_msg->add_message_text('Cannot add timestamp "' . $value . '" when importing ' . $val->dsp_id());
                 }
             }
 
@@ -1587,9 +1587,11 @@ class value_list extends sandbox_value_list
             $i = 0;
             $imp->step_start(msg_id::SAVE, value::class);
             foreach ($this->lst() as $val) {
-                if ($val->value() != null) {
+                if ($val->value() === null) {
+                    $usr_msg->add_message_text('null value for ' . $val->dsp_id() . ' not saved');
+                } else {
                     if ($val->id() == 0) {
-                        $usr_msg->add_message('cannot save ' . $val->dsp_id() . ' because id is zero');
+                        $usr_msg->add_message_text('cannot save ' . $val->dsp_id() . ' because id is zero');
                     } else {
                         $usr_msg->add($val->save());
                     }
