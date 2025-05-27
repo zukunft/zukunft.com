@@ -821,6 +821,21 @@ class data_object
     }
 
     /**
+     * TODO add the missing lists and vars of the dto object
+     * reports the difference to the given data object as human-readable messages
+     * @param data_object $dto which might have some differences
+     * @return user_message all differences as a human-readable text
+     */
+    function diff_msg(data_object $dto): user_message
+    {
+        $usr_msg = new user_message();
+        $usr_msg->add($this->word_list()->diff_msg($dto->word_list()));
+        $usr_msg->add($this->triple_list()->diff_msg($dto->triple_list()));
+        $usr_msg->add($this->value_list()->diff_msg($dto->value_list()));
+        return $usr_msg;
+    }
+
+    /**
      * check if the phrase related to a triple is fine
      * and if not indicate a self reference by returning true
      *

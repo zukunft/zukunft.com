@@ -42,6 +42,7 @@ include_once DB_PATH . 'sql_par.php';
 //include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
@@ -51,6 +52,7 @@ use cfg\group\group_id;
 use cfg\user\user;
 use cfg\user\user_message;
 use controller\api_message;
+use shared\enum\messages as msg_id;
 use shared\types\api_type_list;
 use shared\json_fields;
 
@@ -263,6 +265,24 @@ class db_object_multi extends db_object_key
                 }
             }
         }
+    }
+
+    /**
+     * create human-readable messages of the differences between the db id objects
+     * @param db_object_multi $obj which might be different to this db id object
+     * @return user_message the human-readable messages of the differences between the db id objects
+     */
+    function diff_msg(db_object_multi $obj): user_message
+    {
+        $usr_msg = new user_message();
+        if ($this->id() != $obj->id()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_ID, [
+                msg_id::VAR_ID => $obj->id(),
+                msg_id::VAR_ID_CHK => $this->id(),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $usr_msg;
     }
 
 

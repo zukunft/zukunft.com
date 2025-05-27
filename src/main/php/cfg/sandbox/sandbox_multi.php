@@ -79,6 +79,7 @@ include_once MODEL_ELEMENT_PATH . 'element.php';
 //include_once MODEL_GROUP_PATH . 'result_id.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once MODEL_HELPER_PATH . 'db_object_multi.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
@@ -133,6 +134,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\data_object;
+use cfg\helper\db_object_multi;
 use cfg\helper\db_object_multi_user;
 use cfg\element\element;
 use cfg\formula\formula;
@@ -141,7 +143,6 @@ use cfg\formula\formula_link_type;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\result_id;
-use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_action;
@@ -529,6 +530,20 @@ class sandbox_multi extends db_object_multi_user
         return $this->owner_id;
     }
 
+    /**
+     * TODO use a user list cache
+     * @return user|null the person who has the permission to change the standard object
+     */
+    function owner(): ?user
+    {
+        $owner = null;
+        if ($this->owner_id != null) {
+            $owner = new user();
+            $owner->load_by_id($this->owner_id);
+        }
+        return $owner;
+    }
+
     function set_share_id(?int $id): void
     {
         $this->share_id = $id;
@@ -895,6 +910,50 @@ class sandbox_multi extends db_object_multi_user
         }
 
         return $ptc_typ_cac->name($this->protection_id);
+    }
+
+
+    /*
+     * information
+     */
+
+    /**
+     * create human-readable messages of the differences between the sandbox objects
+     * @param sandbox_multi|db_object_multi $obj which might be different to this sandbox object
+     * @return user_message the human-readable messages of the differences between the sandbox objects
+     */
+    function diff_msg(sandbox_multi|db_object_multi $obj): user_message
+    {
+        $usr_msg = parent::diff_msg($obj);
+        if ($this->owner_id() != $obj->owner_id()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_OWNER, [
+                msg_id::VAR_USER => $obj->owner()->dsp_id(),
+                msg_id::VAR_USER_CHK => $this->owner()->dsp_id(),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        if ($this->share_id() != $obj->share_id()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
+                msg_id::VAR_SHARE => $obj->share_type_name(),
+                msg_id::VAR_SHARE_CHK => $this->share_type_name(),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        if ($this->protection_id() != $obj->protection_id()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
+                msg_id::VAR_PROTECT => $obj->protection_type_name(),
+                msg_id::VAR_PROTECT_CHK => $this->protection_type_name(),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        if ($this->is_excluded() != $obj->is_excluded()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_EXCLUSION, [
+                msg_id::VAR_EXCLUDE => $obj->is_excluded(),
+                msg_id::VAR_EXCLUDE_CHK => $this->is_excluded(),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $usr_msg;
     }
 
 

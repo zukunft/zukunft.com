@@ -47,18 +47,60 @@ enum messages: string
     const VAR_TEMP_VAR = 'VarPrefix';
 
     // var names
+    // the id of a sandbox object
+    const VAR_ID = 'VarObjId';
+    // the id of the compare sandbox object
+    const VAR_ID_CHK = 'VarObjIdCheck';
     // the name of a sandbox object
     const VAR_NAME = 'VarObjName';
+    // the name of the compare sandbox object
+    const VAR_NAME_CHK = 'VarObjNameCheck';
+    // the description of a sandbox object using dsp_id()
+    const VAR_SANDBOX_NAME = 'VarSandboxName';
     // the name and if of a word
     const VAR_WORD_NAME = 'VarWordName';
     // the name and if of a triple
     const VAR_TRIPLE_NAME = 'VarTripleName';
+    // the user/owner of an object
+    const VAR_USER = 'VarUser';
+    // the user/owner of a compare object
+    const VAR_USER_CHK = 'VarUserCheck';
     // the name of a user
     const VAR_USER_NAME = 'VarUserName';
     // the name of a user of a list
     const VAR_USER_LIST_NAME = 'VarUserListName';
+    // the name of a sandbox object
+    const VAR_TYPE = 'VarObjType';
+    // the name of the compare sandbox object
+    const VAR_TYPE_CHK = 'VarObjTypeCheck';
+    // the id of a value object
+    const VAR_VAL_ID = 'VarValueId';
+    // the numeric, time, text or geo value of a value
+    const VAR_VALUE = 'VarValue';
+    // the numeric, time, text or geo value of a compare value
+    const VAR_VALUE_CHK = 'VarValueCheck';
+    // the phrase group naming of a value
+    const VAR_GROUP = 'VarGroup';
+    // the phrase group naming of a compare value
+    const VAR_GROUP_CHK = 'VarGroupCheck';
+    // the source of a value
+    const VAR_SOURCE = 'VarSource';
+    // the source of a compare value
+    const VAR_SOURCE_CHK = 'VarSourceCheck';
     // the name of a class
     const VAR_CLASS_NAME = 'VarClassName';
+    // the share permission of a sandbox object
+    const VAR_SHARE = 'VarShare';
+    // the share permission of the compare sandbox object
+    const VAR_SHARE_CHK = 'VarShareCheck';
+    // the change protection of a sandbox object
+    const VAR_PROTECT = 'VarProtect';
+    // the change protection of the compare sandbox object
+    const VAR_PROTECT_CHK = 'VarProtectCheck';
+    // the exclusion status of a sandbox object
+    const VAR_EXCLUDE = 'VarExclude';
+    // the exclusion status of the compare sandbox object
+    const VAR_EXCLUDE_CHK = 'VarExcludeCheck';
 
     const VAR_JSON_TEXT = 'VarJsonText';
     const VAR_SOURCE_NAME = 'VarSourceName';
@@ -72,6 +114,8 @@ enum messages: string
     const VAR_TRIPLE = 'VarObjTriple';
     const VAR_FORMULA = 'VarObjFormula';
     const VAR_JSON_PART = 'VarJsonPart';
+
+    const IMPORT_SUCCESS = 'finished successful';
 
     // unique message keys
     // *_txt sample translation to test the English mapping
@@ -93,8 +137,116 @@ enum messages: string
     case NONE = '';
 
     // messages with vars
+    case DIFF_ID = 'id is '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' instead of '
+        . self::VAR_START . self::VAR_ID_CHK . self::VAR_END
+        . ' for "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case DIFF_NAME = 'name is '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' instead of '
+        . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END
+        . ' for "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '"';
+    case DIFF_USER = 'user is '
+        . self::VAR_START . self::VAR_USER . self::VAR_END
+        . ' instead of '
+        . self::VAR_START . self::VAR_USER_CHK . self::VAR_END
+        . ' for "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case DIFF_OWNER = 'owner is '
+        . self::VAR_START . self::VAR_USER . self::VAR_END
+        . ' instead of '
+        . self::VAR_START . self::VAR_USER_CHK . self::VAR_END
+        . ' for "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case DIFF_TYPE = 'type is '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' instead of '
+        . self::VAR_START . self::VAR_TYPE_CHK . self::VAR_END
+        . ' for "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '"';
+    case DIFF_SHARE = 'share permission is '
+        . self::VAR_START . self::VAR_SHARE . self::VAR_END
+        . ' instead of '
+        . self::VAR_START . self::VAR_SHARE_CHK . self::VAR_END
+        . ' for "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case DIFF_PROTECTION = 'modify protect is '
+        . self::VAR_START . self::VAR_PROTECT . self::VAR_END
+        . ' instead of '
+        . self::VAR_START . self::VAR_PROTECT_CHK . self::VAR_END
+        . ' for "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case DIFF_EXCLUSION = 'exclusion is '
+        . self::VAR_START . self::VAR_EXCLUDE . self::VAR_END
+        . ' instead of '
+        . self::VAR_START . self::VAR_EXCLUDE_CHK . self::VAR_END
+        . ' for "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case DIFF_VALUE = 'value is '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' instead of '
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
+        . ' for "'
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
+        . '"';
+    case DIFF_VALUE_TYPE = 'value type is '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' instead of '
+        . self::VAR_START . self::VAR_TYPE_CHK . self::VAR_END
+        . ' for "'
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
+        . '"';
+    case DIFF_GROUP = 'group name is '
+        . self::VAR_START . self::VAR_GROUP . self::VAR_END
+        . ' instead of '
+        . self::VAR_START . self::VAR_GROUP_CHK . self::VAR_END
+        . ' for "'
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
+        . '"';
+    case DIFF_SOURCE = 'source is '
+        . self::VAR_START . self::VAR_SOURCE . self::VAR_END
+        . ' instead of '
+        . self::VAR_START . self::VAR_SOURCE_CHK . self::VAR_END
+        . ' for "'
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
+        . '"';
     case TRIM_NAME = 'trim "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case WORD_MISSING = 'word "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is missing';
+    case WORD_ADDITIONAL = 'word "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is extra';
+    case WORD_ID_MISSING = 'word id missing of "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '"';
+    case WORD_ID_ADDITIONAL = 'word id additional of "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '"';
+    case TRIPLE_MISSING = 'triple "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is missing';
+    case TRIPLE_ADDITIONAL = 'triple "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is extra';
+    case TRIPLE_ID_MISSING = 'triple id missing of "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '"';
+    case TRIPLE_ID_ADDITIONAL = 'triple id additional of "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';
     case USER_MISSING = 'user in "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
@@ -112,6 +264,18 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is missing';
     case ID_AND_NAME_MISSING = 'id and name missing';
+    case VALUE_MISSING = 'value "'
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
+        . '" is missing';
+    case VALUE_ADDITIONAL = 'value "'
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
+        . '" is extra';
+    case RESULT_MISSING = 'result "'
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
+        . '" is missing';
+    case RESULT_ADDITIONAL = 'result "'
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
+        . '" is extra';
     case LIST_DOUBLE_ENTRY = 'trying to add "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" which is already part of the '
@@ -162,7 +326,7 @@ enum messages: string
     case IMPORT_EMPTY = 'import file "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
         . '" is empty';
-    case IMPORT_DONE = 'finished successful "'
+    case IMPORT_DONE = self::IMPORT_SUCCESS . ' "'
         . self::VAR_START . self::VAR_SUMMARY . self::VAR_END
         . '" is empty';
     case IMPORT_FAILED = 'failed because '

@@ -221,7 +221,7 @@ class config_numbers extends value_list
             $this->load_phrases();
         } else {
             log_debug('no config values loaded');
-            $usr_msg->add_message('configuration is empty');
+            $usr_msg->add_message_text('configuration is empty');
         }
         return $usr_msg;
     }

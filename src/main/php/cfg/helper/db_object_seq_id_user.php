@@ -12,6 +12,7 @@
     - object vars:       the variables of this seq id object
     - construct and map: including the mapping of the db row to this seq id object
     - set and get:       to capsule the single variables from unexpected changes
+    - information:       functions to make code easier to read
     - modify:            change potentially all variables of this seq id object with one function
 
 
@@ -42,12 +43,14 @@
 namespace cfg\helper;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 
 class db_object_seq_id_user extends db_object_seq_id
@@ -103,6 +106,29 @@ class db_object_seq_id_user extends db_object_seq_id
     function user_id(): int
     {
         return $this->usr->id();
+    }
+
+
+    /*
+     * information
+     */
+
+    /**
+     * create human-readable messages of the differences between the db id objects
+     * @param CombineObject|db_object_seq_id_user|db_object_seq_id $obj which might be different to this db id object
+     * @return user_message the human-readable messages of the differences between the db id objects
+     */
+    function diff_msg(CombineObject|db_object_seq_id_user|db_object_seq_id $obj): user_message
+    {
+        $usr_msg = parent::diff_msg($obj);
+        if ($this->user_id() != $obj->user_id()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_USER, [
+                msg_id::VAR_USER => $obj->user()->dsp_id(),
+                msg_id::VAR_USER_CHK => $this->user()->dsp_id(),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $usr_msg;
     }
 
 

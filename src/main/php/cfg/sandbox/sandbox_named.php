@@ -539,6 +539,24 @@ class sandbox_named extends sandbox
      */
 
     /**
+     * create human-readable messages of the differences between the named sandbox objects
+     * @param sandbox_named|CombineObject|db_object_seq_id $sbx which might be different to this named sandbox
+     * @return user_message the human-readable messages of the differences between the named sandbox objects
+     */
+    function diff_msg(sandbox_named|CombineObject|db_object_seq_id $sbx): user_message
+    {
+        $usr_msg = parent::diff_msg($sbx);
+        if ($this->name() != $sbx->name()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_NAME, [
+                msg_id::VAR_NAME => $sbx->name(),
+                msg_id::VAR_NAME_CHK => $this->name(),
+                msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $usr_msg;
+    }
+
+    /**
      * check if the named object in the database needs to be updated
      *
      * @param sandbox_named $db_obj the word as saved in the database
@@ -749,7 +767,7 @@ class sandbox_named extends sandbox
                         $usr_msg->add_message_text('Updating the reference in the log failed');
                         // TODO do rollback or retry?
                     } else {
-                        //$usr_msg->add_message($this->set_owner($new_owner_id));
+                        //$usr_msg->add_message_text($this->set_owner($new_owner_id));
 
                         // TODO all all objects to the potential used of the prepared sql function with log
                         if (!$this->sql_write_prepared()) {

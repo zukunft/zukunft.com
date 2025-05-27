@@ -57,6 +57,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -85,6 +86,7 @@ use cfg\user\user_message;
 use cfg\value\value_base;
 use cfg\word\word;
 use cfg\word\word_db;
+use shared\enum\messages as msg_id;
 use shared\library;
 use Exception;
 
@@ -678,6 +680,29 @@ class result_list extends sandbox_value_list
 
 
     /*
+     * information
+     */
+
+    /**
+     * reports the difference to the given result list as a human-readable messages
+     * @param sandbox_value_list $val_lst the list of the object to compare with
+     * @param msg_id $msg_missing the message id for a missing result
+     * @param msg_id $msg_additional the message id for an additional result
+     * @return user_message
+     */
+    function diff_msg(
+        sandbox_value_list $val_lst,
+        msg_id             $msg_missing = msg_id::RESULT_MISSING,
+        msg_id             $msg_additional = msg_id::RESULT_ADDITIONAL,
+    ): user_message
+    {
+        return parent::diff_msg($val_lst,
+            msg_id::RESULT_MISSING,
+            msg_id::RESULT_ADDITIONAL);
+    }
+
+
+    /*
      * display
      */
 
@@ -1113,18 +1138,23 @@ class result_list extends sandbox_value_list
 
     /**
      * add one result to the result list, but only if it is not yet part of the phrase list
-     * @param result $res_to_add the calculation result that should be added to the list
+     * @param result|value_base|null $val_to_add the calculation result that should be added to the list
+     * @param bool $allow_duplicates true if e.g. the group id is not yet set but the value should nevertheless be added
+     * @returns bool true the result has been added
      */
-    function add(result $res_to_add): void
+    function add(result|value_base|null $val_to_add, bool $allow_duplicates = false): bool
     {
-        log_debug($res_to_add->dsp_id());
-        if (!in_array($res_to_add->id(), $this->ids())) {
-            if ($res_to_add->id() <> 0) {
-                $this->add_obj($res_to_add);
+        $result = false;
+        log_debug($val_to_add->dsp_id());
+        if (!in_array($val_to_add->id(), $this->ids())) {
+            if ($val_to_add->id() <> 0) {
+                $this->add_obj($val_to_add);
+                $result = true;
             }
         } else {
-            log_debug($res_to_add->dsp_id() . ' not added, because it is already in the list');
+            log_debug($val_to_add->dsp_id() . ' not added, because it is already in the list');
         }
+        return $result;
     }
 
     /**

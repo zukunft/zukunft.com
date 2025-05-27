@@ -552,6 +552,30 @@ class triple_list extends sandbox_list_named
         return new user_message();
     }
 
+    /**
+     * reports the difference to the given triple list as a human-readable messages
+     * @param sandbox_list_named $sbx_lst the list of the object to compare with
+     * @param msg_id $msg_missing the message id for a missing sandbox object
+     * @param msg_id $msg_id_missing the message id for a missing sandbox object id
+     * @param msg_id $msg_additional the message id for an additional sandbox object
+     * @param msg_id $msg_id_additional the message id for an additional sandbox object id
+     * @return user_message
+     */
+    function diff_msg(
+        sandbox_list_named $sbx_lst,
+        msg_id $msg_missing = msg_id::TRIPLE_MISSING,
+        msg_id $msg_id_missing = msg_id::TRIPLE_ID_MISSING,
+        msg_id $msg_additional = msg_id::TRIPLE_ADDITIONAL,
+        msg_id $msg_id_additional = msg_id::TRIPLE_ID_ADDITIONAL
+    ): user_message
+    {
+        return parent::diff_msg($sbx_lst,
+            msg_id::TRIPLE_MISSING,
+            msg_id::TRIPLE_ID_MISSING,
+            msg_id::TRIPLE_ADDITIONAL,
+            msg_id::TRIPLE_ID_ADDITIONAL);
+    }
+
 
     /*
      * convert

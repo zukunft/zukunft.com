@@ -144,7 +144,7 @@ class import_file
                     }
                 } else {
                     $usr_msg->add($import_result);
-                    //$usr_msg->add_message('import of ' . $filename . ' failed');
+                    //$usr_msg->add_message_text('import of ' . $filename . ' failed');
                 }
             }
         }
@@ -188,31 +188,36 @@ class import_file
      * TODO validate the import by comparing the import with the api message to tne frontend
      *
      * @param user $usr who has triggered the function
-     * @param bool $verify if true it is tested if the export matches the import
      * @return bool true if the configuration has imported
      */
-    function import_config_yaml(user $usr, bool $verify = false): bool
+    function import_config_yaml(user $usr): bool
     {
         $result = false;
 
         if ($usr->is_admin() or $usr->is_system()) {
             $imf = new import_file();
             $import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $usr);
-            if (str_starts_with($import_result->get_last_message(), ' done ')) {
+            if (str_starts_with($import_result->get_last_message(), msg_id::IMPORT_SUCCESS)) {
                 $result = true;
             }
+
             // check the import
+            // TODO Prio 3 base the validation on the export yaml
             $cfg = new config_numbers($usr);
             $cfg->load_cfg($usr);
             if ($cfg->count() != $import_result->checksum()) {
+
                 // report the missing config values
                 $imp = new import(files::SYSTEM_CONFIG);
                 $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                 $yaml_array = yaml_parse($yaml_str);
                 $dto = $imp->get_data_object_yaml($yaml_array, $usr);
+                // save the dto again to get the db id
                 $usr_msg = $dto->save($imp);
+
+                $usr_msg = $dto->value_list()->diff_msg($cfg);
                 if (!$usr_msg->is_ok()) {
-                    log_err(files::SYSTEM_CONFIG . ' cannot be loaded because ' . $usr_msg->all_message_text());
+                    log_warning(files::SYSTEM_CONFIG . ' cannot be loaded because ' . $usr_msg->all_message_text());
                 } else {
                     $val_diff = $dto->value_list()->diff($cfg);
                     log_warning('These configuration values could not be imported: ' . $val_diff->dsp_id());

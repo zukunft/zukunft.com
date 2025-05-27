@@ -13,9 +13,9 @@
     - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the variables from unexpected changes
     - preloaded:         get preloaded information such as the type code id
+    - information:       functions to make code easier to read
     - modify:            change potentially all variables of this sandbox object
     - cast:              create an api object and set the vars from an api json
-    - information:       functions to make code easier to read
     - save:              manage to update the database
 
 
@@ -53,6 +53,7 @@ include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -63,6 +64,7 @@ use cfg\phrase\phrase;
 use cfg\ref\source;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\types\api_type_list;
@@ -218,6 +220,46 @@ class sandbox_typed extends sandbox_named
 
 
     /*
+     * information
+     */
+
+    /**
+     * create human-readable messages of the differences between the named sandbox objects
+     * @param sandbox_typed|CombineObject|db_object_seq_id $sbx which might be different to this named sandbox
+     * @return user_message the human-readable messages of the differences between the named sandbox objects
+     */
+    function diff_msg(sandbox_typed|CombineObject|db_object_seq_id $sbx): user_message
+    {
+        $usr_msg = parent::diff_msg($sbx);
+        if ($this->type_id() != $sbx->type_id()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_TYPE, [
+                msg_id::VAR_TYPE => $sbx->type_name(),
+                msg_id::VAR_TYPE_CHK => $this->type_name(),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * check if the typed object in the database needs to be updated
+     *
+     * @param sandbox_typed $db_obj the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the database
+     */
+    function needs_db_update_typed(sandbox_typed $db_obj): bool
+    {
+        $result = parent::needs_db_update_named($db_obj);
+        if ($this->type_id != null) {
+            if ($this->type_id != $db_obj->type_id) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+
+    /*
      * modify
      */
 
@@ -236,28 +278,6 @@ class sandbox_typed extends sandbox_named
             $this->set_type_id($sbx->type_id());
         }
         return $usr_msg;
-    }
-
-
-    /*
-     * information
-     */
-
-    /**
-     * check if the typed object in the database needs to be updated
-     *
-     * @param sandbox_typed $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the database
-     */
-    function needs_db_update_typed(sandbox_typed $db_obj): bool
-    {
-        $result = parent::needs_db_update_named($db_obj);
-        if ($this->type_id != null) {
-            if ($this->type_id != $db_obj->type_id) {
-                $result = true;
-            }
-        }
-        return $result;
     }
 
 

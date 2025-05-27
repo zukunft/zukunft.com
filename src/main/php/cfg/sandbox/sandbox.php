@@ -24,6 +24,7 @@
     - load:              database access object (DAO) functions
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
+    - modify:            change potentially all variables of this seq id object with one function
     - owner and access:  functions to make code easier to read
     - sandbox:           manage the user sandbox
     - log:               write the changes to the log
@@ -157,6 +158,7 @@ use cfg\word\triple;
 use cfg\word\word;
 use Exception;
 use shared\enum\change_actions;
+use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\json_fields;
@@ -594,6 +596,20 @@ class sandbox extends db_object_seq_id_user
         $this->owner_id = $id;
     }
 
+    /**
+     * TODO use a user list cache
+     * @return user|null the person who has the permission to change the standard object
+     */
+    function owner(): ?user
+    {
+        $owner = null;
+        if ($this->owner_id != null) {
+            $owner = new user();
+            $owner->load_by_id($this->owner_id);
+        }
+        return $owner;
+    }
+
     function owner_id(): ?int
     {
         return $this->owner_id;
@@ -617,6 +633,50 @@ class sandbox extends db_object_seq_id_user
     function protection_id(): ?int
     {
         return $this->protection_id;
+    }
+
+
+    /*
+     * information
+     */
+
+    /**
+     * create human-readable messages of the differences between the sandbox objects
+     * @param CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $sbx which might be different to this sandbox object
+     * @return user_message the human-readable messages of the differences between the sandbox objects
+     */
+    function diff_msg(CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $sbx): user_message
+    {
+        $usr_msg = parent::diff_msg($sbx);
+        if ($this->owner_id() != $sbx->owner_id()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_OWNER, [
+                msg_id::VAR_USER => $sbx->owner()->dsp_id(),
+                msg_id::VAR_USER_CHK => $this->owner()->dsp_id(),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        if ($this->share_id() != $sbx->share_id()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
+                msg_id::VAR_SHARE => $sbx->share_type_name(),
+                msg_id::VAR_SHARE_CHK => $this->share_type_name(),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        if ($this->protection_id() != $sbx->protection_id()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
+                msg_id::VAR_PROTECT => $sbx->protection_type_name(),
+                msg_id::VAR_PROTECT_CHK => $this->protection_type_name(),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        if ($this->is_excluded() != $sbx->is_excluded()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_EXCLUSION, [
+                msg_id::VAR_EXCLUDE => $sbx->is_excluded(),
+                msg_id::VAR_EXCLUDE_CHK => $this->is_excluded(),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $usr_msg;
     }
 
 

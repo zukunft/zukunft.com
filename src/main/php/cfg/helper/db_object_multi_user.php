@@ -37,9 +37,12 @@ namespace cfg\helper;
 
 include_once MODEL_HELPER_PATH . 'db_object_multi.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 
-use cfg\helper\db_object_multi;
 use cfg\user\user;
+use cfg\user\user_message;
+use shared\enum\messages as msg_id;
 
 class db_object_multi_user extends db_object_multi
 {
@@ -94,6 +97,29 @@ class db_object_multi_user extends db_object_multi
     function user_id(): int
     {
         return $this->usr->id();
+    }
+
+
+    /*
+     * information
+     */
+
+    /**
+     * create human-readable messages of the differences between the db id objects
+     * @param db_object_multi_user|db_object_multi $obj which might be different to this db id object
+     * @return user_message the human-readable messages of the differences between the db id objects
+     */
+    function diff_msg(db_object_multi_user|db_object_multi $obj): user_message
+    {
+        $usr_msg = parent::diff_msg($obj);
+        if ($this->user_id() != $obj->user_id()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_USER, [
+                msg_id::VAR_USER => $obj->user()->dsp_id(),
+                msg_id::VAR_USER_CHK => $this->user()->dsp_id(),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $usr_msg;
     }
 
 

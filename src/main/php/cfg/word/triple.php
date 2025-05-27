@@ -423,7 +423,7 @@ class triple extends sandbox_link_named
                 if ($do_save) {
                     $wrd_view->load_by_name($value);
                     if ($wrd_view->id() == 0) {
-                        $result->add_message('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                        $result->add_message_text('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
                     } else {
                         $this->view_id = $wrd_view->id();
                     }

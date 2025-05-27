@@ -207,7 +207,7 @@ class user_message
     function add(user_message $msg_to_add): void
     {
         foreach ($msg_to_add->get_all_messages() as $msg_text) {
-            $this->add_message($msg_text);
+            $this->add_message_text($msg_text);
         }
         $this->combine_status($msg_to_add);
     }

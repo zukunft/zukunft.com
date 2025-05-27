@@ -16,6 +16,7 @@
     - load:              database access object (DAO) functions
     - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
+    - information:       functions to make code easier to read
     - modify:            change potentially all variables of this word object
     - information:       functions to make code easier to read
     - to overwrite:      functions that should always be overwritten by the child objects
@@ -59,6 +60,7 @@ include_once MODEL_HELPER_PATH . 'db_object.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 //include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -73,6 +75,7 @@ use cfg\sandbox\sandbox;
 use cfg\user\user;
 use cfg\user\user_message;
 use controller\api_message;
+use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\types\api_type_list;
 use shared\json_fields;
@@ -319,6 +322,29 @@ class db_object_seq_id extends db_object
         // add a dummy id for unit testing
         if ($test_obj) {
             $db_obj->set_id($test_obj->seq_id());
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * information
+     */
+
+    /**
+     * create human-readable messages of the differences between the db id objects
+     * @param CombineObject|db_object_seq_id $obj which might be different to this db id object
+     * @return user_message the human-readable messages of the differences between the db id objects
+     */
+    function diff_msg(CombineObject|db_object_seq_id $obj): user_message
+    {
+        $usr_msg = new user_message();
+        if ($this->id() != $obj->id()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_ID, [
+                msg_id::VAR_ID => $obj->id(),
+                msg_id::VAR_ID_CHK => $this->id(),
+                msg_id::VAR_NAME => $this->dsp_id(),
+            ]);
         }
         return $usr_msg;
     }

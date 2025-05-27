@@ -50,6 +50,7 @@ include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'result_id.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
+include_once MODEL_HELPER_PATH . 'db_object_multi.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
@@ -62,6 +63,7 @@ include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VALUE_PATH . 'value_time.php';
@@ -71,6 +73,7 @@ include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_fields.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -89,6 +92,7 @@ use cfg\formula\formula;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\result_id;
+use cfg\helper\db_object_multi;
 use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
 use cfg\log\change;
@@ -106,10 +110,12 @@ use cfg\value\value_time;
 use cfg\value\value_time_series;
 use cfg\word\triple_list;
 use cfg\user\user;
+use cfg\user\user_message;
 use cfg\value\value_base;
 use cfg\word\word_list;
 use shared\enum\change_actions;
 use shared\enum\change_fields;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use DateTime;
@@ -1068,6 +1074,7 @@ class sandbox_value extends sandbox_multi
         return $this->load_sql_set_where($qp, $sc, $id_ext);
     }
 
+
     /*
      * information
      */
@@ -1082,6 +1089,38 @@ class sandbox_value extends sandbox_multi
         } else {
             return true;
         }
+    }
+
+    /**
+     * create human-readable messages of the differences between the db id objects
+     * @param sandbox_value|db_object_multi $obj which might be different to this db id object
+     * @return user_message the human-readable messages of the differences between the db id objects
+     */
+    function diff_msg(sandbox_value|db_object_multi $obj): user_message
+    {
+        $usr_msg = parent::diff_msg($obj);
+        if ($this->grp_id() != $obj->grp_id()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_GROUP, [
+                msg_id::VAR_VALUE => $obj->grp()->dsp_id(),
+                msg_id::VAR_VALUE_CHK => $this->grp()->dsp_id(),
+                msg_id::VAR_VAL_ID => $this->dsp_id(),
+            ]);
+        }
+        if ($this->value() != $obj->value()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_VALUE, [
+                msg_id::VAR_VALUE => $obj->value(),
+                msg_id::VAR_VALUE_CHK => $this->value(),
+                msg_id::VAR_VAL_ID => $this->dsp_id(),
+            ]);
+        }
+        if ($this->value_type() != $obj->value_type()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_VALUE_TYPE, [
+                msg_id::VAR_TYPE => $obj->value_type(),
+                msg_id::VAR_TYPE_CHK => $this->value_type(),
+                msg_id::VAR_VAL_ID => $this->dsp_id(),
+            ]);
+        }
+        return $usr_msg;
     }
 
     /**

@@ -95,6 +95,7 @@ include_once MODEL_FORMULA_PATH . 'figure.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_multi.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_table_list.php';
@@ -147,6 +148,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_type_list;
 use cfg\formula\figure;
 use cfg\helper\data_object;
+use cfg\helper\db_object_multi;
 use cfg\log\change;
 use cfg\log\change_values_big;
 use cfg\log\change_values_geo_big;
@@ -1074,6 +1076,27 @@ class value_base extends sandbox_value
     function phr_names(): array
     {
         return $this->phrase_list()->names();
+    }
+
+    /**
+     * create human-readable messages of the differences between the value objects
+     * TODO add time_stamp, symbol and user value if needed
+     * @param value_base|db_object_multi $obj which might be different to this value object
+     * @return user_message the human-readable messages of the differences between the value objects
+     */
+    function diff_msg(value_base|db_object_multi $obj): user_message
+    {
+        $usr_msg = parent::diff_msg($obj);
+        if ($this->source_id() != $obj->source_id()
+            and $obj->source() != null
+            and $this->source() != null) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_SOURCE, [
+                msg_id::VAR_SOURCE => $obj->source()?->dsp_id(),
+                msg_id::VAR_SOURCE_CHK => $this->source()?->dsp_id(),
+                msg_id::VAR_VAL_ID => $this->dsp_id(),
+            ]);
+        }
+        return $usr_msg;
     }
 
 
@@ -2197,7 +2220,7 @@ class value_base extends sandbox_value
                     /*
                     $upd_result = $this->upd_phr_links();
                     if ($upd_result != '') {
-                        $result->add_message('Adding the phrase links of the value failed because ' . $upd_result);
+                        $result->add_message_text('Adding the phrase links of the value failed because ' . $upd_result);
                         $this->set_id(0);
                     }
                     */

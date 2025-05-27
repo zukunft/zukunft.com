@@ -107,6 +107,7 @@ use cfg\value\value_list;
 use cfg\verb\verb;
 use shared\const\triples;
 use shared\const\words;
+use shared\enum\messages;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
 use shared\helper\TextIdObject;
@@ -906,6 +907,7 @@ class word_list extends sandbox_list_named
 
     /**
      * diff as a function, because it seems the array_diff does not work for an object list
+     * TODO rename to del or intersect
      *
      * e.g. if the $this word list is "January, February, March, April, May, June, Juli, August, September, October, November, December"
      * and the $del_wrd_lst is "May, June, Juli, August"
@@ -948,7 +950,7 @@ class word_list extends sandbox_list_named
             if ($del_wrd_id > 0) {
                 if (in_array($del_wrd_id, $this->ids())) {
                     $del_pos = array_search($del_wrd_id, $this->ids());
-                    log_debug('exclude (' . $this->get_by_id($del_pos)->name() . ')');
+                    log_debug('exclude (' . $this->get_by_id($del_pos)?->name() . ')');
                     $this->unset($del_pos);
                 }
             }

@@ -750,7 +750,7 @@ class sandbox_link extends sandbox
                         $usr_msg->add_message_text('Updating the reference in the log failed');
                         // TODO do rollback or retry?
                     } else {
-                        //$usr_msg->add_message($this->set_owner($new_owner_id));
+                        //$usr_msg->add_message_text($this->set_owner($new_owner_id));
 
                         // create an empty db_rec element to force saving of all set fields
                         $db_rec = clone $this;

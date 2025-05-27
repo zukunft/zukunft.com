@@ -205,6 +205,61 @@ class sandbox_list_named extends sandbox_list
 
 
     /*
+     * information
+     */
+
+    /**
+     * reports the difference to the given word list as a human-readable messages
+     * @param sandbox_list_named $sbx_lst the list of the object to compare with
+     * @param msg_id $msg_missing the message id for a missing sandbox object
+     * @param msg_id $msg_id_missing the message id for a missing sandbox object id
+     * @param msg_id $msg_additional the message id for an additional sandbox object
+     * @param msg_id $msg_id_additional the message id for an additional sandbox object id
+     * @return user_message
+     */
+    function diff_msg(
+        sandbox_list_named $sbx_lst,
+        msg_id $msg_missing = msg_id::WORD_MISSING,
+        msg_id $msg_id_missing = msg_id::WORD_ID_MISSING,
+        msg_id $msg_additional = msg_id::WORD_ADDITIONAL,
+        msg_id $msg_id_additional = msg_id::WORD_ID_ADDITIONAL
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($this->lst() as $sbx) {
+            $sbx_to_chk = $sbx_lst->get($sbx->id());
+            if ($sbx_to_chk == null) {
+                $sbx_to_chk = $sbx_lst->get_by_name($sbx->name());
+                if ($sbx_to_chk == null) {
+                    $vars = [msg_id::VAR_NAME=>$sbx->dsp_id()];
+                    $usr_msg->add_id_with_vars($msg_missing, $vars);
+                } else {
+                    $vars = [msg_id::VAR_ID=>$sbx->dsp_id()];
+                    $usr_msg->add_id_with_vars($msg_id_missing, $vars);
+                }
+            }
+            if ($sbx_to_chk != null) {
+                $usr_msg->add($sbx->diff_msg($sbx_to_chk));
+            }
+        }
+        foreach ($sbx_lst->lst() as $sbx) {
+            $sbx_to_chk = $this->get($sbx->id());
+            if ($sbx_to_chk == null) {
+                $sbx_to_chk = $sbx_lst->get_by_name($sbx->name());
+                if ($sbx_to_chk == null) {
+                    $vars = [msg_id::VAR_NAME=>$sbx->dsp_id()];
+                    $usr_msg->add_id_with_vars($msg_additional, $vars);
+                } else {
+                    $vars = [msg_id::VAR_ID=>$sbx->$sbx->dsp_id()];
+                    $usr_msg->add_id_with_vars($msg_id_additional, $vars);
+                }
+            }
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * modify
      */
 

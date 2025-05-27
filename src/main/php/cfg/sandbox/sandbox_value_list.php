@@ -49,12 +49,14 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 //include_once MODEL_RESULT_PATH . 'result.php';
 //include_once MODEL_RESULT_PATH . 'result_list.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
 //include_once MODEL_VALUE_PATH . 'value_text.php';
 //include_once MODEL_VALUE_PATH . 'value_time.php';
 //include_once MODEL_VALUE_PATH . 'value_geo.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_creator;
@@ -72,16 +74,79 @@ use cfg\phrase\phrase_list;
 use cfg\result\result;
 use cfg\result\result_list;
 use cfg\user\user;
+use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_base;
-use cfg\value\value_geo;
 use cfg\value\value_list;
-use cfg\value\value_text;
-use cfg\value\value_time;
+use shared\enum\messages as msg_id;
 use shared\library;
 
 class sandbox_value_list extends sandbox_list
 {
+
+    /*
+     * object vars
+     */
+
+    // speed versus memory var for fast getting a value of the list
+    private array $id_hash = [];
+    private bool $id_hash_dirty = true;
+    private array $name_hash = [];
+    private bool $name_hash_dirty = true;
+
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(user $usr, array $lst = [])
+    {
+        parent::__construct($usr, $lst);
+        if (count($lst) > 0) {
+            $this->id_hash_dirty = true;
+        }
+    }
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * @return array with the value group names
+     */
+    function name_lst(): array
+    {
+        $lst = array();
+        if ($this->name_hash_dirty) {
+            if ($this->count() > 0) {
+                foreach ($this->lst() as $val) {
+                    // use only valid ids
+                    $name = $val->grp()->name();
+                    if ($name <> '') {
+                        $lst[] = $val->grp()->name();
+                    }
+                }
+            }
+            asort($lst);
+            $this->name_hash = $lst;
+            $this->name_hash_dirty = false;
+        }
+        return $this->name_hash;
+    }
+
+    /**
+     * to be called after the lists have been updated
+     * but the index list have not yet been updated
+     */
+    protected function set_lst_dirty(): void
+    {
+        $this->id_hash_dirty = true;
+        $this->name_hash_dirty = true;
+        parent::set_lst_dirty();
+    }
+
 
     /*
      * load
@@ -325,7 +390,7 @@ class sandbox_value_list extends sandbox_list
         int         $max_phr
     ): void
     {
-        $used_or = true; // the first phrase is always or to force staring with brakest
+        $used_or = true; // the first phrase is always or to force staring with brackets
         foreach ($phr_pos_lst as $phr_pos) {
             $spt = sql_par_type::INT_SAME;
             if ($used_or) {
@@ -375,7 +440,7 @@ class sandbox_value_list extends sandbox_list
         $fld_lst_usr_ex_std = value_base::FLD_NAMES_DATE_USR_EX_STD;
         $fld_lst_usr_num_ex_std = value_base::FLD_NAMES_NUM_USR_EX_STD;
         $fld_lst_usr_txt = $val::FLD_NAMES_USR;
-        $fld_lst_usr_num =  $val::FLD_NAMES_NUM_USR;
+        $fld_lst_usr_num = $val::FLD_NAMES_NUM_USR;
         $fld_lst_usr_only = value_base::FLD_NAMES_USR_ONLY;
 
         // overwrite the value settings for results
@@ -476,6 +541,155 @@ class sandbox_value_list extends sandbox_list
             $sc->set_usr_only_fields($fld_lst_usr_only);
         }
         return $qp;
+    }
+
+
+    /*
+     * information
+     */
+
+    /**
+     * reports the difference to the given value list as a human-readable messages
+     * @param sandbox_value_list $val_lst the list of the object to compare with
+     * @param msg_id $msg_missing the message id for a missing value object
+     * @param msg_id $msg_additional the message id for an additional value object
+     * @return user_message
+     */
+    function diff_msg(
+        sandbox_value_list $val_lst,
+        msg_id             $msg_missing = msg_id::VALUE_MISSING,
+        msg_id             $msg_additional = msg_id::VALUE_ADDITIONAL,
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($this->lst() as $val) {
+            $val_to_chk = $val_lst->get_by_id($val->id());
+            if ($val_to_chk == null) {
+                $vars = [msg_id::VAR_VAL_ID => $val->dsp_id()];
+                $usr_msg->add_id_with_vars($msg_missing, $vars);
+            }
+            if ($val_to_chk != null) {
+                $usr_msg->add($val->diff_msg($val_to_chk));
+            }
+        }
+        foreach ($val_lst->lst() as $val) {
+            $val_to_chk = $this->get_by_id($val->id());
+            if ($val_to_chk == null) {
+                $vars = [msg_id::VAR_VAL_ID => $val->dsp_id()];
+                $usr_msg->add_id_with_vars($msg_additional, $vars);
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return array with the sorted value ids
+     */
+    function id_lst(): array
+    {
+        $lst = array();
+        if ($this->name_hash_dirty) {
+            if ($this->count() > 0) {
+                foreach ($this->lst() as $val) {
+                    // use only valid ids
+                    if ($val->id() <> 0) {
+                        $lst[] = $val->id();
+                    }
+                }
+            }
+            asort($lst);
+            $this->id_hash = $lst;
+            $this->id_hash_dirty = false;
+        }
+        return $this->id_hash;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * add one value to the value list, but only if it is not yet part of the list
+     * @param value_base|null $val_to_add the value object to be added to the list
+     * @returns bool true the value has been added
+     */
+    function add_by_group(?value_base $val_to_add): bool
+    {
+        $result = false;
+        // check parameters
+        if ($val_to_add != null) {
+            $name = $val_to_add->grp()->name();
+            if ($name != '') {
+                if (count($this->name_lst()) > 0) {
+                    if (!in_array($name, $this->name_lst())) {
+                        parent::add_obj($val_to_add);
+                        $this->add_hash_name($name);
+                        $result = true;
+                    }
+                } else {
+                    parent::add_obj($val_to_add);
+                    $this->add_hash_name($name);
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+    private function add_hash_id(int|string $id): void
+    {
+        if ($this->count() != count($this->id_hash)) {
+            $this->id_lst();
+        } else {
+            $this->id_hash[] = $id;
+            // assuming that in most cases either the id or the names has is needed for building up the list but not both
+            $this->name_hash_dirty = true;
+        }
+    }
+
+    private function add_hash_name(string $name): void
+    {
+        if ($this->count() != count($this->name_hash)) {
+            $this->name_lst();
+        } else {
+            $this->name_hash[] = $name;
+            // assuming that in most cases either the id or the names has is needed for building up the list but not both
+            $this->set_lst_dirty();
+        }
+    }
+
+    /**
+     * add one value to the value list, but only if it is not yet part of the list
+     * @param value_base|null $val_to_add the value object to be added to the list
+     * @param bool $allow_duplicates true if e.g. the group id is not yet set but the value should nevertheless be added
+     * @returns bool true the value has been added
+     */
+    function add(?value_base $val_to_add, bool $allow_duplicates = false): bool
+    {
+        $result = false;
+        // check parameters
+        if ($val_to_add != null) {
+            if ($allow_duplicates) {
+                parent::add_obj($val_to_add, $allow_duplicates);
+            } else {
+                if ($val_to_add->is_id_set() or $val_to_add->grp()->name() != '') {
+                    $id = $val_to_add->id();
+                    if (count($this->id_lst()) > 0) {
+                        if (!in_array($id, $this->id_lst())) {
+                            parent::add_obj($val_to_add);
+                            $this->add_hash_id($id);
+                            $result = true;
+                        }
+                    } else {
+                        parent::add_obj($val_to_add);
+                        $this->add_hash_id($id);
+                        $result = true;
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
 }

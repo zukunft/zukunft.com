@@ -410,8 +410,7 @@ class sandbox_list extends base_list
 
         if ($obj_to_add->user() == null) {
             $obj_to_add->set_user($this->user());
-            $usr_msg->add_id_with_vars(msg_id::USER_MISSING,
-                [msg_id::VAR_NAME => $this->dsp_id()]);
+            $usr_msg->add_id_with_vars(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
         }
         if ($obj_to_add->user() !== $this->user()) {
             if (!$this->user()->is_admin() and !$this->user()->is_system()) {

@@ -98,6 +98,7 @@ include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
@@ -133,6 +134,7 @@ use cfg\verb\verb_list;
 use cfg\view\view;
 use shared\enum\change_actions;
 use shared\enum\foaf_direction;
+use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\library;
@@ -283,7 +285,7 @@ class word extends sandbox_typed
                 if ($do_save) {
                     $wrd_view->load_by_name($value);
                     if ($wrd_view->id() == 0) {
-                        $result->add_message('Cannot find view >' . $value . '< when importing ' . $this->dsp_id());
+                        $result->add_message_text('Cannot find view >' . $value . '< when importing ' . $this->dsp_id());
                     } else {
                         $this->view_id = $wrd_view->id();
                     }
@@ -922,6 +924,24 @@ class word extends sandbox_typed
     /*
      * information
      */
+
+    /**
+     * create human-readable messages of the differences between the word objects
+     * @param word|CombineObject|db_object_seq_id $wrd which might be different to this word
+     * @return user_message the human-readable messages of the differences between the word objects
+     */
+    function diff_msg(word|CombineObject|db_object_seq_id $wrd): user_message
+    {
+        $usr_msg = parent::diff_msg($wrd);
+        if ($this->id() != $wrd->id()) {
+            $usr_msg->add_id_with_vars(msg_id::DIFF_ID, [
+                msg_id::VAR_ID => $wrd->dsp_id(),
+                msg_id::VAR_ID_CHK => $this->dsp_id(),
+                msg_id::VAR_WORD_NAME => $this->dsp_id(),
+            ]);
+        }
+        return $usr_msg;
+    }
 
     /**
      * @param string $type the ENUM string of the fixed type

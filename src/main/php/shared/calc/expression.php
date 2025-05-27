@@ -523,25 +523,25 @@ class expression
         return 'Error: function get_verb_symbol() is expected to be overwritten by a frontend or backend class function';
     }
 
-    protected function load_word(int $id): word|word_dsp
+    protected function load_word(int $id): word|word_dsp|null
     {
         log_err('Error: function load_word() is expected to be overwritten');
         return new word_dsp();
     }
 
-    protected function load_triple(int $id): triple|triple_dsp
+    protected function load_triple(int $id): triple|triple_dsp|null
     {
         log_err('Error: function load_triple() is expected to be overwritten');
         return new triple_dsp();
     }
 
-    protected function load_formula(int $id): formula|formula_dsp
+    protected function load_formula(int $id): formula|formula_dsp|null
     {
         log_err('Error: function load_formula() is expected to be overwritten');
         return new formula_dsp();
     }
 
-    protected function load_verb(int $id): verb|verb_dsp
+    protected function load_verb(int $id): verb|verb_dsp|null
     {
         log_err('Error: function load_verb() is expected to be overwritten');
         return new verb_dsp();

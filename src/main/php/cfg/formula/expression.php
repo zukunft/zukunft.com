@@ -816,7 +816,7 @@ class expression extends shared_expression
         return $db_sym;
     }
 
-    protected function load_word(int $id): word
+    protected function load_word(int $id): ?word
     {
         $wrd = new word($this->usr);
         $wrd->load_by_id($id);
@@ -826,7 +826,7 @@ class expression extends shared_expression
         return $wrd;
     }
 
-    protected function load_triple(int $id): triple
+    protected function load_triple(int $id): ?triple
     {
         $trp = new triple($this->usr);
         $trp->load_by_id($id);
@@ -836,7 +836,7 @@ class expression extends shared_expression
         return $trp;
     }
 
-    protected function load_formula(int $id): formula
+    protected function load_formula(int $id): ?formula
     {
         $frm = new formula($this->usr);
         $frm->load_by_id($id);
@@ -846,7 +846,7 @@ class expression extends shared_expression
         return $frm;
     }
 
-    protected function load_verb(int $id): verb
+    protected function load_verb(int $id): ?verb
     {
         $vrb = new verb();
         $vrb->set_user($this->usr);

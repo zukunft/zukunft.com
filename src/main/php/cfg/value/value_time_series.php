@@ -331,7 +331,7 @@ class value_time_series extends sandbox_value
                 /*
                 $upd_result = $this->upd_phr_links();
                 if ($upd_result != '') {
-                    $result->add_message('Adding the phrase links of the value time series failed because ' . $upd_result);
+                    $result->add_message_text('Adding the phrase links of the value time series failed because ' . $upd_result);
                     $this->set_id(0);
                 }
                 */

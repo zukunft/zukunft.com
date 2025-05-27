@@ -137,12 +137,12 @@ class ListOfIdObjects extends ListOf
      */
     function get_by_id(int|string $id): object|null
     {
-        $lib = new library();
         $key_lst = $this->id_pos_lst();
         if (array_key_exists($id, $key_lst)) {
             $pos = $key_lst[$id];
             return $this->lst()[$pos];
         } else {
+            $lib = new library();
             log_info($id . ' not found in ' . $lib->dsp_array_keys($key_lst));
             return null;
         }
@@ -162,7 +162,7 @@ class ListOfIdObjects extends ListOf
      */
     function add_obj(
         IdObject|TextIdObject|CombineObject $obj_to_add,
-        bool $allow_duplicates = false
+        bool                                $allow_duplicates = false
     ): user_message
     {
         $usr_msg = new user_message();
@@ -188,19 +188,21 @@ class ListOfIdObjects extends ListOf
      */
     protected function id_pos_lst(): array
     {
-        $result = array();
         if ($this->lst_dirty) {
-            foreach ($this->lst() as $key => $obj) {
-                if (!array_key_exists($obj->id(), $result)) {
-                    $result[$obj->id()] = $key;
-                }
-            }
-            $this->id_pos_lst = $result;
-            $this->lst_dirty = false;
-        } else {
-            $result = $this->id_pos_lst;
+            $this->set_id_pos_lst();
         }
-        return $result;
+        return $this->id_pos_lst;
+    }
+
+    protected function set_id_pos_lst(): void
+    {
+        $this->id_pos_lst = [];
+        foreach ($this->lst() as $key => $obj) {
+            if (!array_key_exists($obj->id(), $this->id_pos_lst)) {
+                $this->id_pos_lst[$obj->id()] = $key;
+            }
+        }
+        $this->lst_dirty = false;
     }
 
 
