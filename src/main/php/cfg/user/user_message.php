@@ -455,21 +455,21 @@ class user_message
             foreach ($msg_var[1] as $key => $var) {
                 // TODO use a library function for this
                 // avoid using escaped var makers (probably not 100% correct)
-                $msg_txt .= str_replace(
+                $msg_txt = str_replace(
                     msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END,
                     msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END, $msg_txt);
                 // replace the var
-                $msg_txt .= str_replace(
+                $msg_txt = str_replace(
                     msg_id::VAR_START . $key . msg_id::VAR_END,
                     $var, $msg_txt);
                 // undo escaped vars
-                $msg_txt .= str_replace(
+                $msg_txt = str_replace(
                     msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END,
                     msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END, $msg_txt);
             }
             // replace the escaped var makers
-            $msg_txt .= str_replace(msg_id::VAR_ESC_START, msg_id::VAR_START, $msg_txt);
-            $msg_txt .= str_replace(msg_id::VAR_ESC_END, msg_id::VAR_END, $msg_txt);
+            $msg_txt = str_replace(msg_id::VAR_ESC_START, msg_id::VAR_START, $msg_txt);
+            $msg_txt = str_replace(msg_id::VAR_ESC_END, msg_id::VAR_END, $msg_txt);
             $part .= $msg_txt;
         }
         if ($msg != '' and $part <> '') {

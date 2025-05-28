@@ -123,6 +123,12 @@ class value_list extends sandbox_value_list
         $result = false;
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
+                // TODO remove temp
+                /*
+                if ($db_row[group::FLD_ID] == '....0/-....2t+....39+....3o+....3p+......+......+......+......+......+......+......+......+......+......+......+') {
+                    log_info('');
+                }
+                */
                 $excluded = null;
                 if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
                     $excluded = $db_row[sandbox::FLD_EXCLUDED];
@@ -268,9 +274,12 @@ class value_list extends sandbox_value_list
      * @param value_types|null $val_typ if not null load only the values of this type
      * @return bool true if at least one value found
      */
-    function load_by_ids(array $val_ids, value_types|null $val_typ = null): bool
+    function load_by_ids(array $val_ids = [], value_types|null $val_typ = null): bool
     {
         global $db_con;
+        if (count($val_ids) === 0) {
+            $val_ids = $this->ids();
+        }
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_ids($sc, $val_ids, 0, 0, false, $val_typ);
         return $this->load($qp);
@@ -1152,6 +1161,15 @@ class value_list extends sandbox_value_list
             $result[] = $val->number();
         }
         return $result;
+    }
+
+    function fill_phrase_ids_by_names(phrase_list $phr_lst): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($this->lst() as $val) {
+            $usr_msg->add($val->set_group_id_by_phrase_list($phr_lst));
+        }
+        return $usr_msg;
     }
 
 

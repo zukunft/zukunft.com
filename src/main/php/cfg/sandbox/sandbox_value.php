@@ -2294,7 +2294,7 @@ class sandbox_value extends sandbox_multi
      */
     function dsp_id_short(): string
     {
-        $result = $this->dsp_id_entry();
+        $result = $this->dsp();
         if ($this->id() != 0) {
             $sc_par_lst = new sql_type_list();
             $sc_par_lst->add($this->table_type());
@@ -2322,16 +2322,36 @@ class sandbox_value extends sandbox_multi
     /**
      * @return string with the short identification for lists
      */
-    function dsp_id_entry(): string
+    function dsp(): string
     {
         $result = '';
         if ($this->grp()->name() != '') {
-            $result .= '"' . $this->grp()->name() . '" ';
+            $result .= $this->grp()->name() . ': ';
         }
         if ($this->number() != null) {
             $result .= $this->number();
         } else {
             $result .= 'null';
+        }
+        return $result;
+    }
+
+    /**
+     * @return string with the short identification for lists
+     */
+    function dsp_db(): string
+    {
+        $result = '';
+        if ($this->grp()->name() != '') {
+            $result .= $this->grp()->name() . ': ';
+        }
+        if ($this->number() != null) {
+            $result .= $this->number();
+        } else {
+            $result .= 'null';
+        }
+        if ($this->grp()->id() != '') {
+            $result .= ' (db id ' . $this->grp()->id() . ')';
         }
         return $result;
     }

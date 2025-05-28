@@ -155,9 +155,12 @@ class triple_list extends sandbox_list_named
      * @param bool $load_all force to include also the excluded triples e.g. for admins
      * @return bool true if at least one word found
      */
-    function load_by_names(array $names, bool $load_all = false): bool
+    function load_by_names(array $names = [], bool $load_all = false): bool
     {
         global $db_con;
+        if (count($names) === 0) {
+            $names = $this->names();
+        }
         $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
         return $this->load($qp, $load_all);
     }

@@ -248,6 +248,9 @@ enum messages: string
     case TRIPLE_ID_ADDITIONAL = 'triple id additional of "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';
+    case PHRASE_MISSING_MSG = 'phrase "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is missing';
     case USER_MISSING = 'user in "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" missing';

@@ -212,16 +212,18 @@ class import_file
                 $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                 $yaml_array = yaml_parse($yaml_str);
                 $dto = $imp->get_data_object_yaml($yaml_array, $usr);
-                // save the dto again to get the db id
-                $usr_msg = $dto->save($imp);
-
-                $usr_msg = $dto->value_list()->diff_msg($cfg);
-                if (!$usr_msg->is_ok()) {
-                    log_warning(files::SYSTEM_CONFIG . ' cannot be loaded because ' . $usr_msg->all_message_text());
-                } else {
+                $usr_msg = $dto->load();
+                if ($usr_msg->is_ok()) {
+                    $usr_msg = $cfg->diff_msg($dto->value_list());
+                }
+                if ($usr_msg->is_ok()) {
                     $val_diff = $dto->value_list()->diff($cfg);
                     log_warning('These configuration values could not be imported: ' . $val_diff->dsp_id());
                     //log_err('These configuration values could not be imported: ' . $val_diff->dsp_id());
+                } else {
+                    $msg = 'import ' . basename(files::SYSTEM_CONFIG) . ' failed because ' . $usr_msg->all_message_text();
+                    echo $msg . "\n";
+                    log_warning($msg);
                 }
             }
         }

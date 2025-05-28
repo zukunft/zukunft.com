@@ -515,6 +515,21 @@ class data_object
     }
 
     /**
+     * load the objects from the database and fill in missing db id
+     * e.g. to validate the import
+     * TODO Prio 2 add the missing lists and vars
+     */
+    function load(): user_message
+    {
+        $usr_msg = new user_message();
+        $this->word_list()->load_by_names();
+        $this->triple_list()->load_by_names();
+        $usr_msg->add($this->value_list()->fill_phrase_ids_by_names($this->phrase_list()));
+        //$this->value_list()->load_by_ids();
+        return $usr_msg;
+    }
+
+    /**
      * add all words, triples and values to the database
      * or update the database
      * @param import $imp the import object that includes the start time of the import

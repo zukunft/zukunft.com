@@ -925,7 +925,10 @@ class sandbox_multi extends db_object_multi_user
     function diff_msg(sandbox_multi|db_object_multi $obj): user_message
     {
         $usr_msg = parent::diff_msg($obj);
-        if ($this->owner_id() != $obj->owner_id()) {
+        // TODO Prio 2 check owner is sometimes null on load?
+        if ($this->owner_id() != $obj->owner_id()
+            and $this->owner() != null
+            and $obj->owner() != null) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_OWNER, [
                 msg_id::VAR_USER => $obj->owner()->dsp_id(),
                 msg_id::VAR_USER_CHK => $this->owner()->dsp_id(),

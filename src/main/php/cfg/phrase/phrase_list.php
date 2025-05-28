@@ -220,7 +220,7 @@ class phrase_list extends sandbox_list_named
      * @param phrase_list|null $phr_lst a list of preloaded phrase that should not be loaded again
      * @return bool true if at least one phrase has been loaded
      */
-    function load_by_names(array $names, ?phrase_list $phr_lst = null): bool
+    function load_by_names(array $names = [], ?phrase_list $phr_lst = null): bool
     {
         global $db_con;
 

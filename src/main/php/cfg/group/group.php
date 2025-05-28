@@ -519,7 +519,7 @@ class group extends sandbox_multi
      * @param phrase_list $phr_lst sorted list of phrases for this group
      * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
      */
-    private function set_id_from_phrase_list(phrase_list $phr_lst): int|string
+    function set_id_from_phrase_list(phrase_list $phr_lst): int|string
     {
         $grp_id = new group_id();
         $this->set_id($grp_id->get_id($phr_lst));

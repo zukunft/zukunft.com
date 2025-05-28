@@ -565,7 +565,7 @@ class sandbox_value_list extends sandbox_list
         foreach ($this->lst() as $val) {
             $val_to_chk = $val_lst->get_by_id($val->id());
             if ($val_to_chk == null) {
-                $vars = [msg_id::VAR_VAL_ID => $val->dsp_id()];
+                $vars = [msg_id::VAR_VAL_ID => $val->dsp_db()];
                 $usr_msg->add_id_with_vars($msg_missing, $vars);
             }
             if ($val_to_chk != null) {
@@ -575,7 +575,7 @@ class sandbox_value_list extends sandbox_list
         foreach ($val_lst->lst() as $val) {
             $val_to_chk = $this->get_by_id($val->id());
             if ($val_to_chk == null) {
-                $vars = [msg_id::VAR_VAL_ID => $val->dsp_id()];
+                $vars = [msg_id::VAR_VAL_ID => $val->dsp_db()];
                 $usr_msg->add_id_with_vars($msg_additional, $vars);
             }
         }

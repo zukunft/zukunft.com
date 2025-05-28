@@ -691,6 +691,29 @@ class value_base extends sandbox_value
         return $this->phrase_list()->ids();
     }
 
+    function set_group_id_by_phrase_list(phrase_list $phr_lst): user_message
+    {
+        $usr_msg = new user_message();
+        $db_phr_lst = new phrase_list($this->user());
+        foreach ($this->phrase_list()->lst() as $phr) {
+            if ($phr->id() == 0) {
+                $db_phr = $phr_lst->get_by_name($phr->name());
+                if ($db_phr == null) {
+                    $usr_msg->add_id_with_vars(msg_id::PHRASE_MISSING_MSG,
+                        [msg_id::VAR_NAME => $phr->name()]);
+                } else {
+                    $db_phr_lst->add($db_phr);
+                }
+            }
+        }
+        if ($usr_msg->is_ok()) {
+            $grp = $this->grp();
+            $id = $grp->set_id_from_phrase_list($db_phr_lst);
+            $this->set_id($id);
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * load

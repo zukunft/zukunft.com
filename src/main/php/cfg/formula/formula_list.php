@@ -429,7 +429,7 @@ class formula_list extends sandbox_list_named
      * @param array $names an array of formula ids which should be loaded
      * @return bool true if at least one formula found
      */
-    function load_by_names(array $names): bool
+    function load_by_names(array $names = []): bool
     {
         global $db_con;
         $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);

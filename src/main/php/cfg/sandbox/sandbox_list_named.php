@@ -110,9 +110,8 @@ class sandbox_list_named extends sandbox_list
     function __construct(user $usr, array $lst = array())
     {
         $this->name_pos_lst = array();
-        $this->lst_name_dirty = false;
         $this->name_pos_lst_all = array();
-        $this->lst_name_dirty_all = false;
+        $this->set_lst_dirty();
 
         parent::__construct($usr, $lst);
     }
@@ -154,9 +153,13 @@ class sandbox_list_named extends sandbox_list
      * @param array $names a named object used for selection e.g. a word type
      * @return bool true if at least one found
      */
-    function load_by_names(array $names): bool
+    function load_by_names(array $names = []): bool
     {
         global $db_con;
+        if (count($names) === 0) {
+            $names = $this->names();
+            $this->reset();
+        }
         $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
         return $this->load($qp);
     }
@@ -219,10 +222,10 @@ class sandbox_list_named extends sandbox_list
      */
     function diff_msg(
         sandbox_list_named $sbx_lst,
-        msg_id $msg_missing = msg_id::WORD_MISSING,
-        msg_id $msg_id_missing = msg_id::WORD_ID_MISSING,
-        msg_id $msg_additional = msg_id::WORD_ADDITIONAL,
-        msg_id $msg_id_additional = msg_id::WORD_ID_ADDITIONAL
+        msg_id             $msg_missing = msg_id::WORD_MISSING,
+        msg_id             $msg_id_missing = msg_id::WORD_ID_MISSING,
+        msg_id             $msg_additional = msg_id::WORD_ADDITIONAL,
+        msg_id             $msg_id_additional = msg_id::WORD_ID_ADDITIONAL
     ): user_message
     {
         $usr_msg = new user_message();
@@ -231,10 +234,10 @@ class sandbox_list_named extends sandbox_list
             if ($sbx_to_chk == null) {
                 $sbx_to_chk = $sbx_lst->get_by_name($sbx->name());
                 if ($sbx_to_chk == null) {
-                    $vars = [msg_id::VAR_NAME=>$sbx->dsp_id()];
+                    $vars = [msg_id::VAR_NAME => $sbx->dsp_id()];
                     $usr_msg->add_id_with_vars($msg_missing, $vars);
                 } else {
-                    $vars = [msg_id::VAR_ID=>$sbx->dsp_id()];
+                    $vars = [msg_id::VAR_ID => $sbx->dsp_id()];
                     $usr_msg->add_id_with_vars($msg_id_missing, $vars);
                 }
             }
@@ -247,10 +250,10 @@ class sandbox_list_named extends sandbox_list
             if ($sbx_to_chk == null) {
                 $sbx_to_chk = $sbx_lst->get_by_name($sbx->name());
                 if ($sbx_to_chk == null) {
-                    $vars = [msg_id::VAR_NAME=>$sbx->dsp_id()];
+                    $vars = [msg_id::VAR_NAME => $sbx->dsp_id()];
                     $usr_msg->add_id_with_vars($msg_additional, $vars);
                 } else {
-                    $vars = [msg_id::VAR_ID=>$sbx->$sbx->dsp_id()];
+                    $vars = [msg_id::VAR_ID => $sbx->$sbx->dsp_id()];
                     $usr_msg->add_id_with_vars($msg_id_additional, $vars);
                 }
             }
@@ -312,20 +315,18 @@ class sandbox_list_named extends sandbox_list
     {
         $result = false;
         if ($to_add != null) {
+            // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             if (!in_array($to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {
-                // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
-                if ($to_add->id() == null) {
-                    $this->set_lst_dirty();
-                }
                 // add only objects that have all mandatory values
                 $result = $to_add->can_be_ready()->is_ok();
 
                 if ($result) {
                     $this->add_direct($to_add);
+                    $this->set_lst_dirty();
                 }
+            } else {
+                $result = parent::add_obj($to_add, $allow_duplicates)->is_ok();
             }
-        } else {
-            $result = parent::add_obj($to_add, $allow_duplicates)->is_ok();
         }
         return $result;
     }
