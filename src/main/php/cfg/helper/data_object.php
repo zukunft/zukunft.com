@@ -693,6 +693,7 @@ class data_object
             $imp->step_start(msg_id::SAVE, value::class, $val_lst->count(), $val_est);
             $usr_msg->add($val_lst->save($imp, $val_per_sec));
             $imp->step_end($val_lst->count(), $val_per_sec);
+            $imp->values_done = $val_lst->count();
         } else {
             log_debug('values not imported because ' . $usr_msg->all_message_text());
         }

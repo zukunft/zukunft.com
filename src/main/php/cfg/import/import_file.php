@@ -73,7 +73,7 @@ class import_file
      *
      * @param string $filename
      * @param user $usr
-     * @param bool $direct true if each object should be saved separate in the database 
+     * @param bool $direct true if each object should be saved separate in the database
      * @return user_message
      */
     function json_file(string $filename, user $usr, bool $direct = true): user_message
@@ -177,6 +177,7 @@ class import_file
                 } else {
                     $this->failed($import_result->all_message_text(), $usr_msg);
                 }
+                $usr_msg->add($import_result);
             }
         }
 
@@ -188,47 +189,103 @@ class import_file
      * TODO validate the import by comparing the import with the api message to tne frontend
      *
      * @param user $usr who has triggered the function
-     * @return bool true if the configuration has imported
+     * @param bool $validate if true the import is validated even if the number of the values matches
+     * @return user_message true if the configuration has imported
      */
-    function import_config_yaml(user $usr): bool
+    function import_config_yaml(user $usr, bool $validate = false): user_message
     {
-        $result = false;
+        global $mtr;
 
+        $usr_msg = new user_message();
+
+        // only admin users are allowed to load the system config from the resource file
         if ($usr->is_admin() or $usr->is_system()) {
+
+            // import the system configuration from the resource file
             $imf = new import_file();
-            $import_result = $imf->yaml_file(files::SYSTEM_CONFIG, $usr);
-            if (str_starts_with($import_result->get_last_message(), msg_id::IMPORT_SUCCESS)) {
-                $result = true;
+            $usr_msg->add($imf->yaml_file(files::SYSTEM_CONFIG, $usr));
+
+            // check the import if needed or requested
+            if (!$usr_msg->is_ok() or $validate) {
+
+                // load the system configuration from the database
+                // TODO Prio 3 base the validation on the export yaml
+                $cfg = new config_numbers($usr);
+                $cfg->load_cfg($usr);
+
+                // check based on the number of values
+                $cfg_nbr = $cfg->count();
+                $chk_nbr = $usr_msg->checksum();
+                if ($cfg_nbr != $chk_nbr or $validate) {
+
+                    // report a number difference
+                    if ($cfg_nbr != $chk_nbr) {
+                        $usr_msg->add_id_with_vars(msg_id::IMPORT_COUNT_DIFF, [
+                            msg_id::VAR_FILE_NAME => files::SYSTEM_CONFIG,
+                            msg_id::VAR_VALUE_COUNT => $cfg_nbr,
+                            msg_id::VAR_VALUE_COUNT_CHK => $chk_nbr,
+                        ]);
+                    }
+
+                    // reload the target values to be able to report the missing config values
+                    $imp = new import(files::SYSTEM_CONFIG);
+                    $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
+                    $yaml_array = yaml_parse($yaml_str);
+                    $dto = $imp->get_data_object_yaml($yaml_array, $usr);
+                    $load_msg = $dto->load();
+                    if (!$load_msg->is_ok()) {
+
+                        // report the issues on loading the config values
+                        $usr_msg->add($load_msg);
+                    } else {
+                        if ($validate) {
+
+                            // report all config value differences
+                            $usr_msg->add($cfg->diff_msg($dto->value_list()));
+                        } else {
+
+                            // report al least the missing config values
+                            $val_diff = $dto->value_list()->diff($cfg);
+                            if ($val_diff->is_empty()) {
+
+                                // confirm the validation by counting the values
+                                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_COUNT_VALIDATED, [
+                                    msg_id::VAR_FILE_NAME => files::SYSTEM_CONFIG,
+                                    msg_id::VAR_VALUE_COUNT => $cfg_nbr,
+                                ]);
+                            } else {
+
+                                // report al least the missing config values
+                                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUES_MISSING, [
+                                    msg_id::VAR_FILE_NAME => files::SYSTEM_CONFIG,
+                                    msg_id::VAR_VALUE_LIST => $val_diff->dsp_id(),
+                                ]);
+                            }
+                        }
+                    }
+
+                    // sum the import result
+                    if (!$usr_msg->is_ok()) {
+                        $usr_msg->add_id_with_vars(msg_id::IMPORT_FAIL_BECAUSE, [
+                            msg_id::VAR_FILE_NAME => files::SYSTEM_CONFIG,
+                            msg_id::VAR_VALUE_LIST => $usr_msg->all_message_text(),
+                        ]);
+                        $msg = $usr_msg->all_message_text();
+                        echo $msg . "\n";
+                        log_err($msg);
+                    }
+                }
             }
 
-            // check the import
-            // TODO Prio 3 base the validation on the export yaml
-            $cfg = new config_numbers($usr);
-            $cfg->load_cfg($usr);
-            if ($cfg->count() != $import_result->checksum()) {
-
-                // report the missing config values
-                $imp = new import(files::SYSTEM_CONFIG);
-                $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
-                $yaml_array = yaml_parse($yaml_str);
-                $dto = $imp->get_data_object_yaml($yaml_array, $usr);
-                $usr_msg = $dto->load();
-                if ($usr_msg->is_ok()) {
-                    $usr_msg = $cfg->diff_msg($dto->value_list());
-                }
-                if ($usr_msg->is_ok()) {
-                    $val_diff = $dto->value_list()->diff($cfg);
-                    log_warning('These configuration values could not be imported: ' . $val_diff->dsp_id());
-                    //log_err('These configuration values could not be imported: ' . $val_diff->dsp_id());
-                } else {
-                    $msg = 'import ' . basename(files::SYSTEM_CONFIG) . ' failed because ' . $usr_msg->all_message_text();
-                    echo $msg . "\n";
-                    log_warning($msg);
-                }
+            // show the last message to the user which is hopefully a confirmation how many config values have been imported
+            $msg = $usr_msg->all_message_text();
+            echo $mtr->txt(msg_id::IMPORT_JSON) . ' ' . basename(files::SYSTEM_CONFIG) . ' ' . $msg . "\n";
+            if (!$usr_msg->is_ok()) {
+                log_warning($msg);
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -375,7 +432,7 @@ class import_file
      */
     private function done(string $summary, user_message $usr_msg): void
     {
-        $usr_msg->add_id_with_vars(msg_id::IMPORT_DONE, [
+        $usr_msg->add_info_with_vars(msg_id::IMPORT_DONE, [
             msg_id::VAR_SUMMARY => $summary
         ]);
     }

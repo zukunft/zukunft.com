@@ -183,6 +183,9 @@ class user_message
         $this->checksum = $checksum;
     }
 
+    /**
+     * @return int|null the number of values that have been expected to be imported
+     */
     function checksum(): int|null
     {
         return $this->checksum;
@@ -222,6 +225,21 @@ class user_message
     }
 
     /**
+     * add an info message id and a list of related variables
+     * to offer the user to see more details without retry
+     * more than one message id can be added to a user message result
+     * the message id is translated to the user interface language at the latest possible moment
+     * the vars are expected to be in the target language already
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_info_with_vars(?msg_id $msg_id, array $var_lst): void
+    {
+        $this->add_id_with_vars($msg_id, $var_lst, true);
+    }
+
+    /**
      * add a message id and a list of related variables
      * to offer the user to see more details without retry
      * more than one message id can be added to a user message result
@@ -231,7 +249,7 @@ class user_message
      * @param msg_id|null $msg_id the message text to add
      * @return void is never expected to fail
      */
-    function add_id_with_vars(?msg_id $msg_id, array $var_lst): void
+    function add_id_with_vars(?msg_id $msg_id, array $var_lst, bool $ok = false): void
     {
         if ($msg_id != null) {
             $key_lst = [];
@@ -253,7 +271,7 @@ class user_message
                 $this->msg_var_lst[] = [$msg_id, $var_lst];
             }
             // if a message text is added it is expected that the result was not ok, but other stati are not changed
-            if ($this->is_ok()) {
+            if ($this->is_ok() and !$ok) {
                 $this->set_not_ok();
             }
         }
@@ -364,7 +382,7 @@ class user_message
             $this->add_id($msg_id);
         }
         foreach ($msg_to_add->get_all_var_messages() as $msg_var) {
-            $this->add_id_with_vars($msg_var[0], $msg_var[1]);
+            $this->add_id_with_vars($msg_var[0], $msg_var[1], $msg_to_add->is_ok());
         }
         foreach ($msg_to_add->get_all_type_messages() as $key => $lst) {
             foreach ($lst as $entry) {
@@ -372,6 +390,13 @@ class user_message
             }
         }
         $this->combine_status($msg_to_add);
+        if ($msg_to_add->checksum() != null) {
+            if ($this->checksum == null) {
+                $this->set_checksum($msg_to_add->checksum());
+            } else {
+                $this->set_checksum($this->checksum() + $msg_to_add->checksum());
+            }
+        }
 
         $lib = new library();
         $this->db_row_id_lst = $lib->array_merge_by_key($this->db_row_id_lst, $msg_to_add->db_row_id_lst);

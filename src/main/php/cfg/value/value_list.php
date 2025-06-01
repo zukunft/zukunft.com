@@ -124,11 +124,13 @@ class value_list extends sandbox_value_list
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 // TODO remove temp
-                /*
-                if ($db_row[group::FLD_ID] == '....0/-....2t+....39+....3o+....3p+......+......+......+......+......+......+......+......+......+......+......+') {
-                    log_info('');
+                if (array_key_exists(group::FLD_ID, $db_row)) {
+                    if ($db_row[group::FLD_ID] == '....0/-....2t+....39+....3o+....3p+......+......+......+......+......+......+......+......+......+......+......+') {
+                        log_info('got value');
+                    }
+                } else {
+                    log_info('group id missing');
                 }
-                */
                 $excluded = null;
                 if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
                     $excluded = $db_row[sandbox::FLD_EXCLUDED];

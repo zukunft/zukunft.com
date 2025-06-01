@@ -79,6 +79,12 @@ enum messages: string
     const VAR_VALUE = 'VarValue';
     // the numeric, time, text or geo value of a compare value
     const VAR_VALUE_CHK = 'VarValueCheck';
+    // the real number of values
+    const VAR_VALUE_COUNT = 'VarValueCount';
+    // the expected number of values
+    const VAR_VALUE_COUNT_CHK = 'VarValueCountCheck';
+    // a list of values
+    const VAR_VALUE_LIST = 'VarValueList';
     // the phrase group naming of a value
     const VAR_GROUP = 'VarGroup';
     // the phrase group naming of a compare value
@@ -330,15 +336,37 @@ enum messages: string
     case IMPORT_EMPTY = 'import file "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
         . '" is empty';
-    case IMPORT_DONE = self::IMPORT_SUCCESS . ' "'
+    case IMPORT_DONE = self::IMPORT_SUCCESS . ' ('
         . self::VAR_START . self::VAR_SUMMARY . self::VAR_END
-        . '" is empty';
+        . ' imported)';
     case IMPORT_FAILED = 'failed because '
         . self::VAR_START . self::VAR_SUMMARY . self::VAR_END
         . '.';
     case CONFIG_PART = 'configuration part '
         . self::VAR_START . self::VAR_PART . self::VAR_END
         . ' cannot yet be selected';
+    case IMPORT_COUNT_DIFF = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because only '
+        . self::VAR_START . self::VAR_VALUE_COUNT . self::VAR_END
+        . ' are in the database instead of '
+        . self::VAR_START . self::VAR_VALUE_COUNT_CHK . self::VAR_END
+        . '.';
+    case IMPORT_VALUES_MISSING = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because these values are missing '
+        . self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
+        . '.';
+    case IMPORT_VALUE_COUNT_VALIDATED = 'import from "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" validated by counting '
+        . self::VAR_START . self::VAR_VALUE_COUNT . self::VAR_END
+        . ' values';
+    case IMPORT_FAIL_BECAUSE = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because '
+        . self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
+        . '.';
 
 
     // for the change log

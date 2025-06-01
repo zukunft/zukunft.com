@@ -275,7 +275,7 @@ class import
                 $part = ' ' . $class . $step;
             } else {
                 $class = $lib->class_to_table($this->class);
-                $part = ' ' . $step . ' ' . $processed  . ' ' . $class;
+                $part = ' ' . $step . ' ' . $processed . ' ' . $class;
             }
             $times = ' ' . round($total_time, 3) . 's / ' . round($this->time_exp_act, 3) . 's';
             $final_time = ' ' . round($total_time, 3) . 's ' . $this->time_exp_act;
@@ -1458,17 +1458,17 @@ class import
     {
         $usr_msg = new user_message();
         $msg_txt = $this->status_text_entry('words', $this->words_done, $this->words_failed);
-        $msg_txt .= $this->status_text_entry('verbs', $this->verbs_done, $this->verbs_failed);
-        $msg_txt .= $this->status_text_entry('triples', $this->triples_done, $this->triples_failed);
-        $msg_txt .= $this->status_text_entry('formulas', $this->formulas_done, $this->formulas_failed);
-        $msg_txt .= $this->status_text_entry('values', $this->values_done, $this->values_failed);
-        $msg_txt .= $this->status_text_entry('simple values', $this->list_values_done, $this->list_values_failed);
-        $msg_txt .= $this->status_text_entry('sources', $this->sources_done, $this->sources_failed);
-        $msg_txt .= $this->status_text_entry('references', $this->refs_done, $this->refs_failed);
-        $msg_txt .= $this->status_text_entry('views', $this->views_done, $this->views_failed);
-        $msg_txt .= $this->status_text_entry('components', $this->components_done, $this->components_failed);
-        $msg_txt .= $this->status_text_entry('results validated', $this->calc_validations_done, $this->calc_validations_failed);
-        $msg_txt .= $this->status_text_entry('views validated', $this->view_validations_done, $this->view_validations_failed);
+        $msg_txt = $this->status_text_entry('verbs', $this->verbs_done, $this->verbs_failed, $msg_txt);
+        $msg_txt = $this->status_text_entry('triples', $this->triples_done, $this->triples_failed, $msg_txt);
+        $msg_txt = $this->status_text_entry('formulas', $this->formulas_done, $this->formulas_failed, $msg_txt);
+        $msg_txt = $this->status_text_entry('values', $this->values_done, $this->values_failed, $msg_txt);
+        $msg_txt = $this->status_text_entry('simple values', $this->list_values_done, $this->list_values_failed, $msg_txt);
+        $msg_txt = $this->status_text_entry('sources', $this->sources_done, $this->sources_failed, $msg_txt);
+        $msg_txt = $this->status_text_entry('references', $this->refs_done, $this->refs_failed, $msg_txt);
+        $msg_txt = $this->status_text_entry('views', $this->views_done, $this->views_failed, $msg_txt);
+        $msg_txt = $this->status_text_entry('components', $this->components_done, $this->components_failed, $msg_txt);
+        $msg_txt = $this->status_text_entry('results validated', $this->calc_validations_done, $this->calc_validations_failed, $msg_txt);
+        $msg_txt = $this->status_text_entry('views validated', $this->view_validations_done, $this->view_validations_failed, $msg_txt);
         $usr_msg->add_message_text($msg_txt);
         return $usr_msg;
     }
@@ -1485,19 +1485,23 @@ class import
         return $msg_txt;
     }
 
-    private function status_text_entry(string $name, int $done, int $failed): string
+    private function status_text_entry(string $name, int $done, int $failed, string $msg_txt = ''): string
     {
-        $msg_txt = '';
+        $txt_to_add = '';
         if ($done > 0 or $failed > 0) {
-            $msg_txt .= $done;
+            $txt_to_add .= $done;
             if ($failed > 0) {
-                $msg_txt .= 'done (' . $failed . ' failed)';
+                $txt_to_add .= 'done (' . $failed . ' failed)';
 
             }
-            $msg_txt .= ' ' . $name;
+            $txt_to_add .= ' ' . $name;
         }
-        if ($msg_txt != '') {
-            $msg_txt .= ', ';
+        if ($txt_to_add != '') {
+            if ($msg_txt != '') {
+                $msg_txt .= ', ' . $txt_to_add;
+            } else {
+                $msg_txt .= $txt_to_add;
+            }
         }
         return $msg_txt;
     }
