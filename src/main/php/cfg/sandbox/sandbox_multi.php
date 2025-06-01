@@ -977,24 +977,24 @@ class sandbox_multi extends db_object_multi_user
         global $shr_typ_cac;
         global $ptc_typ_cac;
 
-        $result = parent::import_db_obj($this, $test_obj);
+        $usr_msg = parent::import_db_obj($this, $test_obj);
         foreach ($in_ex_json as $key => $value) {
             if ($key == json_fields::SHARE) {
                 $this->share_id = $shr_typ_cac->id($value);
                 if ($this->share_id < 0) {
                     $lib = new library();
-                    $result->add_message_text('share type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
+                    $usr_msg->add_message_text('share type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
                 }
             }
             if ($key == json_fields::PROTECTION) {
                 $this->protection_id = $ptc_typ_cac->id($value);
                 if ($this->protection_id < 0) {
                     $lib = new library();
-                    $result->add_message_text('protection type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
+                    $usr_msg->add_message_text('protection type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
                 }
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
