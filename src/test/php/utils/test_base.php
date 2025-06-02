@@ -462,12 +462,12 @@ class test_base
      * @return bool true is the result is fine
      */
     function assert(
-        string            $test_name,
-        string|array|null $result,
-        string|array|null $target = '',
-        float             $exe_max_time = self::TIMEOUT_LIMIT,
-        string            $comment = '',
-        string            $test_type = ''): bool
+        string                 $test_name,
+        string|bool|array|null $result,
+        string|bool|array|null $target = '',
+        float                  $exe_max_time = self::TIMEOUT_LIMIT,
+        string                 $comment = '',
+        string                 $test_type = ''): bool
     {
         // init the test result vars
         $lib = new library();

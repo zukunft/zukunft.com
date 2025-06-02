@@ -1652,7 +1652,7 @@ class word_list extends sandbox_list_named
             $usr_msg->add($this->insert($db_lst, true, $imp, word::class));
 
             // create any missing sql update functions and update the words
-            // TODO create a test that fields not included in the import message are not updated, but e.g. an empty descrption is updated
+            // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
             // TODO create blocks of update function calls
             $usr_msg->add($this->update($db_lst, true, $imp, word::class, $upd_per_sec));
         }

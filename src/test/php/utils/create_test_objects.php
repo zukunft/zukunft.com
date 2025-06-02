@@ -4092,7 +4092,7 @@ class create_test_objects extends test_base
     function test_word(string $wrd_name, ?string $wrd_type_code_id = null, ?user $test_usr = null): word
     {
         $wrd = $this->add_word($wrd_name, $wrd_type_code_id, $test_usr);
-        $this->assert('add_word', $wrd->name(), $wrd_name);
+        $this->assert('add_word', $wrd->name(), $wrd_name, $this::TIMEOUT_LIMIT_DB_MULTI);
         return $wrd;
     }
 

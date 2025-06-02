@@ -81,7 +81,7 @@ class words
     const URL_ID = 326;
     // e.g. the launch date of the first beta version of zukunft.com
     const LAUNCH = 'launch';
-    const LAUNCH_ID = 370;
+    const LAUNCH_ID = 373;
 
     // for the user settings
     const ROW = 'row';
@@ -103,7 +103,7 @@ class words
     const DECIMAL = 'decimal';
     // e.g. the geolocation of the development of zukunft.com
     const POINT = 'point';
-    const POINT_ID = 371;
+    const POINT_ID = 374;
 
     // general words used also for the system configuration that have a fixed tooltip
     const TIME = 'time';
@@ -318,9 +318,9 @@ class words
 
     // words from import test file companies.json used for the start page in order of appearance
     const ABB = 'ABB';
-    const ABB_ID = 1004;
+    const ABB_ID = 1007;
     const VESTAS = 'Vestas';
-    const VESTAS_ID = 1007;
+    const VESTAS_ID = 1010;
 
     // for the config.yaml
     const TEST = 'test';

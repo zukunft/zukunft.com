@@ -207,8 +207,10 @@ class all_unit_tests extends test_cleanup
              */
 
             // run the selected db import tests
+            $test_name = 'validate config import';
             $imf = new import_file();
             $import_result = $imf->import_config_yaml($sys_usr, true);
+            $t->assert($test_name, $import_result->is_ok(), true, $t::TIMEOUT_LIMIT_IMPORT);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::SYSTEM_VIEWS_FILE, $usr);

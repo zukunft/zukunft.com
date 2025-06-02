@@ -542,7 +542,6 @@ class data_object
         $usr_msg = new user_message();
 
         // get the relevant config values
-        $time_object = $cfg->get_by([triples::OBJECT_CREATION, words::PERCENT, triples::EXPECTED_TIME, words::IMPORT]);
         $trp_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $src_per_sec = $cfg->get_by([words::SOURCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $ref_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);

@@ -190,7 +190,7 @@ class user_message
         }
     }
 
-    private function add_message_text(string $txt): void
+    public function add_message_text(string $txt): void
     {
         // do not repeat the same text more than once
         if (!in_array($txt, $this->txt)) {

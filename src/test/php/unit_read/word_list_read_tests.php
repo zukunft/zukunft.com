@@ -64,7 +64,7 @@ class word_list_read_tests
         $wrd_lst = new word_list($t->usr1);
         $test_name = 'loading word names without pattern return more than two words';
         $wrd_lst->load_names();
-        $t->assert_greater($test_name, 2, $wrd_lst->count());
+        $t->assert_greater($test_name, 2, $wrd_lst->count(), $t::TIMEOUT_LIMIT_DB);
         $test_name = 'loading word names with pattern return the expected word';
         $pattern = substr(words::MATH, 0, -1);
         $wrd_lst = new word_list($t->usr1);

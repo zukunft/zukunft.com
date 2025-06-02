@@ -930,7 +930,7 @@ class import
             if ($used_est_per_sec != 0) {
                 $this->time_exp_act = $this->calc_total_time($end_time, $nbr);
             }
-            $this->display_progress($nbr, $est_per_sec, '', true);
+            $this->display_progress($nbr, $est_per_sec, '');
         }
     }
 

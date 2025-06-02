@@ -678,39 +678,43 @@ class sandbox_list_named extends sandbox_list
         $add_lst = $add_lst->filter_by_name($db_names);
         $imp->step_end(count($db_names));
 
-        // get the sql call to add the missing objects
-        // TODO use sql_insert ?
-        $ins_calls = $add_lst->sql_insert_call_with_par($sc, $use_func);
-        $imp->step_start(msg_id::PREPARE, $class, $ins_calls->count());
+        if (!$add_lst->is_empty()) {
 
-        // get the functions that are already in the database
-        $db_func_lst = $db_con->get_functions();
+            // get the sql call to add the missing objects
+            // TODO use sql_insert ?
+            $ins_calls = $add_lst->sql_insert_call_with_par($sc, $use_func);
+            $imp->step_start(msg_id::PREPARE, $class, $ins_calls->count());
 
-        // get the sql functions that have not yet been created
-        $func_to_create = $ins_calls->sql_functions_missing($db_func_lst);
+            // get the functions that are already in the database
+            $db_func_lst = $db_con->get_functions();
 
-        // get the first object that have requested the missing function
-        $func_create_obj = clone $this;
-        $func_create_obj_names = $func_to_create->object_names();
-        $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
+            // get the sql functions that have not yet been created
+            $func_to_create = $ins_calls->sql_functions_missing($db_func_lst);
 
-        // create the missing sql functions and add the first missing word
-        $func_to_create = $func_create_obj->sql_insert($sc);
-        $func_to_create->exe($class);
-        $imp->step_end($func_to_create->count());
+            // get the first object that have requested the missing function
+            $func_create_obj = clone $this;
+            $func_create_obj_names = $func_to_create->object_names();
+            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
 
-        // add the remaining missing words or triples
-        $step_time = $this->count() / $save_per_sec;
-        $imp->step_start(msg_id::ADD, $class, $add_lst->count(), $step_time);
-        $add_lst = $add_lst->filter_by_name($func_create_obj_names);
-        $ins_calls = $add_lst->sql_insert_call_with_par($sc, $use_func);
-        $usr_msg->add($ins_calls->exe($class));
+            // create the missing sql functions and add the first missing word
+            $func_to_create = $func_create_obj->sql_insert($sc);
+            $func_to_create->exe($class);
+            $imp->step_end($func_to_create->count());
 
-        // TODO create a loop to add depending triples
-        // add the just added words or triples id to this list
-        $this->add_id_by_name($usr_msg->db_row_id_lst());
+            // add the remaining missing words or triples
+            $step_time = $this->count() / $save_per_sec;
+            $imp->step_start(msg_id::ADD, $class, $add_lst->count(), $step_time);
+            $add_lst = $add_lst->filter_by_name($func_create_obj_names);
+            $ins_calls = $add_lst->sql_insert_call_with_par($sc, $use_func);
+            $usr_msg->add($ins_calls->exe($class));
 
-        $imp->step_end($add_lst->count(), $save_per_sec);
+            // TODO create a loop to add depending triples
+            // add the just added words or triples id to this list
+            $this->add_id_by_name($usr_msg->db_row_id_lst());
+
+            $imp->step_end($add_lst->count(), $save_per_sec);
+
+        }
 
         return $usr_msg;
     }
@@ -744,38 +748,41 @@ class sandbox_list_named extends sandbox_list
         $upd_lst = $this->update_list($db_lst);
         $imp->step_end($db_lst->count());
 
-        // get the sql call to add the missing objects
-        $upd_calls = $upd_lst->sql_update($sc, $db_lst, $use_func);
-        $imp->step_start(msg_id::PREPARE, $class, $upd_calls->count());
+        if (!$upd_lst->is_empty()) {
 
-        // get the functions that are already in the database
-        $db_func_lst = $db_con->get_functions();
+            // get the sql call to add the missing objects
+            $upd_calls = $upd_lst->sql_update($sc, $db_lst, $use_func);
+            $imp->step_start(msg_id::PREPARE, $class, $upd_calls->count());
 
-        // get the sql functions that have not yet been created
-        $func_to_create = $upd_calls->sql_functions_missing($db_func_lst);
+            // get the functions that are already in the database
+            $db_func_lst = $db_con->get_functions();
 
-        // get the first object that have requested the missing function
-        $func_create_obj = clone $upd_lst;
-        $func_create_obj_names = $func_to_create->object_names();
-        $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
+            // get the sql functions that have not yet been created
+            $func_to_create = $upd_calls->sql_functions_missing($db_func_lst);
 
-        // create the missing sql functions and add the first missing object
-        $func_to_create = $func_create_obj->sql_update($sc, $db_lst);
-        $func_to_create->exe_update($class);
-        $imp->step_end($func_to_create->count());
+            // get the first object that have requested the missing function
+            $func_create_obj = clone $upd_lst;
+            $func_create_obj_names = $func_to_create->object_names();
+            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
 
-        // add the remaining missing words or triples
-        $step_time = $db_lst->count() / $upd_per_sec;
-        $imp->step_start(msg_id::SAVE, triple::class, $db_lst->count(), $step_time);
-        $upd_calls = $upd_lst->sql_update_call_with_par($sc, $db_lst, $use_func);
-        $usr_msg->add($upd_calls->exe_update($class));
-        $imp->step_end($upd_lst->count());
+            // create the missing sql functions and add the first missing object
+            $func_to_create = $func_create_obj->sql_update($sc, $db_lst);
+            $func_to_create->exe_update($class);
+            $imp->step_end($func_to_create->count());
 
-        // TODO create a loop to add depending triples
-        // add the just added words or triples id to this list
-        $this->add_id_by_name($usr_msg->db_row_id_lst());
+            // add the remaining missing words or triples
+            $step_time = $db_lst->count() / $upd_per_sec;
+            $imp->step_start(msg_id::SAVE, triple::class, $db_lst->count(), $step_time);
+            $upd_calls = $upd_lst->sql_update_call_with_par($sc, $db_lst, $use_func);
+            $usr_msg->add($upd_calls->exe_update($class));
+            $imp->step_end($upd_lst->count());
 
-        $imp->step_end($db_lst->count(), $upd_per_sec);
+            // TODO create a loop to add depending triples
+            // add the just added words or triples id to this list
+            $this->add_id_by_name($usr_msg->db_row_id_lst());
+
+            $imp->step_end($db_lst->count(), $upd_per_sec);
+        }
 
         return $usr_msg;
     }
