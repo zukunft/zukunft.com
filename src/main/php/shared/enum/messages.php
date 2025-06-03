@@ -243,6 +243,9 @@ enum messages: string
     case WORD_ID_ADDITIONAL = 'word id additional of "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';
+    case WORD_NOT_SAVED = 'word "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" cannot be saved';
     case TRIPLE_MISSING = 'triple "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is missing';
