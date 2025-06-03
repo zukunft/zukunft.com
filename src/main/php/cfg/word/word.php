@@ -430,29 +430,30 @@ class word extends sandbox_typed
         log_debug();
 
         // set the object vars based on the json
-        $result = $this->import_mapper($in_ex_json, null, $test_obj);
+        $usr_msg = $this->import_mapper($in_ex_json, null, $test_obj);
 
         // save the word in the database
         if ($test_obj == null) {
-            if ($result->is_ok()) {
-                $result->add($this->save());
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
             }
         }
 
         // add related parameters to the word object
-        if ($result->is_ok()) {
+        if ($usr_msg->is_ok()) {
             log_debug('saved ' . $this->dsp_id());
 
             if ($this->id() <= 0) {
-                $result->add_message_text('Word ' . $this->dsp_id() . ' cannot be saved');
+                // $usr_msg->add_message_text('Word ' . $this->dsp_id() . ' cannot be saved');
+                $usr_msg->add_id_with_vars(msg_id::WORD_NOT_SAVED, [msg_id::VAR_ID => $this->dsp_id()]);
             } else {
                 foreach ($in_ex_json as $key => $value) {
-                    if ($result->is_ok()) {
+                    if ($usr_msg->is_ok()) {
                         if ($key == word_db::FLD_REFS) {
                             foreach ($value as $ref_data) {
                                 $ref_obj = new ref($this->user());
                                 $ref_obj->set_phrase($this->phrase());
-                                $result->add($ref_obj->import_obj($ref_data, $test_obj));
+                                $usr_msg->add($ref_obj->import_obj($ref_data, $test_obj));
                                 $this->ref_lst[] = $ref_obj;
                             }
                         }
@@ -460,7 +461,7 @@ class word extends sandbox_typed
                 }
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
