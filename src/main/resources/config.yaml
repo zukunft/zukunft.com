@@ -38,6 +38,9 @@ zukunft.com:
             decode:
               sys-conf-value: 40
               tooltip-comment: "the estimated MB per second for decoding the import json file"
+            object storing:
+              sys-conf-value: 5
+              tooltip-comment: "the estimated MB per second for storing the objects in the database"
             total:
               sys-conf-value: 16386
               tooltip-comment: "the estimated bytes per second that can be processed when importing a json"
@@ -49,6 +52,9 @@ zukunft.com:
               triples:
                 sys-conf-value: 790
                 tooltip-comment: "the estimated number of triples that can be loaded per second"
+              references:
+                sys-conf-value: 780
+                tooltip-comment: "the estimated number of references that can be loaded per second"
               sources:
                 sys-conf-value: 780
                 tooltip-comment: "the estimated number of sources that can be loaded per second"
@@ -74,6 +80,9 @@ zukunft.com:
               sources:
                 sys-conf-value: 600
                 tooltip-comment: "the estimated number of sources that can be created per second"
+              references:
+                sys-conf-value: 610
+                tooltip-comment: "the estimated number of references that can be created per second"
               values:
                 sys-conf-value: 250
                 tooltip-comment: "the estimated number of values that can be created per second"
@@ -88,8 +97,29 @@ zukunft.com:
                 tooltip-comment: "the estimated number of components that can be created per second"
             update:
               words:
-                sys-conf-value: 600
+                sys-conf-value: 590
                 tooltip-comment: "the estimated number of words that can be updated per second"
+              triples:
+                sys-conf-value: 580
+                tooltip-comment: "the estimated number of triples that can be updated per second"
+              sources:
+                sys-conf-value: 570
+                tooltip-comment: "the estimated number of sources that can be updated per second"
+              references:
+                sys-conf-value: 560
+                tooltip-comment: "the estimated number of references that can be updated per second"
+              values:
+                sys-conf-value: 550
+                tooltip-comment: "the estimated number of values that can be updated per second"
+              formulas:
+                sys-conf-value: 540
+                tooltip-comment: "the estimated number of formulas that can be updated per second"
+              views:
+                sys-conf-value: 530
+                tooltip-comment: "the estimated number of views that can be updated per second"
+              components:
+                sys-conf-value: 520
+                tooltip-comment: "the estimated number of components that can be updated per second"
             store:
               words:
                 sys-conf-value: 800

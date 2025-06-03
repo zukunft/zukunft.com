@@ -61,6 +61,7 @@ include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\component\component;
 use cfg\component\component_list;
@@ -89,6 +90,7 @@ use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
 use shared\helper\TextIdObject;
+use shared\library;
 
 class sandbox_list_named extends sandbox_list
 {
@@ -646,6 +648,8 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * create any missing sql functions and queries to save the list objects
+     * TODO create blocks of insert function calls
+     * *
      * @param word_list|triple_list|phrase_list|source_list $db_lst filled with the words or triples that are already in the db so a kind of cache
      * @param bool $use_func true if sql function should be used to insert the named user sandbox objects
      * @param import|null $imp the import object e.g. with the ETA
@@ -662,11 +666,14 @@ class sandbox_list_named extends sandbox_list
         global $db_con;
         global $cfg;
 
+        // prepare
         $sc = $db_con->sql_creator();
         $usr_msg = new user_message();
+        $lib = new library();
 
         // get the configuration values
-        $save_per_sec = $cfg->get_by([words::WORDS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $cfg_wrd = $lib->class_to_word($class);
+        $save_per_sec = $cfg->get_by([$cfg_wrd, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         // get the db id from the loaded objects
         $usr_msg->add($this->fill_by_name($db_lst));
@@ -740,6 +747,7 @@ class sandbox_list_named extends sandbox_list
     {
         global $db_con;
 
+        // prepare
         $sc = $db_con->sql_creator();
         $usr_msg = new user_message();
 
@@ -772,14 +780,9 @@ class sandbox_list_named extends sandbox_list
 
             // add the remaining missing words or triples
             $step_time = $db_lst->count() / $upd_per_sec;
-            $imp->step_start(msg_id::SAVE, triple::class, $db_lst->count(), $step_time);
+            $imp->step_start(msg_id::SAVE, $class, $db_lst->count(), $step_time);
             $upd_calls = $upd_lst->sql_update_call_with_par($sc, $db_lst, $use_func);
             $usr_msg->add($upd_calls->exe_update($class));
-            $imp->step_end($upd_lst->count());
-
-            // TODO create a loop to add depending triples
-            // add the just added words or triples id to this list
-            $this->add_id_by_name($usr_msg->db_row_id_lst());
 
             $imp->step_end($db_lst->count(), $upd_per_sec);
         }

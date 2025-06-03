@@ -20,8 +20,8 @@ To install this version 0.0.3 use a LAMP server (https://wiki.debian.org/LaMp) a
 1) copy all files to the www root path (e.g. /var/www/html/)
 2) copy all files of bootstrap 4.1.3 or higher to /var/www/html/lib_external/bootstrap/4.1.3/
 3) copy all files of fontawesome to /var/www/html/lib_external/fontawesome/
-4) create a user "zukunft_db_root" in Postgres or MySQL and remember the password
-5) execute the script "src/main/php/db/.../zukunft_structure.sql" in MySQL to create the database zukunft_structure
+4) create a user "zukunft_db_root" in Postgres (or MySQL) and remember the password
+5) execute the script "src/main/php/db/.../zukunft_structure.sql" in Postgres (or MySQL) to create the database zukunft_structure
 6) change the password "xxx" in db_link/zu_lib_sql_link.php with the password used in 2)
 7) test if the installation is running fine by calling http://yourserver.com/test/test.php
 
@@ -47,13 +47,15 @@ but at least once a day a status message should be shown with the system usage a
 Additional for development
 --------------------------
 
-on debian systems
+on debian systems start in bash
 
 sudo apt-get install php-pgsql
 
 sudo apt-get install php-yaml
 
 sudo apt-get install php-curl
+
+the preferred phpversion is 8.2
 
 Planned changes
 ---------------

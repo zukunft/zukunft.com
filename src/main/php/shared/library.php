@@ -118,6 +118,7 @@ use cfg\word\word;
 use html\verb\verb as verb_dsp;
 use DateTime;
 use Exception;
+use shared\const\words;
 use shared\enum\messages as msg_id;
 use shared\types\protection_type;
 use shared\types\share_type;
@@ -2132,6 +2133,38 @@ class library
                 break;
             case sys_log_status_list::class;
                 $result = str_replace('_list', '', $result);
+                break;
+        }
+        return $result;
+    }
+
+    /**
+     * get the predefined word e.g. used to select the system configuration values based on the given class
+     *
+     * @param string $class including the namespace
+     * @return string the predefined word as defined in the shared words class
+     */
+    function class_to_word(string $class): string
+    {
+        $result = '';
+        switch ($class) {
+            case word::class;
+                $result = words::WORDS;
+                break;
+            case triple::class;
+                $result = words::TRIPLES;
+                break;
+            case source::class;
+                $result = words::SOURCES;
+                break;
+            case formula::class;
+                $result = words::FORMULAS;
+                break;
+            case view::class;
+                $result = words::VIEWS;
+                break;
+            case component::class;
+                $result = words::COMPONENTS;
                 break;
         }
         return $result;
