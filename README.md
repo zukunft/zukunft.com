@@ -13,8 +13,8 @@ This program should
 - use common sense by using opencyc via conceptnet.io
 - enable data exchange to wikidata and other interlinking databases
 
-Install
--------
+installation
+------------
 
 To install this version 0.0.3 use a LAMP server (https://wiki.debian.org/LaMp) and
 1) copy all files to the www root path (e.g. /var/www/html/)
@@ -23,10 +23,11 @@ To install this version 0.0.3 use a LAMP server (https://wiki.debian.org/LaMp) a
 4) create a user "zukunft_db_root" in Postgres (or MySQL) and remember the password
 5) execute the script "src/main/php/db/.../zukunft_structure.sql" in Postgres (or MySQL) to create the database zukunft_structure
 6) change the password "xxx" in db_link/zu_lib_sql_link.php with the password used in 2)
-7) test if the installation is running fine by calling http://yourserver.com/test/test.php
+7) create an admin user in the user database table that has the user profile id set to 2 and has the ip_address localhost 
+8) test if the installation is running fine by calling http://yourserver.com/test/test.php
 
-Target install
---------------
+Target installation
+-------------------
 
 In the final version the installation on debian should be 
 
