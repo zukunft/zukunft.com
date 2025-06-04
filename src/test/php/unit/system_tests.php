@@ -298,7 +298,7 @@ class system_tests
 
         $t->subheader($ts . 'im- and export');
 
-        $json_in = json_decode(file_get_contents(test_files::RESOURCE_PATH . 'unit/system/ip_blacklist.json'), true);
+        $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
         $ip_range->import_obj($json_in, $t);
@@ -313,7 +313,7 @@ class system_tests
 
         $t->subheader($ts . 'ip range');
 
-        $json_in = json_decode(file_get_contents(test_files::RESOURCE_PATH . 'unit/system/ip_blacklist.json'), true);
+        $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
         $ip_range->import_obj($json_in, $t);

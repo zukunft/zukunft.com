@@ -53,6 +53,10 @@ class files
     // main path for the test resources
     const RESOURCE_PATH = TEST_PATH . 'resources' . DIRECTORY_SEPARATOR;
 
+    // path for unit test resources
+    const UNIT_PATH = self::RESOURCE_PATH . 'unit' . DIRECTORY_SEPARATOR;
+    const SYSTEM_PATH = self::UNIT_PATH . 'system' . DIRECTORY_SEPARATOR;
+
     // path for resources to test the api
     const API_RES_PATH = self::RESOURCE_PATH . 'api' . DIRECTORY_SEPARATOR;
     const API_SYSTEM_RES_PATH = self::API_RES_PATH . 'system' . DIRECTORY_SEPARATOR;
@@ -70,6 +74,13 @@ class files
 
     // path for resources to test the user interface
     const UI_RES_PATH = self::WEB_RES_PATH . 'ui' . DIRECTORY_SEPARATOR;
+
+
+    /*
+     * unit test files
+     */
+
+    const IP_BLACKLIST = self::SYSTEM_PATH . 'ip_blacklist' . self::JSON;
 
 
     /*
