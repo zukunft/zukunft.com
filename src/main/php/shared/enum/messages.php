@@ -113,6 +113,7 @@ enum messages: string
     const VAR_COMPONENT_NAME = 'VarComponentName';
     const VAR_FILE_TYPE = 'VarFileType';
     const VAR_FILE_NAME = 'VarFileName';
+    const VAR_IP_RANGE = 'VarIpRange';
     const VAR_SUMMARY = 'VarSummary';
     const VAR_PART = 'VarPart';
     const VAR_ERROR_TEXT = 'VarErrorText';
@@ -370,6 +371,11 @@ enum messages: string
         . '" failed because '
         . self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
         . '.';
+    case IMPORT_IP_MISSING = 'mandatory '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' ip of range missing in import json part "'
+        . self::VAR_START . self::VAR_IP_RANGE . self::VAR_END
+        . '.';
 
 
     // for the change log
@@ -404,6 +410,7 @@ enum messages: string
     // config
     case CONFIG_NOT_LOADED = 'cannot load config';
     case CONFIG_EMPTY = 'config is empty';
+    case IP_LIST_EMPTY = 'ip range list is empty on import';
 
     // text to be shown in buttons
     case ADD = 'add';

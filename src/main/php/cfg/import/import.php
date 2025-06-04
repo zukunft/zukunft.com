@@ -789,6 +789,7 @@ class import
         $frm_per_sec = $cfg->get_by([words::FORMULAS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $msk_per_sec = $cfg->get_by([words::VIEWS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $cmp_per_sec = $cfg->get_by([words::COMPONENTS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $ip_per_sec = $cfg->get_by([words::IP_RANGES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         // estimate the time for each object type
         // where 5 is the number of data objects that are filled with this function
@@ -800,7 +801,12 @@ class import
 
         $usr_msg->add($this->message_check($json_array));
         if ($usr_msg->is_ok()) {
-            // TODO add json_fields::IP_BLACKLIST
+            if (key_exists(json_fields::IP_BLACKLIST, $json_array)) {
+                $ip_array = $json_array[json_fields::IP_BLACKLIST];
+                $this->step_start(msg_id::COUNT, ip_range::class, count($ip_array), $step_time);
+                $usr_msg->add($this->dto_get_ip_ranges($ip_array, $usr_trigger, $dto, $ip_per_sec));
+                $this->step_end($dto->ip_range_list()->count(), $ip_per_sec);
+            }
             // TODO add json_fields::USERS
             // TODO add json_fields::LIST_VERBS
             if (key_exists(json_fields::WORDS, $json_array)) {
@@ -1246,6 +1252,34 @@ class import
             $dto->add_component($cmp);
             $i++;
             $this->display_progress($i, $per_sec, $cmp->dsp_id());
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add the ip ranges from the json array to the data object
+     * @param array $json_array the ip range part of the import json
+     * @param data_object $dto the data object that should be filled
+     * @param float $per_sec the expected number of ip ranges that can be analysed per second
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function dto_get_ip_ranges(
+        array       $json_array,
+        user        $usr_trigger,
+        data_object $dto,
+        float       $per_sec = 0
+    ): user_message
+    {
+        $usr_msg = new user_message();
+
+        $i = 0;
+        foreach ($json_array as $ip_json) {
+            $ip = new ip_range();
+            $ip->set_user($usr_trigger);
+            $usr_msg->add($ip->import_mapper($ip_json));
+            $dto->add_ip_range($ip);
+            $i++;
+            $this->display_progress($i, $per_sec, $ip->dsp_id());
         }
         return $usr_msg;
     }

@@ -215,6 +215,7 @@ class all_unit_tests extends test_cleanup
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::SYSTEM_VIEWS_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::UNITS_FILE, $usr);
+            $this->file_import(files::MESSAGE_PATH . files::IP_BLACKLIST_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr, true);
             //$this->file_import(files::MESSAGE_PATH . files::COMPANY_FILE, $usr);

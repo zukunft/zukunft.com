@@ -46,6 +46,7 @@ include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -61,6 +62,7 @@ use cfg\log\change;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\enum\change_actions;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 
@@ -144,6 +146,43 @@ class ip_range extends db_object_seq_id
             $this->active = $db_row[self::FLD_ACTIVE];
         }
         return $result;
+    }
+
+    /**
+     * set the vars of this ip range object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @return user_message
+     */
+    function import_mapper(array $in_ex_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        // set the object vars based on the json
+        if (key_exists(json_fields::IP_FROM, $in_ex_json)) {
+            $this->from = $in_ex_json[json_fields::IP_FROM];
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
+                msg_id::VAR_NAME => json_fields::IP_FROM,
+                msg_id::VAR_IP_RANGE => $in_ex_json,
+            ]);
+        }
+        if (key_exists(json_fields::IP_TO, $in_ex_json)) {
+            $this->to = $in_ex_json[json_fields::IP_TO];
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
+                msg_id::VAR_NAME => json_fields::IP_TO,
+                msg_id::VAR_IP_RANGE => $in_ex_json,
+            ]);
+        }
+        if (key_exists(json_fields::REASON, $in_ex_json)) {
+            $this->reason = $in_ex_json[json_fields::REASON];
+        }
+        if (key_exists(json_fields::IS_ACTIVE, $in_ex_json)) {
+            $this->active = filter_var($in_ex_json[json_fields::IS_ACTIVE], FILTER_VALIDATE_BOOLEAN);
+        }
+
+        return $usr_msg;
     }
 
 

@@ -225,6 +225,22 @@ class user_message
     }
 
     /**
+     * add a message id for info only
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_info_id(?msg_id $msg_id): void
+    {
+        if ($msg_id != null) {
+            // do not repeat the same text more than once
+            if (!in_array($msg_id, $this->msg_id_lst)) {
+                $this->msg_id_lst[] = $msg_id;
+            }
+        }
+    }
+
+    /**
      * add an info message id and a list of related variables
      * to offer the user to see more details without retry
      * more than one message id can be added to a user message result

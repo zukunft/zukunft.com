@@ -118,11 +118,11 @@ class files
         self::SOURCES_FILE,
         self::UNITS_FILE,
         self::SCALING_FILE,
+        self::IP_BLACKLIST_FILE,
     ];
 
     // to load the default data for all pods
     const BASE_CONFIG_FILES_DIRECT = [
-        self::IP_BLACKLIST_FILE,
         self::TIME_FILE,
         self::BASE_VIEWS_FILE,
         self::START_PAGE_DATA_FILE,
