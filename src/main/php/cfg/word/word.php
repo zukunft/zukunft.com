@@ -366,9 +366,12 @@ class word extends sandbox_typed
             if (!$test_obj) {
                 $wrd_view->load_by_name($msk_name);
                 if ($wrd_view->id() == 0) {
+                    /*
                     $usr_msg->add_message_text(
                         'Cannot find view "' . $msk_name
                         . '" when importing ' . $this->dsp_id());
+                    */
+                    $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $msk_name]);
                 } else {
                     $this->set_view_id($wrd_view->id());
                 }
@@ -1675,7 +1678,8 @@ class word extends sandbox_typed
                 } else {
                     if (!$this->has_usr_cfg()) {
                         if (!$this->add_usr_cfg()) {
-                            $usr_msg->add_message_text('adding of user configuration failed');
+                            // $usr_msg->add_message_text('adding of user configuration failed');
+                            $usr_msg->add_id(msg_id::ADD_USER_CONFIG_FAILED);
                         }
                     }
                     if ($usr_msg == '') {

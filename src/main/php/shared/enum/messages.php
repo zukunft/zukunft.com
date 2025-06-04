@@ -370,6 +370,10 @@ enum messages: string
         . '" failed because '
         . self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
         . '.';
+    case IMPORT_NOT_FIND_VIEW = 'Cannot find view "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" when importing '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
 
 
     // for the change log
@@ -404,6 +408,8 @@ enum messages: string
     // config
     case CONFIG_NOT_LOADED = 'cannot load config';
     case CONFIG_EMPTY = 'config is empty';
+
+    case ADD_USER_CONFIG_FAILED = 'adding of user configuration failed';
 
     // text to be shown in buttons
     case ADD = 'add';
