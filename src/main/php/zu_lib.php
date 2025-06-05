@@ -170,6 +170,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO remove the time phrase from result
     TODO rename change and change_log to change
     TODO rename sys_log to log
+    TODO log the changes of system tables like the ip blacklist with the SQL based standard log
+    TODO ... and switch off the SQL standard log for tables that are using the user friendly log process of this code e.g. the changes tables
     TODO use LLM KI systems like deepSeek to fill up and validate the phrases semi automatically
     TODO fix the button frontend issue
     TODO use the json api message header for all api messages

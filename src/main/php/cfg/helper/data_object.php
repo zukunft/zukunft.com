@@ -751,7 +751,7 @@ class data_object
                         $exp = $frm->expression($trm_lst);
                         $frm_trm_lst = $exp->terms($trm_lst);
                         foreach ($frm_trm_lst->lst() as $trm) {
-                            $frm_self_ref = $this->check_formula_term($frm, $trm, $frm_trm_lst, $usr_msg, $trp_self_ref);
+                            $frm_self_ref = $this->check_formula_term($frm, $trm, $frm_trm_lst, $usr_msg, $frm_self_ref);
                         }
                     }
                 }
