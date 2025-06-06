@@ -375,7 +375,7 @@ class view extends sandbox_typed
                         '" as requested by the import of ');
                 }
                 if ($trm->id() != 0) {
-                    $this->add_term($trm);
+                    $this->add_term_db($trm);
                 }
             }
         }
@@ -546,7 +546,7 @@ class view extends sandbox_typed
                             '" as requested by the import of ');
                     }
                     if ($trm->id() != 0) {
-                        $this->add_term($trm);
+                        $this->add_term_db($trm);
                     }
                 }
             }
@@ -1126,11 +1126,11 @@ class view extends sandbox_typed
      */
 
     /**
-     * links this view to a term
+     * link this view to the given term and save to the database
      * @param term $trm the term that should be linked
      * @return user_message with the message to the user if something has gone wrong and the suggested solutions
      */
-    function add_term(term $trm): user_message
+    function add_term_db(term $trm): user_message
     {
         $usr_msg = new user_message();
         $lnk = new view_term_link($this->user());
@@ -1141,7 +1141,22 @@ class view extends sandbox_typed
     }
 
     /**
-     * unlinks this view from the given term
+     * add the term link to this view object
+     * @param term $trm the term that should be linked
+     * @return user_message with the message to the user if something has gone wrong and the suggested solutions
+     */
+    function add_term(term $trm): user_message
+    {
+        $usr_msg = new user_message();
+        $lnk = new view_term_link($this->user());
+        $lnk->set_view($this);
+        $lnk->set_term($trm);
+        //$this->cmp_lnk_lst->a
+        return $usr_msg;
+    }
+
+    /**
+     * unlink this view from the given term
      * @param term $trm the term that should be removed from the list of assigned terms
      * @return user_message with the message to the user if something has gone wrong and the suggested solutions
      */

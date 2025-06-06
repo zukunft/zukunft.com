@@ -41,6 +41,7 @@ include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
+use cfg\component\component_link_list;
 use cfg\config;
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -52,6 +53,7 @@ use cfg\phrase\phrase;
 use cfg\ref\source;
 use cfg\ref\source_type;
 use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\value\value;
@@ -71,14 +73,40 @@ class sandbox_tests
     {
 
         global $usr;
-        global $sql_names;
 
+        // init
         $lib = new library();
 
         // start the test section (ts)
         $ts = 'unit sandbox ';
         $t->header($ts);
 
+        $t->subheader($ts . 'link list');
+        $lst = new component_link_list($usr);
+        $test_name = 'add link is fine';
+        $result = $lst->add_link($t->component_link());
+        $t->assert_true($test_name, $result);
+        $test_name = 'adding link twice is rejected';
+        $result = $lst->add_link($t->component_link());
+        $t->assert_false($test_name, $result);
+        $lst = new component_link_list($usr);
+        $test_name = 'add component is fine';
+        $result = $lst->add(1, $t->view(), $t->component(), 1);
+        $t->assert_true($test_name, $result);
+        $test_name = 'add component at the same position is rejected';
+        $result = $lst->add(1, $t->view(), $t->component(), 1);
+        $t->assert_false($test_name, $result);
+        $test_name = 'add component at a different position is fine';
+        $result = $lst->add(2, $t->view(), $t->component(), 2);
+        $t->assert_true($test_name, $result);
+        $test_name = 'add same component at different position without db id is fine';
+        $result = $lst->add(0, $t->view(), $t->component(), 3);
+        $t->assert_true($test_name, $result);
+        $test_name = 'add same component at different position with same db id is rejected';
+        $result = $lst->add(1, $t->view(), $t->component(), 3);
+        $t->assert_false($test_name, $result);
+
+        // TODO review the tests below e.g. by using the test section ($ts) and $test_name like above
         $t->subheader($ts . 'functions that does not need a database connection');
 
         // test if two sources are supposed to be the same
