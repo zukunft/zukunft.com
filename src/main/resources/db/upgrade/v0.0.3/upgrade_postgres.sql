@@ -35,12 +35,12 @@ ALTER TABLE user_refs
 -- --------------------------------------------------------
 
 --
--- Table structure for table user_view_term_links
+-- Table structure for table user_term_views
 --
 
-CREATE TABLE IF NOT EXISTS user_view_term_links
+CREATE TABLE IF NOT EXISTS user_term_views
 (
-    view_term_link_id BIGSERIAL PRIMARY KEY,
+    term_view_id BIGSERIAL PRIMARY KEY,
     type_id           bigint NOT NULL   DEFAULT '1',
     link_type_id      smallint          DEFAULT NULL,
     user_id           bigint NOT NULL,

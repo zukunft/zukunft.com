@@ -58,6 +58,8 @@ include_once MODEL_REF_PATH . 'ref_list.php';
 //include_once MODEL_VIEW_PATH . 'view_list.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VERB_PATH . 'verb_list.php';
+include_once MODEL_VIEW_PATH . 'term_view_list.php';
+//include_once MODEL_VIEW_PATH . 'term_view.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_VIEW_PATH . 'view_list.php';
 //include_once MODEL_WORD_PATH . 'word.php';
@@ -94,6 +96,8 @@ use cfg\value\value_base;
 use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
+use cfg\view\term_view;
+use cfg\view\term_view_list;
 use cfg\view\view;
 use cfg\view\view_list;
 use cfg\word\word;
@@ -129,6 +133,7 @@ class data_object
     private bool $trm_lst_dirty;
     private view_list $msk_lst;
     private component_list $cmp_lst;
+    private term_view_list $trm_msk_lst;
     // for system configuration exchange
     private ip_range_list $ip_lst;
     // for warning and errors while filling the data_object
@@ -161,6 +166,7 @@ class data_object
         $this->trm_lst_dirty = false;
         $this->msk_lst = new view_list($usr);
         $this->cmp_lst = new component_list($usr);
+        $this->trm_msk_lst = new term_view_list($usr);
         $this->ip_lst = new ip_range_list();
         $this->usr_msg = new user_message();
     }
@@ -355,6 +361,14 @@ class data_object
     }
 
     /**
+     * @return term_view_list with the list how the words, triples, verbs or formulas should be shown
+     */
+    function term_view_list(): term_view_list
+    {
+        return $this->trm_msk_lst;
+    }
+
+    /**
      * @return ip_range_list with the ip ranges of this data object
      */
     function ip_range_list(): ip_range_list
@@ -452,12 +466,22 @@ class data_object
 
     /**
      * add a component with name but without db id to the list
-     * @param component $frm with the name and parameters set
+     * @param component $cmp with the name and parameters set
      * @return void
      */
-    function add_component(component $frm): void
+    function add_component(component $cmp): void
     {
-        $this->cmp_lst->add_by_name($frm);
+        $this->cmp_lst->add_by_name($cmp);
+    }
+
+    /**
+     * add a term view with term and the view but without db id to the list
+     * @param term_view $trm_msk with the term and the view set
+     * @return void
+     */
+    function add_term_view(term_view $trm_msk): void
+    {
+        $this->trm_msk_lst->add_link($trm_msk);
     }
 
     /**

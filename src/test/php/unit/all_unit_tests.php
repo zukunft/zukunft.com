@@ -64,7 +64,7 @@ include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_term_link.php';
+include_once MODEL_VIEW_PATH . 'term_view.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
 include_once MODEL_REF_PATH . 'source_list.php';
 include_once MODEL_REF_PATH . 'source_type_list.php';
@@ -357,7 +357,7 @@ class all_unit_tests extends test_cleanup
         (new figure_list_tests)->run($this);
         (new view_tests)->run($this);
         (new view_list_tests)->run($this); // TODO add assert_api_to_dsp
-        (new view_term_link_tests())->run($this);
+        (new term_view_tests())->run($this);
         (new component_tests ())->run($this);
         (new component_list_tests ())->run($this); // TODO add assert_api_to_dsp
         (new component_link_tests)->run($this); // TODO add assert_api_to_dsp

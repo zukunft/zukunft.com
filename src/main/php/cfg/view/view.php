@@ -81,7 +81,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view_term_link.php';
+include_once MODEL_VIEW_PATH . 'term_view.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
@@ -837,7 +837,7 @@ class view extends sandbox_typed
 
     /**
      * create an SQL statement to retrieve a view by the phrase from the database
-     * TODO include user_view_term_links into the selection
+     * TODO include user_term_views into the selection
      * TODO take the usage into account for the selection of the view
      *
      * @param sql_creator $sc with the target db_type set
@@ -849,8 +849,8 @@ class view extends sandbox_typed
     {
         $qp = $this->load_sql($sc, 'term', $class);
         $sc->set_join_fields(
-            view_term_link::FLD_NAMES,
-            view_term_link::class,
+            term_view::FLD_NAMES,
+            term_view::class,
             view::FLD_ID,
             view::FLD_ID);
         $sc->add_where(term::FLD_ID, $trm->id(), null, sql_db::LNK_TBL);
@@ -1133,7 +1133,7 @@ class view extends sandbox_typed
     function add_term_db(term $trm): user_message
     {
         $usr_msg = new user_message();
-        $lnk = new view_term_link($this->user());
+        $lnk = new term_view($this->user());
         $lnk->set_view($this);
         $lnk->set_term($trm);
         $usr_msg->add($lnk->save());
@@ -1148,7 +1148,7 @@ class view extends sandbox_typed
     function add_term(term $trm): user_message
     {
         $usr_msg = new user_message();
-        $lnk = new view_term_link($this->user());
+        $lnk = new term_view($this->user());
         $lnk->set_view($this);
         $lnk->set_term($trm);
         //$this->cmp_lnk_lst->a

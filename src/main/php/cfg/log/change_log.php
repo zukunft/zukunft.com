@@ -95,7 +95,7 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_VIEW_PATH . 'view_term_link.php';
+//include_once MODEL_VIEW_PATH . 'term_view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
@@ -130,7 +130,7 @@ use cfg\word\triple;
 use cfg\user\user;
 use cfg\value\value_base;
 use cfg\view\view;
-use cfg\view\view_term_link;
+use cfg\view\term_view;
 use cfg\word\word;
 use cfg\word\word_db;
 use shared\enum\change_actions;
@@ -586,8 +586,8 @@ class change_log extends db_object_seq_id_user
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VIEW_TERM_LINK) {
-                $db_con->set_class(view_term_link::class);
-                foreach (view_term_link::FLD_NAMES as $field_name) {
+                $db_con->set_class(term_view::class);
+                foreach (term_view::FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VIEW_COMPONENT) {

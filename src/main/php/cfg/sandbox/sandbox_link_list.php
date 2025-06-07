@@ -40,13 +40,13 @@ include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_term_link.php';
+include_once MODEL_VIEW_PATH . 'term_view.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\phrase\term;
 use cfg\view\view;
-use cfg\view\view_term_link;
+use cfg\view\term_view;
 
 class sandbox_link_list extends sandbox_list
 {
@@ -62,7 +62,7 @@ class sandbox_link_list extends sandbox_list
     function add(int $id, view $msk, component|term $sbx, int $pos = 0): bool
     {
         if ($sbx::class == term::class) {
-            $new_lnk = new view_term_link($this->user());
+            $new_lnk = new term_view($this->user());
         } else {
             $new_lnk = new component_link($this->user());
         }
@@ -74,7 +74,7 @@ class sandbox_link_list extends sandbox_list
      * add a link to this list without saving it to the database
      * @return true if the link has been added
      */
-    function add_link(component_link|view_term_link $lnk_to_add): bool
+    function add_link(component_link|term_view $lnk_to_add): bool
     {
         $added = false;
         if ($this->can_add($lnk_to_add)) {

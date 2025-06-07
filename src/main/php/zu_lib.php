@@ -520,7 +520,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
                         sandbox_link_named - user sandbox objects that link two objects
                             triple - link two words with a predicate / verb
                         formula_link - link a formula to a phrase
-                        view_term_link - link a view to a term
+                        term_view - link a view to a term
                         component_link - to assign a component to a view
                         ref - to link a value to an external source
                     sandbox_value - to save a user specific numbers
@@ -1252,8 +1252,8 @@ const DB_TABLE_LIST = [
     'view_styles',
     'component_types',
     'view_link_types',
-    'view_term_links',
-    'user_view_term_links',
+    'term_views',
+    'user_term_views',
     'value_formula_links',
     'value_time_series',
     'user_value_time_series',

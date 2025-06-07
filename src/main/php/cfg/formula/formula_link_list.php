@@ -47,15 +47,10 @@ use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link_list;
-use cfg\user\user;
 use shared\library;
 
 class formula_link_list extends sandbox_link_list
 {
-
-    public array $lst; // the list of formula word link objects
-    public user $usr;  // the user who wants to see or modify the list
-
 
     /*
      * construct and map

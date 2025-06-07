@@ -3509,13 +3509,13 @@ ALTER TABLE view_link_types
 -- table structure to link view to a word,triple,verb or formula with an n:m relation
 --
 
-CREATE TABLE IF NOT EXISTS view_term_links
+CREATE TABLE IF NOT EXISTS term_views
 (
-    view_term_link_id bigint       NOT NULL COMMENT 'the internal unique primary index',
+    term_view_id bigint       NOT NULL COMMENT 'the internal unique primary index',
     term_id           bigint       NOT NULL,
     view_id           bigint       NOT NULL,
     view_link_type_id smallint     NOT NULL DEFAULT 1 COMMENT '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups',
-    user_id           bigint   DEFAULT NULL COMMENT 'the owner / creator of the view_term_link',
+    user_id           bigint   DEFAULT NULL COMMENT 'the owner / creator of the term_view',
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id     smallint DEFAULT NULL COMMENT 'to restrict the access',
@@ -3526,19 +3526,19 @@ CREATE TABLE IF NOT EXISTS view_term_links
     COMMENT 'to link view to a word,triple,verb or formula with an n:m relation';
 
 --
--- AUTO_INCREMENT for table view_term_links
+-- AUTO_INCREMENT for table term_views
 --
-ALTER TABLE view_term_links
-    MODIFY view_term_link_id int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE term_views
+    MODIFY term_view_id int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes to link view to a word,triple,verb or formula with an n:m relation
 --
 
-CREATE TABLE IF NOT EXISTS user_view_term_links
+CREATE TABLE IF NOT EXISTS user_term_views
 (
-    view_term_link_id bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
-    user_id           bigint       NOT NULL COMMENT 'the changer of the view_term_link',
+    term_view_id bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id           bigint       NOT NULL COMMENT 'the changer of the term_view',
     view_link_type_id smallint DEFAULT NULL,
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
@@ -5938,25 +5938,25 @@ ALTER TABLE view_link_types
 -- --------------------------------------------------------
 
 --
--- indexes for table view_term_links
+-- indexes for table term_views
 --
 
-ALTER TABLE view_term_links
-    ADD PRIMARY KEY (view_term_link_id),
-    ADD KEY view_term_links_term_idx (term_id),
-    ADD KEY view_term_links_view_idx (view_id),
-    ADD KEY view_term_links_view_link_type_idx (view_link_type_id),
-    ADD KEY view_term_links_user_idx (user_id);
+ALTER TABLE term_views
+    ADD PRIMARY KEY (term_view_id),
+    ADD KEY term_views_term_idx (term_id),
+    ADD KEY term_views_view_idx (view_id),
+    ADD KEY term_views_view_link_type_idx (view_link_type_id),
+    ADD KEY term_views_user_idx (user_id);
 
 --
--- indexes for table user_view_term_links
+-- indexes for table user_term_views
 --
 
-ALTER TABLE user_view_term_links
-    ADD PRIMARY KEY (view_term_link_id,user_id),
-    ADD KEY user_view_term_links_view_term_link_idx (view_term_link_id),
-    ADD KEY user_view_term_links_user_idx (user_id),
-    ADD KEY user_view_term_links_view_link_type_idx (view_link_type_id);
+ALTER TABLE user_term_views
+    ADD PRIMARY KEY (term_view_id,user_id),
+    ADD KEY user_term_views_term_view_idx (term_view_id),
+    ADD KEY user_term_views_user_idx (user_id),
+    ADD KEY user_term_views_view_link_type_idx (view_link_type_id);
 
 -- --------------------------------------------------------
 
@@ -7063,22 +7063,22 @@ ALTER TABLE user_views
 -- --------------------------------------------------------
 
 --
--- constraints for table view_term_links
+-- constraints for table term_views
 --
 
-ALTER TABLE view_term_links
-    ADD CONSTRAINT view_term_links_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id),
-    ADD CONSTRAINT view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+ALTER TABLE term_views
+    ADD CONSTRAINT term_views_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT term_views_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id),
+    ADD CONSTRAINT term_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- constraints for table user_view_term_links
+-- constraints for table user_term_views
 --
 
-ALTER TABLE user_view_term_links
-    ADD CONSTRAINT user_view_term_links_view_term_link_fk FOREIGN KEY (view_term_link_id) REFERENCES view_term_links (view_term_link_id),
-    ADD CONSTRAINT user_view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
+ALTER TABLE user_term_views
+    ADD CONSTRAINT user_term_views_term_view_fk FOREIGN KEY (term_view_id) REFERENCES term_views (term_view_id),
+    ADD CONSTRAINT user_term_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_term_views_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
 
 -- --------------------------------------------------------
 
