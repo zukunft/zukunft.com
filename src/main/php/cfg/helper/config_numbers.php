@@ -49,6 +49,7 @@ use shared\const\triples;
 use shared\const\words;
 use shared\enum\language_codes;
 use shared\api;
+use shared\enum\messages as msg_id;
 
 
 class config_numbers extends value_list
@@ -221,7 +222,7 @@ class config_numbers extends value_list
             $this->load_phrases();
         } else {
             log_debug('no config values loaded');
-            $usr_msg->add_message_text('configuration is empty');
+            $usr_msg->add_id(msg_id::CONFIG_EMPTY);
         }
         return $usr_msg;
     }

@@ -111,7 +111,7 @@ class import_file
             $this->read_error($filename, file_types::JSOM, $usr_msg);
         } else {
             if ($json_str == '') {
-                $usr_msg->add_message_text(' failed because message file is empty of not found.');
+                $usr_msg->add_id(msg_id::FAILED_MESSAGE_EMPTY);
             } else {
 
                 // analyse the import file and update the database

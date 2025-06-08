@@ -121,7 +121,7 @@ enum messages: string
     const VAR_TRIPLE = 'VarObjTriple';
     const VAR_FORMULA = 'VarObjFormula';
     const VAR_JSON_PART = 'VarJsonPart';
-
+    const VAR_VERB_NAME = 'VarVerbName';
     const IMPORT_SUCCESS = 'finished successful';
 
     // unique message keys
@@ -258,6 +258,9 @@ enum messages: string
     case TRIPLE_ID_ADDITIONAL = 'triple id additional of "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';
+    case TRIPLE_NOT_SAVED = 'triple "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" cannot be saved';
     case PHRASE_MISSING_MSG = 'phrase "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is missing';
@@ -374,6 +377,43 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" when importing '
         . self::VAR_START . self::VAR_ID . self::VAR_END;
+    case FROM_NAME_NOT_EMPTY = 'from name should not be empty at "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '"';
+    case TO_NAME_NOT_EMPTY = 'to name should not be empty at "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '"';
+    case TRIPLE_VERB_CREATED = 'verb "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" for triple "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" created';
+    case TRIPLE_VERB_MISSING = 'verb for triple "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" missing';
+    case TRIPLE_VERB_NOT_FOUND = 'verb "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case FOR_TRIPLE = 'for triple "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case FAILED_ADD_TRIPLE = 'Adding triple "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" failed';
+    case REVERSE_ALREADY_EXISTS = 'The reverse of "'
+        . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_VERB_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" already exists. Do you really want to create both sides?';
+    case FAILED_RELOAD_CLASS = 'Reload "'
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . '" failed';
+    case TRIPLE_VERB_SET = 'verb for triple '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' set to '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END;
 
 
     // for the change log
@@ -516,6 +556,15 @@ enum messages: string
     case FOR = ' for '; // e.g. to indicate which phrases a value is assigned to
     case OF = ' of ';   // e.g. to indicate which word would be deleted
 
+    case TRIPLE_FROM_PHRASE_MISSING = 'triple from phrase is missing';
+    case TRIPLE_PHRASE_FROM_NAME_MISSING = 'triple phrase from name is missing and id is 0';
+    case TRIPLE_TO_PHRASE_MISSING = 'triple to phrase is missing';
+    case TRIPLE_PHRASE_TO_NAME_MISSING = 'triple phrase to name is missing and id is 0';
+    case FAILED_TO_DELETE_UNUSED_WORK_LINK = 'Failed to delete the unused work link';
+    case FAILED_UPDATE_REF = 'Updating the reference in the log failed';
+    case FAILED_UPDATE_WORK_LINK_NAME = 'Update of work link name failed';
+
+    case FAILED_MESSAGE_EMPTY = ' failed because message file is empty of not found.';
 
     /**
      * @return string with the text for the user in the default language

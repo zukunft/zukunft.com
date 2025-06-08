@@ -469,7 +469,7 @@ class triple extends sandbox_link_named
             $value = $in_ex_json[json_fields::EX_FROM];
             if ($value == "") {
                 $lib = new library();
-                $usr_msg->add_message_text('from name should not be empty at "' . $lib->dsp_array($in_ex_json)) . '"';
+                $usr_msg->add_id_with_vars(msg_id::FROM_NAME_NOT_EMPTY, [msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)]);
             } else {
                 if (is_string($value)) {
                     if ($dto == null) {
@@ -491,7 +491,7 @@ class triple extends sandbox_link_named
             $value = $in_ex_json[json_fields::EX_TO];
             if ($value == "") {
                 $lib = new library();
-                $usr_msg->add_message_text('to name should not be empty at ' . $lib->dsp_array($in_ex_json));
+                $usr_msg->add_id_with_vars(msg_id::TO_NAME_NOT_EMPTY, [msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)]);
             } else {
                 if ($dto == null) {
                     $this->set_to($this->import_phrase($value, $test_obj));
@@ -511,7 +511,7 @@ class triple extends sandbox_link_named
             $vrb = $vrb_cac->get_by_name($name);
             if ($vrb == null) {
                 if ($name <> '') {
-                    $usr_msg->add_message_text('verb "' . $name . '" for triple "' . $this->dsp_id() . '" created');
+                    $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_CREATED, [msg_id::VAR_ID => $this->dsp_id(), msg_id::VAR_NAME => $name]);
                     $vrb = new verb();
                     $vrb->set_name($name);
                     $vrb->set_user($this->user());
@@ -522,13 +522,13 @@ class triple extends sandbox_link_named
                     }
                 } else {
                     $vrb = $vrb_cac->get_verb(verbs::NOT_SET);
-                    $usr_msg->add_message_text('verb for triple "' . $this->dsp_id() . '" missing');
+                    $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_MISSING, [msg_id::VAR_ID => $this->dsp_id()]);
                 }
             } else {
                 if ($vrb->id() <= 0) {
-                    $usr_msg->add_message_text('verb "' . $name . '" not found');
+                    $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_NOT_FOUND, [msg_id::VAR_NAME => $name]);
                     if ($this->name <> '') {
-                        $usr_msg->add_message_text('for triple "' . $this->name . '"');
+                        $usr_msg->add_id_with_vars(msg_id::FOR_TRIPLE, [msg_id::VAR_NAME => $this->name]);
                     }
                 }
             }
@@ -542,7 +542,7 @@ class triple extends sandbox_link_named
                 // TODO replace all load in the import mapper with get functions
                 $trp_view->load_by_name($value);
                 if ($trp_view->id() == 0) {
-                    $usr_msg->add_message_text('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
+                    $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_FIND_VIEW, [msg_id::VAR_NAME => $value, msg_id::VAR_ID => $this->dsp_id()]);
                 }
             } else {
                 $trp_view->set_name($value);
@@ -728,7 +728,7 @@ class triple extends sandbox_link_named
 
             if (!$test_obj) {
                 if ($this->id() == 0) {
-                    $result->add_message_text('Triple ' . $this->dsp_id() . ' cannot be saved');
+                    $usr_msg->add_id_with_vars(msg_id::TRIPLE_NOT_SAVED, [msg_id::VAR_ID => $this->dsp_id()]);
                 } else {
                     foreach ($in_ex_json as $key => $value) {
                         if ($result->is_ok()) {
@@ -1852,22 +1852,22 @@ class triple extends sandbox_link_named
     {
         $usr_msg = new user_message();
         if ($this->from() == null) {
-            $usr_msg->add_message_text('triple from phrase is missing');
+            $usr_msg->add_id(msg_id::TRIPLE_FROM_PHRASE_MISSING);
         } else {
             if ($this->from()->id() == 0) {
                 if ($this->from()->name() == '') {
-                    $usr_msg->add_message_text('triple phrase from name is missing and id is 0');
+                    $usr_msg->add_id(msg_id::TRIPLE_PHRASE_FROM_NAME_MISSING);
                 } else {
                     $usr_msg->add_info_text('triple phrase from id is 0');
                 }
             }
         }
         if ($this->to() == null) {
-            $usr_msg->add_message_text('triple to phrase is missing');
+            $usr_msg->add_id(msg_id::TRIPLE_TO_PHRASE_MISSING);
         } else {
             if ($this->to()->id() == 0) {
                 if ($this->to()->name() == '') {
-                    $usr_msg->add_message_text('triple phrase to name is missing and id is 0');
+                    $usr_msg->add_id(msg_id::TRIPLE_PHRASE_TO_NAME_MISSING);
                 } else {
                     $usr_msg->add_info_text('triple phrase to id is 0');
                 }
@@ -2287,7 +2287,7 @@ class triple extends sandbox_link_named
                 if (!$db_con->update_old($this->id(),
                     array(triple::FLD_FROM, verb::FLD_ID, triple::FLD_TO),
                     array($this->from_id(), $this->verb_id(), $this->to_id()))) {
-                    $result = 'Update of work link name failed';
+                    $result = msg_id::FAILED_UPDATE_WORK_LINK_NAME;
                 }
             }
         }
@@ -2328,7 +2328,7 @@ class triple extends sandbox_link_named
                 $msg = $to_del->del();
                 $usr_msg->add($msg);
                 if (!$msg->is_ok()) {
-                    $usr_msg->add_message_text('Failed to delete the unused work link');
+                    $usr_msg->add_id(msg_id::FAILED_TO_DELETE_UNUSED_WORK_LINK);
                 }
                 if ($usr_msg->is_ok()) {
                     // ... and use it for the update
@@ -2346,7 +2346,7 @@ class triple extends sandbox_link_named
                     // in this case change is allowed and done
                     log_debug('triple->save_id_if_updated change the existing triple ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
                     $this->load_objects();
-                    $usr_msg->add_message_text($this->save_id_fields($db_con, $db_rec, $std_rec));
+                    $usr_msg->add_id($this->save_id_fields($db_con, $db_rec, $std_rec));
                 } else {
                     // if the target link has not yet been created
                     // ... request to delete the old
@@ -2354,7 +2354,7 @@ class triple extends sandbox_link_named
                     $msg = $to_del->del();
                     $usr_msg->add($msg);
                     if (!$msg->is_ok()) {
-                        $usr_msg->add_message_text('Failed to delete the unused work link');
+                        $usr_msg->add_id(msg_id::FAILED_TO_DELETE_UNUSED_WORK_LINK);
                     }
                     // ... and create a deletion request for all users ???
 
@@ -2419,7 +2419,7 @@ class triple extends sandbox_link_named
                 if ($this->id() > 0) {
                     // update the id in the log
                     if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_message_text('Updating the reference in the log failed');
+                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
                         // TODO do rollback or retry?
                     } else {
 
@@ -2435,7 +2435,7 @@ class triple extends sandbox_link_named
                     }
 
                 } else {
-                    $usr_msg->add_message_text("Adding triple " . $this->name . " failed");
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_TRIPLE, [msg_id::VAR_NAME => $this->name]);
                 }
             }
         }
@@ -2458,8 +2458,6 @@ class triple extends sandbox_link_named
         global $mtr;
 
         // init
-        $msg_reload = $mtr->txt(msg_id::RELOAD);
-        $msg_fail = $mtr->txt(msg_id::FAILED);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
@@ -2503,7 +2501,12 @@ class triple extends sandbox_link_named
                 $db_chk_rev->load_standard();
                 if ($db_chk_rev->id() > 0) {
                     $this->set_id($db_chk_rev->id());
-                    $usr_msg->add_message_text('The reverse of "' . $this->from()->name() . ' ' . $this->verb_name() . ' ' . $this->to()->name() . '" already exists. Do you really want to create both sides?');
+
+                    $usr_msg->add_id_with_vars(msg_id::REVERSE_ALREADY_EXISTS, [
+                        msg_id::VAR_SOURCE_NAME => $this->from()->name(),
+                        msg_id::VAR_VERB_NAME => $this->verb_name(),
+                        msg_id::VAR_NAME => $this->to()->name(),
+                    ]);
                 }
             }
 
@@ -2536,7 +2539,7 @@ class triple extends sandbox_link_named
                 // done first, because it needs to be done for user and general phrases
                 $db_rec = new triple($this->user());
                 if (!$db_rec->load_by_id($this->id())) {
-                    $usr_msg->add_message_text($msg_reload . ' ' . $class_name . ' ' . $msg_fail);
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_RELOAD_CLASS, [msg_id::VAR_CLASS_NAME => $class_name]);
                     if (!$usr_msg->is_ok()) {
                         log_err($usr_msg->get_last_message());
                     }
@@ -2545,7 +2548,7 @@ class triple extends sandbox_link_named
                 $std_rec = new triple($this->user()); // the user must also be set to allow to take the ownership
                 $std_rec->set_id($this->id());
                 if (!$std_rec->load_standard()) {
-                    $usr_msg->add_message_text($msg_reload . ' ' . $class_name . ' ' . $msg_fail);
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_RELOAD_CLASS, [msg_id::VAR_CLASS_NAME => $class_name]);
                     if (!$usr_msg->is_ok()) {
                         log_err($usr_msg->get_last_message());
                     }
