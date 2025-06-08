@@ -337,6 +337,11 @@ enum messages: string
         . '"';
     case IMPORT_SUMMARY = ''
         . self::VAR_START . self::VAR_SUMMARY . self::VAR_END;
+    case PHRASE_NAME_EMPTY = self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
+        . ' contains an empty phrase name';
+
+    case YAML_TOOLTIP_COMMENT_UNEXPECTED = 'yaml is not expected to start with a tooltip-comment';
+    case SOURCE_DESCRIPTION_WITHOUT_NAME = 'source-description is given without source-name';
 
     case SOURCE_MISSING_IMPORT = 'source "'
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END

@@ -1309,7 +1309,7 @@ class import
             // add the tooltip to the last added phrase of value
             if ($key == words::TOOLTIP_COMMENT) {
                 if ($wrd == null and $trp == null and $val == null) {
-                    $dto->add_message('yaml is not expected to start with a tooltip-comment');
+                    $dto->add_message(msg_id::YAML_TOOLTIP_COMMENT_UNEXPECTED);
                 } else {
                     if ($wrd != null) {
                         $wrd->set_description($value);
@@ -1339,7 +1339,7 @@ class import
             } elseif ($key == words::SYS_CONF_SOURCE_COM) {
                 // assumes that always a source description is given to force adding the source
                 if ($src == null) {
-                    $dto->add_message('source-description is given without source-name');
+                    $dto->add_message(msg_id::SOURCE_DESCRIPTION_WITHOUT_NAME);
                 } else {
                     $src->set_description($value);
                 }

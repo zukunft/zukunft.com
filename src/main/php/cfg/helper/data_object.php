@@ -456,7 +456,7 @@ class data_object
 
     function add_message(string $msg): void
     {
-        $this->usr_msg->add_message_text($msg);
+        $this->usr_msg->add_id($msg);
     }
 
     /**
