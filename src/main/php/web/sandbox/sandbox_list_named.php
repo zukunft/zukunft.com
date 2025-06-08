@@ -47,6 +47,7 @@ use html\phrase\term;
 use html\user\user_message;
 use html\word\triple;
 use html\word\word;
+use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
 use shared\helper\TextIdObject;
@@ -175,7 +176,7 @@ class sandbox_list_named extends sandbox_list
                     $this->add($sbx_new);
                 }
             } else {
-                $usr_msg->add_message_text('id or name of word ' . $sbx_new->dsp_id() . ' missing');
+                $usr_msg->add_id_with_vars(msg_id::ID_OR_NAME_MISSING, [msg_id::VAR_ID => $sbx_new->dsp_id()]);
             }
         }
         return $usr_msg;
@@ -199,7 +200,7 @@ class sandbox_list_named extends sandbox_list
                     $this->add($sbx_new);
                 }
             } else {
-                $usr_msg->add_message_text('id or name of word ' . $sbx_new->dsp_id() . ' missing');
+                $usr_msg->add_id_with_vars(msg_id::ID_OR_NAME_MISSING, [msg_id::VAR_ID => $sbx_new->dsp_id()]);
             }
         }
         return $usr_msg;

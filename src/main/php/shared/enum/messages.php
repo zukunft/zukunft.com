@@ -342,6 +342,19 @@ enum messages: string
 
     case YAML_TOOLTIP_COMMENT_UNEXPECTED = 'yaml is not expected to start with a tooltip-comment';
     case SOURCE_DESCRIPTION_WITHOUT_NAME = 'source-description is given without source-name';
+    case IMPORT_RESULT_NOT_NUMERIC = 'Import result: "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" is expected to be a number ('
+        . self::VAR_START . self::VAR_GROUP . self::VAR_END
+        . ')';
+    case FAILED_ADD_LOGGING_ERROR = 'Adding "'
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . '" "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" failed due to logging error';
+    case ID_OR_NAME_MISSING = 'id or name of word "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" missing';
 
     case SOURCE_MISSING_IMPORT = 'source "'
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
