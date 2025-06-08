@@ -319,6 +319,25 @@ enum messages: string
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
         . '"';
 
+    case YAML_DECODE_FAILED = 'YAML decode failed of "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '"';
+    case YAML_STRING_EMPTY = 'YAML string is empty';
+    case JSON_DECODE_FAILED = 'JSON decode failed of "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '"';
+    case JSON_STRING_EMPTY = 'JSON string is empty';
+    case IMPORT_VERSION_NEWER = 'Import file has been created with version "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '", which is newer than this, which is "'
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
+        . '"';
+    case IMPORT_UNKNOWN_ELEMENT = 'Unknown element "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case IMPORT_SUMMARY = ''
+        . self::VAR_START . self::VAR_SUMMARY . self::VAR_END;
+
     case SOURCE_MISSING_IMPORT = 'source "'
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
         . '" is missing in the import message '
