@@ -391,6 +391,28 @@ enum messages: string
     case CONFIG_PART = 'configuration part '
         . self::VAR_START . self::VAR_PART . self::VAR_END
         . ' cannot yet be selected';
+    case API_MESSAGE = ''
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case MANDATORY_FIELD_NAME_MISSING = 'Mandatory field name missing in API JSON '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case VIEW_TYPE_NOT_FOUND = 'view type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case VIEW_IMPORT_ERROR = ' when importing '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case VIEW_NAME_MISSING = 'name in view missing';
+    case NOT_YET_IMPLEMENTED = 'not yet implemented';
+    case CANNOT_ADD_TIMESTAMP = 'Cannot add timestamp "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" when importing '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
+    case NULL_VALUE_NOT_SAVED = 'null value for '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' not saved';
+    case CANNOT_SAVE_ZERO_ID = 'cannot save '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' because id is zero';
+    case VALUE_TIME_SERIES_LOG_REF_FAILED = 'adding the value time series reference in the system log failed';
     case IMPORT_COUNT_DIFF = 'import of "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
         . '" failed because only '
@@ -512,6 +534,7 @@ enum messages: string
     // config
     case CONFIG_NOT_LOADED = 'cannot load config';
     case CONFIG_EMPTY = 'config is empty';
+    case CONFIG_API_MESSAGE_EMPTY = 'config api message is empty';
 
     case ADD_USER_CONFIG_FAILED = 'adding of user configuration failed';
 
