@@ -282,12 +282,7 @@ class element_group extends base_list
                 /* TODO review
                 $grp_res->load_by_grp($val_phr_grp);
                 */
-                if ($val_time_phr == null) {
-                    $time_id = null;
-                } else {
-                    $time_id = $val_time_phr->id();
-                }
-                $grp_res->load_by_grp($val_phr_grp, $time_id);
+                $grp_res->load_by_grp($val_phr_grp, true);
 
                 // save the value to the result
                 if ($grp_res->id() > 0) {

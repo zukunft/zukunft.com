@@ -1362,19 +1362,24 @@
       ]
     },
     {
-      "name": "1967"
+      "name": "1967",
+      "type": "time"
     },
     {
-      "name": "1979"
+      "name": "1979",
+      "type": "time"
     },
     {
-      "name": "1983"
+      "name": "1983",
+      "type": "time"
     },
     {
-      "name": "2019"
+      "name": "2019",
+      "type": "time"
     },
     {
-      "name": "2020"
+      "name": "2020",
+      "type": "time"
     },
     {
       "name": "per 100 km",

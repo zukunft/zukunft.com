@@ -3211,6 +3211,9 @@ class test_base
         if ($db_lst != $in_lst) {
             $lib = new library();
             $result = $lib->diff_msg($in_lst, $db_lst);
+            if ($result != '') {
+                log_warning($test_name . 'diff is:' . $result);
+            }
         }
 
         return $this->assert($test_name, $result, '');

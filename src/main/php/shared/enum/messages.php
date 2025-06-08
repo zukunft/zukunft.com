@@ -61,6 +61,12 @@ enum messages: string
     const VAR_WORD_NAME = 'VarWordName';
     // the name and if of a triple
     const VAR_TRIPLE_NAME = 'VarTripleName';
+    // the name and if of a phrase
+    const VAR_PHRASE_NAME = 'VarPhraseName';
+    // the name and if of a term
+    const VAR_TERM_NAME = 'VarTermName';
+    // the name and if of a view
+    const VAR_VIEW_NAME = 'VarViewName';
     // the user/owner of an object
     const VAR_USER = 'VarUser';
     // the user/owner of a compare object
@@ -375,7 +381,14 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' ip of range missing in import json part "'
         . self::VAR_START . self::VAR_IP_RANGE . self::VAR_END
-        . '.';
+        . '".';
+    case IMPORT_TERM_VIEW_DOUBLE = 'the term '
+        . self::VAR_START . self::VAR_TERM_NAME . self::VAR_END
+        . ' is probable assigned more than once to the view "'
+        . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
+        . ' in the import json part "'
+        . self::VAR_START . self::VAR_JSON_PART . self::VAR_END
+        . '".';
 
 
     // for the change log

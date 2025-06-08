@@ -95,13 +95,13 @@ class triples
     const TIME_POINTS = 'time points';
     const TIME_POINTS_ID = 76;
     const HAPPY_TIME_POINTS = 'happy time points';
-    const HAPPY_TIME_POINTS_ID = 77;
+    const HAPPY_TIME_POINTS_ID = 80;
     const GLOBAL_WARMING_PROBLEM = 'global warming (global problem)';
-    const GLOBAL_WARMING_PROBLEM_ID = 80;
+    const GLOBAL_WARMING_PROBLEM_ID = 81;
     const POPULISM_PROBLEM = 'populism (global problem)';
-    const POPULISM_PROBLEM_ID = 81;
+    const POPULISM_PROBLEM_ID = 82;
     const POTENTIAL_HEALTH_PROBLEM = 'health can be a global problem';
-    const POTENTIAL_HEALTH_PROBLEM_ID = 82;
+    const POTENTIAL_HEALTH_PROBLEM_ID = 83;
     const POVERTY_PROBLEM = 'poverty (global problem)';
     const POVERTY_PROBLEM_ID = 84;
     const POTENTIAL_EDUCATION_PROBLEM = 'education can be global problem';
