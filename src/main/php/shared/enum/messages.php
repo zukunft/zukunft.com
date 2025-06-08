@@ -332,6 +332,9 @@ enum messages: string
     case COMPONENT_CREATED = 'component with name "'
         . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
         . '" created';
+    case COMPONENT_ALREADY_EXISTS = 'A view component with the name "'
+        . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
+        . '" already exists. Please use another name.';
 
     // messages with vars for import
     case IMPORT_READ_ERROR = 'error reading to decode json '
@@ -414,7 +417,31 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' set to '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END;
+    case FAILED_SAVE_FORMULA_TRIGGER = 'saving the update trigger for formula '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed';
+    case FAILED_ADD_FORMULA = 'Adding formula '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed.';
+    case FORMULA_NOT_SIMILAR = 'Adding formula '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END;
 
+    case FAILED_ADD_GROUP = 'Adding group '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed (missing save maker).';
+    case GROUP_IS_RESERVED = '"'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+
+    case CONFLICT_DB_ID = 'Unexpected conflict of the database id. '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' != '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
 
     // for the change log
     case LOG_ADD = 'added';
@@ -565,6 +592,7 @@ enum messages: string
     case FAILED_UPDATE_WORK_LINK_NAME = 'Update of work link name failed';
 
     case FAILED_MESSAGE_EMPTY = ' failed because message file is empty of not found.';
+    case FAILED_REFRESH_FORMULA = 'Refresh of the formula elements failed';
 
     /**
      * @return string with the text for the user in the default language

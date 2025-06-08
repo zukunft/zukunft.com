@@ -369,9 +369,7 @@ class db_object_seq_id extends db_object
             if ($this->id() == 0) {
                 $this->set_id($sbx->id());
             } elseif ($sbx->id() != $this->id()) {
-                $usr_msg->add_message_text(
-                    'Unexpected conflict of the database id. '
-                    . $this->dsp_id() . ' != ' . $this->dsp_id());
+                $usr_msg->add_id_with_vars(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
             }
         }
         return $usr_msg;
