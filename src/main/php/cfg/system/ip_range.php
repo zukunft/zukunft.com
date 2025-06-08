@@ -46,6 +46,7 @@ include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -61,6 +62,7 @@ use cfg\log\change;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\enum\change_actions;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 
@@ -476,14 +478,16 @@ class ip_range extends db_object_seq_id
             if ($this->id() > 0) {
                 // update the id in the log for the correct reference
                 if (!$log->add_ref($this->id())) {
-                    $msg = 'Adding reference for ' . $this->dsp_id() . ' in the log failed.';
-                    $usr_msg->add_message_text($msg);
-                    log_err($msg, self::class . '->add');
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE_LOG, [
+                        msg_id::VAR_ID => $this->dsp_id()
+                    ]);
+                    log_err('Adding reference for ' . $this->dsp_id() . ' in the log failed.', self::class . '->add');
                 }
             } else {
-                $msg = 'Adding reference ' . $this->dsp_id() . ' failed.';
-                $usr_msg->add_message_text($msg);
-                log_err($msg, self::class . '->add');
+                $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE, [
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
+                log_err('Adding reference ' . $this->dsp_id() . ' failed.', self::class . '->add');
             }
         }
 

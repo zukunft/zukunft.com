@@ -413,6 +413,41 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' because id is zero';
     case VALUE_TIME_SERIES_LOG_REF_FAILED = 'adding the value time series reference in the system log failed';
+    case SHARE_TYPE_NOT_EXPECTED = 'share type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not expected when importing '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case PROTECTION_TYPE_NOT_EXPECTED = 'protection type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not expected when importing '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case USER_SANDBOX_CREATION_FAILED = 'creation of user sandbox for '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed';
+    case REMOVE_FIELD_FAILED = 'remove of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' failed';
+    case DATABASE_UPDATE_FIELD_TO_VALUE_FAILED = 'update of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' to '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' failed';
+    case EXCLUDING_FAILED = 'excluding of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' failed';
+    case USER_SANDBOX_TO_EXCLUDE_FAILED = 'creation of user sandbox to exclude failed';
+    case INCLUDE_FOR_USER_FAILED = 'include of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' for user failed';
+    case EXCLUDING_FOR_USER_FAILED = 'excluding of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' for user failed';
+    case USER_SANDBOX_DELETE_IF_NOT_NEEDED_FAILED = 'remove of user sandbox if not needed for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' failed';
+    case USER_SANDBOX_CANNOT_BE_CLEANED = ' and user sandbox cannot be cleaned';
+    case FAILED_TO_DELETE_UNUSED = 'Failed to delete the unused '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
     case IMPORT_COUNT_DIFF = 'import of "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
         . '" failed because only '
@@ -653,6 +688,35 @@ enum messages: string
 
     case FAILED_MESSAGE_EMPTY = ' failed because message file is empty of not found.';
     case FAILED_REFRESH_FORMULA = 'Refresh of the formula elements failed';
+
+    case OBJECT_NAME_ALREADY_EXISTS = 'A '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' with the name "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" already exists. Please use another name or merge with this '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . '.';
+    case DUMMY_PARENT_ADD_FUNCTION_CALLED = 'The dummy parent add function has been called, which should never happen';
+    case NOT_SIMILAR_OBJECTS = ''
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not similar '
+        . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END;
+    case FAILED_RELOAD_DEFAULT_VALUES = 'Reloading of the default values for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' failed';
+
+    case NAME_IS_RESERVED_FOR_CLASS = '"'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is a reserved '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' name';
+
+    case FAILED_ADD_REFERENCE = 'Adding reference '
+    . self::VAR_START . self::VAR_ID . self::VAR_END
+    . ' failed.';
+    case FAILED_ADD_REFERENCE_LOG = 'Adding reference for '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' in the log failed.';
 
     /**
      * @return string with the text for the user in the default language
