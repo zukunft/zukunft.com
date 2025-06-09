@@ -70,6 +70,9 @@ zukunft.com:
               components:
                 sys-conf-value: 740
                 tooltip-comment: "the estimated number of components that can be loaded per second"
+              ip-ranges:
+                sys-conf-value: 730
+                tooltip-comment: "the estimated number of ip-ranges that can be loaded per second"
             create:
               words:
                 sys-conf-value: 700
@@ -95,6 +98,9 @@ zukunft.com:
               components:
                 sys-conf-value: 280
                 tooltip-comment: "the estimated number of components that can be created per second"
+              ip-ranges:
+                sys-conf-value: 270
+                tooltip-comment: "the estimated number of ip-ranges that can be created per second"
             update:
               words:
                 sys-conf-value: 590
@@ -120,6 +126,9 @@ zukunft.com:
               components:
                 sys-conf-value: 520
                 tooltip-comment: "the estimated number of components that can be updated per second"
+              ip-ranges:
+                sys-conf-value: 520
+                tooltip-comment: "the estimated number of ip-ranges that can be updated per second"
             store:
               words:
                 sys-conf-value: 800
@@ -145,6 +154,9 @@ zukunft.com:
               components:
                 sys-conf-value: 85
                 tooltip-comment: "the estimated number of components that can be added or updated in the database per second"
+              ip-ranges:
+                sys-conf-value: 95
+                tooltip-comment: "the estimated number of ip-ranges that can be added or updated in the database per second"
       value table:
         table name:
           max phrase: 3

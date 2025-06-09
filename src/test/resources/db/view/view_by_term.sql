@@ -16,5 +16,5 @@ PREPARE view_by_term (bigint, bigint) AS
                 CASE WHEN (u.protect_id        IS     NULL) THEN s.protect_id    ELSE u.protect_id    END AS protect_id
            FROM views s
       LEFT JOIN user_views u      ON s.view_id = u.view_id AND u.user_id = $1
-      LEFT JOIN view_term_links l ON s.view_id = l.view_id
+      LEFT JOIN term_views l ON s.view_id = l.view_id
           WHERE l.term_id = $2;

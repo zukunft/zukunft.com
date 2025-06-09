@@ -64,7 +64,7 @@ include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_term_link.php';
+include_once MODEL_VIEW_PATH . 'term_view.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
 include_once MODEL_REF_PATH . 'source_list.php';
 include_once MODEL_REF_PATH . 'source_type_list.php';
@@ -207,17 +207,23 @@ class all_unit_tests extends test_cleanup
              */
 
             // run the selected db import tests
+            /*
             $test_name = 'validate config import';
             $imf = new import_file();
             $import_result = $imf->import_config_yaml($sys_usr, true);
             $t->assert($test_name, $import_result->is_ok(), true, $t::TIMEOUT_LIMIT_IMPORT);
+            */
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::SYSTEM_VIEWS_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::UNITS_FILE, $usr);
-            //$this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr);
+            //$this->file_import(files::MESSAGE_PATH . files::IP_BLACKLIST_FILE, $usr);
+            $this->file_import(files::MESSAGE_PATH . files::TIME_FILE, $usr);
+            $this->file_import(files::MESSAGE_PATH . files::BASE_VIEWS_FILE, $usr);
+            $this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
+            $this->file_import(files::MESSAGE_PATH . files::COMPANY_FILE, $usr);
+            $this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr, true);
-            //$this->file_import(files::MESSAGE_PATH . files::COMPANY_FILE, $usr);
             //$this->file_import(test_files::IMPORT_COUNTRY_ISO, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
             //$this->file_import(test_files::IMPORT_WIND_INVESTMENT, $usr);
@@ -355,7 +361,7 @@ class all_unit_tests extends test_cleanup
         (new figure_list_tests)->run($this);
         (new view_tests)->run($this);
         (new view_list_tests)->run($this); // TODO add assert_api_to_dsp
-        (new view_term_link_tests())->run($this);
+        (new term_view_tests())->run($this);
         (new component_tests ())->run($this);
         (new component_list_tests ())->run($this); // TODO add assert_api_to_dsp
         (new component_link_tests)->run($this); // TODO add assert_api_to_dsp

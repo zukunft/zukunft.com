@@ -93,7 +93,7 @@ class result_write_tests
                 $result = '';
             }
         } else {
-            $result = 'no ' . words::INHABITANTS . ' ' . formulas::INCREASE. ' value found for ' . words::CH;
+            $result = 'no ' . words::INHABITANTS . ' ' . formulas::INCREASE . ' value found for ' . words::CH;
         }
         // TODO review
         $target = results::TV_INCREASE_LONG;
@@ -107,7 +107,7 @@ class result_write_tests
         $ch_up_grp = $phr_lst->get_grp_id();
         if ($ch_up_grp->is_id_set()) {
             $ch_increase = new result($usr);
-            $ch_increase->load_by_grp($ch_up_grp, $time_phr->id());
+            $ch_increase->load_by_grp($ch_up_grp, true);
             $result = $ch_increase->number();
             if ($result == null) {
                 $result = '';

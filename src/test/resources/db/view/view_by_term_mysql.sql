@@ -16,5 +16,5 @@ PREPARE view_by_term FROM
                 IF(u.protect_id    IS NULL, s.protect_id,    u.protect_id)    AS protect_id
            FROM views s
       LEFT JOIN user_views u      ON s.view_id = u.view_id AND u.user_id = ?
-      LEFT JOIN view_term_links l ON s.view_id = l.view_id
+      LEFT JOIN term_views l ON s.view_id = l.view_id
           WHERE l.term_id = ?';

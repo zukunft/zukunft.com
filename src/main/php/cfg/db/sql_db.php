@@ -153,7 +153,7 @@ include_once MODEL_VIEW_PATH . 'view_list.php';
 include_once MODEL_VIEW_PATH . 'view_link_type.php';
 include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
 include_once MODEL_VIEW_PATH . 'view_sys_list.php';
-include_once MODEL_VIEW_PATH . 'view_term_link.php';
+include_once MODEL_VIEW_PATH . 'term_view.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once MODEL_WORD_PATH . 'word.php';
@@ -274,7 +274,7 @@ use cfg\view\view;
 use cfg\view\view_link_type;
 use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
-use cfg\view\view_term_link;
+use cfg\view\term_view;
 use cfg\view\view_type;
 use cfg\view\view_type_list;
 use cfg\word\word;
@@ -410,7 +410,7 @@ class sql_db
         view_style::class,
         view::class,
         view_link_type::class,
-        view_term_link::class,
+        term_view::class,
         component_link_type::class,
         position_type::class,
         component_type::class,
@@ -506,7 +506,7 @@ class sql_db
         formula::class,
         formula_link::class,
         view::class,
-        view_term_link::class,
+        term_view::class,
         component::class,
         component_link::class
     ];
@@ -521,7 +521,7 @@ class sql_db
         formula::class,
         formula_link::class,
         view::class,
-        view_term_link::class,
+        term_view::class,
         component::class,
         component_link::class
     ];
@@ -541,7 +541,7 @@ class sql_db
         result::class,
         element::class,
         component_link::class,
-        view_term_link::class,
+        term_view::class,
         ref::class,
         ip_range::class,
         ip_range_list::class,

@@ -107,7 +107,7 @@ use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\view\view_list;
-use cfg\view\view_term_link;
+use cfg\view\term_view;
 use cfg\word\triple;
 use cfg\word\triple_list;
 use cfg\word\word;
@@ -198,7 +198,7 @@ include_once TEST_UNIT_PATH . 'figure_tests.php';
 include_once TEST_UNIT_PATH . 'figure_list_tests.php';
 include_once TEST_UNIT_PATH . 'expression_tests.php';
 include_once TEST_UNIT_PATH . 'view_tests.php';
-include_once TEST_UNIT_PATH . 'view_term_link_tests.php';
+include_once TEST_UNIT_PATH . 'term_view_tests.php';
 include_once TEST_UNIT_PATH . 'view_list_tests.php';
 include_once TEST_UNIT_PATH . 'component_tests.php';
 include_once TEST_UNIT_PATH . 'component_link_tests.php';
@@ -2661,7 +2661,7 @@ class test_base
                 // ... and user 2 also see the changed (TODO or not?)
                 $result = $this->write_link_check_order_nbr($lnk, $this->usr2, $new_order_nbr);
             }
-        } elseif ($lnk::class == view_term_link::class
+        } elseif ($lnk::class == term_view::class
             or $lnk::class == ref::class
             or $lnk::class == triple::class) {
             $old_description = $lnk->description;
@@ -3063,7 +3063,7 @@ class test_base
         }
     }
 
-    private function write_link_update_description(view_term_link|ref|triple $lnk, user $usr, string $new_description): bool
+    private function write_link_update_description(term_view|ref|triple $lnk, user $usr, string $new_description): bool
     {
         $id = $lnk->id();
         $lnk->set_user($usr);
@@ -3082,7 +3082,7 @@ class test_base
         }
     }
 
-    private function write_link_check_description(view_term_link|ref|triple $lnk, user $usr, ?string $description): bool
+    private function write_link_check_description(term_view|ref|triple $lnk, user $usr, ?string $description): bool
     {
         $id = $lnk->id();
         $lnk->set_user($usr);
@@ -3211,6 +3211,9 @@ class test_base
         if ($db_lst != $in_lst) {
             $lib = new library();
             $result = $lib->diff_msg($in_lst, $db_lst);
+            if ($result != '') {
+                log_warning($test_name . 'diff is:' . $result);
+            }
         }
 
         return $this->assert($test_name, $result, '');

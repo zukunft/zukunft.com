@@ -36,12 +36,12 @@ ALTER TABLE `user_refs`
 -- --------------------------------------------------------
 
 --
--- Table structure for table`user_view_term_links`
+-- Table structure for table`user_term_views`
 --
 
-CREATE TABLE IF NOT EXISTS `user_view_term_links`
+CREATE TABLE IF NOT EXISTS `user_term_views`
 (
-    `view_term_link_id` int(11) NOT NULL,
+    `term_view_id` int(11) NOT NULL,
     `type_id`           int(11) NOT NULL DEFAULT '1' COMMENT '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups',
     `link_type_id`      int(11)          DEFAULT NULL,
     `user_id`           int(11) NOT NULL,

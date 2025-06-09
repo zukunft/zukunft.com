@@ -113,7 +113,7 @@ use cfg\user\user_type;
 use cfg\value\value_base;
 use cfg\value\value_ts_data;
 use cfg\view\view;
-use cfg\view\view_term_link;
+use cfg\view\term_view;
 use cfg\word\word;
 use html\verb\verb as verb_dsp;
 use DateTime;
@@ -2340,7 +2340,7 @@ class library
             case $this->class_to_name(formula_link::class):
                 $result = $this->class_to_name(formula::class);
                 break;
-            case $this->class_to_name(view_term_link::class):
+            case $this->class_to_name(term_view::class):
                 $result = $this->class_to_name(view::class);
                 break;
             case $this->class_to_name(component_link_type::class):

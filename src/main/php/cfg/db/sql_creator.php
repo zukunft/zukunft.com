@@ -89,7 +89,7 @@ include_once MODEL_VALUE_PATH . 'value_time.php';
 include_once MODEL_VALUE_PATH . 'value_text.php';
 include_once MODEL_VALUE_PATH . 'value_geo.php';
 include_once MODEL_VALUE_PATH . 'value_time_series.php';
-include_once MODEL_VIEW_PATH . 'view_term_link.php';
+include_once MODEL_VIEW_PATH . 'term_view.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\component\component_link;
@@ -139,7 +139,7 @@ use cfg\user\user_type;
 use cfg\user\user_official_type;
 use cfg\value\value_base;
 use cfg\value\value_time_series;
-use cfg\view\view_term_link;
+use cfg\view\term_view;
 use shared\library;
 use DateTime;
 
@@ -165,7 +165,7 @@ class sql_creator
         result::class,
         element::class,
         component_link::class,
-        view_term_link::class,
+        term_view::class,
         ref::class,
         ip_range::class,
         ip_range_list::class,

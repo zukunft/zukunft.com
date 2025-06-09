@@ -31,13 +31,13 @@
 
 namespace cfg\formula;
 
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_list.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -46,16 +46,11 @@ use cfg\db\sql_par;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
 use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_list;
-use cfg\user\user;
+use cfg\sandbox\sandbox_link_list;
 use shared\library;
 
-class formula_link_list extends sandbox_list
+class formula_link_list extends sandbox_link_list
 {
-
-    public array $lst; // the list of formula word link objects
-    public user $usr;  // the user who wants to see or modify the list
-
 
     /*
      * construct and map

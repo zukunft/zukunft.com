@@ -170,6 +170,8 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO remove the time phrase from result
     TODO rename change and change_log to change
     TODO rename sys_log to log
+    TODO log the changes of system tables like the ip blacklist with the SQL based standard log
+    TODO ... and switch off the SQL standard log for tables that are using the user friendly log process of this code e.g. the changes tables
     TODO use LLM KI systems like deepSeek to fill up and validate the phrases semi automatically
     TODO fix the button frontend issue
     TODO use the json api message header for all api messages
@@ -518,7 +520,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
                         sandbox_link_named - user sandbox objects that link two objects
                             triple - link two words with a predicate / verb
                         formula_link - link a formula to a phrase
-                        view_term_link - link a view to a term
+                        term_view - link a view to a term
                         component_link - to assign a component to a view
                         ref - to link a value to an external source
                     sandbox_value - to save a user specific numbers
@@ -1250,8 +1252,8 @@ const DB_TABLE_LIST = [
     'view_styles',
     'component_types',
     'view_link_types',
-    'view_term_links',
-    'user_view_term_links',
+    'term_views',
+    'user_term_views',
     'value_formula_links',
     'value_time_series',
     'user_value_time_series',

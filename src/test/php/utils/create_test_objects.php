@@ -166,7 +166,7 @@ use cfg\view\view;
 use cfg\view\view_link_type;
 use cfg\view\view_link_type_list;
 use cfg\view\view_list;
-use cfg\view\view_term_link;
+use cfg\view\term_view;
 use cfg\view\view_type_list;
 use cfg\word\triple;
 use cfg\word\triple_list;
@@ -3210,17 +3210,17 @@ class create_test_objects extends test_base
         return new view_list_dsp($this->view_list_word_long()->api_json());
     }
 
-    function view_link(): view_term_link
+    function view_link(): term_view
     {
         global $msk_lnk_typ_cac;
-        $lnk = new view_term_link($this->usr1);
+        $lnk = new term_view($this->usr1);
         $lnk->set(1, $this->view(), $this->word()->term());
         $lnk->set_predicate_id($msk_lnk_typ_cac->id(view_link_type::DEFAULT));
         $lnk->description = 2;
         return $lnk;
     }
 
-    function view_link_filled(): view_term_link
+    function view_link_filled(): term_view
     {
         global $shr_typ_cac;
         global $ptc_typ_cac;
@@ -3231,7 +3231,7 @@ class create_test_objects extends test_base
         return $lnk;
     }
 
-    function view_link_filled_add(): view_term_link
+    function view_link_filled_add(): term_view
     {
         $lnk = $this->view_link_filled();
         $lnk->include();
@@ -3510,9 +3510,9 @@ class create_test_objects extends test_base
         return $lst;
     }
 
-    function view_term_link(): view_term_link
+    function term_view(): term_view
     {
-        $lnk = new view_term_link($this->usr1);
+        $lnk = new term_view($this->usr1);
         $lnk->set_view($this->view());
         $lnk->set_predicate(view_link_type::DEFAULT);
         $lnk->set_term($this->term());

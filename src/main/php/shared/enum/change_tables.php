@@ -57,8 +57,8 @@ enum change_tables: string
     const FORMULA_LINK_USR = 'user_formula_links';
     const VIEW = 'views';
     const VIEW_USR = 'user_views';
-    const VIEW_TERM_LINK = 'view_term_links';
-    //const VIEW_TERM_LINK_USR = 'user_view_term_links';
+    const VIEW_TERM_LINK = 'term_views';
+    //const VIEW_TERM_LINK_USR = 'user_term_views';
     const VIEW_COMPONENT = 'components';
     const VIEW_COMPONENT_USR = 'user_components';
     const VIEW_LINK = 'component_links';

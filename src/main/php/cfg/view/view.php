@@ -81,11 +81,12 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view_term_link.php';
+include_once MODEL_VIEW_PATH . 'term_view.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_CONST_PATH . 'views.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -120,6 +121,7 @@ use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\const\views;
+use shared\enum\messages as msg_id;
 use shared\types\api_type_list;
 use shared\types\position_types;
 
@@ -205,6 +207,8 @@ class view extends sandbox_typed
     // in memory only fields
     // all links to the component objects in correct order
     public ?component_link_list $cmp_lnk_lst;
+    // list of terms that use this view / mask
+    private ?term_view_list $trm_msk_lst;
 
     // the default display style for this component which can be overwritten by the link
     private ?type_object $style = null;
@@ -235,6 +239,7 @@ class view extends sandbox_typed
         $this->code_id = null;
 
         $this->cmp_lnk_lst = null;
+        $this->trm_msk_lst = null;
     }
 
     // TODO check if there is any case where the user fields should not be set
@@ -376,9 +381,7 @@ class view extends sandbox_typed
                         '" created to link it to view "' . $this->name() .
                         '" as requested by the import of ');
                 }
-                if ($trm->id() != 0) {
-                    $this->add_term($trm);
-                }
+                $this->add_term($trm, json_encode($in_ex_json));
             }
         }
 
@@ -548,7 +551,7 @@ class view extends sandbox_typed
                             '" as requested by the import of ');
                     }
                     if ($trm->id() != 0) {
-                        $this->add_term($trm);
+                        $this->add_term_db($trm);
                     }
                 }
             }
@@ -829,7 +832,7 @@ class view extends sandbox_typed
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
-        $qp = $this->load_sql($sc, 'code_id', $this::class);
+        $qp = $this->load_sql($sc, 'code_id');
         $sc->add_where(sql::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -839,23 +842,23 @@ class view extends sandbox_typed
 
     /**
      * create an SQL statement to retrieve a view by the phrase from the database
-     * TODO include user_view_term_links into the selection
+     * TODO include user_term_views into the selection
      * TODO take the usage into account for the selection of the view
      *
      * @param sql_creator $sc with the target db_type set
      * @param term $trm the code id of the view
-     * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_term(sql_creator $sc, term $trm, string $class = self::class): sql_par
+    function load_sql_by_term(sql_creator $sc, term $trm): sql_par
     {
-        $qp = $this->load_sql($sc, 'term', $class);
+        $qp = $this->load_sql($sc, 'term');
         $sc->set_join_fields(
-            view_term_link::FLD_NAMES,
-            view_term_link::class,
+            term_view::FLD_NAMES,
+            term_view::class,
             view::FLD_ID,
             view::FLD_ID);
         $sc->add_where(term::FLD_ID, $trm->id(), null, sql_db::LNK_TBL);
+        // TODO activate
         //$sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -1128,14 +1131,14 @@ class view extends sandbox_typed
      */
 
     /**
-     * links this view to a term
+     * link this view to the given term and save to the database
      * @param term $trm the term that should be linked
      * @return user_message with the message to the user if something has gone wrong and the suggested solutions
      */
-    function add_term(term $trm): user_message
+    function add_term_db(term $trm): user_message
     {
         $usr_msg = new user_message();
-        $lnk = new view_term_link($this->user());
+        $lnk = new term_view($this->user());
         $lnk->set_view($this);
         $lnk->set_term($trm);
         $usr_msg->add($lnk->save());
@@ -1143,7 +1146,30 @@ class view extends sandbox_typed
     }
 
     /**
-     * unlinks this view from the given term
+     * add the term link to this view object
+     * @param term $trm the term that should be linked
+     * @param string $json_part the part of a json message which has cause the adding
+     * @return user_message with the message to the user if something has gone wrong and the suggested solutions
+     */
+    function add_term(term $trm, string $json_part = ''): user_message
+    {
+        $usr_msg = new user_message();
+        if ($this->trm_msk_lst == null) {
+            $this->trm_msk_lst = new term_view_list($this->user());
+        }
+        $added = $this->trm_msk_lst->add(0, $this, $trm);
+        if (!$added) {
+            $usr_msg->add_id_with_vars(msg_id::IMPORT_TERM_VIEW_DOUBLE, [
+                msg_id::VAR_TERM_NAME => $trm->name(),
+                msg_id::VAR_VIEW_NAME => $this->name(),
+                msg_id::VAR_JSON_PART => $json_part,
+            ]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * unlink this view from the given term
      * @param term $trm the term that should be removed from the list of assigned terms
      * @return user_message with the message to the user if something has gone wrong and the suggested solutions
      */
@@ -1442,14 +1468,6 @@ class view extends sandbox_typed
         $result .= '&back=' . $back . '">' . $this->name . '</a>';
 
         return $result;
-    }
-
-    /**
-     * display the unique id fields
-     */
-    function name_dsp(): string
-    {
-        return '"' . $this->name . '"';
     }
 
 }

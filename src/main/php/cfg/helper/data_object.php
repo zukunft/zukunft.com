@@ -50,12 +50,16 @@ include_once MODEL_REF_PATH . 'ref_list.php';
 //include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 //include_once MODEL_PHRASE_PATH . 'term.php';
 //include_once MODEL_PHRASE_PATH . 'term_list.php';
+//include_once MODEL_SYSTEM_PATH . 'ip_range.php';
+//include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
 //include_once MODEL_VIEW_PATH . 'view_list.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VERB_PATH . 'verb_list.php';
+include_once MODEL_VIEW_PATH . 'term_view_list.php';
+//include_once MODEL_VIEW_PATH . 'term_view.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_VIEW_PATH . 'view_list.php';
 //include_once MODEL_WORD_PATH . 'word.php';
@@ -83,6 +87,8 @@ use cfg\ref\ref;
 use cfg\ref\ref_list;
 use cfg\ref\source;
 use cfg\ref\source_list;
+use cfg\system\ip_range;
+use cfg\system\ip_range_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
@@ -90,6 +96,8 @@ use cfg\value\value_base;
 use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
+use cfg\view\term_view;
+use cfg\view\term_view_list;
 use cfg\view\view;
 use cfg\view\view_list;
 use cfg\word\word;
@@ -125,6 +133,9 @@ class data_object
     private bool $trm_lst_dirty;
     private view_list $msk_lst;
     private component_list $cmp_lst;
+    private term_view_list $trm_msk_lst;
+    // for system configuration exchange
+    private ip_range_list $ip_lst;
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
 
@@ -155,6 +166,8 @@ class data_object
         $this->trm_lst_dirty = false;
         $this->msk_lst = new view_list($usr);
         $this->cmp_lst = new component_list($usr);
+        $this->trm_msk_lst = new term_view_list($usr);
+        $this->ip_lst = new ip_range_list();
         $this->usr_msg = new user_message();
     }
 
@@ -207,6 +220,7 @@ class data_object
         $vars[json_fields::FORMULAS] = $this->frm_lst->api_json_array($typ_lst);
         $vars[json_fields::VIEWS] = $this->msk_lst->api_json_array($typ_lst);
         $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_json_array($typ_lst);
+        $vars[json_fields::IP_BLACKLIST] = $this->ip_lst->api_json_array($typ_lst);
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -347,6 +361,22 @@ class data_object
     }
 
     /**
+     * @return term_view_list with the list how the words, triples, verbs or formulas should be shown
+     */
+    function term_view_list(): term_view_list
+    {
+        return $this->trm_msk_lst;
+    }
+
+    /**
+     * @return ip_range_list with the ip ranges of this data object
+     */
+    function ip_range_list(): ip_range_list
+    {
+        return $this->ip_lst;
+    }
+
+    /**
      * @return bool true if this context object contains a view list
      */
     function has_view_list(): bool
@@ -436,12 +466,32 @@ class data_object
 
     /**
      * add a component with name but without db id to the list
-     * @param component $frm with the name and parameters set
+     * @param component $cmp with the name and parameters set
      * @return void
      */
-    function add_component(component $frm): void
+    function add_component(component $cmp): void
     {
-        $this->cmp_lst->add_by_name($frm);
+        $this->cmp_lst->add_by_name($cmp);
+    }
+
+    /**
+     * add a term view with term and the view but without db id to the list
+     * @param term_view $trm_msk with the term and the view set
+     * @return void
+     */
+    function add_term_view(term_view $trm_msk): void
+    {
+        $this->trm_msk_lst->add_link($trm_msk);
+    }
+
+    /**
+     * add an ip range without db id to the list
+     * @param ip_range $ip with the range set
+     * @return void
+     */
+    function add_ip_range(ip_range $ip): void
+    {
+        $this->ip_lst->add($ip);
     }
 
     /**
@@ -552,6 +602,9 @@ class data_object
 
 
         // save the data lists in order of the dependencies
+
+        // start with the system configuration
+        $usr_msg->add($this->save_ip_ranges($imp));
 
         // import first the words
         $usr_msg->add($this->save_words($imp));
@@ -722,7 +775,7 @@ class data_object
                         $exp = $frm->expression($trm_lst);
                         $frm_trm_lst = $exp->terms($trm_lst);
                         foreach ($frm_trm_lst->lst() as $trm) {
-                            $frm_self_ref = $this->check_formula_term($frm, $trm, $frm_trm_lst, $usr_msg, $trp_self_ref);
+                            $frm_self_ref = $this->check_formula_term($frm, $trm, $frm_trm_lst, $usr_msg, $frm_self_ref);
                         }
                     }
                 }
@@ -831,6 +884,28 @@ class data_object
             $imp->step_start(msg_id::SAVE, word::class, $wrd_lst->count(), $wrd_est);
             $usr_msg->add($wrd_lst->save($imp));
             $imp->step_end($wrd_lst->count(), $wrd_per_sec);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add or update all ip ranges to the database
+     * @param import $imp the import object that includes the start time of the import
+     * @return user_message ok or the error message for the user with the suggested solution
+     */
+    private function save_ip_ranges(import $imp): user_message
+    {
+        global $cfg;
+        $usr_msg = new user_message();
+
+        $ip_per_sec = $cfg->get_by([words::IP_RANGES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+
+        $ip_lst = $this->ip_range_list();
+        if (!$ip_lst->is_empty()) {
+            $ip_est = $ip_lst->count() / $ip_per_sec;
+            $imp->step_start(msg_id::SAVE, ip_range::class, $ip_lst->count(), $ip_est);
+            $usr_msg->add($ip_lst->save($imp));
+            $imp->step_end($ip_lst->count(), $ip_per_sec);
         }
         return $usr_msg;
     }

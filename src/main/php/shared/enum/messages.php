@@ -61,6 +61,12 @@ enum messages: string
     const VAR_WORD_NAME = 'VarWordName';
     // the name and if of a triple
     const VAR_TRIPLE_NAME = 'VarTripleName';
+    // the name and if of a phrase
+    const VAR_PHRASE_NAME = 'VarPhraseName';
+    // the name and if of a term
+    const VAR_TERM_NAME = 'VarTermName';
+    // the name and if of a view
+    const VAR_VIEW_NAME = 'VarViewName';
     // the user/owner of an object
     const VAR_USER = 'VarUser';
     // the user/owner of a compare object
@@ -113,6 +119,7 @@ enum messages: string
     const VAR_COMPONENT_NAME = 'VarComponentName';
     const VAR_FILE_TYPE = 'VarFileType';
     const VAR_FILE_NAME = 'VarFileName';
+    const VAR_IP_RANGE = 'VarIpRange';
     const VAR_SUMMARY = 'VarSummary';
     const VAR_PART = 'VarPart';
     const VAR_ERROR_TEXT = 'VarErrorText';
@@ -470,6 +477,18 @@ enum messages: string
         . '" failed because '
         . self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
         . '.';
+    case IMPORT_IP_MISSING = 'mandatory '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' ip of range missing in import json part "'
+        . self::VAR_START . self::VAR_IP_RANGE . self::VAR_END
+        . '".';
+    case IMPORT_TERM_VIEW_DOUBLE = 'the term '
+        . self::VAR_START . self::VAR_TERM_NAME . self::VAR_END
+        . ' is probable assigned more than once to the view "'
+        . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
+        . ' in the import json part "'
+        . self::VAR_START . self::VAR_JSON_PART . self::VAR_END
+        . '".';
     case IMPORT_NOT_FIND_VIEW = 'Cannot find view "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" when importing '
@@ -569,6 +588,7 @@ enum messages: string
     // config
     case CONFIG_NOT_LOADED = 'cannot load config';
     case CONFIG_EMPTY = 'config is empty';
+    case IP_LIST_EMPTY = 'ip range list is empty on import';
     case CONFIG_API_MESSAGE_EMPTY = 'config api message is empty';
 
     case ADD_USER_CONFIG_FAILED = 'adding of user configuration failed';

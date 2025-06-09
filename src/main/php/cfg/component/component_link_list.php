@@ -44,25 +44,24 @@
 
 namespace cfg\component;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once DB_PATH . 'sql.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_list.php';
+include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_link.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
-use cfg\sandbox\sandbox_list;
+use cfg\sandbox\sandbox_link;
+use cfg\sandbox\sandbox_link_list;
 use cfg\user\user_message;
 use cfg\view\view;
 
-class component_link_list extends sandbox_list
+class component_link_list extends sandbox_link_list
 {
 
     /*
@@ -247,31 +246,6 @@ class component_link_list extends sandbox_list
      */
 
     /**
-     * add a view component link based on parts to the list without saving it to the database
-     * @return true if the link has been added
-     */
-    function add(int $id, view $msk, component $cmp, int $pos): bool
-    {
-        $new_lnk = new component_link($this->user());
-        $new_lnk->set($id, $msk, $cmp, $pos);
-        return $this->add_link($new_lnk);
-    }
-
-    /**
-     * add a view component link to the list without saving it to the database
-     * @return true if the link has been added
-     */
-    function add_link(component_link $lnk_to_add): bool
-    {
-        $added = false;
-        if ($this->can_add($lnk_to_add)) {
-            $this->add_obj($lnk_to_add);
-            $added = true;
-        }
-        return $added;
-    }
-
-    /**
      * add a view component link to the list without saving it to the database
      * @return true if the link has been added
      */
@@ -384,16 +358,30 @@ class component_link_list extends sandbox_list
       * internal
       */
 
-    private function can_add(component_link $lnk_to_add): bool
+    /**
+     * test if the link at the same position already exists and if yes return false to prevent duplicates
+     * overwrites the parent because the same component can be used in a view at different positions
+     * but not at the same position
+     * @param component_link|sandbox_link $lnk_to_add the link that should be added to the list
+     * @return bool true if the link can be added
+     */
+    protected function can_add(component_link|sandbox_link $lnk_to_add): bool
     {
         $can_add = true;
 
         if (!$this->is_empty()) {
             foreach ($this->lst() as $lnk) {
-                if ($lnk->view()->id() == $lnk_to_add->view()->id()
-                    and $lnk->component()->id() == $lnk_to_add->component()->id()
-                    and $lnk->pos() == $lnk_to_add->pos()) {
-                    $can_add = false;
+                if ($can_add) {
+                    if ($lnk->from_id() == $lnk_to_add->from_id()
+                        and $lnk->to_id() == $lnk_to_add->to_id()
+                        and $lnk->pos() == $lnk_to_add->pos()) {
+                        $can_add = false;
+                    }
+                    if ($lnk->id() == $lnk_to_add->id()
+                        and $lnk->id() != 0 and $lnk_to_add->id() != 0
+                        and $lnk->id() !== null and $lnk_to_add->id() !== null) {
+                        $can_add = false;
+                    }
                 }
             }
         }

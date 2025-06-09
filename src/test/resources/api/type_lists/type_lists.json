@@ -1590,8 +1590,8 @@
         "id": 88
       },
       {
-        "name": "view_term_links",
-        "code_id": "view_term_links",
+        "name": "term_views",
+        "code_id": "term_views",
         "description": "",
         "id": 89
       },
@@ -1602,8 +1602,8 @@
         "id": 90
       },
       {
-        "name": "user_view_term_links",
-        "code_id": "user_view_term_links",
+        "name": "user_term_views",
+        "code_id": "user_term_views",
         "description": "",
         "id": 91
       },
@@ -6020,8 +6020,8 @@
         "id": 720
       },
       {
-        "name": "89view_term_link_id",
-        "code_id": "89view_term_link_id",
+        "name": "89term_view_id",
+        "code_id": "89term_view_id",
         "description": "",
         "id": 721
       },
@@ -6104,8 +6104,8 @@
         "id": 734
       },
       {
-        "name": "91view_term_link_id",
-        "code_id": "91view_term_link_id",
+        "name": "91term_view_id",
+        "code_id": "91term_view_id",
         "description": "",
         "id": 735
       },
