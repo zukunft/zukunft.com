@@ -2847,12 +2847,12 @@ class sandbox_multi extends db_object_multi_user
                     $db_rec->reset();
                     $db_rec->set_user($this->user());
                     if ($db_rec->load_by_id($this->id()) != $this->id()) {
-                        $usr_msg->add_message_text('Reloading of user ' . $class_name . ' failed');
+                        $usr_msg->add_id_with_vars(msg_id::OBJECT_RELOADING_FAILED, [msg_id::VAR_VALUE => $class_name]);
                     } else {
                         log_debug('reloaded from db');
                         if ($this->is_link_obj()) {
                             if (!$db_rec->load_objects()) {
-                                $usr_msg->add_message_text('Reloading of the object for ' . $class_name . ' failed');
+                                $usr_msg->add_id_with_vars(msg_id::OBJECT_RELOADING_FAILED, [msg_id::VAR_VALUE => $class_name]);
                             }
                             // configure the global database connection object again to overwrite any changes from load_objects
                             $db_con->set_class($this::class);
@@ -2873,7 +2873,7 @@ class sandbox_multi extends db_object_multi_user
                     $std_rec->set_user($this->user()); // must also be set to allow to take the ownership
                     if ($usr_msg->is_ok()) {
                         if (!$std_rec->load_standard()) {
-                            $usr_msg->add_message_text('Reloading of the default values for ' . $class_name . ' failed');
+                            $usr_msg->add_id_with_vars(msg_id::DEFAULT_VALUES_RELOADING_FAILED, [msg_id::VAR_VALUE => $class_name]);
                         }
                     }
 

@@ -550,6 +550,12 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case OBJECT_RELOADING_FAILED = 'Reloading of the object for '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' failed';
+    case DEFAULT_VALUES_RELOADING_FAILED = 'Reloading of the default values for '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' failed';
 
     case CONFLICT_DB_ID = 'Unexpected conflict of the database id. '
         . self::VAR_START . self::VAR_ID . self::VAR_END
