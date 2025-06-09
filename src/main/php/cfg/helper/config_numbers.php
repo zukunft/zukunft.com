@@ -39,6 +39,7 @@ include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_ENUM_PATH . 'language_codes.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'api.php';
 
 use cfg\phrase\phrase;

@@ -121,7 +121,6 @@ use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\const\views;
-use shared\enum\messages as msg_id;
 use shared\types\api_type_list;
 use shared\types\position_types;
 

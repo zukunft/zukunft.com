@@ -487,6 +487,26 @@ class user_message
         } else {
             $msg .= $part;
         }
+
+        // get the text for all messages with vars
+        $part = $this->var_message_text();
+
+        if ($msg != '' and $part <> '') {
+            $msg .= $msg . '; ' . $part;
+        } else {
+            $msg .= $part;
+        }
+        return $msg;
+    }
+
+    /**
+     * TODO review
+     * @return string the translated text for all messages with vars
+     */
+    function var_message_text(): string
+    {
+        global $mtr;
+
         $part = '';
         foreach ($this->msg_var_lst as $msg_var) {
             if ($part != '') {
@@ -513,12 +533,7 @@ class user_message
             $msg_txt = str_replace(msg_id::VAR_ESC_END, msg_id::VAR_END, $msg_txt);
             $part .= $msg_txt;
         }
-        if ($msg != '' and $part <> '') {
-            $msg .= $msg . '; ' . $part;
-        } else {
-            $msg .= $part;
-        }
-        return $msg;
+        return $part;
     }
 
     /**
@@ -538,11 +553,38 @@ class user_message
     }
 
     /**
-     * @return string with latest added message
+     * simple return a translated message text with vars
+     * TODO review
+     * @param int $pos used to get other message than the main message
+     * @return string simple the message text
+     */
+    function get_message_translated(int $pos = 1): string
+    {
+        // the first message should have the position 1 not 0 like in php array
+        $pos = $pos - 1;
+        if (count($this->msg_var_lst) > $pos and $pos >= 0) {
+            return $this->var_message_text();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO should be deprecated once the msg_id is used for all messages
+     * @return string with latest added message text
      */
     function get_last_message(): string
     {
         return $this->get_message(count($this->msg_text));
+    }
+
+    /**
+     * TODO should pick the last either from msg_var_lst or msg_id_lst
+     * @return string with latest added message translated to the user language
+     */
+    function get_last_message_translated(): string
+    {
+        return $this->get_message_translated(count($this->msg_var_lst));
     }
 
     /**

@@ -504,7 +504,7 @@ class data_object
         $this->val_lst->add_value_direct($val);
     }
 
-    function add_message(string $msg): void
+    function add_message(msg_id $msg): void
     {
         $this->usr_msg->add_id($msg);
     }
