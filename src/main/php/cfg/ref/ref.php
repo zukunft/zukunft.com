@@ -96,6 +96,7 @@ include_once MODEL_WORD_PATH . 'triple.php';
 include_once WEB_REF_PATH . 'ref.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -126,6 +127,7 @@ use shared\enum\change_tables;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
+use shared\enum\messages as msg_id;
 
 class ref extends sandbox_link
 {
@@ -352,8 +354,10 @@ class ref extends sandbox_link
             $this->set_predicate_id($ref_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]));
 
             if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
-                $usr_msg->add_message_text('Reference type for '
-                    . $in_ex_json[json_fields::TYPE_NAME] . ' not found');
+                $usr_msg->add_id_with_vars(msg_id::REFERENCE_TYPE_NOT_FOUND, [
+                    msg_id::VAR_TYPE_NAME->value => $in_ex_json[json_fields::TYPE_NAME],
+                ]);
+
             }
         }
         if (key_exists(json_fields::NAME, $in_ex_json)) {
