@@ -96,6 +96,7 @@ include_once MODEL_WORD_PATH . 'triple.php';
 include_once WEB_REF_PATH . 'ref.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
