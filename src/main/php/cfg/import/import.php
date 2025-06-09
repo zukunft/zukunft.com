@@ -334,9 +334,9 @@ class import
 
         if ($yaml_array == null) {
             if ($yaml_str != '') {
-                $usr_msg->add_message_text('YAML decode failed of ' . $yaml_str);
+                $usr_msg->add_id_with_vars(msg_id::YAML_DECODE_FAILED, [msg_id::VAR_JSON_TEXT => $yaml_str]);
             } else {
-                $usr_msg->add_warning_text('YAML string is empty');
+                $usr_msg->add_id(msg_id::YAML_STRING_EMPTY);
             }
         } else {
 
@@ -429,9 +429,9 @@ class import
         $json_array = json_decode($json_str, true);
         if ($json_array == null) {
             if ($json_str != '') {
-                $usr_msg->add_message_text('JSON decode failed of ' . $json_str);
+                $usr_msg->add_id_with_vars(msg_id::JSON_DECODE_FAILED, [msg_id::VAR_JSON_TEXT => $json_str]);
             } else {
-                $usr_msg->add_warning_text('JSON string is empty');
+                $usr_msg->add_id(msg_id::JSON_STRING_EMPTY);
             }
         } else {
             $usr_msg = $this->put($json_array, $usr_trigger);
@@ -493,7 +493,10 @@ class import
             $pos++;
             if ($key == json_fields::VERSION) {
                 if (prg_version_is_newer($json_obj)) {
-                    $usr_msg->add_message_text('Import file has been created with version ' . $json_obj . ', which is newer than this, which is ' . PRG_VERSION);
+                    $usr_msg->add_id_with_vars(msg_id::IMPORT_VERSION_NEWER, [
+                        msg_id::VAR_VALUE => $json_obj,
+                        msg_id::VAR_VALUE_CHK => PRG_VERSION
+                    ]);
                 }
             } elseif ($key == json_fields::POD) {
                 // TODO set the source pod
@@ -736,7 +739,7 @@ class import
                     $pos++;
                 }
             } else {
-                $usr_msg->add_message_text('Unknown element ' . $key);
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_UNKNOWN_ELEMENT, [msg_id::VAR_NAME => $key]);
             }
         }
 
@@ -1049,7 +1052,10 @@ class import
         $usr_msg = new user_message();
         if (key_exists(json_fields::VERSION, $json_array)) {
             if (prg_version_is_newer($json_array[json_fields::VERSION])) {
-                $usr_msg->add_message_text('Import file has been created with version ' . $json_array[json_fields::VERSION] . ', which is newer than this, which is ' . PRG_VERSION);
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_VERSION_NEWER, [
+                    msg_id::VAR_VALUE => $json_array[json_fields::VERSION],
+                    msg_id::VAR_VALUE_CHK => PRG_VERSION
+                ]);
             }
         }
         // TODO add json_fields::POD
@@ -1337,7 +1343,7 @@ class import
             // add the tooltip to the last added phrase of value
             if ($key == words::TOOLTIP_COMMENT) {
                 if ($wrd == null and $trp == null and $val == null) {
-                    $dto->add_message('yaml is not expected to start with a tooltip-comment');
+                    $dto->add_message(msg_id::YAML_TOOLTIP_COMMENT_UNEXPECTED);
                 } else {
                     if ($wrd != null) {
                         $wrd->set_description($value);
@@ -1367,7 +1373,7 @@ class import
             } elseif ($key == words::SYS_CONF_SOURCE_COM) {
                 // assumes that always a source description is given to force adding the source
                 if ($src == null) {
-                    $dto->add_message('source-description is given without source-name');
+                    $dto->add_message(msg_id::SOURCE_DESCRIPTION_WITHOUT_NAME);
                 } else {
                     $src->set_description($value);
                 }
@@ -1503,7 +1509,7 @@ class import
         $msg_txt = $this->status_text_entry('components', $this->components_done, $this->components_failed, $msg_txt);
         $msg_txt = $this->status_text_entry('results validated', $this->calc_validations_done, $this->calc_validations_failed, $msg_txt);
         $msg_txt = $this->status_text_entry('views validated', $this->view_validations_done, $this->view_validations_failed, $msg_txt);
-        $usr_msg->add_message_text($msg_txt);
+        $usr_msg->add_id_with_vars(msg_id::IMPORT_SUMMARY, [msg_id::VAR_SUMMARY => $msg_txt]);
         return $usr_msg;
     }
 

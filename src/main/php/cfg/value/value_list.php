@@ -889,7 +889,10 @@ class value_list extends sandbox_value_list
                 if (strtotime($value)) {
                     $val->time_stamp = $lib->get_datetime($value, $val->dsp_id(), 'JSON import');
                 } else {
-                    $usr_msg->add_message_text('Cannot add timestamp "' . $value . '" when importing ' . $val->dsp_id());
+                    $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP, [
+                        msg_id::VAR_VALUE => $value,
+                        msg_id::VAR_ID => $val->dsp_id()
+                    ]);
                 }
             }
 
@@ -1462,10 +1465,10 @@ class value_list extends sandbox_value_list
             $imp->step_start(msg_id::SAVE, value::class);
             foreach ($this->lst() as $val) {
                 if ($val->value() === null) {
-                    $usr_msg->add_message_text('null value for ' . $val->dsp_id() . ' not saved');
+                    $usr_msg->add_id_with_vars(msg_id::NULL_VALUE_NOT_SAVED, [msg_id::VAR_ID => $val->dsp_id()]);
                 } else {
                     if ($val->id() == 0) {
-                        $usr_msg->add_message_text('cannot save ' . $val->dsp_id() . ' because id is zero');
+                        $usr_msg->add_id_with_vars(msg_id::CANNOT_SAVE_ZERO_ID, [msg_id::VAR_ID => $val->dsp_id()]);
                     } else {
                         $usr_msg->add($val->save());
                     }

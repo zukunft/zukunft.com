@@ -55,6 +55,7 @@ use shared\api;
 use html\rest_ctrl as api_dsp;
 use html\user\user_message;
 use shared\const\views;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 
 class sandbox_named extends sandbox
@@ -121,7 +122,7 @@ class sandbox_named extends sandbox
         } else {
             $this->set_name('');
             if ($this::class != group::class) {
-                $usr_msg->add_message_text('Mandatory field name missing in API JSON ' . json_encode($json_array));
+                $usr_msg->add_id_with_vars(msg_id::MANDATORY_FIELD_NAME_MISSING, [msg_id::VAR_JSON_TEXT => json_encode($json_array)]);
             }
         }
         if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {

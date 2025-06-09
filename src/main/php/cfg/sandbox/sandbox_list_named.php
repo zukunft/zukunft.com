@@ -352,7 +352,7 @@ class sandbox_list_named extends sandbox_list
                     $this->add($sbx_new);
                 }
             } else {
-                $usr_msg->add_message_text('id or name of word ' . $sbx_new->dsp_id() . ' missing');
+                $usr_msg->add_id_with_vars(msg_id::ID_OR_NAME_MISSING, [msg_id::VAR_ID => $sbx_new->dsp_id()]);
             }
         }
         return $usr_msg;
@@ -378,7 +378,7 @@ class sandbox_list_named extends sandbox_list
                     $obj_to_fill->fill($db_obj);
                 }
             } else {
-                $usr_msg->add_message_text('id or name of word ' . $obj_to_fill->dsp_id() . ' missing');
+                $usr_msg->add_id_with_vars(msg_id::ID_OR_NAME_MISSING, [msg_id::VAR_ID => $obj_to_fill->dsp_id()]);
             }
         }
         return $usr_msg;
@@ -393,10 +393,10 @@ class sandbox_list_named extends sandbox_list
                 if ($sbx_old != null) {
                     $sbx_old->set_id($id);
                 } else {
-                    $usr_msg->add_message_text('id or name of word ' . $name . ' missing');
+                    $usr_msg->add_id_with_vars(msg_id::ID_OR_NAME_MISSING, [msg_id::VAR_ID => $name]);
                 }
             } else {
-                $usr_msg->add_message_text('id or name of word ' . $name . ' missing');
+                $usr_msg->add_id_with_vars(msg_id::ID_OR_NAME_MISSING, [msg_id::VAR_ID => $name]);
             }
         }
         return $usr_msg;

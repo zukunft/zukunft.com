@@ -1245,7 +1245,10 @@ class group extends sandbox_multi
             // the admin user needs to add the read test group name during initial load
             // so for admin do not create a message
             if (!$usr->is_admin() and !$usr->is_system()) {
-                $usr_msg->add_message_text('"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for);
+                $usr_msg->add_id_with_vars(msg_id::GROUP_IS_RESERVED, [
+                    msg_id::VAR_NAME => $this->name(),
+                    msg_id::VAR_JSON_TEXT => $msg_res . ' ' . $class_name . ' ' . $msg_for
+                ]);
             }
         }
         return $usr_msg;
@@ -1486,11 +1489,11 @@ class group extends sandbox_multi
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
                     if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_message_text('Updating the reference in the log failed');
+                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
                     }
 
                 } else {
-                    $usr_msg->add_message_text('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed (missing save maker).');
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_GROUP, [msg_id::VAR_ID => $this->dsp_id()]);
                 }
             }
         }

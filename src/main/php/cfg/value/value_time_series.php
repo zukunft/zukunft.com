@@ -63,6 +63,7 @@ use cfg\sandbox\sandbox_value;
 use cfg\ref\source;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\messages as msg_id;
 use shared\library;
 
 class value_time_series extends sandbox_value
@@ -324,7 +325,7 @@ class value_time_series extends sandbox_value
             if ($this->id() > 0) {
                 // update the reference in the log
                 if (!$log->add_ref($this->id())) {
-                    $usr_msg->add_message_text('adding the value time series reference in the system log failed');
+                    $usr_msg->add_id(msg_id::VALUE_TIME_SERIES_LOG_REF_FAILED);
                 }
 
                 // update the phrase links for fast searching

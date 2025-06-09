@@ -2179,7 +2179,7 @@ class formula extends sandbox_typed
         $this->last_update = new DateTime();
         $db_con->set_class(formula::class);
         if (!$db_con->update_old($this->id(), self::FLD_LAST_UPDATE, sql::NOW)) {
-            $usr_msg->add_message_text('saving the update trigger for formula ' . $this->dsp_id() . ' failed');
+            $usr_msg->add_id_with_vars(msg_id::FAILED_SAVE_FORMULA_TRIGGER, [msg_id::VAR_ID => $this->dsp_id()]);
         }
 
         log_debug('->save_field_trigger_update timestamp of ' .
@@ -2427,7 +2427,7 @@ class formula extends sandbox_typed
                         $this->save_field_excluded($db_con, $db_rec, $std_rec);
                         log_debug('->save_id_if_updated found a display component link with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());
                     } else {
-                        $usr_msg->add_message_text('A view component with the name "' . $this->name() . '" already exists. Please use another name.');
+                        $usr_msg->add_id_with_vars(msg_id::COMPONENT_ALREADY_EXISTS, [msg_id::VAR_COMPONENT_NAME => $this->name()]);
                     }
                 } else {
                     // the formula can be renamed (either for this user or for all users)
@@ -2500,12 +2500,12 @@ class formula extends sandbox_typed
                     log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id());
                     // update the id in the log for the correct reference
                     if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_message_text('Updating the reference in the log failed');
+                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
                         $this->set_id(0);
                         // TODO do rollback or retry?
                     }
                 } else {
-                    $usr_msg->add_message_text("Adding formula " . $this->name . " failed.");
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_FORMULA, [msg_id::VAR_NAME => $this->name]);
                 }
             }
         }
@@ -2528,7 +2528,7 @@ class formula extends sandbox_typed
                 }
             }
         } else {
-            $usr_msg->add_message_text("Adding formula " . $this->name . " failed.");
+            $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_FORMULA, [msg_id::VAR_NAME => $this->name]);
         }
 
         return $usr_msg;
@@ -2598,7 +2598,12 @@ class formula extends sandbox_typed
                 // check that the get_similar function has really found a similar object and report potential program errors
                 if (!$this->is_similar($similar)) {
                     $msg_not = $mtr->txt(msg_id::NOT_SIMILAR);
-                    $usr_msg->add_message_text($this->dsp_id() . ' ' . $msg_not . ' ' . $similar->dsp_id());
+
+                    $usr_msg->add_id_with_vars(msg_id::FORMULA_NOT_SIMILAR, [
+                        msg_id::VAR_ID => $this->dsp_id(),
+                        msg_id::VAR_VALUE => $msg_not,
+                        msg_id::VAR_VAL_ID => $similar->dsp_id()
+                    ]);
                 } else {
                     // if similar is found set the id to trigger the updating instead of adding
                     $similar->load_by_id($similar->id()); // e.g. to get the type_id
@@ -2690,7 +2695,7 @@ class formula extends sandbox_typed
             // a '1' in the result only indicates that an update has been done for testing; '1' doesn't mean that there has been an error
             if ($usr_msg->is_ok()) {
                 if (!$this->element_refresh($this->ref_text)) {
-                    $usr_msg->add_message_text('Refresh of the formula elements failed');
+                    $usr_msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
                 }
             }
         }

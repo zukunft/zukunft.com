@@ -105,6 +105,7 @@ use cfg\value\value_base;
 use DateTime;
 use shared\calc\parameter_type;
 use shared\const\chars;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -401,7 +402,10 @@ class result extends sandbox_value
                 if (is_numeric($value)) {
                     $this->set_value($value);
                 } else {
-                    $usr_msg->add_message_text('Import result: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+                    $usr_msg->add_id_with_vars(msg_id::IMPORT_RESULT_NOT_NUMERIC, [
+                        msg_id::VAR_VALUE => $value,
+                        msg_id::VAR_GROUP => $this->grp()->dsp_id()
+                    ]);
                 }
             }
 

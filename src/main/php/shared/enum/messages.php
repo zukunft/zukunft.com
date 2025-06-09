@@ -128,7 +128,7 @@ enum messages: string
     const VAR_TRIPLE = 'VarObjTriple';
     const VAR_FORMULA = 'VarObjFormula';
     const VAR_JSON_PART = 'VarJsonPart';
-
+    const VAR_VERB_NAME = 'VarVerbName';
     const IMPORT_SUCCESS = 'finished successful';
 
     // unique message keys
@@ -265,6 +265,9 @@ enum messages: string
     case TRIPLE_ID_ADDITIONAL = 'triple id additional of "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';
+    case TRIPLE_NOT_SAVED = 'triple "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" cannot be saved';
     case PHRASE_MISSING_MSG = 'phrase "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is missing';
@@ -323,6 +326,43 @@ enum messages: string
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
         . '"';
 
+    case YAML_DECODE_FAILED = 'YAML decode failed of "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '"';
+    case YAML_STRING_EMPTY = 'YAML string is empty';
+    case JSON_DECODE_FAILED = 'JSON decode failed of "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '"';
+    case JSON_STRING_EMPTY = 'JSON string is empty';
+    case IMPORT_VERSION_NEWER = 'Import file has been created with version "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '", which is newer than this, which is "'
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
+        . '"';
+    case IMPORT_UNKNOWN_ELEMENT = 'Unknown element "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case IMPORT_SUMMARY = ''
+        . self::VAR_START . self::VAR_SUMMARY . self::VAR_END;
+    case PHRASE_NAME_EMPTY = self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
+        . ' contains an empty phrase name';
+
+    case YAML_TOOLTIP_COMMENT_UNEXPECTED = 'yaml is not expected to start with a tooltip-comment';
+    case SOURCE_DESCRIPTION_WITHOUT_NAME = 'source-description is given without source-name';
+    case IMPORT_RESULT_NOT_NUMERIC = 'Import result: "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" is expected to be a number ('
+        . self::VAR_START . self::VAR_GROUP . self::VAR_END
+        . ')';
+    case FAILED_ADD_LOGGING_ERROR = 'Adding "'
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . '" "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" failed due to logging error';
+    case ID_OR_NAME_MISSING = 'id or name of word "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" missing';
+
     case SOURCE_MISSING_IMPORT = 'source "'
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
         . '" is missing in the import message '
@@ -336,6 +376,9 @@ enum messages: string
     case COMPONENT_CREATED = 'component with name "'
         . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
         . '" created';
+    case COMPONENT_ALREADY_EXISTS = 'A view component with the name "'
+        . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
+        . '" already exists. Please use another name.';
 
     // messages with vars for import
     case IMPORT_READ_ERROR = 'error reading to decode json '
@@ -355,6 +398,63 @@ enum messages: string
     case CONFIG_PART = 'configuration part '
         . self::VAR_START . self::VAR_PART . self::VAR_END
         . ' cannot yet be selected';
+    case API_MESSAGE = ''
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case MANDATORY_FIELD_NAME_MISSING = 'Mandatory field name missing in API JSON '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case VIEW_TYPE_NOT_FOUND = 'view type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case VIEW_IMPORT_ERROR = ' when importing '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case VIEW_NAME_MISSING = 'name in view missing';
+    case NOT_YET_IMPLEMENTED = 'not yet implemented';
+    case CANNOT_ADD_TIMESTAMP = 'Cannot add timestamp "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" when importing '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
+    case NULL_VALUE_NOT_SAVED = 'null value for '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' not saved';
+    case CANNOT_SAVE_ZERO_ID = 'cannot save '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' because id is zero';
+    case VALUE_TIME_SERIES_LOG_REF_FAILED = 'adding the value time series reference in the system log failed';
+    case SHARE_TYPE_NOT_EXPECTED = 'share type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not expected when importing '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case PROTECTION_TYPE_NOT_EXPECTED = 'protection type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not expected when importing '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case USER_SANDBOX_CREATION_FAILED = 'creation of user sandbox for '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed';
+    case REMOVE_FIELD_FAILED = 'remove of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' failed';
+    case DATABASE_UPDATE_FIELD_TO_VALUE_FAILED = 'update of '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' to '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' failed';
+    case EXCLUDING_FAILED = 'excluding of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' failed';
+    case USER_SANDBOX_TO_EXCLUDE_FAILED = 'creation of user sandbox to exclude failed';
+    case INCLUDE_FOR_USER_FAILED = 'include of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' for user failed';
+    case EXCLUDING_FOR_USER_FAILED = 'excluding of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' for user failed';
+    case USER_SANDBOX_DELETE_IF_NOT_NEEDED_FAILED = 'remove of user sandbox if not needed for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' failed';
+    case USER_SANDBOX_CANNOT_BE_CLEANED = ' and user sandbox cannot be cleaned';
+    case FAILED_TO_DELETE_UNUSED = 'Failed to delete the unused '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
     case IMPORT_COUNT_DIFF = 'import of "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
         . '" failed because only '
@@ -389,7 +489,72 @@ enum messages: string
         . ' in the import json part "'
         . self::VAR_START . self::VAR_JSON_PART . self::VAR_END
         . '".';
+    case IMPORT_NOT_FIND_VIEW = 'Cannot find view "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" when importing '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
+    case FROM_NAME_NOT_EMPTY = 'from name should not be empty at "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '"';
+    case TO_NAME_NOT_EMPTY = 'to name should not be empty at "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '"';
+    case TRIPLE_VERB_CREATED = 'verb "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" for triple "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" created';
+    case TRIPLE_VERB_MISSING = 'verb for triple "'
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . '" missing';
+    case TRIPLE_VERB_NOT_FOUND = 'verb "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case FOR_TRIPLE = 'for triple "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case FAILED_ADD_TRIPLE = 'Adding triple "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" failed';
+    case REVERSE_ALREADY_EXISTS = 'The reverse of "'
+        . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_VERB_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" already exists. Do you really want to create both sides?';
+    case FAILED_RELOAD_CLASS = 'Reload "'
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . '" failed';
+    case TRIPLE_VERB_SET = 'verb for triple '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' set to '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END;
+    case FAILED_SAVE_FORMULA_TRIGGER = 'saving the update trigger for formula '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed';
+    case FAILED_ADD_FORMULA = 'Adding formula '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed.';
+    case FORMULA_NOT_SIMILAR = 'Adding formula '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END;
 
+    case FAILED_ADD_GROUP = 'Adding group '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed (missing save maker).';
+    case GROUP_IS_RESERVED = '"'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" '
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+
+    case CONFLICT_DB_ID = 'Unexpected conflict of the database id. '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' != '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
 
     // for the change log
     case LOG_ADD = 'added';
@@ -424,6 +589,9 @@ enum messages: string
     case CONFIG_NOT_LOADED = 'cannot load config';
     case CONFIG_EMPTY = 'config is empty';
     case IP_LIST_EMPTY = 'ip range list is empty on import';
+    case CONFIG_API_MESSAGE_EMPTY = 'config api message is empty';
+
+    case ADD_USER_CONFIG_FAILED = 'adding of user configuration failed';
 
     // text to be shown in buttons
     case ADD = 'add';
@@ -530,6 +698,45 @@ enum messages: string
     case FOR = ' for '; // e.g. to indicate which phrases a value is assigned to
     case OF = ' of ';   // e.g. to indicate which word would be deleted
 
+    case TRIPLE_FROM_PHRASE_MISSING = 'triple from phrase is missing';
+    case TRIPLE_PHRASE_FROM_NAME_MISSING = 'triple phrase from name is missing and id is 0';
+    case TRIPLE_TO_PHRASE_MISSING = 'triple to phrase is missing';
+    case TRIPLE_PHRASE_TO_NAME_MISSING = 'triple phrase to name is missing and id is 0';
+    case FAILED_TO_DELETE_UNUSED_WORK_LINK = 'Failed to delete the unused work link';
+    case FAILED_UPDATE_REF = 'Updating the reference in the log failed';
+    case FAILED_UPDATE_WORK_LINK_NAME = 'Update of work link name failed';
+
+    case FAILED_MESSAGE_EMPTY = ' failed because message file is empty of not found.';
+    case FAILED_REFRESH_FORMULA = 'Refresh of the formula elements failed';
+
+    case OBJECT_NAME_ALREADY_EXISTS = 'A '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' with the name "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" already exists. Please use another name or merge with this '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . '.';
+    case DUMMY_PARENT_ADD_FUNCTION_CALLED = 'The dummy parent add function has been called, which should never happen';
+    case NOT_SIMILAR_OBJECTS = ''
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not similar '
+        . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END;
+    case FAILED_RELOAD_DEFAULT_VALUES = 'Reloading of the default values for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' failed';
+
+    case NAME_IS_RESERVED_FOR_CLASS = '"'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is a reserved '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' name';
+
+    case FAILED_ADD_REFERENCE = 'Adding reference '
+    . self::VAR_START . self::VAR_ID . self::VAR_END
+    . ' failed.';
+    case FAILED_ADD_REFERENCE_LOG = 'Adding reference for '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' in the log failed.';
 
     /**
      * @return string with the text for the user in the default language

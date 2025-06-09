@@ -996,8 +996,6 @@ class verb extends type_object
 
         // init
         $usr_msg = new user_message();
-        $msg_res = $mtr->txt(msg_id::IS_RESERVED);
-        $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
@@ -1005,7 +1003,10 @@ class verb extends type_object
             if (in_array($this->name, verbs::RESERVED_WORDS)) {
                 // the admin user needs to add the read test word during initial load
                 if (!$usr->is_admin()) {
-                    $usr_msg->add_message_text('"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for);
+                    $usr_msg->add_id_with_vars(msg_id::NAME_IS_RESERVED_FOR_CLASS, [
+                        msg_id::VAR_NAME => $this->name(),
+                        msg_id::VAR_CLASS_NAME => $class_name
+                    ]);
                 }
             }
         }

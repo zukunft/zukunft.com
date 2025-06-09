@@ -764,7 +764,7 @@ class sandbox_named extends sandbox
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
                     if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_message_text('Updating the reference in the log failed');
+                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
                         // TODO do rollback or retry?
                     } else {
                         //$usr_msg->add_message_text($this->set_owner($new_owner_id));
@@ -785,7 +785,10 @@ class sandbox_named extends sandbox
                 } else {
                     $lib = new library();
                     $class_name = $lib->class_to_name($this::class);
-                    $usr_msg->add_message_text('Adding ' . $class_name . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_LOGGING_ERROR, [
+                        msg_id::VAR_CLASS_NAME => $class_name,
+                        msg_id::VAR_ID => $this->dsp_id()
+                    ]);
                 }
             }
         }
@@ -833,7 +836,10 @@ class sandbox_named extends sandbox
             if (in_array($this->name(), $this->reserved_names())) {
                 // the admin user needs to add the read test objects during initial load
                 if ($usr->is_admin() and !in_array($this->name(), $this->fixed_names())) {
-                    $usr_msg->add_message_text('"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for);
+                    $usr_msg->add_id_with_vars(msg_id::GROUP_IS_RESERVED, [
+                        msg_id::VAR_NAME => $this->name(),
+                        msg_id::VAR_JSON_TEXT => $msg_res . ' ' . $class_name . ' ' . $msg_for
+                    ]);
                 }
             }
         }

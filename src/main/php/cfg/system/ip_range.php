@@ -515,14 +515,16 @@ class ip_range extends db_object_seq_id
             if ($this->id() > 0) {
                 // update the id in the log for the correct reference
                 if (!$log->add_ref($this->id())) {
-                    $msg = 'Adding reference for ' . $this->dsp_id() . ' in the log failed.';
-                    $usr_msg->add_message_text($msg);
-                    log_err($msg, self::class . '->add');
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE_LOG, [
+                        msg_id::VAR_ID => $this->dsp_id()
+                    ]);
+                    log_err('Adding reference for ' . $this->dsp_id() . ' in the log failed.', self::class . '->add');
                 }
             } else {
-                $msg = 'Adding reference ' . $this->dsp_id() . ' failed.';
-                $usr_msg->add_message_text($msg);
-                log_err($msg, self::class . '->add');
+                $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE, [
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
+                log_err('Adding reference ' . $this->dsp_id() . ' failed.', self::class . '->add');
             }
         }
 

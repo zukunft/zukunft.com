@@ -117,6 +117,7 @@ use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\const\views;
@@ -339,8 +340,9 @@ class view extends sandbox_typed
             if ($in_ex_json[json_fields::TYPE_NAME] != '') {
                 $type_id = $this->type_id_by_code_id($in_ex_json[json_fields::TYPE_NAME]);
                 if ($type_id == type_list::CODE_ID_NOT_FOUND) {
-                    $usr_msg->add_message_text('view type "'
-                        . $in_ex_json[json_fields::TYPE_NAME] . '" not found');
+                    $usr_msg->add_id_with_vars(msg_id::VIEW_TYPE_NOT_FOUND, [
+                        msg_id::VAR_NAME => $in_ex_json[json_fields::TYPE_NAME]
+                    ]);
                 } else {
                     $this->type_id = $type_id;
                 }
@@ -385,7 +387,7 @@ class view extends sandbox_typed
 
         if (!$usr_msg->is_ok()) {
             $lib = new library();
-            $usr_msg->add_message_text(' when importing ' . $lib->dsp_array($in_ex_json));
+            $usr_msg->add_id_with_vars(msg_id::VIEW_IMPORT_ERROR, [msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)]);
         }
 
         return $usr_msg;
@@ -450,7 +452,7 @@ class view extends sandbox_typed
                 if ($value != '') {
                     $type_id = $this->type_id_by_code_id($value);
                     if ($type_id == type_list::CODE_ID_NOT_FOUND) {
-                        $result->add_message_text('view type "' . $value . '" not found');
+                        $result->add_id_with_vars(msg_id::VIEW_TYPE_NOT_FOUND, [msg_id::VAR_NAME => $value]);
                     } else {
                         $this->type_id = $type_id;
                     }
@@ -467,7 +469,7 @@ class view extends sandbox_typed
 
         if (!$test_obj) {
             if ($this->name == '') {
-                $result->add_message_text('name in view missing');
+                $result->add_id(msg_id::VIEW_NAME_MISSING);
             } else {
                 $result->add($this->save());
 
@@ -557,7 +559,7 @@ class view extends sandbox_typed
 
         if (!$result->is_ok()) {
             $lib = new library();
-            $result->add_message_text(' when importing ' . $lib->dsp_array($in_ex_json));
+            $result->add_id_with_vars(msg_id::VIEW_IMPORT_ERROR, [msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)]);
         }
 
         return $result;
@@ -1175,7 +1177,7 @@ class view extends sandbox_typed
     {
         $usr_msg = new user_message();
         // TODO implement
-        $usr_msg->add_message_text('not yet implemented');
+        $usr_msg->add_id(msg_id::NOT_YET_IMPLEMENTED);
         return $usr_msg;
     }
 

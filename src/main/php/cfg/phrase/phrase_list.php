@@ -174,7 +174,7 @@ class phrase_list extends sandbox_list_named
 
         foreach ($json_obj as $phr_name) {
             if ($phr_name == '') {
-                $usr_msg->add_message_text(implode(',', $json_obj) . ' contains an empty phrase name');
+                $usr_msg->add_id_with_vars(msg_id::PHRASE_NAME_EMPTY, [msg_id::VAR_VALUE_LIST => implode(',', $json_obj)]);
             } else {
                 if ($usr_msg->is_ok()) {
                     $phr = $phr_lst->get_by_name($phr_name);

@@ -46,6 +46,7 @@ use html\rest_ctrl;
 use html\user\user_message;
 use html\value\value_list;
 use shared\api;
+use shared\enum\messages as msg_id;
 use shared\helper\Config as shared_config;
 
 class config extends value_list
@@ -89,12 +90,12 @@ class config extends value_list
         $rest = new rest_ctrl();
         $json_body = $rest->api_get(config::class, $data);
         if (array_key_exists(api::URL_VAR_MSG, $json_body)) {
-            $usr_msg->add_message_text($json_body[api::URL_VAR_MSG]);
+            $usr_msg->add_id_with_vars(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[api::URL_VAR_MSG]]);
         }
         if ($usr_msg->is_ok()) {
             $this->api_mapper($json_body);
             if ($this->is_empty()) {
-                $usr_msg->add_message_text('config api message is empty');
+                $usr_msg->add_id(msg_id::CONFIG_API_MESSAGE_EMPTY);
             }
         }
         return $usr_msg;
