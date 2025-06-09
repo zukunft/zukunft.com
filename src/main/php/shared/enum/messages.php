@@ -738,6 +738,9 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' in the log failed.';
 
+    case REFERENCE_TYPE_NOT_FOUND = 'Reference type for {VAR_TYPE_NAME} not found';
+    case VAR_TYPE_NAME = 'TYPE_NAME';
+
     /**
      * @return string with the text for the user in the default language
      */
