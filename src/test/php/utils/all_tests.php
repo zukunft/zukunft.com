@@ -145,10 +145,11 @@ const QUICK_TEST_ONLY = false; // true to run only a single test for faster debu
 const WRITE_TEST = true; // perform also the db write tests
 
 include_once TEST_UNIT_WRITE_PATH . 'all_unit_write_tests.php';
+include_once TEST_UNIT_INT_PATH . 'all_integration_tests.php';
 
-use unit_write\all_unit_write_tests;
+use integration\all_integration_tests;
 
-class all_tests extends all_unit_write_tests
+class all_tests extends all_integration_tests
 {
 
     function run_all_tests(): void
@@ -160,7 +161,7 @@ class all_tests extends all_unit_write_tests
         $this->header('Start of all zukunft.com tests');
 
         if (QUICK_TEST_ONLY) {
-            $this->run_single();
+            $this->run_single($this);
         }
 
         // run the unit tests without database connection
@@ -179,6 +180,10 @@ class all_tests extends all_unit_write_tests
 
         if ($errors <= ERROR_LIMIT and !ONLY_UNIT_TESTS and !RESET_DB_ONLY and !QUICK_TEST_ONLY and WRITE_TEST) {
             $this->run_db_write_tests($this);
+        }
+
+        if ($errors <= ERROR_LIMIT and !ONLY_UNIT_TESTS and !RESET_DB_ONLY and !QUICK_TEST_ONLY and WRITE_TEST) {
+            $this->run_integration_tests($this);
         }
 
         // display the test results

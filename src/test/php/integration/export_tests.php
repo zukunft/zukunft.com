@@ -2,8 +2,8 @@
 
 /*
 
-  test_export.php - TESTing of the EXPORT functions
-  ---------------
+    test/php/integration/export_tests.php - TESTing of the EXPORT functions
+    -------------------------------------
   
 
     This file is part of zukunft.com - calc with words

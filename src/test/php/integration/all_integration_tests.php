@@ -2,9 +2,9 @@
 
 /*
 
-  test_import.php - TESTing of the IMPORT functions by loading the sample import files
-  ---------------
-  
+    test/php/integration/all_integration_tests.php - add all integration tests to the test class
+    ---------------------------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -30,26 +30,27 @@
 
 */
 
+namespace integration;
+
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
+include_once SERVICE_PATH . 'config.php';
 include_once TEST_CONST_PATH . 'files.php';
 
-use cfg\import\import_file;
-use test\test_cleanup;
-use const\files as test_files;
+use test\all_tests;
+use unit_write\all_unit_write_tests;
 
-function run_import_test($file_list, test_cleanup $t): void
+class all_integration_tests extends all_unit_write_tests
 {
-    global $usr;
 
-    $t->header('Zukunft.com integration tests by importing the sample cases');
+    function run_integration_tests(all_tests $t): void
+    {
+        // start the test section (ts)
+        $ts = 'integration ';
+        $t->header($ts);
 
-    $import_path = test_files::IMPORT_PATH;
+        // do the database unit tests
+        (new import_tests)->run($this);
 
-    foreach ($file_list as $json_test_filename) {
-        $imf = new import_file();
-        $result = $imf->json_file($import_path . $json_test_filename, $usr);
-        $target = 'done';
-        $t->dsp_contains(', import of ' . $json_test_filename . ' contains at least ' . $target, $target,
-            $result->get_last_message(), $t::TIMEOUT_LIMIT_IMPORT);
     }
 
 }

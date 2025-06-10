@@ -5,6 +5,8 @@
     test/unit/import.php - testing of the import functions
     --------------------
   
+    similar to the integration/import_tests but excluding the actual database import
+
 
     This file is part of zukunft.com - calc with words
 

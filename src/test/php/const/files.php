@@ -67,6 +67,7 @@ class files
     const IMPORT_PATH = self::RESOURCE_PATH . 'import' . DIRECTORY_SEPARATOR;
     const IMPORT_UNIT_PATH = self::IMPORT_PATH . 'unit_tests' . DIRECTORY_SEPARATOR;
     const IMPORT_WIKIPEDIA_PATH = self::IMPORT_PATH . 'wikipedia' . DIRECTORY_SEPARATOR;
+    const IMPORT_FAIL_PATH = self::IMPORT_PATH . 'inconsistency_tests' . DIRECTORY_SEPARATOR;
 
     // path for resources to test the frontend
     const WEB_RES_PATH = self::RESOURCE_PATH . 'web' . DIRECTORY_SEPARATOR;
@@ -153,5 +154,12 @@ class files
         'personal_climate_gas_emissions_timon.json',
         'THOMY_test.json'
     ];
+
+
+    /*
+     * import fail test files
+     */
+
+    const IMPORT_DOUBLE_FORMULA = self::IMPORT_FAIL_PATH . 'formula_double' . self::JSON;
 
 }

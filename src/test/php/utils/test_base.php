@@ -291,8 +291,8 @@ include_once TEST_PHP_UTIL_PATH . 'format.php';
 include_once TEST_PHP_UTIL_PATH . 'level.php';
 
 // load the integration test functions
-include_once TEST_UNIT_INT_PATH . 'test_import.php';
-include_once TEST_UNIT_INT_PATH . 'test_export.php';
+include_once TEST_UNIT_INT_PATH . 'import_tests.php';
+include_once TEST_UNIT_INT_PATH . 'export_tests.php';
 
 // load the test functions still in development
 include_once TEST_DEV_PATH . 'test_legacy.php';

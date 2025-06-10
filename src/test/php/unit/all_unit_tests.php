@@ -88,13 +88,11 @@ include_once TEST_CONST_PATH . 'files.php';
 use cfg\component\component_link_type_list;
 use cfg\component\component_type_list;
 use cfg\component\position_type_list;
-use cfg\const\files;
 use cfg\db\sql_db;
 use cfg\element\element_type_list;
 use cfg\formula\formula_link_type_list;
 use cfg\formula\formula_type_list;
 use cfg\import\import_file;
-use cfg\phrase\phrase_list;
 use cfg\system\job_type_list;
 use cfg\language\language_form_list;
 use cfg\language\language_list;
@@ -115,20 +113,13 @@ use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
 use cfg\view\view_type_list;
 use html\types\formula_type_list as formula_type_list_web;
-use shared\const\words;
 use shared\enum\user_profiles;
 use test\all_tests;
 use test\test_cleanup;
-use unit\import_tests as import_tests;
-use unit_read\triple_list_read_tests;
-use unit_read\triple_read_tests;
-use unit_read\value_read_tests;
-use unit_read\word_list_read_tests;
+use unit\import_tests as unit_import_tests;
+use integration\import_tests;
 use unit_ui\all_ui_tests;
 use unit_ui\base_ui_tests;
-use const\files as test_files;
-use unit_write\triple_write_tests;
-use unit_write\value_write_tests;
 
 class all_unit_tests extends test_cleanup
 {
@@ -218,11 +209,11 @@ class all_unit_tests extends test_cleanup
             //$this->file_import(files::MESSAGE_PATH . files::SYSTEM_VIEWS_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::UNITS_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::IP_BLACKLIST_FILE, $usr);
-            $this->file_import(files::MESSAGE_PATH . files::TIME_FILE, $usr);
-            $this->file_import(files::MESSAGE_PATH . files::BASE_VIEWS_FILE, $usr);
-            $this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
-            $this->file_import(files::MESSAGE_PATH . files::COMPANY_FILE, $usr);
-            $this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr);
+            //$this->file_import(files::MESSAGE_PATH . files::TIME_FILE, $usr);
+            //$this->file_import(files::MESSAGE_PATH . files::BASE_VIEWS_FILE, $usr);
+            //$this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
+            //$this->file_import(files::MESSAGE_PATH . files::COMPANY_FILE, $usr);
+            //$this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr, true);
             //$this->file_import(test_files::IMPORT_COUNTRY_ISO, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
@@ -236,15 +227,15 @@ class all_unit_tests extends test_cleanup
             // run the selected db read tests
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);
-            (new word_list_read_tests())->run($this);
-            (new triple_read_tests())->run($this);
+            //(new word_list_read_tests())->run($this);
+            //(new triple_read_tests())->run($this);
             //(new triple_list_read_tests())->run($this);
             //(new source_read_tests())->run($this);
             //(new formula_read_tests())->run($this);
             //(new view_read_tests())->run($this);
             //(new component_read_tests())->run($this);
             //(new graph_tests())->run($this);
-            (new value_read_tests())->run($this);
+            //(new value_read_tests())->run($this);
 
 
             /*
@@ -258,7 +249,7 @@ class all_unit_tests extends test_cleanup
             //(new group_write_tests)->run($this);
             //(new source_write_tests)->run($this);
             //(new ref_write_tests)->run($this);
-            (new value_write_tests)->run($this);
+            //(new value_write_tests)->run($this);
             //(new formula_write_tests)->run($this);
             //(new formula_link_write_tests)->run($this);
             //(new expression_write_tests)->run($this);
@@ -270,8 +261,13 @@ class all_unit_tests extends test_cleanup
             //(new component_link_write_tests)->run($this);
 
 
+            /*
+             * integration
+             */
+
             //$import = new import_file();
             //$import->import_test_files($usr);
+            (new import_tests())->run($this);
         }
 
         /*
@@ -368,7 +364,7 @@ class all_unit_tests extends test_cleanup
         (new component_link_list_tests)->run($this);
 
         // do the im- and export unit tests
-        (new import_tests)->run($this);
+        (new unit_import_tests)->run($this);
 
         // db setup
         (new db_setup_tests)->run($this);
