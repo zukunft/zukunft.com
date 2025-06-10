@@ -16,7 +16,7 @@ This program should
 installation
 ------------
 
-To install this version 0.0.3 use a LAMP server (https://wiki.debian.org/LaMp) and
+To install this version 0.0.3 use a LAPP or (LAMP for MySQL) server (https://wiki.debian.org/LaMp) and
 1) copy all files to the www root path (e.g. /var/www/html/)
 2) copy all files of bootstrap 4.1.3 or higher to /var/www/html/lib_external/bootstrap/4.1.3/
 3) copy all files of fontawesome to /var/www/html/lib_external/fontawesome/
