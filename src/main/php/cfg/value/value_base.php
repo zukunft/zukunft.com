@@ -2360,7 +2360,7 @@ class value_base extends sandbox_value
                 if ($usr_msg->is_ok()) {
                     // if the user is the owner and no other user has adjusted the value, really delete the value in the database
                     if ($use_func) {
-                        $usr_msg->add_message_text($this->save_fields_func($db_con, $db_rec, $std_rec));
+                        $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
                     } else {
                         $usr_msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec));
                     }

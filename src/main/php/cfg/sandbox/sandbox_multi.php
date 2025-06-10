@@ -2896,7 +2896,7 @@ class sandbox_multi extends db_object_multi_user
                     // TODO add function based saving
                     if ($usr_msg->is_ok()) {
                         if ($use_func) {
-                            $usr_msg->add_message_text($this->save_fields_func($db_con, $db_rec, $std_rec));
+                            $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
                         } else {
                             $usr_msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec));
                         }
@@ -3148,7 +3148,7 @@ class sandbox_multi extends db_object_multi_user
                         if ($msg == '') {
                             log_debug('loaded standard ' . $std_rec->dsp_id());
                             if ($use_func) {
-                                $msg .= $this->save_fields_func($db_con, $db_rec, $std_rec);
+                                $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
                             } else {
                                 $msg .= $this->save_field_excluded($db_con, $db_rec, $std_rec);
                             }
@@ -3171,9 +3171,9 @@ class sandbox_multi extends db_object_multi_user
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sandbox_multi $db_obj the database record before the saving
      * @param sandbox_multi $norm_obj the database record defined as standard because it is used by most users
-     * @return string if not empty the message that should be shown to the user
+     * @return user_message with the description of any problems for the user and the suggested solution
      */
-    function save_fields_func(sql_db $db_con, sandbox_multi $db_obj, sandbox_multi $norm_obj): string
+    function save_fields_func(sql_db $db_con, sandbox_multi $db_obj, sandbox_multi $norm_obj): user_message
     {
         // always return a user message and if everything is fine, it is just empty
         $usr_msg = new user_message();
@@ -3254,9 +3254,8 @@ class sandbox_multi extends db_object_multi_user
             }
         }
 
-        $result = $usr_msg->get_last_message();
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
-        return $result;
+        return $usr_msg;
     }
 
     /**

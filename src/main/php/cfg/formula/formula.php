@@ -2522,7 +2522,7 @@ class formula extends sandbox_typed
                 $std_rec = clone $db_rec;
                 // save the formula fields
                 if ($use_func) {
-                    $usr_msg->add_message_text($this->save_fields_func($db_con, $db_rec, $std_rec));
+                    $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
                 } else {
                     $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }
@@ -2681,7 +2681,7 @@ class formula extends sandbox_typed
                         // the problem is shown to the user by the calling interactive script
                         if ($usr_msg->is_ok()) {
                             if ($use_func) {
-                                $usr_msg->add_message_text($this->save_fields_func($db_con, $db_rec, $std_rec));
+                                $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
                             } else {
                                 $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                             }
