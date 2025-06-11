@@ -499,7 +499,7 @@ class value_base extends sandbox_value
                 if (is_numeric($value)) {
                     $this->set_value($value);
                 } else {
-                    $usr_msg->add_id_with_vars(msg_id::IMPORT_RESULT_NOT_NUMERIC, [
+                    $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
                         msg_id::VAR_VALUE => $value, 
                         msg_id::VAR_GROUP => $this->grp()->dsp_id()
                     ]);
@@ -1493,8 +1493,8 @@ class value_base extends sandbox_value
             if (strtotime($value)) {
                 $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
             } else {
-                $msg->add_id_with_vars(msg_id::IMPORT_RESULT_NOT_NUMERIC,
-                    [msg_id::VAR_GROUP => $this->grp()->dsp_id(), msg_id::VAR_VALUE => $value]
+                $msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP,
+                    [msg_id::VAR_VALUE => $value, msg_id::VAR_ID => $this->dsp_id()]
                 );
             }
         }
@@ -1503,7 +1503,7 @@ class value_base extends sandbox_value
             if (is_numeric($value)) {
                 $this->set_value($value);
             } else {
-                $msg->add_id_with_vars(msg_id::IMPORT_RESULT_NOT_NUMERIC, [
+                $msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
                     msg_id::VAR_GROUP => $this->grp()->dsp_id(), 
                     msg_id::VAR_VALUE => $value
                     ]);
@@ -2247,7 +2247,7 @@ class value_base extends sandbox_value
                     // update the reference in the log
                     if ($this->grp()->is_prime()) {
                         if (!$log->add_ref($this->id())) {
-                            $usr_msg->add_id_with_vars(msg_id::VALUE_TIME_SERIES_LOG_REF_FAILED, []);
+                            $usr_msg->add_id(msg_id::VALUE_TIME_SERIES_LOG_REF_FAILED);
                         }
                     } else {
                         // TODO: save in the value or value big change log
@@ -2276,7 +2276,7 @@ class value_base extends sandbox_value
                     }
 
                 } else {
-                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE, [
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_VALUE, [
                         msg_id::VAR_ID => $this->id()
                     ]);
                 }
