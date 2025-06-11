@@ -820,13 +820,13 @@ class sql_db
         $result = false;
         if ($this->db_type == sql_db::POSTGRES) {
             try {
-                $this->postgres_link = pg_connect('host=localhost dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
+                $this->postgres_link = pg_connect('host=' . SQL_DB_HOST . ' dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
                 $result = true;
             } catch (Exception $e) {
                 log_fatal('Cannot connect to database due to ' . $e->getMessage(), 'sql_db open');
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $this->mysql = mysqli_connect('localhost', SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, 'zukunft') or die('Could not connect: ' . mysqli_error($this->mysql));
+            $this->mysql = mysqli_connect(SQL_DB_HOST, SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, 'zukunft') or die('Could not connect: ' . mysqli_error($this->mysql));
             $result = true;
         } else {
             log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
