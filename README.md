@@ -42,7 +42,19 @@ with the options
 After "zukunftcom start" a message should be shown including the pod name. Every critical event, 
 such as the connection to other pods, should be shown in the console 
 and beginning with an increasing minute based interval, 
-but at least once a day a status message should be shown with the system usage and a summery if the usage. 
+but at least once a day a status message should be shown with the system usage and a summery if the usage.
+
+Local installation
+------------------
+
+For development a local installation is recommend 
+using an install that needs to be created (see issue #133)
+
+Pod Installation
+----------------
+
+To install a pod on a server a solution is to use the 
+docker installation that will be created (see issue #134)
 
 
 Additional for development
@@ -119,6 +131,13 @@ Coding team suggestions
 
 Decisions
 - use this program for a mind map with all arguments where each has a weight and value and all changes are logged
+
+Deployment process
+1. do the changes and commits in the feature branch related to the issue e.g. "feature/134-create-a-docker-script-and-a-docu-how-to-use"
+2. review the code and merge it to "develop"
+3. test it and if it is fine, merge it to the staging branch "release"
+4. if the public test is fine, merge it to master and update the production system using the CI/CD Process, which needs to be created
+
 
 naming conventions for vars:
 ---------------------------
