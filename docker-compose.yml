@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  php:
+    build: .
+    container_name: zukunft-php
+    expose:
+      - 9000
+    volumes:
+      - .:/var/www/html
+    environment:
+      DB_HOST: zukunft_db_host
+      DB_NAME: zukunftdb
+      DB_USER: zukunft
+      DB_PASS: zukunft
+
+  nginx:
+    image: nginx:alpine
+    container_name: zukunft-nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
