@@ -488,7 +488,10 @@ class value_base extends sandbox_value
                 if (strtotime($value)) {
                     $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
                 } else {
-                    $usr_msg->add_message_text('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
+                    $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP, [
+                        msg_id::VAR_VALUE => $value, 
+                        msg_id::VAR_ID => $this->dsp_id()
+                    ]);
                 }
             }
 
@@ -496,7 +499,10 @@ class value_base extends sandbox_value
                 if (is_numeric($value)) {
                     $this->set_value($value);
                 } else {
-                    $usr_msg->add_message_text('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+                    $usr_msg->add_id_with_vars(msg_id::IMPORT_RESULT_NOT_NUMERIC, [
+                        msg_id::VAR_VALUE => $value, 
+                        msg_id::VAR_GROUP => $this->grp()->dsp_id()
+                    ]);
                 }
             }
 
@@ -585,7 +591,9 @@ class value_base extends sandbox_value
             if (strtotime($value)) {
                 $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
             } else {
-                $usr_msg->add_message_text('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
+                $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP,
+                    [msg_id::VAR_VALUE => $value, msg_id::VAR_ID => $this->dsp_id()]
+                );
             }
         }
 
@@ -594,7 +602,9 @@ class value_base extends sandbox_value
             if (is_numeric($value)) {
                 $this->set_value($value);
             } else {
-                $usr_msg->add_message_text('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_RESULT_NOT_NUMERIC,
+                    [msg_id::VAR_VALUE => $value, msg_id::VAR_GROUP => $this->grp()->dsp_id()]
+                );
             }
         }
 
@@ -1483,7 +1493,9 @@ class value_base extends sandbox_value
             if (strtotime($value)) {
                 $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
             } else {
-                $msg->add_message_text('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
+                $msg->add_id_with_vars(msg_id::IMPORT_RESULT_NOT_NUMERIC,
+                    [msg_id::VAR_GROUP => $this->grp()->dsp_id(), msg_id::VAR_VALUE => $value]
+                );
             }
         }
 
@@ -1491,7 +1503,10 @@ class value_base extends sandbox_value
             if (is_numeric($value)) {
                 $this->set_value($value);
             } else {
-                $msg->add_message_text('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+                $msg->add_id_with_vars(msg_id::IMPORT_RESULT_NOT_NUMERIC, [
+                    msg_id::VAR_GROUP => $this->grp()->dsp_id(), 
+                    msg_id::VAR_VALUE => $value
+                    ]);
             }
         }
 
@@ -2232,7 +2247,7 @@ class value_base extends sandbox_value
                     // update the reference in the log
                     if ($this->grp()->is_prime()) {
                         if (!$log->add_ref($this->id())) {
-                            $usr_msg->add_message_text('adding the value reference in the system log failed');
+                            $usr_msg->add_id_with_vars(msg_id::VALUE_TIME_SERIES_LOG_REF_FAILED, []);
                         }
                     } else {
                         // TODO: save in the value or value big change log
@@ -2261,7 +2276,9 @@ class value_base extends sandbox_value
                     }
 
                 } else {
-                    $usr_msg->add_message_text("Adding value " . $this->id() . " failed.");
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE, [
+                        msg_id::VAR_ID => $this->id()
+                    ]);
                 }
             }
         }
