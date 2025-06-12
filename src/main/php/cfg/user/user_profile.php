@@ -59,7 +59,7 @@ class user_profile extends type_object
 
     // database fields additional to the standard field names
     const FLD_ID = 'user_profile_id';
-    const FLD_LEVEL_COM = 'the access right level to prevent unpermitted right gaining';
+    const FLD_LEVEL_COM = 'the access right level to prevent not permitted right gaining';
     const FLD_LEVEL = 'right_level';
 
     // additional fieldss for the table creation of user profiles

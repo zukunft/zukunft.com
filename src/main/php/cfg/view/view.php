@@ -508,7 +508,9 @@ class view extends sandbox_typed
                             and array_key_exists(json_fields::NAME, $json_cmp)
                             and array_key_exists(json_fields::POS_TYPE, $json_cmp)
                             and array_key_exists(json_fields::STYLE, $json_cmp))) {
-                        $cmp->load_by_name($json_cmp[json_fields::NAME]);
+                        if ($test_obj == null) {
+                            $cmp->load_by_name($json_cmp[json_fields::NAME]);
+                        }
                         if (array_key_exists(json_fields::POS_TYPE, $json_cmp)) {
                             $pos_type_code_id = $json_cmp[json_fields::POS_TYPE];
                         }
