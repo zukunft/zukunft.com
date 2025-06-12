@@ -71,6 +71,7 @@ $result = ''; // reset the html code var
 
 // load the session user parameters
 $usr = new user;
+$usr_msg->add_message_text($usr->get());
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {

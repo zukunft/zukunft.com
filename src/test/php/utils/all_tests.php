@@ -160,7 +160,7 @@ class all_tests extends all_unit_write_tests
         $this->header('Start of all zukunft.com tests');
 
         if (QUICK_TEST_ONLY) {
-            $this->run_single();
+            $this->run_single($this);
         }
 
         // run the unit tests without database connection
