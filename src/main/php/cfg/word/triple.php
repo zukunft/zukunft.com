@@ -2118,7 +2118,7 @@ class triple extends sandbox_link_named
         $similar = $this->get_similar_named();
         // if the similar object is not the same as $this object, suggest renaming $this object
         if ($similar != null) {
-            $usr_msg->add_message_text($similar->id_used_msg($this));
+            $usr_msg->add($similar->id_used_msg($this));
         }
         return $usr_msg;
     }
