@@ -26,8 +26,10 @@ To install this version 0.0.3 use a LAPP or (LAMP for MySQL) server (https://wik
 7) test if the installation is running fine by calling http://yourserver.com/test/test.php 
    (until this version 0.0.3 is finished try to run test.php in a terminal in case of errors)
 
-Docker Installation (Recommended)
-------------------------------
+Docker Installation
+-------------------
+
+Recommended only for dedicated pod servers due to potential security issues ( https://wiki.debian.org/Docker )
 
 For a quick and easy setup, you can use Docker to run the application. This method ensures consistent environments and easy deployment.
 
