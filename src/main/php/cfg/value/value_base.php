@@ -602,7 +602,7 @@ class value_base extends sandbox_value
             if (is_numeric($value)) {
                 $this->set_value($value);
             } else {
-                $usr_msg->add_id_with_vars(msg_id::IMPORT_RESULT_NOT_NUMERIC,
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC,
                     [msg_id::VAR_VALUE => $value, msg_id::VAR_GROUP => $this->grp()->dsp_id()]
                 );
             }
@@ -2247,7 +2247,7 @@ class value_base extends sandbox_value
                     // update the reference in the log
                     if ($this->grp()->is_prime()) {
                         if (!$log->add_ref($this->id())) {
-                            $usr_msg->add_id(msg_id::VALUE_TIME_SERIES_LOG_REF_FAILED);
+                            $usr_msg->add_id(msg_id::VALUE_REFERENCE_LOG_REF_FAILED);
                         }
                     } else {
                         // TODO: save in the value or value big change log

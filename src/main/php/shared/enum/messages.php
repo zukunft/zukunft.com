@@ -425,6 +425,7 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' because id is zero';
     case VALUE_TIME_SERIES_LOG_REF_FAILED = 'adding the value time series reference in the system log failed';
+    case VALUE_REFERENCE_LOG_REF_FAILED = 'adding the value reference in the system log failed';
     case SHARE_TYPE_NOT_EXPECTED = 'share type "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is not expected when importing '
