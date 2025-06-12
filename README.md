@@ -26,6 +26,62 @@ To install this version 0.0.3 use a LAPP or (LAMP for MySQL) server (https://wik
 7) test if the installation is running fine by calling http://yourserver.com/test/test.php 
    (until this version 0.0.3 is finished try to run test.php in a terminal in case of errors)
 
+Docker Installation (Recommended)
+------------------------------
+
+For a quick and easy setup, you can use Docker to run the application. This method ensures consistent environments and easy deployment.
+
+Prerequisites:
+- Docker Engine installed on your system
+- Docker Compose installed on your system
+
+Steps:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/zukunft/zukunft.com.git
+   cd zukunft.com
+   ```
+
+2. (Optional) Create a `.env` file to customize database credentials:
+   ```env
+   DB_HOST=db
+   DB_PORT=5432
+   DB_DATABASE=zukunft
+   DB_USERNAME=zukunft
+   DB_PASSWORD=your_secure_password
+   ```
+
+3. Start the application:
+   ```bash
+   docker compose up -d
+   ```
+
+4. Initialize the database (first time only):
+   ```bash
+   docker compose exec app php /var/www/html/test/reset_db.php
+   ```
+
+5. Access the application:
+   - Main application: http://localhost
+   - Test page: http://localhost/test/test.php
+
+The Docker setup includes:
+- PHP 8.2 with Apache
+- PostgreSQL 14
+- All required PHP extensions (pgsql, yaml, curl)
+- Automatic database configuration
+- Volume persistence for database data
+
+To stop the application:
+```bash
+docker compose down
+```
+
+To view logs:
+```bash
+docker compose logs -f
+```
+
 Target installation
 -------------------
 

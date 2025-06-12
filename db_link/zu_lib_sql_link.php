@@ -1,9 +1,10 @@
 <?php
 
-// passwords are in this separate file for easy distribution of code
+// Database configuration from environment variables
+define('SQL_DB_HOST', getenv('DB_HOST') ?: 'db');
 
-const SQL_DB_USER = "zukunft";
-const SQL_DB_PASSWD = "zukunft";
+define('SQL_DB_USER', getenv('DB_USERNAME') ?: 'zukunft');
+define('SQL_DB_PASSWD', getenv('DB_PASSWORD') ?: 'zukunft');
 
-const SQL_DB_USER_MYSQL = "zukunft";
-const SQL_DB_PASSWD_MYSQL = "y9CJxs2JkVKvGmP";
+define('SQL_DB_USER_MYSQL', getenv('DB_USERNAME') ?: 'zukunft');
+define('SQL_DB_PASSWD_MYSQL', getenv('DB_PASSWORD') ?: 'y9CJxs2JkVKvGmP');

@@ -1634,7 +1634,7 @@ class library
         array  $to,
         ?array $from_sep = null,
         ?array $to_sep = null,
-        int    $str_type): array
+        int    $str_type = self::STR_TYPE_CODE): array
     {
         if ($from_sep == null
             or count($from_sep) != count($from)
