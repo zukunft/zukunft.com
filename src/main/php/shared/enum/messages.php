@@ -354,6 +354,11 @@ enum messages: string
         . '" is expected to be a number ('
         . self::VAR_START . self::VAR_GROUP . self::VAR_END
         . ')';
+    case IMPORT_VALUE_NOT_NUMERIC = 'Import value: "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" is expected to be a number ('
+        . self::VAR_START . self::VAR_GROUP . self::VAR_END
+        . ')';
     case FAILED_ADD_LOGGING_ERROR = 'Adding "'
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . '" "'
@@ -420,6 +425,7 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' because id is zero';
     case VALUE_TIME_SERIES_LOG_REF_FAILED = 'adding the value time series reference in the system log failed';
+    case VALUE_REFERENCE_LOG_REF_FAILED = 'adding the value reference in the system log failed';
     case SHARE_TYPE_NOT_EXPECTED = 'share type "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is not expected when importing '
@@ -734,6 +740,10 @@ enum messages: string
     case FAILED_ADD_REFERENCE = 'Adding reference '
     . self::VAR_START . self::VAR_ID . self::VAR_END
     . ' failed.';
+    case FAILED_ADD_VALUE = 'Adding value '
+    . self::VAR_START . self::VAR_ID . self::VAR_END
+    . ' failed.';
+
     case FAILED_ADD_REFERENCE_LOG = 'Adding reference for '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' in the log failed.';
