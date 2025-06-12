@@ -85,6 +85,7 @@ use cfg\user\user;
 use cfg\word\word;
 use cfg\word\triple;
 use cfg\word\word_db;
+use shared\enum\messages as msg_id;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use shared\types\phrase_type as phrase_type_shared;
@@ -1005,19 +1006,21 @@ class term extends combine_named
     /**
      * create a message text that the name is already used
      */
-    function id_used_msg(db_object_seq_id $obj_to_add): string
+    function id_used_msg(db_object_seq_id $obj_to_add): user_message
     {
         $lib = new library();
-        $result = "";
+        $usr_msg = new user_message();
 
         if ($this->id() != 0) {
             $class = $lib->class_to_name($this->type());
-            $result =
-                'A ' . $class . ' with the name "' . $this->name() . '" already exists. '
-                . 'Please use another ' . $lib->class_to_name($obj_to_add::class) . ' name.';
+            $usr_msg->add_id_with_vars(msg_id::CLASS_ALREADY_EXISTS, [
+                msg_id::VAR_CLASS_NAME => $class,
+                msg_id::VAR_NAME => $this->name(),
+                msg_id::VAR_VALUE => $lib->class_to_name($obj_to_add::class)
+            ]);
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /*

@@ -562,6 +562,31 @@ enum messages: string
         . ' != '
         . self::VAR_START . self::VAR_ID . self::VAR_END;
 
+    case IMPORT_SOURCE_NOT_FOUND = 'Cannot find source "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" when importing '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
+
+    case CLASS_ALREADY_EXISTS = 'A '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' with the name "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" already exists. Please use another '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' name.';
+
+    case VERB_UPDATE_FAILED = 'updating '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' to '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' for verb '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed';
+
+    case VERB_ADD_FAILED = 'Adding verb '
+        .self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' failed.';
+
     // for the change log
     case LOG_ADD = 'added';
     case LOG_UPDATE = 'changed';
