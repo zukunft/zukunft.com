@@ -898,9 +898,9 @@ class sql_db
         $sys_times->switch(system_time_type::DB_WRITE);
 
         // ask the user for the database server, admin user and pw
-        $db_server = 'localhost';
+        $db_server = SQL_DB_HOST;
         $db_admin_user = 'postgres';
-        $db_admin_password = 'xxx';
+        $db_admin_password = SQL_DB_PASSWD;
         // connect with db admin user
         $this->postgres_link = pg_connect('host=' . $db_server . ' user=' . $db_admin_user . ' password=' . $db_admin_password);
         // create zukunft user
