@@ -1632,9 +1632,9 @@ class library
     function str_diff_list(
         array  $from,
         array  $to,
-        int    $str_type,
         ?array $from_sep = null,
-        ?array $to_sep = null): array
+        ?array $to_sep = null,
+        int    $str_type = self::STR_TYPE_CODE): array
     {
         if ($from_sep == null
             or count($from_sep) != count($from)
