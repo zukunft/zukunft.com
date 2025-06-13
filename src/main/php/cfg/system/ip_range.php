@@ -412,7 +412,7 @@ class ip_range extends db_object_seq_id
      */
     private function save_field_reason(sql_db $db_con, ip_range $db_rec): user_message
     {
-        $usr_msg = null;
+        $usr_msg = new user_message();
         if ($db_rec->reason <> $this->reason) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->reason;
@@ -429,11 +429,11 @@ class ip_range extends db_object_seq_id
      * set the update parameters for the block reason
      * @param sql_db $db_con the active database connection
      * @param ip_range $db_rec the ip range active flag as saved in the database before the change
-     * @return user_message | null string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_field_active(sql_db $db_con, ip_range $db_rec): user_message | null
+    private function save_field_active(sql_db $db_con, ip_range $db_rec): user_message
     {
-        $usr_msg = null;
+        $usr_msg = new user_message();
         if ($db_rec->active <> $this->active) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->active;

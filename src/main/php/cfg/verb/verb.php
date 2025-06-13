@@ -775,7 +775,7 @@ class verb extends type_object
 
     private function save_field_code_id(sql_db $db_con, $db_rec): user_message
     {
-        $usr_msg = null;
+        $usr_msg = new user_message();
         if ($db_rec->code_id <> $this->code_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->code_id;
@@ -792,7 +792,7 @@ class verb extends type_object
     // set the update parameters for the verb name
     private function save_field_name(sql_db $db_con, $db_rec): user_message
     {
-        $usr_msg = null;
+        $usr_msg = new user_message();
         if ($db_rec->name <> $this->name) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->name;
@@ -808,7 +808,7 @@ class verb extends type_object
     // set the update parameters for the verb plural
     private function save_field_plural(sql_db $db_con, $db_rec): user_message
     {
-        $usr_msg = null;
+        $usr_msg = new user_message();
         if ($db_rec->plural <> $this->plural) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->plural;
@@ -824,7 +824,7 @@ class verb extends type_object
     // set the update parameters for the verb reverse
     private function save_field_reverse(sql_db $db_con, $db_rec): user_message
     {
-        $usr_msg = null;
+        $usr_msg = new user_message();
         if ($db_rec->reverse <> $this->reverse) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->reverse;
@@ -840,7 +840,7 @@ class verb extends type_object
     // set the update parameters for the verb rev_plural
     private function save_field_rev_plural(sql_db $db_con, $db_rec): user_message
     {
-        $usr_msg = null;
+        $usr_msg = new user_message();
         if ($db_rec->rev_plural <> $this->rev_plural) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->rev_plural;
@@ -856,7 +856,7 @@ class verb extends type_object
     // set the update parameters for the verb description
     private function save_field_description(sql_db $db_con, $db_rec): user_message
     {
-        $usr_msg = null;
+        $usr_msg = new user_message();
         if ($db_rec->description <> $this->description) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->description;
@@ -872,7 +872,7 @@ class verb extends type_object
     // set the update parameters for the verb description
     private function save_field_formula_name(sql_db $db_con, $db_rec): user_message
     {
-        $usr_msg = null;
+        $usr_msg = new user_message();
         if ($db_rec->frm_name <> $this->frm_name) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->frm_name;
