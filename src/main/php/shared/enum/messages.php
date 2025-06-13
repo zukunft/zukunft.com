@@ -608,6 +608,10 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' failed';
 
+    case SANDBOX_NOT_SIMILAR = self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' seems to be not similar to '
+        . self::VAR_START . self::VAR_ID_CHK . self::VAR_END;
+
     // for the change log
     case LOG_ADD = 'added';
     case LOG_UPDATE = 'changed';

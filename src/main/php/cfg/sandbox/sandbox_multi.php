@@ -426,10 +426,10 @@ class sandbox_multi extends db_object_multi_user
                 $in_ex_json[json_fields::SHARE]);
             if ($this->share_id < 0) {
                 $lib = new library();
-                $usr_msg->add_message_text('share type '
-                    . $in_ex_json[json_fields::SHARE]
-                    . ' is not expected when importing '
-                    . $lib->dsp_array($in_ex_json));
+                $usr_msg->add_id_with_vars(msg_id::SHARE_TYPE_NOT_EXPECTED, [
+                    msg_id::VAR_NAME => $in_ex_json[json_fields::SHARE],
+                    msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
+                ]);
             }
         }
         if (key_exists(json_fields::PROTECTION, $in_ex_json)) {
@@ -437,10 +437,10 @@ class sandbox_multi extends db_object_multi_user
                 $in_ex_json[json_fields::PROTECTION]);
             if ($this->protection_id < 0) {
                 $lib = new library();
-                $usr_msg->add_message_text('protection type '
-                    . $in_ex_json[json_fields::PROTECTION]
-                    . ' is not expected when importing '
-                    . $lib->dsp_array($in_ex_json));
+                $usr_msg->add_id_with_vars(msg_id::PROTECTION_TYPE_NOT_EXPECTED, [
+                    msg_id::VAR_NAME => $in_ex_json[json_fields::PROTECTION],
+                    msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
+                ]);
             }
         }
 
@@ -983,14 +983,20 @@ class sandbox_multi extends db_object_multi_user
                 $this->share_id = $shr_typ_cac->id($value);
                 if ($this->share_id < 0) {
                     $lib = new library();
-                    $usr_msg->add_message_text('share type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
+                    $usr_msg->add_id_with_vars(msg_id::SHARE_TYPE_NOT_EXPECTED, [
+                        msg_id::VAR_NAME => $value,
+                        msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
+                    ]);
                 }
             }
             if ($key == json_fields::PROTECTION) {
                 $this->protection_id = $ptc_typ_cac->id($value);
                 if ($this->protection_id < 0) {
                     $lib = new library();
-                    $usr_msg->add_message_text('protection type ' . $value . ' is not expected when importing ' . $lib->dsp_array($in_ex_json));
+                    $usr_msg->add_id_with_vars(msg_id::PROTECTION_TYPE_NOT_EXPECTED, [
+                        msg_id::VAR_NAME => $value,
+                        msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
+                    ]);
                 }
             }
         }
@@ -2751,7 +2757,7 @@ class sandbox_multi extends db_object_multi_user
         $usr_msg = new user_message();
         $msg = 'The dummy parent add function has been called, which should never happen';
         log_err($msg);
-        $usr_msg->add_message_text($msg);
+        $usr_msg->add_id(msg_id::DUMMY_PARENT_ADD_FUNCTION_CALLED);
         return $usr_msg;
     }
 
@@ -2800,7 +2806,10 @@ class sandbox_multi extends db_object_multi_user
                 if ($similar->id() <> 0) {
                     // check that the get_similar function has really found a similar object and report potential program errors
                     if (!$this->is_similar($similar)) {
-                        $usr_msg->add_message_text($this->dsp_id() . ' seems to be not similar to ' . $similar->dsp_id());
+                        $usr_msg->add_id_with_vars(msg_id::SANDBOX_NOT_SIMILAR, [
+                            msg_id::VAR_ID => $this->dsp_id(),
+                            msg_id::VAR_ID_CHK => $similar->dsp_id()
+                        ]);
                     } else {
                         // if similar is found set the id to trigger the updating instead of adding
                         $similar->load_by_id($similar->id); // e.g. to get the type_id
@@ -2810,7 +2819,7 @@ class sandbox_multi extends db_object_multi_user
                         } else {
                             if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                                 or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                                $usr_msg->add_message_text($similar->id_used_msg($this));
+                                $usr_msg->add($similar->id_used_msg($this));
                             }
                         }
                     }
@@ -2833,7 +2842,7 @@ class sandbox_multi extends db_object_multi_user
                     // e.g. if a source already exists update the source
                     // but if a word with the same name of a formula already exists suggest a new formula name
                     if (!$this->is_same($similar)) {
-                        $usr_msg->add_message_text($similar->id_used_msg($this));
+                        $usr_msg->add($similar->id_used_msg($this));
                     }
                 }
 
@@ -3990,14 +3999,19 @@ class sandbox_multi extends db_object_multi_user
     }
 
     /**
-     * @return string a message to use a different name
+     * @return user_message a message to use a different name
      */
-    function id_used_msg(sandbox_multi $obj_to_add): string
+    function id_used_msg(sandbox_multi $obj_to_add): user_message
     {
         $lib = new library();
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
-        return 'A ' . $lib->class_to_name($this::class) . ' with the name ' . $obj_to_add->dsp_id() . ' already exists. '
-            . 'Please use another ' . $obj_to_add_name . ' name.';
+        $usr_msg = new user_message();
+        $usr_msg->add_id_with_vars(msg_id::CLASS_ALREADY_EXISTS, [
+            msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+            msg_id::VAR_NAME => $obj_to_add->dsp_id(),
+            msg_id::VAR_VALUE => $obj_to_add_name
+        ]);
+        return $usr_msg;
     }
 
     /**
