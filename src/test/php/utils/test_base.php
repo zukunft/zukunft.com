@@ -414,6 +414,15 @@ class test_base
     }
 
 
+    /*
+     * set and get
+     */
+
+    function start_time(): float
+    {
+        return $this->start_time;
+    }
+
 
     /*
      * Display functions
@@ -445,7 +454,7 @@ class test_base
 
     private function time_stamp(): string
     {
-        return sprintf('%08.4f', microtime(true) - $this->start_time, 4) . ' ';
+        return sprintf('%08.4f', microtime(true) - $this->start_time) . ' ';
     }
 
     /**
