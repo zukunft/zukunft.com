@@ -384,30 +384,35 @@ class ip_range extends db_object_seq_id
      * actually update a formula field in the main database record
      * @param sql_db $db_con the active database connection
      * @param change $log with the action and table already set
-     * @return string string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_field_do(sql_db $db_con, change $log): string
+    private function save_field_do(sql_db $db_con, change $log): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($log->add()) {
             $db_con->set_class(self::class);
             if (!$db_con->update_old($this->id(), $log->field(), $log->new_value)) {
-                $result .= 'updating ' . $log->field() . ' to ' . $log->new_value . ' for ' . self::OBJ_NAME . ' ' . $this->dsp_id() . ' failed';
+                $usr_msg->add_id_with_vars(msg_id::UPDATE_FAILED, [
+                    msg_id::VAR_NAME => $log->field(),
+                    msg_id::VAR_VALUE => $log->new_value,
+                    msg_id::VAR_CLASS_NAME => self::OBJ_NAME,
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
             }
 
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters for the block reason
      * @param sql_db $db_con the active database connection
      * @param ip_range $db_rec the ip range reason as saved in the database before the change
-     * @return string string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_field_reason(sql_db $db_con, ip_range $db_rec): string
+    private function save_field_reason(sql_db $db_con, ip_range $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = null;
         if ($db_rec->reason <> $this->reason) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->reason;
@@ -415,20 +420,20 @@ class ip_range extends db_object_seq_id
             $log->std_value = $db_rec->reason;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_REASON);
-            $result .= $this->save_field_do($db_con, $log);
+            $usr_msg = $this->save_field_do($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters for the block reason
      * @param sql_db $db_con the active database connection
      * @param ip_range $db_rec the ip range active flag as saved in the database before the change
-     * @return string string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message | null string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_field_active(sql_db $db_con, ip_range $db_rec): string
+    private function save_field_active(sql_db $db_con, ip_range $db_rec): user_message | null
     {
-        $result = '';
+        $usr_msg = null;
         if ($db_rec->active <> $this->active) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->active;
@@ -436,9 +441,9 @@ class ip_range extends db_object_seq_id
             $log->std_value = $db_rec->active;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_ACTIVE);
-            $result .= $this->save_field_do($db_con, $log);
+            $usr_msg = $this->save_field_do($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -483,13 +488,16 @@ class ip_range extends db_object_seq_id
      * save all updated verb fields excluding the name, because already done when adding a verb
      * @param sql_db $db_con the active database connection
      * @param ip_range $db_rec the ip range entry as saved in the database before the change
-     * @return string string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_fields(sql_db $db_con, ip_range $db_rec): string
+    private function save_fields(sql_db $db_con, ip_range $db_rec): user_message
     {
-        $result = $this->save_field_reason($db_con, $db_rec);
-        $result .= $this->save_field_active($db_con, $db_rec);
-        return $result;
+        $usr_msg = $this->save_field_reason($db_con, $db_rec);
+        $result = $this->save_field_active($db_con, $db_rec);
+        if ($result) {
+            $usr_msg = $result;
+        }
+        return $usr_msg;
     }
 
     /**
@@ -598,7 +606,7 @@ class ip_range extends db_object_seq_id
             $db_rec->set_user($this->user());
             $qp = $this->load_sql_by_vars($db_con);
             if ($db_rec->load($qp) > 0) {
-                $usr_msg->add_message_text($this->save_fields($db_con, $db_rec));
+                $usr_msg->add($this->save_fields($db_con, $db_rec));
             }
         }
         return $usr_msg;

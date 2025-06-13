@@ -598,6 +598,16 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' is already in the list of active jobs';
 
+    case UPDATE_FAILED = 'updating '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' to '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed';
+
     // for the change log
     case LOG_ADD = 'added';
     case LOG_UPDATE = 'changed';
