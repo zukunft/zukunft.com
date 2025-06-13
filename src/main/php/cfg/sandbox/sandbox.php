@@ -2870,15 +2870,20 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * @return string a message to use a different name
+     * @return user_message a message to use a different name
      */
-    function id_used_msg(sandbox $obj_to_add): string
+    function id_used_msg(sandbox $obj_to_add): user_message
     {
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
-        return 'A ' . $class_name . ' with the name "' . $obj_to_add->name() . '" already exists. '
-            . 'Please use another ' . $obj_to_add_name . ' name.';
+        $usr_msg = new user_message();
+        $usr_msg->add_id_with_vars(msg_id::CLASS_ALREADY_EXISTS, [
+            msg_id::VAR_CLASS_NAME => $class_name,
+            msg_id::VAR_NAME => $obj_to_add->name(),
+            msg_id::VAR_VALUE => $obj_to_add_name
+        ]);
+        return $usr_msg;
     }
 
     /**

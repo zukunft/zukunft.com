@@ -2613,7 +2613,7 @@ class formula extends sandbox_typed
                     } else {
                         if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                             or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                            $usr_msg->add_message_text($similar->id_used_msg($this));
+                            $usr_msg->add($similar->id_used_msg($this));
                         }
                     }
                 }
@@ -2640,7 +2640,7 @@ class formula extends sandbox_typed
                     // e.g. if a source already exists update the source
                     // but if a word with the same name of a formula already exists suggest a new formula name
                     if (!$this->is_same($similar)) {
-                        $usr_msg->add_message_text($similar->id_used_msg($this));
+                        $usr_msg->add($similar->id_used_msg($this));
                     }
                 }
 
