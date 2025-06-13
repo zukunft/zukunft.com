@@ -4762,7 +4762,7 @@ class sql_db
         $result = $field_value;
 
         // add the formatting for the sql statement
-        if (trim($result) == "" or trim($result) == sql::NULL_VALUE) {
+        if ((is_null($result) || trim($result) == "") || trim($result) == sql::NULL_VALUE) {
             $result = sql::NULL_VALUE;
         } else {
             if ($forced_format == sql_db::FLD_FORMAT_VAL) {
