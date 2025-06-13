@@ -886,16 +886,16 @@ class verb extends type_object
     }
 
     // save all updated verb fields excluding the name, because already done when adding a verb
-    private function save_fields(sql_db $db_con, $db_rec): array
+    private function save_fields(sql_db $db_con, $db_rec): void
     {
-        $usr_msg[] = $this->save_field_code_id($db_con, $db_rec);
-        $usr_msg[] = $this->save_field_plural($db_con, $db_rec);
-        $usr_msg[] = $this->save_field_reverse($db_con, $db_rec);
-        $usr_msg[] = $this->save_field_rev_plural($db_con, $db_rec);
-        $usr_msg[] = $this->save_field_description($db_con, $db_rec);
-        $usr_msg[] = $this->save_field_formula_name($db_con, $db_rec);
+        $usr_msg = new user_message();
+        $usr_msg->add($this->save_field_code_id($db_con, $db_rec));
+        $usr_msg->add($this->save_field_plural($db_con, $db_rec));
+        $usr_msg->add($this->save_field_reverse($db_con, $db_rec));
+        $usr_msg->add($this->save_field_rev_plural($db_con, $db_rec));
+        $usr_msg->add($this->save_field_description($db_con, $db_rec));
+        $usr_msg->add($this->save_field_formula_name($db_con, $db_rec));
         log_debug('verb->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
-        return $usr_msg;
     }
 
     // check if the id parameters are supposed to be changed
@@ -979,9 +979,7 @@ class verb extends type_object
                     $db_rec->name = $this->name;
                     $db_rec->usr = $this->usr;
                     // save the verb fields
-                    foreach ($this->save_fields($db_con, $db_rec) as $msg) {
-                        $usr_msg->add($msg);
-                    }
+                    $this->save_fields($db_con, $db_rec);
                 }
 
             } else {
@@ -1086,9 +1084,7 @@ class verb extends type_object
                 // if a problem has appeared up to here, don't try to save the values
                 // the problem is shown to the user by the calling interactive script
                 if ($usr_msg->is_ok()) {
-                    foreach ($this->save_fields($db_con, $db_rec) as $msg) {
-                        $usr_msg->add($msg);
-                    }
+                    $this->save_fields($db_con, $db_rec);
                 }
             }
         }
