@@ -156,8 +156,8 @@ class id
                 $chars[] = $this->int2char($id);
                 $id = 0;
             } else {
-                $chars[] = $this->int2char($id % 64);
-                $id = intdiv($id, 64);
+                $chars[] = $this->int2char((int)($id % 64));
+                $id = (int)($id / 64);
             }
             $i--;
         }
