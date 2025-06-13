@@ -587,6 +587,17 @@ enum messages: string
         .self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' failed.';
 
+
+    case JOB_FORMULA_MISSING = 'Job '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' cannot be added, because formula is missing.';
+    case JOB_WORD_MISSING = 'Job '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' cannot be added, because no words or triples are defined.';
+    case JOB_ALREADY_ACTIVE = 'Job for phrases '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is already in the list of active jobs';
+
     // for the change log
     case LOG_ADD = 'added';
     case LOG_UPDATE = 'changed';
