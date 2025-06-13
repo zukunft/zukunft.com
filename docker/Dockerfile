@@ -3,6 +3,7 @@ FROM php:8.2-apache
 
 # Install required packages
 RUN apt-get update && apt-get install -y \
+    micro \
     libpq-dev \
     libyaml-dev \
     libcurl4-openssl-dev \
