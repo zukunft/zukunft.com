@@ -955,7 +955,7 @@ class verb extends type_object
     /**
      * create a new verb
      */
-    private function add(sql_db $db_con): void
+    private function add(sql_db $db_con): user_message
     {
         log_debug('verb->add the verb ' . $this->dsp_id());
 
@@ -986,6 +986,8 @@ class verb extends type_object
                 $usr_msg->add_id_with_vars(msg_id::VERB_ADD_FAILED, [msg_id::VAR_NAME => $this->name]);
             }
         }
+
+        return $usr_msg;
     }
 
     /**
@@ -1051,7 +1053,7 @@ class verb extends type_object
         // create a new verb or update an existing
         if ($usr_msg->is_ok()) {
             if ($this->id() <= 0) {
-                $this->add($db_con);
+                $usr_msg->add($this->add($db_con));
             } else {
                 log_debug('update "' . $this->id() . '"');
                 // read the database values to be able to check if something has been changed; done first,
