@@ -39,17 +39,94 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'term_view.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_ENUM_PATH . 'value_types.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
+include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\phrase\term;
+use cfg\user\user;
+use cfg\user\user_message;
 use cfg\view\view;
 use cfg\view\term_view;
+use shared\enum\value_types;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 
 class sandbox_link_list extends sandbox_list
 {
+
+    /*
+     *  object vars
+     */
+
+    // memory vs speed optimize vars for faster finding the list position by the link key
+    private array $key_pos_lst;
+    private bool $key_lst_dirty;
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(user $usr, array $lst = [])
+    {
+        $this->key_pos_lst = [];
+        $this->set_lst_dirty();
+
+        parent::__construct($usr, $lst);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * to be called after the lists have been updated
+     * but the index list have not yet been updated
+     */
+    protected function set_lst_dirty(): void
+    {
+        parent::set_lst_dirty();
+        $this->key_lst_dirty = true;
+    }
+
+    /**
+     * TODO add a unit test
+     * @returns array with all unique link keys of this list with the position key within this list
+     */
+    protected function key_pos_list(): array
+    {
+        $result = array();
+        if ($this->key_lst_dirty) {
+            foreach ($this->lst() as $key => $obj) {
+                $result[$obj->key()] = $key;
+            }
+            $this->key_pos_lst = $result;
+            $this->key_lst_dirty = false;
+        } else {
+            $result = $this->key_pos_lst;
+        }
+        return $result;
+    }
+
+    /**
+     * @return true if the at least one of the hash tables is not updated
+     */
+    protected function is_key_list_dirty(): bool
+    {
+        return $this->key_lst_dirty;
+    }
+
 
     /*
      * modify
@@ -74,14 +151,71 @@ class sandbox_link_list extends sandbox_list
      * add a link to this list without saving it to the database
      * @return true if the link has been added
      */
-    function add_link(component_link|term_view $lnk_to_add): bool
+    function add_link(
+        component_link|term_view $lnk_to_add,
+        bool                     $allow_duplicates = false
+    ): bool
     {
         $added = false;
         if ($this->can_add($lnk_to_add)) {
-            $this->add_obj($lnk_to_add);
+            $this->add_obj($lnk_to_add, $allow_duplicates);
             $added = true;
         }
         return $added;
+    }
+
+    /**
+     * add one link to the list of user sandbox objects,
+     * but only if it is not yet part of the list
+     * based on the names (not the db id) of the linked objects
+     * @param component_link|term_view $obj_to_add the backend object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
+     */
+    function add_link_by_key(
+        component_link|term_view $obj_to_add,
+        bool                     $allow_duplicates = false
+    ): user_message
+    {
+        $usr_msg = new user_message();
+
+        // add only objects that have all mandatory values
+        $usr_msg->add($obj_to_add->db_ready());
+
+        // add a missing user to the object
+        // or check if the object user matches the list user
+        // and allow exceptions only for admin users
+        $usr_msg->add($this->add_user_check($obj_to_add));
+
+        // if a sandbox object has the names of the objects to link, but not (yet) an id, add it nevertheless to the list
+        if (!in_array($obj_to_add->key(), array_keys($this->key_pos_list())) or $allow_duplicates) {
+            // add only objects that have all mandatory values
+            $result = $obj_to_add->can_be_ready()->is_ok();
+
+            if ($result) {
+                $this->add_direct($obj_to_add);
+            }
+        } else {
+            log_warning('trying to add linked object via id but add_link_by_key has been called');
+            $this->add_link($obj_to_add, $allow_duplicates);
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * add the object to the list without duplicate check
+     * and add the id to the id hash
+     *
+     * @param IdObject|TextIdObject|CombineObject|value_types|component_link|term_view $obj_to_add
+     * @return void
+     */
+    protected function add_direct(IdObject|TextIdObject|CombineObject|value_types|component_link|term_view $obj_to_add): void
+    {
+        if (!$this->is_key_list_dirty()) {
+            $this->key_pos_lst[$obj_to_add->key()] = count($this->lst());
+        }
+        parent::add_direct($obj_to_add);
     }
 
 
