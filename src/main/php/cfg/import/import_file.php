@@ -322,13 +322,11 @@ class import_file
         );
 
         foreach (files::BASE_CONFIG_FILES as $filename) {
-            $this->echo('load ' . $filename);
             $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
         }
 
         // config files that cannot yet be loaded via list saving
         foreach (files::BASE_CONFIG_FILES_DIRECT as $filename) {
-            $this->echo('load ' . $filename);
             $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, true)->get_last_message();
         }
 
@@ -353,7 +351,6 @@ class import_file
         );
 
         foreach (files::POD_CONFIG_FILES_DIRECT as $filename) {
-            $this->echo('load ' . $filename);
             $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
         }
 
@@ -378,7 +375,6 @@ class import_file
         );
 
         foreach (test_files::TEST_IMPORT_FILE_LIST as $filename) {
-            $this->echo('load ' . $filename);
             $result .= $this->json_file($filename, $usr, $direct)->get_last_message();
         }
 

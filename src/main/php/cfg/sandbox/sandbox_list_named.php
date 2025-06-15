@@ -109,10 +109,10 @@ class sandbox_list_named extends sandbox_list
      * @param array $lst object array that could be set with the construction
      * the parent constructor is called after the reset of lst_name_dirty to enable setting by adding the list
      */
-    function __construct(user $usr, array $lst = array())
+    function __construct(user $usr, array $lst = [])
     {
-        $this->name_pos_lst = array();
-        $this->name_pos_lst_all = array();
+        $this->name_pos_lst = [];
+        $this->name_pos_lst_all = [];
         $this->set_lst_dirty();
 
         parent::__construct($usr, $lst);
@@ -135,8 +135,9 @@ class sandbox_list_named extends sandbox_list
     }
 
     /**
+     * TODO dismiss
      * to be called after the lists have been updated
-     * but the index list have not yet been updated
+     * and all index lists have been updated
      */
     protected function set_lst_clean(): void
     {
@@ -294,7 +295,7 @@ class sandbox_list_named extends sandbox_list
                 $usr_msg = $this->add_obj($to_add);
                 $result = $usr_msg->is_ok();
             } else {
-                if (!in_array($to_add->id(), $this->ids())) {
+                if (!array_key_exists($to_add->id(), $this->id_pos_lst())) {
                     if ($to_add->id() != 0) {
                         $usr_msg = $this->add_obj($to_add);
                         $result = $usr_msg->is_ok();
@@ -309,25 +310,25 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * add a named object to the list that does not yet have an id but has a name
-     * @param sandbox_named|triple|phrase|term|null $to_add the named user sandbox object that should be added
+     * @param sandbox_named|triple|phrase|term|null $obj_to_add the named user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns bool true if the object has been added
      */
-    function add_by_name(sandbox_named|triple|phrase|term|null $to_add, bool $allow_duplicates = false): bool
+    function add_by_name(sandbox_named|triple|phrase|term|null $obj_to_add, bool $allow_duplicates = false): bool
     {
         $result = false;
-        if ($to_add != null) {
+        if ($obj_to_add != null) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
-            if (!in_array($to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {
+            if (!in_array($obj_to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {
                 // add only objects that have all mandatory values
-                $result = $to_add->can_be_ready()->is_ok();
+                $result = $obj_to_add->can_be_ready()->is_ok();
 
                 if ($result) {
-                    $this->add_direct($to_add);
+                    $this->add_direct($obj_to_add);
                     $this->set_lst_dirty();
                 }
             } else {
-                $result = parent::add_obj($to_add, $allow_duplicates)->is_ok();
+                $result = parent::add_obj($obj_to_add, $allow_duplicates)->is_ok();
             }
         }
         return $result;
@@ -523,7 +524,7 @@ class sandbox_list_named extends sandbox_list
                 $usr_msg->add(parent::add_obj($obj_to_add, $allow_duplicates));
             } else {
                 if ($obj_to_add->id() <> 0) {
-                    if (!in_array($obj_to_add->id(), $this->ids())) {
+                    if (!array_key_exists($obj_to_add->id(), $this->id_pos_lst())) {
                         $usr_msg->add(parent::add_obj($obj_to_add));
                     } else {
                         $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
@@ -557,6 +558,7 @@ class sandbox_list_named extends sandbox_list
         $result = array();
         if ($this->lst_name_dirty) {
             foreach ($this->lst() as $key => $obj) {
+                // TODO check if duplicate test is really needed here and most likely simple remove it
                 if (!in_array($obj->name(), $result)) {
                     $result[$obj->name()] = $key;
                 }

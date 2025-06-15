@@ -81,6 +81,41 @@ class sandbox_tests
         $ts = 'unit sandbox ';
         $t->header($ts);
 
+        $t->subheader($ts . 'link');
+        $test_name = 'name with key separator can be used';
+        $wrd = $t->word();
+        $to = $t->word();
+        $vrb = $t->verb();
+        $wrd->set_name($wrd->name() . sandbox_link::KEY_SEP . $vrb->name());
+        $trp = new triple($usr);
+        $trp->set_from($wrd->phrase());
+        $trp->set_verb($vrb);
+        $trp->set_to($to->phrase());
+        $key_vrb = $trp->key();
+        $wrd->set_name($t->word()->name());
+        $to->set_name($vrb->name() . sandbox_link::KEY_SEP . $to->name());
+        $key_to = $trp->key();
+        $t->assert_not($test_name, $key_vrb, $key_to);
+        // TODO activate this test based on changing the verb
+        //      which implies that the changing of the verb name is updating the cache
+        //      so a requirement is that the cache update trigger is implemented
+        /*
+        $wrd = $t->word();
+        $to = $t->word();
+        $vrb = $t->verb();
+        $vrb->set_name($vrb->name() . sandbox_link::KEY_SEP . $wrd->name());
+        $trp = new triple($usr);
+        $trp->set_from($wrd->phrase());
+        $trp->set_verb($vrb);
+        $trp->set_to($to->phrase());
+        $key_vrb = $trp->key();
+        $vrb->set_name($t->verb()->name());
+        $to->set_name($to->name() . sandbox_link::KEY_SEP . $to->name());
+        $key_to = $trp->key();
+        $t->assert_not($test_name, $key_vrb, $key_to);
+        */
+
+
         $t->subheader($ts . 'link list');
         $lst = new component_link_list($usr);
         $test_name = 'add link is fine';

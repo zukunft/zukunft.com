@@ -79,7 +79,7 @@ class expression extends shared_expression
         $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
         while ($obj_sym != '') {
             $elm = $this->element_by_symbol($obj_sym, $trm_lst);
-            $elm_lst->add_obj($elm);
+            $elm_lst->add_obj($elm, true);
             $work = $lib->str_right_of($work, chars::TERM_END);
             $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
         }

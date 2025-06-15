@@ -135,7 +135,8 @@ class ListOf
      */
 
     /**
-     * add an object to the list
+     * add an object to the list and by default avoid duplicates
+     * in most cases overwritten by the child objects that are e.g. unique by the database id
      *
      * @param IdObject|TextIdObject|CombineObject $obj_to_add an object with a unique database id that should be added to the list
      * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
@@ -161,6 +162,14 @@ class ListOf
         return $usr_msg;
     }
 
+    /**
+     * add the object to the list without duplicate check
+     * but including the updating the hash tables that are not dirty
+     * is expected to be overwritten by all children that have a hash table
+     *
+     * @param IdObject|TextIdObject|CombineObject|value_types $obj_to_add
+     * @return void
+     */
     protected function add_direct(IdObject|TextIdObject|CombineObject|value_types $obj_to_add): void
     {
         $this->lst[] = $obj_to_add;
@@ -168,6 +177,8 @@ class ListOf
 
     /**
      * unset an object of the list
+     * TODO move to ListOfIdObjects ? And if not, explain in a comment why
+     *
      * @param int|string $key the unique id of the entry
      * @returns bool true if the object has been added
      */

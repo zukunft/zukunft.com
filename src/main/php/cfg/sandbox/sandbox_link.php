@@ -116,13 +116,18 @@ class sandbox_link extends sandbox
     const FLD_LST_LINK = array();
     const FLD_LST_MUST_BUT_STD_ONLY = array();
 
+    // separator to create a unique key based on the
+    const KEY_SEP = '/';
+    // to allow the usage of the name key separator within an object name
+    const KEY_SEP_ESC = '//';
+
 
     /*
      * object vars
      */
 
-    private sandbox_named|combine_named|null $fob = null; // the From OBject which this linked object is creating the connection
-    private sandbox_named|combine_named|string|null $tob = null; // the To OBject which this linked object is creating the connection (can be a string for external keys)
+    private sandbox_named|combine_named|null $fob = null; // the (F)rom (OB)ject which this linked object is creating the connection
+    private sandbox_named|combine_named|string|null $tob = null; // the (T)o (OB)ject which this linked object is creating the connection (can be a string for external keys)
 
     // database id of the type used for named link user sandbox objects with predefined functionality
     // which is formula link and view component link
@@ -326,6 +331,17 @@ class sandbox_link extends sandbox
         $obj_cpy->set_fob($this->fob());
         $obj_cpy->set_tob($this->tob());
         return $obj_cpy;
+    }
+
+    /**
+     * @return string a unique key of the link based on the names of the objects that are linked
+     */
+    function key(): string
+    {
+        $from_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->from_name());
+        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->predicate_name());
+        $to_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->to_name());
+        return $from_name . self::KEY_SEP . $link_name . self::KEY_SEP . $to_name;
     }
 
 

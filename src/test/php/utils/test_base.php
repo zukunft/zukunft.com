@@ -463,8 +463,8 @@ class test_base
      * TODO the first parameter should almost always be $ts . $test_name
      *
      * @param string $test_name (unique) description of the test
-     * @param string|array|null $result the actual result
-     * @param string|array|null $target the expected result
+     * @param string|bool|array|null $result the actual result
+     * @param string|bool|array|null $target the expected result
      * @param float $exe_max_time the expected max time to create the result
      * @param string $comment
      * @param string $test_type
