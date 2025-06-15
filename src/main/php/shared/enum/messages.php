@@ -550,11 +550,67 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case OBJECT_RELOADING_FAILED = 'Reloading of the object for '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' failed';
+    case DEFAULT_VALUES_RELOADING_FAILED = 'Reloading of the default values for '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' failed';
 
     case CONFLICT_DB_ID = 'Unexpected conflict of the database id. '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' != '
         . self::VAR_START . self::VAR_ID . self::VAR_END;
+
+    case IMPORT_SOURCE_NOT_FOUND = 'Cannot find source "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" when importing '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
+
+    case CLASS_ALREADY_EXISTS = 'A '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' with the name "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" already exists. Please use another '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' name.';
+
+    case VERB_UPDATE_FAILED = 'updating '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' to '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' for verb '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed';
+
+    case VERB_ADD_FAILED = 'Adding verb '
+        .self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' failed.';
+
+
+    case JOB_FORMULA_MISSING = 'Job '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' cannot be added, because formula is missing.';
+    case JOB_WORD_MISSING = 'Job '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' cannot be added, because no words or triples are defined.';
+    case JOB_ALREADY_ACTIVE = 'Job for phrases '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is already in the list of active jobs';
+
+    case UPDATE_FAILED = 'updating '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' to '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed';
+
+    case SANDBOX_NOT_SIMILAR = self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' seems to be not similar to '
+        . self::VAR_START . self::VAR_ID_CHK . self::VAR_END;
 
     // for the change log
     case LOG_ADD = 'added';
@@ -737,6 +793,9 @@ enum messages: string
     case FAILED_ADD_REFERENCE_LOG = 'Adding reference for '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' in the log failed.';
+
+    case REFERENCE_TYPE_NOT_FOUND = 'Reference type for {VAR_TYPE_NAME} not found';
+    case VAR_TYPE_NAME = 'TYPE_NAME';
 
     /**
      * @return string with the text for the user in the default language

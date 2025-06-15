@@ -79,6 +79,7 @@ use cfg\user\user_message;
 use cfg\word\word;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
+use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
@@ -742,9 +743,10 @@ class verb extends type_object
     }
 
     // actually update a formula field in the main database record or the user sandbox
-    private function save_field_do(sql_db $db_con, $log): string
+    private function save_field_do(sql_db $db_con, $log): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
+
         if ($log->new_id > 0) {
             $new_value = $log->new_id;
             $std_value = $log->std_id;
@@ -756,7 +758,11 @@ class verb extends type_object
             if ($this->can_change()) {
                 $db_con->set_class(verb::class);
                 if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
-                    $result .= 'updating ' . $log->field() . ' to ' . $new_value . ' for verb ' . $this->dsp_id() . ' failed';
+                    $usr_msg->add_id_with_vars(msg_id::VERB_UPDATE_FAILED, [
+                        msg_id::VAR_NAME => $log->field(),
+                        msg_id::VAR_VALUE => $new_value,
+                        msg_id::VAR_ID => $this->dsp_id()
+                    ]);
                 }
 
             } else {
@@ -764,12 +770,12 @@ class verb extends type_object
                 log_warning('verb->save_field_do creating of a new verb not yet coded');
             }
         }
-        return $result;
+        return $usr_msg;
     }
 
-    private function save_field_code_id(sql_db $db_con, $db_rec): string
+    private function save_field_code_id(sql_db $db_con, $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->code_id <> $this->code_id) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->code_id;
@@ -777,16 +783,16 @@ class verb extends type_object
             $log->std_value = $db_rec->code_id;
             $log->row_id = $this->id();
             $log->set_field(sql::FLD_CODE_ID);
-            $result .= $this->save_field_do($db_con, $log);
+            $usr_msg = $this->save_field_do($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
 
     // set the update parameters for the verb name
-    private function save_field_name(sql_db $db_con, $db_rec): string
+    private function save_field_name(sql_db $db_con, $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->name <> $this->name) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->name;
@@ -794,15 +800,15 @@ class verb extends type_object
             $log->std_value = $db_rec->name;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_NAME);
-            $result .= $this->save_field_do($db_con, $log);
+            $usr_msg = $this->save_field_do($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     // set the update parameters for the verb plural
-    private function save_field_plural(sql_db $db_con, $db_rec): string
+    private function save_field_plural(sql_db $db_con, $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->plural <> $this->plural) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->plural;
@@ -810,15 +816,15 @@ class verb extends type_object
             $log->std_value = $db_rec->plural;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_PLURAL);
-            $result .= $this->save_field_do($db_con, $log);
+            $usr_msg = $this->save_field_do($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     // set the update parameters for the verb reverse
-    private function save_field_reverse(sql_db $db_con, $db_rec): string
+    private function save_field_reverse(sql_db $db_con, $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->reverse <> $this->reverse) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->reverse;
@@ -826,15 +832,15 @@ class verb extends type_object
             $log->std_value = $db_rec->reverse;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_REVERSE);
-            $result .= $this->save_field_do($db_con, $log);
+            $usr_msg = $this->save_field_do($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     // set the update parameters for the verb rev_plural
-    private function save_field_rev_plural(sql_db $db_con, $db_rec): string
+    private function save_field_rev_plural(sql_db $db_con, $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->rev_plural <> $this->rev_plural) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->rev_plural;
@@ -842,15 +848,15 @@ class verb extends type_object
             $log->std_value = $db_rec->rev_plural;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_PLURAL_REVERSE);
-            $result .= $this->save_field_do($db_con, $log);
+            $usr_msg = $this->save_field_do($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     // set the update parameters for the verb description
-    private function save_field_description(sql_db $db_con, $db_rec): string
+    private function save_field_description(sql_db $db_con, $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->description <> $this->description) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->description;
@@ -858,15 +864,15 @@ class verb extends type_object
             $log->std_value = $db_rec->description;
             $log->row_id = $this->id();
             $log->set_field(sandbox_named::FLD_DESCRIPTION);
-            $result .= $this->save_field_do($db_con, $log);
+            $usr_msg = $this->save_field_do($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     // set the update parameters for the verb description
-    private function save_field_formula_name(sql_db $db_con, $db_rec): string
+    private function save_field_formula_name(sql_db $db_con, $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->frm_name <> $this->frm_name) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->frm_name;
@@ -874,22 +880,23 @@ class verb extends type_object
             $log->std_value = $db_rec->frm_name;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_FORMULA);
-            $result .= $this->save_field_do($db_con, $log);
+            $usr_msg = $this->save_field_do($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     // save all updated verb fields excluding the name, because already done when adding a verb
-    private function save_fields(sql_db $db_con, $db_rec): string
+    private function save_fields(sql_db $db_con, $db_rec): user_message
     {
-        $result = $this->save_field_code_id($db_con, $db_rec);
-        $result .= $this->save_field_plural($db_con, $db_rec);
-        $result .= $this->save_field_reverse($db_con, $db_rec);
-        $result .= $this->save_field_rev_plural($db_con, $db_rec);
-        $result .= $this->save_field_description($db_con, $db_rec);
-        $result .= $this->save_field_formula_name($db_con, $db_rec);
+        $usr_msg = new user_message();
+        $usr_msg->add($this->save_field_code_id($db_con, $db_rec));
+        $usr_msg->add($this->save_field_plural($db_con, $db_rec));
+        $usr_msg->add($this->save_field_reverse($db_con, $db_rec));
+        $usr_msg->add($this->save_field_rev_plural($db_con, $db_rec));
+        $usr_msg->add($this->save_field_description($db_con, $db_rec));
+        $usr_msg->add($this->save_field_formula_name($db_con, $db_rec));
         log_debug('verb->save_fields all fields for ' . $this->dsp_id() . ' has been saved');
-        return $result;
+        return $usr_msg;
     }
 
     // check if the id parameters are supposed to be changed
@@ -949,10 +956,11 @@ class verb extends type_object
     /**
      * create a new verb
      */
-    private function add(sql_db $db_con): string
+    private function add(sql_db $db_con): user_message
     {
         log_debug('verb->add the verb ' . $this->dsp_id());
-        $result = '';
+
+        $usr_msg = new user_message();
 
         // log the insert attempt first
         $log = $this->log_add();
@@ -963,7 +971,7 @@ class verb extends type_object
             if ($this->id() > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id())) {
-                    $result .= 'Updating the reference in the log failed';
+                    $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
                     // TODO do rollback or retry?
                 } else {
 
@@ -972,15 +980,15 @@ class verb extends type_object
                     $db_rec->name = $this->name;
                     $db_rec->usr = $this->usr;
                     // save the verb fields
-                    $result .= $this->save_fields($db_con, $db_rec);
+                    $usr_msg->add($this->save_fields($db_con, $db_rec));
                 }
 
             } else {
-                $result .= "Adding verb " . $this->name . " failed.";
+                $usr_msg->add_id_with_vars(msg_id::VERB_ADD_FAILED, [msg_id::VAR_NAME => $this->name]);
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1036,7 +1044,7 @@ class verb extends type_object
             // check if a word, triple or formula with the same name is already in the database
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
-                $usr_msg->add_message_text($trm->id_used_msg($this));
+                $usr_msg->add($trm->id_used_msg($this));
             } else {
                 $this->set_id($trm->id_obj());
                 log_debug('verb->save adding verb name ' . $this->dsp_id() . ' is OK');
@@ -1046,7 +1054,7 @@ class verb extends type_object
         // create a new verb or update an existing
         if ($usr_msg->is_ok()) {
             if ($this->id() <= 0) {
-                $usr_msg->add_message_text($this->add($db_con));
+                $usr_msg->add($this->add($db_con));
             } else {
                 log_debug('update "' . $this->id() . '"');
                 // read the database values to be able to check if something has been changed; done first,
@@ -1061,10 +1069,10 @@ class verb extends type_object
                     // check if a verb, formula or verb with the same name is already in the database
                     $trm = $this->get_term();
                     if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
-                        $usr_msg->add_message_text($trm->id_used_msg($this));
+                        $usr_msg->add($trm->id_used_msg($this));
                     } else {
                         if ($this->can_change()) {
-                            $usr_msg->add_message_text($this->save_field_name($db_con, $db_rec));
+                            $usr_msg->add($this->save_field_name($db_con, $db_rec));
                         } else {
                             // TODO: create a new verb and request to delete the old
                             log_err('Creating a new verb is not yet possible');
@@ -1073,13 +1081,13 @@ class verb extends type_object
                 }
 
                 if ($db_rec->code_id <> $this->code_id) {
-                    $usr_msg->add_message_text($this->save_field_code_id($db_con, $db_rec));
+                    $usr_msg->add($this->save_field_code_id($db_con, $db_rec));
                 }
 
                 // if a problem has appeared up to here, don't try to save the values
                 // the problem is shown to the user by the calling interactive script
                 if ($usr_msg->is_ok()) {
-                    $usr_msg->add_message_text($this->save_fields($db_con, $db_rec));
+                    $usr_msg->add($this->save_fields($db_con, $db_rec));
                 }
             }
         }

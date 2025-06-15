@@ -16,15 +16,73 @@ This program should
 installation
 ------------
 
-To install this version 0.0.3 use a LAMP server (https://wiki.debian.org/LaMp) and
+To install this version 0.0.3 use a LAPP or (LAMP for MySQL) server (https://wiki.debian.org/LaMp) and
 1) copy all files to the www root path (e.g. /var/www/html/)
 2) copy all files of bootstrap 4.1.3 or higher to /var/www/html/lib_external/bootstrap/4.1.3/
 3) copy all files of fontawesome to /var/www/html/lib_external/fontawesome/
 4) create a user "zukunft_db_root" in Postgres (or MySQL) and remember the password
-5) execute the script "src/main/php/db/.../zukunft_structure.sql" in Postgres (or MySQL) to create the database zukunft_structure
-6) change the password "xxx" in db_link/zu_lib_sql_link.php with the password used in 2)
-7) create an admin user in the user database table that has the user profile id set to 2 and has the ip_address localhost 
-8) test if the installation is running fine by calling http://yourserver.com/test/test.php
+5) change the password "xxx" in db_link/zu_lib_sql_link.php with the password used in 2)
+6) run the script "src/test/reset_db.php" local on the server and if the result is 0 test errors 0 internal errors delete the script
+7) test if the installation is running fine by calling http://yourserver.com/test/test.php 
+   (until this version 0.0.3 is finished try to run test.php in a terminal in case of errors)
+
+Docker Installation
+-------------------
+
+Recommended only for dedicated pod servers due to potential security issues ( https://wiki.debian.org/Docker )
+
+For a quick and easy setup, you can use Docker to run the application. This method ensures consistent environments and easy deployment.
+
+Prerequisites:
+- Docker Engine installed on your system
+- Docker Compose installed on your system
+
+Steps:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/zukunft/zukunft.com.git
+   cd zukunft.com
+   ```
+
+2. (Optional) Create a `.env` file to customize database credentials:
+   ```env
+   DB_HOST=db
+   DB_PORT=5432
+   DB_DATABASE=zukunft
+   DB_USERNAME=zukunft
+   DB_PASSWORD=your_secure_password
+   ```
+
+3. Start the application:
+   ```bash
+   docker compose up -d
+   ```
+
+4. Initialize the database (first time only):
+   ```bash
+   docker compose exec app php /var/www/html/test/reset_db.php
+   ```
+
+5. Access the application:
+   - Main application: http://localhost
+   - Test page: http://localhost/test/test.php
+
+The Docker setup includes:
+- PHP 8.2 with Apache
+- PostgreSQL 14
+- All required PHP extensions (pgsql, yaml, curl)
+- Automatic database configuration
+- Volume persistence for database data
+
+To stop the application:
+```bash
+docker compose down
+```
+
+To view logs:
+```bash
+docker compose logs -f
+```
 
 Target installation
 -------------------
@@ -42,7 +100,19 @@ with the options
 After "zukunftcom start" a message should be shown including the pod name. Every critical event, 
 such as the connection to other pods, should be shown in the console 
 and beginning with an increasing minute based interval, 
-but at least once a day a status message should be shown with the system usage and a summery if the usage. 
+but at least once a day a status message should be shown with the system usage and a summery if the usage.
+
+Local installation
+------------------
+
+For development a local installation is recommend 
+using an install that needs to be created (see issue #133)
+
+Pod Installation
+----------------
+
+To install a pod on a server a solution is to use the 
+docker installation that will be created (see issue #134)
 
 
 Additional for development
@@ -119,6 +189,13 @@ Coding team suggestions
 
 Decisions
 - use this program for a mind map with all arguments where each has a weight and value and all changes are logged
+
+Deployment process
+1. do the changes and commits in the feature branch related to the issue e.g. "feature/134-create-a-docker-script-and-a-docu-how-to-use"
+2. review the code and merge it to "develop"
+3. test it and if it is fine, merge it to the staging branch "release"
+4. if the public test is fine, merge it to master and update the production system using the CI/CD Process, which needs to be created
+
 
 naming conventions for vars:
 ---------------------------
