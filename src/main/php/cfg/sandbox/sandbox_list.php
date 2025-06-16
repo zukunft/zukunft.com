@@ -357,27 +357,17 @@ class sandbox_list extends base_list
         // add only objects that have all mandatory values
         $usr_msg->add($obj_to_add->db_ready());
 
-        if ($obj_to_add->user() == null) {
-            $obj_to_add->set_user($this->user());
-            $usr_msg->add_id_with_vars(msg_id::USER_MISSING,
-                [msg_id::VAR_NAME => $this->dsp_id()]);
-        }
-        if ($obj_to_add->user() !== $this->user()) {
-            if (!$this->user()->is_admin() and !$this->user()->is_system()) {
-                $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
-                    [
-                        msg_id::VAR_NAME => $obj_to_add->dsp_id(),
-                        msg_id::VAR_USER_NAME => $obj_to_add->user()->name(),
-                        msg_id::VAR_USER_LIST_NAME => $this->user()->name(),
-                    ]);
-            }
-        }
+        // add a missing user to the object
+        // or check if the object user matches the list user
+        // and allow exceptions only for admin users
+        $usr_msg->add($this->add_user_check($obj_to_add));
+
         if ($obj_to_add->id() <> 0) {
             if ($allow_duplicates) {
                 $usr_msg->add(parent::add_obj($obj_to_add, $allow_duplicates));
             } else {
                 if ($obj_to_add->id() <> 0) {
-                    if (!in_array($obj_to_add->id(), $this->ids())) {
+                    if (!array_key_exists($obj_to_add->id(), $this->id_pos_lst())) {
                         $usr_msg->add(parent::add_obj($obj_to_add));
                     } else {
                         $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
@@ -393,28 +383,25 @@ class sandbox_list extends base_list
     }
 
     /**
-     * add one object to the list of user sandbox objects, but only if it is not yet part of the list
+     * add a missing user to the object
+     * or check if the object user matches the list user
+     * and allow exceptions only for admin users
      * @param IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add the backend object that should be added
-     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
+     * @return user_message the warning or error message if the user
      */
-    function add_link_by_name(
-        IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add,
-        bool                                                         $allow_duplicates = false
+    protected function add_user_check(
+        IdObject|TextIdObject|CombineObject|db_object_seq_id|sandbox $obj_to_add
     ): user_message
     {
         $usr_msg = new user_message();
-
-        // add only objects that have all mandatory values
-        $usr_msg->add($obj_to_add->db_ready());
-
         if ($obj_to_add->user() == null) {
             $obj_to_add->set_user($this->user());
-            $usr_msg->add_id_with_vars(msg_id::USER_MISSING, [msg_id::VAR_NAME => $this->dsp_id()]);
+            $usr_msg->add_id_with_vars(msg_id::USER_MISSING,
+                [msg_id::VAR_NAME => $this->dsp_id()]);
         }
         if ($obj_to_add->user() !== $this->user()) {
             if (!$this->user()->is_admin() and !$this->user()->is_system()) {
-                $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
+                $usr_msg->add_id_with_vars(msg_id::LIST_USER_NO_MATCH,
                     [
                         msg_id::VAR_NAME => $obj_to_add->dsp_id(),
                         msg_id::VAR_USER_NAME => $obj_to_add->user()->name(),
@@ -422,8 +409,6 @@ class sandbox_list extends base_list
                     ]);
             }
         }
-        $usr_msg->add(parent::add_obj($obj_to_add, $allow_duplicates));
-
         return $usr_msg;
     }
 

@@ -4,7 +4,7 @@ services:
       context: ./docker
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "8081:80"
     volumes:
       - ./:/var/www/html
       - ./docker/apache-config.conf:/etc/apache2/sites-enabled/000-default.conf

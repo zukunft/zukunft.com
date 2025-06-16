@@ -223,8 +223,8 @@ class all_unit_tests extends test_cleanup
             //$this->file_import(files::MESSAGE_PATH . files::BASE_VIEWS_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::COMPANY_FILE, $usr);
+            $this->file_import(test_files::IMPORT_COUNTRY_ISO, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr);
-            //$this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr, true);
             //$this->file_import(test_files::IMPORT_COUNTRY_ISO, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
             //$this->file_import(test_files::IMPORT_WIND_INVESTMENT, $usr);
@@ -287,6 +287,7 @@ class all_unit_tests extends test_cleanup
     private function file_import(string $filename, user $usr): void
     {
         $imf = new import_file();
+        $imf->set_start_time($this->start_time());
         $usr_msg = $imf->json_file($filename, $usr, false);
         if (!$usr_msg->is_ok()) {
             log_warning($filename .  ' imported failed because ' . $usr_msg->all_message_text());

@@ -81,6 +81,60 @@ class sandbox_tests
         $ts = 'unit sandbox ';
         $t->header($ts);
 
+        $t->subheader($ts . 'name list');
+        $test_name = 'names match cached names';
+        $wrd_lst = $t->word_list();
+        // call the names function with a high limit to force the usage of the slow loop
+        $name_list = implode('.', $wrd_lst->names(100));
+        $name_list_cache = implode('.', array_keys($wrd_lst->name_pos_lst()));
+        $t->assert($test_name, $name_list_cache, $name_list);
+        $test_name = 'names match not cached names including excluded';
+        $name_list_ex = implode('.', array_keys($wrd_lst->name_pos_lst_all()));
+        $wrd_ex = $t->word_education();
+        $wrd_ex->exclude();
+        $wrd_lst->add_by_name($wrd_ex);
+        $name_list_ex_cache = implode('.', array_keys($wrd_lst->name_pos_lst_all()));
+        // TODO activate and add the handling of excluded named objects
+        //$t->assert_not($test_name, $name_list_ex_cache, $name_list);
+        $test_name = 'cached names match cached names including excluded';
+        //$t->assert($test_name, $name_list_ex_cache, $name_list_ex);
+
+
+        $t->subheader($ts . 'link');
+        $test_name = 'name with key separator can be used';
+        $wrd = $t->word();
+        $to = $t->word();
+        $vrb = $t->verb();
+        $wrd->set_name($wrd->name() . sandbox_link::KEY_SEP . $vrb->name());
+        $trp = new triple($usr);
+        $trp->set_from($wrd->phrase());
+        $trp->set_verb($vrb);
+        $trp->set_to($to->phrase());
+        $key_vrb = $trp->key();
+        $wrd->set_name($t->word()->name());
+        $to->set_name($vrb->name() . sandbox_link::KEY_SEP . $to->name());
+        $key_to = $trp->key();
+        $t->assert_not($test_name, $key_vrb, $key_to);
+        // TODO activate this test based on changing the verb
+        //      which implies that the changing of the verb name is updating the cache
+        //      so a requirement is that the cache update trigger is implemented
+        /*
+        $wrd = $t->word();
+        $to = $t->word();
+        $vrb = $t->verb();
+        $vrb->set_name($vrb->name() . sandbox_link::KEY_SEP . $wrd->name());
+        $trp = new triple($usr);
+        $trp->set_from($wrd->phrase());
+        $trp->set_verb($vrb);
+        $trp->set_to($to->phrase());
+        $key_vrb = $trp->key();
+        $vrb->set_name($t->verb()->name());
+        $to->set_name($to->name() . sandbox_link::KEY_SEP . $to->name());
+        $key_to = $trp->key();
+        $t->assert_not($test_name, $key_vrb, $key_to);
+        */
+
+
         $t->subheader($ts . 'link list');
         $lst = new component_link_list($usr);
         $test_name = 'add link is fine';
@@ -124,10 +178,10 @@ class sandbox_tests
         // TODO review test (start with test_name="" and move the creation to the test object creation)
         // a source can have the same name as a word
         $wrd1 = new word($usr);
-        $wrd1->set_id( 1);
+        $wrd1->set_id(1);
         $wrd1->set_name(sources::IPCC_AR6_SYNTHESIS);
         $src2 = new source($usr);
-        $src2->set_id( 2);
+        $src2->set_id(2);
         $src2->set_name(sources::IPCC_AR6_SYNTHESIS);
         $result = $wrd1->is_same($src2);
         $t->assert("a source is not the same as a word even if they have the same name", $result, false);
@@ -1813,7 +1867,7 @@ class sandbox_tests
 
         // the word changer query (used in _sandbox->changer_sql)
         $wrd = new word($usr);
-        $wrd->set_id( 1);
+        $wrd->set_id(1);
         $sc = $db_con->sql_creator();
         $sc->db_type = sql_db::POSTGRES;
         $qp = $wrd->load_sql_changer($sc);

@@ -211,6 +211,25 @@ class import
         $this->time_exp_act = 3;
     }
 
+
+    /*
+     * set and get
+     */
+
+    /*
+     * use to apply the time of the parent process for continuous timestamp reporting
+     */
+    function set_start_time(float $tart_time): void
+    {
+        $this->start_time = $tart_time;
+    }
+
+    private function time_stamp(): string
+    {
+        return sprintf('%08.4f', microtime(true) - $this->start_time) . ' ';
+    }
+
+
     /**
      * show the progress of an import process
      * @param int $processed the number of processed objects until now
@@ -298,10 +317,10 @@ class import
         }
 
         if ($stat) {
-            echo $name . $final_time . $step . $speed . "\n";
+            echo $this->time_stamp() . $name . $final_time . $step . $speed . "\n";
         } elseif ($show or ($time_since_last_display > $ui_response_time)) {
             //echo '<br><br>import' . $progress . ' done<br>';
-            echo $name . $progress . $times . $part . $speed . $sample . "\n";
+            echo $this->time_stamp() . $name . $progress . $times . $part . $speed . $sample . "\n";
             $this->last_display_time = microtime(true);
         }
     }
@@ -910,7 +929,7 @@ class import
             global $mtr;
             $name = $mtr->txt($this->msg_id) . ' ' . basename($this->file_name);
             $speed = '(' . round($total / 1000) . ' kBytes)';
-            echo $name . ' ' . $speed . "\n";
+            echo $this->time_stamp() . $name . ' ' . $speed . "\n";
         }
     }
 
@@ -1038,7 +1057,7 @@ class import
             $real_time = $end_time - $this->start_time;
             $name = $mtr->txt($this->msg_id) . ' ' . basename($this->file_name);
             $part = $lib->class_to_table($this->class) . ' ' . $step . ': ' . $nbr;
-            echo $name . ' ' . $part . "\n";
+            echo $this->time_stamp() . $name . ' ' . $part . "\n";
         }
     }
 

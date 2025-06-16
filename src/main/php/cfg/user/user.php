@@ -7,8 +7,8 @@
 
     TODO make sure that no right gain is possible
     TODO move the non functional user parameters to hidden words to be able to reuse the standard view functionality
-    TODO log the access attempts to objects with a restriked access
-    TODO build a process so that a user can request access to an object with restrikted access
+    TODO log the access attempts to objects with a restricted access
+    TODO build a process so that a user can request access to an object with restricted access
 
     if a user has done 3 value edits he can add new values (adding a word to a value also creates a new value)
     if a user has added 3 values and at least one is accepted by another user, he can add words and formula and he must have a valid email
@@ -138,7 +138,7 @@ class user extends db_object_seq_id
     const FLD_PASSWORD_COM = 'the hash value of the password';
     const FLD_PASSWORD = 'password';
     // description and type
-    const FLD_DESCRIPTION_COM = 'for system users the description to expain the profile to human users';
+    const FLD_DESCRIPTION_COM = 'for system users the description to explain the profile to human users';
     const FLD_DESCRIPTION = 'description';
     const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
     const FLD_CODE_ID_COM = 'to select e.g. the system batch user';
@@ -147,7 +147,7 @@ class user extends db_object_seq_id
     const FLD_PROFILE = 'user_profile_id';
     const FLD_TYPE_ID_COM = 'to set the confirmation level of a user';
     const FLD_TYPE_ID = 'user_type_id';
-    const FLD_LEVEL_COM = 'the access right level to prevent unpermitted right gaining';
+    const FLD_LEVEL_COM = 'the access right level to prevent not permitted right gaining';
     const FLD_LEVEL = 'right_level';
     // online verification
     const FLD_EMAIL_COM = 'the primary email for verification';
@@ -870,6 +870,7 @@ class user extends db_object_seq_id
     }
 
     /**
+     * TODO return a translatable msg_id instead of a string
      * @returns string the active session user object
      */
     function get(): string
@@ -1266,7 +1267,7 @@ class user extends db_object_seq_id
 
     /**
      * create a new user or update the existing
-     * TODO check if the user name or email excist before adding a new user
+     * TODO check if the user name or email exist before adding a new user
      * @return string an empty string if all user data are saved in the database otherwise the message that should be shown to the user
      */
     function save(sql_db $db_con): string
