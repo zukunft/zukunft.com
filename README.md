@@ -514,13 +514,19 @@ Prio 2:
 ---
 
 
-## Docker Setup Guide for `zukunft.com`
+## Setup Guide 
 
-You can build and run `zukunft.com` in a Docker container using one of the two options below:
+### clone the repository
 
+```bash
+git clone https://github.com/zukunft/zukunft.com.git
+
+cd zukunft.com
+```
 ---
 
-###  Option 1: Using Docker (Manually)
+### Installation (using Docker)
+
 
 ### 1. **Build the Docker image**
 
@@ -547,10 +553,9 @@ docker run -d \
 
 > Note: `PHP-FPM` does **not** serve HTTP directly.
 > You will need to reverse proxy it with **Nginx** or use **Docker Compose** (see Option 2).
-
 ---
 
-## Option 2: Using Docker Compose (Recommended)
+### Option 2: Using Docker Compose (Recommended)
 
 ### 1. **Start the App**
 
