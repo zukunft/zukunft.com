@@ -103,7 +103,7 @@ if ($usr->id() > 0) {
                 $trm = new term($usr);
                 $trm->load_by_name($vrb->name());
                 if ($trm->id_obj() > 0) {
-                    $msg .= $html->dsp_err($trm->id_used_msg($this));
+                    $msg .= $html->dsp_err($trm->id_used_msg_text($this));
                 }
 
                 // if the parameters are fine

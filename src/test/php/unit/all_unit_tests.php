@@ -129,6 +129,7 @@ use unit_ui\base_ui_tests;
 use const\files as test_files;
 use unit_write\triple_write_tests;
 use unit_write\value_write_tests;
+use unit_write\word_write_tests;
 
 class all_unit_tests extends test_cleanup
 {
@@ -236,15 +237,15 @@ class all_unit_tests extends test_cleanup
             // run the selected db read tests
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);
-            (new word_list_read_tests())->run($this);
-            (new triple_read_tests())->run($this);
+            //(new word_list_read_tests())->run($this);
+            //(new triple_read_tests())->run($this);
             //(new triple_list_read_tests())->run($this);
             //(new source_read_tests())->run($this);
             //(new formula_read_tests())->run($this);
             //(new view_read_tests())->run($this);
             //(new component_read_tests())->run($this);
             //(new graph_tests())->run($this);
-            (new value_read_tests())->run($this);
+            //(new value_read_tests())->run($this);
 
 
             /*
@@ -252,13 +253,13 @@ class all_unit_tests extends test_cleanup
              */
 
             // run the selected db write tests
-            //(new word_write_tests)->run($this);
+            (new word_write_tests)->run($this);
             //(new word_list_write_tests)->run($this);
             //(new triple_write_tests)->run($this);
             //(new group_write_tests)->run($this);
             //(new source_write_tests)->run($this);
             //(new ref_write_tests)->run($this);
-            (new value_write_tests)->run($this);
+            //(new value_write_tests)->run($this);
             //(new formula_write_tests)->run($this);
             //(new formula_link_write_tests)->run($this);
             //(new expression_write_tests)->run($this);

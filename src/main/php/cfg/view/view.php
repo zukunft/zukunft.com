@@ -533,7 +533,7 @@ class view extends sandbox_typed
                     }
                     // on import first add all view components to the view object and save them all at once
                     // TODO overwrite the style or position type
-                    $result->add_message_text($this->save_component($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj));
+                    $this->save_component($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj);
                     $cmp_pos++;
                 }
             }
