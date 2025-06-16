@@ -278,7 +278,7 @@ COMMENT ON COLUMN user_profiles.user_profile_id IS 'the internal unique primary 
 COMMENT ON COLUMN user_profiles.type_name IS 'the unique type name as shown to the user and used for the selection';
 COMMENT ON COLUMN user_profiles.code_id IS 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
 COMMENT ON COLUMN user_profiles.description IS 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
-COMMENT ON COLUMN user_profiles.right_level IS 'the access right level to prevent unpermitted right gaining';
+COMMENT ON COLUMN user_profiles.right_level IS 'the access right level to prevent not permitted right gaining';
 
 -- --------------------------------------------------------
 
@@ -346,11 +346,11 @@ COMMENT ON COLUMN users.user_id IS 'the internal unique primary index';
 COMMENT ON COLUMN users.user_name IS 'the user name unique for this pod';
 COMMENT ON COLUMN users.ip_address IS 'all users a first identified with the ip address';
 COMMENT ON COLUMN users.password IS 'the hash value of the password';
-COMMENT ON COLUMN users.description IS 'for system users the description to expain the profile to human users';
+COMMENT ON COLUMN users.description IS 'for system users the description to explain the profile to human users';
 COMMENT ON COLUMN users.code_id IS 'to select e.g. the system batch user';
 COMMENT ON COLUMN users.user_profile_id IS 'to define the user roles and read and write rights';
 COMMENT ON COLUMN users.user_type_id IS 'to set the confirmation level of a user';
-COMMENT ON COLUMN users.right_level IS 'the access right level to prevent unpermitted right gaining';
+COMMENT ON COLUMN users.right_level IS 'the access right level to prevent not permitted right gaining';
 COMMENT ON COLUMN users.email IS 'the primary email for verification';
 COMMENT ON COLUMN users.email_status IS 'if the email has been verified or if a password reset has been send';
 COMMENT ON COLUMN users.email_alternative IS 'an alternative email for account recovery';

@@ -38,6 +38,7 @@
 $debug = $_GET['debug'] ?? 0;
 // get the root path from the path of this file (relative path)
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
+
 // set the other path once for all scripts
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 // load once the common const and vars used almost every time

@@ -4757,11 +4757,14 @@ class sql_db
     function postgres_format($field_value, $forced_format)
     {
         global $debug;
+        global $db_con;
 
         $result = $field_value;
 
         // add the formatting for the sql statement
-        if (trim($result) == "" or trim($result) == sql::NULL_VALUE) {
+        if (is_null($result)) {
+            $result = sql::NULL_VALUE;
+        } elseif (trim($result) == "" || trim($result) == sql::NULL_VALUE) {
             $result = sql::NULL_VALUE;
         } else {
             if ($forced_format == sql_db::FLD_FORMAT_VAL) {
@@ -4771,7 +4774,13 @@ class sql_db
             } elseif ($forced_format == sql_db::FLD_FORMAT_TEXT or !is_numeric($result)) {
 
                 // escape the text value for Postgres
-                $result = pg_escape_string($result);
+                if ($db_con->postgres_link == null) {
+                    // TODO review
+                    log_warning('deprecated call of the pg_escape_string function');
+                    $result = pg_escape_string($result);
+                } else {
+                    $result = pg_escape_string($db_con->postgres_link, $result);
+                }
                 //$result = pg_real_escape_string($result);
 
                 // undo the double high quote escape char, because this is not needed if the string is capsuled by single high quote
@@ -5578,7 +5587,7 @@ class sql_db
     }
 
     /**
-     * @return bool true if the user has actuelly been imported
+     * @return bool true if the user has actually been imported
      */
     function import_system_users(): bool
     {
