@@ -124,14 +124,18 @@ class ListOfIdObjects extends ListOf
      */
     function ids(int $limit = null): array
     {
-        $result = array();
-        $pos = 0;
-        foreach ($this->lst() as $sbx_obj) {
-            if ($pos <= $limit or $limit == null) {
-                // use only valid ids
-                if ($sbx_obj->id() <> 0) {
-                    $result[] = $sbx_obj->id();
-                    $pos++;
+        if ($limit == null and !$this->lst_dirty) {
+            $result = array_keys($this->id_pos_lst);
+        } else {
+            $result = array();
+            $pos = 0;
+            foreach ($this->lst() as $sbx_obj) {
+                if ($pos <= $limit or $limit == null) {
+                    // use only valid ids
+                    if ($sbx_obj->id() <> 0) {
+                        $result[] = $sbx_obj->id();
+                        $pos++;
+                    }
                 }
             }
         }
@@ -232,6 +236,19 @@ class ListOfIdObjects extends ListOf
             }
         }
         $this->lst_dirty = false;
+    }
+
+    /**
+     * unset an object of the list
+     * and set the cache to dirty
+     *
+     * @param int|string $key the unique id of the entry
+     * @returns bool true if the object has been added
+     */
+    protected function unset(int|string $key): bool
+    {
+        $this->set_lst_dirty();
+        return parent::unset($key);
     }
 
 
