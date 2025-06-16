@@ -414,6 +414,15 @@ class test_base
     }
 
 
+    /*
+     * set and get
+     */
+
+    function start_time(): float
+    {
+        return $this->start_time;
+    }
+
 
     /*
      * Display functions
@@ -445,7 +454,7 @@ class test_base
 
     private function time_stamp(): string
     {
-        return sprintf('%08.4f', microtime(true) - $this->start_time, 4) . ' ';
+        return sprintf('%08.4f', microtime(true) - $this->start_time) . ' ';
     }
 
     /**
@@ -454,8 +463,8 @@ class test_base
      * TODO the first parameter should almost always be $ts . $test_name
      *
      * @param string $test_name (unique) description of the test
-     * @param string|array|null $result the actual result
-     * @param string|array|null $target the expected result
+     * @param string|bool|array|null $result the actual result
+     * @param string|bool|array|null $target the expected result
      * @param float $exe_max_time the expected max time to create the result
      * @param string $comment
      * @param string $test_type

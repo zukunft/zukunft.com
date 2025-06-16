@@ -1032,7 +1032,7 @@ class view extends sandbox_typed
             $this->cmp_lnk_lst = new component_link_list($this->user());
         }
         $lnk->set_view($this);
-        $this->cmp_lnk_lst->add_link_by_name($lnk);
+        $this->cmp_lnk_lst->add_link_by_key($lnk);
 
         return $result;
     }

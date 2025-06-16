@@ -624,6 +624,17 @@ class component_link extends sandbox_link
         return $lnk;
     }
 
+    /**
+     * @return string a unique key including the position of the component link based on the names of the view and component
+     */
+    function key(): string
+    {
+        $from_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->from_name());
+        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->predicate_name());
+        $to_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->to_name());
+        return $from_name . self::KEY_SEP . $link_name . self::KEY_SEP . $to_name . self::KEY_SEP . strval($this->pos());
+    }
+
 
     /*
      * preloaded

@@ -67,6 +67,20 @@ class import_file
         $this->start_save = microtime(true);
     }
 
+
+    /*
+     * set and get
+     */
+
+    /*
+     * use to apply the time of the parent process for continuous timestamp reporting
+     */
+    function set_start_time(float $tart_time): void
+    {
+        $this->start_time = $tart_time;
+    }
+
+
     /**
      * import a single json file
      * TODO return a user message instead of a string
@@ -82,6 +96,7 @@ class import_file
 
         $usr_msg = new user_message();
         $imp = new import($filename);
+        $imp->set_start_time($this->start_time);
 
         // get the relevant config values
         $read_bytes_per_sec = $cfg->get_by([triples::FILE_READ, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -307,13 +322,11 @@ class import_file
         );
 
         foreach (files::BASE_CONFIG_FILES as $filename) {
-            $this->echo('load ' . $filename);
             $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
         }
 
         // config files that cannot yet be loaded via list saving
         foreach (files::BASE_CONFIG_FILES_DIRECT as $filename) {
-            $this->echo('load ' . $filename);
             $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, true)->get_last_message();
         }
 
@@ -338,7 +351,6 @@ class import_file
         );
 
         foreach (files::POD_CONFIG_FILES_DIRECT as $filename) {
-            $this->echo('load ' . $filename);
             $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
         }
 
@@ -363,7 +375,6 @@ class import_file
         );
 
         foreach (test_files::TEST_IMPORT_FILE_LIST as $filename) {
-            $this->echo('load ' . $filename);
             $result .= $this->json_file($filename, $usr, $direct)->get_last_message();
         }
 
