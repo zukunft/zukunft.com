@@ -63,6 +63,7 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
@@ -1004,7 +1005,7 @@ class term extends combine_named
      */
 
     /**
-     * create a message text that the name is already used
+     * create a translatable message that the name is already used
      */
     function id_used_msg(db_object_seq_id $obj_to_add): user_message
     {
@@ -1021,6 +1022,14 @@ class term extends combine_named
         }
 
         return $usr_msg;
+    }
+
+    /**
+     * create a message text that the name is already used
+     */
+    function id_used_msg_text(db_object_seq_id $obj_to_add): string
+    {
+        return $this->id_used_msg($obj_to_add)->get_last_message_translated();
     }
 
     /*

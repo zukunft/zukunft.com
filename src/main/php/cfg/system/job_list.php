@@ -44,6 +44,7 @@ include_once MODEL_SYSTEM_PATH . 'job.php';
 include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
