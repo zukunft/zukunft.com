@@ -4,7 +4,6 @@ README.md
 Dockerfile
 docker-compose.yml
 .dockerignore
-.env
 .env.example
 logs/
 *.log
