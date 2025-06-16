@@ -4,3 +4,4 @@
 /src/main/resources/style/.directory
 /.idea/
 .vscode/
+.env
