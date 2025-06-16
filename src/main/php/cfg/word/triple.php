@@ -711,19 +711,19 @@ class triple extends sandbox_link_named
         log_debug();
 
         // set the object vars based on the json
-        $result = $this->import_mapper($in_ex_json, null, $test_obj);
+        $usr_msg = $this->import_mapper($in_ex_json, null, $test_obj);
 
         // save the triple in the database
         if (!$test_obj) {
-            if ($result->is_ok()) {
+            if ($usr_msg->is_ok()) {
                 // remove unneeded given names
                 $this->set_names();
-                $result->add($this->save());
+                $usr_msg->add($this->save());
             }
         }
 
         // add related parameters to the word object
-        if ($result->is_ok()) {
+        if ($usr_msg->is_ok()) {
             log_debug('saved ' . $this->dsp_id());
 
             if (!$test_obj) {
@@ -731,12 +731,12 @@ class triple extends sandbox_link_named
                     $usr_msg->add_id_with_vars(msg_id::TRIPLE_NOT_SAVED, [msg_id::VAR_ID => $this->dsp_id()]);
                 } else {
                     foreach ($in_ex_json as $key => $value) {
-                        if ($result->is_ok()) {
+                        if ($usr_msg->is_ok()) {
                             if ($key == self::FLD_REFS) {
                                 foreach ($value as $ref_data) {
                                     $ref_obj = new ref($this->user());
                                     $ref_obj->set_phrase($this->phrase());
-                                    $result->add($ref_obj->import_obj($ref_data, $test_obj));
+                                    $usr_msg->add($ref_obj->import_obj($ref_data, $test_obj));
                                     $this->ref_lst[] = $ref_obj;
                                 }
                             }
@@ -746,7 +746,7 @@ class triple extends sandbox_link_named
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -1150,7 +1150,7 @@ class triple extends sandbox_link_named
      * if the given name is not set (null) the given name is not remove
      * if the given name is an empty string the given name is removed
      *
-     * @param triple|CombineObject|db_object_seq_id $sbx word with the values that should been updated e.g. based on the import
+     * @param triple|CombineObject|db_object_seq_id $sbx word with the values that should be updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
     function fill(triple|CombineObject|db_object_seq_id $sbx): user_message
@@ -1324,7 +1324,6 @@ class triple extends sandbox_link_named
         // the triple has positive id, but the phrase uses a negative id
         $phr->set_name($this->name, triple::class);
         $phr->set_obj($this);
-        log_debug('triple->phrase of ' . $this->dsp_id());
         return $phr;
     }
 
@@ -1338,7 +1337,6 @@ class triple extends sandbox_link_named
         $trm->set_id_from_obj($this->id(), self::class);
         $trm->set_name($this->name(), triple::class);
         $trm->set_obj($this);
-        log_debug($this->dsp_id());
         return $trm;
     }
 
@@ -2346,7 +2344,7 @@ class triple extends sandbox_link_named
                     // in this case change is allowed and done
                     log_debug('triple->save_id_if_updated change the existing triple ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
                     $this->load_objects();
-                    $usr_msg->add_id($this->save_id_fields($db_con, $db_rec, $std_rec));
+                    $usr_msg->add_message_text($this->save_id_fields($db_con, $db_rec, $std_rec));
                 } else {
                     // if the target link has not yet been created
                     // ... request to delete the old
