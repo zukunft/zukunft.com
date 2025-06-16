@@ -101,13 +101,21 @@ class sandbox_link_list extends sandbox_list
     }
 
     /**
+     * @return true if the link key hash table is updated
+     */
+    private function is_key_list_dirty(): bool
+    {
+        return $this->key_lst_dirty;
+    }
+
+    /**
      * TODO add a unit test
      * @returns array with all unique link keys of this list with the position key within this list
      */
     protected function key_pos_list(): array
     {
         $result = array();
-        if ($this->key_lst_dirty) {
+        if ($this->is_key_list_dirty()) {
             foreach ($this->lst() as $key => $obj) {
                 $result[$obj->key()] = $key;
             }
@@ -117,14 +125,6 @@ class sandbox_link_list extends sandbox_list
             $result = $this->key_pos_lst;
         }
         return $result;
-    }
-
-    /**
-     * @return true if the at least one of the hash tables is not updated
-     */
-    protected function is_key_list_dirty(): bool
-    {
-        return $this->key_lst_dirty;
     }
 
 
