@@ -417,3 +417,74 @@ Prio 2:
 - review the database indices and the foreign keys
 - include a list of basic values in test.php e.g. CO2 of rice
 - allow personal groups up to 100 persons and to join up 20 named groups
+---
+
+
+## Setup Guide 
+
+### clone the repository
+
+```bash
+git clone https://github.com/zukunft/zukunft.com.git
+
+cd zukunft.com
+
+cp .env.example .env
+```
+---
+
+### Installation (using Docker)
+
+
+### 1. **Build the Docker image**
+
+Run the following command from the **project root**:
+
+```bash
+docker build -t zukunft.com .
+```
+
+---
+
+### 2. **Run the container**
+
+```bash
+docker run -d \
+  --name zukunft-app \
+  -p 9000:9000 \
+  -e DB_HOST=your_db_host \
+  -e DB_NAME=zukunft_structure \
+  -e DB_USER=zukunft_db_root \
+  -e DB_PASS=your_password \
+  zukunft.com
+```
+
+> Note: `PHP-FPM` does **not** serve HTTP directly.
+> You will need to reverse proxy it with **Nginx** or use **Docker Compose** (see Option 2).
+---
+
+### Option 2: Using Docker Compose (Recommended)
+
+### 1. **Start the App**
+
+```bash
+docker-compose up --build
+```
+
+---
+
+### 2. **Access in the Browser**
+
+```bash
+http://localhost:8080
+```
+
+---
+
+### 3. **Stop and Remove Containers**
+
+```bash
+docker-compose down
+```
+
+---
