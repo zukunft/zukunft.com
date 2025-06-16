@@ -522,6 +522,8 @@ Prio 2:
 git clone https://github.com/zukunft/zukunft.com.git
 
 cd zukunft.com
+
+cp .env.example .env
 ```
 ---
 
