@@ -193,16 +193,8 @@ installAndConfigurePostgresql() {
     # TODO use the generated or give db password in the php code
     # TODO add postgres admin username and password if postgres is ready running and the standard user name is changed
     # TODO secure the standard postgres user name after install
-    #runuser -l postgres -c "psql -c \"CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';\""
-    #runuser -l postgres -c "psql -c \"CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8' TEMPLATE=template0;\""
-    #su postgres
-    #psql
-    #CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';
-    #CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8';
-    #exit
-    #exit
-    sudo -u postgres psql -c "CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';"
-    sudo -u postgres psql -c "CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8';"
+    sudo -u postgres psql -d postgres -U postgres -c "CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';"
+    sudo -u postgres psql -d postgres -U postgres -c "CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8';"
 
     echo -e "Installed postgres: \n$(psql --version)"
 
