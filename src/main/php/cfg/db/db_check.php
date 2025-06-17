@@ -94,11 +94,11 @@ class db_check
         // TODO remove rewrite before moved to PROD
         $main_tbl_name = $lib->class_to_name(config::class);
         if (!$db_con->has_table($main_tbl_name)) {
-            $cfg = new config();
             $usr_msg = $db_con->setup_db();
             if ($usr_msg->is_ok()) {
                 $db_con->db_fill_code_links();
                 $db_con->db_check_missing_owner();
+                $cfg = new config();
                 $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $db_con);
             }
         }

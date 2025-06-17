@@ -98,6 +98,12 @@ class import_file
         $imp = new import($filename);
         $imp->set_start_time($this->start_time);
 
+        // load the config e.g. after initial setup
+        if ($cfg == null) {
+            $cfg = new config_numbers($usr);
+            $cfg->load_cfg($usr);
+        }
+
         // get the relevant config values
         $read_bytes_per_sec = $cfg->get_by([triples::FILE_READ, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $total_bytes_per_sec = $cfg->get_by([words::TOTAL_PRE, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);

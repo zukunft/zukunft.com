@@ -180,8 +180,8 @@ installAndConfigurePostgresql() {
     # TODO check if postgres is already installed and if yes request the user and password once to create a zukunft user and a db
     apt-get install -y postgresql postgresql-contrib
 
-    systemctl enable postgresql
-    systemctl start postgresql
+    # systemctl enable postgresql
+    # systemctl start postgresql
 
     # Backup pg_hba.conf
     #PG_HBA=$(find /etc/postgresql/ -name pg_hba.conf | head -n 1)
@@ -197,10 +197,11 @@ installAndConfigurePostgresql() {
     sudo -u postgres psql -d postgres -U postgres -c "CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8';"
 
     echo -e "Installed postgres: \n$(psql --version)"
+    read -p "Press enter to continue or CTRL+C to exit"
 
-    systemctl stop postgresql
+    #systemctl stop postgresql
     #cat "$(pwd)/config/pg_hba.conf" > "$PG_HBA"
-    systemctl start postgresql
+    #systemctl start postgresql
 
     # rm /var/lib/pgsql/data/pg_hba.conf
     # mv $(pwd)/config/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf
@@ -266,16 +267,7 @@ downloadAndInstallZukunft() {
     git clone -b $BRANCH https://github.com/zukunft/zukunft.com
     rsync -avP $(pwd)/zukunft.com/ $WWW_ROOT/
 
-    #chown -R apache:apache $WWW_ROOT
-    #cd $WWW_ROOT/admin/cli
-
-    #chown -R root:root $WWW_ROOT
-    #chmod -R 755 $WWW_ROOT
-
-    systemctl restart postgresql
-    systemctl restart httpd
-
-    #runuser -u apache $(which php) reset_db.php --
+    # create the zukunft.com database tables
     php $WWW_ROOT/test/reset_db.php
 
     # TODO check result and create warning if it does not end with
