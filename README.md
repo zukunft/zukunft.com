@@ -22,7 +22,7 @@ To install this version 0.0.3 on a debian system (https://wiki.debian.org/):
 Steps:
 1. Clone the repository:
    ```bash
-   git clone https://github.com/zukunft/zukunft.com.git
+   git clone -b develop https://github.com/zukunft/zukunft.com.git
    cd zukunft.com
    ```
 
@@ -39,7 +39,7 @@ Steps:
 
 3. Start the application:
    ```bash
-   sudo ./install.ch
+   sudo ./install.sh
    ```
 
 Old and manual installation:
@@ -67,7 +67,7 @@ Prerequisites:
 Steps:
 1. Clone the repository:
    ```bash
-   git clone https://github.com/zukunft/zukunft.com.git
+   git clone -b release https://github.com/zukunft/zukunft.com.git
    cd zukunft.com
    ```
 
