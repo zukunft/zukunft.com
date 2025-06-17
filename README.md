@@ -16,6 +16,32 @@ This program should
 installation
 ------------
 
+Target installation (to be tested):
+To install this version 0.0.3 on a debian system (https://wiki.debian.org/):
+
+Steps:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/zukunft/zukunft.com.git
+   cd zukunft.com
+   ```
+
+2. (Optional) Adjust the `.env.sample` file e.g. for customize database credentials:
+   ```env
+   OS=debian
+   ENV=dev
+   ZUKUNFT_BRANCH=develop
+   PGSQL_ZUKUNFT_USER=zukunft
+   PGSQL_ZUKUNFT_DATABASE=zukunft
+   PGSQL_ZUKUNFT_USER_PASSWORD=your_password_here
+   ```
+
+3. Start the application:
+   ```bash
+   sudo ./install_lapp.ch
+   ```
+
+Old and manual installation:
 To install this version 0.0.3 use a LAPP or (LAMP for MySQL) server (https://wiki.debian.org/LaMp) and
 1) copy all files to the www root path (e.g. /var/www/html/)
 2) copy all files of bootstrap 4.1.3 or higher to /var/www/html/lib_external/bootstrap/4.1.3/
