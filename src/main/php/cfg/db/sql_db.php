@@ -37,6 +37,7 @@ namespace cfg\db;
 
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_DB_PATH . 'sql_creator.php';
+include_once MODEL_DB_PATH . 'sql_sync_sequences.php';
 include_once MODEL_SYSTEM_PATH . 'log.php';
 include_once MODEL_IMPORT_PATH . 'import_file.php';
 include_once MODEL_HELPER_PATH . 'config_numbers.php';
@@ -1019,6 +1020,9 @@ class sql_db
             $sys_typ_lst = new type_lists();
             $sys_typ_lst->load($this, $usr);
 
+            // update the sql sequences
+            $this->check_sequences();
+
             // reload the base configuration
             $job = new job($usr);
             $job_id = $job->add(job_type_list::BASE_IMPORT);
@@ -1059,6 +1063,16 @@ class sql_db
             $cfg->set(config::LAST_CONSISTENCY_CHECK, gmdate(DATE_ATOM), $this);
         }
         return $usr_msg;
+    }
+
+    /**
+     * check and fix the sql sequences
+     * @return user_message
+     */
+    public function check_sequences(): user_message
+    {
+        $sql_seq = new sql_sync_sequences();
+        return $sql_seq->sync($this);
     }
 
     /**
@@ -2619,7 +2633,7 @@ class sql_db
      * @param int $log_level to prevent further messages in case of fatal errors
      * @return string the message that should be shown to the user
      */
-    private function log_db_exception(
+    public function log_db_exception(
         string $msg,
         Exception $e,
         string $sql = '',
