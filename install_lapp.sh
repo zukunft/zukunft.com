@@ -27,6 +27,7 @@ main() {
     checkOs
     checkEnv
 
+    # TODO add docker version
     updateDebian
     installAndConfigurePostgresql
     installAndConfigureApache
@@ -67,6 +68,7 @@ displayIntro() {
 }
 
 initEnvironment() {
+    # TODO modify to environment base on the given parameters e.g. -docker
     echo -e "\n${GREEN}Create environment...${NC}"
     if [ ! -f .env ]; then
         if [ -f .env.example ]; then
@@ -124,6 +126,7 @@ checkEnv() {
     fi
 }
 
+# TODO add other linux distributions such as Fedora
 updateDebian() {
     clear >$(tty)
     echo -e "\n${GREEN}Updating Debian...${NC}"
@@ -140,6 +143,7 @@ installAndConfigurePostgresql() {
     echo -e "\n${GREEN}Installing PostgreSQL ...${NC}"
 
     # Install PostgreSQL
+    # TODO check if postgres is already installed and if yes request the user and password once to create a zukunft user and a db
     apt-get install -y postgresql postgresql-contrib
 
     systemctl enable postgresql
@@ -151,6 +155,8 @@ installAndConfigurePostgresql() {
     chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf.bak
 
     # Initialize database
+    # TODO if no password is given just create on and write it to the .env secrets
+    # TODO use the generated or give db password in the php code
     runuser -l postgres -c "psql -c \"CREATE USER $PGSQL_ZUKUNFT_USER WITH PASSWORD '$PGSQL_ZUKUNFT_USER_PASSWORD';\""
     runuser -l postgres -c "psql -c \"CREATE DATABASE $PGSQL_ZUKUNFT_DATABASE WITH OWNER $PGSQL_ZUKUNFT_USER ENCODING 'UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8' TEMPLATE=template0;\""
 
@@ -168,6 +174,7 @@ installAndConfigurePostgresql() {
     sleep 3
 }
 
+# TODO add a nginx based installation
 installAndConfigureApache() {
     clear >$(tty)
     echo -e "\n${GREEN}Installing Apache...${NC}"
