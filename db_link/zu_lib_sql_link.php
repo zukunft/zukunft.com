@@ -1,10 +1,10 @@
 <?php
 
 // Database configuration from environment variables
-define('SQL_DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('SQL_DB_HOST', getenv('PGSQL_HOST') ?: 'localhost');
+define('SQL_DB_USER', getenv('PGSQL_USERNAME') ?: 'zukunft');
+define('SQL_DB_PASSWD', getenv('PGSQL_PASSWORD') ?: 'zukunft');
 
-define('SQL_DB_USER', getenv('DB_USERNAME') ?: 'zukunft');
-define('SQL_DB_PASSWD', getenv('DB_PASSWORD') ?: 'zukunft');
-
-define('SQL_DB_USER_MYSQL', getenv('DB_USERNAME') ?: 'zukunft');
-define('SQL_DB_PASSWD_MYSQL', getenv('DB_PASSWORD') ?: 'y9CJxs2JkVKvGmP');
+define('SQL_DB_HOST_MYSQL', getenv('MYSQL_HOST') ?: 'localhost');
+define('SQL_DB_USER_MYSQL', getenv('MYSQL_USERNAME') ?: 'zukunft');
+define('SQL_DB_PASSWD_MYSQL', getenv('MYSQL_PASSWORD') ?: 'y9CJxs2JkVKvGmP');

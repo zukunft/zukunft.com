@@ -28,17 +28,18 @@ Steps:
 
 2. (Optional) Adjust the `.env.sample` file e.g. for customize database credentials:
    ```env
-   OS=debian
-   ENV=dev
-   ZUKUNFT_BRANCH=develop
-   PGSQL_ZUKUNFT_USER=zukunft
-   PGSQL_ZUKUNFT_DATABASE=zukunft
-   PGSQL_ZUKUNFT_USER_PASSWORD=your_password_here
+   OS=debian (or "docker")
+   ENV=dev (or "test", "prod")
+   BRANCH=develop (or "release", "master")
+   DB=postgres (or "mysql")
+   PGSQL_USERNAME=zukunft
+   PGSQL_DATABASE=zukunft
+   PGSQL_PASSWORD=your_password_here
    ```
 
 3. Start the application:
    ```bash
-   sudo ./install_lapp.ch
+   sudo ./install.ch
    ```
 
 Old and manual installation:
@@ -72,11 +73,11 @@ Steps:
 
 2. (Optional) Create a `.env` file to customize database credentials:
    ```env
-   DB_HOST=db
-   DB_PORT=5432
-   DB_DATABASE=zukunft
-   DB_USERNAME=zukunft
-   DB_PASSWORD=your_secure_password
+   PGSQL_HOST=db
+   PGSQL_PORT=5432
+   PGSQL_DATABASE=zukunft
+   PGSQL_USERNAME=zukunft
+   PGSQL_PASSWORD=your_secure_password
    ```
 
 3. Start the application:

@@ -11,11 +11,11 @@ services:
     depends_on:
       - db
     environment:
-      - DB_HOST=${DB_HOST:-db}
-      - DB_PORT=${DB_PORT:-5432}
-      - DB_DATABASE=${DB_DATABASE:-zukunft}
-      - DB_USERNAME=${DB_USERNAME:-zukunft}
-      - DB_PASSWORD=${DB_PASSWORD:-zukunft}
+      - PGSQL_HOST=${PGSQL_HOST:-db}
+      - PGSQL_PORT=${PGSQL_PORT:-5432}
+      - PGSQL_DATABASE=${PGSQL_DATABASE:-zukunft}
+      - PGSQL_USERNAME=${PGSQL_USERNAME:-zukunft}
+      - PGSQL_PASSWORD=${PGSQL_PASSWORD:-zukunft}
     networks:
       - zukunft_network
 
@@ -23,9 +23,9 @@ services:
     image: postgres:14
     restart: always
     environment:
-      POSTGRES_DB: ${DB_DATABASE:-zukunft}
-      POSTGRES_USER: ${DB_USERNAME:-zukunft}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-zukunft}
+      POSTGRES_DB: ${PGSQL_DATABASE:-zukunft}
+      POSTGRES_USER: ${PGSQL_USERNAME:-zukunft}
+      POSTGRES_PASSWORD: ${PGSQL_PASSWORD:-zukunft}
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:

@@ -21,20 +21,29 @@ main() {
     CURRENT_DIR=$(pwd)
 
     displayIntro
+    parseArguments
     initEnvironment
     readVar
 
-    checkOs
     checkEnv
+    checkOs
+    checkDb
 
-    # TODO add docker version
-    updateDebian
-    installAndConfigurePostgresql
-    installAndConfigureApache
-    installAndConfigurePhp
-    downloadAndInstallExternalLibraries
-    downloadAndInstallZukunft
-    testInstallation
+    if [[ "$OS" == "debian" ]]; then
+        updateDebian
+        installAndConfigurePostgresql
+        installAndConfigureApache
+        installAndConfigurePhp
+        downloadAndInstallExternalLibraries
+        downloadAndInstallZukunft
+        #testInstallation
+    else
+        if [[ "$OS" == "docker" ]]; then
+            installZukunftInDocker
+            #testInstallation
+        fi
+    fi
+
 }
 # ------------------------------------------
 # END Main
@@ -67,6 +76,18 @@ displayIntro() {
     read -p "Press enter to continue or CTRL+C to exit"
 }
 
+# Parse arguments
+parseArguments() {
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+            --os=*) OS="${1#*=}" ;;
+            --os) OS="$2"; shift ;;
+            *) echo "Updating with default environment";;
+        esac
+        shift
+    done
+}
+
 initEnvironment() {
     # TODO modify to environment base on the given parameters e.g. -docker
     echo -e "\n${GREEN}Create environment...${NC}"
@@ -87,6 +108,32 @@ readVar() {
     set -o allexport; source .env; set +o allexport
 }
 
+checkEnv() {
+    # reject unexpected environments
+    if [[ "$ENV" == "prod" ]]; then
+        echo -e "${GREEN}install a production instance of zukunft.com${NC}"
+        if [[ "$BRANCH" != "master" ]]; then
+            echo -e "${RED}branch $BRANCH not expected for a production instance${NC}"
+        fi
+    else
+        if [[ "$ENV" == "test" ]]; then
+            echo -e "${GREEN}install a zukunft.com for user acceptance testing${NC}"
+            if [[ "$BRANCH" != "release" ]]; then
+               echo -e "${RED}branch $BRANCH not expected for a production instance${NC}"
+            fi
+        else
+            if [[ "$ENV" == "dev" ]]; then
+                echo -e "${GREEN}install a zukunft.com for development${NC}"
+                if [[ "$BRANCH" != "develop" ]]; then
+                    echo -e "${RED}branch $BRANCH not expected for a production instance${NC}"
+                fi
+            else
+                echo -e "\n${RED}environment $ENV not yet supported by zukunft.com${NC}"
+            fi
+        fi
+    fi
+}
+
 checkOs() {
     # reject unexpected operating systems
     if [[ "$OS" == "debian" ]]; then
@@ -100,28 +147,15 @@ checkOs() {
     fi
 }
 
-checkEnv() {
-    # reject unexpected environments
-    if [[ "$ENV" == "prod" ]]; then
-        echo -e "${GREEN}install a production instance of zukunft.com${NC}"
-        if [[ "$ZUKUNFT_BRANCH" != "master" ]]; then
-            echo -e "${RED}branch $ZUKUNFT_BRANCH not expected for a production instance${NC}"
-        fi
+checkDb() {
+    # reject unexpected operating systems
+    if [[ "$DB" == "postgres" ]]; then
+        echo -e "${GREEN}using postgres database${NC}"
     else
-        if [[ "$ENV" == "test" ]]; then
-            echo -e "${GREEN}install a zukunft.com for user acceptance testing${NC}"
-            if [[ "$ZUKUNFT_BRANCH" != "release" ]]; then
-               echo -e "${RED}branch $ZUKUNFT_BRANCH not expected for a production instance${NC}"
-            fi
+        if [[ "$DB" == "mysql" ]]; then
+        echo -e "${GREEN}using mysql database${NC}"
         else
-            if [[ "$ENV" == "dev" ]]; then
-                echo -e "${GREEN}install a zukunft.com for development${NC}"
-                if [[ "$ZUKUNFT_BRANCH" != "develop" ]]; then
-                    echo -e "${RED}branch $ZUKUNFT_BRANCH not expected for a production instance${NC}"
-                fi
-            else
-                echo -e "\n${RED}environment $ENV not yet supported by zukunft.com${NC}"
-            fi
+            echo -e "\n${RED}database $DB not yet possible.${NC}"
         fi
     fi
 }
@@ -129,7 +163,7 @@ checkEnv() {
 # TODO add other linux distributions such as Fedora
 updateDebian() {
     clear >$(tty)
-    echo -e "\n${GREEN}Updating Debian...${NC}"
+    echo -e "\n${GREEN}Updating debian...${NC}"
 
     # Update Debian
     apt-get update && apt-get upgrade
@@ -140,9 +174,9 @@ updateDebian() {
 
 installAndConfigurePostgresql() {
     clear >$(tty)
-    echo -e "\n${GREEN}Installing PostgreSQL ...${NC}"
+    echo -e "\n${GREEN}Installing postgres ...${NC}"
 
-    # Install PostgreSQL
+    # Install postgres
     # TODO check if postgres is already installed and if yes request the user and password once to create a zukunft user and a db
     apt-get install -y postgresql postgresql-contrib
 
@@ -157,10 +191,10 @@ installAndConfigurePostgresql() {
     # Initialize database
     # TODO if no password is given just create on and write it to the .env secrets
     # TODO use the generated or give db password in the php code
-    runuser -l postgres -c "psql -c \"CREATE USER $PGSQL_ZUKUNFT_USER WITH PASSWORD '$PGSQL_ZUKUNFT_USER_PASSWORD';\""
-    runuser -l postgres -c "psql -c \"CREATE DATABASE $PGSQL_ZUKUNFT_DATABASE WITH OWNER $PGSQL_ZUKUNFT_USER ENCODING 'UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8' TEMPLATE=template0;\""
+    runuser -l postgres -c "psql -c \"CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';\""
+    runuser -l postgres -c "psql -c \"CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8' TEMPLATE=template0;\""
 
-    echo -e "Installed PostgreSQL: \n$(psql --version)"
+    echo -e "Installed postgres: \n$(psql --version)"
 
     systemctl stop postgresql
     cat "$(pwd)/config/pg_hba.conf" > "$PG_HBA"
@@ -195,8 +229,8 @@ installAndConfigurePhp() {
     php-pgsql php-yaml php-curl \
     php-spl php-xml php-json
     # check which might be needed
-    # php-opcache php-gd php-mysqlnd php-mbstring \
-    # php-openssl php-xmlrpc php-soap php-zip php-simplexml \
+    # php-opcache php-gd php-mysqlnd \
+    # php-openssl php-soap php-zip php-simplexml \
     # php-pcre php-dom php-intl php-json \
     # php-pdo_pgsql
 
@@ -228,7 +262,7 @@ downloadAndInstallZukunft() {
     echo -e "\n${GREEN}Installing zukunft.com ...${NC}"
 
     # switch later to something like git://git.zukunft.com/zukunft.git
-    git clone -b $ZUKUNFT_BRANCH https://github.com/zukunft/zukunft.com
+    git clone -b $BRANCH https://github.com/zukunft/zukunft.com
     rsync -avP $(pwd)/zukunft.com/ $WWW_ROOT/
 
     chown -R apache:apache $WWW_ROOT
@@ -250,6 +284,20 @@ downloadAndInstallZukunft() {
     systemctl restart httpd
     cd $CURRENT_DIR
     sleep 3
+}
+
+installZukunftInDocker() {
+    clear >$(tty)
+    echo -e "\n${GREEN}Installing zukunft.com in docker ...${NC}"
+
+    # switch later to something like git://git.zukunft.com/zukunft.git
+    git clone -b $BRANCH https://github.com/zukunft/zukunft.com
+    rsync -avP $(pwd)/zukunft.com/ $WWW_ROOT/
+
+    docker compose up -d
+
+    docker compose exec app php /var/www/html/test/reset_db.php
+
 }
 
 # ------------------------------------------
