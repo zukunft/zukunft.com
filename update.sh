@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# TODO make sure that before any update in release or prod
+# TODO the test.php script has run without errors on the local server
+# TODO using a temp test database e.g "zukunft_test"
+
 # Defaults
 ENV=""
 BRANCH=""
