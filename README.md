@@ -26,7 +26,7 @@ Steps:
    cd zukunft.com
    ```
 
-2. (Optional) Adjust the `.env.sample` file e.g. for customize database credentials:
+2. (Optional) Adjust the `.env.example` file e.g. for customize database credentials:
    ```env
    OS=debian (or "docker")
    ENV=dev (or "test", "prod")
@@ -69,15 +69,28 @@ Steps:
    ```bash
    git clone -b release https://github.com/zukunft/zukunft.com.git
    cd zukunft.com
+   cp .env.example .env
    ```
 
-2. (Optional) Create a `.env` file to customize database credentials:
+2. (Optional) Customize configurations of `.env`:
    ```env
-   PGSQL_HOST=db
-   PGSQL_PORT=5432
+   OS=debian
+   ENV=dev
+   BRANCH=develop
+   DB=postgres
    PGSQL_DATABASE=zukunft
-   PGSQL_USERNAME=zukunft
-   PGSQL_PASSWORD=your_secure_password
+   PGSQL_USERNAME=zukunft_db_root
+   PGSQL_PASSWORD=your_password_here
+   PGSQL_HOST=localhost
+   PGSQL_PORT=5432
+   PGSQL_ZUKUNFT_VERSION=0.0.3
+   MYSQL_DATABASE=zukunft
+   MYSQL_USERNAME=zukunft_db_root
+   MYSQL_PASSWORD=your_password_here
+   MYSQL_HOST=localhost
+   MYSQL_PORT=5432
+   MYSQL_ZUKUNFT_VERSION=0.0.1
+   WWW_ROOT=/var/www/html
    ```
 
 3. Start the application:
