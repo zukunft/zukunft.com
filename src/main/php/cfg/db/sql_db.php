@@ -5596,6 +5596,7 @@ class sql_db
      */
     function reset_config(): void
     {
+        global $cfg;
         $cfg = new config();
         $cfg->set(config::VERSION_DB, PRG_VERSION, $this);
     }
