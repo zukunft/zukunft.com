@@ -24,6 +24,7 @@ Steps:
    ```bash
    git clone -b develop https://github.com/zukunft/zukunft.com.git
    cd zukunft.com
+   chmod 777 install.sh
    ```
 
 2. (Optional) Adjust the `.env.sample` file e.g. for customize database credentials:

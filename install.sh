@@ -225,9 +225,12 @@ installAndConfigurePhp() {
     echo -e "\n${GREEN}Installing PHP ...${NC}"
 
     # Install PHP
-    apt-get install -y php \
-    php-pgsql php-yaml php-curl \
-    php-spl php-xml php-json
+    apt-get install -y php
+    apt-get install -y php-pgsql
+    apt-get install -y php-yaml
+    apt-get install -y php-curl
+    apt-get install -y php-xml
+    apt-get install -y php-json
     # check which might be needed
     # php-opcache php-gd php-mysqlnd \
     # php-openssl php-soap php-zip php-simplexml \
