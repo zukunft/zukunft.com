@@ -253,7 +253,7 @@ class component_link_list extends sandbox_link_list
     {
         $added = false;
         if ($this->can_add($lnk_to_add)) {
-            $this->add_link_by_name($lnk_to_add);
+            $this->add_link_by_key($lnk_to_add);
             $added = true;
         }
         return $added;

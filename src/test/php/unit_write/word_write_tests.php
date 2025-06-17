@@ -283,19 +283,19 @@ class word_write_tests
         $test_name = 'check if saving a word with an existing name (' . words::MATH . ') creates a warning message for the user';
         $wrd_new = new word($t->usr1);
         $wrd_new->set_name(words::MATH);
-        $result = $wrd_new->save()->get_last_message();
+        $result = $wrd_new->save()->get_last_message_translated();
         $target = 'A word with the name "'.words::MATH.'" already exists. Please use another word name.';
         $t->display($test_name, $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // test the creation of a new word
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(words::TEST_ADD);
-        $result = $wrd_add->save()->get_last_message();
+        $result = $wrd_add->save()->get_last_message_translated();
         $target = '';
         $t->assert('word->save for "' . words::TEST_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(words::TEST_ADD);
-        $result = $wrd_add->save()->get_last_message();
+        $result = $wrd_add->save()->get_last_message_translated();
         $target = 'A word with the name "'.words::TEST_ADD.'" already exists. Please use another word name.';
         $t->display('word->save reject for "' . words::TEST_ADD . '"', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
@@ -303,7 +303,7 @@ class word_write_tests
         $vrb = new verb();
         $vrb->set_user($t->usr1);
         $vrb->set_name(words::TEST_ADD);
-        $result = $vrb->save()->get_last_message();
+        $result = $vrb->save()->get_last_message_translated();
         $target = 'A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.';
         $t->assert('verb cannot have an already used word name', $result, $target);
@@ -312,7 +312,7 @@ class word_write_tests
         $trp = new triple($t->usr1);
         $trp->load_by_name(triples::PI_NAME);
         $trp->set_name(words::TEST_ADD);
-        $result = $trp->save()->get_last_message();
+        $result = $trp->save()->get_last_message_translated();
         $target = 'A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.';
         $t->assert('triple cannot by renamed to an already used word name', $result, $target);
@@ -321,7 +321,7 @@ class word_write_tests
         $frm = new formula($t->usr1);
         $frm->load_by_name(formulas::SCALE_TO_SEC);
         $frm->set_name(words::TEST_ADD);
-        $result = $frm->save()->get_last_message();
+        $result = $frm->save()->get_last_message_translated();
         $target = 'A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.';
         $t->assert('formula cannot by renamed to an already used word name', $result, $target);

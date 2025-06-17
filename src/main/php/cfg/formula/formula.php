@@ -2402,7 +2402,7 @@ class formula extends sandbox_typed
             // check if a word, triple or verb with the same name is already in the database
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and !$this->is_term_the_same($trm)) {
-                $usr_msg->add_message_text($trm->id_used_msg($this));
+                $usr_msg->add($trm->id_used_msg($this));
                 log_debug('->save_id_if_updated name "' . $trm->name() . '" used already as "' . $trm->type() . '"');
             } else {
 
@@ -2574,10 +2574,10 @@ class formula extends sandbox_typed
                             if ($trm->obj()->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
                                 log_debug('adding formula name ' . $this->dsp_id() . ' has just a matching formula word');
                             } else {
-                                $usr_msg->add_message_text($trm->id_used_msg($this));
+                                $usr_msg->add($trm->id_used_msg($this));
                             }
                         } else {
-                            $usr_msg->add_message_text($trm->id_used_msg($this));
+                            $usr_msg->add($trm->id_used_msg($this));
                         }
                     } else {
                         $this->set_id($trm->id_obj());
@@ -2613,7 +2613,7 @@ class formula extends sandbox_typed
                     } else {
                         if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                             or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                            $usr_msg->add_message_text($similar->id_used_msg($this));
+                            $usr_msg->add($similar->id_used_msg($this));
                         }
                     }
                 }
@@ -2640,7 +2640,7 @@ class formula extends sandbox_typed
                     // e.g. if a source already exists update the source
                     // but if a word with the same name of a formula already exists suggest a new formula name
                     if (!$this->is_same($similar)) {
-                        $usr_msg->add_message_text($similar->id_used_msg($this));
+                        $usr_msg->add($similar->id_used_msg($this));
                     }
                 }
 

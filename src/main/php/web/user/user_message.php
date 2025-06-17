@@ -58,6 +58,10 @@ class user_message
     // in the language of the user frontend
     // to explain the result of a process
     private array $msg_id_lst;
+    // array of an array of a message id
+    // and a list of vars that should be added at the translated messages text
+    // at the predefined and language specific place
+    private array $msg_var_lst;
 
     // a list of solutions suggested by the program
     //private user_actions $actions;
@@ -78,6 +82,7 @@ class user_message
         }
         $this->db_row_id = 0;
         $this->msg_id_lst = [];
+        $this->msg_var_lst = [];
     }
 
 
@@ -147,6 +152,44 @@ class user_message
     }
 
     /**
+     * add a message id and a list of related variables
+     * to offer the user to see more details without retry
+     * more than one message id can be added to a user message result
+     * the message id is translated to the user interface language at the latest possible moment
+     * the vars are expected to be in the target language already
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_id_with_vars(?msg_id $msg_id, array $var_lst, bool $ok = false): void
+    {
+        if ($msg_id != null) {
+            $key_lst = [];
+            foreach ($this->msg_var_lst as $msg_row) {
+
+                $key_lst[] = $msg_row[0]->name . ':' . implode(",", $msg_row[1]);
+            }
+
+            // check the var list
+            foreach ($var_lst as $var) {
+                if (is_array($var)) {
+                    log_warning('var ' . implode(",", $var) . 'is an array');
+                }
+            }
+
+            // do not repeat the same text more than once
+            if (!in_array($msg_id->name . ':' . implode(",", $var_lst),
+                $key_lst)) {
+                $this->msg_var_lst[] = [$msg_id, $var_lst];
+            }
+            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            if ($this->is_ok() and !$ok) {
+                $this->set_not_ok();
+            }
+        }
+    }
+
+    /**
      * add a message that is classified as an error
      * @param string $txt the explanation that should be shown to the user
      * @return void
@@ -208,6 +251,9 @@ class user_message
     {
         foreach ($msg_to_add->get_all_messages() as $msg_text) {
             $this->add_message_text($msg_text);
+        }
+        foreach ($msg_to_add->get_all_var_messages() as $msg_var) {
+            $this->add_id_with_vars($msg_var[0], $msg_var[1], $msg_to_add->is_ok());
         }
         $this->combine_status($msg_to_add);
     }
@@ -272,6 +318,14 @@ class user_message
     protected function get_all_messages(): array
     {
         return $this->txt;
+    }
+
+    /**
+     * @return array with all the translatable messages with vars
+     */
+    protected function get_all_var_messages(): array
+    {
+        return $this->msg_var_lst;
     }
 
     /**

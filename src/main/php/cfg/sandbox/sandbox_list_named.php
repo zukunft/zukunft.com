@@ -58,6 +58,7 @@ include_once MODEL_WORD_PATH . 'word_list.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_ENUM_PATH . 'value_types.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
@@ -87,6 +88,7 @@ use cfg\word\word_list;
 use shared\const\triples;
 use shared\const\words;
 use shared\enum\messages as msg_id;
+use shared\enum\value_types;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
 use shared\helper\TextIdObject;
@@ -109,10 +111,10 @@ class sandbox_list_named extends sandbox_list
      * @param array $lst object array that could be set with the construction
      * the parent constructor is called after the reset of lst_name_dirty to enable setting by adding the list
      */
-    function __construct(user $usr, array $lst = array())
+    function __construct(user $usr, array $lst = [])
     {
-        $this->name_pos_lst = array();
-        $this->name_pos_lst_all = array();
+        $this->name_pos_lst = [];
+        $this->name_pos_lst_all = [];
         $this->set_lst_dirty();
 
         parent::__construct($usr, $lst);
@@ -135,14 +137,56 @@ class sandbox_list_named extends sandbox_list
     }
 
     /**
-     * to be called after the lists have been updated
-     * but the index list have not yet been updated
+     * @return true if the name hash table is updated
      */
-    protected function set_lst_clean(): void
+    protected function is_name_list_dirty(): bool
     {
-        parent::set_lst_clean();
-        $this->lst_name_dirty = false;
-        $this->lst_name_dirty_all = false;
+        return $this->lst_name_dirty;
+    }
+
+    /**
+     * @return true if the name hash table including the excluded is updated
+     */
+    protected function is_all_name_list_dirty(): bool
+    {
+        return $this->lst_name_dirty_all;
+    }
+
+    /**
+     * @returns array with all unique names of this list with the keys within this list
+     */
+    function name_pos_lst(): array
+    {
+        $result = array();
+        if ($this->is_name_list_dirty()) {
+            foreach ($this->lst() as $key => $obj) {
+                $result[$obj->name()] = $key;
+            }
+            $this->name_pos_lst = $result;
+            $this->lst_name_dirty = false;
+        } else {
+            $result = $this->name_pos_lst;
+        }
+        return $result;
+    }
+
+    /**
+     * like name_pos_lst but include also the excluded names e.g. for import
+     * @returns array with all unique names of this list with the keys within this list
+     */
+    function name_pos_lst_all(): array
+    {
+        $result = array();
+        if ($this->is_all_name_list_dirty()) {
+            foreach ($this->lst() as $key => $obj) {
+                $result[$obj->name(true)] = $key;
+            }
+            $this->name_pos_lst_all = $result;
+            $this->lst_name_dirty_all = false;
+        } else {
+            $result = $this->name_pos_lst_all;
+        }
+        return $result;
     }
 
 
@@ -294,7 +338,7 @@ class sandbox_list_named extends sandbox_list
                 $usr_msg = $this->add_obj($to_add);
                 $result = $usr_msg->is_ok();
             } else {
-                if (!in_array($to_add->id(), $this->ids())) {
+                if (!array_key_exists($to_add->id(), $this->id_pos_lst())) {
                     if ($to_add->id() != 0) {
                         $usr_msg = $this->add_obj($to_add);
                         $result = $usr_msg->is_ok();
@@ -309,28 +353,50 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * add a named object to the list that does not yet have an id but has a name
-     * @param sandbox_named|triple|phrase|term|null $to_add the named user sandbox object that should be added
+     * @param sandbox_named|triple|phrase|term|null $obj_to_add the named user sandbox object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns bool true if the object has been added
      */
-    function add_by_name(sandbox_named|triple|phrase|term|null $to_add, bool $allow_duplicates = false): bool
+    function add_by_name(sandbox_named|triple|phrase|term|null $obj_to_add, bool $allow_duplicates = false): bool
     {
         $result = false;
-        if ($to_add != null) {
+        if ($obj_to_add != null) {
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
-            if (!in_array($to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {
-                // add only objects that have all mandatory values
-                $result = $to_add->can_be_ready()->is_ok();
+            $name = $obj_to_add->name();
+            if ($name != '') {
+                if (!in_array($obj_to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {
+                    // add only objects that have all mandatory values
+                    $result = $obj_to_add->can_be_ready()->is_ok();
 
-                if ($result) {
-                    $this->add_direct($to_add);
-                    $this->set_lst_dirty();
+                    if ($result) {
+                        $this->add_direct($obj_to_add);
+                        $this->set_lst_dirty();
+                    }
+                } else {
+                    $result = parent::add_obj($obj_to_add, $allow_duplicates)->is_ok();
                 }
-            } else {
-                $result = parent::add_obj($to_add, $allow_duplicates)->is_ok();
             }
         }
         return $result;
+    }
+
+    /**
+     * add the object to the list without duplicate check
+     * and add the id to the id hash
+     *
+     * @param IdObject|TextIdObject|CombineObject|value_types|sandbox_named|triple|phrase|term|null $obj_to_add
+     * @return void
+     */
+    protected function add_direct(IdObject|TextIdObject|CombineObject|value_types|sandbox_named|triple|phrase|term|null $obj_to_add): void
+    {
+        if (!$this->is_name_list_dirty()) {
+            $this->name_pos_lst[$obj_to_add->name()] = count($this->lst());
+        }
+        if (!$this->is_all_name_list_dirty()) {
+            // TODO add handling of excluded named objects
+            $this->name_pos_lst_all[$obj_to_add->name(true)] = count($this->lst());
+        }
+        parent::add_direct($obj_to_add);
     }
 
     /**
@@ -523,7 +589,7 @@ class sandbox_list_named extends sandbox_list
                 $usr_msg->add(parent::add_obj($obj_to_add, $allow_duplicates));
             } else {
                 if ($obj_to_add->id() <> 0) {
-                    if (!in_array($obj_to_add->id(), $this->ids())) {
+                    if (!array_key_exists($obj_to_add->id(), $this->id_pos_lst())) {
                         $usr_msg->add(parent::add_obj($obj_to_add));
                     } else {
                         $usr_msg->add_id_with_vars(msg_id::LIST_DOUBLE_ENTRY,
@@ -546,49 +612,6 @@ class sandbox_list_named extends sandbox_list
             }
         }
         return $usr_msg;
-    }
-
-    /**
-     * TODO add a unit test
-     * @returns array with all unique names of this list with the keys within this list
-     */
-    protected function name_pos_lst(): array
-    {
-        $result = array();
-        if ($this->lst_name_dirty) {
-            foreach ($this->lst() as $key => $obj) {
-                if (!in_array($obj->name(), $result)) {
-                    $result[$obj->name()] = $key;
-                }
-            }
-            $this->name_pos_lst = $result;
-            $this->lst_name_dirty = false;
-        } else {
-            $result = $this->name_pos_lst;
-        }
-        return $result;
-    }
-
-    /**
-     * TODO add a unit test
-     * like name_pos_lst but include also the excluded names e.g. for import
-     * @returns array with all unique names of this list with the keys within this list
-     */
-    protected function name_pos_lst_all(): array
-    {
-        $result = array();
-        if ($this->lst_name_dirty_all) {
-            foreach ($this->lst() as $key => $obj) {
-                if (!in_array($obj->name(true), $result)) {
-                    $result[$obj->name(true)] = $key;
-                }
-            }
-            $this->name_pos_lst_all = $result;
-            $this->lst_name_dirty_all = false;
-        } else {
-            $result = $this->name_pos_lst_all;
-        }
-        return $result;
     }
 
     /**
@@ -881,6 +904,32 @@ class sandbox_list_named extends sandbox_list
             }
         }
         return $sql_list;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @param ?int $limit the max number of ids to show
+     * @return array with all names of the list
+     */
+    function names(int $limit = null): array
+    {
+        if ($limit == null and !$this->is_name_list_dirty()) {
+            $result = array_keys($this->name_pos_lst);
+        } else {
+            $result = [];
+            $pos = 0;
+            foreach ($this->lst() as $sbx_obj) {
+                if ($pos <= $limit or $limit == null) {
+                    $result[] = $sbx_obj->name();
+                    $pos++;
+                }
+            }
+        }
+        return $result;
     }
 
 }

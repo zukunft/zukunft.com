@@ -119,7 +119,7 @@ if ($usr->id() > 0) {
         log_debug('word');
         $trm = $frm->get_term();
         if ($trm->id_obj() > 0) {
-            $msg .= $html->dsp_err($trm->id_used_msg($this));
+            $msg .= $html->dsp_err($trm->id_used_msg_text($this));
         }
         log_debug('checked');
 

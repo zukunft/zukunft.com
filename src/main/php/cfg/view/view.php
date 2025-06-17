@@ -508,7 +508,9 @@ class view extends sandbox_typed
                             and array_key_exists(json_fields::NAME, $json_cmp)
                             and array_key_exists(json_fields::POS_TYPE, $json_cmp)
                             and array_key_exists(json_fields::STYLE, $json_cmp))) {
-                        $cmp->load_by_name($json_cmp[json_fields::NAME]);
+                        if ($test_obj == null) {
+                            $cmp->load_by_name($json_cmp[json_fields::NAME]);
+                        }
                         if (array_key_exists(json_fields::POS_TYPE, $json_cmp)) {
                             $pos_type_code_id = $json_cmp[json_fields::POS_TYPE];
                         }
@@ -531,7 +533,7 @@ class view extends sandbox_typed
                     }
                     // on import first add all view components to the view object and save them all at once
                     // TODO overwrite the style or position type
-                    $result->add_message_text($this->save_component($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj));
+                    $this->save_component($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj);
                     $cmp_pos++;
                 }
             }
@@ -1030,7 +1032,7 @@ class view extends sandbox_typed
             $this->cmp_lnk_lst = new component_link_list($this->user());
         }
         $lnk->set_view($this);
-        $this->cmp_lnk_lst->add_link_by_name($lnk);
+        $this->cmp_lnk_lst->add_link_by_key($lnk);
 
         return $result;
     }
