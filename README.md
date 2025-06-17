@@ -16,6 +16,33 @@ This program should
 installation
 ------------
 
+Target installation (to be tested):
+To install this version 0.0.3 on a debian system (https://wiki.debian.org/):
+
+Steps:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/zukunft/zukunft.com.git
+   cd zukunft.com
+   ```
+
+2. (Optional) Adjust the `.env.sample` file e.g. for customize database credentials:
+   ```env
+   OS=debian (or "docker")
+   ENV=dev (or "test", "prod")
+   BRANCH=develop (or "release", "master")
+   DB=postgres (or "mysql")
+   PGSQL_USERNAME=zukunft
+   PGSQL_DATABASE=zukunft
+   PGSQL_PASSWORD=your_password_here
+   ```
+
+3. Start the application:
+   ```bash
+   sudo ./install.ch
+   ```
+
+Old and manual installation:
 To install this version 0.0.3 use a LAPP or (LAMP for MySQL) server (https://wiki.debian.org/LaMp) and
 1) copy all files to the www root path (e.g. /var/www/html/)
 2) copy all files of bootstrap 4.1.3 or higher to /var/www/html/lib_external/bootstrap/4.1.3/
@@ -46,11 +73,11 @@ Steps:
 
 2. (Optional) Create a `.env` file to customize database credentials:
    ```env
-   DB_HOST=db
-   DB_PORT=5432
-   DB_DATABASE=zukunft
-   DB_USERNAME=zukunft
-   DB_PASSWORD=your_secure_password
+   PGSQL_HOST=db
+   PGSQL_PORT=5432
+   PGSQL_DATABASE=zukunft
+   PGSQL_USERNAME=zukunft
+   PGSQL_PASSWORD=your_secure_password
    ```
 
 3. Start the application:
