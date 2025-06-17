@@ -184,20 +184,30 @@ installAndConfigurePostgresql() {
     systemctl start postgresql
 
     # Backup pg_hba.conf
-    PG_HBA=$(find /etc/postgresql/ -name pg_hba.conf | head -n 1)
-    cp "$PG_HBA" "$PG_HBA.bak"
-    chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf.bak
+    #PG_HBA=$(find /etc/postgresql/ -name pg_hba.conf | head -n 1)
+    #cp "$PG_HBA" "$PG_HBA.bak"
+    #chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf.bak
 
     # Initialize database
     # TODO if no password is given just create on and write it to the .env secrets
     # TODO use the generated or give db password in the php code
-    runuser -l postgres -c "psql -c \"CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';\""
-    runuser -l postgres -c "psql -c \"CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8' TEMPLATE=template0;\""
+    # TODO add postgres admin username and password if postgres is ready running and the standard user name is changed
+    # TODO secure the standard postgres user name after install
+    #runuser -l postgres -c "psql -c \"CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';\""
+    #runuser -l postgres -c "psql -c \"CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8' LC_COLLATE='en_US.UTF-8' LC_CTYPE='en_US.UTF-8' TEMPLATE=template0;\""
+    #su postgres
+    #psql
+    #CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';
+    #CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8';
+    #exit
+    #exit
+    sudo -u postgres psql -c "CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';"
+    sudo -u postgres psql -c "CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8';"
 
     echo -e "Installed postgres: \n$(psql --version)"
 
     systemctl stop postgresql
-    cat "$(pwd)/config/pg_hba.conf" > "$PG_HBA"
+    #cat "$(pwd)/config/pg_hba.conf" > "$PG_HBA"
     systemctl start postgresql
 
     # rm /var/lib/pgsql/data/pg_hba.conf
@@ -210,7 +220,6 @@ installAndConfigurePostgresql() {
 
 # TODO add a nginx based installation
 installAndConfigureApache() {
-    clear >$(tty)
     echo -e "\n${GREEN}Installing Apache...${NC}"
 
     # Install Apache
@@ -221,7 +230,6 @@ installAndConfigureApache() {
 }
 
 installAndConfigurePhp() {
-    clear >$(tty)
     echo -e "\n${GREEN}Installing PHP ...${NC}"
 
     # Install PHP
@@ -247,7 +255,6 @@ installAndConfigurePhp() {
 }
 
 downloadAndInstallExternalLibraries() {
-    clear >$(tty)
     echo -e "\n${GREEN}Installing external libraries ...${NC}"
 
     echo -e "\n${GREEN}Installing bootstrap ...${NC}"
@@ -261,36 +268,37 @@ downloadAndInstallExternalLibraries() {
 }
 
 downloadAndInstallZukunft() {
-    clear >$(tty)
     echo -e "\n${GREEN}Installing zukunft.com ...${NC}"
 
     # switch later to something like git://git.zukunft.com/zukunft.git
     git clone -b $BRANCH https://github.com/zukunft/zukunft.com
     rsync -avP $(pwd)/zukunft.com/ $WWW_ROOT/
 
-    chown -R apache:apache $WWW_ROOT
-    cd $WWW_ROOT/admin/cli
+    #chown -R apache:apache $WWW_ROOT
+    #cd $WWW_ROOT/admin/cli
+
+    #chown -R root:root $WWW_ROOT
+    #chmod -R 755 $WWW_ROOT
+
+    systemctl restart postgresql
+    systemctl restart httpd
+
+    #runuser -u apache $(which php) reset_db.php --
+    php $WWW_ROOT/test/reset_db.php
 
     # TODO check result and create warning if it does not end with
     #      0 test errors
     #      0 internal errors
     #      Process finished with exit code 0
-    runuser -u apache $(which php) reset_db.php --
 
     # TODO if ENV is prod, remove the test script to avoid database reset by mistake
     # TODO if ENV is release add und use a script to clone the database from prod
 
-    chown -R root:root $WWW_ROOT
-    chmod -R 755 $WWW_ROOT
-
-    systemctl restart postgresql
-    systemctl restart httpd
     cd $CURRENT_DIR
     sleep 3
 }
 
 installZukunftInDocker() {
-    clear >$(tty)
     echo -e "\n${GREEN}Installing zukunft.com in docker ...${NC}"
 
     # switch later to something like git://git.zukunft.com/zukunft.git
