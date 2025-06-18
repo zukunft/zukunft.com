@@ -62,6 +62,7 @@ class files
     const API_SYSTEM_RES_PATH = self::API_RES_PATH . 'system' . DIRECTORY_SEPARATOR;
     const DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
     const DB_FORMULA_PATH = self::DB_PATH . 'formula' . DIRECTORY_SEPARATOR;
+    const DB_USER_PATH = self::DB_PATH . 'user' . DIRECTORY_SEPARATOR;
     const EXPORT_PATH = self::RESOURCE_PATH . 'export' . DIRECTORY_SEPARATOR;
     const EXPORT_WORD_PATH = self::EXPORT_PATH . 'word' . DIRECTORY_SEPARATOR;
     const IMPORT_PATH = self::RESOURCE_PATH . 'import' . DIRECTORY_SEPARATOR;
@@ -92,6 +93,7 @@ class files
     const SYSTEM_CONFIG_SAMPLE = self::RESOURCE_PATH . 'config_sample' . self::YAML;
     const SYS_LOG_ADMIN = self::WEB_SYSTEM_RES_PATH . 'sys_log_admin' . self::HTML;
     const FORMULA_COUNT = self::DB_FORMULA_PATH . 'formula_count' . self::SQL;
+    const USER_COUNT = self::DB_USER_PATH . 'user_count' . self::SQL;
     const WORD_LIST = self::EXPORT_WORD_PATH . 'word_list' . self::JSON;
 
 

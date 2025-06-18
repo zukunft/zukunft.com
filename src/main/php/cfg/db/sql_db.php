@@ -160,6 +160,7 @@ include_once MODEL_VIEW_PATH . 'view_type_list.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once SHARED_CONST_PATH . 'triples.php';
+include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
@@ -284,6 +285,7 @@ use mysqli;
 use mysqli_result;
 use PDOException;
 use shared\const\triples;
+use shared\const\users;
 use shared\const\words;
 use shared\enum\user_profiles;
 use shared\library;
@@ -4021,47 +4023,11 @@ class sql_db
      */
     function count(string $class = '', string $id_fld = ''): ?int
     {
+        $sc = $this->sql_creator();
         if ($class != '') {
-            $this->set_class($class);
+            $sc->set_class($class);
         }
-        return $this->get1_int($this->count_qp());
-    }
-
-    /**
-     * create the SQL parameters to count the number of rows related to a database table type
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function count_qp(string $class_name = '', string $id_fld = ''): sql_par
-    {
-        $lib = new library();
-        if ($class_name == '') {
-            $class_name = $lib->class_to_name($this->class);
-        }
-        $qp = new sql_par($class_name);
-        $qp->name = $class_name . '_count';
-        $qp->sql = $this->count_sql($qp->name, $id_fld);
-        return $qp;
-    }
-
-    /**
-     * create a SQL select statement to count the number of rows related to a database table type
-     * the table type includes the table for the standard parameters and the user sandbox exceptions
-     * @return string the created SQL statement in the previous set dialect
-     */
-    function count_sql(string $sql_name = '', string $id_fld = ''): string
-    {
-        $lib = new library();
-        $class = $lib->class_to_name($this->class);
-        if ($id_fld == '') {
-            $id_fld = $class . self::FLD_EXT_ID;
-        }
-        if ($sql_name == '') {
-            $sql_name = $class . '_count';
-        }
-        return sql::PREPARE . ' ' . $sql_name . ' AS
-                    SELECT count(' . self::STD_TBL . '.' . $id_fld . ') + count(' . self::USR_TBL . '.' . $id_fld . ') AS count
-                      FROM ' . $this->table . ' ' . self::STD_TBL . '
-                 LEFT JOIN ' . sql_db::USER_PREFIX . $this->table . '  ' . self::USR_TBL . ' ON ' . self::STD_TBL . '.' . $id_fld . ' = ' . self::USR_TBL . '.' . $id_fld . ';';
+        return $this->get1_int($sc->count_qp('', $id_fld));
     }
 
     /**
@@ -5601,11 +5567,36 @@ class sql_db
     }
 
     /**
-     * @return bool true if the user has actually been imported
+     * fixed code to create the initial system user
+     * but only if the user table is empty
+     * @return bool
+     */
+    function create_system_user(): bool
+    {
+        $result = false;
+        if ($this->count(user::class) <= 0) {
+            $sys_usr = new user();
+            $sys_usr->set_id(users::SYSTEM_ID);
+            $sys_usr->set_name(users::SYSTEM_NAME);
+            $sys_usr->set_profile_id(user_profiles::SYSTEM_ID);
+            $save_result = $sys_usr->save($this);
+            if ($save_result == '') {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * import the system users
+     * @return bool true if the system users has actually been imported
      */
     function import_system_users(): bool
     {
         $result = false;
+
+        // create the main system user if needed and allowed which is only the case directly after the database structure creation
+        $this->create_system_user();
 
         // allow adding only if there is not yet any system user in the database
         $usr = new user;

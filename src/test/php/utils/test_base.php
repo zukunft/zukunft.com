@@ -170,6 +170,7 @@ include_once TEST_UNIT_PATH . 'all_unit_tests.php';
 include_once TEST_UNIT_PATH . 'lib_tests.php';
 include_once TEST_UNIT_PATH . 'math_tests.php';
 include_once TEST_UNIT_PATH . 'system_tests.php';
+include_once TEST_UNIT_PATH . 'sql_tests.php';
 include_once TEST_UNIT_PATH . 'pod_tests.php';
 include_once TEST_UNIT_PATH . 'user_tests.php';
 include_once TEST_UNIT_PATH . 'user_list_tests.php';

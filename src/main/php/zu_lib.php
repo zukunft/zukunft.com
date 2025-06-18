@@ -1032,6 +1032,7 @@ const CLASSES_NO_CHANGE_LOG = [
 ];
 
 // list of classes that are used in the api e.g. to receive the user changes
+// TODO Prio 2 move to const/def class?
 const API_CLASSES = [
     word::class,
     verb::class,
