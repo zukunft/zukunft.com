@@ -5,7 +5,7 @@
   "users": [
     {
       "name": "zukunft.com system",
-      "description": "the internal zukunft.com system user mainly used for the log entries of the initial setup and batch jobs",
+      "description": "the internal zukunft.com system user mainly used for the log entries of the initial setup and batch jobs; this user is only used by the program code and no interactive login with this user is ever allowed",
       "code_id": "system",
       "profile": "system",
       "email": "system@zukunft.com"

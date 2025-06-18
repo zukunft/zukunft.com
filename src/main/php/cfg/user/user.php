@@ -1193,6 +1193,16 @@ class user extends db_object_seq_id
         //$this->profile = $usr_pro_cac->lst[$this->profile_id];
     }
 
+    /**
+     * set the user profile id directly which is hopefully only used once to set the profile of the system user
+     * @param int $profile_id the id of the user profile
+     * @return void
+     */
+    function set_profile_id(int $profile_id): void
+    {
+        $this->profile_id = $profile_id;
+    }
+
     // set the main log entry parameters for updating one word field
     private function log_upd(): change
     {
@@ -1267,6 +1277,8 @@ class user extends db_object_seq_id
 
     /**
      * create a new user or update the existing
+     * TODO use prepare SQL statements
+     * TODO return a user_message not a string
      * TODO check if the user name or email exist before adding a new user
      * @return string an empty string if all user data are saved in the database otherwise the message that should be shown to the user
      */

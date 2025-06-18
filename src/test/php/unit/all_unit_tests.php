@@ -324,6 +324,7 @@ class all_unit_tests extends test_cleanup
         (new lib_tests)->run($all); // test functions not yet split into single unit tests
         (new math_tests)->run($this);
         (new system_tests)->run($this);
+        (new sql_tests)->run($this);
         (new sys_log_tests)->run($this); // TODO add assert_api_to_dsp
         (new change_log_tests)->run($this); // TODO add assert_api_to_dsp  // TODO for version 0.0.6 add import test
         (new job_tests)->run($this); // TODO add assert_api_to_dsp

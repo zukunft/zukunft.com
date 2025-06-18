@@ -4703,6 +4703,51 @@ class sql_creator
     }
 
     /**
+     * create the SQL parameters to count the number of rows related to a database table type
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function count_qp(string $class_name = '', string $id_fld = ''): sql_par
+    {
+        $lib = new library();
+        if ($class_name == '') {
+            $class_name = $lib->class_to_name($this->class);
+        }
+        $qp = new sql_par($class_name);
+        $qp->name = $class_name . sql::NAME_EXT_COUNT;
+        $qp->sql = $this->count_sql($qp->name, $id_fld);
+        return $qp;
+    }
+
+    /**
+     * create a SQL select statement to count the number of rows related to a database table type
+     * the table type includes the table for the standard parameters and the user sandbox exceptions
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function count_sql(string $sql_name = '', string $id_fld = ''): string
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($this->class);
+        if ($id_fld == '') {
+            $id_fld = $class . sql_db::FLD_EXT_ID;
+        }
+        if ($sql_name == '') {
+            $sql_name = $class . sql::NAME_EXT_COUNT;
+        }
+        if ($lib->class_is_sandbox($this->class)) {
+            return sql::PREPARE . ' ' . $sql_name . ' ' . sql::AS . '
+                ' . sql::SELECT . ' ' . sql::FUNCTION_COUNT . '(' . sql_db::STD_TBL . '.' . $id_fld . ') 
+                                  + ' . sql::FUNCTION_COUNT . '(' . sql_db::USR_TBL . '.' . $id_fld . ') ' . sql::AS . ' count
+                  ' . sql::FROM . ' ' . $this->table . ' ' . sql_db::STD_TBL . '
+             ' . sql::LEFT_JOIN . ' ' . sql_db::USER_PREFIX . $this->table . '  ' . sql_db::USR_TBL . ' 
+                    ' . sql::ON . ' ' . sql_db::STD_TBL . '.' . $id_fld . ' = ' . sql_db::USR_TBL . '.' . $id_fld . ';';
+        } else {
+            return sql::PREPARE . ' ' . $sql_name . ' ' . sql::AS . '
+                ' . sql::SELECT . ' ' . sql::FUNCTION_COUNT . '(' . $id_fld . ') ' . sql::AS . ' count
+                  ' . sql::FROM . ' ' . $this->table . ';';
+        }
+    }
+
+    /**
      * remove the where condition at the given position $pos
      * used to move where parameters to a sub query
      * @param int $pos the array position which parameter should be removed

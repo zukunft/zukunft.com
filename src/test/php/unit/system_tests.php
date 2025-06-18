@@ -55,6 +55,7 @@ use cfg\system\sys_log_list;
 use cfg\system\sys_log_status_list;
 use cfg\user\user_message;
 use cfg\verb\verb;
+use cfg\word\word;
 use DateTime;
 use html\system\sys_log as sys_log_dsp;
 use html\system\sys_log_list as sys_log_list_dsp;
@@ -178,6 +179,10 @@ class system_tests
         $t->subheader($ts . 'log');
         $t->assert('default log message', log_debug(), 'unit\system_tests->run');
         $t->assert('debug log message', log_debug('additional info'), 'unit\system_tests->run: additional info');
+
+        $t->subheader($ts . 'def');
+        $t->assert_true('word is a sandbox class', $lib->class_is_sandbox(word::class));
+        $t->assert_false('user is not a sandbox class', $lib->class_is_sandbox(user::class));
 
 
         $t->subheader($ts . 'IP filter');
@@ -474,19 +479,6 @@ class system_tests
         $created = $log_lst_dsp->get_html_page($usr1_dsp);
         $expected = file_get_contents(test_files::RESOURCE_PATH . 'web/system/sys_log_list_page.html');
         $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
-
-
-        /*
-         * SQL database link unit tests
-         */
-
-        $t->subheader($ts . 'sql database link');
-
-        $db_con = new sql_db();
-        $db_con->set_class(formula::class);
-        $created = $db_con->count_sql();
-        $expected = file_get_contents(test_files::FORMULA_COUNT);
-        $t->assert_sql('sql_db->count', $created, $expected);
 
     }
 

@@ -33,8 +33,10 @@
 namespace shared;
 
 include_once SERVICE_PATH . 'config.php';
+include_once MODEL_CONST_PATH . 'def.php';
 
 use cfg\component\view_style;
+use cfg\const\def;
 use cfg\log\change_values_geo_big;
 use cfg\log\change_values_geo_norm;
 use cfg\log\change_values_geo_prime;
@@ -2208,6 +2210,22 @@ class library
         }
         */
         return $this->class_to_name_pur($class);
+    }
+
+    /**
+     * get the fixed api name of an object class
+     * to allow changing the internal object name without changing the api
+     *
+     * @param string $class including the namespace
+     * @return bool true if the class is using the user sandbox
+     */
+    function class_is_sandbox(string $class): bool
+    {
+        $result = false;
+        if (in_array($class, def::SANDBOX_CLASSES)){
+        $result = true;
+    }
+        return $result;
     }
 
     /**

@@ -42,6 +42,12 @@ class users
     // *_TYPE is the code_id of the user group
     // *_ID the fixed database due to the initial setup
 
+    // system users
+
+    // the fixed system user
+    const SYSTEM_ID = 1;
+    const SYSTEM_NAME = 'zukunft.com system';
+
     // system testing
     const TEST_NAME = 'standard user view for all users';
     const TEST_IP = '66.249.64.95'; // used to check the blocking of an IP address
