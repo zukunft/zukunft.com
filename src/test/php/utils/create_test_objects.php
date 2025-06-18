@@ -51,6 +51,8 @@ include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_CONST_PATH . 'files.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
+include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
 include_once MODEL_RESULT_PATH . 'results.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_time.php';
@@ -80,6 +82,7 @@ use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_list;
 use cfg\component\component_link_type;
+use cfg\component\component_link_type_list;
 use cfg\component\component_list;
 use cfg\component\component_type_list;
 use cfg\component\position_type_list;
@@ -244,7 +247,7 @@ class create_test_objects extends test_base
         $msk_sty_cac = new view_style_list();
         $msk_lnk_typ_cac = new view_link_type_list();
         $cmp_typ_cac = new component_type_list();
-        //$cmp_lnk_typ_cac = new component_link_type_list();
+        $cmp_lnk_typ_cac = new component_link_type_list();
         $pos_typ_cac = new position_type_list();
         $ref_typ_cac = new ref_type_list();
         $src_typ_cac = new source_type_list();
@@ -268,7 +271,7 @@ class create_test_objects extends test_base
         $msk_sty_cac->load_dummy();
         $msk_lnk_typ_cac->load_dummy();
         $cmp_typ_cac->load_dummy();
-        //$cmp_lnk_typ_cac->load_dummy();
+        $cmp_lnk_typ_cac->load_dummy();
         $pos_typ_cac->load_dummy();
         $ref_typ_cac->load_dummy();
         $src_typ_cac->load_dummy();
@@ -295,8 +298,7 @@ class create_test_objects extends test_base
         $vars[json_fields::LIST_VIEW_STYLES] = $msk_sty_cac->api_json_array();
         $vars[json_fields::LIST_VIEW_LINK_TYPES] = $msk_lnk_typ_cac->api_json_array();
         $vars[json_fields::LIST_COMPONENT_TYPES] = $cmp_typ_cac->api_json_array();
-        // TODO activate
-        //$vars[json_fields::LIST_VIEW_COMPONENT_LINK_TYPES] = $cmp_lnk_typ_cac->api_json_array();
+        $vars[json_fields::LIST_COMPONENT_LINK_TYPES] = $cmp_lnk_typ_cac->api_json_array();
         $vars[json_fields::LIST_COMPONENT_POSITION_TYPES] = $pos_typ_cac->api_json_array();
         $vars[json_fields::LIST_REF_TYPES] = $ref_typ_cac->api_json_array();
         $vars[json_fields::LIST_SOURCE_TYPES] = $src_typ_cac->api_json_array();

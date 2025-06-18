@@ -37,6 +37,8 @@ namespace cfg\const;
 //include_once MODEL_REF_PATH . 'ref.php';
 //include_once MODEL_REF_PATH . 'source.php';
 //include_once MODEL_RESULT_PATH . 'result.php';
+//include_once MODEL_USER_PATH . 'user_profile.php';
+//include_once MODEL_USER_PATH . 'user_type.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
@@ -48,6 +50,8 @@ use cfg\formula\formula;
 use cfg\ref\ref;
 use cfg\ref\source;
 use cfg\result\result;
+use cfg\user\user_profile;
+use cfg\user\user_type;
 use cfg\value\value;
 use cfg\verb\verb;
 use cfg\view\view;
@@ -60,6 +64,12 @@ class def
     /*
      * classes
      */
+
+    // list of classes that have a csv with the code id for the initial user profile and type setup
+    const CLASS_WITH_USER_CODE_LINK_CSV = [
+        user_profile::class,
+        user_type::class
+    ];
 
     // list of classes that use the user sandbox
     const SANDBOX_CLASSES = [

@@ -1046,7 +1046,7 @@ const API_CLASSES = [
     component::class
 ];
 
-const USER_CODE_LINK_FILES = [
+const CLASS_WITH_USER_CODE_LINK_CSV = [
     user_profile::class,
     user_type::class
 ];

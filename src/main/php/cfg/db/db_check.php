@@ -94,6 +94,8 @@ class db_check
         // TODO remove rewrite before moved to PROD
         $main_tbl_name = $lib->class_to_name(config::class);
         if (!$db_con->has_table($main_tbl_name)) {
+            // because no log yet exists here echo instead of log_echo() is used
+            echo 'zukunft.com: empty database detected' . "\n";
             $usr_msg = $db_con->setup_db();
             if ($usr_msg->is_ok()) {
                 $db_con->db_fill_code_links();

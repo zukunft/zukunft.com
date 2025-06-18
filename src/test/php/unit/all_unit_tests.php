@@ -631,18 +631,6 @@ class all_unit_tests extends test_cleanup
     }
 
     /**
-     * create view component position type array for the unit tests without database connection
-     */
-    private function init_component_pos_types(): void
-    {
-        global $pos_typ_cac;
-
-        $pos_typ_cac = new position_type_list();
-        $pos_typ_cac->load_dummy();
-
-    }
-
-    /**
      * create view component link type array for the unit tests without database connection
      */
     private function init_component_link_types(): void
@@ -651,6 +639,18 @@ class all_unit_tests extends test_cleanup
 
         $cmp_lnk_typ_cac = new component_link_type_list();
         $cmp_lnk_typ_cac->load_dummy();
+
+    }
+
+    /**
+     * create view component position type array for the unit tests without database connection
+     */
+    private function init_component_pos_types(): void
+    {
+        global $pos_typ_cac;
+
+        $pos_typ_cac = new position_type_list();
+        $pos_typ_cac->load_dummy();
 
     }
 
