@@ -47,6 +47,9 @@ class users
     // the fixed system user
     const SYSTEM_ID = 1;
     const SYSTEM_NAME = 'zukunft.com system';
+    const SYSTEM_ADMIN_NAME = 'zukunft.com local admin';
+    const LOCALHOST_NAME = 'localhost';
+    const LOCALHOST_IP = 'localhost';
 
     // system testing
     const TEST_NAME = 'standard user view for all users';

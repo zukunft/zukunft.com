@@ -69,8 +69,9 @@ class verb_write_tests
 
         // test verb not yet used can be deleted
         $vrb = new verb;
-        $vrb->set_user($t->usr1);
         $vrb->load_by_name(verbs::TEST_ADD_NAME);
+        // TODO this setting of the user should actually not be needed
+        $vrb->set_user($t->usr1);
         $result = $vrb->del();
         $t->assert('verb->del ', $result);
 

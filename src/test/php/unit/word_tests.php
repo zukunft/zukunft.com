@@ -93,6 +93,9 @@ class word_tests
         $this->assert_sql_view($t, $wrd);
 
         $t->subheader($ts . 'sql write insert');
+        $wrd = new word($usr);
+        $wrd->set_name(words::TEST_ADD);
+        $t->assert_sql_insert($sc, $wrd, [sql_type::LOG]);
         $wrd = $t->word();
         $t->assert_sql_insert($sc, $wrd);
         $t->assert_sql_insert($sc, $wrd, [sql_type::USER]);

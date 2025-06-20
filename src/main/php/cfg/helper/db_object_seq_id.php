@@ -111,6 +111,8 @@ class db_object_seq_id extends db_object
         $this->set_id(0);
         if ($db_row != null) {
             if (array_key_exists($id_fld, $db_row)) {
+                // TODO check that $this->reset() is removed from all load function and only this reset is used
+                $this->reset();
                 if ($db_row[$id_fld] != 0) {
                     $this->set_id($db_row[$id_fld]);
                     $result = true;

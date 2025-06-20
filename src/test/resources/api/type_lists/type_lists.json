@@ -7,33 +7,33 @@
   "body": {
     "user_profiles": [
       {
-        "name": "normal user",
-        "code_id": "normal",
-        "description": "",
+        "name": "system",
+        "code_id": "system",
+        "description": "User to log internal tasks not directly initiated by an user like system testing and cleanup",
         "id": 1
-      },
-      {
-        "name": "admin",
-        "code_id": "admin",
-        "description": "Administrator that can add and change verbs and sees the code_id",
-        "id": 2
-      },
-      {
-        "name": "developer",
-        "code_id": "dev",
-        "description": "Can see all errors and change the status of the errors, but cannot access the production system",
-        "id": 3
       },
       {
         "name": "system test",
         "code_id": "test",
         "description": "for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
+        "id": 2
+      },
+      {
+        "name": "admin",
+        "code_id": "admin",
+        "description": "Administrator that can add and change verbs and sees the code_id",
+        "id": 3
+      },
+      {
+        "name": "developer",
+        "code_id": "dev",
+        "description": "Can see all errors and change the status of the errors, but cannot access the production and user acceptance test systems",
         "id": 4
       },
       {
-        "name": "system",
-        "code_id": "system",
-        "description": "User to log internal tasks not directly initiated by an user like system testing and cleanup",
+        "name": "normal user",
+        "code_id": "normal",
+        "description": "",
         "id": 5
       }
     ],
@@ -717,6 +717,20 @@
         "code_id": "expression",
         "description": "display expression of a formula",
         "id": 61
+      }
+    ],
+    "component_link_types": [
+      {
+        "name": "always",
+        "code_id": "always",
+        "description": "the component is always shown as it is",
+        "id": 1
+      },
+      {
+        "name": "expression",
+        "code_id": "expression",
+        "description": "the component is only shown if an expression is true",
+        "id": 2
       }
     ],
     "position_types": [

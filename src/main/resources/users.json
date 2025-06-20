@@ -11,7 +11,7 @@
       "email": "system@zukunft.com"
     },
     {
-      "name": "zukunft.com admin",
+      "name": "zukunft.com local admin",
       "description": "the fallback zukunft.com admin user that should only be used in a break-glass event to recover other admin users",
       "code_id": "admin",
       "profile": "admin",

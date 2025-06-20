@@ -5652,7 +5652,6 @@ class sql_db
                 $mtr = new Translator(language_codes::SYS);
 
                 // create the other system users from the json and add e.g. the description fields
-                $usr->set_profile(user_profiles::SYSTEM);
                 $imf = new import_file();
                 $import_result = $imf->json_file(files::SYSTEM_USERS, $usr);
                 if (str_starts_with($import_result->get_last_message(), ' done ')) {
