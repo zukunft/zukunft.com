@@ -195,9 +195,12 @@ installAndConfigurePostgresql() {
     # TODO secure the standard postgres user name after install
     sudo -u postgres psql -d postgres -U postgres -c "CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';"
     sudo -u postgres psql -d postgres -U postgres -c "CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8';"
+    # to fix the owner in case the database already existed
+    sudo -u postgres psql -d postgres -U postgres -c "ALTER DATABASE $PGSQL_DATABASE OWNER TO $PGSQL_USERNAME ENCODING 'UTF8';"
+    # TODO if the database existed change the owner of the tables or drop all tables
 
     echo -e "Installed postgres: \n$(psql --version)"
-    read -p "Press enter to continue or CTRL+C to exit"
+    # read -p "Press enter to continue or CTRL+C to exit"
 
     #systemctl stop postgresql
     #cat "$(pwd)/config/pg_hba.conf" > "$PG_HBA"
@@ -269,6 +272,14 @@ downloadAndInstallZukunft() {
 
     # create the zukunft.com database tables
     php $WWW_ROOT/test/reset_db.php
+
+    # TODO check result and create warning if it does not end with
+    #      0 test errors
+    #      0 internal errors
+    #      Process finished with exit code 0
+
+    # test the zukunft.com
+    php $WWW_ROOT/test/test.php
 
     # TODO check result and create warning if it does not end with
     #      0 test errors
