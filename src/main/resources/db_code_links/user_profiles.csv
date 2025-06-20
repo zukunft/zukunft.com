@@ -1,6 +1,6 @@
 user_profile_id, right_level, type_name, code_id, description
-1, 10, 'normal user', 'normal', NULL
-2, 60, 'admin', 'admin', 'Administrator that can add and change verbs and sees the code_id'
-3, 80, 'developer', 'dev', 'Can see all errors and change the status of the errors, but cannot access the production system'
-4, 90, 'system test', 'test', 'for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests'
-5, 99, 'system', 'system', 'User to log internal tasks not directly initiated by an user like system testing and cleanup'
+1, 99, 'system', 'system', 'User to log internal tasks not directly initiated by an user like system testing and cleanup'
+2, 90, 'system test', 'test', 'for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests'
+3, 60, 'admin', 'admin', 'Administrator that can add and change verbs and sees the code_id'
+4, 80, 'developer', 'dev', 'Can see all errors and change the status of the errors, but cannot access the production and user acceptance test systems'
+5, 10, 'normal user', 'normal', NULL

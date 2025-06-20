@@ -48,6 +48,7 @@ use shared\types\verbs;
 use test\all_tests;
 use unit\all_unit_tests;
 use unit\api_tests;
+use unit_ui\all_ui_tests;
 
 class all_unit_read_tests extends all_unit_tests
 {

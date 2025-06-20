@@ -217,11 +217,16 @@ class term extends combine_named
      */
     function __construct(user|word|triple|formula|verb|null $obj)
     {
-        if ($obj::class == user::class) {
-            // create a dummy word object to remember the user
-            parent::__construct(new word($obj));
+        if ($obj != null) {
+            if ($obj::class == user::class) {
+                // create a dummy word object to remember the user
+                parent::__construct(new word($obj));
+            } else {
+                parent::__construct($obj);
+            }
         } else {
-            parent::__construct($obj);
+            log_err('object is null when trying to construct a term');
+            parent::__construct(new word($obj));
         }
     }
 

@@ -88,13 +88,11 @@ include_once TEST_CONST_PATH . 'files.php';
 use cfg\component\component_link_type_list;
 use cfg\component\component_type_list;
 use cfg\component\position_type_list;
-use cfg\const\files;
 use cfg\db\sql_db;
 use cfg\element\element_type_list;
 use cfg\formula\formula_link_type_list;
 use cfg\formula\formula_type_list;
 use cfg\import\import_file;
-use cfg\phrase\phrase_list;
 use cfg\system\job_type_list;
 use cfg\language\language_form_list;
 use cfg\language\language_list;
@@ -115,20 +113,13 @@ use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
 use cfg\view\view_type_list;
 use html\types\formula_type_list as formula_type_list_web;
-use shared\const\words;
 use shared\enum\user_profiles;
 use test\all_tests;
 use test\test_cleanup;
 use unit\import_tests as import_tests;
-use unit_read\triple_list_read_tests;
-use unit_read\triple_read_tests;
-use unit_read\value_read_tests;
-use unit_read\word_list_read_tests;
 use unit_ui\all_ui_tests;
 use unit_ui\base_ui_tests;
 use const\files as test_files;
-use unit_write\triple_write_tests;
-use unit_write\value_write_tests;
 use unit_write\word_write_tests;
 
 class all_unit_tests extends test_cleanup
@@ -631,18 +622,6 @@ class all_unit_tests extends test_cleanup
     }
 
     /**
-     * create view component position type array for the unit tests without database connection
-     */
-    private function init_component_pos_types(): void
-    {
-        global $pos_typ_cac;
-
-        $pos_typ_cac = new position_type_list();
-        $pos_typ_cac->load_dummy();
-
-    }
-
-    /**
      * create view component link type array for the unit tests without database connection
      */
     private function init_component_link_types(): void
@@ -651,6 +630,18 @@ class all_unit_tests extends test_cleanup
 
         $cmp_lnk_typ_cac = new component_link_type_list();
         $cmp_lnk_typ_cac->load_dummy();
+
+    }
+
+    /**
+     * create view component position type array for the unit tests without database connection
+     */
+    private function init_component_pos_types(): void
+    {
+        global $pos_typ_cac;
+
+        $pos_typ_cac = new position_type_list();
+        $pos_typ_cac->load_dummy();
 
     }
 

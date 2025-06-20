@@ -43,12 +43,14 @@ include_once MODEL_IMPORT_PATH . 'import_file.php';
 include_once MODEL_HELPER_PATH . 'config_numbers.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
+include_once MODEL_CONST_PATH . 'def.php';
 include_once MODEL_CONST_PATH . 'files.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
 include_once MODEL_COMPONENT_PATH . 'component_type.php';
 include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
+include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'position_type.php';
 include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'view_style.php';
@@ -162,7 +164,9 @@ include_once WEB_HTML_PATH . 'html_base.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_CONST_PATH . 'words.php';
+include_once SHARED_ENUM_PATH . 'language_codes.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
+include_once SHARED_HELPER_PATH . 'Translator.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
@@ -171,6 +175,7 @@ include_once SHARED_PATH . 'library.php';
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_type;
+use cfg\component\component_link_type_list;
 use cfg\component\component_type;
 use cfg\component\component_type_list;
 use cfg\component\position_type;
@@ -178,6 +183,7 @@ use cfg\component\position_type_list;
 use cfg\component\view_style;
 use cfg\component\view_style_list;
 use cfg\config;
+use cfg\const\def;
 use cfg\const\files;
 use cfg\helper\config_numbers;
 use cfg\element\element;
@@ -287,7 +293,9 @@ use PDOException;
 use shared\const\triples;
 use shared\const\users;
 use shared\const\words;
+use shared\enum\language_codes;
 use shared\enum\user_profiles;
+use shared\helper\Translator;
 use shared\library;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\phrase_type as phrase_type_shared;
@@ -983,7 +991,8 @@ class sql_db
         // create the tables, db indexes and foreign keys
         $sql = resource_file(DB_RES_SUB_PATH . DB_SETUP_SUB_PATH . $this->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
         try {
-            log_echo('Run db setup sql script');
+            // because no log yet exists here echo instead of log_echo() is used
+            echo 'Run db setup sql script' . "\n";
             $sys_times->switch(system_time_type::DB_SETUP);
             $sql_msg = $this->exe_script($sql);
             $sys_times->switch();
@@ -1007,7 +1016,8 @@ class sql_db
 
         // fill the tables with the essential data
         if ($usr_msg->is_ok()) {
-            log_echo('Create system users');
+            // because no user yet exists here echo instead of log_echo() is used
+            echo 'Create system users' . "\n";
             $this->reset_config();
             $this->import_system_users();
 
@@ -1172,7 +1182,6 @@ class sql_db
         global $msk_sty_cac;
         global $msk_lnk_typ_cac;
         global $cmp_typ_cac;
-        // TODO use component link type cache
         global $cmp_lnk_typ_cac;
         global $pos_typ_cac;
         global $ref_typ_cac;
@@ -1197,8 +1206,7 @@ class sql_db
         $msk_sty_cac = new view_style_list();
         $msk_lnk_typ_cac = new view_link_type_list();
         $cmp_typ_cac = new component_type_list();
-        // not yet needed?
-        //$cmp_lnk_typ_cac = new component_link_type_list();
+        $cmp_lnk_typ_cac = new component_link_type_list();
         $pos_typ_cac = new position_type_list();
         $ref_typ_cac = new ref_type_list();
         $src_typ_cac = new source_type_list();
@@ -1263,18 +1271,21 @@ class sql_db
 
         // get the list of CSV and loop
         foreach (BASE_CODE_LINK_FILES as $csv_file_name) {
-            $this->load_db_code_link_file($csv_file_name, $this);
+            $this->load_db_code_link_file($csv_file_name);
         }
 
         // set the seq number if needed
+        // TODO check why this is needed and combine with the other sequence reset
         $this->seq_reset(change_table::class);
         $this->seq_reset(change_field::class);
         $this->seq_reset(change_action::class);
     }
 
-    function load_db_code_link_file(string $class): void
+    function load_db_code_link_file(string $class): bool
     {
         global $debug;
+
+        $result = false;
         $lib = new library();
         $table_name = $lib->class_to_table($class);
 
@@ -1345,8 +1356,12 @@ class sql_db
                 }
                 $row++;
             }
+            if ($continue) {
+                $result = true;
+            }
             fclose($handle);
         }
+        return $result;
     }
 
     function db_fill_code_link_sql(string $table_name, string $id_col_name, int $id): sql_par
@@ -2322,6 +2337,9 @@ class sql_db
         if ($result == 'component_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
+        if ($result == 'component_link_type_name') {
+            $result = sql::FLD_TYPE_NAME;
+        }
         if ($result == 'position_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
@@ -2636,10 +2654,10 @@ class sql_db
      * @return string the message that should be shown to the user
      */
     public function log_db_exception(
-        string $msg,
+        string    $msg,
         Exception $e,
-        string $sql = '',
-        int $log_level = sys_log_level::ERROR
+        string    $sql = '',
+        int       $log_level = sys_log_level::ERROR
     ): string
     {
         return $this->log_db_error_message($msg, $e->getMessage(), $sql, $log_level);
@@ -2659,7 +2677,7 @@ class sql_db
         string $msg,
         string $err,
         string $sql = '',
-        int $log_level = sys_log_level::ERROR
+        int    $log_level = sys_log_level::ERROR
     ): string
     {
         $msg .= ' ' . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $err;
@@ -3509,7 +3527,7 @@ class sql_db
                             }
                         }
 
-                        if ($par_type == sql_par_type::TEXT OR $par_type == sql_par_type::KEY_512) {
+                        if ($par_type == sql_par_type::TEXT or $par_type == sql_par_type::KEY_512) {
                             if ($id_fields[$used_fields] == sql::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $this->where .= ' AND ';
@@ -5543,17 +5561,27 @@ class sql_db
     }
 
     /**
-     * fill the user profiled with the default values for this program version
-     * @return void
+     * fixed code to load into the database the user profiled with the default values for this program version
+     * but only if the user profile or type table is empty
+     * @return bool true if the profiles have been created
      */
-    function load_user_profiles(): void
+    function load_user_profiles(): bool
     {
-        foreach (USER_CODE_LINK_FILES as $csv_file_name) {
-            $this->load_db_code_link_file($csv_file_name, $this);
+        $result = true;
+        $lib = new library();
+        foreach (def::CLASS_WITH_USER_CODE_LINK_CSV as $class_for_csv) {
+            if ($this->count($class_for_csv) <= 0 and $result) {
+                $save_result = $this->load_db_code_link_file($class_for_csv);
+                if (!$save_result) {
+                    log_fatal($class_for_csv . ' code link csv file cannot be loaded into the database');
+                    $result = false;
+                }
+            }
         }
         global $usr_pro_cac;
         $usr_pro_cac = new user_profile_list();
         $usr_pro_cac->load($this);
+        return $result;
     }
 
     /**
@@ -5569,18 +5597,21 @@ class sql_db
     /**
      * fixed code to create the initial system user
      * but only if the user table is empty
-     * @return bool
+     * @return bool true if the system user have been created
      */
     function create_system_user(): bool
     {
         $result = false;
         if ($this->count(user::class) <= 0) {
             $sys_usr = new user();
-            $sys_usr->set_id(users::SYSTEM_ID);
             $sys_usr->set_name(users::SYSTEM_NAME);
             $sys_usr->set_profile_id(user_profiles::SYSTEM_ID);
             $save_result = $sys_usr->save($this);
-            if ($save_result == '') {
+            if ($save_result != '') {
+                log_fatal('system user cannot be created');
+            } elseif ($sys_usr->id() != users::SYSTEM_ID) {
+                log_fatal('system user has not the expected database id of ' . users::SYSTEM_ID);
+            } else {
                 $result = true;
             }
         }
@@ -5595,9 +5626,6 @@ class sql_db
     {
         $result = false;
 
-        // create the main system user if needed and allowed which is only the case directly after the database structure creation
-        $this->create_system_user();
-
         // allow adding only if there is not yet any system user in the database
         $usr = new user;
         $usr->load_by_id(SYSTEM_USER_ID);
@@ -5608,8 +5636,22 @@ class sql_db
             $check_usr = new user();
             if (!$check_usr->has_any_user_this_profile(user_profiles::SYSTEM)) {
                 // if the system users are missing always reset all users as a double line of defence to prevent system
+                // create the main system user profiles
+                // but only if needed and allowed which is only the case directly after the database structure creation
                 $this->load_user_profiles();
-                $usr->set_profile(user_profiles::SYSTEM);
+
+                // create the main system user upfront direct from the code
+                // but only if needed and allowed which is only the case directly after the database structure creation
+                if ($this->create_system_user()) {
+                    // reload the system user if adding has been successful
+                    $usr->load_by_id(SYSTEM_USER_ID);
+                }
+
+                // translate the system setup messages only to the system base language which is english
+                global $mtr;
+                $mtr = new Translator(language_codes::SYS);
+
+                // create the other system users from the json and add e.g. the description fields
                 $imf = new import_file();
                 $import_result = $imf->json_file(files::SYSTEM_USERS, $usr);
                 if (str_starts_with($import_result->get_last_message(), ' done ')) {

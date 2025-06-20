@@ -41,6 +41,7 @@ enum user_profiles: string
     const DEV = "dev";       // reserved for developers which are supposed to code the verb functionality
     const TEST = "test";     // reserved for the system test user e.g. for internal unit and integration tests
     const SYSTEM = "system"; // reserved for the system user which is executing cleanup tasks
-    const SYSTEM_ID = 5;     // only used for the initial setup
+    const SYSTEM_ID = 1;     // only used for the initial setup
+    const NORMAL_ID = 5;     // only used for the testing
 
 }

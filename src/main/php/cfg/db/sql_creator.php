@@ -4728,7 +4728,7 @@ class sql_creator
         $lib = new library();
         $class = $lib->class_to_name($this->class);
         if ($id_fld == '') {
-            $id_fld = $class . sql_db::FLD_EXT_ID;
+            $id_fld = $lib->class_to_id_field($this->class);
         }
         if ($sql_name == '') {
             $sql_name = $class . sql::NAME_EXT_COUNT;
@@ -5139,6 +5139,9 @@ class sql_creator
             $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'component_type_name') {
+            $result = sql::FLD_TYPE_NAME;
+        }
+        if ($result == 'component_link_type_name') {
             $result = sql::FLD_TYPE_NAME;
         }
         if ($result == 'position_type_name') {

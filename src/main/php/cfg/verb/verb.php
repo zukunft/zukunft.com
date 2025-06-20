@@ -609,7 +609,7 @@ class verb extends type_object
      */
     function term(): term
     {
-        $trm = new term($this->usr);
+        $trm = new term($this);
         $trm->set_id_from_obj($this->id(), self::class);
         $trm->set_name($this->name);
         $trm->set_obj($this);

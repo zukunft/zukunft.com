@@ -86,6 +86,7 @@ include_once MODEL_USER_PATH . 'user_type.php';
 //include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_HELPER_PATH . 'Config.php';
+include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
@@ -109,6 +110,7 @@ use cfg\verb\verb_list;
 use cfg\view\view;
 use cfg\view\view_sys_list;
 use cfg\word\word;
+use shared\const\users;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
 use shared\enum\user_profiles;
@@ -279,7 +281,7 @@ class user extends db_object_seq_id
 
     // the system admin user that should only be used in a break-glass event to recover other admin users
     const SYSTEM_ADMIN_ID = 2;
-    const SYSTEM_ADMIN_NAME = 'zukunft.com admin';
+    const SYSTEM_ADMIN_NAME = 'zukunft.com local admin';
     const SYSTEM_ADMIN_CODE_ID = 'admin';
     const SYSTEM_ADMIN_EMAIL = 'admin@zukunft.com';
 
@@ -529,11 +531,19 @@ class user extends db_object_seq_id
     }
 
     /**
-     * @return string the unique username for this pod
+     * @return string the unique username for the user on this pod
      */
     function name(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @return string the unique email for this user
+     */
+    function email(): ?string
+    {
+        return $this->email;
     }
 
 
@@ -555,7 +565,6 @@ class user extends db_object_seq_id
         global $db_con;
 
         log_debug($id);
-        $this->reset();
         $qp = $this->load_sql_by_id($db_con->sql_creator(), $id);
         return $this->load($qp);
     }
@@ -570,7 +579,6 @@ class user extends db_object_seq_id
         global $db_con;
 
         log_debug($name);
-        $this->reset();
         $qp = $this->load_sql_by_name($db_con->sql_creator(), $name);
         return $this->load($qp);
     }
@@ -585,7 +593,6 @@ class user extends db_object_seq_id
         global $db_con;
 
         log_debug($email);
-        $this->reset();
         $qp = $this->load_sql_by_email($db_con->sql_creator(), $email);
         return $this->load($qp);
     }
@@ -601,7 +608,6 @@ class user extends db_object_seq_id
         global $db_con;
 
         log_debug($email);
-        $this->reset();
         $qp = $this->load_sql_by_name_or_email($db_con, $name, $email);
         return $this->load($qp);
     }
@@ -616,7 +622,6 @@ class user extends db_object_seq_id
         global $db_con;
 
         log_debug($ip);
-        $this->reset();
         $qp = $this->load_sql_by_ip($db_con->sql_creator(), $ip);
         return $this->load($qp);
     }
@@ -631,7 +636,6 @@ class user extends db_object_seq_id
         global $db_con;
 
         log_debug($profile_id);
-        $this->reset();
         $qp = $this->load_sql_by_profile($db_con->sql_creator(), $profile_id);
         return $this->load($qp);
     }
@@ -930,6 +934,8 @@ class user extends db_object_seq_id
         // create the local admin users but only if there are no other admins
         $check_usr = new user();
         if (!$check_usr->has_any_user_this_profile(user_profiles::ADMIN)) {
+            $this->set_name(users::LOCALHOST_NAME);
+            $this->ip_addr = users::LOCALHOST_IP;
             $this->set_profile(user_profiles::ADMIN);
         }
 
@@ -996,7 +1002,7 @@ class user extends db_object_seq_id
                 // check the importing profile and make sure that gaining additional privileges is impossible
                 // the user profiles must always be in the order that the lower ID has same or less rights
                 // TODO use the right level of the profile
-                if ($profile_id >= $this->profile_id) {
+                if ($profile_id <= $this->profile_id) {
                     global $db_con;
                     $usr_msg->add_message_text($this->save($db_con));
                 }
@@ -1288,58 +1294,81 @@ class user extends db_object_seq_id
 
         $result = '';
 
+
         // build the database object because the is anyway needed
+        // TODO review
         //$db_con = new mysql;
         $db_con->usr_id = $this->id();
         $db_con->set_class(user::class);
 
+        if ($this->name() != '' and $this->name != null) {
+            $this->load_by_name($this->name());
+        }
+        if ($this->id() <= 0) {
+            if ($this->email() != '' and $this->email() != null) {
+                $this->load_by_email($this->email());
+            }
+        }
+
         if ($this->id() <= 0) {
             log_debug(' add (' . $this->name . ')');
 
-            $this->set_id($db_con->insert_old('user_name', $this->name));
-            // log the changes???
-            if ($this->id() > 0) {
-                // add the description of the user
-                if (!$db_con->update_old($this->id(), sandbox_named::FLD_DESCRIPTION, $this->description)) {
-                    $result = 'Saving of user description ' . $this->id() . ' failed.';
-                }
-                // add the email of the user
-                if (!$db_con->update_old($this->id(), self::FLD_EMAIL, $this->email)) {
-                    $result = 'Saving of user email ' . $this->id() . ' failed.';
-                }
-                // add the first name of the user
-                if (!$db_con->update_old($this->id(), self::FLD_FIRST_NAME, $this->first_name)) {
-                    $result = 'Saving of user first name ' . $this->id() . ' failed.';
-                }
-                // add the last name of the user
-                if (!$db_con->update_old($this->id(), self::FLD_LAST_NAME, $this->last_name)) {
-                    $result = 'Saving of user last name ' . $this->id() . ' failed.';
-                }
-                // add the code of the user
-                if ($this->code_id != '') {
-                    if (!$db_con->update_old($this->id(), self::FLD_CODE_ID, $this->code_id)) {
-                        $result = 'Saving of user code id ' . $this->id() . ' failed.';
-                    }
-                }
-                // add the profile of the user
-                if (!$db_con->update_old($this->id(), self::FLD_PROFILE, $this->profile_id)) {
-                    $result = 'Saving of user profile ' . $this->id() . ' failed.';
-                }
-                // add the ip address to the user, but never for system users
-                if ($this->profile_id != $usr_pro_cac->id(user_profiles::SYSTEM)
-                    and $this->profile_id != $usr_pro_cac->id(user_profiles::TEST)) {
-                    if (!$db_con->update_old($this->id(), self::FLD_IP_ADDR, $this->get_ip())) {
-                        $result = 'Saving of user ' . $this->id() . ' failed.';
-                    }
-                }
-                log_debug(' add ... done');
-            } else {
-                log_debug(' add ... failed');
+            if ($this->name != '' and $this->name != null) {
+                $this->set_id($db_con->insert_old('user_name', $this->name));
             }
+            // TODO log the changes???
         } else {
             // update the ip address and log the changes????
             log_warning(' method for ip update missing', 'user->save', 'method for ip update missing', (new Exception)->getTraceAsString(), $this);
         }
+
+        // update the user
+        if ($this->id() > 0) {
+            // add the description of the user
+            if (!$db_con->update_old($this->id(), sandbox_named::FLD_DESCRIPTION, $this->description)) {
+                $result = 'Saving of user description ' . $this->id() . ' failed.';
+            }
+            // add the email of the user
+            if (!$db_con->update_old($this->id(), self::FLD_EMAIL, $this->email)) {
+                $result = 'Saving of user email ' . $this->id() . ' failed.';
+            }
+            // add the first name of the user
+            if (!$db_con->update_old($this->id(), self::FLD_FIRST_NAME, $this->first_name)) {
+                $result = 'Saving of user first name ' . $this->id() . ' failed.';
+            }
+            // add the last name of the user
+            if (!$db_con->update_old($this->id(), self::FLD_LAST_NAME, $this->last_name)) {
+                $result = 'Saving of user last name ' . $this->id() . ' failed.';
+            }
+            // add the code of the user
+            if ($this->code_id != '') {
+                if (!$db_con->update_old($this->id(), self::FLD_CODE_ID, $this->code_id)) {
+                    $result = 'Saving of user code id ' . $this->id() . ' failed.';
+                }
+            }
+            // add the profile of the user
+            if (!$db_con->update_old($this->id(), self::FLD_PROFILE, $this->profile_id)) {
+                $result = 'Saving of user profile ' . $this->id() . ' failed.';
+            }
+            // add the ip address to the user, but never for system users
+            if ($this->profile_id != $usr_pro_cac->id(user_profiles::SYSTEM)
+                and $this->profile_id != $usr_pro_cac->id(user_profiles::TEST)) {
+                $ip = $this->get_ip();
+                // write the localhost ip only for the local system admin user
+                if ($ip == users::LOCALHOST_IP AND $this->name() != users::SYSTEM_ADMIN_NAME) {
+                    $ip = '';
+                }
+                if ($ip != '') {
+                    if (!$db_con->update_old($this->id(), self::FLD_IP_ADDR, $this->get_ip())) {
+                        $result = 'Saving of user ' . $this->id() . ' failed.';
+                    }
+                }
+            }
+            log_debug(' add ... done');
+        } else {
+            log_debug(' add ... failed');
+        }
+
         return $result;
     }
 

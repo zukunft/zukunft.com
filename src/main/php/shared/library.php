@@ -2141,6 +2141,28 @@ class library
     }
 
     /**
+     * get the id field related to a class
+     * TODO avoid these exception
+     *
+     * @param string $class including the namespace
+     * @return string the name of the id field
+     */
+    function class_to_id_field(string $class): string
+    {
+        $id_fld = $this->class_to_name($class) . sql_db::FLD_EXT_ID;
+        // for some lists and exceptions
+        switch ($class) {
+            case user_profile::class;
+                $id_fld = user_profile::FLD_ID;
+                break;
+            case sys_log::class;
+                $id_fld = sys_log::FLD_ID;
+                break;
+        }
+        return $id_fld;
+    }
+
+    /**
      * get the predefined word e.g. used to select the system configuration values based on the given class
      *
      * @param string $class including the namespace

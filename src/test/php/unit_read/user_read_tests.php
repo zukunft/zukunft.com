@@ -82,7 +82,7 @@ class user_read_tests
         // ... and check if at least the most critical is loaded
         global $usr_pro_cac;
         $result = $usr_pro_cac->id(user_profiles::NORMAL);
-        $t->assert('user profile check ' . user_profiles::NORMAL, $result, 1);
+        $t->assert('user profile check ' . user_profiles::NORMAL, $result, user_profiles::NORMAL_ID);
     }
 
 }

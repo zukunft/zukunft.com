@@ -78,6 +78,7 @@ include_once MODEL_USER_PATH . 'user_list.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use cfg\component\component_link_type_list;
 use cfg\component\position_type_list;
 use cfg\component\component_type_list;
 use cfg\component\view_style_list;
@@ -173,9 +174,8 @@ class type_lists
         $msk_lnk_typ_cac->load($db_con);
         $cmp_typ_cac = new component_type_list();
         $cmp_typ_cac->load($db_con);
-        // TODO review: not yet needed?
-        //$cmp_lnk_typ_cac = new component_link_type_list();
-        //$cmp_lnk_typ_cac->load($db_con);
+        $cmp_lnk_typ_cac = new component_link_type_list();
+        $cmp_lnk_typ_cac->load($db_con);
         $pos_typ_cac = new position_type_list();
         $pos_typ_cac->load($db_con);
         $ref_typ_cac = new ref_type_list();
@@ -264,9 +264,8 @@ class type_lists
         $vars[json_fields::LIST_VIEW_LINK_TYPES] = $msk_lnk_typ_cac->api_json_array();
         global $cmp_typ_cac;
         $vars[json_fields::LIST_COMPONENT_TYPES] = $cmp_typ_cac->api_json_array();
-        // TODO activate
-        //global $cmp_lnk_typ_cac;
-        //$vars[json_fields::LIST_VIEW_COMPONENT_LINK_TYPES] = $cmp_lnk_typ_cac->api_json_array();
+        global $cmp_lnk_typ_cac;
+        $vars[json_fields::LIST_COMPONENT_LINK_TYPES] = $cmp_lnk_typ_cac->api_json_array();
         global $pos_typ_cac;
         $vars[json_fields::LIST_COMPONENT_POSITION_TYPES] = $pos_typ_cac->api_json_array();
         global $ref_typ_cac;

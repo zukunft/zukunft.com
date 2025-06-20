@@ -235,7 +235,7 @@ class json_fields
     const LIST_VIEW_STYLES = 'view_styles';
     const LIST_VIEW_LINK_TYPES = 'view_link_types';
     const LIST_COMPONENT_TYPES = 'component_types';
-    // const LIST_COMPONENT_LINK_TYPES = 'component_link_types';
+    const LIST_COMPONENT_LINK_TYPES = 'component_link_types';
     const LIST_COMPONENT_POSITION_TYPES = 'position_types';
     const LIST_REF_TYPES = 'ref_types';
     const LIST_SOURCE_TYPES = 'source_types';
