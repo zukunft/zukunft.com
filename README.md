@@ -27,7 +27,7 @@ Steps:
    chmod 777 install.sh
    ```
 
-2. (Optional) Adjust the `.env.sample` file e.g. for customize database credentials:
+2. (Optional) Adjust the `.env.example` file e.g. for customize database credentials:
    ```env
    OS=debian (or "docker")
    ENV=dev (or "test", "prod")
@@ -70,15 +70,28 @@ Steps:
    ```bash
    git clone -b release https://github.com/zukunft/zukunft.com.git
    cd zukunft.com
+   cp .env.example .env
    ```
 
-2. (Optional) Create a `.env` file to customize database credentials:
+2. (Optional) Customize configurations of `.env`:
    ```env
-   PGSQL_HOST=db
-   PGSQL_PORT=5432
+   OS=debian
+   ENV=dev
+   BRANCH=develop
+   DB=postgres
    PGSQL_DATABASE=zukunft
-   PGSQL_USERNAME=zukunft
-   PGSQL_PASSWORD=your_secure_password
+   PGSQL_USERNAME=zukunft_db_root
+   PGSQL_PASSWORD=your_password_here
+   PGSQL_HOST=localhost
+   PGSQL_PORT=5432
+   PGSQL_ZUKUNFT_VERSION=0.0.3
+   MYSQL_DATABASE=zukunft
+   MYSQL_USERNAME=zukunft_db_root
+   MYSQL_PASSWORD=your_password_here
+   MYSQL_HOST=localhost
+   MYSQL_PORT=5432
+   MYSQL_ZUKUNFT_VERSION=0.0.1
+   WWW_ROOT=/var/www/html
    ```
 
 3. Start the application:
@@ -538,3 +551,75 @@ Prio 2:
 - review the database indices and the foreign keys
 - include a list of basic values in test.php e.g. CO2 of rice
 - allow personal groups up to 100 persons and to join up 20 named groups
+
+---
+
+
+## Setup Guide 
+
+### clone the repository
+
+```bash
+git clone https://github.com/zukunft/zukunft.com.git
+
+cd zukunft.com
+
+cp .env.example .env
+```
+---
+
+### Installation (using Docker)
+
+
+### 1. **Build the Docker image**
+
+Run the following command from the **project root**:
+
+```bash
+docker build -t zukunft.com .
+```
+
+---
+
+### 2. **Run the container**
+
+```bash
+docker run -d \
+  --name zukunft-app \
+  -p 9000:9000 \
+  -e DB_HOST=your_db_host \
+  -e DB_NAME=zukunft_structure \
+  -e DB_USER=zukunft_db_root \
+  -e DB_PASS=your_password \
+  zukunft.com
+```
+
+> Note: `PHP-FPM` does **not** serve HTTP directly.
+> You will need to reverse proxy it with **Nginx** or use **Docker Compose** (see Option 2).
+---
+
+### Option 2: Using Docker Compose (Recommended)
+
+### 1. **Start the App**
+
+```bash
+docker-compose up --build
+```
+
+---
+
+### 2. **Access in the Browser**
+
+```bash
+http://localhost:8080
+```
+
+---
+
+### 3. **Stop and Remove Containers**
+
+```bash
+docker-compose down
+```
+
+---

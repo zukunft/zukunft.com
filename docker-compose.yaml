@@ -1,5 +1,8 @@
+version: '3.8'
+
 services:
   app:
+    container_name: zukunft-php
     build:
       context: ./docker
       dockerfile: Dockerfile
@@ -40,6 +43,7 @@ services:
       - ADMINER_DEFAULT_SERVER=db
     depends_on:
       - db
+      - php
     networks:
       - zukunft_network
 
