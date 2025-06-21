@@ -36,6 +36,9 @@ Steps:
    PGSQL_USERNAME=zukunft
    PGSQL_DATABASE=zukunft
    PGSQL_PASSWORD=your_password_here
+   PGSQL_ADMIN_USERNAME=postgres
+   PGSQL_ADMIN_PASSWORD=admin_password_here
+   PGSQL_HOST=localhost (or "db")
    ```
 
 3. Start the application:
@@ -79,6 +82,8 @@ Steps:
    PGSQL_DATABASE=zukunft
    PGSQL_USERNAME=zukunft
    PGSQL_PASSWORD=your_secure_password
+   PGSQL_ADMIN_USERNAME=postgres
+   PGSQL_ADMIN_PASSWORD=admin_password
    ```
 
 3. Start the application:

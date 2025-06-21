@@ -145,7 +145,7 @@ class sql_sync_sequences
                 $sql = "
                     SELECT TABLE_NAME, COLUMN_NAME
                     FROM INFORMATION_SCHEMA.COLUMNS
-                    WHERE TABLE_SCHEMA = 'zukunft'
+                    WHERE TABLE_SCHEMA = ".SQL_DB_NAME_MYSQL."
                     AND EXTRA = 'auto_increment';
                 ";
                 $result = mysqli_query($db_con->mysql, $sql);

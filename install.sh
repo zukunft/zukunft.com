@@ -297,12 +297,17 @@ installZukunftInDocker() {
     echo -e "\n${GREEN}Installing zukunft.com in docker ...${NC}"
 
     # switch later to something like git://git.zukunft.com/zukunft.git
-    git clone -b $BRANCH https://github.com/zukunft/zukunft.com
-    rsync -avP $(pwd)/zukunft.com/ $WWW_ROOT/
+    git clone -b $BRANCH https://github.com/zukunft/zukunft.com $WWW_ROOT/
 
-    docker compose up -d
+    cd $WWW_ROOT
 
-    docker compose exec app php /var/www/html/test/reset_db.php
+    echo -e "\n${GREEN}Building docker images ...${NC}"
+
+    docker compose up -d --build
+
+    echo -e "\n${GREEN}Resetting database ...${NC}"
+
+    docker compose exec app php test/reset_db.php
 
 }
 

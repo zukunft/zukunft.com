@@ -831,13 +831,13 @@ class sql_db
         $result = false;
         if ($this->db_type == sql_db::POSTGRES) {
             try {
-                $this->postgres_link = pg_connect('host=' . SQL_DB_HOST . ' dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
+                $this->postgres_link = pg_connect('host=' . SQL_DB_HOST . ' dbname='. SQL_DB_NAME . ' user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
                 $result = true;
             } catch (Exception $e) {
                 log_fatal('Cannot connect to database due to ' . $e->getMessage(), 'sql_db open');
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $this->mysql = mysqli_connect(SQL_DB_HOST, SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, 'zukunft') or die('Could not connect: ' . mysqli_error($this->mysql));
+            $this->mysql = mysqli_connect(SQL_DB_HOST, SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, SQL_DB_NAME_MYSQL) or die('Could not connect: ' . mysqli_error($this->mysql));
             $result = true;
         } else {
             log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
@@ -910,8 +910,8 @@ class sql_db
 
         // ask the user for the database server, admin user and pw
         $db_server = SQL_DB_HOST;
-        $db_admin_user = 'postgres';
-        $db_admin_password = SQL_DB_PASSWD;
+        $db_admin_user = SQL_DB_ADMIN_USER;
+        $db_admin_password = SQL_DB_ADMIN_PASSWD; // would be different form the db user password
         // connect with db admin user
         $this->postgres_link = pg_connect('host=' . $db_server . ' user=' . $db_admin_user . ' password=' . $db_admin_password);
         // create zukunft user
@@ -950,7 +950,7 @@ class sql_db
         }
         $this->close();
         // connect with zukunft user
-        $conn_str = 'host=' . $db_server . ' dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
+        $conn_str = 'host=' . $db_server . ' dbname=' . SQL_DB_NAME . ' user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
         $this->postgres_link = pg_connect($conn_str);
         $db_tmp = new sql_db();
         if ($this->postgres_link !== false) {
@@ -4898,7 +4898,7 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $sql_check .= "TABLE_NAME = '" . $table_name . "';";
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $sql_check .= "TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $table_name . "';";
+            $sql_check .= "TABLE_SCHEMA = '".SQL_DB_NAME_MYSQL."' AND TABLE_NAME = '" . $table_name . "';";
         } else {
             $msg = 'Unknown database type "' . $this->db_type . '"';
             log_err($msg, 'sql_db->has_column');
@@ -4926,7 +4926,7 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $sql_check = "SELECT TRUE FROM pg_attribute WHERE attrelid = '" . $table_name . "'::regclass AND  attname = '" . $column_name . "' AND NOT attisdropped ";
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $sql_check = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $table_name . "' AND COLUMN_NAME = '" . $column_name . "';";
+            $sql_check = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '".SQL_DB_NAME_MYSQL."' AND TABLE_NAME = '" . $table_name . "' AND COLUMN_NAME = '" . $column_name . "';";
         } else {
             $msg = 'Unknown database type "' . $this->db_type . '"';
             log_err($msg, 'sql_db->has_column');
@@ -4970,9 +4970,9 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $sql = "SELECT column_name FROM information_schema.columns WHERE table_name   = '" . $tbl_name . "';";
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $tbl_name . "';";
+            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '".SQL_DB_NAME_MYSQL."' AND TABLE_NAME = '" . $tbl_name . "';";
         } else {
-            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $tbl_name . "';";
+            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '".SQL_DB_NAME_MYSQL."' AND TABLE_NAME = '" . $tbl_name . "';";
         }
         $sql_result = $this->get_internal($sql);
         foreach ($sql_result as $row) {
@@ -5014,12 +5014,12 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $sql_check = "SELECT" . " TRUE 
                             FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS 
-                           WHERE CONSTRAINT_CATALOG = 'zukunft' 
+                           WHERE CONSTRAINT_CATALOG = '".SQL_DB_NAME."' 
                              AND CONSTRAINT_NAME = '" . $key_name . "';";
         } elseif ($this->db_type == sql_db::MYSQL) {
             $sql_check = "SELECT" . " TRUE 
                             FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS 
-                           WHERE CONSTRAINT_SCHEMA = 'zukunft' 
+                           WHERE CONSTRAINT_SCHEMA = '".SQL_DB_NAME_MYSQL."' 
                              AND TABLE_NAME = '" . $table_name . "' 
                              AND CONSTRAINT_NAME = '" . $key_name . "';";
         } else {
@@ -5364,7 +5364,7 @@ class sql_db
             $qp->sql .= " table_name = '" . $table_name . "';";
             $qp->name .= $table_name;
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $qp->sql .= " TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $table_name . "';";
+            $qp->sql .= " TABLE_SCHEMA = '".SQL_DB_NAME_MYSQL."' AND TABLE_NAME = '" . $table_name . "';";
             $qp->name .= $table_name;
         } else {
             $qp->sql = '';
