@@ -33,6 +33,7 @@
 namespace cfg\helper;
 
 include_once API_OBJECT_PATH . 'api_message.php';
+include_once MODEL_CONST_PATH . 'def.php';
 include_once MODEL_CONST_PATH . 'files.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
@@ -104,6 +105,7 @@ use cfg\component\position_type;
 use cfg\component\position_type_list;
 use cfg\component\view_style;
 use cfg\component\view_style_list;
+use cfg\const\def;
 use cfg\const\files;
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -623,7 +625,7 @@ class type_list
         $csv_path = '';
         $lib = new library();
         $type = $lib->class_to_name($list::class);
-        foreach (BASE_CODE_LINK_FILES as $csv_class) {
+        foreach (def::BASE_CODE_LINK_FILES as $csv_class) {
             $csv_file_name = $lib->class_to_name($csv_class);
             if (str_ends_with($type, '_list')) {
                 $csv_list_type = $csv_file_name . '_list';

@@ -1270,7 +1270,7 @@ class sql_db
         $cfg->check(config::VERSION_DB, PRG_VERSION, $this);
 
         // get the list of CSV and loop
-        foreach (BASE_CODE_LINK_FILES as $csv_file_name) {
+        foreach (def::BASE_CODE_LINK_FILES as $csv_file_name) {
             $this->load_db_code_link_file($csv_file_name);
         }
 

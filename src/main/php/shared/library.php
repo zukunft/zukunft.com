@@ -2262,8 +2262,8 @@ class library
         $result = 'api class name match missing';
         $i = 0;
         $found = false;
-        while ($i < count(API_CLASSES) and !$found) {
-            $class = API_CLASSES[$i];
+        while ($i < count(def::API_CLASSES) and !$found) {
+            $class = def::API_CLASSES[$i];
             $api_name = $this->class_to_api_name($class);
             if ($api_name == $class_name) {
                 $result = $class;

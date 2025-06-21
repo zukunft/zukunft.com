@@ -48,6 +48,7 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_CONST_PATH . 'def.php';
 include_once MODEL_CONST_PATH . 'files.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
@@ -87,6 +88,7 @@ use cfg\component\component_list;
 use cfg\component\component_type_list;
 use cfg\component\position_type_list;
 use cfg\component\view_style_list;
+use cfg\const\def;
 use cfg\const\files;
 use cfg\db\sql_db;
 use cfg\element\element;
@@ -464,7 +466,7 @@ class create_test_objects extends test_base
         $csv_path = '';
         $lib = new library();
         $type = $lib->class_to_name($list::class);
-        foreach (BASE_CODE_LINK_FILES as $csv_class) {
+        foreach (def::BASE_CODE_LINK_FILES as $csv_class) {
             $csv_file_name = $lib->class_to_name($csv_class);
             if (str_ends_with($type, '_list')) {
                 $csv_list_type = $csv_file_name . '_list';
