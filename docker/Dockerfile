@@ -15,6 +15,6 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get clean && \
     rm -rf /var/lib/apt/lists/*
     
-# Expose port 80 and Start the Apache server
-EXPOSE 80
+# Expose port 8080 and Start the Apache server
+EXPOSE 8080
 CMD ["apache2-foreground"]
