@@ -113,6 +113,7 @@ use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
 use cfg\view\view_type_list;
 use html\types\formula_type_list as formula_type_list_web;
+use shared\const\users;
 use shared\enum\user_profiles;
 use test\all_tests;
 use test\test_cleanup;
@@ -184,7 +185,7 @@ class all_unit_tests extends test_cleanup
              */
 
             $sys_usr = new user;
-            $sys_usr->load_by_id(SYSTEM_USER_ID);
+            $sys_usr->load_by_id(users::SYSTEM_ID);
             //$import = new import_file();
             //$import->import_config_yaml($sys_usr);
 

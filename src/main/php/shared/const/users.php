@@ -47,12 +47,28 @@ class users
     // the fixed system user
     const SYSTEM_ID = 1;
     const SYSTEM_NAME = 'zukunft.com system';
+    const SYSTEM_COM = 'the internal zukunft.com system user that should never log in and is mainly used for the initial setup';
+
     const SYSTEM_ADMIN_NAME = 'zukunft.com local admin';
+    const SYSTEM_TEST_NAME = 'zukunft.com system test';
     const LOCALHOST_NAME = 'localhost';
     const LOCALHOST_IP = 'localhost';
 
     // system testing
     const TEST_NAME = 'standard user view for all users';
     const TEST_IP = '66.249.64.95'; // used to check the blocking of an IP address
+
+    // list of predefined usernames used for the system and for testing that are expected to be never used or changed
+    const RESERVED_NAMES = array(
+        self::SYSTEM_NAME,
+        self::SYSTEM_ADMIN_NAME,
+        self::LOCALHOST_NAME,
+        self::TEST_NAME,
+    );
+
+    // array of usernames that used for db read testing and that should not be renamed
+    const FIXED_NAMES = array(
+        self::SYSTEM_NAME
+    );
 
 }

@@ -43,6 +43,7 @@ include_once SHARED_CONST_PATH . 'words.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\config;
+use cfg\const\paths;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
@@ -350,7 +351,7 @@ class system_tests
         $expected_sql = $t->file('db/system/missing_owner_by_formula.sql');
         $t->assert('system_consistency->missing_owner_sql by formula', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
-        $this->php_include_tests($t, MODEL_PATH);
+        $this->php_include_tests($t, paths::MODEL);
         $this->php_include_tests($t, API_PATH);
         $this->php_include_tests($t, WEB_PATH);
         $this->php_class_section_tests($t, MODEL_COMPONENT_PATH);

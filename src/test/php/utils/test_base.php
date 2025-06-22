@@ -282,6 +282,7 @@ include_once TEST_UNIT_READ_PATH . 'export_read_tests.php';
 
 // load the testing functions that save data to the database
 include_once TEST_UNIT_WRITE_PATH . 'all_unit_write_tests.php';
+include_once TEST_UNIT_WRITE_PATH . 'user_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'word_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'word_list_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'verb_write_tests.php';

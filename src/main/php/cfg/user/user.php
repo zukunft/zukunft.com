@@ -89,8 +89,10 @@ include_once SHARED_HELPER_PATH . 'Config.php';
 include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_PATH . 'library.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql;
@@ -113,10 +115,12 @@ use cfg\word\word;
 use shared\const\users;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
+use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
 use shared\helper\Config as shared_config;
 use shared\json_fields;
 use Exception;
+use shared\library;
 use shared\types\api_type_list;
 
 class user extends db_object_seq_id
@@ -126,6 +130,7 @@ class user extends db_object_seq_id
      * db const
      */
 
+    // TODO move to user_db class like word_db
     // database fields and comments only used for user
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
@@ -331,6 +336,7 @@ class user extends db_object_seq_id
     public ?string $first_name = null;    //
     public ?string $last_name = null;     //
     public ?string $code_id = null;       // the main id to detect system users
+    // TODO move to user config e.g. by using the key word "pod-user-config"
     public ?string $dec_point = null;     // the decimal point char for this user
     public ?string $thousand_sep = null;  // the thousand separator user for this user
     public ?int $percent_decimals = null; // the number of decimals for this user
@@ -445,6 +451,7 @@ class user extends db_object_seq_id
 
     // TODO test api_mapper
 
+    // TODO add the import mapper
 
     /*
      * api
@@ -914,7 +921,7 @@ class user extends db_object_seq_id
                         // add the local admin user to use it for the import
                         $upd_result = $this->create_local_admin($db_con);
                     } else {
-                        $upd_result = $this->save($db_con);
+                        $upd_result = $this->save_old($db_con);
                     }
 
                     // TODO make sure that the result is always compatible and checked if needed
@@ -940,7 +947,7 @@ class user extends db_object_seq_id
         }
 
         // add the local admin user to use it for the import
-        return $this->save($db_con);
+        return $this->save_old($db_con);
 
     }
 
@@ -1004,7 +1011,7 @@ class user extends db_object_seq_id
                 // TODO use the right level of the profile
                 if ($profile_id <= $this->profile_id) {
                     global $db_con;
-                    $usr_msg->add_message_text($this->save($db_con));
+                    $usr_msg->add_message_text($this->save_old($db_con));
                 }
             }
         }
@@ -1288,7 +1295,7 @@ class user extends db_object_seq_id
      * TODO check if the user name or email exist before adding a new user
      * @return string an empty string if all user data are saved in the database otherwise the message that should be shown to the user
      */
-    function save(sql_db $db_con): string
+    function save_old(sql_db $db_con): string
     {
         global $usr_pro_cac;
 
@@ -1370,6 +1377,61 @@ class user extends db_object_seq_id
         }
 
         return $result;
+    }
+
+    /**
+     * check if a preserver user name is trying to be added
+     * and if return a message to the user to suggest another name
+     *
+     * @return user_message
+     */
+    protected function check_preserved(): user_message
+    {
+        global $usr;
+        global $mtr;
+
+        // init
+        $usr_msg = new user_message();
+        $msg_res = $mtr->txt(msg_id::IS_RESERVED);
+        $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
+        $lib = new library();
+        $class_name = $lib->class_to_name($this::class);
+
+        // system users are always allowed to add users e.g. to add the system users
+        if (!$usr->is_system()) {
+            if (in_array($this->name(), users::RESERVED_NAMES)) {
+                // the admin user needs to add the read test objects during initial load
+                if ($usr->is_admin() and !in_array($this->name(), users::FIXED_NAMES)) {
+                    $usr_msg->add_id_with_vars(msg_id::USER_IS_RESERVED, [
+                        msg_id::VAR_USER_NAME => $this->name(),
+                        msg_id::VAR_NAME_LIST => implode(',', users::RESERVED_NAMES)
+                    ]);
+                }
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add or update a user in the database
+     *
+     * @return user_message the message that should be shown to the user in case something went wrong
+     *                      or the database id of the user just added
+     */
+    function save(): user_message
+    {
+        // all potential time intensive function should start with a log message to detect time improvement potential
+        log_debug($this->dsp_id());
+
+        // use the already open database connection of the already started process
+        global $db_con;
+        // use the preloaded message translation object
+        global $mtr;
+
+        // check the preserved names
+        $usr_msg = $this->check_preserved();
+
+        return $usr_msg;
     }
 
     /**

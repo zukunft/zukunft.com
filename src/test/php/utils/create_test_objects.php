@@ -183,6 +183,7 @@ use DateTime;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\view\view_list as view_list_dsp;
 use html\word\word as word_dsp;
+use shared\const\users;
 use shared\enum\change_actions;
 use shared\enum\change_fields;
 use shared\enum\change_tables;
@@ -3964,7 +3965,7 @@ class create_test_objects extends test_base
     function system_user(): user
     {
         $sys_usr = new user;
-        $sys_usr->set_id(SYSTEM_USER_ID);
+        $sys_usr->set_id(users::SYSTEM_ID);
         $sys_usr->name = "zukunft.com system";
         $sys_usr->code_id = 'system';
         $sys_usr->dec_point = ".";

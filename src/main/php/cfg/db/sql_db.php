@@ -1024,7 +1024,7 @@ class sql_db
             // use the system user for the database updates
             global $usr;
             $usr = new user;
-            $usr->load_by_id(SYSTEM_USER_ID);
+            $usr->load_by_id(users::SYSTEM_ID);
 
             // recreate the code link database rows
             log_echo('Create the code links');
@@ -1398,7 +1398,7 @@ class sql_db
         $this->reset();
         $this->class = $class;
         if ($usr == null) {
-            $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
+            $this->set_usr(users::SYSTEM_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
             if ($usr->id() == null) {
                 $this->set_usr(0); // fallback for special cases
@@ -5595,6 +5595,7 @@ class sql_db
     }
 
     /**
+     * TODO move to system_user
      * fixed code to create the initial system user
      * but only if the user table is empty
      * @return bool true if the system user have been created
@@ -5606,11 +5607,12 @@ class sql_db
             $sys_usr = new user();
             $sys_usr->set_name(users::SYSTEM_NAME);
             $sys_usr->set_profile_id(user_profiles::SYSTEM_ID);
-            $save_result = $sys_usr->save($this);
+            $sys_usr->description = users::SYSTEM_COM;
+            $save_result = $sys_usr->save_old($this);
             if ($save_result != '') {
-                log_fatal('system user cannot be created');
+                log_fatal('system user cannot be created', 'sql_db->create_system_user');
             } elseif ($sys_usr->id() != users::SYSTEM_ID) {
-                log_fatal('system user has not the expected database id of ' . users::SYSTEM_ID);
+                log_fatal('system user has not the expected database id of ' . users::SYSTEM_ID, 'sql_db->create_system_user');
             } else {
                 $result = true;
             }
@@ -5628,7 +5630,7 @@ class sql_db
 
         // allow adding only if there is not yet any system user in the database
         $usr = new user;
-        $usr->load_by_id(SYSTEM_USER_ID);
+        $usr->load_by_id(users::SYSTEM_ID);
 
         if ($usr->id() <= 0) {
 
@@ -5644,7 +5646,7 @@ class sql_db
                 // but only if needed and allowed which is only the case directly after the database structure creation
                 if ($this->create_system_user()) {
                     // reload the system user if adding has been successful
-                    $usr->load_by_id(SYSTEM_USER_ID);
+                    $usr->load_by_id(users::SYSTEM_ID);
                 }
 
                 // translate the system setup messages only to the system base language which is english

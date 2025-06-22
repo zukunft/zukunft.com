@@ -698,15 +698,12 @@ use cfg\word\word;
 use html\component\component_exe as component;
 use html\html_base;
 use html\view\view as view_dsp;
+use shared\const\users;
 use shared\helper\Translator;
 use shared\library;
 use shared\types\protection_type;
 use shared\types\share_type;
 use test\test_cleanup;
-
-// the fixed system user
-const SYSTEM_USER_ID = 1; //
-const SYSTEM_USER_TEST_ID = 2; //
 
 // parameters for internal testing and debugging
 const LIST_MIN_NAMES = 4; // number of object names that should at least be shown
@@ -714,6 +711,8 @@ const LIST_MIN_NUM = 20; // number of object ids that should at least be shown
 const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
 
 // set all path for the program code here at once
+const CONST_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR;
+include_once CONST_PATH . 'paths.php';
 const SRC_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
 const MAIN_PATH = SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
 const PHP_PATH_LIB = MAIN_PATH . 'php' . DIRECTORY_SEPARATOR; // recreation of the PHP_PATH for library use only
@@ -1355,7 +1354,7 @@ function log_msg(string  $msg_text,
             $user_id = $usr->id();
         }
         if ($user_id <= 0) {
-            $user_id = $_SESSION['usr_id'] ?? SYSTEM_USER_ID;
+            $user_id = $_SESSION['usr_id'] ?? users::SYSTEM_ID;
         }
 
         // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
@@ -1767,7 +1766,7 @@ function prg_end_write_time($db_con): void
     $time_report = $sys_times->report();
     $sys_time_end = time();
     if ($sys_time_end > $sys_time_limit) {
-        $db_con->usr_id = SYSTEM_USER_ID;
+        $db_con->usr_id = users::SYSTEM_ID;
         $db_con->set_class(system_time_type::class);
         $sys_script_id = $db_con->get_id($sys_script);
         if ($sys_script_id <= 0) {

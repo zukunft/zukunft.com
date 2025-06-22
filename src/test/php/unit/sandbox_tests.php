@@ -62,6 +62,7 @@ use cfg\view\view;
 use cfg\word\triple;
 use cfg\word\word;
 use cfg\word\word_db;
+use shared\const\users;
 use shared\library;
 use shared\const\sources;
 use shared\const\words;
@@ -286,7 +287,7 @@ class sandbox_tests
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_class(user::class);
         $db_con->set_name('formula_link_norm_by_id');
-        $db_con->set_usr(SYSTEM_USER_ID);
+        $db_con->set_usr(users::SYSTEM_ID);
         $db_con->set_where_std(null, 'Test User');
         $created_sql = $db_con->select_by_set_id();
         // TODO use the file
@@ -298,7 +299,7 @@ class sandbox_tests
         $db_con->db_type = sql_db::MYSQL;
         $db_con->set_class(user::class);
         $db_con->set_name('formula_link_norm_by_id_mysql');
-        $db_con->set_usr(SYSTEM_USER_ID);
+        $db_con->set_usr(users::SYSTEM_ID);
         $db_con->set_where_std(null, 'Test User');
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "PREPARE formula_link_norm_by_id_mysql FROM 'SELECT user_id,  user_name FROM users WHERE user_name = ?';";

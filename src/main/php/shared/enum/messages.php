@@ -53,6 +53,8 @@ enum messages: string
     const VAR_ID_CHK = 'VarObjIdCheck';
     // the name of a sandbox object
     const VAR_NAME = 'VarObjName';
+    // the list of names e.g. the reserved names that should not be used
+    const VAR_NAME_LIST = 'VarObjNameList';
     // the name of the compare sandbox object
     const VAR_NAME_CHK = 'VarObjNameCheck';
     // the description of a sandbox object using dsp_id()
@@ -556,6 +558,10 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case USER_IS_RESERVED = 'user name "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" is used by the system. Please use another name, which should not be one of these '
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END;
     case OBJECT_RELOADING_FAILED = 'Reloading of the object for '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' failed';

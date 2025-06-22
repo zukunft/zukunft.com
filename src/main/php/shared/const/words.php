@@ -63,6 +63,8 @@ class words
     const SYS_CONF_VALUE = 'sys-conf-value';
     const SYS_CONF_SOURCE = 'source-name';
     const SYS_CONF_SOURCE_COM = 'source-description';
+    const SYS_CONF_USER = 'pod-user-config';
+    const SYS_CONF_USER_COM = 'keyword to read the user configuration for a specific user';
 
     // for the system setup and all pods of zukunft.com
     const POD = 'pod';
@@ -81,7 +83,7 @@ class words
     const URL_ID = 326;
     // e.g. the launch date of the first beta version of zukunft.com
     const LAUNCH = 'launch';
-    const LAUNCH_ID = 374;
+    const LAUNCH_ID = 375;
 
     // for the user settings
     const ROW = 'row';
@@ -107,7 +109,7 @@ class words
 
     // e.g. the geolocation of the development of zukunft.com
     const POINT = 'point';
-    const POINT_ID = 375;
+    const POINT_ID = 376;
 
     // general words used also for the system configuration that have a fixed tooltip
     const TIME = 'time';
@@ -322,9 +324,9 @@ class words
 
     // words from import test file companies.json used for the start page in order of appearance
     const ABB = 'ABB';
-    const ABB_ID = 1008;
+    const ABB_ID = 1009;
     const VESTAS = 'Vestas';
-    const VESTAS_ID = 1011;
+    const VESTAS_ID = 1012;
 
     // for the config.yaml
     const TEST = 'test';

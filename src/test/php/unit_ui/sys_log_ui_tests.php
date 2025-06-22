@@ -36,6 +36,7 @@ use cfg\user\user;
 use html\user\user as user_dsp;
 use html\html_base;
 use html\system\sys_log_list as sys_log_list_dsp;
+use shared\const\users;
 use test\test_cleanup;
 
 class sys_log_ui_tests
@@ -43,7 +44,7 @@ class sys_log_ui_tests
     function run(test_cleanup $t): void
     {
         $sys_usr = new user;
-        $sys_usr->load_by_id(SYSTEM_USER_ID);
+        $sys_usr->load_by_id(users::SYSTEM_ID);
         $sys_usr_dsp = new user_dsp($sys_usr->api_json());
 
         $html = new html_base();
