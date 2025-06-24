@@ -351,7 +351,7 @@ class sql_par_field_list
         global $cng_fld_cac;
 
         // include the name field for the log also if the object is only excluded
-        if ($sbx_db->name() <> $sbx_upd->name()) {
+        if ($sbx_db->name_or_null() <> $sbx_upd->name()) {
             if ($do_log) {
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . $sbx_upd->name_field(),
@@ -359,16 +359,11 @@ class sql_par_field_list
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            if ($sbx_db->name() == '') {
-                $old_name = null;
-            } else {
-                $old_name = $sbx_db->name();
-            }
             $this->add_field(
                 $sbx_upd->name_field(),
                 $sbx_upd->name(),
                 sandbox_named::FLD_NAME_SQL_TYP,
-                $old_name
+                $sbx_db->name_or_null()
             );
         }
         if ($sbx_db->description <> $sbx_upd->description) {

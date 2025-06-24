@@ -62,7 +62,7 @@ class user_profile extends type_object
     const FLD_LEVEL_COM = 'the access right level to prevent not permitted right gaining';
     const FLD_LEVEL = 'right_level';
 
-    // additional fieldss for the table creation of user profiles
+    // additional fields for the table creation of user profiles
     const FLD_LST_EXTRA = array(
         [self::FLD_LEVEL, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_LEVEL_COM],
     );

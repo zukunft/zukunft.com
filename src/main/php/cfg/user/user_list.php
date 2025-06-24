@@ -52,6 +52,7 @@ include_once MODEL_USER_PATH . 'user_profile.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
 //include_once MODEL_WORD_PATH . 'word.php';
+include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -69,6 +70,7 @@ use cfg\value\value;
 use cfg\view\view;
 use cfg\word\triple;
 use cfg\word\word;
+use shared\const\users;
 use shared\enum\user_profiles;
 use shared\library;
 
@@ -126,7 +128,7 @@ class user_list
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(user::FLD_NAMES_LIST);
+        $sc->set_fields(user_db::FLD_NAMES_LIST);
         return $qp;
     }
 
@@ -186,7 +188,7 @@ class user_list
         $sc->set_join_fields(
             array(user_profile::FLD_LEVEL),
             user_profile::class,
-            user::FLD_PROFILE,
+            user_db::FLD_PROFILE,
             user_profile::FLD_ID);
         $sc->add_where(user_profile::FLD_LEVEL, $profile_id, sql_par_type::INT_HIGHER, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
@@ -331,7 +333,7 @@ class user_list
     function load_system(sql_db $db_con): void
     {
         global $system_users;
-        $this->load_by_profile_and_higher($db_con, user::RIGHT_LEVEL_SYSTEM_TEST);
+        $this->load_by_profile_and_higher($db_con, users::RIGHT_LEVEL_SYSTEM_TEST);
         $system_users = clone $this;
     }
 
@@ -458,35 +460,35 @@ class user_list
         $this->lst = array();
         $this->code_id_hash = array();
 
-        $usr = new user(user::SYSTEM_NAME, user::SYSTEM_EMAIL);
-        $usr->code_id = user::SYSTEM_CODE_ID;
+        $usr = new user(users::SYSTEM_NAME, users::SYSTEM_EMAIL);
+        $usr->code_id = users::SYSTEM_CODE_ID;
         $usr->profile_id = $usr_pro_cac->id(user_profiles::SYSTEM);
-        $this->lst[user::SYSTEM_ID] = $usr;
-        $this->code_id_hash[user::SYSTEM_CODE_ID] = user::SYSTEM_ID;
+        $this->lst[users::SYSTEM_ID] = $usr;
+        $this->code_id_hash[users::SYSTEM_CODE_ID] = users::SYSTEM_ID;
 
-        $usr = new user(user::SYSTEM_ADMIN_NAME, user::SYSTEM_ADMIN_EMAIL);
-        $usr->code_id = user::SYSTEM_ADMIN_CODE_ID;
+        $usr = new user(users::SYSTEM_ADMIN_NAME, users::SYSTEM_ADMIN_EMAIL);
+        $usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
         $usr->profile_id = $usr_pro_cac->id(user_profiles::ADMIN);
-        $this->lst[user::SYSTEM_ADMIN_ID] = $usr;
-        $this->code_id_hash[user::SYSTEM_ADMIN_CODE_ID] = user::SYSTEM_ADMIN_ID;
+        $this->lst[users::SYSTEM_ADMIN_ID] = $usr;
+        $this->code_id_hash[users::SYSTEM_ADMIN_CODE_ID] = users::SYSTEM_ADMIN_ID;
 
-        $usr = new user(user::SYSTEM_TEST_NAME, user::SYSTEM_TEST_EMAIL);
-        $usr->code_id = user::SYSTEM_TEST_CODE_ID;
+        $usr = new user(users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
+        $usr->code_id = users::SYSTEM_TEST_CODE_ID;
         $usr->profile_id = $usr_pro_cac->id(user_profiles::TEST);
-        $this->lst[user::SYSTEM_TEST_ID] = $usr;
-        $this->code_id_hash[user::SYSTEM_TEST_CODE_ID] = user::SYSTEM_TEST_ID;
+        $this->lst[users::SYSTEM_TEST_ID] = $usr;
+        $this->code_id_hash[users::SYSTEM_TEST_CODE_ID] = users::SYSTEM_TEST_ID;
 
-        $usr = new user(user::SYSTEM_TEST_PARTNER_NAME, user::SYSTEM_TEST_PARTNER_EMAIL);
-        $usr->code_id = user::SYSTEM_TEST_PARTNER_CODE_ID;
+        $usr = new user(users::SYSTEM_TEST_PARTNER_NAME, users::SYSTEM_TEST_PARTNER_EMAIL);
+        $usr->code_id = users::SYSTEM_TEST_PARTNER_CODE_ID;
         $usr->profile_id = $usr_pro_cac->id(user_profiles::TEST);
-        $this->lst[user::SYSTEM_TEST_PARTNER_ID] = $usr;
-        $this->code_id_hash[user::SYSTEM_TEST_PARTNER_CODE_ID] = user::SYSTEM_TEST_PARTNER_ID;
+        $this->lst[users::SYSTEM_TEST_PARTNER_ID] = $usr;
+        $this->code_id_hash[users::SYSTEM_TEST_PARTNER_CODE_ID] = users::SYSTEM_TEST_PARTNER_ID;
 
-        $usr = new user(user::SYSTEM_TEST_NORMAL_NAME, user::SYSTEM_TEST_NORMAL_EMAIL);
-        $usr->code_id = user::SYSTEM_TEST_NORMAL_CODE_ID;
+        $usr = new user(users::SYSTEM_TEST_NORMAL_NAME, users::SYSTEM_TEST_NORMAL_EMAIL);
+        $usr->code_id = users::SYSTEM_TEST_NORMAL_CODE_ID;
         $usr->profile_id = $usr_pro_cac->id(user_profiles::NORMAL);
-        $this->lst[user::SYSTEM_TEST_NORMAL_ID] = $usr;
-        $this->code_id_hash[user::SYSTEM_TEST_NORMAL_CODE_ID] = user::SYSTEM_TEST_NORMAL_ID;
+        $this->lst[users::SYSTEM_TEST_NORMAL_ID] = $usr;
+        $this->code_id_hash[users::SYSTEM_TEST_NORMAL_CODE_ID] = users::SYSTEM_TEST_NORMAL_ID;
 
     }
 

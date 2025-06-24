@@ -63,6 +63,7 @@ include_once MODEL_USER_PATH . 'user.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_LOG_PATH . 'change_log.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_db.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_PATH . 'library.php';
@@ -81,6 +82,7 @@ use cfg\sandbox\sandbox_link;
 use cfg\ref\source;
 use cfg\helper\type_object;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\word\word;
 use Exception;
 use shared\enum\change_actions;
@@ -212,7 +214,7 @@ class change_link extends change_log
             // TODO check if not the complete user should be loaded
             $usr = new user();
             $usr->set_id($db_row[user::FLD_ID]);
-            $usr->name = $db_row[user::FLD_NAME];
+            $usr->name = $db_row[user_db::FLD_NAME];
             $this->set_user($usr);
         }
         return $result;
@@ -236,7 +238,7 @@ class change_link extends change_log
         $sc->set_name($qp->name);
         $sc->set_usr($usr->id());
         $sc->set_fields(self::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), user::class);
+        $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
 
         $sc->add_where(user::FLD_ID, $usr->id());
         $sc->set_order(self::FLD_ID, sql::ORDER_DESC);
@@ -280,7 +282,7 @@ class change_link extends change_log
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_join_fields(array(user::FLD_NAME), user::class);
+        $db_con->set_join_fields(array(user_db::FLD_NAME), user::class);
 
         $db_con->set_where_text($db_con->where_par($fields, $values));
         $db_con->set_order(self::FLD_ID, sql::ORDER_DESC);
@@ -461,8 +463,8 @@ class change_link extends change_log
             if (!$ex_time) {
                 $result .= $db_row['change_time'] . ' ';
             }
-            if ($db_row[user::FLD_NAME] <> '') {
-                $result .= $db_row[user::FLD_NAME] . ' ';
+            if ($db_row[user_db::FLD_NAME] <> '') {
+                $result .= $db_row[user_db::FLD_NAME] . ' ';
             }
             if ($db_row['new_text_from'] <> '' and $db_row['new_text_to'] <> '') {
                 $result .= 'linked ' . $db_row['new_text_from'] . ' to ' . $db_row['new_text_to'];
@@ -760,7 +762,7 @@ class change_link extends change_log
     ): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQL_TYP);
+        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user_db::FLD_ID_SQL_TYP);
         $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
         $fvt_lst->add_field(change_table::FLD_ID, $this->table_id, type_object::FLD_ID_SQL_TYP);
 

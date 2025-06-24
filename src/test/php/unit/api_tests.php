@@ -81,6 +81,7 @@ use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use shared\api;
 use shared\const\triples;
+use shared\const\users;
 use shared\enum\change_fields;
 use shared\helper\Config as shared_config;
 use shared\library;
@@ -119,9 +120,9 @@ class api_tests
         $ts = 'api ';
         $t->header($ts);
 
-        $t->assert_api_get(user::class, user::SYSTEM_TEST_ID);
-        $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_NAME);
-        $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_EMAIL, api::URL_VAR_EMAIL);
+        $t->assert_api_get(user::class, users::SYSTEM_TEST_ID);
+        $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_NAME);
+        $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_EMAIL, api::URL_VAR_EMAIL);
         $t->assert_api_get(word::class);
         $t->assert_api_get_json(word::class, api::URL_VAR_WORD_ID);
         $t->assert_api_get_by_text(word::class, words::MATH);

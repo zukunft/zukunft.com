@@ -104,6 +104,7 @@ include_once MODEL_LOG_PATH . 'changes_norm.php';
 //include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_db.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
@@ -167,6 +168,7 @@ use cfg\phrase\phrase;
 use cfg\ref\source;
 use cfg\result\result;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_list;
 use cfg\user\user_message;
 use cfg\value\value;
@@ -1290,7 +1292,7 @@ class sandbox_multi extends db_object_multi_user
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
-            array_merge(array(user::FLD_ID, user::FLD_NAME), user::FLD_NAMES_LIST),
+            array_merge(array(user::FLD_ID, user_db::FLD_NAME), user_db::FLD_NAMES_LIST),
             user::class,
             user::FLD_ID,
             user::FLD_ID);

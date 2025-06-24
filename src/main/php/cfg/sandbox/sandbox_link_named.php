@@ -231,6 +231,20 @@ class sandbox_link_named extends sandbox_link
     }
 
     /**
+     * get the name of the word object or null
+     *
+     * @return string|null the name from the object e.g. word using the same function as the phrase and term
+     */
+    function name_or_null(): ?string
+    {
+        if ($this->name == null) {
+            return null;
+        } else {
+            return $this->name();
+        }
+    }
+
+    /**
      * dummy function that should always be overwritten by the child object
      * @return string
      */

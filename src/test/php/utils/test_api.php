@@ -70,6 +70,7 @@ use Exception;
 use html\rest_ctrl;
 use html\log\change_log_list as change_log_list_dsp;
 use shared\api;
+use shared\const\users;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type;
@@ -826,7 +827,7 @@ class test_api extends create_test_objects
                 or $actual_user == '127.0.0.1'
                 or 'zukunft.com system'
                 or 'localhost') {
-                $new_value = user::SYSTEM_TEST_NAME;
+                $new_value = users::SYSTEM_TEST_NAME;
                 $json = $this->json_remove_volatile_replace_field($json, json_fields::USER_NAME, $new_value);
             }
         }
@@ -835,7 +836,7 @@ class test_api extends create_test_objects
         if (array_key_exists(json_fields::USER_ID, $json)) {
             $user_id = $json[json_fields::USER_ID];
             if ($user_id >= 0) {
-                $user_id = user::SYSTEM_TEST_ID;
+                $user_id = users::SYSTEM_TEST_ID;
             }
             $json = $this->json_remove_volatile_replace_int_field($json, json_fields::USER_ID, $user_id);
         }

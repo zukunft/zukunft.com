@@ -410,7 +410,17 @@ class db_object_seq_id extends db_object
      */
     function name(): string
     {
-        return 'ERROR: name function not overwritten by child object';
+        return 'ERROR: name function not overwritten by child object ' . $this::class;
+    }
+
+    /**
+     * get the name of the database object which can be null if db object does not yet exist (only used by named objects)
+     *
+     * @return string|null the name from the object e.g. word using the same function as the phrase and term
+     */
+    function name_or_null(): ?string
+    {
+        return 'ERROR: name_or_null function not overwritten by child object ' . $this::class;
     }
 
     /**

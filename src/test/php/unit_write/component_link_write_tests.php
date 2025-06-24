@@ -40,6 +40,7 @@ use cfg\log\change_link;
 use cfg\user\user;
 use cfg\view\view;
 use shared\const\components;
+use shared\const\users;
 use shared\const\views;
 use shared\enum\change_tables;
 use test\test_cleanup;
@@ -74,7 +75,7 @@ class component_link_write_tests
         $log->new_from_id = $msk->id();
         $log->new_to_id = $cmp->id();
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_NAME . ' linked ' . views::TEST_ADD_NAME . ' to ' . components::TEST_ADD_NAME;
+        $target = users::SYSTEM_TEST_NAME . ' linked ' . views::TEST_ADD_NAME . ' to ' . components::TEST_ADD_NAME;
         $t->assert($test_name, $result, $target);
 
         $test_name = 'check list of linked views contains the added view for user "' . $t->usr1->dsp_id() . '"';
@@ -141,7 +142,7 @@ class component_link_write_tests
         $log->old_from_id = $msk->id();
         $log->old_to_id = $cmp->id();
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_NAME . ' unlinked ' . views::TEST_ADD_NAME . ' from ' . components::TEST_ADD_NAME;
+        $target = users::SYSTEM_TEST_NAME . ' unlinked ' . views::TEST_ADD_NAME . ' from ' . components::TEST_ADD_NAME;
         $t->display('view component_link->unlink_dsp logged of "' . $msk->name() . '" from "' . $cmp->name() . '"', $target, $result);
 
         // check if the view component is not used any more for both users

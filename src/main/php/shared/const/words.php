@@ -51,6 +51,9 @@ class words
     //
     // if words have a predefined behaviour instead of the code_id the phrase type is used
 
+    // the standard word displayed to the user if she/he as not yet viewed any other word
+    const DEFAULT_WORD_ID = 1;
+
     // keywords to select the system configuration
     const THIS_SYSTEM = 'zukunft.com';
     const SYSTEM = 'system';

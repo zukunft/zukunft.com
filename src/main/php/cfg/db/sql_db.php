@@ -4199,7 +4199,7 @@ class sql_db
 
         // get the system user id
         $sys_usr = new user();
-        $sys_usr->load_by_name(user::SYSTEM_NAME);
+        $sys_usr->load_by_name(users::SYSTEM_NAME);
 
         if ($sys_usr->id() <= 0) {
             log_err('Cannot load system used in set_default_owner');

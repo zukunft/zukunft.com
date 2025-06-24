@@ -45,6 +45,7 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_db.php';
 include_once SHARED_ENUM_PATH . 'change_fields.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -61,6 +62,7 @@ use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\helper\type_object;
 use cfg\user\user;
+use cfg\user\user_db;
 use DateTime;
 use shared\enum\change_fields;
 use shared\json_fields;
@@ -155,7 +157,7 @@ class change_value extends change_log
             if (!$usr_set) {
                 $row_usr = new user();
                 $row_usr->set_id($db_row[user::FLD_ID]);
-                $row_usr->name = $db_row[user::FLD_NAME];
+                $row_usr->name = $db_row[user_db::FLD_NAME];
                 $this->set_user($row_usr);
             }
         }
@@ -186,7 +188,7 @@ class change_value extends change_log
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_fields($this::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), user::class);
+        $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
         $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
         $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
 

@@ -44,6 +44,7 @@ use cfg\user\user;
 use cfg\value\value;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
+use shared\const\users;
 use shared\enum\change_fields;
 use shared\library;
 use shared\const\triples;
@@ -248,7 +249,7 @@ class value_write_tests
             }
             $result = $t->log_last_by_field($add_val, change_fields::FLD_NUMERIC_VALUE, $add_val->id(), true);
         }
-        $target = user::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST;
+        $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST;
         // TODO activate
         //$t->assert(', value->save logged for "' . $phr_grp->name() . '"', $result, $target);
 
@@ -287,7 +288,7 @@ class value_write_tests
         if ($add_val->is_id_set()) {
             $result = $t->log_last_by_field($add_val2, change_fields::FLD_NUMERIC_VALUE, $add_val2->id(), true);
         }
-        $target = user::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_ADD2;
+        $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_ADD2;
         // TODO activate
         //$t->assert(', value->save logged for "' . $phr_grp2->name() . '"', $result, $target);
 
@@ -313,9 +314,9 @@ class value_write_tests
             $result = $t->log_last_by_field($added_val, change_fields::FLD_NUMERIC_VALUE, $added_val->id(), true);
         }
         // TODO fix it
-        $target = user::SYSTEM_TEST_NAME . ' changed ' . self::NUMBER_TEST . ' to ' . self::NUMBER_ADD;
+        $target = users::SYSTEM_TEST_NAME . ' changed ' . self::NUMBER_TEST . ' to ' . self::NUMBER_ADD;
         if ($result != $target) {
-            $target = user::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST . '';
+            $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST . '';
         }
         // TODO activate
         //$t->assert(', value->save logged for "' . words::TN_RENAMED . '"', $result, $target);
@@ -343,7 +344,7 @@ class value_write_tests
             $result = $t->log_last_by_field($val_usr2, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
                 true);
         }
-        $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_ADD . '" to "' . self::NUMBER_CHANGED . '"';
+        $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_ADD . '" to "' . self::NUMBER_CHANGED . '"';
         // TODO activate
         //$t->assert(', value->save logged for user "' . $t->usr2->name . '"', $result, $target);
 
@@ -377,7 +378,7 @@ class value_write_tests
             $result = $t->log_last_by_field($val_usr2,  change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
                 true);
         }
-        $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_CHANGED . '" to "' . self::NUMBER_ADD . '"';
+        $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_CHANGED . '" to "' . self::NUMBER_ADD . '"';
         $t->assert(', value->save logged for user "' . $t->usr2->name . '"', $result, $target);
 
         // ... check if the value has really been changed back

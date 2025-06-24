@@ -412,14 +412,14 @@ class all_unit_tests extends test_cleanup
 
         // create a dummy user for testing
         $usr = new user;
-        $usr->set_id(user::SYSTEM_TEST_ID);
-        $usr->name = user::SYSTEM_TEST_NAME;
+        $usr->set_id(users::SYSTEM_TEST_ID);
+        $usr->name = users::SYSTEM_TEST_NAME;
         $this->usr1 = $usr;
 
         // create a dummy system user for unit testing
         $usr_sys = new user;
-        $usr_sys->set_id(user::SYSTEM_ID);
-        $usr_sys->name = user::SYSTEM_NAME;
+        $usr_sys->set_id(users::SYSTEM_ID);
+        $usr_sys->name = users::SYSTEM_NAME;
 
     }
 

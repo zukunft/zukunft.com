@@ -92,6 +92,7 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_REF_PATH . 'source.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_USER_PATH . 'user.php';
+//include_once MODEL_USER_PATH . 'user_db.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
@@ -99,6 +100,7 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
+include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
@@ -124,6 +126,7 @@ use cfg\formula\formula_link;
 use cfg\sandbox\sandbox_link;
 use cfg\ref\ref;
 use cfg\ref\source;
+use cfg\user\user_db;
 use cfg\value\value;
 use cfg\verb\verb;
 use cfg\word\triple;
@@ -133,6 +136,7 @@ use cfg\view\view;
 use cfg\view\term_view;
 use cfg\word\word;
 use cfg\word\word_db;
+use shared\const\users;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
 use shared\json_fields;
@@ -517,7 +521,7 @@ class change_log extends db_object_seq_id_user
             $db_changed = $this->set_table($table_name, $db_con);
             if ($table_name == change_tables::USER) {
                 $db_con->set_class(user::class);
-                foreach (user::FLD_NAMES as $field_name) {
+                foreach (user_db::FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::WORD) {
@@ -632,8 +636,8 @@ class change_log extends db_object_seq_id_user
                 }
             } else {
                 $sys_usr = new user();
-                $sys_usr->set_id(user::SYSTEM_ID);
-                $sys_usr->set_name(user::SYSTEM_NAME);
+                $sys_usr->set_id(users::SYSTEM_ID);
+                $sys_usr->set_name(users::SYSTEM_NAME);
                 log_warning('Log field settings for table ' . $table_name . ' are missing',
                     '', '', '', $sys_usr, $db_con);
             }

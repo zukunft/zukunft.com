@@ -36,6 +36,7 @@ include_once SHARED_ENUM_PATH . 'user_profiles.php';
 
 use cfg\user\user_profile_list;
 use cfg\user\user;
+use shared\const\users;
 use shared\enum\user_profiles;
 use test\test_cleanup;
 
@@ -54,20 +55,20 @@ class user_read_tests
 
         $t->subheader('User db read tests');
 
-        $test_name = 'load user ' . user::SYSTEM_TEST_NAME . ' by name and id';
+        $test_name = 'load user ' . users::SYSTEM_TEST_NAME . ' by name and id';
         $usr = new user();
-        $usr->load_by_name(user::SYSTEM_TEST_NAME);
+        $usr->load_by_name(users::SYSTEM_TEST_NAME);
         $usr_by_id = new user();
         $usr_by_id->load_by_id($usr->id(), user::class);
-        $t->assert($test_name, $usr_by_id->name, user::SYSTEM_TEST_NAME);
-        //$t->assert($test_name, $usr_by_id->email, user::SYSTEM_TEST_EMAIL);
+        $t->assert($test_name, $usr_by_id->name, users::SYSTEM_TEST_NAME);
+        //$t->assert($test_name, $usr_by_id->email, users::SYSTEM_TEST_EMAIL);
 
-        $test_name = 'load user ' . user::SYSTEM_TEST_NAME . ' by email';
+        $test_name = 'load user ' . users::SYSTEM_TEST_NAME . ' by email';
         $usr = new user();
-        $usr->load_by_email(user::SYSTEM_TEST_EMAIL);
+        $usr->load_by_email(users::SYSTEM_TEST_EMAIL);
         $usr_by_id = new user();
         $usr_by_id->load_by_id($usr->id(), user::class);
-        $t->assert($test_name, $usr_by_id->name, user::SYSTEM_TEST_NAME);
+        $t->assert($test_name, $usr_by_id->name, users::SYSTEM_TEST_NAME);
 
         // TODO test type and view
 

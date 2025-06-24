@@ -75,6 +75,8 @@ enum messages: string
     const VAR_USER_CHK = 'VarUserCheck';
     // the name of a user
     const VAR_USER_NAME = 'VarUserName';
+    // the name, profile and permissions of a user
+    const VAR_USER_PROFILE = 'VarUserProfile';
     // the name of a user of a list
     const VAR_USER_LIST_NAME = 'VarUserListName';
     // the name of a sandbox object
@@ -558,6 +560,14 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case USER_NO_ADD_PRIVILEGES = 'user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" cannot be added due to missing privileges of the requesting user '
+        . self::VAR_START . self::VAR_USER_PROFILE . self::VAR_END;
+    case USER_NO_UPDATE_PRIVILEGES = 'user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" cannot be updated due to missing privileges of the requesting user '
+        . self::VAR_START . self::VAR_USER_PROFILE . self::VAR_END;
     case USER_IS_RESERVED = 'user name "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . '" is used by the system. Please use another name, which should not be one of these '

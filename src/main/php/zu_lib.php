@@ -1669,10 +1669,11 @@ function prg_restart(string $code_name): sql_db
 
         // create a virtual one-time system user to load the system users
         $usr_sys = new user();
-        $usr_sys->set_id(user::SYSTEM_ID);
-        $usr_sys->name = user::SYSTEM_NAME;
+        $usr_sys->set_id(users::SYSTEM_ID);
+        $usr_sys->name = users::SYSTEM_NAME;
 
         // load system configuration
+        // TODO cache the system config json and detect
         $cfg = new config_numbers($usr_sys);
         $cfg->load_cfg($usr_sys);
         $mtr = new Translator($cfg->language());

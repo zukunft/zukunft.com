@@ -31,7 +31,12 @@
     - load sql:          create the sql statements for loading from the db
     - im- and export:    create an export object and set the vars from an import object
     - information:       functions to make code easier to read
-    - save:              manage to update the database
+    - save:              manage to insert or update the database
+    - similar:           get similar objects or compare
+    - add:               insert database wrapper
+    - update:            update database wrapper
+    - sql write:         create the sql insert, update of delete statements
+    - sql write fields:  get a list of all or only the changed database fields
     - debug:             internal support functions for debugging
 
 
@@ -70,7 +75,12 @@ include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_par.php';
+include_once DB_PATH . 'sql_par_field.php';
+include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once DB_PATH . 'sql_type.php';
+include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_HELPER_PATH . 'type_object.php';
 //include_once MODEL_IMPORT_PATH . 'import_file.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 //include_once MODEL_LOG_PATH . 'change.php';
@@ -79,13 +89,15 @@ include_once MODEL_LOG_PATH . 'change_action.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 //include_once MODEL_REF_PATH . 'source.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_USER_PATH . 'user_db.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
 include_once MODEL_USER_PATH . 'user_type.php';
 //include_once MODEL_VERB_PATH . 'verb_list.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_VIEW_PATH . 'view_sys_list.php';
-//include_once MODEL_WORD_PATH . 'word.php';
+//include_once MODEL_PHRASE_PATH . 'term.php';
 include_once SHARED_HELPER_PATH . 'Config.php';
+include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
@@ -98,21 +110,24 @@ include_once SHARED_PATH . 'json_fields.php';
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
+use cfg\db\sql_type;
+use cfg\db\sql_type_list;
 use cfg\helper\db_object_seq_id;
+use cfg\helper\type_object;
+use cfg\log\change_action;
+use cfg\phrase\term;
 use cfg\system\ip_range_list;
 use cfg\log\change;
 use cfg\sandbox\sandbox_named;
 use cfg\ref\source;
-use cfg\word\triple;
 use cfg\verb\verb_list;
-use cfg\view\view;
 use cfg\view\view_sys_list;
-use cfg\word\word;
 use shared\const\users;
+use shared\const\words;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
 use shared\enum\messages as msg_id;
@@ -130,198 +145,13 @@ class user extends db_object_seq_id
      * db const
      */
 
-    // TODO move to user_db class like word_db
-    // database fields and comments only used for user
-    // *_COM: the description of the field
-    // *_SQL_TYP is the sql data type used for the field
+    // comments used for the database creation
     const TBL_COMMENT = 'for users including system users; only users can add data';
-    const FLD_ID = 'user_id'; // also the field name for foreign keys
-    const FLD_ID_SQL_TYP = sql_field_type::INT;
-    // fields for the main logon
-    const FLD_NAME_COM = 'the user name unique for this pod';
-    const FLD_NAME = 'user_name';
-    const FLD_IP_ADDR_COM = 'all users a first identified with the ip address';
-    const FLD_IP_ADDR = 'ip_address';
-    const FLD_PASSWORD_COM = 'the hash value of the password';
-    const FLD_PASSWORD = 'password';
-    // description and type
-    const FLD_DESCRIPTION_COM = 'for system users the description to explain the profile to human users';
-    const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
-    const FLD_CODE_ID_COM = 'to select e.g. the system batch user';
-    const FLD_CODE_ID = 'code_id';
-    const FLD_PROFILE_COM = 'to define the user roles and read and write rights';
-    const FLD_PROFILE = 'user_profile_id';
-    const FLD_TYPE_ID_COM = 'to set the confirmation level of a user';
-    const FLD_TYPE_ID = 'user_type_id';
-    const FLD_LEVEL_COM = 'the access right level to prevent not permitted right gaining';
-    const FLD_LEVEL = 'right_level';
-    // online verification
-    const FLD_EMAIL_COM = 'the primary email for verification';
-    const FLD_EMAIL = 'email';
-    const FLD_EMAIL_STATUS_COM = 'if the email has been verified or if a password reset has been send';
-    const FLD_EMAIL_STATUS = 'email_status';
-    const FLD_EMAIL_ALT_COM = 'an alternative email for account recovery';
-    const FLD_EMAIL_ALT = 'email_alternative';
-    const FLD_TWO_FACTOR_ID = 'mobile_number';
-    const FLD_TWO_FACTOR_STATUS = 'mobile_status';
-    const FLD_ACTIVATION_KEY = 'activation_key';
-    const FLD_ACTIVATION_TIMEOUT = 'activation_timeout';
-    // offline verification
-    const FLD_FIRST_NAME = 'first_name';
-    const FLD_LAST_NAME = 'last_name';
-    const FLD_NAME_TRIPLE_COM = 'triple that contains e.g. the given name, family name, selected name or title of the person';
-    const FLD_NAME_TRIPLE_ID = 'name_triple_id';
-    const FLD_GEO_TRIPLE_COM = 'the post address with street, city or any other form of geo location for physical transport';
-    const FLD_GEO_TRIPLE_ID = 'geo_triple_id';
-    const FLD_GEO_STATUS = 'geo_status_id';
-    const FLD_OFFICIAL_ID_COM = 'e.g. the number of the passport';
-    const FLD_OFFICIAL_ID = 'official_id';
-    const FLD_OFFICIAL_TYPE_ID = 'official_id_type';
-    const FLD_OFFICIAL_ID_STATUS = 'official_id_status';
-    // settings
-    const FLD_TERM_COM = 'the last term that the user had used';
-    const FLD_TERM = 'term_id';
-    const FLD_VIEW_COM = 'the last mask that the user has used';
-    const FLD_VIEW = 'view_id';
-    const FLD_SOURCE_COM = 'the last source used by this user to have a default for the next value';
-    const FLD_SOURCE = 'source_id';
-    const FLD_STATUS_COM = 'e.g. to exclude inactive users';
-    const FLD_STATUS = 'user_status_id';
-    const FLD_CREATED = 'created';
-    const FLD_LAST_LOGIN = 'last_login';
-    const FLD_LAST_LOGOUT = 'last_logoff';
 
-
-    // database fields used for the user logon process
-    const FLD_DB_NOW = 'NOW() AS db_now';
-
-    // all database field names excluding the id
-    const FLD_NAMES = array(
-        sql::FLD_CODE_ID,
-        self::FLD_IP_ADDR,
-        self::FLD_EMAIL,
-        self::FLD_FIRST_NAME,
-        self::FLD_LAST_NAME,
-        self::FLD_TERM,
-        self::FLD_SOURCE,
-        self::FLD_PROFILE,
-        self::FLD_ACTIVATION_KEY,
-        self::FLD_ACTIVATION_TIMEOUT,
-        self::FLD_DB_NOW
-    );
-    // the database field names excluding the id and the fields for logon
-    const FLD_NAMES_LIST = array(
-        sql::FLD_CODE_ID,
-        self::FLD_IP_ADDR,
-        self::FLD_EMAIL,
-        self::FLD_FIRST_NAME,
-        self::FLD_LAST_NAME,
-        self::FLD_TERM,
-        self::FLD_SOURCE,
-        self::FLD_PROFILE
-    );
-
-    // field lists for the table creation
-    const FLD_LST_ALL = array(
-        // main logon
-        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
-        [self::FLD_IP_ADDR, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_IP_ADDR_COM],
-        [self::FLD_PASSWORD, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PASSWORD_COM],
-        // description and type
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
-        [self::FLD_PROFILE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_profile::class, self::FLD_PROFILE_COM],
-        [self::FLD_TYPE_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_type::class, self::FLD_TYPE_ID_COM],
-        [self::FLD_LEVEL, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_LEVEL_COM],
-        // online verification
-        [self::FLD_EMAIL, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_EMAIL_COM],
-        [self::FLD_EMAIL_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_EMAIL_STATUS_COM],
-        [self::FLD_EMAIL_ALT, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_EMAIL_ALT_COM],
-        [self::FLD_TWO_FACTOR_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
-        [self::FLD_TWO_FACTOR_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', ''],
-        [self::FLD_ACTIVATION_KEY, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
-        [self::FLD_ACTIVATION_TIMEOUT, sql_field_type::TIME, sql_field_default::NULL, '', '', ''],
-        // offline verification
-        [self::FLD_FIRST_NAME, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
-        [self::FLD_LAST_NAME, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
-        [self::FLD_NAME_TRIPLE_ID, sql_field_type::INT, sql_field_default::NULL, '', triple::class, self::FLD_NAME_TRIPLE_COM, triple::FLD_ID],
-        [self::FLD_GEO_TRIPLE_ID, sql_field_type::INT, sql_field_default::NULL, '', triple::class, self::FLD_GEO_TRIPLE_COM, triple::FLD_ID],
-        [self::FLD_GEO_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', ''],
-        [self::FLD_OFFICIAL_ID, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_OFFICIAL_ID_COM],
-        [self::FLD_OFFICIAL_TYPE_ID, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', ''],
-        [self::FLD_OFFICIAL_ID_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', ''],
-        // settings
-        [self::FLD_TERM, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_TERM_COM],
-        [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, '', view::class, self::FLD_VIEW_COM],
-        [self::FLD_SOURCE, sql_field_type::INT, sql_field_default::NULL, '', source::class, self::FLD_SOURCE_COM],
-        [self::FLD_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_STATUS_COM],
-        [self::FLD_CREATED, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, '', '', ''],
-        [self::FLD_LAST_LOGIN, sql_field_type::TIME, sql_field_default::NULL, '', '', ''],
-        [self::FLD_LAST_LOGOUT, sql_field_type::TIME, sql_field_default::NULL, '', '', ''],
-    );
-
-
-    /*
-     * im- and export link
-     */
-
-    // the field names used for the im- and export in the json or yaml format
-    const FLD_EX_PROFILE = 'profile';
-
-
-    /*
-     * predefined user linked to the program code
-     */
-
-    // TODO move to a separate shared class named users
-    // list of the system users that have a coded functionality as defined in src/main/resources/users.json
-
-    // the system user that should only be used for internal processes and to log system tasks
-    const SYSTEM_ID = 1;
-    const SYSTEM_NAME = 'zukunft.com system';
-    const SYSTEM_CODE_ID = 'system'; // unique id to select the user
-    const SYSTEM_EMAIL = 'system@zukunft.com';
-    const SYSTEM_LOCAL_IP = 'localhost'; // as a second line of defence to prevent remote manipulation
-
-    // the system admin user that should only be used in a break-glass event to recover other admin users
-    const SYSTEM_ADMIN_ID = 2;
-    const SYSTEM_ADMIN_NAME = 'zukunft.com local admin';
-    const SYSTEM_ADMIN_CODE_ID = 'admin';
-    const SYSTEM_ADMIN_EMAIL = 'admin@zukunft.com';
-
-    // the user that performs the system tests
-    const SYSTEM_TEST_ID = 3;
-    const SYSTEM_TEST_NAME = 'zukunft.com system test';
-    const SYSTEM_TEST_EMAIL = 'test@zukunft.com';
-    const SYSTEM_TEST_CODE_ID = 'test';
-
-    // the user that acts as a partner for the system tests
-    // so that multi-user behaviour can be tested
-    const SYSTEM_TEST_PARTNER_ID = 4;
-    const SYSTEM_TEST_PARTNER_NAME = 'zukunft.com system test partner'; // to test that the user sandbox is working e.g. that changes of the main test user has no impact of another user simulated by this test user
-    const SYSTEM_TEST_PARTNER_CODE_ID = 'test_partner';
-    const SYSTEM_TEST_PARTNER_EMAIL = 'test.partner@zukunft.com';
-
-    // an admin user to test the allow of functions only allowed for administrators
-    const SYSTEM_TEST_ADMIN_ID = 5;
-    const SYSTEM_TEST_ADMIN_NAME = 'zukunft.com system test admin';
-    const SYSTEM_TEST_ADMIN_CODE_ID = 'admin';
-    const SYSTEM_TEST_ADMIN_EMAIL = 'admin@zukunft.com';
-
-    // a normal user to test the deny of functions only allowed for administrators
-    // and as a fallback owner
-    const SYSTEM_TEST_NORMAL_ID = 6;
-    const SYSTEM_TEST_NORMAL_NAME = 'zukunft.com system test no admin';
-    const SYSTEM_TEST_NORMAL_CODE_ID = 'test_normal';
-    const SYSTEM_TEST_NORMAL_EMAIL = 'support.normal@zukunft.com';
-
-    // change right levels to prevent access level gaining
-    const RIGHT_LEVEL_USER = 10;
-    const RIGHT_LEVEL_ADMIN = 60;
-    const RIGHT_LEVEL_DEVELOPER = 80;
-    const RIGHT_LEVEL_SYSTEM_TEST = 90;
-    const RIGHT_LEVEL_SYSTEM = 99;
+    // forward the const to enable usage of $this::CONST_NAME
+    const FLD_ID = user_db::FLD_ID;
+    const FLD_NAMES = user_db::FLD_NAMES;
+    const FLD_LST_ALL = user_db::FLD_LST_ALL;
 
 
     /*
@@ -330,28 +160,33 @@ class user extends db_object_seq_id
 
     // database fields
     public ?string $name = null;          // simply the username, which cannot be empty
-    public ?string $description = null;   // used for system users to describe the target; can be used by users for a short introduction
     public ?string $ip_addr = null;       // simply the ip address used if no username is given
+    public ?string $password = null;      // only used for the login and password change process
+    public ?string $description = null;   // used for system users to describe the target; can be used by users for a short introduction
+    public ?string $code_id = null;       // the main id to detect system users
+    public ?int $profile_id = null;       // id of the user profile
+    public ?int $type_id = null;          // the confirmation level of the user e.g. email checked or passport checked
     public ?string $email = null;         //
     public ?string $first_name = null;    //
     public ?string $last_name = null;     //
-    public ?string $code_id = null;       // the main id to detect system users
     // TODO move to user config e.g. by using the key word "pod-user-config"
     public ?string $dec_point = null;     // the decimal point char for this user
     public ?string $thousand_sep = null;  // the thousand separator user for this user
     public ?int $percent_decimals = null; // the number of decimals for this user
-    public ?int $profile_id = null;       // id of the user profile
-    public ?int $source_id = null;        // id of the last source used by the user
+
+    public ?user_profile $profile = null; // to define the base rights of a user which can be further restricted but not expanded
 
     // user setting parameters
-    public ?int $wrd_id = null;           // id of the last word viewed by the user
-    public ?int $vrb_id = null;           // id of the last verb used by the user
-
     // in memory only fields
-    public ?word $wrd = null;             // the last word viewed by the user
-    public ?user_profile $profile = null; // to define the base rights of a user which can be further restricted but not expanded
-    public ?user $viewer = null;          // the user who wants to access this user
+    // the last term used by the user
+    private ?term $trm = null;
+    // the last source used by the user
+    private ?source $source = null;
+
+    // TODO add set and get
     // e.g. only admin are allowed to see other user parameters
+    public ?user $viewer = null;          // the user who wants to access this user
+
 
     // var used for the registration and logon process
     public ?string $activation_key = '';
@@ -395,18 +230,43 @@ class user extends db_object_seq_id
         $this->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
         $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
         $this->profile_id = null;
-        $this->source_id = null;
 
-        $this->wrd_id = null;
-        $this->vrb_id = null;
+        $this->trm = null;
+        $this->source = null;
 
-        $this->wrd = null;
         $this->viewer = null;
 
         $this->activation_key = '';
         $this->activation_timeout = '';
         $this->db_now = '';
 
+    }
+
+    /**
+     * create a clone and empty all fields
+     *
+     * @return $this a clone with the name changed
+     */
+    function clone_reset(): user
+    {
+        $obj_cpy = clone $this;
+        $obj_cpy->reset();
+        return $obj_cpy;
+    }
+
+    /**
+     * create a clone and update the name (mainly used for unit testing)
+     * but keep the id a unique db id
+     *
+     * @param string $name the target name
+     * @return $this a clone with the name changed
+     */
+    function cloned(string $name): user
+    {
+        $obj_cpy = $this->clone_reset();
+        $obj_cpy->set_id($this->id());
+        $obj_cpy->set_name($name);
+        return $obj_cpy;
     }
 
     /**
@@ -423,25 +283,41 @@ class user extends db_object_seq_id
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->code_id = $db_row[sql::FLD_CODE_ID];
-            $this->name = $db_row[self::FLD_NAME];
-            $this->ip_addr = $db_row[self::FLD_IP_ADDR];
-            $this->email = $db_row[self::FLD_EMAIL];
-            $this->first_name = $db_row[self::FLD_FIRST_NAME];
-            $this->last_name = $db_row[self::FLD_LAST_NAME];
-            $this->wrd_id = $db_row[self::FLD_TERM];
-            $this->source_id = $db_row[self::FLD_SOURCE];
-            $this->profile_id = $db_row[self::FLD_PROFILE];
+            $this->name = $db_row[user_db::FLD_NAME];
+            $this->ip_addr = $db_row[user_db::FLD_IP_ADDR];
+            $this->email = $db_row[user_db::FLD_EMAIL];
+            if (array_key_exists(user_db::FLD_FIRST_NAME, $db_row)) {
+                $this->first_name = $db_row[user_db::FLD_FIRST_NAME];
+            }
+            if (array_key_exists(user_db::FLD_LAST_NAME, $db_row)) {
+                $this->last_name = $db_row[user_db::FLD_LAST_NAME];
+            }
+            if (array_key_exists(user_db::FLD_TERM, $db_row)) {
+                if ($db_row[user_db::FLD_TERM] != null) {
+                    $trm = new term($this);
+                    $trm->set_id($db_row[user_db::FLD_TERM]);
+                    $this->trm = $trm;
+                }
+            }
+            if (array_key_exists(user_db::FLD_SOURCE, $db_row)) {
+                if ($db_row[user_db::FLD_SOURCE] != null) {
+                    $src = new source($this);
+                    $src->set_id($db_row[user_db::FLD_SOURCE]);
+                    $this->source = $src;
+                }
+            }
+            $this->profile_id = $db_row[user_db::FLD_PROFILE];
             $this->dec_point = DEFAULT_DEC_POINT;
             $this->thousand_sep = DEFAULT_THOUSAND_SEP;
             $this->percent_decimals = DEFAULT_PERCENT_DECIMALS;
-            if (array_key_exists(self::FLD_ACTIVATION_KEY, $db_row)) {
-                $this->activation_key = $db_row[self::FLD_ACTIVATION_KEY];
+            if (array_key_exists(user_db::FLD_ACTIVATION_KEY, $db_row)) {
+                $this->activation_key = $db_row[user_db::FLD_ACTIVATION_KEY];
             }
-            if (array_key_exists(self::FLD_ACTIVATION_TIMEOUT, $db_row)) {
-                $this->activation_timeout = $db_row[self::FLD_ACTIVATION_TIMEOUT];
+            if (array_key_exists(user_db::FLD_ACTIVATION_TIMEOUT, $db_row)) {
+                $this->activation_timeout = $db_row[user_db::FLD_ACTIVATION_TIMEOUT];
             }
-            if (array_key_exists(self::FLD_DB_NOW, $db_row)) {
-                $this->db_now = $db_row[self::FLD_DB_NOW];
+            if (array_key_exists(user_db::FLD_DB_NOW, $db_row)) {
+                $this->db_now = $db_row[user_db::FLD_DB_NOW];
             }
             $result = true;
             log_debug($this->name, $debug - 25);
@@ -542,15 +418,65 @@ class user extends db_object_seq_id
      */
     function name(): string
     {
-        return $this->name;
+        if ($this->name == null) {
+            return $this->email;
+        } else {
+            return $this->name;
+        }
     }
 
     /**
-     * @return string the unique email for this user
+     * @return string|null the unique username for the user on this pod or null if not set
+     */
+    function name_or_null(): ?string
+    {
+        if ($this->name == null) {
+            return $this->email;
+        } else {
+            return $this->name;
+        }
+    }
+
+    /**
+     * @return string the username and the privileges of the user
+     */
+    function name_and_profile(): string
+    {
+        $result = $this->name();
+        $result .= ' ' . $this->profile_code_id();
+        return $result;
+    }
+
+    /**
+     * @return string|null the unique email for this user
      */
     function email(): ?string
     {
         return $this->email;
+    }
+
+    /**
+     * @return int|null the id of the last term used by the user
+     */
+    function term_id(): ?int
+    {
+        return $this->trm?->id();
+    }
+
+    /**
+     * @return string|null the name of the last term used by the user
+     */
+    function term_name(): ?string
+    {
+        return $this->trm?->name();
+    }
+
+    /**
+     * @return int|null the id of the last source used by the user
+     */
+    function source_id(): ?int
+    {
+        return $this->source?->id();
     }
 
 
@@ -700,7 +626,7 @@ class user extends db_object_seq_id
         } else {
             $sc->set_usr($this->viewer->id());
         }
-        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_fields(user_db::FLD_NAMES);
         return $qp;
     }
 
@@ -733,7 +659,7 @@ class user extends db_object_seq_id
     function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
-        $sc->add_where(self::FLD_NAME, $name);
+        $sc->add_where(user_db::FLD_NAME, $name);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -751,7 +677,7 @@ class user extends db_object_seq_id
     function load_sql_by_email(sql_creator $sc, string $email, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'email', $class);
-        $sc->add_where(self::FLD_EMAIL, $email);
+        $sc->add_where(user_db::FLD_EMAIL, $email);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -770,8 +696,8 @@ class user extends db_object_seq_id
     function load_sql_by_name_or_email(sql_creator $sc, string $name, string $email, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'name_or_email', $class);
-        $sc->add_where(self::FLD_NAME, $name, sql_par_type::TEXT_OR);
-        $sc->add_where(self::FLD_EMAIL, $email, sql_par_type::TEXT_OR);
+        $sc->add_where(user_db::FLD_NAME, $name, sql_par_type::TEXT_OR);
+        $sc->add_where(user_db::FLD_EMAIL, $email, sql_par_type::TEXT_OR);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -789,7 +715,7 @@ class user extends db_object_seq_id
     function load_sql_by_ip(sql_creator $sc, string $ip_addr, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'ip', $class);
-        $sc->add_where(self::FLD_IP_ADDR, $ip_addr);
+        $sc->add_where(user_db::FLD_IP_ADDR, $ip_addr);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -807,7 +733,7 @@ class user extends db_object_seq_id
     function load_sql_by_profile(sql_creator $sc, int $profile_id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'profile', $class);
-        $sc->add_where(self::FLD_PROFILE, $profile_id);
+        $sc->add_where(user_db::FLD_PROFILE, $profile_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -875,7 +801,7 @@ class user extends db_object_seq_id
             $this->ip_addr = $_SERVER['REMOTE_ADDR'];
         }
         if ($this->ip_addr == null) {
-            $this->ip_addr = self::SYSTEM_LOCAL_IP;
+            $this->ip_addr = users::SYSTEM_LOCAL_IP;
         }
         return $this->ip_addr;
     }
@@ -917,7 +843,7 @@ class user extends db_object_seq_id
                     $this->name = $this->get_ip();
 
                     // allow to fill the database only if a local user has logged in
-                    if ($this->name == self::SYSTEM_LOCAL_IP) {
+                    if ($this->name == users::SYSTEM_LOCAL_IP) {
                         // add the local admin user to use it for the import
                         $upd_result = $this->create_local_admin($db_con);
                     } else {
@@ -953,6 +879,62 @@ class user extends db_object_seq_id
 
 
     /*
+     * owner and access
+     */
+
+    /**
+     * true if the login user is in general allowed to insert anything in this user
+     *
+     * @return bool true if the logged-in user is the user itself or an admin
+     */
+    function can_add(): bool
+    {
+        global $usr;
+
+        $can_add = false;
+
+        // if the user who wants to change it, is the owner, he can do it
+        // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
+        if ($usr->is_admin() or $usr->is_system()) {
+            $can_add = true;
+            log_info('user ' . $this->dsp_id() . ' is change by admin user ' . $usr->dsp_id());
+        } elseif ($usr->is_normal()) {
+            $can_add = true;
+            log_info('user ' . $this->dsp_id() . ' is added by user ' . $usr->dsp_id());
+        } else {
+            log_warning('privileged user ' . $usr->dsp_id() . ' has requested to added by non admin user ' . $this->dsp_id() . ' without permission');
+        }
+
+        return $can_add;
+    }
+
+    /**
+     * true if the login user is in general allowed to change anything in this user
+     *
+     * @return bool true if the logged-in user is the user itself or an admin
+     */
+    function can_change(): bool
+    {
+        global $usr;
+
+        $can_change = false;
+
+        // if the user who wants to change it, is the owner, he can do it
+        // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
+        if ($this->id() == $usr->id()) {
+            $can_change = true;
+        } elseif ($usr->is_admin() or $usr->is_system()) {
+            $can_change = true;
+            log_info('user ' . $this->dsp_id() . ' is change by admin user ' . $usr->dsp_id());
+        } else {
+            log_warning('user ' . $usr->dsp_id() . ' has requested to change by user ' . $this->dsp_id() . ' without permission');
+        }
+
+        return $can_change;
+    }
+
+
+    /*
      * im- and export
      */
 
@@ -980,19 +962,19 @@ class user extends db_object_seq_id
             if ($key == json_fields::DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == self::FLD_EMAIL) {
+            if ($key == user_db::FLD_EMAIL) {
                 $this->email = $value;
             }
-            if ($key == self::FLD_FIRST_NAME) {
+            if ($key == user_db::FLD_FIRST_NAME) {
                 $this->first_name = $value;
             }
-            if ($key == self::FLD_LAST_NAME) {
+            if ($key == user_db::FLD_LAST_NAME) {
                 $this->last_name = $value;
             }
-            if ($key == self::FLD_CODE_ID) {
+            if ($key == user_db::FLD_CODE_ID) {
                 $this->code_id = $value;
             }
-            if ($key == self::FLD_EX_PROFILE) {
+            if ($key == json_fields::PROFILE) {
                 $this->profile_id = $usr_pro_cac->id($value);
             }
             if ($key == json_fields::CODE_ID) {
@@ -1084,6 +1066,14 @@ class user extends db_object_seq_id
     }
 
     /**
+     * @return int|null the profile id or null if the profile is not yet set
+     */
+    function profile_id(): int|null
+    {
+        return $this->profile_id;
+    }
+
+    /**
      * @returns bool true if the user has admin rights
      */
     function is_admin(): bool
@@ -1119,6 +1109,23 @@ class user extends db_object_seq_id
     }
 
     /**
+     * @returns bool true if the user is a normal user without any privileges
+     */
+    function is_normal(): bool
+    {
+        global $usr_pro_cac;
+        log_debug();
+        $result = false;
+
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $usr_pro_cac->id(user_profiles::NORMAL)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @return bool false if the profile is not set or is not found
      */
     private function is_profile_valid(): bool
@@ -1146,17 +1153,19 @@ class user extends db_object_seq_id
     }
 
     /**
-     * @return word load the last word used by the user
+     * @return term load the last term used by the user
      */
-    function last_wrd(): word
+    function last_term(): term
     {
-        if ($this->wrd_id <= 0) {
-            $this->wrd_id = DEFAULT_WORD_ID;
+
+        if ($this->trm == null) {
+            $trm = new term($this);
+            $trm->load_by_id(words::DEFAULT_WORD_ID);
+            $this->trm = $trm;
+        } elseif ($this->term_id() != 0 and ($this->term_name() == null or $this->term_name() == '')) {
+            $this->trm->load_by_id($this->term_id());
         }
-        $wrd = new word($this);
-        $wrd->load_by_id($this->wrd_id);
-        $this->wrd = $wrd;
-        return $wrd;
+        return $this->trm;
     }
 
     /**
@@ -1270,10 +1279,10 @@ class user extends db_object_seq_id
         $db_id = $db_usr->load_by_id($this->id());
         log_debug('database user loaded "' . $db_id . '"');
 
-        $this->upd_par($db_con, $usr_par, $db_usr->name, self::FLD_NAME, 'name');
-        $this->upd_par($db_con, $usr_par, $db_usr->email, self::FLD_EMAIL, 'email');
-        $this->upd_par($db_con, $usr_par, $db_usr->first_name, self::FLD_FIRST_NAME, 'fname');
-        $this->upd_par($db_con, $usr_par, $db_usr->last_name, self::FLD_LAST_NAME, 'lname');
+        $this->upd_par($db_con, $usr_par, $db_usr->name, user_db::FLD_NAME, 'name');
+        $this->upd_par($db_con, $usr_par, $db_usr->email, user_db::FLD_EMAIL, 'email');
+        $this->upd_par($db_con, $usr_par, $db_usr->first_name, user_db::FLD_FIRST_NAME, 'fname');
+        $this->upd_par($db_con, $usr_par, $db_usr->last_name, user_db::FLD_LAST_NAME, 'lname');
 
         log_debug('done');
         return $result;
@@ -1336,25 +1345,25 @@ class user extends db_object_seq_id
                 $result = 'Saving of user description ' . $this->id() . ' failed.';
             }
             // add the email of the user
-            if (!$db_con->update_old($this->id(), self::FLD_EMAIL, $this->email)) {
+            if (!$db_con->update_old($this->id(), user_db::FLD_EMAIL, $this->email)) {
                 $result = 'Saving of user email ' . $this->id() . ' failed.';
             }
             // add the first name of the user
-            if (!$db_con->update_old($this->id(), self::FLD_FIRST_NAME, $this->first_name)) {
+            if (!$db_con->update_old($this->id(), user_db::FLD_FIRST_NAME, $this->first_name)) {
                 $result = 'Saving of user first name ' . $this->id() . ' failed.';
             }
             // add the last name of the user
-            if (!$db_con->update_old($this->id(), self::FLD_LAST_NAME, $this->last_name)) {
+            if (!$db_con->update_old($this->id(), user_db::FLD_LAST_NAME, $this->last_name)) {
                 $result = 'Saving of user last name ' . $this->id() . ' failed.';
             }
             // add the code of the user
             if ($this->code_id != '') {
-                if (!$db_con->update_old($this->id(), self::FLD_CODE_ID, $this->code_id)) {
+                if (!$db_con->update_old($this->id(), user_db::FLD_CODE_ID, $this->code_id)) {
                     $result = 'Saving of user code id ' . $this->id() . ' failed.';
                 }
             }
             // add the profile of the user
-            if (!$db_con->update_old($this->id(), self::FLD_PROFILE, $this->profile_id)) {
+            if (!$db_con->update_old($this->id(), user_db::FLD_PROFILE, $this->profile_id)) {
                 $result = 'Saving of user profile ' . $this->id() . ' failed.';
             }
             // add the ip address to the user, but never for system users
@@ -1362,11 +1371,11 @@ class user extends db_object_seq_id
                 and $this->profile_id != $usr_pro_cac->id(user_profiles::TEST)) {
                 $ip = $this->get_ip();
                 // write the localhost ip only for the local system admin user
-                if ($ip == users::LOCALHOST_IP AND $this->name() != users::SYSTEM_ADMIN_NAME) {
+                if ($ip == users::LOCALHOST_IP and $this->name() != users::SYSTEM_ADMIN_NAME) {
                     $ip = '';
                 }
                 if ($ip != '') {
-                    if (!$db_con->update_old($this->id(), self::FLD_IP_ADDR, $this->get_ip())) {
+                    if (!$db_con->update_old($this->id(), user_db::FLD_IP_ADDR, $this->get_ip())) {
                         $result = 'Saving of user ' . $this->id() . ' failed.';
                     }
                 }
@@ -1380,7 +1389,7 @@ class user extends db_object_seq_id
     }
 
     /**
-     * check if a preserver user name is trying to be added
+     * check if a preserver username is trying to be added
      * and if return a message to the user to suggest another name
      *
      * @return user_message
@@ -1412,6 +1421,11 @@ class user extends db_object_seq_id
         return $usr_msg;
     }
 
+
+    /*
+     * save
+     */
+
     /**
      * add or update a user in the database
      *
@@ -1423,27 +1437,766 @@ class user extends db_object_seq_id
         // all potential time intensive function should start with a log message to detect time improvement potential
         log_debug($this->dsp_id());
 
+        // get the user that is logged in and is requesting the changes
+        global $usr;
         // use the already open database connection of the already started process
         global $db_con;
-        // use the preloaded message translation object
-        global $mtr;
+
+        // configure the global database connection object for the select, insert, update and delete queries
+        $db_con->set_class($this::class);
+        $db_con->set_usr($usr->id());
 
         // check the preserved names
         $usr_msg = $this->check_preserved();
 
+        // check if a user with the same name or email already exists
+        if ($usr_msg->is_ok()) {
+            // if a new user is supposed to be added check upfront for a similar object to prevent adding duplicates
+            if ($this->id() == 0) {
+                log_debug('check possible duplicates before adding ' . $this->dsp_id());
+                $similar = $this->get_similar();
+                if ($similar->id() <> 0) {
+                    // check that the get_similar function has really found a similar object and report potential program errors
+                    if (!$this->is_similar($similar)) {
+                        $usr_msg->add_id_with_vars(msg_id::NOT_SIMILAR_OBJECTS, [
+                            msg_id::VAR_NAME => $this->dsp_id(),
+                            msg_id::VAR_NAME_CHK => $similar->dsp_id()
+                        ]);
+                    } else {
+                        // if similar is found set the id to trigger the updating instead of adding
+                        $similar->load_by_id($similar->id()); // e.g. to get the type_id
+                    }
+                } else {
+                    $similar = null;
+                }
+            }
+        }
+
+        // create or update
+        if ($usr_msg->is_ok()) {
+            if ($this->id() == 0) {
+
+                // create a user if no similar user has been found
+                log_debug('add ' . $this->dsp_id());
+                $usr_msg->add($this->db_insert($db_con));
+
+            } else {
+
+                // update the user
+                log_debug('update');
+
+                // read the database parameter of the user as of now
+                $db_rec = clone $this;
+                $db_rec->reset();
+                if ($db_rec->load_by_id($this->id()) != $this->id()) {
+                    $lib = new library();
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_RELOAD_CLASS, [
+                        msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+                    ]);
+                } else {
+                    $usr_msg->add($this->db_update($db_con, $db_rec));
+                }
+            }
+        }
+
         return $usr_msg;
     }
 
-    /**
-     * create a clone and empty all fields
-     *
-     * @return $this a clone with the name changed
+
+    /*
+     * similar
      */
-    function clone_reset(): user
+
+    /**
+     * check if a user with the name or email already exists
+     * @return user a filled object that has the same name
+     *                 or a sandbox object with id() = 0 if nothing similar has been found
+     */
+    function get_similar(): user
     {
-        $obj_cpy = clone $this;
-        $obj_cpy->reset();
-        return $obj_cpy;
+        $result = new user();
+        $result->load_by_name_or_email($this->name(), $this->email());
+        return $result;
+    }
+
+    /**
+     * check if all unique key of the given user matches with this
+     * and there it can be assumed that the users are the same
+     * @return bool true if all unique keys match
+     */
+    function is_similar(user $similar): bool
+    {
+        $result = true;
+        if ($this->name() != null and $similar->name() != null) {
+            if ($this->name() != $similar->name()) {
+                $result = false;
+            }
+        }
+        if ($this->email() != null and $similar->email() != null) {
+            if ($this->email() != $similar->email()) {
+                $result = false;
+            }
+        }
+        return $result;
+    }
+
+
+    /*
+     * add
+     */
+
+    /**
+     * create a new user in the database
+     *
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @return user_message with status ok
+     *                      or if something went wrong
+     *                      the message that should be shown to the user
+     *                      including suggested solutions
+     */
+    private function db_insert(sql_db $db_con): user_message
+    {
+        log_debug($this->dsp_id());
+
+        global $usr;
+
+        // always return a user message and if everything is fine, it is just empty
+        $usr_msg = new user_message();
+
+        if ($this->can_add()) {
+            // the sql creator is used more than once, so create it upfront
+            $sc = $db_con->sql_creator();
+            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
+            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+            if ($ins_msg->is_ok()) {
+                $this->set_id($ins_msg->get_row_id());
+            }
+            $usr_msg->add($ins_msg);
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::USER_NO_ADD_PRIVILEGES, [
+                msg_id::VAR_USER_NAME => $this->name(),
+                msg_id::VAR_USER_PROFILE => $usr->name_and_profile()
+            ]);
+        }
+
+        return $usr_msg;
+    }
+
+
+    /*
+     * update
+     */
+
+    /**
+     * save all updated fields with one sql function
+     * similar to the sandbox save_fields_func function but for non-user sandbox objects like the user
+     *
+     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param user $db_usr the database record before saving the changes whereas $this is the record with the changes
+     * @return user_message with the description of any problems for the user and the suggested solution
+     */
+    private function db_update(sql_db $db_con, user $db_usr): user_message
+    {
+        log_debug($this->dsp_id());
+
+        global $usr;
+
+        // always return a user message and if everything is fine, it is just empty
+        $usr_msg = new user_message();
+
+        if ($this->can_change()) {
+            // the sql creator is used more than once, so create it upfront
+            $sc = $db_con->sql_creator();
+
+            $qp = $this->sql_update($sc, $db_usr, new sql_type_list([sql_type::LOG]));
+            $upd_msg = $db_con->update($qp, 'update and log ' . $this->dsp_id());
+            $usr_msg->add($upd_msg);
+
+            log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::USER_NO_UPDATE_PRIVILEGES, [
+                msg_id::VAR_USER_NAME => $this->name(),
+                msg_id::VAR_USER_PROFILE => $usr->name_and_profile()
+            ]);
+        }
+
+        return $usr_msg;
+    }
+
+
+    /*
+     * sql write
+     */
+
+    /**
+     * create the sql statement to insert a user in the database
+     * always all fields are included in the query to be able to remove overwrites with a null value
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert(
+        sql_creator   $sc,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        global $usr;
+
+        // set some var names to shorten the code lines
+        $var_name_row_id = $sc->var_name_row_id($sc_par_lst);
+
+        // clone the sql parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::INSERT);
+        // fields and values that the word has additional to the standard named user sandbox object
+        $sbx_empty = $this->clone_reset();
+        // get the list of the changed fields
+        $fvt_lst = $this->db_fields_changed($sbx_empty, $sc_par_lst_used);
+        // get the list of all fields that can be changed by the user
+        $fld_lst_all = $this->db_fields_all();
+
+        // make the query name unique based on the changed fields
+        $lib = new library();
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all);
+
+        // TODO check if the prepared function already exists and if yes, skip the query recreation
+
+        // create the main query parameter object and set the query name
+        $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
+
+        // log functions must always use named parameters
+        $sc_par_lst_used->add(sql_type::NAMED_PAR);
+
+        // list of parameters actually used in order of the function usage
+        $par_lst_out = new sql_par_field_list();
+
+        // add the change action field to the field list for the log entries
+        global $cng_act_cac;
+        $fvt_lst->add_field(
+            change_action::FLD_ID,
+            $cng_act_cac->id(change_actions::ADD),
+            type_object::FLD_ID_SQL_TYP
+        );
+
+        // init the function body
+        $id_fld_new = $sc->var_name_new_id($sc_par_lst_used);
+        $sql = $sc->sql_func_start($id_fld_new, $sc_par_lst_used);
+
+        // don't use the log parameter for the sub queries
+        $sc_par_lst_sub = $sc_par_lst_used->remove(sql_type::LOG);
+        $sc_par_lst_sub->add(sql_type::LIST);
+        $sc_par_lst_log = clone $sc_par_lst_sub;
+        $sc_par_lst_log->add(sql_type::INSERT_PART);
+
+        // create sql to set the prime key upfront to get the sequence id
+        $qp_id = clone $qp;
+        $qp_id = $this->sql_insert_key_field($sc, $qp_id, $fvt_lst, $id_fld_new, $sc_par_lst_sub);
+        $par_lst_out->add($qp_id->par_fld);
+        $sql .= $qp_id->sql;
+
+        // get the data fields and move the unique db key field to the first entry
+        $fld_lst_ex_log = array_intersect($fvt_lst->names(), $fld_lst_all);
+
+        $key_fld_pos = array_search(user_db::FLD_NAME, $fld_lst_ex_log);
+        unset($fld_lst_ex_log[$key_fld_pos]);
+        $fld_lst_log = array_merge([$qp_id->par_fld->name], $fld_lst_ex_log);
+
+        // create the query parameters for the log entries for the single fields
+        $qp_log = $sc->sql_func_log($this::class, $usr, $fld_lst_log, $fvt_lst, $sc_par_lst_log);
+        $sql .= ' ' . $qp_log->sql;
+        $par_lst_out->add_list($qp_log->par_fld_lst);
+
+        if (!$sc_par_lst_used->is_call_only()) {
+
+            // update the fields excluding the unique id
+            $update_fvt_lst = new sql_par_field_list();
+            foreach ($fld_lst_ex_log as $fld) {
+                $update_fvt_lst->add($fvt_lst->get($fld));
+            }
+            $sc_update = clone $sc;
+            $sc_par_lst_upd = $sc_par_lst_used;
+            $sc_par_lst_upd->add(sql_type::UPDATE);
+            $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
+            $sc_par_lst_upd_ex_log->add(sql_type::SUB);
+            $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
+
+            $qp_update->sql = $sc_update->create_sql_update(
+                user_db::FLD_ID, $var_name_row_id . user_db::FLD_ID, $update_fvt_lst, [], $sc_par_lst_upd_ex_log);
+            // add the insert row to the function body
+            $sql .= ' ' . $qp_update->sql . ' ';
+        }
+
+        if ($sc->db_type == sql_db::POSTGRES) {
+            if ($id_fld_new != '') {
+                $sql .= sql::RETURN . ' ' . $id_fld_new . '; ';
+            }
+        }
+
+        // create the query parameters for the actual change
+        $qp_chg = clone $qp;
+
+        if (!$sc_par_lst_used->is_call_only()) {
+            $sql .= $sc->sql_func_end();
+
+            $qp_chg->sql = $sc->create_sql_insert($par_lst_out, $sc_par_lst_used);
+
+            // merge all together and create the function
+            $qp->sql = $qp_chg->sql . $sql . ';';
+        }
+        $qp->par = $par_lst_out->values();
+
+        // create the call sql statement
+        return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
+    }
+
+    /**
+     * create the sql statement to update a user in the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user $db_row the sandbox object with the database values before the update
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_update(
+        sql_creator   $sc,
+        user          $db_row,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par
+    {
+        global $usr;
+
+        // clone the parameter list to avoid changing the given list
+        $sc_par_lst_used = clone $sc_par_lst;
+        // set the sql query type
+        $sc_par_lst_used->add(sql_type::UPDATE);
+        // update does not need to return an id
+        $sc_par_lst_used->add(sql_type::NO_ID_RETURN);
+        // log for users is always on and log functions must always use named parameters
+        $sc_par_lst_used->add(sql_type::NAMED_PAR);
+        // get the field names, values and parameter types that have been changed
+        // and that needs to be updated in the database
+        // the db_* child function call the corresponding parent function
+        // including the sql parameters for logging
+        $fvt_lst = $this->db_fields_changed($db_row, $sc_par_lst_used);
+        // get the list of all fields that can be changed by the user
+        $fld_lst_all = $this->db_fields_all();
+
+        // create either the prepared sql query or a sql function that includes the logging of the changes
+        // unlike the db_* function the sql_update_* parent function is called directly
+        //return $this::sql_update_switch($sc, $fld_lst, $all_fields, $sc_par_lst_used);
+
+        // make the query name unique based on the changed fields
+        $lib = new library();
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all);
+
+        // TODO check if the prepared function already exists and if yes, skip the query recreation
+
+        // create the main query parameter object and set the query name
+        $qp = $this->sql_common($sc, $sc_par_lst_used, $ext);
+
+        if (!$fvt_lst->is_empty_except_internal_fields()) {
+
+            // set some var names to shorten the code lines
+            $id_fld = user_db::FLD_ID;
+            $id_val = '_' . $id_fld;
+
+            // add the change action field to the field list for the log entries
+            global $cng_act_cac;
+            $fvt_lst->add_field(
+                change_action::FLD_ID,
+                $cng_act_cac->id(change_actions::UPDATE),
+                type_object::FLD_ID_SQL_TYP
+            );
+
+            // list of parameters actually used in order of the function usage
+            $par_lst_out = new sql_par_field_list();
+
+            // init the function body
+            $sql = $sc->sql_func_start('', $sc_par_lst_used);
+
+            // don't use the log parameter for the sub queries
+            $sc_par_lst_sub = $sc_par_lst_used->remove(sql_type::LOG);
+            $sc_par_lst_sub->add(sql_type::LIST);
+            $sc_par_lst_log = clone $sc_par_lst_sub;
+            $sc_par_lst_log->add(sql_type::UPDATE_PART);
+
+            // get the fields actually changed
+            $fld_lst = $fvt_lst->names();
+            $fld_lst_chg = array_intersect($fld_lst, $fld_lst_all);
+
+            // add the row id
+            $fvt_lst->add_field(
+                $sc->id_field_name(),
+                $this->id(),
+                db_object_seq_id::FLD_ID_SQL_TYP);
+
+            // create the query parameters for the log entries for the single fields
+            $qp_log = $sc->sql_func_log_update($this::class, $usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id());
+            $sql .= ' ' . $qp_log->sql;
+            $par_lst_out->add_list($qp_log->par_fld_lst);
+
+            // update the fields excluding the unique id
+            $update_fvt_lst = new sql_par_field_list();
+            foreach ($fld_lst_chg as $fld) {
+                $update_fvt_lst->add($fvt_lst->get($fld));
+            }
+            $sc_update = clone $sc;
+            $sc_par_lst_upd = new sql_type_list([sql_type::NAMED_PAR, sql_type::UPDATE, sql_type::UPDATE_PART]);
+            $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
+            $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
+            $qp_update->sql = $sc_update->create_sql_update(
+                $id_fld, $id_val, $update_fvt_lst, [], $sc_par_lst_upd, true, '', $id_fld);
+            // add the insert row to the function body
+            $sql .= ' ' . $qp_update->sql . ' ';
+
+            $sql .= $sc->sql_func_end();
+
+            // create the query parameters for the actual change
+            $qp_chg = clone $qp;
+            $qp_chg->sql = $sc->create_sql_update(
+                $id_fld, $id_val, $par_lst_out, [], $sc_par_lst_used);
+            $qp_chg->par = $fvt_lst->values();
+
+            // merge all together and create the function
+            $qp->sql = $qp_chg->sql . $sql . ';';
+            $qp->par = $par_lst_out->values();
+
+            // create the call sql statement
+            return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
+        } else {
+            return $qp;
+        }
+    }
+
+    /**
+     * the common part of the sql_insert and sql_update functions
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param string $ext the query name extension to differ the queries based on the fields changed
+     * @return sql_par prepared sql parameter object with the name set
+     */
+    protected function sql_common(
+        sql_creator   $sc,
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        string        $ext = ''): sql_par
+    {
+        $qp = new sql_par($this::class, $sc_par_lst, $ext);
+
+        // update the sql creator settings
+        $sc->set_class($this::class, $sc_par_lst);
+        $sc->set_name($qp->name);
+
+        return $qp;
+    }
+
+    /**
+     * create the sql statement to add a new user to the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param sql_par $qp
+     * @param sql_par_field_list $fvt_lst list of field names, values and sql types additional to the standard id and name fields
+     * @param string $id_fld_new
+     * @param sql_type_list $sc_par_lst_sub the parameters for the sql statement creation
+     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     */
+    function sql_insert_key_field(
+        sql_creator        $sc,
+        sql_par            $qp,
+        sql_par_field_list $fvt_lst,
+        string             $id_fld_new,
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
+    ): sql_par
+    {
+        // set some var names to shorten the code lines
+        $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
+
+        // list of parameters actually used in order of the function usage
+        $sql = '';
+        $fvt_insert = $fvt_lst->get(user_db::FLD_NAME);
+
+        // create the sql to insert the row
+        $fvt_insert_list = new sql_par_field_list();
+        $fvt_insert_list->add($fvt_insert);
+        $sc_insert = clone $sc;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
+        $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
+        if ($sc->db_type == sql_db::MYSQL) {
+            $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
+        }
+        $qp_insert->sql = $sc_insert->create_sql_insert(
+            $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
+        $qp_insert->par = [$fvt_insert->value];
+
+        // add the insert row to the function body
+        $sql .= ' ' . $qp_insert->sql . '; ';
+
+        // get the new row id for MySQL db
+        if ($sc->db_type == sql_db::MYSQL) {
+            $sql .= ' ' . sql::LAST_ID_MYSQL . $sc->var_name_row_id($sc_par_lst_sub) . '; ';
+        }
+
+        $qp->sql = $sql;
+        $qp->par_fld = $fvt_insert;
+
+        return $qp;
+    }
+
+
+    /*
+     * sql write fields
+     */
+
+    /**
+     * get a list of all database fields that might be changed
+     * excluding the internal fields e.g. the database id
+     *
+     * @return array list of all database field names that have been updated
+     */
+    function db_fields_all(): array
+    {
+        return user_db::FLD_NAMES;
+    }
+
+    /**
+     * get a list of database field names, values and types that have been updated
+     *
+     * @param user $db_usr the compare value to detect the changed fields
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
+     */
+    function db_fields_changed(
+        user          $db_usr,
+        sql_type_list $sc_par_lst = new sql_type_list()
+    ): sql_par_field_list
+    {
+        global $cng_fld_cac;
+
+        $lst = new sql_par_field_list();
+        $sc = new sql_creator();
+        $do_log = $sc_par_lst->incl_log();
+        $table_id = $sc->table_id($this::class);
+
+        // the user database fields in order of user_db::FLD_NAMES and user_db::FLD_LST_ALL
+
+        // the username must be unique
+        if ($db_usr->name_or_null() <> $this->name()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_NAME,
+                    $cng_fld_cac->id($table_id . user_db::FLD_NAME),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                user_db::FLD_NAME,
+                $this->name(),
+                sandbox_named::FLD_NAME_SQL_TYP,
+                $db_usr->name_or_null()
+            );
+        }
+
+        // the ip address should always be included
+        if ($db_usr->ip_addr <> $this->ip_addr) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_IP_ADDR,
+                    $cng_fld_cac->id($table_id . user_db::FLD_IP_ADDR),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                user_db::FLD_IP_ADDR,
+                $this->ip_addr,
+                sql_field_type::CODE_ID,
+                $db_usr->ip_addr
+            );
+        }
+
+        // the password is not part of the standard update process
+
+        // the description is mainly used for system users
+        if ($db_usr->description <> $this->description) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
+                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sandbox_named::FLD_DESCRIPTION,
+                $this->description,
+                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
+                $db_usr->description
+            );
+        }
+
+        // the code_id to select users with predefined assigned functionality that can change their username
+        if ($db_usr->code_id <> $this->code_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_CODE_ID,
+                    $cng_fld_cac->id($table_id . user_db::FLD_CODE_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                user_db::FLD_CODE_ID,
+                $this->code_id,
+                sql_field_type::CODE_ID,
+                $db_usr->code_id
+            );
+        }
+
+        // TODO a profile with more permissions can only be set by a user that has the permission to do so
+        if ($db_usr->profile_id() <> $this->profile_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_PROFILE,
+                    $cng_fld_cac->id($table_id . user_db::FLD_PROFILE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            global $usr_pro_cac;
+            $lst->add_type_field(
+                user_db::FLD_PROFILE,
+                type_object::FLD_NAME,
+                $this->profile_id(),
+                $db_usr->profile_id(),
+                $usr_pro_cac);
+        }
+
+        /* TODO the confirmation levels should created and be added
+        // the confirmation type should only be changed by the system based on the confirmation process
+        if ($db_usr->type_id  <> $this->type_id) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_TYPE_ID,
+                    $cng_fld_cac->id($table_id . user_db::FLD_TYPE_ID),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            global $usr_cfm_cac;
+            $lst->add_type_field(
+                user_db::FLD_TYPE_ID,
+                type_object::FLD_NAME,
+                $this->profile_code_id(),
+                $db_usr->profile_code_id(),
+                $usr_cfm_cac);
+        }
+        */
+
+        // TODO add user_db::FLD_LEVEL
+
+        // the is used as the name if no name is given
+        if ($db_usr->email <> $this->email) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_EMAIL,
+                    $cng_fld_cac->id($table_id . user_db::FLD_EMAIL),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                user_db::FLD_EMAIL,
+                $this->email,
+                sql_field_type::CODE_ID,
+                $db_usr->email
+            );
+        }
+
+        // in may be useful to move the name and other non-critical user parameters to a value_list
+        if ($db_usr->first_name <> $this->first_name) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_FIRST_NAME,
+                    $cng_fld_cac->id($table_id . user_db::FLD_FIRST_NAME),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                user_db::FLD_FIRST_NAME,
+                $this->first_name,
+                sql_field_type::NAME,
+                $db_usr->first_name
+            );
+        }
+
+        // in may be useful to move the last name and other non-critical user parameters to a value_list
+        if ($db_usr->last_name <> $this->last_name) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_LAST_NAME,
+                    $cng_fld_cac->id($table_id . user_db::FLD_LAST_NAME),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                user_db::FLD_LAST_NAME,
+                $this->last_name,
+                sql_field_type::NAME,
+                $db_usr->last_name
+            );
+        }
+
+        // for the last used term additional the name is written to the log
+        if ($db_usr->term_id() <> $this->term_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_TERM,
+                    $cng_fld_cac->id($table_id . user_db::FLD_TERM),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_link_field(
+                user_db::FLD_TERM,
+                term::FLD_NAME,
+                $this->trm,
+                $db_usr->trm
+            );
+        }
+
+        // for the source id additional the source name is written to the log
+        if ($db_usr->source_id() <> $this->source_id()) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_SOURCE,
+                    $cng_fld_cac->id($table_id . user_db::FLD_SOURCE),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_link_field(
+                user_db::FLD_SOURCE,
+                source::FLD_NAME,
+                $this->source,
+                $db_usr->source
+            );
+        }
+
+        // the activation_key is used during the signup process and is not logged
+        if ($db_usr->activation_key <> $this->activation_key) {
+            $lst->add_field(
+                user_db::FLD_ACTIVATION_KEY,
+                $this->activation_key,
+                sql_field_type::NAME,
+                $db_usr->activation_key
+            );
+        }
+
+        // the activation_timeout is used during the signup process and is not logged
+        if ($db_usr->activation_timeout <> $this->activation_timeout) {
+            $lst->add_field(
+                user_db::FLD_ACTIVATION_TIMEOUT,
+                $this->activation_timeout,
+                sql_field_type::TIME,
+                $db_usr->activation_timeout
+            );
+        }
+
+        return $lst;
     }
 
 

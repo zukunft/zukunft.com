@@ -488,7 +488,7 @@ class create_test_objects extends test_base
     function user_sys_test(): user
     {
         $usr = new user();
-        $usr->set(3, user::SYSTEM_TEST_NAME, user::SYSTEM_TEST_EMAIL);
+        $usr->set(users::SYSTEM_TEST_ID, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
         $usr->set_profile(user_profiles::TEST);
         return $usr;
     }
@@ -3883,7 +3883,7 @@ class create_test_objects extends test_base
         $sys = new sys_log();
         $sys->set_id(1);
         $sys->log_time = new DateTime(sys_log_tests::TV_TIME);
-        $sys->usr_name = user::SYSTEM_TEST_NAME;
+        $sys->usr_name = users::SYSTEM_TEST_NAME;
         $sys->log_text = sys_log_tests::TV_LOG_TEXT;
         $sys->log_trace = sys_log_tests::TV_LOG_TRACE;
         $sys->function_name = sys_log_tests::TV_FUNC_NAME;
@@ -3901,7 +3901,7 @@ class create_test_objects extends test_base
         $sys = new sys_log();
         $sys->set_id(2);
         $sys->log_time = new DateTime(sys_log_tests::TV_TIME);
-        $sys->usr_name = user::SYSTEM_TEST_NAME;
+        $sys->usr_name = users::SYSTEM_TEST_NAME;
         $sys->log_text = sys_log_tests::T2_LOG_TEXT;
         $sys->log_trace = sys_log_tests::T2_LOG_TRACE;
         $sys->function_name = sys_log_tests::T2_FUNC_NAME;
