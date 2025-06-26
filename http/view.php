@@ -228,8 +228,8 @@ if ($usr->id() > 0) {
     if ($id != 0) {
         $dbo_dsp->load_by_id($id);
     } else {
-        // get last word used by the user or a default value
-        $wrd = $usr->last_wrd();
+        // get last term used by the user or a default value
+        $wrd = $usr->last_term();
     }
 
     // select the view

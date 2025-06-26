@@ -34,10 +34,11 @@ namespace unit;
 
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once TEST_CONST_PATH . 'files.php';
+include_once SHARED_CONST_PATH . 'users.php';
 
-use cfg\user\user;
 use cfg\user\user_message;
 use DateTimeInterface;
+use shared\const\users;
 use shared\library;
 use test\all_tests;
 use const\files as test_files;
@@ -428,8 +429,8 @@ class lib_tests
         $t->assert($test_name, $result, $target);
 
         $test_name = $tb . 'string that has caused an error in an earlier version';
-        $test_result = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test View Renamed from System Test View Component';
-        $test_target = user::SYSTEM_TEST_PARTNER_NAME . ' ';
+        $test_result = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test View Renamed from System Test View Component';
+        $test_target = users::SYSTEM_TEST_PARTNER_NAME . ' ';
         $result = $lib->diff_msg($test_result, $test_target);
         $target = 'zukunft.com system test partner//-////+ unlinked System Test View Renamed from System Test View Component//';
         $t->assert($test_name, $result, $target);

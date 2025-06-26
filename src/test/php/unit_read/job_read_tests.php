@@ -35,6 +35,7 @@ namespace unit_read;
 use cfg\system\job_list;
 use cfg\system\job_type_list;
 use cfg\user\user;
+use shared\const\users;
 use test\test_cleanup;
 
 class job_read_tests
@@ -54,7 +55,7 @@ class job_read_tests
 
         // use the system user for the database updates
         $sys_usr = new user;
-        $sys_usr->load_by_id(SYSTEM_USER_ID);
+        $sys_usr->load_by_id(users::SYSTEM_ID);
 
         // check if loading of the first entry is the adding of the word name
         $job_lst = new job_list($sys_usr);

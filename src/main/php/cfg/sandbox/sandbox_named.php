@@ -137,9 +137,11 @@ class sandbox_named extends sandbox
      */
 
     // database fields only used for objects that have a name
-    protected string $name = '';        // simply the object name, which cannot be empty if it is a named object
-    public ?string $description = null; // the object description that is shown as a mouseover explain to the user
-    //                                     if description is NULL the database value should not be updated
+    // simply the object name, which is only null if the object has not yet been written to the database
+    protected ?string $name = null;
+    // the object description that is shown as a mouseover explain to the user
+    // if description is NULL the database value should not be updated
+    public ?string $description = null;
 
 
     /*
@@ -154,7 +156,7 @@ class sandbox_named extends sandbox
     {
         parent::reset();
 
-        $this->set_name('');
+        $this->set_name(null);
         $this->description = null;
     }
 
@@ -298,11 +300,12 @@ class sandbox_named extends sandbox
     /**
      * set the name of this named user sandbox object
      * set and get of the name is needed to use the same function for phrase or term
+     * the name can be set to null e.g. for the compare object
      *
-     * @param string $name the name of this named user sandbox object e.g. word set in the related object
+     * @param string|null $name the name of this named user sandbox object e.g. word set in the related object
      * @return user_message
      */
-    function set_name(string $name): user_message
+    function set_name(?string $name): user_message
     {
         $usr_msg = new user_message();
         if (trim($name) <> $name) {
@@ -316,10 +319,25 @@ class sandbox_named extends sandbox
 
     /**
      * get the name of the word object
+     * TODO can it be merged with name_or_null() ?
      *
      * @return string the name from the object e.g. word using the same function as the phrase and term
      */
     function name(): string
+    {
+        if ($this->name == null) {
+            return '';
+        } else {
+            return $this->name;
+        }
+    }
+
+    /**
+     * get the name of the word object or null
+     *
+     * @return string|null the name from the object e.g. word using the same function as the phrase and term
+     */
+    function name_or_null(): ?string
     {
         return $this->name;
     }

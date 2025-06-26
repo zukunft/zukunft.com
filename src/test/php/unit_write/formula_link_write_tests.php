@@ -44,6 +44,7 @@ use cfg\user\user;
 use cfg\word\word;
 use html\formula\formula as formula_dsp;
 use shared\const\formulas;
+use shared\const\users;
 use shared\const\words;
 use shared\enum\change_tables;
 use test\test_cleanup;
@@ -79,7 +80,7 @@ class formula_link_write_tests
         $log->new_from_id = $frm->id();
         $log->new_to_id = $phr->id();
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_NAME . ' linked System Test Formula to ' . words::TEST_ADD;
+        $target = users::SYSTEM_TEST_NAME . ' linked System Test Formula to ' . words::TEST_ADD;
         $t->display('formula_link->link_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '"', $target, $result);
 
         // ... check if the link can be loaded by formula and phrase id and base on the id the correct formula and phrase objects are loaded
@@ -148,8 +149,8 @@ class formula_link_write_tests
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last(true);
         // TODO fix it
-        $target = user::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test Formula Renamed from ' . words::TEST_ADD . '';
-        $target = user::SYSTEM_TEST_PARTNER_NAME . ' ';
+        $target = users::SYSTEM_TEST_PARTNER_NAME . ' unlinked System Test Formula Renamed from ' . words::TEST_ADD . '';
+        $target = users::SYSTEM_TEST_PARTNER_NAME . ' ';
         $t->display('formula_link->unlink_phr logged for "' . $phr->name() . '" to "' . $frm->name() . '" and user "' . $t->usr2->name . '"', $target, $result);
 
 
@@ -185,7 +186,7 @@ class formula_link_write_tests
         $log->old_from_id = $frm->id();
         $log->old_to_id = $phr->id();
         $result = $log->dsp_last(true);
-        $target = user::SYSTEM_TEST_NAME . ' unlinked System Test Formula from ' . words::TEST_ADD;
+        $target = users::SYSTEM_TEST_NAME . ' unlinked System Test Formula from ' . words::TEST_ADD;
         $t->display('formula_link->unlink_phr logged of "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result);
 
         // check if the formula is not used any more for both users

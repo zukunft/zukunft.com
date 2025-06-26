@@ -305,7 +305,7 @@ class triple extends sandbox_link_named
     function reset(): void
     {
         parent::reset();
-        $this->set_name('');
+        $this->set_name(null);
         $this->name_given = null;
         $this->name_generated = '';
         $this->values = null;
@@ -973,10 +973,10 @@ class triple extends sandbox_link_named
 
     /**
      * set the name used object
-     * @param string $name
+     * @param string|null $name
      * @return void
      */
-    function set_name(string $name): void
+    function set_name(?string $name): void
     {
         $this->name = $name;
     }
@@ -1322,7 +1322,7 @@ class triple extends sandbox_link_named
     {
         $phr = new phrase($this->user());
         // the triple has positive id, but the phrase uses a negative id
-        $phr->set_name($this->name, triple::class);
+        $phr->set_name($this->name(), triple::class);
         $phr->set_obj($this);
         return $phr;
     }
@@ -2806,16 +2806,11 @@ class triple extends sandbox_link_named
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            if ($sbx->name_given() == '') {
-                $old_name = null;
-            } else {
-                $old_name = $sbx->name_given();
-            }
             $lst->add_field(
                 self::FLD_NAME_GIVEN,
                 $this->name_given(),
                 self::FLD_NAME_GIVEN_SQL_TYP,
-                $old_name
+                $sbx->name_given()
             );
         }
         // TODO add test case
@@ -2829,16 +2824,11 @@ class triple extends sandbox_link_named
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
-                if ($sbx->name_generated() == '') {
-                    $old_name = null;
-                } else {
-                    $old_name = $sbx->name_generated();
-                }
                 $lst->add_field(
                     self::FLD_NAME_AUTO,
                     $this->name_generated(),
                     self::FLD_NAME_AUTO_SQL_TYP,
-                    $old_name
+                    $sbx->name_generated()
                 );
             }
         }

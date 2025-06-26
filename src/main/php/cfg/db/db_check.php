@@ -48,6 +48,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
+include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -67,6 +68,7 @@ use cfg\user\user_message;
 use cfg\user\user_profile_list;
 use cfg\value\value;
 use cfg\value\value_base;
+use shared\const\users;
 use shared\enum\user_profiles;
 use shared\library;
 
@@ -377,42 +379,42 @@ class db_check
             // add missing system users if needed
             $sys_usr = new user();
             if (!$sys_usr->has_any_user_this_profile(user_profiles::SYSTEM)) {
-                $sys_usr->load_by_name(user::SYSTEM_NAME);
+                $sys_usr->load_by_name(users::SYSTEM_NAME);
                 $sys_usr->set_profile(user_profiles::SYSTEM);
-                $sys_usr->save($db_con);
+                $sys_usr->save();
             }
             // add missing system users if needed
             $usr_admin = new user();
             if (!$usr_admin->has_any_user_this_profile(user_profiles::ADMIN)) {
-                $usr_admin->load_by_name(user::SYSTEM_ADMIN_NAME);
+                $usr_admin->load_by_name(users::SYSTEM_ADMIN_NAME);
                 $usr_admin->set_profile(user_profiles::ADMIN);
-                $usr_admin->save($db_con);
+                $usr_admin->save();
             }
 
             // add missing system test users if needed
             $test_usr = new user();
             if (!$test_usr->has_any_user_this_profile(user_profiles::TEST)) {
-                $test_usr->load_by_name(user::SYSTEM_TEST_NAME);
+                $test_usr->load_by_name(users::SYSTEM_TEST_NAME);
                 $test_usr->set_profile(user_profiles::TEST);
-                $test_usr->save($db_con);
+                $test_usr->save();
                 $test_usr2 = new user();
-                $test_usr2->load_by_name(user::SYSTEM_TEST_PARTNER_NAME);
+                $test_usr2->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
                 $test_usr2->set_profile(user_profiles::TEST);
-                $test_usr2->save($db_con);
+                $test_usr2->save();
             }
 
             $test_usr_normal = new user();
             if (!$test_usr_normal->has_any_user_this_profile(user_profiles::NORMAL)) {
                 $test_usr_normal = new user();
-                $test_usr_normal->load_by_name(user::SYSTEM_TEST_NORMAL_NAME);
+                $test_usr_normal->load_by_name(users::SYSTEM_TEST_NORMAL_NAME);
                 $test_usr_normal->set_profile(user_profiles::NORMAL);
-                $test_usr_normal->save($db_con);
+                $test_usr_normal->save();
             }
         }
 
         // prepare the high level upgrade
         $sys_usr = new user();
-        $sys_usr->load_by_name(user::SYSTEM_NAME);
+        $sys_usr->load_by_name(users::SYSTEM_NAME);
 
         // refresh the formula ref_text, because the coding has changed (use "{w" instead of "{t")
         $frm_lst = new formula_list($sys_usr);

@@ -208,7 +208,7 @@ class source extends sandbox_typed
 
         // for new values assume the last source used, but not for existing values to enable only changing the value, but not setting the source
         if ($this->id() <= 0 and $form_name == "value_add") {
-            $this->id = $usr->source_id;
+            $this->id = $usr->source_id();
         }
 
         log_debug("source id used (" . $this->id() . ")");

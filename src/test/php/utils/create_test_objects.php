@@ -48,6 +48,7 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once SHARED_TYPES_PATH . 'component_type.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
+include_once MODEL_CONST_PATH . 'def.php';
 include_once MODEL_CONST_PATH . 'files.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
@@ -87,6 +88,7 @@ use cfg\component\component_list;
 use cfg\component\component_type_list;
 use cfg\component\position_type_list;
 use cfg\component\view_style_list;
+use cfg\const\def;
 use cfg\const\files;
 use cfg\db\sql_db;
 use cfg\element\element;
@@ -181,6 +183,7 @@ use DateTime;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\view\view_list as view_list_dsp;
 use html\word\word as word_dsp;
+use shared\const\users;
 use shared\enum\change_actions;
 use shared\enum\change_fields;
 use shared\enum\change_tables;
@@ -464,7 +467,7 @@ class create_test_objects extends test_base
         $csv_path = '';
         $lib = new library();
         $type = $lib->class_to_name($list::class);
-        foreach (BASE_CODE_LINK_FILES as $csv_class) {
+        foreach (def::BASE_CODE_LINK_FILES as $csv_class) {
             $csv_file_name = $lib->class_to_name($csv_class);
             if (str_ends_with($type, '_list')) {
                 $csv_list_type = $csv_file_name . '_list';
@@ -480,13 +483,34 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return user the user used for unit testing
+     * @return user a user used for unit testing with has only the ip set
+     */
+    function user_ip(): user
+    {
+        $usr = new user();
+        $usr->ip_addr = users::TEST_USER_IP;
+        return $usr;
+    }
+
+    /**
+     * @return user a user used for unit testing with the test profile
      */
     function user_sys_test(): user
     {
         $usr = new user();
-        $usr->set(3, user::SYSTEM_TEST_NAME, user::SYSTEM_TEST_EMAIL);
+        $usr->set(users::SYSTEM_TEST_ID, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
         $usr->set_profile(user_profiles::TEST);
+        return $usr;
+    }
+
+    /**
+     * @return user a user used for unit testing with the admin profile
+     */
+    function user_sys_admin(): user
+    {
+        $usr = new user();
+        $usr->set(users::SYSTEM_ADMIN_ID, users::SYSTEM_ADMIN_NAME, users::SYSTEM_ADMIN_EMAIL);
+        $usr->set_profile(user_profiles::ADMIN);
         return $usr;
     }
 
@@ -3880,7 +3904,7 @@ class create_test_objects extends test_base
         $sys = new sys_log();
         $sys->set_id(1);
         $sys->log_time = new DateTime(sys_log_tests::TV_TIME);
-        $sys->usr_name = user::SYSTEM_TEST_NAME;
+        $sys->usr_name = users::SYSTEM_TEST_NAME;
         $sys->log_text = sys_log_tests::TV_LOG_TEXT;
         $sys->log_trace = sys_log_tests::TV_LOG_TRACE;
         $sys->function_name = sys_log_tests::TV_FUNC_NAME;
@@ -3898,7 +3922,7 @@ class create_test_objects extends test_base
         $sys = new sys_log();
         $sys->set_id(2);
         $sys->log_time = new DateTime(sys_log_tests::TV_TIME);
-        $sys->usr_name = user::SYSTEM_TEST_NAME;
+        $sys->usr_name = users::SYSTEM_TEST_NAME;
         $sys->log_text = sys_log_tests::T2_LOG_TEXT;
         $sys->log_trace = sys_log_tests::T2_LOG_TRACE;
         $sys->function_name = sys_log_tests::T2_FUNC_NAME;
@@ -3962,7 +3986,7 @@ class create_test_objects extends test_base
     function system_user(): user
     {
         $sys_usr = new user;
-        $sys_usr->set_id(SYSTEM_USER_ID);
+        $sys_usr->set_id(users::SYSTEM_ID);
         $sys_usr->name = "zukunft.com system";
         $sys_usr->code_id = 'system';
         $sys_usr->dec_point = ".";

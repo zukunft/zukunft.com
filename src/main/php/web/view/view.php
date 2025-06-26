@@ -298,7 +298,7 @@ class view extends view_exe
 
     /**
      * TODO fill
-     * @return string
+     * @return bool
      */
     private function is_system(): bool
     {

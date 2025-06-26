@@ -52,15 +52,40 @@
 namespace test;
 
 include_once SERVICE_PATH . 'config.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once WEB_HTML_PATH . 'styles.php';
 include_once DB_PATH . 'sql_type.php';
+include_once MODEL_COMPONENT_PATH . 'component_type.php';
+include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
+include_once MODEL_COMPONENT_PATH . 'position_type.php';
+include_once MODEL_COMPONENT_PATH . 'view_style.php';
+include_once MODEL_CONST_PATH . 'def.php';
+include_once MODEL_ELEMENT_PATH . 'element_type.php';
+include_once MODEL_FORMULA_PATH . 'formula_type.php';
+include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
+include_once MODEL_LANGUAGE_PATH . 'language.php';
+include_once MODEL_LANGUAGE_PATH . 'language_form.php';
+include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_table.php';
+include_once MODEL_LOG_PATH . 'change_field.php';
+include_once MODEL_PHRASE_PATH . 'phrase_types.php';
+include_once MODEL_SYSTEM_PATH . 'job_type.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
+include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
+include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
+include_once MODEL_REF_PATH . 'ref_type.php';
+include_once MODEL_REF_PATH . 'source_type.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_official_type.php';
+include_once MODEL_VIEW_PATH . 'view_type.php';
+include_once MODEL_VIEW_PATH . 'view_link_type.php';
+include_once WEB_HTML_PATH . 'styles.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_TYPES_PATH . 'protection_type.php';
+include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once TEST_CONST_PATH . 'files.php';
 
@@ -81,6 +106,7 @@ use cfg\formula\formula_list;
 use cfg\group\group;
 use cfg\helper\combine_named;
 use cfg\helper\combine_object;
+use cfg\helper\db_id_object_non_sandbox;
 use cfg\helper\db_object_seq_id;
 use cfg\log\change;
 use cfg\log\change_link;
@@ -100,6 +126,9 @@ use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_multi;
 use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_value;
+use cfg\system\ip_range;
+use cfg\system\job;
+use cfg\system\pod;
 use cfg\user\user;
 use cfg\value\value;
 use cfg\value\value_base;
@@ -130,6 +159,7 @@ use html\view\view as view_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\api;
+use shared\const\users;
 use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
 use shared\enum\value_types;
@@ -257,6 +287,7 @@ include_once TEST_UNIT_READ_PATH . 'export_read_tests.php';
 
 // load the testing functions that save data to the database
 include_once TEST_UNIT_WRITE_PATH . 'all_unit_write_tests.php';
+include_once TEST_UNIT_WRITE_PATH . 'user_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'word_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'word_list_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'verb_write_tests.php';
@@ -352,6 +383,7 @@ class test_base
     public user $usr2; // a second testing user e.g. to test the user sandbox
     public user $usr_admin; // a user with the admin profile to test allow of admin functionality
     public user $usr_normal; // a user with the standard profile to test deny of admin functionality
+    public user $usr_signup; // the system user to add new users to the database
 
     private float $start_time; // time when all tests have started
     private float $exe_start_time; // time when the single test has started (end the end time of all tests)
@@ -401,16 +433,19 @@ class test_base
         // instead a user specific value is created
         // for testing $usr is the user who has started the test ans $usr1 and $usr2 are the users used for simulation
         $this->usr1 = new user();
-        $this->usr1->load_by_name(user::SYSTEM_TEST_NAME);
+        $this->usr1->load_by_name(users::SYSTEM_TEST_NAME);
 
         $this->usr2 = new user();
-        $this->usr2->load_by_name(user::SYSTEM_TEST_PARTNER_NAME);
+        $this->usr2->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
 
         $this->usr_admin = new user();
-        $this->usr_admin->load_by_name(user::SYSTEM_TEST_ADMIN_NAME);
+        $this->usr_admin->load_by_name(users::SYSTEM_TEST_ADMIN_NAME);
 
         $this->usr_normal = new user();
-        $this->usr_normal->load_by_name(user::SYSTEM_TEST_NORMAL_NAME);
+        $this->usr_normal->load_by_name(users::SYSTEM_TEST_NORMAL_NAME);
+
+        $this->usr_signup = new user();
+        $this->usr_signup->load_by_code_id(users::SYSTEM_SIGNUP_CODE_ID);
 
     }
 
@@ -880,7 +915,9 @@ class test_base
         $file_text = $this->file($json_file_name);
         $json_in = json_decode($file_text, true);
         if ($usr_obj::class == user::class) {
-            $usr_obj->import_obj($json_in, $usr_pro_cac->id(user_profiles::ADMIN), $this);
+            $admin_usr = new user();
+            $admin_usr->load_by_id(users::SYSTEM_ADMIN_ID);
+            $usr_obj->import_obj($json_in, $admin_usr, $this);
         } else {
             $usr_obj->import_obj($json_in, $this);
         }
@@ -1187,13 +1224,21 @@ class test_base
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+        if ($usr_obj::class == user::class) {
+            $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $sc_par_lst);
+        } else {
+            $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+        }
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+            if ($usr_obj::class == user::class) {
+                $qp = $usr_obj->sql_insert($sc, $this->usr_admin, $sc_par_lst);
+            } else {
+                $qp = $usr_obj->sql_insert($sc, $sc_par_lst);
+            }
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -1214,13 +1259,21 @@ class test_base
         $sc_par_lst = new sql_type_list($sql_type_array);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
+        if ($usr_obj::class == user::class) {
+            $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $sc_par_lst);
+        } else {
+            $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
+        }
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
+            if ($usr_obj::class == user::class) {
+                $qp = $usr_obj->sql_update($sc, $db_obj, $this->usr_admin, $sc_par_lst);
+            } else {
+                $qp = $usr_obj->sql_update($sc, $db_obj, $sc_par_lst);
+            }
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -1240,13 +1293,21 @@ class test_base
         $sc_par_lst = new sql_type_list($sc_par_lst_in);
         // check the Postgres query syntax
         $sc->reset(sql_db::POSTGRES);
-        $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
+        if ($usr_obj::class == user::class) {
+            $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $sc_par_lst);
+        } else {
+            $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
+        }
         $result = $this->assert_qp($qp, $sc->db_type);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
+            if ($usr_obj::class == user::class) {
+                $qp = $usr_obj->sql_delete($sc, $this->usr_admin, $sc_par_lst);
+            } else {
+                $qp = $usr_obj->sql_delete($sc, $sc_par_lst);
+            }
             $result = $this->assert_qp($qp, $sc->db_type);
         }
         return $result;
@@ -2313,8 +2374,9 @@ class test_base
     function assert_write_named(sandbox_named|sandbox_link_named $sbx, string $name): bool
     {
 
-        // check for leftovers
-        $this->write_named_cleanup($sbx, $name, true);
+        // check for leftovers but protect the object to add by using a clone
+        $del_sbx = clone $sbx;
+        $this->write_named_cleanup($del_sbx, $name, true);
 
         // remember mandatory fields
         if ($sbx::class == formula::class) {
@@ -2478,7 +2540,7 @@ class test_base
          * owner change
          */
 
-        // restore mandetory fields
+        // restore mandatory fields
         if ($sbx::class == formula::class) {
             $sbx->usr_text = $usr_text;
             $sbx->ref_text = $ref_text;
@@ -2535,6 +2597,100 @@ class test_base
 
         return $result;
     }
+
+    /**
+     * test save to db of non sandbox objects
+     *
+     * @param user|ip_range|pod|job $obj a non sandbox object that has prepared write functions like the user
+     * @param string $key target name of the object
+     * @return bool
+     */
+    function assert_write(user|ip_range|pod|job $obj, string $key, string $key_name): bool
+    {
+
+        // check for leftovers
+        $del_obj = clone $obj;
+        $this->write_cleanup($del_obj, $key, $key_name);
+
+        /*
+         * are all fields saved?
+         */
+
+        // add the named object by the test user
+        //$id = $this->write_add($obj, $this->usr1);
+        $id = 0;
+
+        // remember the api json for later compare
+        $api_json = $obj->api_json();
+
+        // check the log
+        if ($id != 0) {
+            $result = $this->write_log($obj, $this->usr1, $obj->key_field(), $key, msg_id::LOG_ADD->value);
+        } else {
+            $result = false;
+        }
+
+        /*
+        // check reset
+        if ($result) {
+            $result = $this->assert_reset($obj);
+        }
+
+        // check if user 1 can load the added object
+        if ($result) {
+            $result = $this->assert_load($obj, $name, $id);
+        }
+
+        // check if no relevant fields a lost during save and reload
+        if ($result) {
+            $result = $this->assert('API json based compare', $obj->api_json(), $api_json);
+        }
+
+        // check if the system reports correctly, that no one has changed the named object
+        if ($result) {
+            $result = $this->write_named_changed_by_noone($obj);
+        }
+        */
+
+
+        /*
+         * rename?
+         */
+
+        /*
+        // check renaming the added object
+        $new_name = '';
+        if ($result) {
+            $new_name = $this->write_rename($obj, $id, $this->usr1);
+        }
+
+        // check the log
+        if ($id != 0) {
+            $result = $this->write_log($obj, $obj->key_field(), $new_name, msg_id::LOG_UPDATE->value, $name);
+        } else {
+            $result = false;
+        }
+        */
+
+
+        /*
+         * all delete
+         */
+
+        /*
+        if ($result) {
+            // if the owner also deletes it
+            $result = $this->write_del($obj, $this->usr1);
+        }
+         */
+
+
+        // fallback delete
+        $this->write_cleanup($obj, $obj->unique_value(), $obj->key_field());
+
+        return $result;
+    }
+
 
     /**
      * test the link user sandbox object by adding it
@@ -2734,6 +2890,27 @@ class test_base
      */
 
     /**
+     * remove all remaining test rows of a normal (not user sandbox) object
+     *
+     * @param user|db_id_object_non_sandbox $obj the named user sandbox object e.g. a user
+     * @param string $key the unique key of the object that should be removed
+     * @param string $key_name the name unique key of the object that should be removed
+     * @param bool $check if true an error message is created if the object needs to be removed
+     *                    e.g. to detect incomplete cleanup of previous tests
+     * @return void
+     */
+    function write_cleanup(user|db_id_object_non_sandbox $obj, string $key, string $key_name, bool $check = false): void
+    {
+        $obj->load_by_key($key, $key_name);
+        if ($check) {
+            if ($obj->id() != 0) {
+                log_warning('Unexpected cleanup of ' . $obj->dsp_id());
+            }
+        }
+        $obj->del($this->usr_admin);
+    }
+
+    /**
      * remove all remaining test rows of a named user sandbox object
      *
      * @param sandbox_named|sandbox_link_named|phrase $sbx the named user sandbox object e.g. a word
@@ -2812,6 +2989,27 @@ class test_base
      */
 
     /**
+     * add a non sandbox object to the database by the given user
+     *
+     * @param user|ip_range $obj the object were the write db action should be tested
+     * @param user $usr the user who has requested the change
+     * @return int the id of the added object
+     */
+    private function write_add(user|ip_range $obj, user $usr): int
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($obj::class);
+        $name = $obj->unique_value();
+        $test_name = 'add ' . $class . ' ' . $name . ' by user ' . $usr->dsp_id();
+        $result = $obj->save($usr)->get_last_message();
+        if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
+            return $obj->id();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
      * add a named object to the database for the given user
      *
      * @param sandbox_named|sandbox_link_named $sbx
@@ -2881,6 +3079,38 @@ class test_base
         } else {
             return 0;
         }
+    }
+
+    /**
+     * check if changing a normal object has been logged correctly
+     *
+     * @param user|db_id_object_non_sandbox $sbx
+     * @param string $fld
+     * @param string $name
+     * @param string $action
+     * @param string|null $old_name
+     * @return bool
+     */
+    private function write_log(
+        user|db_id_object_non_sandbox $sbx,
+        user                          $usr_req,
+        string                        $fld,
+        string                        $name,
+        string                        $action,
+        ?string                       $old_name = ''
+    ): bool
+    {
+        $lib = new library();
+        $result = $this->log_last_by_field($sbx, $fld, $sbx->id(), true);
+        $target = $usr_req->name() . ' ' . $action . ' "';
+        if ($action == msg_id::LOG_UPDATE->value) {
+            $target .= $old_name . '" to "' . $name . '"';
+        } else {
+            $target .= $name . '"';
+        }
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = 'check ' . $class . ' log of ' . $action . ' ' . $name;
+        return $this->assert($test_name, $result, $target);
     }
 
     /**
@@ -2999,7 +3229,7 @@ class test_base
         $sbx->description = $description;
         $result = $sbx->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
-            return $this->write_named_log($sbx, sandbox_named::FLD_DESCRIPTION, $description, msg_id::LOG_ADD);
+            return $this->write_named_log($sbx, sandbox_named::FLD_DESCRIPTION, $description, msg_id::LOG_ADD->text());
         } else {
             return false;
         }
@@ -3712,7 +3942,7 @@ class test_base
      * short text description of the
      * last change of the given named sandbox object and further
      * selected by the field and value if given
-     * @param sandbox|sandbox_multi $sbx the sandbox object that should be used to filter the changes
+     * @param sandbox|sandbox_multi|db_id_object_non_sandbox $sbx the sandbox object that should be used to filter the changes
      * @param string $fld the name if the field that should be used to filter the changes
      * @param int|string|null $id the field value if the given field name
      * @param bool $ex_time true if the change time should not be included in the text
@@ -3720,11 +3950,11 @@ class test_base
      * @return string the last log entry that the given user has done on a named object
      */
     function log_last_by_field(
-        sandbox|sandbox_multi $sbx,
-        string                $fld = '',
-        int|string|null       $id = null,
-        bool                  $ex_time = false,
-        bool                  $usr_only = false
+        sandbox|sandbox_multi|db_id_object_non_sandbox $sbx,
+        string                                         $fld = '',
+        int|string|null                                $id = null,
+        bool                                           $ex_time = false,
+        bool                                           $usr_only = false
     ): string
     {
         // TODO maybe use log_object?

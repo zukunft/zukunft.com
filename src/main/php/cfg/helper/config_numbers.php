@@ -156,6 +156,7 @@ class config_numbers extends value_list
         [words::TOOLTIP_COMMENT_COM, words::TOOLTIP_COMMENT],
         [words::SYS_CONF_VALUE_COM, words::SYS_CONF_VALUE],
         [words::SYS_CONF_SOURCE_COM, words::SYS_CONF_SOURCE],
+        [words::SYS_CONF_USER_COM, words::SYS_CONF_USER],
         [words::TIME_COM, words::TIME],
         [words::YEAR_COM, words::YEAR],
         [words::CALCULATION_COM, words::CALCULATION],

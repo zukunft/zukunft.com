@@ -48,6 +48,7 @@ use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\word;
 use html\word\word as word_dsp;
+use shared\const\users;
 use shared\enum\change_fields;
 use shared\enum\change_tables;
 use shared\library;
@@ -333,7 +334,7 @@ class word_write_tests
         if ($wrd_add->id() > 0) {
             $result = $t->log_last_by_field($wrd_add, change_fields::FLD_WORD_NAME, $wrd_add->id(), true);
         }
-        $target = user::SYSTEM_TEST_NAME . ' added "' . words::TEST_ADD . '"';
+        $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_ADD . '"';
         $t->display('word->save logged for "' . words::TEST_ADD . '"', $target, $result);
 
         // ... test if the new word has been created
@@ -384,14 +385,14 @@ class word_write_tests
 
         // check if the word parameter adding have been logged
         $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_WORD_PLURAL, $wrd_reloaded->id(), true);
-        $target = user::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . 's"';
+        $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . 's"';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '" logged', $target, $result);
         $result = $t->log_last_by_field($wrd_reloaded, sandbox_named::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
-        $target = user::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . ' description"';
+        $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . ' description"';
         $t->display('word->load description for "' . words::TEST_RENAMED . '" logged', $target, $result);
         $t->display('word->load ref_2 for "' . words::TEST_RENAMED . '" logged', $target, $result);
         $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_PHRASE_TYPE, $wrd_reloaded->id(), true);
-        $target = user::SYSTEM_TEST_NAME . ' added "differentiator filler"';
+        $target = users::SYSTEM_TEST_NAME . ' added "differentiator filler"';
         $t->display('word->load type_id for "' . words::TEST_RENAMED . '" logged', $target, $result);
 
         // check if a user specific word is created if another user changes the word

@@ -48,7 +48,7 @@ class files
      * path
      */
 
-    const RESOURCE_PATH = MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
+    const RESOURCE_PATH = paths::MAIN . 'resources' . DIRECTORY_SEPARATOR;
     const MESSAGE_PATH = self::RESOURCE_PATH . 'messages' . DIRECTORY_SEPARATOR;
     const DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
     const DB_UPGRADE_PATH = self::DB_PATH . 'upgrade' . DIRECTORY_SEPARATOR;

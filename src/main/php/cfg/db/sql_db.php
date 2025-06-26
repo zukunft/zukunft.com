@@ -1024,7 +1024,7 @@ class sql_db
             // use the system user for the database updates
             global $usr;
             $usr = new user;
-            $usr->load_by_id(SYSTEM_USER_ID);
+            $usr->load_by_id(users::SYSTEM_ID);
 
             // recreate the code link database rows
             log_echo('Create the code links');
@@ -1270,7 +1270,28 @@ class sql_db
         $cfg->check(config::VERSION_DB, PRG_VERSION, $this);
 
         // get the list of CSV and loop
-        foreach (BASE_CODE_LINK_FILES as $csv_file_name) {
+        foreach (def::BASE_CODE_LINK_FILES as $csv_file_name) {
+            $this->load_db_code_link_file($csv_file_name);
+        }
+
+        // set the seq number if needed
+        // TODO check why this is needed and combine with the other sequence reset
+        $this->seq_reset(change_table::class);
+        $this->seq_reset(change_field::class);
+        $this->seq_reset(change_action::class);
+    }
+
+    /**
+     * fill the database with the rows needed for change logging
+     */
+    function db_log_code_links(): void
+    {
+        // first of all set the database version if not yet done
+        $cfg = new config();
+        $cfg->check(config::VERSION_DB, PRG_VERSION, $this);
+
+        // get the list of CSV and loop
+        foreach (def::LOG_CODE_LINK_FILES as $csv_file_name) {
             $this->load_db_code_link_file($csv_file_name);
         }
 
@@ -1398,7 +1419,7 @@ class sql_db
         $this->reset();
         $this->class = $class;
         if ($usr == null) {
-            $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
+            $this->set_usr(users::SYSTEM_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
             if ($usr->id() == null) {
                 $this->set_usr(0); // fallback for special cases
@@ -4199,7 +4220,7 @@ class sql_db
 
         // get the system user id
         $sys_usr = new user();
-        $sys_usr->load_by_name(user::SYSTEM_NAME);
+        $sys_usr->load_by_name(users::SYSTEM_NAME);
 
         if ($sys_usr->id() <= 0) {
             log_err('Cannot load system used in set_default_owner');
@@ -5568,12 +5589,12 @@ class sql_db
     function load_user_profiles(): bool
     {
         $result = true;
-        $lib = new library();
         foreach (def::CLASS_WITH_USER_CODE_LINK_CSV as $class_for_csv) {
             if ($this->count($class_for_csv) <= 0 and $result) {
                 $save_result = $this->load_db_code_link_file($class_for_csv);
                 if (!$save_result) {
-                    log_fatal($class_for_csv . ' code link csv file cannot be loaded into the database');
+                    log_fatal($class_for_csv . ' code link csv file cannot be loaded into the database',
+                        'sql_db->load_user_profiles');
                     $result = false;
                 }
             }
@@ -5595,30 +5616,6 @@ class sql_db
     }
 
     /**
-     * fixed code to create the initial system user
-     * but only if the user table is empty
-     * @return bool true if the system user have been created
-     */
-    function create_system_user(): bool
-    {
-        $result = false;
-        if ($this->count(user::class) <= 0) {
-            $sys_usr = new user();
-            $sys_usr->set_name(users::SYSTEM_NAME);
-            $sys_usr->set_profile_id(user_profiles::SYSTEM_ID);
-            $save_result = $sys_usr->save($this);
-            if ($save_result != '') {
-                log_fatal('system user cannot be created');
-            } elseif ($sys_usr->id() != users::SYSTEM_ID) {
-                log_fatal('system user has not the expected database id of ' . users::SYSTEM_ID);
-            } else {
-                $result = true;
-            }
-        }
-        return $result;
-    }
-
-    /**
      * import the system users
      * @return bool true if the system users has actually been imported
      */
@@ -5628,7 +5625,7 @@ class sql_db
 
         // allow adding only if there is not yet any system user in the database
         $usr = new user;
-        $usr->load_by_id(SYSTEM_USER_ID);
+        $usr->load_by_id(users::SYSTEM_ID);
 
         if ($usr->id() <= 0) {
 
@@ -5642,14 +5639,20 @@ class sql_db
 
                 // create the main system user upfront direct from the code
                 // but only if needed and allowed which is only the case directly after the database structure creation
-                if ($this->create_system_user()) {
+                $init_usr = new user();
+                if ($init_usr->create_system_user()) {
                     // reload the system user if adding has been successful
-                    $usr->load_by_id(SYSTEM_USER_ID);
+                    $usr->load_by_id(users::SYSTEM_ID);
                 }
 
                 // translate the system setup messages only to the system base language which is english
                 global $mtr;
                 $mtr = new Translator(language_codes::SYS);
+
+                // prepare logging of the import
+                $this->db_log_code_links();
+                $sys_typ_lst = new type_lists();
+                $sys_typ_lst->load_log($this);
 
                 // create the other system users from the json and add e.g. the description fields
                 $imf = new import_file();

@@ -138,6 +138,7 @@ class sql
     // for sql functions that do the change log and the actual change with on function
     const FLD_LOG_FIELD_PREFIX = 'field_id_'; // added to the field name to include the preloaded log field id
     const FLD_LOG_ID_PREFIX = 'id_'; // added to the field name to include the actual id changed in the log e.g. for type changes
+    const FLD_LOG_REQ_USER = 'req_user_id'; // the sql parameter name for the user id of the user who has requested the change
     const PAR_PREFIX = '_'; // to separate the parameter names e.g. _word_id instead of word_id for the given parameter
     const PAR_PREFIX_MYSQL = '@'; // for the new sequence id using MySQL
     const PAR_NEW_ID_PREFIX = 'new_'; // added to the field id name to remember the sequence id

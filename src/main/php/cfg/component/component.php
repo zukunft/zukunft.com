@@ -1482,11 +1482,6 @@ class component extends sandbox_typed
      * debug
      */
 
-    function name(): string
-    {
-        return $this->name;
-    }
-
     // not used at the moment
     /*  private function link_type_name() {
         if ($this->type_id > 0) {

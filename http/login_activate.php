@@ -40,6 +40,7 @@ use html\html_base;
 use cfg\db\sql_db;
 use cfg\user\user;
 use shared\api;
+use shared\const\users;
 
 // open database
 $db_con = prg_start("login_activate", "center_form");
@@ -87,7 +88,7 @@ if (isset($_POST['submit'])) {
             $pw_hash = hash('sha256', mysqli_real_escape_string($db_con->mysql, $_POST['password']));
             //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
             $db_con->set_class(user::class);
-            $db_con->set_usr(SYSTEM_USER_ID);
+            $db_con->set_usr(users::SYSTEM_ID);
             $db_con->update_old($usr_id, array('password', 'activation_key', 'activation_timeout'), array($pw_hash, '', 'NOW()'));
             /*
             $sql = sprintf("UPDATE users

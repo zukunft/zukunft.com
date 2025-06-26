@@ -341,6 +341,14 @@ class sql_type_list
     }
 
     /**
+     * @return bool true if a chance requesting user is part of the parameters
+     */
+    public function has_requesting_user(): bool
+    {
+        return in_array(sql_type::REQUESTING_USER, $this->lst);
+    }
+
+    /**
      * @return bool true if the standard sandbox fields should be added to the sql statement
      */
     public function use_sandbox_fields(): bool

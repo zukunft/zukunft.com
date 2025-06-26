@@ -301,8 +301,6 @@ class formula extends sandbox_typed
     {
         parent::reset();
 
-        $this->name = '';
-
         $this->ref_text = null;
         $this->ref_text_dirty = false;
         $this->usr_text = null;
@@ -510,11 +508,6 @@ class formula extends sandbox_typed
     function usage(): ?int
     {
         return $this->usage;
-    }
-
-    function name(): string
-    {
-        return $this->name;
     }
 
     /**

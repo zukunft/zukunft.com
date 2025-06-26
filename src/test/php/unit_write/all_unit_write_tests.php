@@ -44,6 +44,7 @@ use cfg\system\job;
 use cfg\system\job_type_list;
 use cfg\user\user;
 use const\files as test_files;
+use shared\const\users;
 use shared\enum\user_profiles;
 use shared\library;
 use test\all_tests;
@@ -72,7 +73,7 @@ class all_unit_write_tests extends all_unit_read_tests
             if (array_key_exists("REMOTE_ADDR", $_SERVER)) {
                 $ip_addr = $_SERVER['REMOTE_ADDR'];
             }
-            if ($ip_addr == user::SYSTEM_LOCAL_IP) {
+            if ($ip_addr == users::SYSTEM_ADMIN_IP) {
                 $db_con->import_system_users();
             }
 
@@ -107,6 +108,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 $t->set_users();
                 $t->create_test_db_entries($t);
                 // run the db write tests
+                (new user_write_tests)->run($t);
                 (new word_write_tests)->run($t);
                 (new word_list_write_tests)->run($t);
                 (new verb_write_tests)->run($t);
@@ -195,7 +197,7 @@ class all_unit_write_tests extends all_unit_read_tests
         if ($db_con->has_table($ip_tbl_name)) {
             $result = $usr->get();
         } else {
-            $usr->set_id(SYSTEM_USER_ID);
+            $usr->set_id(users::SYSTEM_ID);
             $usr->set_profile(user_profiles::ADMIN);
         }
 
@@ -204,9 +206,9 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // use the system user for the database updates
         if ($db_con->has_table($ip_tbl_name)) {
-            $usr->load_by_id(SYSTEM_USER_ID);
+            $usr->load_by_id(users::SYSTEM_ID);
         } else {
-            $usr->set_id(SYSTEM_USER_ID);
+            $usr->set_id(users::SYSTEM_ID);
             $usr->set_profile(user_profiles::ADMIN);
         }
 
@@ -229,7 +231,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // use the system user for the database updates
         $usr = new user;
-        $usr->load_by_id(SYSTEM_USER_ID);
+        $usr->load_by_id(users::SYSTEM_ID);
         $sys_usr = $usr;
 
         // run reset the main database tables
@@ -266,7 +268,7 @@ class all_unit_write_tests extends all_unit_read_tests
         // use the system user again to create the database test datasets
         global $usr;
         $usr = new user;
-        $usr->load_by_id(SYSTEM_USER_ID);
+        $usr->load_by_id(users::SYSTEM_ID);
         $sys_usr = $usr;
 
         // create the test dataset to check the basic write functions

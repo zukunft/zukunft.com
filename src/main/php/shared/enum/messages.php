@@ -53,6 +53,8 @@ enum messages: string
     const VAR_ID_CHK = 'VarObjIdCheck';
     // the name of a sandbox object
     const VAR_NAME = 'VarObjName';
+    // the list of names e.g. the reserved names that should not be used
+    const VAR_NAME_LIST = 'VarObjNameList';
     // the name of the compare sandbox object
     const VAR_NAME_CHK = 'VarObjNameCheck';
     // the description of a sandbox object using dsp_id()
@@ -73,6 +75,8 @@ enum messages: string
     const VAR_USER_CHK = 'VarUserCheck';
     // the name of a user
     const VAR_USER_NAME = 'VarUserName';
+    // the name, profile and permissions of a user
+    const VAR_USER_PROFILE = 'VarUserProfile';
     // the name of a user of a list
     const VAR_USER_LIST_NAME = 'VarUserListName';
     // the name of a sandbox object
@@ -549,6 +553,11 @@ enum messages: string
         . ' '
         . self::VAR_START . self::VAR_VAL_ID . self::VAR_END;
 
+    case ID_MISSING_FOR_DEL = 'Deleting of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' not possible because database id is missing in '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END;
+
     case FAILED_ADD_GROUP = 'Adding group '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' failed (missing save maker).';
@@ -556,9 +565,21 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
-    case OBJECT_RELOADING_FAILED = 'Reloading of the object for '
-        . self::VAR_START . self::VAR_VALUE . self::VAR_END
-        . ' failed';
+    case USER_NO_ADD_PRIVILEGES = 'user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" cannot be added due to missing privileges of the requesting user '
+        . self::VAR_START . self::VAR_USER_PROFILE . self::VAR_END;
+    case USER_NO_UPDATE_PRIVILEGES = 'user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" cannot be updated due to missing privileges of the requesting user '
+        . self::VAR_START . self::VAR_USER_PROFILE . self::VAR_END;
+    case USER_IS_RESERVED = 'user name "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" is used by the system. Please use another name, which should not be one of these '
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END;
+    case USER_CANNOT_DEL = 'user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" cannot be deleted because otherwise log entries would be lost';
     case DEFAULT_VALUES_RELOADING_FAILED = 'Reloading of the default values for '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' failed';

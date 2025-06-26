@@ -50,6 +50,7 @@ include_once API_OBJECT_PATH . 'api_message.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_HELPER_PATH . 'config_numbers.php';
+include_once SHARED_CONST_PATH . 'users.php';
 
 use cfg\helper\config_numbers;
 use cfg\user\user_message;

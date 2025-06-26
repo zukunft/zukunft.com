@@ -113,6 +113,7 @@ use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
 use cfg\view\view_type_list;
 use html\types\formula_type_list as formula_type_list_web;
+use shared\const\users;
 use shared\enum\user_profiles;
 use test\all_tests;
 use test\test_cleanup;
@@ -120,6 +121,7 @@ use unit\import_tests as import_tests;
 use unit_ui\all_ui_tests;
 use unit_ui\base_ui_tests;
 use const\files as test_files;
+use unit_write\user_write_tests;
 use unit_write\word_write_tests;
 
 class all_unit_tests extends test_cleanup
@@ -184,7 +186,7 @@ class all_unit_tests extends test_cleanup
              */
 
             $sys_usr = new user;
-            $sys_usr->load_by_id(SYSTEM_USER_ID);
+            $sys_usr->load_by_id(users::SYSTEM_ID);
             //$import = new import_file();
             //$import->import_config_yaml($sys_usr);
 
@@ -214,7 +216,7 @@ class all_unit_tests extends test_cleanup
             //$this->file_import(files::MESSAGE_PATH . files::BASE_VIEWS_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::COMPANY_FILE, $usr);
-            $this->file_import(test_files::IMPORT_COUNTRY_ISO, $usr);
+            //$this->file_import(test_files::IMPORT_COUNTRY_ISO, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::COUNTRY_FILE, $usr);
             //$this->file_import(test_files::IMPORT_COUNTRY_ISO, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::START_PAGE_DATA_FILE, $usr);
@@ -244,7 +246,8 @@ class all_unit_tests extends test_cleanup
              */
 
             // run the selected db write tests
-            (new word_write_tests)->run($this);
+            (new user_write_tests)->run($this);
+            //(new word_write_tests)->run($this);
             //(new word_list_write_tests)->run($this);
             //(new triple_write_tests)->run($this);
             //(new group_write_tests)->run($this);
@@ -411,14 +414,14 @@ class all_unit_tests extends test_cleanup
 
         // create a dummy user for testing
         $usr = new user;
-        $usr->set_id(user::SYSTEM_TEST_ID);
-        $usr->name = user::SYSTEM_TEST_NAME;
+        $usr->set_id(users::SYSTEM_TEST_ID);
+        $usr->name = users::SYSTEM_TEST_NAME;
         $this->usr1 = $usr;
 
         // create a dummy system user for unit testing
         $usr_sys = new user;
-        $usr_sys->set_id(user::SYSTEM_ID);
-        $usr_sys->name = user::SYSTEM_NAME;
+        $usr_sys->set_id(users::SYSTEM_ID);
+        $usr_sys->name = users::SYSTEM_NAME;
 
     }
 

@@ -59,6 +59,7 @@ include_once MODEL_LOG_PATH . 'change_log.php';
 //include_once MODEL_FORMULA_PATH . 'formula.php';
 //include_once MODEL_GROUP_PATH . 'group.php';
 //include_once MODEL_USER_PATH . 'user.php';
+//include_once MODEL_USER_PATH . 'user_db.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
@@ -86,6 +87,7 @@ use cfg\db\sql_type_list;
 use cfg\formula\formula;
 use cfg\group\group;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\value\value;
 use cfg\view\view;
 use cfg\word\word;
@@ -212,7 +214,7 @@ class change extends change_log
             if (!$usr_set) {
                 $row_usr = new user();
                 $row_usr->set_id($db_row[user::FLD_ID]);
-                $row_usr->name = $db_row[user::FLD_NAME];
+                $row_usr->name = $db_row[user_db::FLD_NAME];
                 $this->set_user($row_usr);
             }
             log_debug('Change ' . $this->id() . ' loaded', $debug - 8);
@@ -265,7 +267,7 @@ class change extends change_log
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), user::class);
+        $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
         $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
         $sc->set_order(self::FLD_TIME, sql::ORDER_DESC);
 

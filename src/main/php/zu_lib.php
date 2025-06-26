@@ -698,15 +698,12 @@ use cfg\word\word;
 use html\component\component_exe as component;
 use html\html_base;
 use html\view\view as view_dsp;
+use shared\const\users;
 use shared\helper\Translator;
 use shared\library;
 use shared\types\protection_type;
 use shared\types\share_type;
 use test\test_cleanup;
-
-// the fixed system user
-const SYSTEM_USER_ID = 1; //
-const SYSTEM_USER_TEST_ID = 2; //
 
 // parameters for internal testing and debugging
 const LIST_MIN_NAMES = 4; // number of object names that should at least be shown
@@ -714,6 +711,8 @@ const LIST_MIN_NUM = 20; // number of object ids that should at least be shown
 const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
 
 // set all path for the program code here at once
+const CONST_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR;
+include_once CONST_PATH . 'paths.php';
 const SRC_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
 const MAIN_PATH = SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
 const PHP_PATH_LIB = MAIN_PATH . 'php' . DIRECTORY_SEPARATOR; // recreation of the PHP_PATH for library use only
@@ -973,37 +972,8 @@ const SQL_STD_CLASSES = [
     sys_log_function::class
 ];
 
-// type classes that have a csv file for the initial load
-const BASE_CODE_LINK_FILES = [
-    sys_log_status::class,
-    sys_log_type::class,
-    job_type::class,
-    change_action::class,
-    change_table::class,
-    change_field::class,
-    element_type::class,
-    formula_link_type::class,
-    formula_type::class,
-    language::class,
-    language_form::class,
-    protection_type::class,
-    ref_type::class,
-    share_type::class,
-    source_type::class,
-    system_time_type::class,
-    user_official_type::class,
-    user_profile::class,
-    user_type::class,
-    position_type::class,
-    component_link_type::class,
-    component_type::class,
-    view_link_type::class,
-    view_type::class,
-    view_style::class,
-    phrase_types::class
-];
-
 // list of classes that use a database table but where the changes do not need to be logged
+// TODO Prio 2 move to const/def class?
 const CLASSES_NO_CHANGE_LOG = [
     sys_log_status::class,
     sys_log_function::class,
@@ -1031,27 +1001,14 @@ const CLASSES_NO_CHANGE_LOG = [
     'user_result*',
 ];
 
-// list of classes that are used in the api e.g. to receive the user changes
 // TODO Prio 2 move to const/def class?
-const API_CLASSES = [
-    word::class,
-    verb::class,
-    triple::class,
-    source::class,
-    ref::class,
-    value::class,
-    formula::class,
-    result::class,
-    view::class,
-    component::class
-];
-
 const CLASS_WITH_USER_CODE_LINK_CSV = [
     user_profile::class,
     user_type::class
 ];
 // list of all sequences used in the database
 // TODO base the list on the class list const and a sequence name function
+// TODO Prio 2 move to const/def class?
 const DB_SEQ_LIST = [
     'sys_log_status_sys_log_status_id_seq',
     'sys_log_sys_log_id_seq',
@@ -1089,6 +1046,8 @@ const DB_SEQ_LIST = [
     'users_user_id_seq',
     'user_profiles_user_profile_id_seq'
 ];
+
+// TODO Prio 2 move to const/def class?
 const DB_TABLE_LIST = [
     'config',
     'sys_log_types',
@@ -1395,7 +1354,7 @@ function log_msg(string  $msg_text,
             $user_id = $usr->id();
         }
         if ($user_id <= 0) {
-            $user_id = $_SESSION['usr_id'] ?? SYSTEM_USER_ID;
+            $user_id = $_SESSION['usr_id'] ?? users::SYSTEM_ID;
         }
 
         // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
@@ -1710,10 +1669,11 @@ function prg_restart(string $code_name): sql_db
 
         // create a virtual one-time system user to load the system users
         $usr_sys = new user();
-        $usr_sys->set_id(user::SYSTEM_ID);
-        $usr_sys->name = user::SYSTEM_NAME;
+        $usr_sys->set_id(users::SYSTEM_ID);
+        $usr_sys->name = users::SYSTEM_NAME;
 
         // load system configuration
+        // TODO cache the system config json and detect
         $cfg = new config_numbers($usr_sys);
         $cfg->load_cfg($usr_sys);
         $mtr = new Translator($cfg->language());
@@ -1807,7 +1767,7 @@ function prg_end_write_time($db_con): void
     $time_report = $sys_times->report();
     $sys_time_end = time();
     if ($sys_time_end > $sys_time_limit) {
-        $db_con->usr_id = SYSTEM_USER_ID;
+        $db_con->usr_id = users::SYSTEM_ID;
         $db_con->set_class(system_time_type::class);
         $sys_script_id = $db_con->get_id($sys_script);
         if ($sys_script_id <= 0) {

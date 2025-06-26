@@ -90,6 +90,7 @@ include_once MODEL_VALUE_PATH . 'value_text.php';
 include_once MODEL_VALUE_PATH . 'value_geo.php';
 include_once MODEL_VALUE_PATH . 'value_time_series.php';
 include_once MODEL_VIEW_PATH . 'term_view.php';
+include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\component\component_link;
@@ -140,6 +141,7 @@ use cfg\user\user_official_type;
 use cfg\value\value_base;
 use cfg\value\value_time_series;
 use cfg\view\term_view;
+use shared\const\users;
 use shared\library;
 use DateTime;
 
@@ -539,7 +541,6 @@ class sql_creator
      */
     function table_id(string $class): int
     {
-        $lib = new library();
         global $cng_tbl_cac;
         return $cng_tbl_cac->id($this->get_table_name($class));
     }
@@ -580,7 +581,7 @@ class sql_creator
         $this->reset();
         $this->class = $class;
         if ($usr == null) {
-            $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
+            $this->set_usr(users::SYSTEM_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
             if ($usr->id() == null) {
                 $this->set_usr(0); // fallback for special cases
