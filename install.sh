@@ -180,14 +180,6 @@ installAndConfigurePostgresql() {
     # TODO check if postgres is already installed and if yes request the user and password once to create a zukunft user and a db
     apt-get install -y postgresql postgresql-contrib
 
-    # systemctl enable postgresql
-    # systemctl start postgresql
-
-    # Backup pg_hba.conf
-    #PG_HBA=$(find /etc/postgresql/ -name pg_hba.conf | head -n 1)
-    #cp "$PG_HBA" "$PG_HBA.bak"
-    #chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf.bak
-
     # Initialize database
     # TODO if no password is given just create on and write it to the .env secrets
     # TODO use the generated or give db password in the php code
@@ -198,17 +190,7 @@ installAndConfigurePostgresql() {
     # TODO if the database existed change the owner of the tables or drop all tables
 
     echo -e "Installed postgres: \n$(psql --version)"
-    # read -p "Press enter to continue or CTRL+C to exit"
 
-    #systemctl stop postgresql
-    #cat "$(pwd)/config/pg_hba.conf" > "$PG_HBA"
-    #systemctl start postgresql
-
-    # rm /var/lib/pgsql/data/pg_hba.conf
-    # mv $(pwd)/config/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf
-    # chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf
-    # chmod 600 /var/lib/pgsql/data/pg_hba.conf
-    # systemctl restart postgresql
     sleep 3
 }
 
@@ -233,11 +215,6 @@ installAndConfigurePhp() {
     apt-get install -y php-curl
     apt-get install -y php-xml
     apt-get install -y php-json
-    # check which might be needed
-    # php-opcache php-gd php-mysqlnd \
-    # php-openssl php-soap php-zip php-simplexml \
-    # php-pcre php-dom php-intl php-json \
-    # php-pdo_pgsql
 
     PHP_VERSION=$(php -r 'echo PHP_VERSION;' | cut -d. -f1,2)
     if [[ "$PHP_VERSION" != "8.2" ]]; then
@@ -271,10 +248,12 @@ downloadAndInstallZukunft() {
     # create the zukunft.com database tables
     php $WWW_ROOT/test/reset_db.php
 
+    # call the reset_db a second time to overwrite the error due to the pending fix of #171
+    php $WWW_ROOT/test/reset_db.php
+
     # TODO check result and create warning if it does not end with
     #      0 test errors
     #      0 internal errors
-    #      Process finished with exit code 0
 
     # test the zukunft.com
     php $WWW_ROOT/test/test.php
@@ -282,7 +261,6 @@ downloadAndInstallZukunft() {
     # TODO check result and create warning if it does not end with
     #      0 test errors
     #      0 internal errors
-    #      Process finished with exit code 0
 
     # TODO if ENV is prod, remove the test script to avoid database reset by mistake
     # TODO if ENV is release add und use a script to clone the database from prod
