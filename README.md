@@ -23,7 +23,11 @@ Steps:
 1. Clone the repository:
    ```bash
    git clone -b develop https://github.com/zukunft/zukunft.com.git
+   ```
+   ```bash
    cd zukunft.com
+   ```
+   ```bash
    chmod 777 install.sh
    ```
 
@@ -45,6 +49,31 @@ Steps:
    ```bash
    sudo ./install.sh
    ```
+
+Fix development installation:
+-----------------------------
+
+If you get the message "Only admin users are allowed to reset the database" and the database does not you contain any relevent data the best is probably to recreate the database:
+
+   ```bash
+   sudo -u postgres psql -d postgres -U postgres -c "DROP DATABASE zukunft;"
+   ```
+   ```bash
+   sudo -u postgres psql -d postgres -U postgres -c "CREATE DATABASE zukunft WITH OWNER zukunft ENCODING 'UTF8';"
+   ```
+   ```bash
+   php /var/www/html/test/reset_db.php
+   ```
+
+If you get the message that the database cannot be accessed one solution could be to reassign the owner:
+   ```bash
+   sudo -u postgres psql -d postgres -U postgres -c "ALTER DATABASE zukunft OWNER TO zukunft ENCODING 'UTF8';"
+   ```
+   ```bash
+   php /var/www/html/test/reset_db.php
+   ```
+
+
 
 Old and manual installation:
 To install this version 0.0.3 use a LAPP or (LAMP for MySQL) server (https://wiki.debian.org/LaMp) and

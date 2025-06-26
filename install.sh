@@ -195,8 +195,6 @@ installAndConfigurePostgresql() {
     # TODO secure the standard postgres user name after install
     sudo -u postgres psql -d postgres -U postgres -c "CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';"
     sudo -u postgres psql -d postgres -U postgres -c "CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8';"
-    # to fix the owner in case the database already existed
-    sudo -u postgres psql -d postgres -U postgres -c "ALTER DATABASE $PGSQL_DATABASE OWNER TO $PGSQL_USERNAME ENCODING 'UTF8';"
     # TODO if the database existed change the owner of the tables or drop all tables
 
     echo -e "Installed postgres: \n$(psql --version)"

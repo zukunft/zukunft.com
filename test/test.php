@@ -71,9 +71,11 @@ if ($start_usr->id() > 0) {
         (new all_tests())->run_all_tests();
 
     } else {
-        echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.';
+        echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.' . "\n";
     }
 }
 
 // Closing connection
 prg_end($db_con, false);
+
+echo 'zukunft.com test finished' . "\n";

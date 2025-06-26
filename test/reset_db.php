@@ -85,9 +85,11 @@ if ($start_usr->id() > 0) {
         }
 
     } else {
-        echo 'Only admin users are allowed to reset the database';
+        echo 'Only admin users are allowed to reset the database' . "\n";
     }
 }
 
 // Closing connection
 prg_end($db_con, false);
+
+echo 'zukunft.com database reset finished' . "\n";
