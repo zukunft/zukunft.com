@@ -21,7 +21,7 @@ main() {
     CURRENT_DIR=$(pwd)
 
     displayIntro
-    parseArguments
+    parseArguments "$@"
     initEnvironment
     readVar
 
@@ -57,7 +57,6 @@ main() {
 # Check if the script is run as root or user with superuser privilege
 rootCheck() {
     ROOT_UID=0
-    SUCCESS=0
 
     if [ "$UID" -ne "$ROOT_UID" ]; then
         echo "Sorry must be in root to run this script"
@@ -66,14 +65,16 @@ rootCheck() {
 }
 
 displayIntro() {
-    clear >$(tty)
+    clear ">$(tty)"
 
     # Initial prompt
     echo -e "${GREEN}ZUKUNFT INSTALLER${NC}"
     printf "\n"
     echo "This script will install a debian based LAPP stack and a zukunft.com pod"
+    printf "\n"
+    echo "and it will recreated the zukunft database if it exists"
     printf "\n\n"
-    read -p "Press enter to continue or CTRL+C to exit"
+    read -rp "Press enter to continue or CTRL+C to exit and keep the database named zukunft"
 }
 
 # Parse arguments
@@ -162,7 +163,6 @@ checkDb() {
 
 # TODO add other linux distributions such as Fedora
 updateDebian() {
-    clear >$(tty)
     echo -e "\n${GREEN}Updating debian...${NC}"
 
     # Update Debian
@@ -173,7 +173,6 @@ updateDebian() {
 }
 
 installAndConfigurePostgresql() {
-    clear >$(tty)
     echo -e "\n${GREEN}Installing postgres ...${NC}"
 
     # Install postgres
@@ -185,7 +184,11 @@ installAndConfigurePostgresql() {
     # TODO use the generated or give db password in the php code
     # TODO add postgres admin username and password if postgres is ready running and the standard user name is changed
     # TODO secure the standard postgres user name after install
+    # create the user
     sudo -u postgres psql -d postgres -U postgres -c "CREATE USER $PGSQL_USERNAME WITH PASSWORD '$PGSQL_PASSWORD';"
+    # drop any old database with the same name
+    sudo -u postgres psql -d postgres -U postgres -c "DROP DATABASE $PGSQL_DATABASE"
+    # create the database
     sudo -u postgres psql -d postgres -U postgres -c "CREATE DATABASE $PGSQL_DATABASE WITH OWNER $PGSQL_USERNAME ENCODING 'UTF8';"
     # TODO if the database existed change the owner of the tables or drop all tables
 
@@ -229,12 +232,10 @@ downloadAndInstallExternalLibraries() {
     echo -e "\n${GREEN}Installing external libraries ...${NC}"
 
     echo -e "\n${GREEN}Installing bootstrap ...${NC}"
-    git clone https://github.com/twbs/bootstrap.git
-    rsync -av --delete bootstrap/ "$WWW_ROOT/lib_external/bootstrap/4.1.3/"
+    git clone https://github.com/twbs/bootstrap.git "$WWW_ROOT/lib_external/bootstrap/4.1.3/"
 
     echo -e "\n${GREEN}Installing fontawesome ...${NC}"
-    git clone https://github.com/gabrielelana/awesome-terminal-fonts
-    rsync -av --delete awesome-terminal-fonts/ "$WWW_ROOT/lib_external/fontawesome/"
+    git clone https://github.com/gabrielelana/awesome-terminal-fonts "$WWW_ROOT/lib_external/fontawesome/"
     sleep 3
 }
 
@@ -242,21 +243,20 @@ downloadAndInstallZukunft() {
     echo -e "\n${GREEN}Installing zukunft.com ...${NC}"
 
     # switch later to something like git://git.zukunft.com/zukunft.git
-    git clone -b $BRANCH https://github.com/zukunft/zukunft.com
-    rsync -avP $(pwd)/zukunft.com/ $WWW_ROOT/
+    git clone -b "$BRANCH" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
+
+    # force to reread to www root ?
+    systemctl restart apache2
 
     # create the zukunft.com database tables
-    php $WWW_ROOT/test/reset_db.php
-
-    # call the reset_db a second time to overwrite the error due to the pending fix of #171
-    php $WWW_ROOT/test/reset_db.php
+    php "$WWW_ROOT/test/reset_db.php"
 
     # TODO check result and create warning if it does not end with
     #      0 test errors
     #      0 internal errors
 
     # test the zukunft.com
-    php $WWW_ROOT/test/test.php
+    php "$WWW_ROOT/test/test.php"
 
     # TODO check result and create warning if it does not end with
     #      0 test errors
@@ -265,7 +265,7 @@ downloadAndInstallZukunft() {
     # TODO if ENV is prod, remove the test script to avoid database reset by mistake
     # TODO if ENV is release add und use a script to clone the database from prod
 
-    cd $CURRENT_DIR
+    cd "$CURRENT_DIR" || exit
     sleep 3
 }
 
@@ -273,9 +273,9 @@ installZukunftInDocker() {
     echo -e "\n${GREEN}Installing zukunft.com in docker ...${NC}"
 
     # switch later to something like git://git.zukunft.com/zukunft.git
-    git clone -b $BRANCH https://github.com/zukunft/zukunft.com $WWW_ROOT/
+    git clone -b "$BRANCH" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
 
-    cd $WWW_ROOT
+    cd "$WWW_ROOT" || exit
 
     echo -e "\n${GREEN}Building docker images ...${NC}"
 
