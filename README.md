@@ -22,7 +22,10 @@ To install this version 0.0.3 on a debian system (https://wiki.debian.org/):
 Steps:
 1. Clone the repository:
    ```bash
-   git fetch -b develop https://github.com/zukunft/install.sh
+   git clone -b develop https://github.com/zukunft/zukunft.com.git
+   ```
+   ```bash
+   cd zukunft.com
    ```
    ```bash
    chmod 777 install.sh
