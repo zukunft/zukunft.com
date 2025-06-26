@@ -59,6 +59,9 @@ If you get the message "Only admin users are allowed to reset the database" and 
    sudo -u postgres psql -d postgres -U postgres -c "DROP DATABASE zukunft;"
    ```
    ```bash
+   sudo -u postgres psql -d postgres -U postgres -c "CREATE USER zukunft WITH PASSWORD 'zukunft';"
+   ```
+   ```bash
    sudo -u postgres psql -d postgres -U postgres -c "CREATE DATABASE zukunft WITH OWNER zukunft ENCODING 'UTF8';"
    ```
    ```bash
