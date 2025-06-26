@@ -13,8 +13,8 @@ This program should
 - use common sense by using opencyc via conceptnet.io
 - enable data exchange to wikidata and other interlinking databases
 
-installation
-------------
+Development installation
+------------------------
 
 Target installation (to be tested):
 To install this version 0.0.3 on a debian system (https://wiki.debian.org/):
@@ -53,7 +53,7 @@ Steps:
 Fix development installation:
 -----------------------------
 
-If you get the message "Only admin users are allowed to reset the database" and the database does not you contain any relevent data the best is probably to recreate the database:
+If you get errors or the message "Only admin users are allowed to reset the database" and the database does not you contain any relevent data the best is probably to recreate the database:
 
    ```bash
    sudo -u postgres psql -d postgres -U postgres -c "DROP DATABASE zukunft;"
@@ -76,9 +76,19 @@ If you get the message that the database cannot be accessed one solution could b
    php /var/www/html/test/reset_db.php
    ```
 
+To run all build in tests start from bash
+   ```bash
+   php /var/www/html/test/test.php
+   ```
+
+To check the frontpage call
+ 
+[localhost/http/view.php]()
 
 
-Old and manual installation:
+Production installation (to be reviewed):
+-----------------------------------------
+
 To install this version 0.0.3 use a LAPP or (LAMP for MySQL) server (https://wiki.debian.org/LaMp) and
 1) copy all files to the www root path (e.g. /var/www/html/)
 2) copy all files of bootstrap 4.1.3 or higher to /var/www/html/lib_external/bootstrap/4.1.3/
@@ -167,11 +177,6 @@ such as the connection to other pods, should be shown in the console
 and beginning with an increasing minute based interval, 
 but at least once a day a status message should be shown with the system usage and a summery if the usage.
 
-Local installation
-------------------
-
-For development a local installation is recommend 
-using an install that needs to be created (see issue #133)
 
 Pod Installation
 ----------------
@@ -180,27 +185,18 @@ To install a pod on a server a solution is to use the
 docker installation that will be created (see issue #134)
 
 
-Additional for development
---------------------------
-
-on debian systems start in bash
-
-sudo apt-get install php-pgsql
-
-sudo apt-get install php-yaml
-
-sudo apt-get install php-curl
-
-the preferred phpversion is 8.2
-
 Planned changes
 ---------------
 
-For versions 0.0.4 these changes are planned
+For versions 0.0.3 these changes are planned
+- JSON import
+- system mask
+
+and for versions 0.0.4
 - fix the unit and integration tests
 
 and for versions 0.0.5
-- fix the setup script
+- improve the setup and update script
 
 Coding Guidelines
 -----------------
