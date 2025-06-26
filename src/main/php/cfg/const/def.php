@@ -143,6 +143,13 @@ class def
         phrase_types::class
     ];
 
+    // log type classes that have a csv file for the initial load
+    const LOG_CODE_LINK_FILES = [
+        change_action::class,
+        change_table::class,
+        change_field::class,
+    ];
+
     // list of classes that are used in the api e.g. to receive the user changes
     const API_CLASSES = [
         word::class,

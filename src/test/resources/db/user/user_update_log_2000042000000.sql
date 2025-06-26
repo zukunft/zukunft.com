@@ -47,7 +47,7 @@ SELECT user_update_log_2000042000000
          'zukunft.com system test partner'::text,
          81::smallint,
          'system test'::text,
-         2::smallint,
+         16::smallint,
          null::text,
          null::smallint,
          76::smallint,

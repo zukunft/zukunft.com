@@ -42,11 +42,11 @@ SELECT user_insert_log_1000051000000
 
 SELECT user_insert_log_1000051000000
         ('zukunft.com system test'::text,
-         null::bigint,
+         2::bigint,
          1::smallint,
          211::smallint,
          81::smallint,
          'system test'::text,
-         2::smallint,
+         16::smallint,
          76::smallint,
          'test@zukunft.com'::text);

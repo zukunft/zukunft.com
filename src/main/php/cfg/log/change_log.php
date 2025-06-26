@@ -72,6 +72,7 @@ TODO    rename to change_base
 namespace cfg\log;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 //include_once MODEL_COMPONENT_PATH . 'component.php';
 //include_once MODEL_COMPONENT_PATH . 'component_link.php';
@@ -119,6 +120,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\db_object_seq_id;
 use cfg\helper\db_object_seq_id_user;
 use cfg\helper\type_object;
 use cfg\formula\formula;
@@ -944,6 +946,7 @@ class change_log extends db_object_seq_id_user
 
     /**
      * get a list of all database fields
+     * this is just the db fields that are always used e.g. to log the changes
      * list must be corresponding to the db_values fields
      *
      * @param sql_creator $sc the sql creation script with preset parameters
@@ -958,7 +961,12 @@ class change_log extends db_object_seq_id_user
     ): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQL_TYP);
+        if ($sc_par_lst->has_requesting_user()) {
+            $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), db_object_seq_id::FLD_ID_SQL_TYP,
+                null, sql::PAR_PREFIX . sql::FLD_LOG_REQ_USER);
+        } else {
+            $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), db_object_seq_id::FLD_ID_SQL_TYP);
+        }
         $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
         if ($this->field_id != null) {
             $fvt_lst->add_field(change_field::FLD_ID, $this->field_id, type_object::FLD_ID_SQL_TYP);

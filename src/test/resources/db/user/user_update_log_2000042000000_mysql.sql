@@ -44,7 +44,7 @@ SELECT user_update_log_2000042000000
          'zukunft.com system test partner',
          81,
          'system test',
-         2,
+         16,
          null,
          null,
          76,

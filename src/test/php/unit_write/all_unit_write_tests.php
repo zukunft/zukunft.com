@@ -73,7 +73,7 @@ class all_unit_write_tests extends all_unit_read_tests
             if (array_key_exists("REMOTE_ADDR", $_SERVER)) {
                 $ip_addr = $_SERVER['REMOTE_ADDR'];
             }
-            if ($ip_addr == users::SYSTEM_LOCAL_IP) {
+            if ($ip_addr == users::SYSTEM_ADMIN_IP) {
                 $db_con->import_system_users();
             }
 

@@ -93,6 +93,7 @@ if (isset($_POST['submit'])) {
         //$pw_hash = password_hash($_POST['password'], password_DEFAULT);
         $db_con->set_class(user::class);
         $db_con->set_usr(users::SYSTEM_ID);
+        // TODO use user object and prepared query
         $log_id = $db_con->insert_old(array('user_name', 'email', 'password'), array($usr_name, $usr_email, $pw_hash));
         if ($log_id <= 0) {
             log_err('Insert of user ' . $usr_name . ' with email ' . $usr_email . ' failed.', 'signup');

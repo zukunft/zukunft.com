@@ -66,6 +66,7 @@
 
 namespace cfg\user;
 
+include_once MODEL_HELPER_PATH . 'db_id_object_non_sandbox.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_HELPER_PATH . 'db_object.php';
 //include_once DB_PATH . 'db_check.php';
@@ -85,6 +86,7 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
 //include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
+include_once MODEL_LOG_PATH . 'change_log.php';
 //include_once MODEL_LOG_PATH . 'change_table_list.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 //include_once MODEL_REF_PATH . 'source.php';
@@ -116,9 +118,11 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\db_id_object_non_sandbox;
 use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
 use cfg\log\change_action;
+use cfg\log\change_log;
 use cfg\phrase\term;
 use cfg\system\ip_range_list;
 use cfg\log\change;
@@ -134,11 +138,11 @@ use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
 use shared\helper\Config as shared_config;
 use shared\json_fields;
-use Exception;
 use shared\library;
 use shared\types\api_type_list;
+use Exception;
 
-class user extends db_object_seq_id
+class user extends db_id_object_non_sandbox
 {
 
     /*
@@ -153,19 +157,24 @@ class user extends db_object_seq_id
     const FLD_NAMES = user_db::FLD_NAMES;
     const FLD_LST_ALL = user_db::FLD_LST_ALL;
 
+    // the possible unique key fields of a user
+    const KEY_ID = user_db::FLD_ID;
+    const KEY_IP = user_db::FLD_IP_ADDR;
+    const KEY_NAME = user_db::FLD_NAME;
+    const KEY_EMAIL = user_db::FLD_EMAIL;
 
     /*
      * object vars
      */
 
     // database fields
-    public ?string $name = null;          // simply the username, which cannot be empty
+    public ?string $name = null;          // simply the username, which is only empty if the user object is not yet saved to the database
     public ?string $ip_addr = null;       // simply the ip address used if no username is given
     public ?string $password = null;      // only used for the login and password change process
     public ?string $description = null;   // used for system users to describe the target; can be used by users for a short introduction
     public ?string $code_id = null;       // the main id to detect system users
-    public ?int $profile_id = null;       // id of the user profile
-    public ?int $type_id = null;          // the confirmation level of the user e.g. email checked or passport checked
+    public ?int $profile_id = null;       // id of the preloaded user profiles to define the base permissions of the user that should be used now
+    public ?int $type_id = null;          // the confirmation level / status of the user e.g. email checked or passport checked which might lead to a different profile id
     public ?string $email = null;         //
     public ?string $first_name = null;    //
     public ?string $last_name = null;     //
@@ -173,8 +182,6 @@ class user extends db_object_seq_id
     public ?string $dec_point = null;     // the decimal point char for this user
     public ?string $thousand_sep = null;  // the thousand separator user for this user
     public ?int $percent_decimals = null; // the number of decimals for this user
-
-    public ?user_profile $profile = null; // to define the base rights of a user which can be further restricted but not expanded
 
     // user setting parameters
     // in memory only fields
@@ -210,9 +217,8 @@ class user extends db_object_seq_id
             $this->email = $email;
         }
 
-        //global $usr_pro_cac;
-        //$this->profile = $usr_pro_cac->get_by_code_id(user_profiles::NORMAL);
-        //$this->profile = cl(db_cl::USER_PROFILE, user_profiles::NORMAL);
+        // set the default user profile
+        $this->profile_id = user_profiles::NORMAL_ID;
 
     }
 
@@ -383,6 +389,19 @@ class user extends db_object_seq_id
 
 
     /*
+     * settings
+     */
+
+    /**
+     * @return change_log the object that is used to log the user changes
+     */
+    function log_object(): change_log
+    {
+        return new change($this);
+    }
+
+
+    /*
      * set and get
      */
 
@@ -418,10 +437,14 @@ class user extends db_object_seq_id
      */
     function name(): string
     {
-        if ($this->name == null) {
-            return $this->email;
-        } else {
+        if ($this->name != null) {
             return $this->name;
+        } elseif ($this->email != null) {
+            return $this->email;
+        } elseif ($this->ip_addr != null) {
+            return $this->ip_addr;
+        } else {
+            return '';
         }
     }
 
@@ -479,6 +502,48 @@ class user extends db_object_seq_id
         return $this->source?->id();
     }
 
+    /**
+     * get the most relevant unique value of this user
+     * e.g. the ip address if the username an email are missing
+     * must be corresponding with function key_field()
+     *
+     * @return string with the most relevant unique key
+     */
+    function unique_value(): string
+    {
+        if ($this->name_or_null() != null and $this->name() != '') {
+            $key = $this->name();
+        } elseif ($this->email() != null and $this->email() != '') {
+            $key = $this->email();
+        } elseif ($this->ip_addr != null and $this->ip_addr != '') {
+            $key = $this->ip_addr;
+        } else {
+            $key = strval($this->id());
+        }
+        return $key;
+    }
+
+    /**
+     * get the db field name of the most relevant unique value of this user
+     * e.g. the ip_address if the username an email are missing
+     * must be corresponding with function unique_value()
+     *
+     * @return string with the db field name of the most relevant unique key
+     */
+    function key_field(): string
+    {
+        if ($this->name_or_null() != null and $this->name() != '') {
+            $key_fld = self::KEY_NAME;
+        } elseif ($this->email() != null and $this->email() != '') {
+            $key_fld = self::KEY_EMAIL;
+        } elseif ($this->ip_addr != null and $this->ip_addr != '') {
+            $key_fld = self::KEY_IP;
+        } else {
+            $key_fld = self::KEY_ID;
+        }
+        return $key_fld;
+    }
+
 
     /*
      * loading / database access object (DAO) functions
@@ -517,6 +582,20 @@ class user extends db_object_seq_id
     }
 
     /**
+     * load one user by the code id
+     * @param string $code_id the code_id of the user
+     * @return int the id of the found user and zero if nothing is found
+     */
+    function load_by_code_id(string $code_id): int
+    {
+        global $db_con;
+
+        log_debug($code_id);
+        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id);
+        return $this->load($qp);
+    }
+
+    /**
      * load one user by name
      * @param string $email the email of the user
      * @return bool true if a user has been found
@@ -525,23 +604,23 @@ class user extends db_object_seq_id
     {
         global $db_con;
 
-        log_debug($email);
+        log_debug();
         $qp = $this->load_sql_by_email($db_con->sql_creator(), $email);
         return $this->load($qp);
     }
 
     /**
      * load one user by name or email
-     * @param string $name the username of the user
-     * @param string $email the email of the user
+     * @param ?string $name the username of the user
+     * @param ?string $email the email of the user
      * @return bool true if a user has been found
      */
-    function load_by_name_or_email(string $name, string $email): bool
+    function load_by_name_or_email(?string $name, ?string $email): bool
     {
         global $db_con;
 
-        log_debug($email);
-        $qp = $this->load_sql_by_name_or_email($db_con, $name, $email);
+        log_debug($this->dsp_id());
+        $qp = $this->load_sql_by_name_or_email($db_con->sql_creator(), $name, $email);
         return $this->load($qp);
     }
 
@@ -588,7 +667,8 @@ class user extends db_object_seq_id
      * @param sql_par $qp the query parameters created by the calling function
      * @return int the id of the object found and zero if nothing is found
      */
-    protected function load(sql_par $qp): int
+    protected
+    function load(sql_par $qp): int
     {
         global $db_con;
 
@@ -667,6 +747,24 @@ class user extends db_object_seq_id
     }
 
     /**
+     * create an SQL statement to retrieve a user by the code id from the database
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $code_id the code id of the user
+     * @param string $class the name of the child class from where the call has been triggered
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = self::class): sql_par
+    {
+        $qp = $this->load_sql($sc, user_db::FLD_CODE_ID, $class);
+        $sc->add_where(user_db::FLD_CODE_ID, $code_id);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+    /**
      * create an SQL statement to retrieve a user by email from the database
      *
      * @param sql_creator $sc with the target db_type set
@@ -688,16 +786,20 @@ class user extends db_object_seq_id
      * create an SQL statement to retrieve a user by name or email from the database
      *
      * @param sql_creator $sc with the target db_type set
-     * @param string $name the name of the user
-     * @param string $email the email of the user
+     * @param ?string $name the name of the user
+     * @param ?string $email the email of the user
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_name_or_email(sql_creator $sc, string $name, string $email, string $class = self::class): sql_par
+    function load_sql_by_name_or_email(sql_creator $sc, ?string $name, ?string $email, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'name_or_email', $class);
-        $sc->add_where(user_db::FLD_NAME, $name, sql_par_type::TEXT_OR);
-        $sc->add_where(user_db::FLD_EMAIL, $email, sql_par_type::TEXT_OR);
+        if ($name != null) {
+            $sc->add_where(user_db::FLD_NAME, $name, sql_par_type::TEXT_OR);
+        }
+        if ($email != null) {
+            $sc->add_where(user_db::FLD_EMAIL, $email, sql_par_type::TEXT_OR);
+        }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -801,7 +903,7 @@ class user extends db_object_seq_id
             $this->ip_addr = $_SERVER['REMOTE_ADDR'];
         }
         if ($this->ip_addr == null) {
-            $this->ip_addr = users::SYSTEM_LOCAL_IP;
+            $this->ip_addr = users::SYSTEM_ADMIN_IP;
         }
         return $this->ip_addr;
     }
@@ -843,18 +945,16 @@ class user extends db_object_seq_id
                     $this->name = $this->get_ip();
 
                     // allow to fill the database only if a local user has logged in
-                    if ($this->name == users::SYSTEM_LOCAL_IP) {
-                        // add the local admin user to use it for the import
-                        $upd_result = $this->create_local_admin($db_con);
-                    } else {
-                        $upd_result = $this->save_old($db_con);
-                    }
+                    if ($this->name == users::SYSTEM_ADMIN_IP) {
 
-                    // TODO make sure that the result is always compatible and checked if needed
-                    // adding a new user automatically is normal, so the result does not need to be shown to the user
-                    if (str_replace('1', '', $upd_result) <> '') {
-                        $result = $upd_result;
+                        // create the main system user upfront direct from the code
+                        // but only if needed and allowed which is only the case directly after the database structure creation
+                        $upd_result = $this->create_system_user();
+
+                    } else {
+                        $upd_result = $this->save();
                     }
+                    $result = $upd_result->get_last_message();
                 }
             }
         }
@@ -862,19 +962,50 @@ class user extends db_object_seq_id
         return $result;
     }
 
-    function create_local_admin(sql_db $db_con): string
+    /**
+     * TODO move to system_user
+     * fixed code to create the initial system user
+     * but only if the user table is empty
+     * @return user_message ok if the system user have been created
+     */
+    function create_system_user(): user_message
     {
-        // create the local admin users but only if there are no other admins
-        $check_usr = new user();
-        if (!$check_usr->has_any_user_this_profile(user_profiles::ADMIN)) {
-            $this->set_name(users::LOCALHOST_NAME);
-            $this->ip_addr = users::LOCALHOST_IP;
-            $this->set_profile(user_profiles::ADMIN);
+        global $db_con;
+
+        $usr_msg = new user_message();
+        if ($db_con->count(user::class) <= 0) {
+            // add the system user to use it for the import
+            $sys_usr = new user();
+            $sys_usr->set_name(users::SYSTEM_NAME);
+            $sys_usr->set_email(users::SYSTEM_EMAIL);
+            $sys_usr->set_profile_id(user_profiles::SYSTEM_ID);
+            $sys_usr->description = users::SYSTEM_COM;
+            $sys_usr->code_id = users::SYSTEM_CODE_ID;
+            $usr_msg->add($sys_usr->save_direct());
+            if (!$usr_msg->is_ok()) {
+                log_fatal('system user cannot be created', 'sql_db->create_system_user');
+            } elseif ($sys_usr->id() != users::SYSTEM_ID) {
+                log_fatal('system user has not the expected database id of ' . users::SYSTEM_ID, 'sql_db->create_system_user');
+            } else {
+                // add the local admin user to use it for the import
+                $local_usr = new user();
+                $local_usr->set_name(users::SYSTEM_ADMIN_NAME);
+                $local_usr->set_email(users::SYSTEM_ADMIN_EMAIL);
+                $local_usr->set_profile(user_profiles::ADMIN);
+                $local_usr->description = users::SYSTEM_ADMIN_COM;
+                $local_usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
+                $local_usr->ip_addr = users::SYSTEM_ADMIN_IP;
+                $usr_msg->add($local_usr->save_direct());
+                if (!$usr_msg->is_ok()) {
+                    log_fatal('local admin user cannot be created', 'sql_db->create_system_user');
+                } elseif ($local_usr->id() != users::SYSTEM_ADMIN_ID) {
+                    log_fatal('local admin user has not the expected database id of ' . users::SYSTEM_ADMIN_ID, 'sql_db->create_system_user');
+                } else {
+                    $usr_msg->add_info_id(msg_id::DONE);
+                }
+            }
         }
-
-        // add the local admin user to use it for the import
-        return $this->save_old($db_con);
-
+        return $usr_msg;
     }
 
 
@@ -885,24 +1016,23 @@ class user extends db_object_seq_id
     /**
      * true if the login user is in general allowed to insert anything in this user
      *
+     * @param user $usr_req the user who has request the user adding
      * @return bool true if the logged-in user is the user itself or an admin
      */
-    function can_add(): bool
+    function can_add(user $usr_req): bool
     {
-        global $usr;
-
         $can_add = false;
 
         // if the user who wants to change it, is the owner, he can do it
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
-        if ($usr->is_admin() or $usr->is_system()) {
+        if ($usr_req->is_admin() or $usr_req->is_system()) {
             $can_add = true;
-            log_info('user ' . $this->dsp_id() . ' is change by admin user ' . $usr->dsp_id());
-        } elseif ($usr->is_normal()) {
+            log_info('user ' . $this->dsp_id() . ' is change by admin user ' . $usr_req->dsp_id());
+        } elseif ($usr_req->is_normal()) {
             $can_add = true;
-            log_info('user ' . $this->dsp_id() . ' is added by user ' . $usr->dsp_id());
+            log_info('user ' . $this->dsp_id() . ' is added by user ' . $usr_req->dsp_id());
         } else {
-            log_warning('privileged user ' . $usr->dsp_id() . ' has requested to added by non admin user ' . $this->dsp_id() . ' without permission');
+            log_warning('privileged user ' . $usr_req->dsp_id() . ' has requested to added by non admin user ' . $this->dsp_id() . ' without permission');
         }
 
         return $can_add;
@@ -911,23 +1041,22 @@ class user extends db_object_seq_id
     /**
      * true if the login user is in general allowed to change anything in this user
      *
+     * @param user $usr_req the user who has request the user update
      * @return bool true if the logged-in user is the user itself or an admin
      */
-    function can_change(): bool
+    function can_change(user $usr_req): bool
     {
-        global $usr;
-
         $can_change = false;
 
         // if the user who wants to change it, is the owner, he can do it
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
-        if ($this->id() == $usr->id()) {
+        if ($this->id() == $usr_req->id()) {
             $can_change = true;
-        } elseif ($usr->is_admin() or $usr->is_system()) {
+        } elseif ($usr_req->is_admin() or $usr_req->is_system()) {
             $can_change = true;
-            log_info('user ' . $this->dsp_id() . ' is change by admin user ' . $usr->dsp_id());
+            log_info('user ' . $this->dsp_id() . ' is change by admin user ' . $usr_req->dsp_id());
         } else {
-            log_warning('user ' . $usr->dsp_id() . ' has requested to change by user ' . $this->dsp_id() . ' without permission');
+            log_warning('user ' . $usr_req->dsp_id() . ' has requested to change by user ' . $this->dsp_id() . ' without permission');
         }
 
         return $can_change;
@@ -942,13 +1071,15 @@ class user extends db_object_seq_id
      * import a user from a json data user object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param int $profile_id the profile of the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, int $profile_id, object $test_obj = null): user_message
+    function import_obj(array $json_obj, user $usr_req, object $test_obj = null): user_message
     {
         global $usr_pro_cac;
+
+        $profile_id = $usr_req->profile_id;
 
         log_debug();
         $usr_msg = parent::import_db_obj($this, $test_obj);
@@ -991,9 +1122,8 @@ class user extends db_object_seq_id
                 // check the importing profile and make sure that gaining additional privileges is impossible
                 // the user profiles must always be in the order that the lower ID has same or less rights
                 // TODO use the right level of the profile
-                if ($profile_id <= $this->profile_id) {
-                    global $db_con;
-                    $usr_msg->add_message_text($this->save_old($db_con));
+                if ($profile_id >= $this->profile_id) {
+                    $usr_msg->add($this->save($usr_req));
                 }
             }
         }
@@ -1038,6 +1168,18 @@ class user extends db_object_seq_id
     /*
      * information
      */
+
+    /**
+     * @return bool true if the user has never been used
+     */
+    function never_used(): bool
+    {
+        // TODO just read the change log
+        //      and because the change log is expected to be complete
+        //      if the change log for this user is empty
+        //      it can be assumed that the user has never done any relevant chnage
+        return true;
+    }
 
     /**
      * @returns bool true if the user is valid
@@ -1128,7 +1270,8 @@ class user extends db_object_seq_id
     /**
      * @return bool false if the profile is not set or is not found
      */
-    private function is_profile_valid(): bool
+    private
+    function is_profile_valid(): bool
     {
         if ($this->profile_id > 0) {
             return true;
@@ -1226,7 +1369,8 @@ class user extends db_object_seq_id
     }
 
     // set the main log entry parameters for updating one word field
-    private function log_upd(): change
+    private
+    function log_upd(): change
     {
         log_debug(' user ' . $this->name);
         $log = new change($this);
@@ -1241,7 +1385,8 @@ class user extends db_object_seq_id
      *
      * TODO check if name and email are unique and do the check within one transaction closed by a commit
      */
-    private function upd_par(sql_db $db_con, array $usr_par, string $db_value, string $fld_name, string $par_name): void
+    private
+    function upd_par(sql_db $db_con, array $usr_par, string $db_value, string $fld_name, string $par_name): void
     {
         $result = '';
         if ($usr_par[$par_name] <> $db_value
@@ -1298,113 +1443,19 @@ class user extends db_object_seq_id
     }
 
     /**
-     * create a new user or update the existing
-     * TODO use prepare SQL statements
-     * TODO return a user_message not a string
-     * TODO check if the user name or email exist before adding a new user
-     * @return string an empty string if all user data are saved in the database otherwise the message that should be shown to the user
-     */
-    function save_old(sql_db $db_con): string
-    {
-        global $usr_pro_cac;
-
-        $result = '';
-
-
-        // build the database object because the is anyway needed
-        // TODO review
-        //$db_con = new mysql;
-        $db_con->usr_id = $this->id();
-        $db_con->set_class(user::class);
-
-        if ($this->name() != '' and $this->name != null) {
-            $this->load_by_name($this->name());
-        }
-        if ($this->id() <= 0) {
-            if ($this->email() != '' and $this->email() != null) {
-                $this->load_by_email($this->email());
-            }
-        }
-
-        if ($this->id() <= 0) {
-            log_debug(' add (' . $this->name . ')');
-
-            if ($this->name != '' and $this->name != null) {
-                $this->set_id($db_con->insert_old('user_name', $this->name));
-            }
-            // TODO log the changes???
-        } else {
-            // update the ip address and log the changes????
-            log_warning(' method for ip update missing', 'user->save', 'method for ip update missing', (new Exception)->getTraceAsString(), $this);
-        }
-
-        // update the user
-        if ($this->id() > 0) {
-            // add the description of the user
-            if (!$db_con->update_old($this->id(), sandbox_named::FLD_DESCRIPTION, $this->description)) {
-                $result = 'Saving of user description ' . $this->id() . ' failed.';
-            }
-            // add the email of the user
-            if (!$db_con->update_old($this->id(), user_db::FLD_EMAIL, $this->email)) {
-                $result = 'Saving of user email ' . $this->id() . ' failed.';
-            }
-            // add the first name of the user
-            if (!$db_con->update_old($this->id(), user_db::FLD_FIRST_NAME, $this->first_name)) {
-                $result = 'Saving of user first name ' . $this->id() . ' failed.';
-            }
-            // add the last name of the user
-            if (!$db_con->update_old($this->id(), user_db::FLD_LAST_NAME, $this->last_name)) {
-                $result = 'Saving of user last name ' . $this->id() . ' failed.';
-            }
-            // add the code of the user
-            if ($this->code_id != '') {
-                if (!$db_con->update_old($this->id(), user_db::FLD_CODE_ID, $this->code_id)) {
-                    $result = 'Saving of user code id ' . $this->id() . ' failed.';
-                }
-            }
-            // add the profile of the user
-            if (!$db_con->update_old($this->id(), user_db::FLD_PROFILE, $this->profile_id)) {
-                $result = 'Saving of user profile ' . $this->id() . ' failed.';
-            }
-            // add the ip address to the user, but never for system users
-            if ($this->profile_id != $usr_pro_cac->id(user_profiles::SYSTEM)
-                and $this->profile_id != $usr_pro_cac->id(user_profiles::TEST)) {
-                $ip = $this->get_ip();
-                // write the localhost ip only for the local system admin user
-                if ($ip == users::LOCALHOST_IP and $this->name() != users::SYSTEM_ADMIN_NAME) {
-                    $ip = '';
-                }
-                if ($ip != '') {
-                    if (!$db_con->update_old($this->id(), user_db::FLD_IP_ADDR, $this->get_ip())) {
-                        $result = 'Saving of user ' . $this->id() . ' failed.';
-                    }
-                }
-            }
-            log_debug(' add ... done');
-        } else {
-            log_debug(' add ... failed');
-        }
-
-        return $result;
-    }
-
-    /**
      * check if a preserver username is trying to be added
      * and if return a message to the user to suggest another name
      *
+     * @param user $usr the user who has request the user adding or update
      * @return user_message
      */
-    protected function check_preserved(): user_message
+    protected
+    function check_preserved(user $usr): user_message
     {
-        global $usr;
         global $mtr;
 
         // init
         $usr_msg = new user_message();
-        $msg_res = $mtr->txt(msg_id::IS_RESERVED);
-        $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
-        $lib = new library();
-        $class_name = $lib->class_to_name($this::class);
 
         // system users are always allowed to add users e.g. to add the system users
         if (!$usr->is_system()) {
@@ -1429,25 +1480,30 @@ class user extends db_object_seq_id
     /**
      * add or update a user in the database
      *
+     * @param user|null $usr_req the user who has request the user adding or update
      * @return user_message the message that should be shown to the user in case something went wrong
      *                      or the database id of the user just added
      */
-    function save(): user_message
+    function save(user $usr_req = null): user_message
     {
         // all potential time intensive function should start with a log message to detect time improvement potential
         log_debug($this->dsp_id());
 
-        // get the user that is logged in and is requesting the changes
-        global $usr;
         // use the already open database connection of the already started process
         global $db_con;
+        // get the user that is logged in and is requesting the changes
+        global $usr;
+
+        if ($usr_req == null) {
+            $usr_req = $usr;
+        }
 
         // configure the global database connection object for the select, insert, update and delete queries
         $db_con->set_class($this::class);
-        $db_con->set_usr($usr->id());
+        $db_con->set_usr($usr_req->id());
 
         // check the preserved names
-        $usr_msg = $this->check_preserved();
+        $usr_msg = $this->check_preserved($usr_req);
 
         // check if a user with the same name or email already exists
         if ($usr_msg->is_ok()) {
@@ -1456,6 +1512,7 @@ class user extends db_object_seq_id
                 log_debug('check possible duplicates before adding ' . $this->dsp_id());
                 $similar = $this->get_similar();
                 if ($similar->id() <> 0) {
+                    log_debug('got similar ' . $similar->dsp_id());
                     // check that the get_similar function has really found a similar object and report potential program errors
                     if (!$this->is_similar($similar)) {
                         $usr_msg->add_id_with_vars(msg_id::NOT_SIMILAR_OBJECTS, [
@@ -1467,6 +1524,7 @@ class user extends db_object_seq_id
                         $similar->load_by_id($similar->id()); // e.g. to get the type_id
                     }
                 } else {
+                    log_debug('no similar to ' . $this->dsp_id() . ' found');
                     $similar = null;
                 }
             }
@@ -1477,13 +1535,11 @@ class user extends db_object_seq_id
             if ($this->id() == 0) {
 
                 // create a user if no similar user has been found
-                log_debug('add ' . $this->dsp_id());
-                $usr_msg->add($this->db_insert($db_con));
+                $usr_msg->add($this->db_insert($db_con, $usr_req));
 
             } else {
 
                 // update the user
-                log_debug('update');
 
                 // read the database parameter of the user as of now
                 $db_rec = clone $this;
@@ -1494,10 +1550,55 @@ class user extends db_object_seq_id
                         msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
                     ]);
                 } else {
-                    $usr_msg->add($this->db_update($db_con, $db_rec));
+                    $usr_msg->add($this->db_update($db_con, $db_rec, $usr_req));
                 }
             }
         }
+
+        return $usr_msg;
+    }
+
+    /**
+     * fixed sql to add a system user without log
+     * @return user_message
+     */
+    private
+    function save_direct(): user_message
+    {
+        // use the already open database connection of the already started process
+        global $db_con;
+
+        $usr_msg = new user_message();
+
+        // configure the global database connection object for the select, insert, update and delete queries
+        $db_con->set_class($this::class);
+        $db_con->set_usr($this->id());
+        $sc_par_lst = new sql_type_list();
+
+        // fields and values that the word has additional to the standard named user sandbox object
+        $usr_empty = $this->clone_reset();
+        // get the list of the changed fields
+        $fvt_lst = $this->db_fields_changed($usr_empty, $sc_par_lst);
+        // get the list of all fields that can be changed by the user
+        $fld_lst_all = $this->db_fields_all();
+
+        // make the query name unique based on the changed fields
+        $lib = new library();
+        $ext = sql::NAME_SEP . $lib->sql_field_ext($fvt_lst, $fld_lst_all);
+
+        // update the sql creator settings
+        $sc = $db_con->sql_creator();
+        $sc->set_class($this::class, $sc_par_lst);
+        $qp = $this->sql_common($sc, $sc_par_lst, $ext);
+        $sc->set_name($qp->name);
+        $qp->sql = $sc->create_sql_insert($fvt_lst);
+        $qp->par = $fvt_lst->db_values();
+
+        $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+        if ($ins_msg->is_ok()) {
+            $this->set_id($ins_msg->get_row_id());
+        }
+        $usr_msg->add($ins_msg);
 
         return $usr_msg;
     }
@@ -1549,33 +1650,39 @@ class user extends db_object_seq_id
      * create a new user in the database
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
+     * @param user $usr_req the user who has request the user adding or update
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      */
-    private function db_insert(sql_db $db_con): user_message
+    private
+    function db_insert(sql_db $db_con, user $usr_req): user_message
     {
         log_debug($this->dsp_id());
-
-        global $usr;
 
         // always return a user message and if everything is fine, it is just empty
         $usr_msg = new user_message();
 
-        if ($this->can_add()) {
+        // use the signup system user for standard accounts if no requesting user is given
+        if ($usr_req->id() == 0) {
+            $usr_req->load_by_code_id(users::SYSTEM_SIGNUP_CODE_ID);
+        }
+
+        if ($this->can_add($usr_req)) {
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
+            $qp = $this->sql_insert($sc, $usr_req, new sql_type_list([sql_type::LOG]));
             $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
             if ($ins_msg->is_ok()) {
                 $this->set_id($ins_msg->get_row_id());
             }
             $usr_msg->add($ins_msg);
         } else {
+            log_debug('no permission to add user ' . $this->dsp_id());
             $usr_msg->add_id_with_vars(msg_id::USER_NO_ADD_PRIVILEGES, [
                 msg_id::VAR_USER_NAME => $this->name(),
-                msg_id::VAR_USER_PROFILE => $usr->name_and_profile()
+                msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
             ]);
         }
 
@@ -1593,22 +1700,22 @@ class user extends db_object_seq_id
      *
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param user $db_usr the database record before saving the changes whereas $this is the record with the changes
+     * @param user $usr_req the user who has request the user adding or update
      * @return user_message with the description of any problems for the user and the suggested solution
      */
-    private function db_update(sql_db $db_con, user $db_usr): user_message
+    private
+    function db_update(sql_db $db_con, user $db_usr, user $usr_req): user_message
     {
         log_debug($this->dsp_id());
-
-        global $usr;
 
         // always return a user message and if everything is fine, it is just empty
         $usr_msg = new user_message();
 
-        if ($this->can_change()) {
+        if ($this->can_change($usr_req)) {
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
 
-            $qp = $this->sql_update($sc, $db_usr, new sql_type_list([sql_type::LOG]));
+            $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([sql_type::LOG]));
             $upd_msg = $db_con->update($qp, 'update and log ' . $this->dsp_id());
             $usr_msg->add($upd_msg);
 
@@ -1616,7 +1723,7 @@ class user extends db_object_seq_id
         } else {
             $usr_msg->add_id_with_vars(msg_id::USER_NO_UPDATE_PRIVILEGES, [
                 msg_id::VAR_USER_NAME => $this->name(),
-                msg_id::VAR_USER_PROFILE => $usr->name_and_profile()
+                msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
             ]);
         }
 
@@ -1633,16 +1740,16 @@ class user extends db_object_seq_id
      * always all fields are included in the query to be able to remove overwrites with a null value
      *
      * @param sql_creator $sc with the target db_type set
+     * @param user $usr the user who has request the user adding or update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
+        user          $usr,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
-        global $usr;
-
         // set some var names to shorten the code lines
         $var_name_row_id = $sc->var_name_row_id($sc_par_lst);
 
@@ -1703,8 +1810,16 @@ class user extends db_object_seq_id
         unset($fld_lst_ex_log[$key_fld_pos]);
         $fld_lst_log = array_merge([$qp_id->par_fld->name], $fld_lst_ex_log);
 
+        // add the requesting user id for logging
+        $fvt_lst_log = clone $fvt_lst;
+        $fvt_lst_log->add_field(
+            user::FLD_ID,
+            $usr->id(),
+            sql_par_type::INT
+        );
+
         // create the query parameters for the log entries for the single fields
-        $qp_log = $sc->sql_func_log($this::class, $usr, $fld_lst_log, $fvt_lst, $sc_par_lst_log);
+        $qp_log = $sc->sql_func_log($this::class, $usr, $fld_lst_log, $fvt_lst_log, $sc_par_lst_log);
         $sql .= ' ' . $qp_log->sql;
         $par_lst_out->add_list($qp_log->par_fld_lst);
 
@@ -1756,17 +1871,17 @@ class user extends db_object_seq_id
      *
      * @param sql_creator $sc with the target db_type set
      * @param user $db_row the sandbox object with the database values before the update
+     * @param user $usr the user who has request the user adding or update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
         sql_creator   $sc,
         user          $db_row,
+        user          $usr,
         sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
-        global $usr;
-
         // clone the parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;
         // set the sql query type
@@ -1871,28 +1986,6 @@ class user extends db_object_seq_id
     }
 
     /**
-     * the common part of the sql_insert and sql_update functions
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
-     * @param string $ext the query name extension to differ the queries based on the fields changed
-     * @return sql_par prepared sql parameter object with the name set
-     */
-    protected function sql_common(
-        sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list(),
-        string        $ext = ''): sql_par
-    {
-        $qp = new sql_par($this::class, $sc_par_lst, $ext);
-
-        // update the sql creator settings
-        $sc->set_class($this::class, $sc_par_lst);
-        $sc->set_name($qp->name);
-
-        return $qp;
-    }
-
-    /**
      * create the sql statement to add a new user to the database
      *
      * @param sql_creator $sc with the target db_type set
@@ -1977,7 +2070,9 @@ class user extends db_object_seq_id
         $lst = new sql_par_field_list();
         $sc = new sql_creator();
         $do_log = $sc_par_lst->incl_log();
-        $table_id = $sc->table_id($this::class);
+        if ($do_log) {
+            $table_id = $sc->table_id($this::class);
+        }
 
         // the user database fields in order of user_db::FLD_NAMES and user_db::FLD_LST_ALL
 
@@ -2201,12 +2296,49 @@ class user extends db_object_seq_id
 
 
     /*
+     * del
+     */
+
+    /**
+     * exclude, archive or delete this user
+     *
+     * @param user $usr_req the user who has requested the deletion
+     * @return user_message with status ok
+     *                      or if something went wrong
+     *                      the message that should be shown to the user
+     *                      including suggested solutions
+     */
+    function del(user $usr_req): user_message
+    {
+        $usr_msg = new user_message();
+        if ($this->never_used()) {
+            $usr_msg->add(parent::del($usr_req));
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::USER_CANNOT_DEL, [
+                msg_id::VAR_USER_NAME => $this->name(),
+            ]);
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * debug
      */
 
     function dsp_id(): string
     {
-        return $this->name . ' (' . $this->id() . ')';
+        $result = $this->name();
+        if ($this->email() != '' and $this->email() != null and $this->email() != $this->name()) {
+            $result .= ' - ' . $this->email();
+        }
+        if ($this->ip_addr != '' and $this->ip_addr != null and $this->ip_addr != $this->name()) {
+            $result .= ' - ip ' . $this->ip_addr;
+        }
+        if ($this->id() != 0) {
+            $result .= ' (' . $this->id() . ')';
+        }
+        return $result;
     }
 
 }

@@ -483,13 +483,34 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return user the user used for unit testing
+     * @return user a user used for unit testing with has only the ip set
+     */
+    function user_ip(): user
+    {
+        $usr = new user();
+        $usr->ip_addr = users::TEST_USER_IP;
+        return $usr;
+    }
+
+    /**
+     * @return user a user used for unit testing with the test profile
      */
     function user_sys_test(): user
     {
         $usr = new user();
         $usr->set(users::SYSTEM_TEST_ID, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
         $usr->set_profile(user_profiles::TEST);
+        return $usr;
+    }
+
+    /**
+     * @return user a user used for unit testing with the admin profile
+     */
+    function user_sys_admin(): user
+    {
+        $usr = new user();
+        $usr->set(users::SYSTEM_ADMIN_ID, users::SYSTEM_ADMIN_NAME, users::SYSTEM_ADMIN_EMAIL);
+        $usr->set_profile(user_profiles::ADMIN);
         return $usr;
     }
 

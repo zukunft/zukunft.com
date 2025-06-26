@@ -4,20 +4,6 @@
   "user": "system",
   "users": [
     {
-      "name": "zukunft.com system",
-      "description": "the internal zukunft.com system user mainly used for the log entries of the initial setup and batch jobs; this user is only used by the program code and no interactive login with this user is ever allowed",
-      "code_id": "system",
-      "profile": "system",
-      "email": "system@zukunft.com"
-    },
-    {
-      "name": "zukunft.com local admin",
-      "description": "the fallback zukunft.com admin user that should only be used in a break-glass event to recover other admin users",
-      "code_id": "admin",
-      "profile": "admin",
-      "email": "admin@zukunft.com"
-    },
-    {
       "name": "zukunft.com system test",
       "description": "the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
       "code_id": "test",
@@ -42,8 +28,15 @@
       "name": "zukunft.com system test no admin",
       "description": "an internal zukunft.com test user to check the deny for normal users",
       "code_id": "test_normal",
-      "profile": "normal",
+      "profile": "email",
       "email": "test.normal@zukunft.com"
+    },
+    {
+      "name": "zukunft.com system user creator",
+      "description": "an internal zukunft.com user to automatically create normal users",
+      "code_id": "signup",
+      "profile": "signup",
+      "email": "signup@zukunft.com"
     }
   ]
 }

@@ -117,6 +117,29 @@ class type_lists
      * load
      */
 
+    /**
+     * reload the cache used for logging the changes
+     * @param sql_db $db_con
+     * @return bool
+     */
+    function load_log(sql_db $db_con): bool
+    {
+        global $cng_act_cac;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
+
+        $result = true;
+
+        $cng_act_cac = new change_action_list();
+        $cng_act_cac->load($db_con);
+        $cng_tbl_cac = new change_table_list();
+        $cng_tbl_cac->load($db_con);
+        $cng_fld_cac = new change_field_list();
+        $cng_fld_cac->load($db_con);
+
+        return $result;
+    }
+
     function load(sql_db $db_con, ?user $usr): bool
     {
         global $sys_log_sta_cac;

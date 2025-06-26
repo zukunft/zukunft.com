@@ -553,6 +553,11 @@ enum messages: string
         . ' '
         . self::VAR_START . self::VAR_VAL_ID . self::VAR_END;
 
+    case ID_MISSING_FOR_DEL = 'Deleting of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' not possible because database id is missing in '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END;
+
     case FAILED_ADD_GROUP = 'Adding group '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' failed (missing save maker).';
@@ -572,9 +577,9 @@ enum messages: string
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . '" is used by the system. Please use another name, which should not be one of these '
         . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END;
-    case OBJECT_RELOADING_FAILED = 'Reloading of the object for '
-        . self::VAR_START . self::VAR_VALUE . self::VAR_END
-        . ' failed';
+    case USER_CANNOT_DEL = 'user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" cannot be deleted because otherwise log entries would be lost';
     case DEFAULT_VALUES_RELOADING_FAILED = 'Reloading of the default values for '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' failed';

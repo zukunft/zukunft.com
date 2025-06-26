@@ -620,7 +620,7 @@ class type_list
         return $list;
     }
 
-    private  function config_csv_get_file(type_list $list): string
+    private function config_csv_get_file(type_list $list): string
     {
         $csv_path = '';
         $lib = new library();

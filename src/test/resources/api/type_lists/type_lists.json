@@ -7,34 +7,112 @@
   "body": {
     "user_profiles": [
       {
-        "name": "system",
-        "code_id": "system",
-        "description": "User to log internal tasks not directly initiated by an user like system testing and cleanup",
+        "name": "ip only",
+        "code_id": "ip",
+        "description": "if only the ip of the request is known",
         "id": 1
+      },
+      {
+        "name": "username selected",
+        "code_id": "name",
+        "description": "the user has selected and reserved a unique username",
+        "id": 2
+      },
+      {
+        "name": "email verified",
+        "code_id": "email",
+        "description": "the email of the account has been confirmed",
+        "id": 3
+      },
+      {
+        "name": "user creator",
+        "code_id": "signup",
+        "description": "for system users that can only create new users and do system based profile upgrades up to email verified",
+        "id": 4
+      },
+      {
+        "name": "system link",
+        "code_id": "link",
+        "description": "for technical accounts for external but trustworthy systems",
+        "id": 5
+      },
+      {
+        "name": "bot",
+        "code_id": "bot",
+        "description": "an internal automated job that does changes in the database",
+        "id": 6
+      },
+      {
+        "name": "human identity",
+        "code_id": "human",
+        "description": "it is confirmed that this user is a human e.g. by the passport",
+        "id": 7
+      },
+      {
+        "name": "publisher",
+        "code_id": "publisher",
+        "description": "humans that have the permission to confirm changes in the general setup",
+        "id": 8
+      },
+      {
+        "name": "voter",
+        "code_id": "voter",
+        "description": "a human that have voting rights for the higher profile levels such as bureaucrat or admin",
+        "id": 9
+      },
+      {
+        "name": "link admin",
+        "code_id": "maintainer",
+        "description": "humans that have the permissions to maintain a system link \/ reference",
+        "id": 10
+      },
+      {
+        "name": "bureaucrat",
+        "code_id": "bureaucrat",
+        "description": "humans that have the permissions e.g. to confirm the human identity check; a bureaucrat cannot have any other permission that a human can have being a bureaucrat",
+        "id": 11
+      },
+      {
+        "name": "admin",
+        "code_id": "admin",
+        "description": "administrator that can add and change verbs and sees the code_id; a admin cannot have any other permission that a human can have being an admin",
+        "id": 12
+      },
+      {
+        "name": "juror",
+        "code_id": "juror",
+        "description": "humans that have right to decide a case with at least one judge that have brought to cord by any other human",
+        "id": 13
+      },
+      {
+        "name": "developer",
+        "code_id": "dev",
+        "description": "Can see all errors and change the status of the errors, but cannot access the production and user acceptance test systems; a developer cannot have any other permission that a human can have being a developer",
+        "id": 14
+      },
+      {
+        "name": "judge",
+        "code_id": "judge",
+        "description": "humans that have right to decide a case that have brought to cord by any other human; a judge cannot have any other permission that a human can have being judge",
+        "id": 15
       },
       {
         "name": "system test",
         "code_id": "test",
         "description": "for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests",
-        "id": 2
+        "id": 16
       },
       {
-        "name": "admin",
-        "code_id": "admin",
-        "description": "Administrator that can add and change verbs and sees the code_id",
-        "id": 3
+        "name": "benevolent dictator",
+        "code_id": "bdfl",
+        "description": "a fallback admin user for unexpected cases; hopefully never used",
+        "id": 17
       },
       {
-        "name": "developer",
-        "code_id": "dev",
-        "description": "Can see all errors and change the status of the errors, but cannot access the production and user acceptance test systems",
-        "id": 4
-      },
-      {
-        "name": "normal user",
-        "code_id": "normal",
-        "description": "",
-        "id": 5
+        "name": "system",
+        "code_id": "system",
+        "description": "User to log internal tasks not directly initiated by an user like system testing and cleanup",
+        "id": 18
       }
     ],
     "phrase_types": [
@@ -6446,12 +6524,6 @@
         "code_id": "2geo_value",
         "description": "",
         "id": 789
-      },
-      {
-        "name": "1NOW() AS db_now",
-        "code_id": "1NOW() AS db_now",
-        "description": "",
-        "id": 790
       }
     ],
     "verbs": [

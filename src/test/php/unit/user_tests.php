@@ -54,6 +54,7 @@ class user_tests
         $sc = new sql_creator();
         $t->name = 'user->';
         $t->resource_path = 'db/user/';
+        $t->usr_admin = $t->user_sys_admin();
 
 
         // start the test section (ts)
@@ -77,12 +78,17 @@ class user_tests
         $this->assert_sql_by_profile($t, $db_con, $usr_test);
 
         $t->subheader($ts . 'sql write insert');
+        $usr_ip = $t->user_ip();
+        $t->assert_sql_insert($sc, $usr_ip, [sql_type::LOG]);
         $usr_test = $t->user_sys_test();
         $t->assert_sql_insert($sc, $usr_test, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write update');
         $usr_changed = $usr_test->cloned(users::SYSTEM_TEST_PARTNER_NAME);
         $t->assert_sql_update($sc, $usr_changed, $usr_test, [sql_type::LOG]);
+
+        $t->subheader($ts . 'sql write delete');
+        $t->assert_sql_delete($sc, $usr_test, [sql_type::LOG]);
 
         $test_usr_list = new user_list($usr_test);
         // TODO include all value tables

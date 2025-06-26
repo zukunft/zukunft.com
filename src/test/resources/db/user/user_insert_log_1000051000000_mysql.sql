@@ -38,11 +38,11 @@ PREPARE user_insert_log_1000051000000_call FROM
 
 SELECT user_insert_log_1000051000000
         ('zukunft.com system test',
-         null,
+         2,
          1,
          211,
          81,
          'system test',
-         2,
+         16,
          76,
          'test@zukunft.com');

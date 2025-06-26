@@ -486,7 +486,7 @@ class import
                     foreach ($json_obj as $user) {
                         // TODO check if the constructor is always used
                         $usr_import = new user;
-                        $import_result = $usr_import->import_obj($user, $usr_trigger->profile_id);
+                        $import_result = $usr_import->import_obj($user, $usr_trigger);
                         if ($import_result->is_ok()) {
                             $this->users_done++;
                         } else {

@@ -541,7 +541,6 @@ class sql_creator
      */
     function table_id(string $class): int
     {
-        $lib = new library();
         global $cng_tbl_cac;
         return $cng_tbl_cac->id($this->get_table_name($class));
     }

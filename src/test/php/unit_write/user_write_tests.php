@@ -69,11 +69,15 @@ class user_write_tests
         global $phr_typ_cac;
 
         // init
-        $lib = new library();
         $t->name = 'user db write->';
 
+        // start the test section (ts)
+        $ts = 'db write user ';
+        $t->header($ts);
 
-        $t->header('word db write tests');
+        $t->subheader($ts . 'add');
+        $usr = $t->user_ip();
+        $t->assert_write($usr, $usr->unique_value(), $usr->key_field());
 
         /*
 

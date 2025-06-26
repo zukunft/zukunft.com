@@ -51,16 +51,17 @@ class users
     const SYSTEM_COM = 'the internal zukunft.com system user that should never log in and is mainly used for the initial setup';
     const SYSTEM_CODE_ID = 'system'; // unique id to select the user
     const SYSTEM_EMAIL = 'system@zukunft.com';
-    const SYSTEM_LOCAL_IP = 'localhost'; // as a second line of defence to prevent remote manipulation
 
+    // to prevent any user to use the name localhost
     const LOCALHOST_NAME = 'localhost';
-    const LOCALHOST_IP = 'localhost';
 
     // the system admin user that should only be used in a break-glass event to recover other admin users
     const SYSTEM_ADMIN_ID = 2;
     const SYSTEM_ADMIN_NAME = 'zukunft.com local admin';
+    const SYSTEM_ADMIN_COM = 'the fallback zukunft.com admin user that should only be used in a break-glass event to recover other admin users';
     const SYSTEM_ADMIN_CODE_ID = 'admin';
     const SYSTEM_ADMIN_EMAIL = 'admin@zukunft.com';
+    const SYSTEM_ADMIN_IP = 'localhost'; // as a second line of defence to prevent remote manipulation
 
     // the user that performs the system tests
     const SYSTEM_TEST_ID = 3;
@@ -79,7 +80,7 @@ class users
     const SYSTEM_TEST_ADMIN_ID = 5;
     const SYSTEM_TEST_ADMIN_NAME = 'zukunft.com system test admin';
     const SYSTEM_TEST_ADMIN_CODE_ID = 'admin';
-    const SYSTEM_TEST_ADMIN_EMAIL = 'admin@zukunft.com';
+    const SYSTEM_TEST_ADMIN_EMAIL = 'test.admin@zukunft.com';
 
     // a normal user to test the deny of functions only allowed for administrators
     // and as a fallback owner
@@ -88,10 +89,15 @@ class users
     const SYSTEM_TEST_NORMAL_CODE_ID = 'test_normal';
     const SYSTEM_TEST_NORMAL_EMAIL = 'support.normal@zukunft.com';
 
+    // an internal zukunft.com user to automatically create normal users
+    const SYSTEM_SIGNUP_CODE_ID = 'signup';
+
 
     // system testing
     const TEST_NAME = 'standard user view for all users';
     const TEST_IP = '66.249.64.95'; // used to check the blocking of an IP address
+    // invalid address used to test creating a new user
+    const TEST_USER_IP = '258.257.256.255';
 
     // list of predefined usernames used for the system and for testing that are expected to be never used or changed
     const RESERVED_NAMES = array(

@@ -1281,6 +1281,27 @@ class sql_db
         $this->seq_reset(change_action::class);
     }
 
+    /**
+     * fill the database with the rows needed for change logging
+     */
+    function db_log_code_links(): void
+    {
+        // first of all set the database version if not yet done
+        $cfg = new config();
+        $cfg->check(config::VERSION_DB, PRG_VERSION, $this);
+
+        // get the list of CSV and loop
+        foreach (def::LOG_CODE_LINK_FILES as $csv_file_name) {
+            $this->load_db_code_link_file($csv_file_name);
+        }
+
+        // set the seq number if needed
+        // TODO check why this is needed and combine with the other sequence reset
+        $this->seq_reset(change_table::class);
+        $this->seq_reset(change_field::class);
+        $this->seq_reset(change_action::class);
+    }
+
     function load_db_code_link_file(string $class): bool
     {
         global $debug;
@@ -5568,12 +5589,12 @@ class sql_db
     function load_user_profiles(): bool
     {
         $result = true;
-        $lib = new library();
         foreach (def::CLASS_WITH_USER_CODE_LINK_CSV as $class_for_csv) {
             if ($this->count($class_for_csv) <= 0 and $result) {
                 $save_result = $this->load_db_code_link_file($class_for_csv);
                 if (!$save_result) {
-                    log_fatal($class_for_csv . ' code link csv file cannot be loaded into the database');
+                    log_fatal($class_for_csv . ' code link csv file cannot be loaded into the database',
+                        'sql_db->load_user_profiles');
                     $result = false;
                 }
             }
@@ -5592,32 +5613,6 @@ class sql_db
     {
         $cfg = new config();
         $cfg->set(config::VERSION_DB, PRG_VERSION, $this);
-    }
-
-    /**
-     * TODO move to system_user
-     * fixed code to create the initial system user
-     * but only if the user table is empty
-     * @return bool true if the system user have been created
-     */
-    function create_system_user(): bool
-    {
-        $result = false;
-        if ($this->count(user::class) <= 0) {
-            $sys_usr = new user();
-            $sys_usr->set_name(users::SYSTEM_NAME);
-            $sys_usr->set_profile_id(user_profiles::SYSTEM_ID);
-            $sys_usr->description = users::SYSTEM_COM;
-            $save_result = $sys_usr->save_old($this);
-            if ($save_result != '') {
-                log_fatal('system user cannot be created', 'sql_db->create_system_user');
-            } elseif ($sys_usr->id() != users::SYSTEM_ID) {
-                log_fatal('system user has not the expected database id of ' . users::SYSTEM_ID, 'sql_db->create_system_user');
-            } else {
-                $result = true;
-            }
-        }
-        return $result;
     }
 
     /**
@@ -5644,7 +5639,8 @@ class sql_db
 
                 // create the main system user upfront direct from the code
                 // but only if needed and allowed which is only the case directly after the database structure creation
-                if ($this->create_system_user()) {
+                $init_usr = new user();
+                if ($init_usr->create_system_user()) {
                     // reload the system user if adding has been successful
                     $usr->load_by_id(users::SYSTEM_ID);
                 }
@@ -5652,6 +5648,11 @@ class sql_db
                 // translate the system setup messages only to the system base language which is english
                 global $mtr;
                 $mtr = new Translator(language_codes::SYS);
+
+                // prepare logging of the import
+                $this->db_log_code_links();
+                $sys_typ_lst = new type_lists();
+                $sys_typ_lst->load_log($this);
 
                 // create the other system users from the json and add e.g. the description fields
                 $imf = new import_file();
