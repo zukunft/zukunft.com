@@ -84,7 +84,7 @@ if ($start_usr->id() > 0) {
         }
 
     } else {
-        echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.';
+        echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.' . "\n";
     }
 }
 
