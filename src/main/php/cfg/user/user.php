@@ -81,6 +81,7 @@ include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 //include_once MODEL_IMPORT_PATH . 'import_file.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
@@ -119,6 +120,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\data_object;
 use cfg\helper\db_id_object_non_sandbox;
 use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
@@ -135,6 +137,7 @@ use shared\const\users;
 use shared\const\words;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
+use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
 use shared\helper\CombineObject;
@@ -335,7 +338,66 @@ class user extends db_id_object_non_sandbox
 
     // TODO test api_mapper
 
-    // TODO add the import mapper
+    /**
+     * set the vars of this user object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message
+     */
+    function import_mapper_user(
+        array       $in_ex_json,
+        user        $usr_req,
+        data_object $dto = null,
+        object      $test_obj = null
+    ): user_message
+    {
+        global $usr_pro_cac;
+
+        // set the object vars based on the json
+        $usr_msg = new user_message();
+
+        if (key_exists(json_fields::NAME, $in_ex_json)) {
+            $this->name = $in_ex_json[json_fields::NAME];
+        }
+        if (key_exists(json_fields::IP_ADDR, $in_ex_json)) {
+            $this->ip_addr = $in_ex_json[json_fields::IP_ADDR];
+        }
+        // the password is not to be expected to be imported or exported
+        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            $this->description = $in_ex_json[json_fields::DESCRIPTION];
+        }
+        if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
+            // only system and admin users are allowed to change the code od
+            if ($usr_req->is_admin() or $usr_req->is_system()) {
+                $this->code_id = $in_ex_json[json_fields::CODE_ID];
+            }
+        }
+        if (key_exists(json_fields::PROFILE, $in_ex_json)) {
+            $profile_id_to_add = $usr_pro_cac->id($in_ex_json[json_fields::PROFILE]);
+            if ($usr_req->can_set_profile($profile_id_to_add)) {
+                $this->profile_id = $profile_id_to_add;
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::USER_NO_IMPORT_PRIVILEGES, [
+                    msg_id::VAR_USER_NAME => $this->name(),
+                    msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
+                ]);
+            }
+        }
+        if (key_exists(json_fields::EMAIL, $in_ex_json)) {
+            $this->email = $in_ex_json[json_fields::EMAIL];
+        }
+        if (key_exists(json_fields::FIRST_NAME, $in_ex_json)) {
+            $this->first_name = $in_ex_json[json_fields::FIRST_NAME];
+        }
+        if (key_exists(json_fields::LAST_NAME, $in_ex_json)) {
+            $this->last_name = $in_ex_json[json_fields::LAST_NAME];
+        }
+
+        return $usr_msg;
+    }
 
     /*
      * api
@@ -1046,7 +1108,7 @@ class user extends db_id_object_non_sandbox
      * @param user $usr_req the user who has request the user update
      * @return bool true if the logged-in user is the user itself or an admin
      */
-    function can_change(user $usr_req): bool
+    function can_be_changed_by(user $usr_req): bool
     {
         $can_change = false;
 
@@ -1062,6 +1124,64 @@ class user extends db_id_object_non_sandbox
         }
 
         return $can_change;
+    }
+
+    /**
+     * check if the requesting user is permitted to do any changes on the user
+     * this function is part of the profile list because the profile list is already a cached object
+     *
+     * @param user $usr the user that is expected to be changed
+     * @return bool true if the user can be changes
+     */
+    function can_change(user $usr): bool
+    {
+        $result = false;
+        // the user can change in general its own parameters
+        if ($usr->id() != 0 and $usr->id() == $this->id()) {
+            $result = true;
+        }
+        // the system users can always change other users
+        if ($this->is_system()) {
+            $result = true;
+        }
+        // the admin users can change other users ...
+        if ($this->is_admin()) {
+            // ... but not system users
+            if (!$usr->is_system()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * check if the user is allowed to permit other user to have the given profile
+     * this function is part of the profile list because the profile list is already a cached object
+     * TODO add the missing profiles and use the profile level as a second line of defence
+     *
+     * @param int $profile_id the profile that should be set
+     * @return bool
+     */
+    function can_set_profile(int $profile_id): bool
+    {
+        $result = false;
+
+        global $usr_pro_cac;
+
+        $profile = $usr_pro_cac->get($profile_id);
+        // the system users can assign all profiles
+        if ($this->is_system()) {
+            $result = true;
+        }
+        // the admin users can change other users ...
+        if ($this->is_admin()) {
+            // ... but not system users
+            // if (!$profile->is_system()) {
+            if (!$profile->is_type(user_profiles::SYSTEM)) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
 
@@ -1084,10 +1204,15 @@ class user extends db_id_object_non_sandbox
         $profile_id = $usr_req->profile_id;
 
         log_debug();
-        $usr_msg = parent::import_db_obj($this, $test_obj);
 
         // reset all parameters of this user object
         $this->reset();
+
+        $usr_msg = $this->import_mapper_user($json_obj, $usr_req);
+
+        // reset all parameters of this user object
+        $this->reset();
+
         foreach ($json_obj as $key => $value) {
             if ($key == json_fields::NAME) {
                 $this->name = $value;
@@ -1762,7 +1887,7 @@ class user extends db_id_object_non_sandbox
         // always return a user message and if everything is fine, it is just empty
         $usr_msg = new user_message();
 
-        if ($this->can_change($usr_req)) {
+        if ($this->can_be_changed_by($usr_req)) {
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
 

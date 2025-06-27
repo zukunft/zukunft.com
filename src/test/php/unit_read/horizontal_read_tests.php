@@ -53,7 +53,7 @@ class horizontal_read_tests
         $t->subheader($ts . 'load');
         foreach (def::MAIN_CLASSES as $class) {
             $base_obj = $t->class_to_base_object($class);
-            $t->assert_load($base_obj);
+            $t->assert_load_by_id($base_obj, $base_obj->id());
         }
 
     }

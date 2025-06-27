@@ -163,6 +163,7 @@ use shared\const\users;
 use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
 use shared\enum\value_types;
+use shared\helper\CombineObject;
 use shared\library;
 use shared\const\words;
 use shared\types\api_type;
@@ -1251,12 +1252,17 @@ class test_base
      * for all allowed SQL database dialects
      *
      * @param sql_creator $sc a sql creator object that can be empty
-     * @param object $usr_obj the user sandbox object e.g. a word
-     * @param object $db_obj must be the same object as the $usr_obj but with the values from the database before the update
+     * @param sandbox_named|sandbox_multi|CombineObject|db_object_seq_id $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_multi|CombineObject|db_object_seq_id|user $db_obj must be the same object as the $usr_obj but with the values from the database before the update
      * @param array $sql_type_array the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_update(sql_creator $sc, object $usr_obj, object $db_obj, array $sql_type_array = []): bool
+    function assert_sql_update(
+        sql_creator $sc,
+        sandbox_named|sandbox_multi|CombineObject|db_object_seq_id $usr_obj,
+        sandbox_named|sandbox_multi|CombineObject|db_object_seq_id|user $db_obj,
+        array $sql_type_array = []
+    ): bool
     {
         $sc_par_lst = new sql_type_list($sql_type_array);
         // check the Postgres query syntax
@@ -2142,6 +2148,23 @@ class test_base
     /*
      * db load
      */
+
+    /**
+     * check the object loading by id and name
+     *
+     * @param sandbox_named|sandbox_link_named|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param int|string $id the id of the object if not 1
+     * @return bool the load object to use it for more tests
+     */
+    function assert_load_by_id(sandbox_named|sandbox_link_named|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
+    {
+        // check the loading via id and check if the id has been mapped
+        $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
+        $usr_obj->reset();
+        $usr_obj->set_id(0);
+        $usr_obj->load_by_id($id);
+        return $this->assert($test_name, $usr_obj->id(), $id);
+    }
 
     /**
      * check the object loading by id and name

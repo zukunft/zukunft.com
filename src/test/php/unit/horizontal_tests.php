@@ -48,7 +48,9 @@ namespace unit;
 include_once MODEL_CONST_PATH . 'def.php';
 
 use cfg\const\def;
+use cfg\user\user;
 use shared\library;
+use shared\types\api_type;
 use test\test_api;
 use test\test_cleanup;
 
@@ -76,8 +78,35 @@ class horizontal_tests
             $test_name = 'reset ' . $lib->class_to_name($class) . ' lead to an empty api_json';
             $filled_obj = $t->class_to_filled_object($class);
             $filled_obj->reset();
-            $api_json = $filled_obj->api_json();
+            $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
             $t->assert_json_string($test_name, $api_json,  test_api::JSON_ID_ONLY);
+        }
+
+        $t->subheader($ts . 'im- and export');
+        foreach (def::MAIN_CLASSES as $class) {
+            $test_name = 'export ' . $lib->class_to_name($class) . ' lead not to an empty export json';
+            $filled_obj = $t->class_to_filled_object($class);
+            // remember the db id, because the db id is never included in the export
+            $id = $filled_obj->id();
+            $ex_json = $filled_obj->export_json(false);
+            $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
+            $t->assert_not($test_name, $ex_json,  test_api::JSON_ID_ONLY);
+            $test_name = 'cleared ' . $lib->class_to_name($class) . ' lead to an empty export json';
+            $filled_obj->reset();
+            $empty_json = json_encode($filled_obj->export_json(false));
+            $t->assert_json_string($test_name, $empty_json,  test_api::JSON_NAME_ONLY);
+            $test_name = 'after import ' . $lib->class_to_name($class) . ' the export json matches the original json';
+            if ($class == user::class) {
+                // special case and more cases are covered in the separate user unit testing
+                $sys_usr = $t->user_sys_admin();
+                $filled_obj->import_mapper_user($ex_json, $sys_usr);
+            } else {
+                $filled_obj->import_mapper($ex_json);
+            }
+            // set the remembered id again , because the db id is never included in the export
+            $filled_obj->set_id($id);
+            $final_json = $filled_obj->api_json([api_type::TEST_MODE]);
+            $t->assert_json_string($test_name,  $final_json, $api_json);
         }
 
     }

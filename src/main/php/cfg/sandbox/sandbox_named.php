@@ -252,7 +252,11 @@ class sandbox_named extends sandbox
         $vars = parent::api_json_array($typ_lst, $usr);
 
         $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
+        if ($typ_lst->test_mode()) {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        } else {
+            $vars[json_fields::DESCRIPTION] = $this->description();
+        }
 
         return $vars;
     }

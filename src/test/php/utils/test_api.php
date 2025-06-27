@@ -82,8 +82,10 @@ class test_api extends create_test_objects
     // path
     const API_PATH = 'api';
     const JSON_EXT = '.json';
-    // aa api json message for an empty object
+    // an api json message for an empty object
     const JSON_ID_ONLY = '{"id":0}';
+    // an export json message for an empty object
+    const JSON_NAME_ONLY = '{"name":""}';
 
     /**
      * check if the HTML frontend object can be set based on the api json message

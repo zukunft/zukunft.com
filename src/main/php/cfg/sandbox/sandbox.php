@@ -435,6 +435,9 @@ class sandbox extends db_object_seq_id_user
 
         $usr_msg = parent::import_db_obj($this, $test_obj);
 
+        if (key_exists(json_fields::EXCLUDED, $in_ex_json)) {
+            $this->excluded = $in_ex_json[json_fields::EXCLUDED];
+        }
         if (key_exists(json_fields::SHARE, $in_ex_json)) {
             $this->share_id = $shr_typ_cac->id($in_ex_json[json_fields::SHARE]);
             if ($this->share_id < 0) {
@@ -519,6 +522,11 @@ class sandbox extends db_object_seq_id_user
         // add the protection type
         if ($this->protection_id > 0 and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
             $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
+        }
+
+        // add the exclusions
+        if ($this->is_exclusion_set()) {
+            $vars[json_fields::EXCLUDED] = $this->excluded;
         }
 
         return $vars;
