@@ -558,15 +558,15 @@ class sandbox_named extends sandbox
 
     /**
      * create human-readable messages of the differences between the named sandbox objects
-     * @param sandbox_named|CombineObject|db_object_seq_id $sbx which might be different to this named sandbox
+     * @param sandbox_named|CombineObject|db_object_seq_id $obj which might be different to this named sandbox
      * @return user_message the human-readable messages of the differences between the named sandbox objects
      */
-    function diff_msg(sandbox_named|CombineObject|db_object_seq_id $sbx): user_message
+    function diff_msg(sandbox_named|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($sbx);
-        if ($this->name() != $sbx->name()) {
+        $usr_msg = parent::diff_msg($obj);
+        if ($this->name() != $obj->name()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_NAME, [
-                msg_id::VAR_NAME => $sbx->name(),
+                msg_id::VAR_NAME => $obj->name(),
                 msg_id::VAR_NAME_CHK => $this->name(),
                 msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
             ]);

@@ -378,7 +378,7 @@ class component_link extends sandbox_link
         if ($this->id() != 0) {
             $vars[json_fields::LINK_ID] = $this->id();
         }
-        if ($this->is_excluded()) {
+        if ($this->is_excluded() and !$typ_lst->test_mode()) {
             $vars[json_fields::EXCLUDED] = true;
         } else {
             if ($this->component() != null) {

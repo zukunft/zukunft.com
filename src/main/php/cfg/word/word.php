@@ -398,7 +398,7 @@ class word extends sandbox_typed
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        if ($this->is_excluded()) {
+        if ($this->is_excluded() and !$typ_lst->test_mode()) {
             $vars = [];
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
@@ -925,15 +925,15 @@ class word extends sandbox_typed
 
     /**
      * create human-readable messages of the differences between the word objects
-     * @param word|CombineObject|db_object_seq_id $wrd which might be different to this word
+     * @param word|CombineObject|db_object_seq_id $obj which might be different to this word
      * @return user_message the human-readable messages of the differences between the word objects
      */
-    function diff_msg(word|CombineObject|db_object_seq_id $wrd): user_message
+    function diff_msg(word|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($wrd);
-        if ($this->id() != $wrd->id()) {
+        $usr_msg = parent::diff_msg($obj);
+        if ($this->id() != $obj->id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_ID, [
-                msg_id::VAR_ID => $wrd->dsp_id(),
+                msg_id::VAR_ID => $obj->dsp_id(),
                 msg_id::VAR_ID_CHK => $this->dsp_id(),
                 msg_id::VAR_WORD_NAME => $this->dsp_id(),
             ]);

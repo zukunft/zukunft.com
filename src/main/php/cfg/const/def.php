@@ -113,6 +113,14 @@ class def
      * classes
      */
 
+    // the main classes that have a
+    // corresponding frontend object,
+    // a database table and
+    // can be im- and exported
+    const MAIN_CLASSES = [
+        word::class
+    ];
+
     // type classes that have a csv file for the initial load
     const BASE_CODE_LINK_FILES = [
         sys_log_status::class,

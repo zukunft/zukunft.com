@@ -572,7 +572,7 @@ class triple extends sandbox_link_named
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        if ($this->is_excluded()) {
+        if ($this->is_excluded() and !$typ_lst->test_mode()) {
             $vars = [];
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;

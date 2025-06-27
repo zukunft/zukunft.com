@@ -106,6 +106,7 @@ use cfg\formula\formula_type;
 use cfg\formula\formula_type_list;
 use cfg\group\group;
 use cfg\group\group_list;
+use cfg\helper\db_id_object_non_sandbox;
 use cfg\helper\type_list;
 use cfg\helper\type_object;
 use cfg\language\language;
@@ -149,6 +150,7 @@ use cfg\result\result_list;
 use cfg\result\results;
 use cfg\sandbox\protection_type_list;
 use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
 use cfg\sandbox\share_type_list;
 use cfg\system\job;
 use cfg\system\job_list;
@@ -493,6 +495,17 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return user used for unit testing with all vars set
+     */
+    function user_filled(): user
+    {
+        $usr = new user();
+        $usr->set_name(users::TEST_USER_NAME);
+        $usr->ip_addr = users::TEST_USER_IP;
+        return $usr;
+    }
+
+    /**
      * @return user a user used for unit testing with the test profile
      */
     function user_sys_test(): user
@@ -512,6 +525,48 @@ class create_test_objects extends test_base
         $usr->set(users::SYSTEM_ADMIN_ID, users::SYSTEM_ADMIN_NAME, users::SYSTEM_ADMIN_EMAIL);
         $usr->set_profile(user_profiles::ADMIN);
         return $usr;
+    }
+
+    /**
+     * get the base test object related to the given class
+     * @param string $class the given main class name
+     * @return sandbox_named|db_id_object_non_sandbox wit only a few vars filled
+     */
+    function class_to_base_object(string $class): sandbox_named|db_id_object_non_sandbox
+    {
+        $obj = null;
+        switch ($class) {
+            case word::class;
+                $obj = $this->word();
+                break;
+            case user::class;
+                $obj = $this->user_ip();
+                break;
+            default:
+                log_err('no base object defined for ' . $class);
+        }
+        return $obj;
+    }
+
+    /**
+     * get the filled test object related to the given class
+     * @param string $class the given main class name
+     * @return sandbox_named|db_id_object_non_sandbox wit only a few vars filled
+     */
+    function class_to_filled_object(string $class): sandbox_named|db_id_object_non_sandbox
+    {
+        $obj = null;
+        switch ($class) {
+            case user::class;
+                $obj = $this->user_filled();
+                break;
+            case word::class;
+                $obj = $this->word_filled();
+                break;
+            default:
+                log_err('no filled object defined for ' . $class);
+        }
+        return $obj;
     }
 
     /**

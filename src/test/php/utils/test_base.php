@@ -206,6 +206,7 @@ include_once TEST_UNIT_PATH . 'user_tests.php';
 include_once TEST_UNIT_PATH . 'user_list_tests.php';
 include_once TEST_UNIT_PATH . 'sandbox_tests.php';
 include_once TEST_UNIT_PATH . 'type_tests.php';
+include_once TEST_UNIT_PATH . 'horizontal_tests.php';
 include_once TEST_UNIT_PATH . 'word_tests.php';
 include_once TEST_UNIT_PATH . 'word_list_tests.php';
 include_once TEST_UNIT_PATH . 'triple_tests.php';
@@ -3474,6 +3475,26 @@ class test_base
         return $this->assert($test_name, $api_json, '{"id":0}');
     }
 
+    /**
+     * check if the filling up an almost empty object matches the filled object
+     * @param sandbox_named|sandbox_link|sandbox_value $empty the object with almost all vars null
+     * @param sandbox_named|sandbox_link|sandbox_value $filled the object filled with all vars
+     * @return bool true if the api message matches
+     */
+    function assert_fill(
+        sandbox_named|sandbox_link|sandbox_value $empty,
+        sandbox_named|sandbox_link|sandbox_value $filled
+    ): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($empty::class);
+        $test_name = $class . ' fill empty object and test via api json';
+        $original_json = $filled->api_json([api_type::TEST_MODE]);
+        $empty->fill($filled);
+        $filled_json = $empty->api_json([api_type::TEST_MODE]);
+        return $this->assert_json_string($test_name, $filled_json, $original_json);
+    }
+
 
     /*
      * type id
@@ -3814,6 +3835,7 @@ class test_base
         echo $this->error_counter . ' test errors';
         echo "\n";
         echo $errors . ' internal errors';
+        echo "\n";
     }
 
     /**

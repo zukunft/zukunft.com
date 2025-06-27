@@ -2,8 +2,12 @@
 
 /*
 
-    shared/types/api_type.php - options of the api messages
-    -------------------------
+    test/unit/horizontal_tests.php - unit testing of the functions that all main classes have
+    ------------------------------
+
+    the tests for all main objects include
+    - fill: check if an imported object is filled correctly with the db object
+
 
 
     This file is part of zukunft.com - calc with words
@@ -23,29 +27,37 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
-namespace shared\types;
+namespace unit;
 
-enum api_type: string
+include_once MODEL_CONST_PATH . 'def.php';
+
+use cfg\const\def;
+use test\test_cleanup;
+
+class horizontal_tests
 {
+    function run(test_cleanup $t): void
+    {
 
-    // include the phrases in the value list api message
-    case INCL_PHRASES = 'incl_phrases';
 
-    // do not fill up the group id to the full key length
-    case NO_KEY_FILL = 'no_key_fill';
+        // start the test section (ts)
+        $ts = 'unit horizontal ';
+        $t->header($ts);
 
-    // internal parameter for unit testing to switch off the database loading of missing objects
-    // and ignore the excluded flag so include all fields also for excluded
-    case TEST_MODE = 'test_mode';
+        $t->subheader($ts . 'fill');
+        foreach (def::MAIN_CLASSES as $class) {
+            $base_obj = $t->class_to_base_object($class);
+            $filled_obj = $t->class_to_filled_object($class);
+            $t->assert_fill($base_obj, $filled_obj);
+        }
 
-    // include the message header
-    case HEADER = 'header';
+    }
 
 }
