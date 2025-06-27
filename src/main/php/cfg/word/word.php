@@ -210,9 +210,6 @@ class word extends sandbox_typed
 
         $this->link_type_id = null;
 
-        $this->set_share_id(null);
-        $this->set_protection_id(null);
-
         $this->view = null;
         $this->ref_lst = [];
     }
@@ -1038,20 +1035,20 @@ class word extends sandbox_typed
      * if the given description is not set (null) the description is not remove
      * if the given description is an empty string the description is removed
      *
-     * @param word|CombineObject|db_object_seq_id $sbx word with the values that should have been updated e.g. based on the import
+     * @param word|CombineObject|db_object_seq_id $obj word with the values that should have been updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(word|CombineObject|db_object_seq_id $sbx): user_message
+    function fill(word|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::fill($sbx);
-        if ($sbx->code_id() != null) {
-            $this->set_code_id($sbx->code_id());
+        $usr_msg = parent::fill($obj);
+        if ($obj->code_id() != null) {
+            $this->set_code_id($obj->code_id());
         }
-        if ($sbx->plural != null) {
-            $this->plural = $sbx->plural;
+        if ($obj->plural != null) {
+            $this->plural = $obj->plural;
         }
-        if ($sbx->values != null) {
-            $this->values = $sbx->values;
+        if ($obj->values != null) {
+            $this->values = $obj->values;
         }
         return $usr_msg;
     }
@@ -1487,6 +1484,7 @@ class word extends sandbox_typed
      */
 
     /**
+     * TODO review
      * true if the word has any none default settings such as a special type
      */
     function has_cfg(): bool

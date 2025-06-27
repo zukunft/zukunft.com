@@ -99,6 +99,7 @@ include_once MODEL_USER_PATH . 'user_type.php';
 //include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 //include_once MODEL_PHRASE_PATH . 'term.php';
 include_once SHARED_HELPER_PATH . 'Config.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
@@ -136,6 +137,7 @@ use shared\enum\change_actions;
 use shared\enum\change_tables;
 use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
+use shared\helper\CombineObject;
 use shared\helper\Config as shared_config;
 use shared\json_fields;
 use shared\library;
@@ -1162,6 +1164,55 @@ class user extends db_id_object_non_sandbox
         }
 
         return $vars;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this seq id object based on the given object
+     * if the given id is zero the id is never overwritten
+     * if the given id is not zero the id is set if not yet done
+     *
+     * @param user|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(user|CombineObject|db_object_seq_id $obj): user_message
+    {
+        $usr_msg = parent::fill($obj);
+        if ($obj->name() != null) {
+            $this->set_name($obj->name());
+        }
+        if ($obj->ip_addr != null) {
+            $this->ip_addr = $obj->ip_addr;
+        }
+        if ($obj->password != null) {
+            $this->password = $obj->password;
+        }
+        if ($obj->description != null) {
+            $this->description = $obj->description;
+        }
+        if ($obj->code_id != null) {
+            $this->code_id = $obj->code_id;
+        }
+        if ($obj->profile_id != null) {
+            $this->profile_id = $obj->profile_id;
+        }
+        if ($obj->type_id != null) {
+            $this->type_id = $obj->type_id;
+        }
+        if ($obj->email != null) {
+            $this->email = $obj->email;
+        }
+        if ($obj->first_name != null) {
+            $this->first_name = $obj->first_name;
+        }
+        if ($obj->last_name != null) {
+            $this->last_name = $obj->last_name;
+        }
+        return $usr_msg;
     }
 
 

@@ -82,6 +82,8 @@ class test_api extends create_test_objects
     // path
     const API_PATH = 'api';
     const JSON_EXT = '.json';
+    // aa api json message for an empty object
+    const JSON_ID_ONLY = '{"id":0}';
 
     /**
      * check if the HTML frontend object can be set based on the api json message
@@ -169,7 +171,7 @@ class test_api extends create_test_objects
             $clone_obj = clone $usr_obj;
             $clone_obj->reset();
             $json_empty = $clone_obj->api_json();
-            $target = '{"id":0}';
+            $target = self::JSON_ID_ONLY;
             // TODO Prio 2 deprecate this exception
             if ($class == element::class) {
                 $target = '{"id":101,"name":"minute","class":"word"}';

@@ -268,14 +268,14 @@ class sandbox_typed extends sandbox_named
      * if the given type is not set (null) the type is not removed
      * if the given type is zero (not null) the type is removed
      *
-     * @param sandbox_typed|CombineObject|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param sandbox_typed|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(sandbox_typed|CombineObject|db_object_seq_id $sbx): user_message
+    function fill(sandbox_typed|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::fill($sbx);
-        if ($sbx->type_id() != null) {
-            $this->set_type_id($sbx->type_id());
+        $usr_msg = parent::fill($obj);
+        if ($obj->type_id() != null) {
+            $this->set_type_id($obj->type_id());
         }
         return $usr_msg;
     }

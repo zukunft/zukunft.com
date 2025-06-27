@@ -5,8 +5,17 @@
     test/unit/horizontal_tests.php - unit testing of the functions that all main classes have
     ------------------------------
 
-    the tests for all main objects include
-    - fill: check if an imported object is filled correctly with the db object
+    the tests for all main objects include these tests
+    - fill: if an imported object is filled correctly with the db object
+    - reset: if api json of an object after reset is an empty json
+    - api: if the api json can be created, dropped to the related frontend object and if the api from the frontend object matches the original api json
+    - import: if an import json is mapped to this object
+    - sql load by id: if prepared sql statement to load the object can be created
+    - diff: if a user readable message can be created what the difference between two objects is
+    - usage: if the usage / relevance of the object can be calculated
+
+    additional tests for sandbox objects
+    -
 
 
 
@@ -39,6 +48,8 @@ namespace unit;
 include_once MODEL_CONST_PATH . 'def.php';
 
 use cfg\const\def;
+use shared\library;
+use test\test_api;
 use test\test_cleanup;
 
 class horizontal_tests
@@ -46,6 +57,8 @@ class horizontal_tests
     function run(test_cleanup $t): void
     {
 
+        // init
+        $lib = new library();
 
         // start the test section (ts)
         $ts = 'unit horizontal ';
@@ -56,6 +69,15 @@ class horizontal_tests
             $base_obj = $t->class_to_base_object($class);
             $filled_obj = $t->class_to_filled_object($class);
             $t->assert_fill($base_obj, $filled_obj);
+        }
+
+        $t->subheader($ts . 'reset');
+        foreach (def::MAIN_CLASSES as $class) {
+            $test_name = 'reset ' . $lib->class_to_name($class) . ' lead to an empty api_json';
+            $filled_obj = $t->class_to_filled_object($class);
+            $filled_obj->reset();
+            $api_json = $filled_obj->api_json();
+            $t->assert_json_string($test_name, $api_json,  test_api::JSON_ID_ONLY);
         }
 
     }

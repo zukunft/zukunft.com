@@ -259,6 +259,7 @@ include_once TEST_UNIT_READ_PATH . 'user_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'job_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'change_log_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'sys_log_read_tests.php';
+include_once TEST_UNIT_READ_PATH . 'horizontal_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'word_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'word_list_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'triple_read_tests.php';
@@ -3477,13 +3478,13 @@ class test_base
 
     /**
      * check if the filling up an almost empty object matches the filled object
-     * @param sandbox_named|sandbox_link|sandbox_value $empty the object with almost all vars null
-     * @param sandbox_named|sandbox_link|sandbox_value $filled the object filled with all vars
+     * @param sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $empty the object with almost all vars null
+     * @param sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $filled the object filled with all vars
      * @return bool true if the api message matches
      */
     function assert_fill(
-        sandbox_named|sandbox_link|sandbox_value $empty,
-        sandbox_named|sandbox_link|sandbox_value $filled
+        sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $empty,
+        sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $filled
     ): bool
     {
         $lib = new library();

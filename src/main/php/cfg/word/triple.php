@@ -1150,18 +1150,18 @@ class triple extends sandbox_link_named
      * if the given name is not set (null) the given name is not remove
      * if the given name is an empty string the given name is removed
      *
-     * @param triple|CombineObject|db_object_seq_id $sbx word with the values that should be updated e.g. based on the import
+     * @param triple|CombineObject|db_object_seq_id $obj word with the values that should be updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(triple|CombineObject|db_object_seq_id $sbx): user_message
+    function fill(triple|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::fill($sbx);
+        $usr_msg = parent::fill($obj);
         // TODO use set and get function to enable phrase fill
         $trp = null;
-        if ($sbx::class == triple::class) {
-            $trp = $sbx;
-        } elseif ($sbx->obj()::class == triple::class) {
-            $trp = $sbx->obj();
+        if ($obj::class == triple::class) {
+            $trp = $obj;
+        } elseif ($obj->obj()::class == triple::class) {
+            $trp = $obj->obj();
         }
         if ($trp != null) {
             if ($trp->name_given != null) {
@@ -1171,8 +1171,8 @@ class triple extends sandbox_link_named
                 $this->name_generated = $trp->name_generated;
             }
         }
-        if ($sbx->usage() != null) {
-            $this->set_usage($sbx->usage());
+        if ($obj->usage() != null) {
+            $this->set_usage($obj->usage());
         }
         return $usr_msg;
     }
