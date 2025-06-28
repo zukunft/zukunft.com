@@ -536,11 +536,14 @@ class create_test_objects extends test_base
     {
         $obj = null;
         switch ($class) {
+            case user::class;
+                $obj = $this->user_ip();
+                break;
             case word::class;
                 $obj = $this->word();
                 break;
-            case user::class;
-                $obj = $this->user_ip();
+            case source::class;
+                $obj = $this->source();
                 break;
             default:
                 log_err('no base object defined for ' . $class);
@@ -562,6 +565,9 @@ class create_test_objects extends test_base
                 break;
             case word::class;
                 $obj = $this->word_filled();
+                break;
+            case source::class;
+                $obj = $this->source_filled();
                 break;
             default:
                 log_err('no filled object defined for ' . $class);

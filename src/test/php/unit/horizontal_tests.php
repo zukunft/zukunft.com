@@ -48,6 +48,8 @@ namespace unit;
 include_once MODEL_CONST_PATH . 'def.php';
 
 use cfg\const\def;
+use cfg\db\sql_creator;
+use cfg\db\sql_type;
 use cfg\user\user;
 use shared\library;
 use shared\types\api_type;
@@ -61,6 +63,7 @@ class horizontal_tests
 
         // init
         $lib = new library();
+        $sc = new sql_creator();
 
         // start the test section (ts)
         $ts = 'unit horizontal ';
@@ -80,6 +83,23 @@ class horizontal_tests
             $filled_obj->reset();
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
             $t->assert_json_string($test_name, $api_json,  test_api::JSON_ID_ONLY);
+        }
+
+        $t->subheader($ts . 'sql');
+        foreach (def::MAIN_CLASSES as $class) {
+            $test_name = 'sql creation for ' . $lib->class_to_name($class);
+            $t->resource_path = $lib->class_to_resource_path($class);
+            $obj = $t->class_to_base_object($class);
+            $obj_changed = clone $obj;
+            $obj_changed->reset();
+            $t->assert_sql_table_create($obj);
+            $t->assert_sql_index_create($obj);
+            $t->assert_sql_foreign_key_create($obj);
+            // TODO maybe move here from the single class tests
+            //$t->assert_sql_insert($sc, $obj, [sql_type::LOG]);
+            //$t->assert_sql_update($sc, $obj_changed, $obj, [sql_type::LOG]);
+            //$t->assert_sql_delete($sc, $obj, [sql_type::LOG]);
+
         }
 
         $t->subheader($ts . 'frontend api');

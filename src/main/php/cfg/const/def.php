@@ -121,6 +121,7 @@ class def
     // can be im- and exported
     const MAIN_CLASSES = [
         word::class,
+        source::class,
         user::class
     ];
 
