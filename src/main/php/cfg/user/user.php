@@ -137,7 +137,6 @@ use shared\const\users;
 use shared\const\words;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
-use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
 use shared\helper\CombineObject;
@@ -145,7 +144,6 @@ use shared\helper\Config as shared_config;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
-use Exception;
 
 class user extends db_id_object_non_sandbox
 {
@@ -336,7 +334,23 @@ class user extends db_id_object_non_sandbox
         return $result;
     }
 
-    // TODO test api_mapper
+    /**
+     * fill this db id object vars with the values from the given api json array
+     * @param array $api_json the api array e.g. from the frontend with the word values that should be mapped
+     * @return user_message if the mapping is incomplete the human-readable message what happened and how to solve it
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        global $usr;
+
+        $usr_msg = parent::api_mapper($api_json);
+
+        // map the fields that are common for import and api json messages
+        $this->json_mapper($api_json, $usr, $usr_msg);
+
+        return $usr_msg;
+    }
+
 
     /**
      * set the vars of this user object based on the given json without writing to the database
@@ -354,29 +368,51 @@ class user extends db_id_object_non_sandbox
         object      $test_obj = null
     ): user_message
     {
-        global $usr_pro_cac;
-
         // set the object vars based on the json
         $usr_msg = new user_message();
 
-        if (key_exists(json_fields::NAME, $in_ex_json)) {
-            $this->name = $in_ex_json[json_fields::NAME];
-        }
-        if (key_exists(json_fields::IP_ADDR, $in_ex_json)) {
-            $this->ip_addr = $in_ex_json[json_fields::IP_ADDR];
-        }
-        // the password is not to be expected to be imported or exported
-        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
-            $this->description = $in_ex_json[json_fields::DESCRIPTION];
-        }
+        // map the fields that are common for import and api json messages
+        $this->json_mapper($in_ex_json, $usr_req, $usr_msg);
+
+        // the code id should never be changed via api
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             // only system and admin users are allowed to change the code od
             if ($usr_req->is_admin() or $usr_req->is_system()) {
                 $this->code_id = $in_ex_json[json_fields::CODE_ID];
             }
         }
-        if (key_exists(json_fields::PROFILE, $in_ex_json)) {
-            $profile_id_to_add = $usr_pro_cac->id($in_ex_json[json_fields::PROFILE]);
+
+        return $usr_msg;
+    }
+
+    /**
+     * the common mapping part for the api and import mapper
+     *
+     * @param array $json
+     * @param user $usr_req
+     * @param user_message $usr_msg
+     * @return void return value is not needed because the messages are written to the given user_message object
+     */
+    private function json_mapper(
+        array        $json,
+        user         $usr_req,
+        user_message $usr_msg
+    ): void
+    {
+        global $usr_pro_cac;
+
+        if (key_exists(json_fields::NAME, $json)) {
+            $this->name = $json[json_fields::NAME];
+        }
+        if (key_exists(json_fields::IP_ADDR, $json)) {
+            $this->ip_addr = $json[json_fields::IP_ADDR];
+        }
+        // the password is not to be expected to be imported or exported
+        if (key_exists(json_fields::DESCRIPTION, $json)) {
+            $this->description = $json[json_fields::DESCRIPTION];
+        }
+        if (key_exists(json_fields::PROFILE, $json)) {
+            $profile_id_to_add = $usr_pro_cac->id($json[json_fields::PROFILE]);
             if ($usr_req->can_set_profile($profile_id_to_add)) {
                 $this->profile_id = $profile_id_to_add;
             } else {
@@ -386,18 +422,18 @@ class user extends db_id_object_non_sandbox
                 ]);
             }
         }
-        if (key_exists(json_fields::EMAIL, $in_ex_json)) {
-            $this->email = $in_ex_json[json_fields::EMAIL];
+        if (key_exists(json_fields::EMAIL, $json)) {
+            $this->email = $json[json_fields::EMAIL];
         }
-        if (key_exists(json_fields::FIRST_NAME, $in_ex_json)) {
-            $this->first_name = $in_ex_json[json_fields::FIRST_NAME];
+        if (key_exists(json_fields::FIRST_NAME, $json)) {
+            $this->first_name = $json[json_fields::FIRST_NAME];
         }
-        if (key_exists(json_fields::LAST_NAME, $in_ex_json)) {
-            $this->last_name = $in_ex_json[json_fields::LAST_NAME];
+        if (key_exists(json_fields::LAST_NAME, $json)) {
+            $this->last_name = $json[json_fields::LAST_NAME];
         }
 
-        return $usr_msg;
     }
+
 
     /*
      * api
@@ -470,10 +506,10 @@ class user extends db_id_object_non_sandbox
      */
 
     /**
-     * set the most often used reference vars with one set statement
-     * @param int $id mainly for test creation the database id of the reference
+     * set the most often used user vars with one set statement
+     * @param int $id mainly for test creation the database id of the user
      */
-    function set(int $id = 0, string $name = '', string $email = '', string $code_id = ''): void
+    function set(int $id = 0, string $name = '', string $email = ''): void
     {
         $this->set_id($id);
         $this->set_name($name);
@@ -1353,7 +1389,7 @@ class user extends db_id_object_non_sandbox
         // TODO just read the change log
         //      and because the change log is expected to be complete
         //      if the change log for this user is empty
-        //      it can be assumed that the user has never done any relevant chnage
+        //      it can be assumed that the user has never done any relevant change
         return true;
     }
 

@@ -158,6 +158,7 @@ use html\verb\verb as verb_dsp;
 use html\view\view as view_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
+use html\user\user as user_dsp;
 use shared\api;
 use shared\const\users;
 use shared\enum\messages as msg_id;
@@ -885,7 +886,7 @@ class test_base
      * @param db_object_seq_id|sandbox_value $dbo the given backend object
      * @return false|db_object_dsp the corresponding frontend object
      */
-    private function frontend_obj_from_backend_object(db_object_seq_id|sandbox_value $dbo): false|db_object_dsp
+    public function frontend_obj_from_backend_object(db_object_seq_id|sandbox_value $dbo): false|db_object_dsp
     {
         return match ($dbo::class) {
             word::class => new word_dsp(),
@@ -899,6 +900,7 @@ class test_base
             result::class => new result_dsp(),
             view::class => new view_dsp(),
             component::class => new component_dsp(),
+            user::class => new user_dsp(),
             default => false,
         };
     }

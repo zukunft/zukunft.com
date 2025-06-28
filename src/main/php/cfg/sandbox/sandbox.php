@@ -402,6 +402,7 @@ class sandbox extends db_object_seq_id_user
         $this->reset();
         $this->set_user($usr);
 
+        // TODO use the array_key_exists function because it is expected to be faster than looping over the array several times
         foreach ($api_json as $key => $value) {
 
             if ($key == json_fields::ID) {
@@ -536,6 +537,16 @@ class sandbox extends db_object_seq_id_user
     /*
      * set and get
      */
+
+    /**
+     * set the vars of this object based on json string from the frontend object
+     * @param string $api_json
+     * @return user_message
+     */
+    function set_from_api(string $api_json): user_message
+    {
+        return $this->api_mapper(json_decode($api_json, true));
+    }
 
     /**
      * set the share type id based on the code id
