@@ -367,11 +367,7 @@ class sandbox_named extends sandbox
      */
     function description(): ?string
     {
-        if ($this->excluded) {
-            return null;
-        } else {
             return $this->description;
-        }
     }
 
     /**

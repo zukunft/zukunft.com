@@ -581,13 +581,14 @@ class test_base
      */
     function assert_true(
         string $msg,
-        bool   $result
+        bool   $result,
+        float  $exe_max_time = self::TIMEOUT_LIMIT
     ): bool
     {
         if ($result === true) {
             return true;
         } else {
-            return $this->assert_dsp($msg, false, 'true', 'false', '');
+            return $this->assert_dsp($msg, false, 'true', 'false', '', $exe_max_time);
         }
     }
 
@@ -1260,10 +1261,10 @@ class test_base
      * @return bool true if all tests are fine
      */
     function assert_sql_update(
-        sql_creator $sc,
-        sandbox_named|sandbox_multi|CombineObject|db_object_seq_id $usr_obj,
+        sql_creator                                                     $sc,
+        sandbox_named|sandbox_multi|CombineObject|db_object_seq_id      $usr_obj,
         sandbox_named|sandbox_multi|CombineObject|db_object_seq_id|user $db_obj,
-        array $sql_type_array = []
+        array                                                           $sql_type_array = []
     ): bool
     {
         $sc_par_lst = new sql_type_list($sql_type_array);
@@ -2526,8 +2527,8 @@ class test_base
             $result = $this->write_named_del($sbx, $this->usr2);
         }
         if ($result) {
-            // ... the description will be empty for user 2
-            $result = $this->write_named_check_description($sbx, $this->usr2, '');
+            // ... for user 2 the object is excluded
+            $result = $this->write_named_check_excluded($sbx, $this->usr2);
         }
         if ($result) {
             // ... but still exist for user 1
@@ -3290,6 +3291,21 @@ class test_base
         $class = $lib->class_to_name($sbx::class);
         $test_name = $class . ' description for user ' . $usr->dsp_id() . ' is ' . $description;
         if ($this->assert($test_name, $sbx->description(), $description, $this::TIMEOUT_LIMIT_DB)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function write_named_check_excluded(sandbox_named|sandbox_link_named $sbx, user $usr): bool
+    {
+        $id = $sbx->id();
+        $sbx->set_user($usr);
+        $sbx->load_by_id($id);
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = $class . ' is excluded for user ' . $usr->dsp_id();
+        if ($this->assert_true($test_name, $sbx->is_excluded(), $this::TIMEOUT_LIMIT_DB)) {
             return true;
         } else {
             return false;

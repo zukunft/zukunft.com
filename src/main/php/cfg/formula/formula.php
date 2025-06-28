@@ -71,6 +71,7 @@ include_once DB_PATH . 'sql_creator.php';
 include_once MODEL_ELEMENT_PATH . 'element.php';
 include_once MODEL_ELEMENT_PATH . 'element_list.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
@@ -103,6 +104,7 @@ include_once SHARED_CALC_PATH . 'parameter_type.php';
 include_once SHARED_CONST_PATH . 'chars.php';
 include_once SHARED_CONST_PATH . 'formulas.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -121,6 +123,7 @@ use cfg\db\sql_type_list;
 use cfg\element\element;
 use cfg\element\element_list;
 use cfg\helper\data_object;
+use cfg\helper\db_object_seq_id;
 use cfg\log\change;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
@@ -145,6 +148,7 @@ use shared\calc\parameter_type;
 use shared\const\chars;
 use shared\const\formulas;
 use shared\enum\messages as msg_id;
+use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -762,6 +766,37 @@ class formula extends sandbox_typed
             log_err('Word with the formula name "' . $this->name() . '" missing for id ' . $this->id() . '.', 'formula->create_wrd');
         }
         return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this formula based on the given formula
+     *
+     * @param formula|CombineObject|db_object_seq_id $obj word with the values that should be updated e.g. based on the import
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(formula|CombineObject|db_object_seq_id $obj): user_message
+    {
+        $usr_msg = parent::fill($obj);
+
+        if ($obj->ref_text != null) {
+            $this->ref_text = $obj->ref_text;
+        }
+        if ($obj->usr_text != null) {
+            $this->usr_text = $obj->usr_text;
+        }
+        if ($obj->need_all_val != null) {
+            $this->need_all_val = $obj->need_all_val;
+        }
+        if ($obj->last_update != null) {
+            $this->last_update = $obj->last_update;
+        }
+
+        return $usr_msg;
     }
 
 

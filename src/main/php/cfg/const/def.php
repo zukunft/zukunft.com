@@ -121,7 +121,15 @@ class def
     // can be im- and exported
     const MAIN_CLASSES = [
         word::class,
+        //verb::class,
+        //triple::class,
         source::class,
+        //ref::class,
+        //value::class,
+        //formula::class,
+        //result::class,
+        //view::class,
+        //component::class,
         user::class
     ];
 

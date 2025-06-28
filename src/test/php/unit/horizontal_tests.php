@@ -50,7 +50,9 @@ include_once MODEL_CONST_PATH . 'def.php';
 use cfg\const\def;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
+use cfg\formula\formula;
 use cfg\user\user;
+use cfg\word\triple;
 use shared\library;
 use shared\types\api_type;
 use test\test_api;
@@ -71,6 +73,11 @@ class horizontal_tests
 
         $t->subheader($ts . 'fill');
         foreach (def::MAIN_CLASSES as $class) {
+            /*
+            if ($class == formula::class) {
+                log_debug('bugfix');
+            }
+            */
             $base_obj = $t->class_to_base_object($class);
             $filled_obj = $t->class_to_filled_object($class);
             $t->assert_fill($base_obj, $filled_obj);
