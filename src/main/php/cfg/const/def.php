@@ -126,9 +126,9 @@ class def
         source::class,
         //ref::class,
         //value::class,
-        //formula::class,
+        formula::class,
         //result::class,
-        //view::class,
+        view::class,
         //component::class,
         user::class
     ];

@@ -1558,6 +1558,8 @@ class formula extends sandbox_typed
 
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $this->type_id = $frm_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
+        } else {
+            $this->type_id = $frm_typ_cac->id(formula_type::DEFAULT);
         }
         if (key_exists(json_fields::EXPRESSION, $in_ex_json)) {
             if ($in_ex_json[json_fields::EXPRESSION] <> '') {
@@ -1657,6 +1659,9 @@ class formula extends sandbox_typed
         if (isset($this->type_id)) {
             if ($this->type_id <> $frm_typ_cac->default_id()) {
                 $vars[json_fields::TYPE_NAME] = $frm_typ_cac->code_id($this->type_id);
+            } else {
+                // unset the type that might be set by the parent object
+                unset($vars[json_fields::TYPE_NAME]);
             }
         }
         if ($this->usr_text <> '') {

@@ -326,6 +326,9 @@ class view extends sandbox_typed
      */
     function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
     {
+        // TODO use a requesting user because the object user might differ from the user who is requesting the import
+        // TODO all objects wit a code id must have a requesting user
+
         log_debug();
 
         // reset the all parameters for the view object but keep the user
@@ -349,9 +352,10 @@ class view extends sandbox_typed
         }
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($in_ex_json[json_fields::CODE_ID] != '') {
-                if ($this->user()->is_admin() or $this->user()->is_system()) {
-                    $this->code_id = $in_ex_json[json_fields::CODE_ID];
-                }
+                $this->code_id = $in_ex_json[json_fields::CODE_ID];
+                // TODO if a code id is set the object can be renamed but not be deleted any more
+                // if ($this->user()->is_admin() or $this->user()->is_system()) {
+                // }
             }
         }
 
@@ -574,6 +578,24 @@ class view extends sandbox_typed
     function export_json(bool $do_load = true): array
     {
         $vars = parent::export_json($do_load);
+
+        global $msk_typ_cac;
+
+        // TODO avoid the var overwrite be overwriting the type_name() function
+        if (isset($this->type_id)) {
+            if ($this->type_id <> $msk_typ_cac->default_id()) {
+                $vars[json_fields::TYPE_NAME] = $msk_typ_cac->code_id($this->type_id);
+            } else {
+                // unset the type that might be set by the parent object
+                unset($vars[json_fields::TYPE_NAME]);
+            }
+        }
+
+        // TODO include the code id in the api message so that the frontend can execute some behavior
+        //      include the code id also in the im- and export, but restrict the code id object changes to develop and system users
+        if ($this->code_id != null) {
+            $vars[json_fields::CODE_ID] = $this->code_id;
+        }
 
         // add the view components used
         if ($do_load) {

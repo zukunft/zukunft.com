@@ -52,6 +52,7 @@ use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use cfg\formula\formula;
 use cfg\user\user;
+use cfg\view\view;
 use cfg\word\triple;
 use shared\library;
 use shared\types\api_type;
@@ -132,6 +133,7 @@ class horizontal_tests
 
         $t->subheader($ts . 'im- and export');
         foreach (def::MAIN_CLASSES as $class) {
+            // TODO add test to im- and export objects with the owner and a user that differs from the owner
             $test_name = 'export ' . $lib->class_to_name($class) . ' lead not to an empty export json';
             $filled_obj = $t->class_to_filled_object($class);
             // remember the db id, because the db id is never included in the export
