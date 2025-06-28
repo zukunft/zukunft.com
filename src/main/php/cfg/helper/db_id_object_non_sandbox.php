@@ -55,6 +55,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
@@ -70,11 +71,33 @@ use cfg\user\user;
 use cfg\user\user_message;
 use shared\enum\change_actions;
 use shared\enum\messages as msg_id;
+use shared\json_fields;
 use shared\library;
 use Exception;
 
 class db_id_object_non_sandbox extends db_object_seq_id
 {
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * fill the vars with this db id object based on the given api json array
+     * @param array $api_json the api array e.g. from the frontend with the word values that should be mapped
+     * @return user_message if the mapping is incomplete the human-readable message what happened and how to solve it
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        if (array_key_exists(json_fields::ID, $api_json)) {
+            $this->set_id($api_json[json_fields::ID]);
+        }
+
+        return $usr_msg;
+    }
+
 
     /*
      * set and get
@@ -89,6 +112,16 @@ class db_id_object_non_sandbox extends db_object_seq_id
     function unique_value(): string
     {
         return strval($this->id());
+    }
+
+    /**
+     * set the vars of this object based on json string from the frontend object
+     * @param string $api_json
+     * @return user_message
+     */
+    function set_from_api(string $api_json): user_message
+    {
+        return $this->api_mapper(json_decode($api_json, true));
     }
 
 
@@ -423,6 +456,20 @@ class db_id_object_non_sandbox extends db_object_seq_id
     {
         log_err('key_field used but not overwritten in ' . $this::class);
         return false;
+    }
+
+    function import_mapper_user(
+        array $in_ex_json,
+        user $usr_req,
+        data_object $dto = null,
+        object $test_obj = null
+    ): user_message
+    {
+        $msg = 'import_mapper_user used but not overwritten in ' . $this::class;
+        log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_message_text($msg);
+        return $usr_msg;
     }
 
 }

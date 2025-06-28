@@ -361,16 +361,16 @@ class db_object_seq_id extends db_object
      * if the given id is zero the id is never overwritten
      * if the given id is not zero the id is set if not yet done
      *
-     * @param CombineObject|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param CombineObject|db_object_seq_id $obj object with the values that should be updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(CombineObject|db_object_seq_id $sbx): user_message
+    function fill(CombineObject|db_object_seq_id $obj): user_message
     {
         $usr_msg = new user_message();
-        if ($sbx->id() != 0) {
+        if ($obj->id() != 0) {
             if ($this->id() == 0) {
-                $this->set_id($sbx->id());
-            } elseif ($sbx->id() != $this->id()) {
+                $this->set_id($obj->id());
+            } elseif ($obj->id() != $this->id()) {
                 $usr_msg->add_id_with_vars(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
             }
         }

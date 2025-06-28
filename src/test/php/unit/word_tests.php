@@ -162,12 +162,26 @@ class word_tests
         $t->assert_json_file(new word($usr), $json_file);
 
         $t->subheader($ts . 'sync and fill');
-        $test_name = 'check if the word fill function set all database fields';
+        $test_name = 'check if the word fill function set all database fields and the view is updated';
         $wrd_imp = $t->word_filled();
         $wrd_db = $t->word();
         $wrd_db->fill($wrd_imp);
         $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
-        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [word_db::FLD_VIEW, sandbox::FLD_EXCLUDED]);
+        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [word_db::FLD_VIEW]);
+        $test_name = 'check if importing of just the admin protection does overwrite the protection in the database';
+        $wrd_db = $t->word_filled();
+        $wrd_imp = $t->word();
+        $wrd_db_after = clone $wrd_db;
+        $wrd_db_after->fill($wrd_imp);
+        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_db_after)->names();
+        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [sandbox::FLD_PROTECT]);
+        $test_name = 'check if importing just the word name does not overwrite any database fields';
+        $wrd_db = $t->word_filled();
+        $wrd_imp = $t->word_name_only();
+        $wrd_db_after = clone $wrd_db;
+        $wrd_db_after->fill($wrd_imp);
+        $non_do_fld_names = $wrd_db->db_fields_changed($wrd_db_after)->names();
+        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, []);
         $test_name = 'check if the word id is filled up';
         $wrd_imp = $t->word();
         $wrd_imp->set_id(0);

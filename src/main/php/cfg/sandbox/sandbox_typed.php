@@ -225,15 +225,15 @@ class sandbox_typed extends sandbox_named
 
     /**
      * create human-readable messages of the differences between the named sandbox objects
-     * @param sandbox_typed|CombineObject|db_object_seq_id $sbx which might be different to this named sandbox
+     * @param sandbox_typed|CombineObject|db_object_seq_id $obj which might be different to this named sandbox
      * @return user_message the human-readable messages of the differences between the named sandbox objects
      */
-    function diff_msg(sandbox_typed|CombineObject|db_object_seq_id $sbx): user_message
+    function diff_msg(sandbox_typed|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($sbx);
-        if ($this->type_id() != $sbx->type_id()) {
+        $usr_msg = parent::diff_msg($obj);
+        if ($this->type_id() != $obj->type_id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_TYPE, [
-                msg_id::VAR_TYPE => $sbx->type_name(),
+                msg_id::VAR_TYPE => $obj->type_name(),
                 msg_id::VAR_TYPE_CHK => $this->type_name(),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
@@ -268,14 +268,14 @@ class sandbox_typed extends sandbox_named
      * if the given type is not set (null) the type is not removed
      * if the given type is zero (not null) the type is removed
      *
-     * @param sandbox_typed|CombineObject|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param sandbox_typed|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(sandbox_typed|CombineObject|db_object_seq_id $sbx): user_message
+    function fill(sandbox_typed|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::fill($sbx);
-        if ($sbx->type_id() != null) {
-            $this->set_type_id($sbx->type_id());
+        $usr_msg = parent::fill($obj);
+        if ($obj->type_id() != null) {
+            $this->set_type_id($obj->type_id());
         }
         return $usr_msg;
     }

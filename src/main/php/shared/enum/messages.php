@@ -565,6 +565,11 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+
+    case USER_NO_IMPORT_PRIVILEGES = 'user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" cannot be imported due to missing privileges of the requesting user '
+        . self::VAR_START . self::VAR_USER_PROFILE . self::VAR_END;
     case USER_NO_ADD_PRIVILEGES = 'user "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . '" cannot be added due to missing privileges of the requesting user '

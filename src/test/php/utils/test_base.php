@@ -158,11 +158,13 @@ use html\verb\verb as verb_dsp;
 use html\view\view as view_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
+use html\user\user as user_dsp;
 use shared\api;
 use shared\const\users;
 use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
 use shared\enum\value_types;
+use shared\helper\CombineObject;
 use shared\library;
 use shared\const\words;
 use shared\types\api_type;
@@ -206,6 +208,7 @@ include_once TEST_UNIT_PATH . 'user_tests.php';
 include_once TEST_UNIT_PATH . 'user_list_tests.php';
 include_once TEST_UNIT_PATH . 'sandbox_tests.php';
 include_once TEST_UNIT_PATH . 'type_tests.php';
+include_once TEST_UNIT_PATH . 'horizontal_tests.php';
 include_once TEST_UNIT_PATH . 'word_tests.php';
 include_once TEST_UNIT_PATH . 'word_list_tests.php';
 include_once TEST_UNIT_PATH . 'triple_tests.php';
@@ -258,6 +261,7 @@ include_once TEST_UNIT_READ_PATH . 'user_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'job_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'change_log_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'sys_log_read_tests.php';
+include_once TEST_UNIT_READ_PATH . 'horizontal_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'word_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'word_list_read_tests.php';
 include_once TEST_UNIT_READ_PATH . 'triple_read_tests.php';
@@ -577,13 +581,14 @@ class test_base
      */
     function assert_true(
         string $msg,
-        bool   $result
+        bool   $result,
+        float  $exe_max_time = self::TIMEOUT_LIMIT
     ): bool
     {
         if ($result === true) {
             return true;
         } else {
-            return $this->assert_dsp($msg, false, 'true', 'false', '');
+            return $this->assert_dsp($msg, false, 'true', 'false', '', $exe_max_time);
         }
     }
 
@@ -882,7 +887,7 @@ class test_base
      * @param db_object_seq_id|sandbox_value $dbo the given backend object
      * @return false|db_object_dsp the corresponding frontend object
      */
-    private function frontend_obj_from_backend_object(db_object_seq_id|sandbox_value $dbo): false|db_object_dsp
+    public function frontend_obj_from_backend_object(db_object_seq_id|sandbox_value $dbo): false|db_object_dsp
     {
         return match ($dbo::class) {
             word::class => new word_dsp(),
@@ -896,6 +901,7 @@ class test_base
             result::class => new result_dsp(),
             view::class => new view_dsp(),
             component::class => new component_dsp(),
+            user::class => new user_dsp(),
             default => false,
         };
     }
@@ -1249,12 +1255,17 @@ class test_base
      * for all allowed SQL database dialects
      *
      * @param sql_creator $sc a sql creator object that can be empty
-     * @param object $usr_obj the user sandbox object e.g. a word
-     * @param object $db_obj must be the same object as the $usr_obj but with the values from the database before the update
+     * @param sandbox_named|sandbox_multi|CombineObject|db_object_seq_id $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_multi|CombineObject|db_object_seq_id|user $db_obj must be the same object as the $usr_obj but with the values from the database before the update
      * @param array $sql_type_array the parameters for the sql statement creation
      * @return bool true if all tests are fine
      */
-    function assert_sql_update(sql_creator $sc, object $usr_obj, object $db_obj, array $sql_type_array = []): bool
+    function assert_sql_update(
+        sql_creator                                                     $sc,
+        sandbox_named|sandbox_multi|CombineObject|db_object_seq_id      $usr_obj,
+        sandbox_named|sandbox_multi|CombineObject|db_object_seq_id|user $db_obj,
+        array                                                           $sql_type_array = []
+    ): bool
     {
         $sc_par_lst = new sql_type_list($sql_type_array);
         // check the Postgres query syntax
@@ -2144,6 +2155,23 @@ class test_base
     /**
      * check the object loading by id and name
      *
+     * @param sandbox_named|sandbox_link_named|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param int|string $id the id of the object if not 1
+     * @return bool the load object to use it for more tests
+     */
+    function assert_load_by_id(sandbox_named|sandbox_link_named|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
+    {
+        // check the loading via id and check if the id has been mapped
+        $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
+        $usr_obj->reset();
+        $usr_obj->set_id(0);
+        $usr_obj->load_by_id($id);
+        return $this->assert($test_name, $usr_obj->id(), $id);
+    }
+
+    /**
+     * check the object loading by id and name
+     *
      * @param sandbox_named|sandbox_link_named $usr_obj the user sandbox object e.g. a word
      * @param string $name the name of the object
      * @param int $id the id of the object if not 1
@@ -2499,8 +2527,8 @@ class test_base
             $result = $this->write_named_del($sbx, $this->usr2);
         }
         if ($result) {
-            // ... the description will be empty for user 2
-            $result = $this->write_named_check_description($sbx, $this->usr2, '');
+            // ... for user 2 the object is excluded
+            $result = $this->write_named_check_excluded($sbx, $this->usr2);
         }
         if ($result) {
             // ... but still exist for user 1
@@ -3269,6 +3297,21 @@ class test_base
         }
     }
 
+    private function write_named_check_excluded(sandbox_named|sandbox_link_named $sbx, user $usr): bool
+    {
+        $id = $sbx->id();
+        $sbx->set_user($usr);
+        $sbx->load_by_id($id);
+        $lib = new library();
+        $class = $lib->class_to_name($sbx::class);
+        $test_name = $class . ' is excluded for user ' . $usr->dsp_id();
+        if ($this->assert_true($test_name, $sbx->is_excluded(), $this::TIMEOUT_LIMIT_DB)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private function write_link_update_order_nbr(formula_link|component_link $lnk, user $usr, int $new_order_nbr): bool
     {
         $id = $lnk->id();
@@ -3472,6 +3515,26 @@ class test_base
         $sbx->reset();
         $api_json = $sbx->api_json([api_type::TEST_MODE]);
         return $this->assert($test_name, $api_json, '{"id":0}');
+    }
+
+    /**
+     * check if the filling up an almost empty object matches the filled object
+     * @param sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $empty the object with almost all vars null
+     * @param sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $filled the object filled with all vars
+     * @return bool true if the api message matches
+     */
+    function assert_fill(
+        sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $empty,
+        sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $filled
+    ): bool
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($empty::class);
+        $test_name = $class . ' fill empty object and test via api json';
+        $original_json = $filled->api_json([api_type::TEST_MODE]);
+        $empty->fill($filled);
+        $filled_json = $empty->api_json([api_type::TEST_MODE]);
+        return $this->assert_json_string($test_name, $filled_json, $original_json);
     }
 
 
@@ -3814,6 +3877,7 @@ class test_base
         echo $this->error_counter . ' test errors';
         echo "\n";
         echo $errors . ' internal errors';
+        echo "\n";
     }
 
     /**

@@ -106,6 +106,7 @@ use cfg\formula\formula_type;
 use cfg\formula\formula_type_list;
 use cfg\group\group;
 use cfg\group\group_list;
+use cfg\helper\db_id_object_non_sandbox;
 use cfg\helper\type_list;
 use cfg\helper\type_object;
 use cfg\language\language;
@@ -149,6 +150,7 @@ use cfg\result\result_list;
 use cfg\result\results;
 use cfg\sandbox\protection_type_list;
 use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_named;
 use cfg\sandbox\share_type_list;
 use cfg\system\job;
 use cfg\system\job_list;
@@ -493,6 +495,17 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return user used for unit testing with all vars set
+     */
+    function user_filled(): user
+    {
+        $usr = new user();
+        $usr->set_name(users::TEST_USER_NAME);
+        $usr->ip_addr = users::TEST_USER_IP;
+        return $usr;
+    }
+
+    /**
      * @return user a user used for unit testing with the test profile
      */
     function user_sys_test(): user
@@ -512,6 +525,102 @@ class create_test_objects extends test_base
         $usr->set(users::SYSTEM_ADMIN_ID, users::SYSTEM_ADMIN_NAME, users::SYSTEM_ADMIN_EMAIL);
         $usr->set_profile(user_profiles::ADMIN);
         return $usr;
+    }
+
+    /**
+     * get the base test object related to the given class
+     * @param string $class the given main class name
+     * @return sandbox|db_id_object_non_sandbox wit only a few vars filled
+     */
+    function class_to_base_object(string $class): sandbox|db_id_object_non_sandbox
+    {
+        $obj = null;
+        switch ($class) {
+            case user::class;
+                $obj = $this->user_ip();
+                break;
+            case word::class;
+                $obj = $this->word();
+                break;
+            case verb::class;
+                $obj = $this->verb();
+                break;
+            case triple::class;
+                $obj = $this->triple();
+                break;
+            case source::class;
+                $obj = $this->source();
+                break;
+            case ref::class;
+                $obj = $this->reference();
+                break;
+            case value::class;
+                $obj = $this->value();
+                break;
+            case formula::class;
+                $obj = $this->formula();
+                break;
+            case result::class;
+                $obj = $this->result();
+                break;
+            case view::class;
+                $obj = $this->view();
+                break;
+            case component::class;
+                $obj = $this->component();
+                break;
+            default:
+                log_err('no base object defined for ' . $class);
+        }
+        return $obj;
+    }
+
+    /**
+     * get the filled test object related to the given class
+     * @param string $class the given main class name
+     * @return sandbox|db_id_object_non_sandbox wit only a few vars filled
+     */
+    function class_to_filled_object(string $class): sandbox|db_id_object_non_sandbox
+    {
+        $obj = null;
+        switch ($class) {
+            case user::class;
+                $obj = $this->user_filled();
+                break;
+            case word::class;
+                $obj = $this->word_filled();
+                break;
+            case verb::class;
+                $obj = $this->verb_filled();
+                break;
+            case triple::class;
+                $obj = $this->triple_filled();
+                break;
+            case source::class;
+                $obj = $this->source_filled();
+                break;
+            case ref::class;
+                $obj = $this->reference_plus();
+                break;
+            case value::class;
+                $obj = $this->value_16_filled();
+                break;
+            case formula::class;
+                $obj = $this->formula_filled();
+                break;
+            case result::class;
+                $obj = $this->result_main_filled();
+                break;
+            case view::class;
+                $obj = $this->view_filled();
+                break;
+            case component::class;
+                $obj = $this->component_filled();
+                break;
+            default:
+                log_err('no filled object defined for ' . $class);
+        }
+        return $obj;
     }
 
     /**
@@ -1113,6 +1222,17 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return verb the default verb with all vars set
+     */
+    function verb_filled(): verb
+    {
+        $vrb = new verb(verbs::NOT_SET_ID, verbs::NOT_SET_NAME, verbs::NOT_SET);
+        $vrb->set_description(verbs::NOT_SET_COM);
+        $vrb->set_user($this->usr1);
+        return $vrb;
+    }
+
+    /**
      * @return verb a standard verb with user null
      */
     function verb_is(): verb
@@ -1186,6 +1306,16 @@ class create_test_objects extends test_base
         $trp->set_type(phrase_type_shared::MATH_CONST);
         global $ptc_typ_cac;
         $trp->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
+        return $trp;
+    }
+
+    /**
+     * @return triple with all fields set and a reserved test name for testing the db write function
+     */
+    function triple_filled(): triple
+    {
+        $trp = $this->triple();
+        $trp->exclude();
         return $trp;
     }
 

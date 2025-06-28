@@ -2,8 +2,12 @@
 
 /*
 
-    shared/types/api_type.php - options of the api messages
-    -------------------------
+    test/unit_read/horizontal_read_tests.php - database read testing of the functions that all main classes have
+    ----------------------------------------
+
+    the tests for all main objects include
+    - load: if the object can be loaded from the database which includes testing the row_mapper
+
 
 
     This file is part of zukunft.com - calc with words
@@ -23,29 +27,35 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Copyright (c) 1995-2022 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
-  
+
 */
 
-namespace shared\types;
+namespace unit_read;
 
-enum api_type: string
+include_once MODEL_CONST_PATH . 'def.php';
+
+use cfg\const\def;
+use test\test_cleanup;
+
+class horizontal_read_tests
 {
+    function run(test_cleanup $t): void
+    {
 
-    // include the phrases in the value list api message
-    case INCL_PHRASES = 'incl_phrases';
+        // start the test section (ts)
+        $ts = 'db read horizontal ';
+        $t->header($ts);
 
-    // do not fill up the group id to the full key length
-    case NO_KEY_FILL = 'no_key_fill';
+        $t->subheader($ts . 'load');
+        foreach (def::MAIN_CLASSES as $class) {
+            $base_obj = $t->class_to_base_object($class);
+            $t->assert_load_by_id($base_obj, $base_obj->id());
+        }
 
-    // internal parameter for unit testing to switch off the database loading of missing objects
-    // and ignore the excluded flag so include all fields also for excluded
-    case TEST_MODE = 'test_mode';
-
-    // include the message header
-    case HEADER = 'header';
+    }
 
 }

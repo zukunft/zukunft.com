@@ -60,6 +60,7 @@ namespace cfg\const;
 //include_once MODEL_VIEW_PATH . 'view_link_type.php';
 //include_once MODEL_RESULT_PATH . 'result.php';
 //include_once MODEL_USER_PATH . 'user_profile.php';
+//include_once MODEL_USER_PATH . 'user.php';
 //include_once MODEL_USER_PATH . 'user_type.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
@@ -93,6 +94,7 @@ use cfg\system\job_type;
 use cfg\system\sys_log_status;
 use cfg\system\sys_log_type;
 use cfg\system\system_time_type;
+use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\user\user_official_type;
@@ -112,6 +114,24 @@ class def
     /*
      * classes
      */
+
+    // the main classes that have a
+    // corresponding frontend object,
+    // a database table and
+    // can be im- and exported
+    const MAIN_CLASSES = [
+        word::class,
+        //verb::class,
+        //triple::class,
+        source::class,
+        //ref::class,
+        //value::class,
+        //formula::class,
+        //result::class,
+        //view::class,
+        //component::class,
+        user::class
+    ];
 
     // type classes that have a csv file for the initial load
     const BASE_CODE_LINK_FILES = [

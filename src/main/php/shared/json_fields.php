@@ -277,6 +277,7 @@ class json_fields
     const ASSIGNED = 'assigned';
 
     // for the user object
+    const IP_ADDR = 'ip_address';
     const EMAIL = 'email';
     const FIRST_NAME = 'first_name';
     const LAST_NAME = 'last_name';

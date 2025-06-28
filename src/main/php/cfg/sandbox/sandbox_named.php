@@ -252,7 +252,11 @@ class sandbox_named extends sandbox
         $vars = parent::api_json_array($typ_lst, $usr);
 
         $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
+        if ($typ_lst->test_mode()) {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        } else {
+            $vars[json_fields::DESCRIPTION] = $this->description();
+        }
 
         return $vars;
     }
@@ -363,11 +367,7 @@ class sandbox_named extends sandbox
      */
     function description(): ?string
     {
-        if ($this->excluded) {
-            return null;
-        } else {
             return $this->description;
-        }
     }
 
     /**
@@ -395,17 +395,17 @@ class sandbox_named extends sandbox
      * if the given description is not set (null) the description is not removed
      * if the given description is an empty string (not null) the description is removed
      *
-     * @param sandbox_named|CombineObject|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param sandbox_named|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(sandbox_named|CombineObject|db_object_seq_id $sbx): user_message
+    function fill(sandbox_named|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::fill($sbx);
-        if ($sbx->name() != null) {
-            $this->set_name($sbx->name());
+        $usr_msg = parent::fill($obj);
+        if ($obj->name() != null) {
+            $this->set_name($obj->name());
         }
-        if ($sbx->description() != null) {
-            $this->set_description($sbx->description());
+        if ($obj->description() != null) {
+            $this->set_description($obj->description());
         }
         return $usr_msg;
     }
@@ -558,15 +558,15 @@ class sandbox_named extends sandbox
 
     /**
      * create human-readable messages of the differences between the named sandbox objects
-     * @param sandbox_named|CombineObject|db_object_seq_id $sbx which might be different to this named sandbox
+     * @param sandbox_named|CombineObject|db_object_seq_id $obj which might be different to this named sandbox
      * @return user_message the human-readable messages of the differences between the named sandbox objects
      */
-    function diff_msg(sandbox_named|CombineObject|db_object_seq_id $sbx): user_message
+    function diff_msg(sandbox_named|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($sbx);
-        if ($this->name() != $sbx->name()) {
+        $usr_msg = parent::diff_msg($obj);
+        if ($this->name() != $obj->name()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_NAME, [
-                msg_id::VAR_NAME => $sbx->name(),
+                msg_id::VAR_NAME => $obj->name(),
                 msg_id::VAR_NAME_CHK => $this->name(),
                 msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
             ]);

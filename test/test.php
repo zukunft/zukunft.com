@@ -77,6 +77,3 @@ if ($start_usr->id() > 0) {
 
 // Closing connection
 prg_end($db_con, false);
-
-echo ' ' . "\n";
-echo 'zukunft.com test finished' . "\n";

@@ -330,6 +330,7 @@ class all_unit_tests extends test_cleanup
         (new type_tests)->run($this); // TODO add assert_api_to_dsp
 
         // do the user object unit tests
+        (new horizontal_tests)->run($this);
         (new word_tests)->run($this);
         (new word_list_tests)->run($this);
         (new verb_tests)->run($this);

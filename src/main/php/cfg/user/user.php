@@ -81,6 +81,7 @@ include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 //include_once MODEL_IMPORT_PATH . 'import_file.php';
 include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
@@ -99,6 +100,7 @@ include_once MODEL_USER_PATH . 'user_type.php';
 //include_once MODEL_VIEW_PATH . 'view_sys_list.php';
 //include_once MODEL_PHRASE_PATH . 'term.php';
 include_once SHARED_HELPER_PATH . 'Config.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
@@ -118,6 +120,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\data_object;
 use cfg\helper\db_id_object_non_sandbox;
 use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
@@ -136,11 +139,11 @@ use shared\enum\change_actions;
 use shared\enum\change_tables;
 use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
+use shared\helper\CombineObject;
 use shared\helper\Config as shared_config;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
-use Exception;
 
 class user extends db_id_object_non_sandbox
 {
@@ -331,9 +334,106 @@ class user extends db_id_object_non_sandbox
         return $result;
     }
 
-    // TODO test api_mapper
+    /**
+     * fill this db id object vars with the values from the given api json array
+     * @param array $api_json the api array e.g. from the frontend with the word values that should be mapped
+     * @return user_message if the mapping is incomplete the human-readable message what happened and how to solve it
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        global $usr;
 
-    // TODO add the import mapper
+        $usr_msg = parent::api_mapper($api_json);
+
+        // map the fields that are common for import and api json messages
+        $this->json_mapper($api_json, $usr, $usr_msg);
+
+        return $usr_msg;
+    }
+
+
+    /**
+     * set the vars of this user object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message
+     */
+    function import_mapper_user(
+        array       $in_ex_json,
+        user        $usr_req,
+        data_object $dto = null,
+        object      $test_obj = null
+    ): user_message
+    {
+        // set the object vars based on the json
+        $usr_msg = new user_message();
+
+        // map the fields that are common for import and api json messages
+        $this->json_mapper($in_ex_json, $usr_req, $usr_msg);
+
+        // the code id should never be changed via api
+        if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
+            // only system and admin users are allowed to change the code od
+            if ($usr_req->is_admin() or $usr_req->is_system()) {
+                $this->code_id = $in_ex_json[json_fields::CODE_ID];
+            }
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * the common mapping part for the api and import mapper
+     *
+     * @param array $json
+     * @param user $usr_req
+     * @param user_message $usr_msg
+     * @return void return value is not needed because the messages are written to the given user_message object
+     */
+    private function json_mapper(
+        array        $json,
+        user         $usr_req,
+        user_message $usr_msg
+    ): void
+    {
+        global $usr_pro_cac;
+
+        if (key_exists(json_fields::NAME, $json)) {
+            $this->name = $json[json_fields::NAME];
+        }
+        if (key_exists(json_fields::IP_ADDR, $json)) {
+            $this->ip_addr = $json[json_fields::IP_ADDR];
+        }
+        // the password is not to be expected to be imported or exported
+        if (key_exists(json_fields::DESCRIPTION, $json)) {
+            $this->description = $json[json_fields::DESCRIPTION];
+        }
+        if (key_exists(json_fields::PROFILE, $json)) {
+            $profile_id_to_add = $usr_pro_cac->id($json[json_fields::PROFILE]);
+            if ($usr_req->can_set_profile($profile_id_to_add)) {
+                $this->profile_id = $profile_id_to_add;
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::USER_NO_IMPORT_PRIVILEGES, [
+                    msg_id::VAR_USER_NAME => $this->name(),
+                    msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
+                ]);
+            }
+        }
+        if (key_exists(json_fields::EMAIL, $json)) {
+            $this->email = $json[json_fields::EMAIL];
+        }
+        if (key_exists(json_fields::FIRST_NAME, $json)) {
+            $this->first_name = $json[json_fields::FIRST_NAME];
+        }
+        if (key_exists(json_fields::LAST_NAME, $json)) {
+            $this->last_name = $json[json_fields::LAST_NAME];
+        }
+
+    }
+
 
     /*
      * api
@@ -406,10 +506,10 @@ class user extends db_id_object_non_sandbox
      */
 
     /**
-     * set the most often used reference vars with one set statement
-     * @param int $id mainly for test creation the database id of the reference
+     * set the most often used user vars with one set statement
+     * @param int $id mainly for test creation the database id of the user
      */
-    function set(int $id = 0, string $name = '', string $email = '', string $code_id = ''): void
+    function set(int $id = 0, string $name = '', string $email = ''): void
     {
         $this->set_id($id);
         $this->set_name($name);
@@ -1044,7 +1144,7 @@ class user extends db_id_object_non_sandbox
      * @param user $usr_req the user who has request the user update
      * @return bool true if the logged-in user is the user itself or an admin
      */
-    function can_change(user $usr_req): bool
+    function can_be_changed_by(user $usr_req): bool
     {
         $can_change = false;
 
@@ -1060,6 +1160,64 @@ class user extends db_id_object_non_sandbox
         }
 
         return $can_change;
+    }
+
+    /**
+     * check if the requesting user is permitted to do any changes on the user
+     * this function is part of the profile list because the profile list is already a cached object
+     *
+     * @param user $usr the user that is expected to be changed
+     * @return bool true if the user can be changes
+     */
+    function can_change(user $usr): bool
+    {
+        $result = false;
+        // the user can change in general its own parameters
+        if ($usr->id() != 0 and $usr->id() == $this->id()) {
+            $result = true;
+        }
+        // the system users can always change other users
+        if ($this->is_system()) {
+            $result = true;
+        }
+        // the admin users can change other users ...
+        if ($this->is_admin()) {
+            // ... but not system users
+            if (!$usr->is_system()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * check if the user is allowed to permit other user to have the given profile
+     * this function is part of the profile list because the profile list is already a cached object
+     * TODO add the missing profiles and use the profile level as a second line of defence
+     *
+     * @param int $profile_id the profile that should be set
+     * @return bool
+     */
+    function can_set_profile(int $profile_id): bool
+    {
+        $result = false;
+
+        global $usr_pro_cac;
+
+        $profile = $usr_pro_cac->get($profile_id);
+        // the system users can assign all profiles
+        if ($this->is_system()) {
+            $result = true;
+        }
+        // the admin users can change other users ...
+        if ($this->is_admin()) {
+            // ... but not system users
+            // if (!$profile->is_system()) {
+            if (!$profile->is_type(user_profiles::SYSTEM)) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
 
@@ -1082,10 +1240,15 @@ class user extends db_id_object_non_sandbox
         $profile_id = $usr_req->profile_id;
 
         log_debug();
-        $usr_msg = parent::import_db_obj($this, $test_obj);
 
         // reset all parameters of this user object
         $this->reset();
+
+        $usr_msg = $this->import_mapper_user($json_obj, $usr_req);
+
+        // reset all parameters of this user object
+        $this->reset();
+
         foreach ($json_obj as $key => $value) {
             if ($key == json_fields::NAME) {
                 $this->name = $value;
@@ -1166,6 +1329,55 @@ class user extends db_id_object_non_sandbox
 
 
     /*
+     * modify
+     */
+
+    /**
+     * fill this seq id object based on the given object
+     * if the given id is zero the id is never overwritten
+     * if the given id is not zero the id is set if not yet done
+     *
+     * @param user|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(user|CombineObject|db_object_seq_id $obj): user_message
+    {
+        $usr_msg = parent::fill($obj);
+        if ($obj->name() != null) {
+            $this->set_name($obj->name());
+        }
+        if ($obj->ip_addr != null) {
+            $this->ip_addr = $obj->ip_addr;
+        }
+        if ($obj->password != null) {
+            $this->password = $obj->password;
+        }
+        if ($obj->description != null) {
+            $this->description = $obj->description;
+        }
+        if ($obj->code_id != null) {
+            $this->code_id = $obj->code_id;
+        }
+        if ($obj->profile_id != null) {
+            $this->profile_id = $obj->profile_id;
+        }
+        if ($obj->type_id != null) {
+            $this->type_id = $obj->type_id;
+        }
+        if ($obj->email != null) {
+            $this->email = $obj->email;
+        }
+        if ($obj->first_name != null) {
+            $this->first_name = $obj->first_name;
+        }
+        if ($obj->last_name != null) {
+            $this->last_name = $obj->last_name;
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * information
      */
 
@@ -1177,7 +1389,7 @@ class user extends db_id_object_non_sandbox
         // TODO just read the change log
         //      and because the change log is expected to be complete
         //      if the change log for this user is empty
-        //      it can be assumed that the user has never done any relevant chnage
+        //      it can be assumed that the user has never done any relevant change
         return true;
     }
 
@@ -1711,7 +1923,7 @@ class user extends db_id_object_non_sandbox
         // always return a user message and if everything is fine, it is just empty
         $usr_msg = new user_message();
 
-        if ($this->can_change($usr_req)) {
+        if ($this->can_be_changed_by($usr_req)) {
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
 

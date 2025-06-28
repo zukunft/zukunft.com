@@ -335,7 +335,7 @@ class library
     function escape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
     {
         // avoid using escaped var makers (probably not 100% correct)
-        return str_replace($chr_to_esc,$esc_chr . $chr_to_esc, $txt_to_esc);
+        return str_replace($chr_to_esc, $esc_chr . $chr_to_esc, $txt_to_esc);
     }
 
     function unescape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
@@ -2140,6 +2140,16 @@ class library
         return $result;
     }
 
+    function class_to_resource_path(string $class): string
+    {
+        // TODO avoid and remove exception
+        if ($class == source::class) {
+            $class = ref::class;
+        }
+        $name = $this->class_to_name($class);
+        return 'db/' . $name . '/';
+    }
+
     /**
      * get the id field related to a class
      * TODO avoid these exception
@@ -2244,9 +2254,9 @@ class library
     function class_is_sandbox(string $class): bool
     {
         $result = false;
-        if (in_array($class, def::SANDBOX_CLASSES)){
-        $result = true;
-    }
+        if (in_array($class, def::SANDBOX_CLASSES)) {
+            $result = true;
+        }
         return $result;
     }
 

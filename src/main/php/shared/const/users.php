@@ -96,6 +96,9 @@ class users
     // system testing
     const TEST_NAME = 'standard user view for all users';
     const TEST_IP = '66.249.64.95'; // used to check the blocking of an IP address
+
+    // a test user for db write tests
+    const TEST_USER_NAME = 'zukunft.com system write test user';
     // invalid address used to test creating a new user
     const TEST_USER_IP = '258.257.256.255';
 
@@ -105,6 +108,7 @@ class users
         self::SYSTEM_ADMIN_NAME,
         self::LOCALHOST_NAME,
         self::TEST_NAME,
+        self::TEST_USER_NAME,
     );
 
     // array of usernames that used for db read testing and that should not be renamed

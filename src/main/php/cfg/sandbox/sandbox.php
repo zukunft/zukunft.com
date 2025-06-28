@@ -252,7 +252,7 @@ class sandbox extends db_object_seq_id_user
     private ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
     private ?int $share_id = null;      // id for public, personal, group or private
     private ?int $protection_id = null; // id for no, user, admin or full protection
-    public bool $excluded = false;     // the user sandbox for object is implemented, but can be switched off for the complete instance
+    public ?bool $excluded = null;     // the user sandbox for object is implemented, but can be switched off for the complete instance
     // but for calculation, use and display an excluded should not be used
     // when loading the word and saving the excluded field is handled as a normal user sandbox field,
     // but for calculation, use and display an excluded should not be used
@@ -402,6 +402,7 @@ class sandbox extends db_object_seq_id_user
         $this->reset();
         $this->set_user($usr);
 
+        // TODO use the array_key_exists function because it is expected to be faster than looping over the array several times
         foreach ($api_json as $key => $value) {
 
             if ($key == json_fields::ID) {
@@ -435,6 +436,9 @@ class sandbox extends db_object_seq_id_user
 
         $usr_msg = parent::import_db_obj($this, $test_obj);
 
+        if (key_exists(json_fields::EXCLUDED, $in_ex_json)) {
+            $this->excluded = $in_ex_json[json_fields::EXCLUDED];
+        }
         if (key_exists(json_fields::SHARE, $in_ex_json)) {
             $this->share_id = $shr_typ_cac->id($in_ex_json[json_fields::SHARE]);
             if ($this->share_id < 0) {
@@ -476,9 +480,12 @@ class sandbox extends db_object_seq_id_user
         $vars = [];
 
         $vars[json_fields::ID] = $this->id();
-        if ($this->is_excluded()) {
+        if ($this->is_excluded() and !$typ_lst->test_mode()) {
             $vars[json_fields::EXCLUDED] = true;
         } else {
+            if ($this->is_excluded() and $typ_lst->test_mode()) {
+                $vars[json_fields::EXCLUDED] = true;
+            }
             if ($this->share_id != null) {
                 $vars[json_fields::SHARE] = $this->share_id;
             }
@@ -518,6 +525,11 @@ class sandbox extends db_object_seq_id_user
             $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
         }
 
+        // add the exclusions
+        if ($this->is_exclusion_set()) {
+            $vars[json_fields::EXCLUDED] = $this->excluded;
+        }
+
         return $vars;
     }
 
@@ -525,6 +537,16 @@ class sandbox extends db_object_seq_id_user
     /*
      * set and get
      */
+
+    /**
+     * set the vars of this object based on json string from the frontend object
+     * @param string $api_json
+     * @return user_message
+     */
+    function set_from_api(string $api_json): user_message
+    {
+        return $this->api_mapper(json_decode($api_json, true));
+    }
 
     /**
      * set the share type id based on the code id
@@ -594,7 +616,24 @@ class sandbox extends db_object_seq_id_user
      */
     function is_excluded(): bool
     {
-        return $this->excluded;
+        if ($this->excluded == null) {
+            // by default an object is not excluded
+            return false;
+        } else {
+            return $this->excluded;
+        }
+    }
+
+    /**
+     * @return bool true if the excluded field is set
+     */
+    function is_exclusion_set(): bool
+    {
+        if ($this->excluded == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     function set_owner_id(?int $id): void
@@ -648,36 +687,36 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * create human-readable messages of the differences between the sandbox objects
-     * @param CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $sbx which might be different to this sandbox object
+     * @param CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $obj which might be different to this sandbox object
      * @return user_message the human-readable messages of the differences between the sandbox objects
      */
-    function diff_msg(CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $sbx): user_message
+    function diff_msg(CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($sbx);
-        if ($this->owner_id() != $sbx->owner_id()) {
+        $usr_msg = parent::diff_msg($obj);
+        if ($this->owner_id() != $obj->owner_id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_OWNER, [
-                msg_id::VAR_USER => $sbx->owner()->dsp_id(),
+                msg_id::VAR_USER => $obj->owner()->dsp_id(),
                 msg_id::VAR_USER_CHK => $this->owner()->dsp_id(),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
-        if ($this->share_id() != $sbx->share_id()) {
+        if ($this->share_id() != $obj->share_id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
-                msg_id::VAR_SHARE => $sbx->share_type_name(),
+                msg_id::VAR_SHARE => $obj->share_type_name(),
                 msg_id::VAR_SHARE_CHK => $this->share_type_name(),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
-        if ($this->protection_id() != $sbx->protection_id()) {
+        if ($this->protection_id() != $obj->protection_id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
-                msg_id::VAR_PROTECT => $sbx->protection_type_name(),
+                msg_id::VAR_PROTECT => $obj->protection_type_name(),
                 msg_id::VAR_PROTECT_CHK => $this->protection_type_name(),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
-        if ($this->is_excluded() != $sbx->is_excluded()) {
+        if ($this->is_excluded() != $obj->is_excluded()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_EXCLUSION, [
-                msg_id::VAR_EXCLUDE => $sbx->is_excluded(),
+                msg_id::VAR_EXCLUDE => $obj->is_excluded(),
                 msg_id::VAR_EXCLUDE_CHK => $this->is_excluded(),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
@@ -695,20 +734,24 @@ class sandbox extends db_object_seq_id_user
      * if the given type is not set (null) the type is not removed
      * if the given type is zero (not null) the type is removed
      *
-     * @param sandbox|CombineObject|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param sandbox|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(sandbox|CombineObject|db_object_seq_id $sbx): user_message
+    function fill(sandbox|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::fill($sbx);
-        if ($sbx->owner_id() != null) {
-            $this->set_owner_id($sbx->owner_id());
+        $usr_msg = parent::fill($obj);
+        // e.g. if the import contains the information that this object is excluded for one user this excluded setting should also be imported
+        if ($obj->is_exclusion_set()) {
+            $this->set_excluded($obj->is_excluded());
         }
-        if ($sbx->share_id() != null) {
-            $this->set_share_id($sbx->share_id());
+        if ($obj->owner_id() != null) {
+            $this->set_owner_id($obj->owner_id());
         }
-        if ($sbx->protection_id() != null) {
-            $this->set_protection_id($sbx->protection_id());
+        if ($obj->share_id() != null) {
+            $this->set_share_id($obj->share_id());
+        }
+        if ($obj->protection_id() != null) {
+            $this->set_protection_id($obj->protection_id());
         }
         return $usr_msg;
     }

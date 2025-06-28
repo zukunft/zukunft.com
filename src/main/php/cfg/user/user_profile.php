@@ -35,20 +35,15 @@ namespace cfg\user;
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
 
 use cfg\helper\type_object;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
+use shared\enum\user_profiles;
 
 class user_profile extends type_object
 {
-    // list of the user profiles that have a coded functionality
-    const NORMAL = "normal";
-    const ADMIN = "admin";
-    const DEV = "dev";       // reserved for developers which are supposed to code the verb functionality
-    const TEST = "test";     // reserved for the system test user e.g. for internal unit and integration tests
-    const SYSTEM = "system"; // reserved for the system user which is executing cleanup tasks
-
 
     /*
      * database link
@@ -66,5 +61,15 @@ class user_profile extends type_object
     const FLD_LST_EXTRA = array(
         [self::FLD_LEVEL, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_LEVEL_COM],
     );
+
+
+    /*
+     * information
+     */
+
+    function is_system(): bool
+    {
+        return $this->is_type(user_profiles::SYSTEM);
+    }
 
 }

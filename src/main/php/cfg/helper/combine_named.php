@@ -213,6 +213,14 @@ class combine_named extends combine_object
     }
 
     /**
+     * @return bool true if the excluded field is set
+     */
+    function is_exclusion_set(): bool
+    {
+        return $this->obj()->is_exclusion_set();
+    }
+
+    /**
      * @param string|null $plural the code id of the target protection or null to remove the parent overwrite
      * @return void
      */

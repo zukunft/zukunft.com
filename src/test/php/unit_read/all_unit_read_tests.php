@@ -81,6 +81,7 @@ class all_unit_read_tests extends all_unit_tests
         (new user_read_tests)->run($this);
         (new protection_read_tests)->run($this);
         (new share_read_tests)->run($this);
+        (new horizontal_read_tests)->run($this);
         (new word_read_tests)->run($this);
         (new word_list_read_tests)->run($this);
         (new verb_read_tests)->run($this);
