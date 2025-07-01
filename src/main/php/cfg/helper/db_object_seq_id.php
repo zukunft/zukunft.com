@@ -362,9 +362,10 @@ class db_object_seq_id extends db_object
      * if the given id is not zero the id is set if not yet done
      *
      * @param CombineObject|db_object_seq_id $obj object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(CombineObject|db_object_seq_id $obj): user_message
+    function fill(CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = new user_message();
         if ($obj->id() != 0) {

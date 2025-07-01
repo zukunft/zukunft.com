@@ -92,6 +92,7 @@ include_once MODEL_LOG_PATH . 'change_log.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 //include_once MODEL_REF_PATH . 'source.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
+//include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_USER_PATH . 'user_db.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
 include_once MODEL_USER_PATH . 'user_type.php';
@@ -359,7 +360,7 @@ class user extends db_id_object_non_sandbox
      * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_mapper_user(
         array       $in_ex_json,
@@ -1220,6 +1221,89 @@ class user extends db_id_object_non_sandbox
         return $result;
     }
 
+    /**
+     * check if the user is allowed to set the type
+     *
+     * @return bool true if the code id of the object can be changes
+     */
+    function can_set_type_id(): bool
+    {
+        $result = false;
+
+        // the system users can always change the message id
+        if ($this->is_system()) {
+            $result = true;
+        }
+        // ... and developers
+        if ($this->is_developer()) {
+            $result = true;
+        }
+        // ... and administrators
+        if ($this->is_admin()) {
+            $result = true;
+        }
+        // ... and even normal unique users are allowed to change the type because a unique log is possible
+        if ($this->is_unique()) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * check if the user is allowed to set the code id of an object
+     * the system upgrade user is allowed the change the object code id by importing a json message
+     * if the code id of the object is changed the change should be written to the database
+     * so the main check is on setting the code id by the import mapper
+     * developers can change the code id via json import in the development environment
+     * without a deployment for faster testing
+     *
+     * @return bool true if the code id of the object can be changes
+     */
+    function can_set_code_id(): bool
+    {
+        $result = false;
+
+        // the system users can always change the code id
+        if ($this->is_system()) {
+            $result = true;
+        }
+        // the development users can change the code id ...
+        if ($this->is_developer()) {
+            // TODO review
+            // ... but only in the deployed development branch
+            // if (!$env->is_development()) {
+            $result = true;
+            // }
+        }
+        return $result;
+    }
+
+    /**
+     * check if the user is allowed to set the user interface message code id of an object
+     * the system users, developer and administrators are allowed to change
+     * because this might be used for online corrections that are not critical
+     *
+     * @return bool true if the code id of the object can be changes
+     */
+    function can_set_ui_msg_id(): bool
+    {
+        $result = false;
+
+        // the system users can always change the message id
+        if ($this->is_system()) {
+            $result = true;
+        }
+        // ... and developers
+        if ($this->is_developer()) {
+            $result = true;
+        }
+        // ... and administrators
+        if ($this->is_admin()) {
+            $result = true;
+        }
+        return $result;
+    }
+
 
     /*
      * im- and export
@@ -1338,11 +1422,12 @@ class user extends db_id_object_non_sandbox
      * if the given id is not zero the id is set if not yet done
      *
      * @param user|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(user|CombineObject|db_object_seq_id $obj): user_message
+    function fill(user|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj);
+        $usr_msg = parent::fill($obj, $usr_req);
         if ($obj->name() != null) {
             $this->set_name($obj->name());
         }
@@ -1425,6 +1510,46 @@ class user extends db_id_object_non_sandbox
     function profile_id(): int|null
     {
         return $this->profile_id;
+    }
+
+    /**
+     * @returns bool true if the user has a unique name for log entries
+     */
+    function is_unique(): bool
+    {
+        global $usr_pro_cac;
+        log_debug();
+        $result = false;
+
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $usr_pro_cac->id(user_profiles::EMAIL)
+                or $this->profile_id == $usr_pro_cac->id(user_profiles::HUMAN)
+                or $this->profile_id == $usr_pro_cac->id(user_profiles::SYS_LINK)
+                or $this->profile_id == $usr_pro_cac->id(user_profiles::ADMIN)
+                or $this->profile_id == $usr_pro_cac->id(user_profiles::DEV)
+                or $this->profile_id == $usr_pro_cac->id(user_profiles::TEST)
+                or $this->profile_id == $usr_pro_cac->id(user_profiles::SYSTEM)) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @returns bool true if the user has developer rights
+     */
+    function is_developer(): bool
+    {
+        global $usr_pro_cac;
+        log_debug();
+        $result = false;
+
+        if ($this->is_profile_valid()) {
+            if ($this->profile_id == $usr_pro_cac->id(user_profiles::DEV)) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**

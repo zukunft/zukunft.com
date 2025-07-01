@@ -1626,7 +1626,7 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
         echo $html->header("", $style);
     }
 
-    return prg_restart($code_name, $style);
+    return prg_restart($code_name);
 }
 
 /**

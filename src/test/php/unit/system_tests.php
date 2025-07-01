@@ -88,7 +88,7 @@ class system_tests
         $sc = new sql_creator();
         $t->name = 'system->';
         $t->resource_path = 'db/system/';
-
+        $t->usr_system = $t->user_system();
 
         // start the test section (ts)
         $ts = 'unit objects ';

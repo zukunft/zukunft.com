@@ -529,11 +529,11 @@ class view extends sandbox_typed
                             log_warning('Component ' . $json_cmp[json_fields::NAME]
                                 . ' has not yet been created, but is supposed to be at position '
                                 . $json_cmp[json_fields::POSITION] . ' of a view ');
-                            $cmp->import_obj($json_cmp, $test_obj);
+                            $cmp->import_obj($json_cmp, $usr, $test_obj);
                         }
                     } else {
                         log_warning('overwriting the component by the view');
-                        $cmp->import_obj($json_cmp, $test_obj);
+                        $cmp->import_obj($json_cmp, $usr, $test_obj);
                     }
                     // on import first add all view components to the view object and save them all at once
                     // TODO overwrite the style or position type

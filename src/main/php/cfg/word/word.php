@@ -97,9 +97,11 @@ include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
+include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
@@ -132,9 +134,11 @@ use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
 use cfg\view\view;
+use shared\const\users;
 use shared\enum\change_actions;
 use shared\enum\foaf_direction;
 use shared\enum\messages as msg_id;
+use shared\enum\user_profiles;
 use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\library;
@@ -236,10 +240,16 @@ class word extends sandbox_typed
         string $name_fld = word_db::FLD_NAME,
         string $type_fld = phrase::FLD_TYPE): bool
     {
+        // create a virtual one-time system user e.g. to set the code id
+        $usr_sys = new user();
+        $usr_sys->set_id(users::SYSTEM_ID);
+        $usr_sys->name = users::SYSTEM_NAME;
+        $usr_sys->set_profile(user_profiles::SYSTEM);
+
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
             if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
-                $this->set_code_id($db_row[sql::FLD_CODE_ID]);
+                $this->set_code_id($db_row[sql::FLD_CODE_ID], $usr_sys);
             }
             if (array_key_exists(word_db::FLD_PLURAL, $db_row)) {
                 $this->plural = $db_row[word_db::FLD_PLURAL];
@@ -310,11 +320,17 @@ class word extends sandbox_typed
      * set the vars of this word object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper_user(
+        array       $in_ex_json,
+        user        $usr_req,
+        data_object $dto = null,
+        object      $test_obj = null
+    ): user_message
     {
         global $phr_typ_cac;
 
@@ -332,7 +348,7 @@ class word extends sandbox_typed
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($this->user()->is_admin()) {
                 if ($in_ex_json[json_fields::CODE_ID] <> '') {
-                    $this->set_code_id($in_ex_json[json_fields::CODE_ID]);
+                    $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
                 }
             }
         }
@@ -416,16 +432,17 @@ class word extends sandbox_typed
      * import a word from a json data word object and write it to the database
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    function import_obj(array $in_ex_json, user $usr_req, object $test_obj = null): user_message
     {
 
         log_debug();
 
         // set the object vars based on the json
-        $usr_msg = $this->import_mapper($in_ex_json, null, $test_obj);
+        $usr_msg = $this->import_mapper_user($in_ex_json, $usr_req, null, $test_obj);
 
         // save the word in the database
         if ($test_obj == null) {
@@ -535,11 +552,24 @@ class word extends sandbox_typed
      * set the unique id to select a single word by the program
      *r
      * @param string|null $code_id the unique key to select a word used by the system e.g. for the system configuration
-     * @return void
+     * @param user $usr the user who has requested the change
+     * @return user_message warning message for the user if the permissions are missing
      */
-    function set_code_id(?string $code_id): void
+    function set_code_id(?string $code_id, user $usr): user_message
     {
-        $this->code_id = $code_id;
+        $usr_msg = new user_message();
+        if ($usr->can_set_code_id()) {
+            $this->code_id = $code_id;
+        } else {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $usr->name(),
+                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_NAME => sql::FLD_CODE_ID,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $usr_msg;
     }
 
     /**
@@ -1036,13 +1066,14 @@ class word extends sandbox_typed
      * if the given description is an empty string the description is removed
      *
      * @param word|CombineObject|db_object_seq_id $obj word with the values that should have been updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(word|CombineObject|db_object_seq_id $obj): user_message
+    function fill(word|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj);
+        $usr_msg = parent::fill($obj, $usr_req);
         if ($obj->code_id() != null) {
-            $this->set_code_id($obj->code_id());
+            $this->set_code_id($obj->code_id(), $usr_req);
         }
         if ($obj->plural != null) {
             $this->plural = $obj->plural;

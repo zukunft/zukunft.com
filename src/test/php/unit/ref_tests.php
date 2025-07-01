@@ -49,6 +49,7 @@ class ref_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init for reference
         $sc = new sql_creator();
@@ -119,8 +120,8 @@ class ref_tests
         $t->assert_api_to_dsp($ref, new ref_dsp());
 
         $t->subheader($ts . 'import and export');
-        $t->assert_ex_and_import($t->reference());
-        $t->assert_ex_and_import($t->ref_filled());
+        $t->assert_ex_and_import($t->reference(), $usr_sys);
+        $t->assert_ex_and_import($t->ref_filled(), $usr_sys);
         $json_file = 'unit/ref/wikipedia.json';
         $t->assert_json_file(new ref($usr), $json_file);
 

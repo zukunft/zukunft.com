@@ -37,14 +37,18 @@ namespace cfg\helper;
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_type.php';
-//include_once MODEL_VERB_PATH . 'verb.php';
-include_once SHARED_PATH . 'library.php';
 include_once MODEL_DB_PATH . 'sql_where_type.php';
 include_once MODEL_HELPER_PATH . 'combine_object.php';
+include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+//include_once MODEL_VERB_PATH . 'verb.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
+use cfg\user\user;
+use cfg\user\user_message;
 use cfg\verb\verb;
 use shared\library;
 
@@ -76,14 +80,7 @@ class combine_named extends combine_object
      */
     function reset(): void
     {
-        $this->set_obj_id(0);
-        $this->set_name('');
-        $this->set_description(null);
-        $this->set_type_id(null);
-        $this->set_share(null);
-        $this->set_protection(null);
-        // TODO review
-        $this->set_plural(null);
+        $this->obj?->reset();
     }
 
 
@@ -150,11 +147,12 @@ class combine_named extends combine_object
 
     /**
      * @param int|null $type_id the type id of the word, triple, formula or verb
-     * @return void
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message warning message for the user if the permissions are missing
      */
-    function set_type_id(?int $type_id): void
+    function set_type_id(?int $type_id, user $usr_req = new user()): user_message
     {
-        $this->obj()?->set_type_id($type_id);
+        return $this->obj()?->set_type_id($type_id, $usr_req);
     }
 
     /**

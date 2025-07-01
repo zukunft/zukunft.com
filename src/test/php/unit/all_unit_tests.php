@@ -417,6 +417,7 @@ class all_unit_tests extends test_cleanup
         $usr = new user;
         $usr->set_id(users::SYSTEM_TEST_ID);
         $usr->name = users::SYSTEM_TEST_NAME;
+        $usr->set_profile(user_profiles::EMAIL);
         $this->usr1 = $usr;
 
         // create a dummy system user for unit testing
@@ -439,7 +440,7 @@ class all_unit_tests extends test_cleanup
         $this->init_job_types();
 
         // set the profile of the test users
-        $usr->profile_id = $usr_pro_cac->id(user_profiles::NORMAL);
+        $usr->profile_id = $usr_pro_cac->id(user_profiles::EMAIL);
         $usr_sys->profile_id = $usr_pro_cac->id(user_profiles::SYSTEM);
         $usr->set_id(1);
 

@@ -146,9 +146,9 @@ class horizontal_tests
             $empty_json = json_encode($filled_obj->export_json(false));
             $t->assert_json_string($test_name, $empty_json,  test_api::JSON_NAME_ONLY);
             $test_name = 'after import ' . $lib->class_to_name($class) . ' the export json matches the original json';
-            if ($class == user::class) {
+            if (in_array($class, def::CODE_ID_CLASSES)) {
                 // special case and more cases are covered in the separate user unit testing
-                $sys_usr = $t->user_sys_admin();
+                $sys_usr = $t->user_system();
                 $filled_obj->import_mapper_user($ex_json, $sys_usr);
             } else {
                 $filled_obj->import_mapper($ex_json);

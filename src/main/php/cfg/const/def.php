@@ -33,6 +33,7 @@
 namespace cfg\const;
 
 //include_once MODEL_COMPONENT_PATH . 'component.php';
+//include_once MODEL_COMPONENT_PATH . 'component_list.php';
 //include_once MODEL_COMPONENT_PATH . 'component_type.php';
 //include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
 //include_once MODEL_COMPONENT_PATH . 'position_type.php';
@@ -61,16 +62,20 @@ namespace cfg\const;
 //include_once MODEL_RESULT_PATH . 'result.php';
 //include_once MODEL_USER_PATH . 'user_profile.php';
 //include_once MODEL_USER_PATH . 'user.php';
+//include_once MODEL_USER_PATH . 'user_list.php';
 //include_once MODEL_USER_PATH . 'user_type.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
+//include_once MODEL_WORD_PATH . 'triple_list.php';
 //include_once MODEL_WORD_PATH . 'word.php';
+//include_once MODEL_WORD_PATH . 'word_list.php';
 //include_once SHARED_TYPES_PATH . 'protection_type.php';
 //include_once SHARED_TYPES_PATH . 'share_type.php';
 
 use cfg\component\component;
+use cfg\component\component_list;
 use cfg\component\component_type;
 use cfg\component\component_link_type;
 use cfg\component\position_type;
@@ -95,6 +100,7 @@ use cfg\system\sys_log_status;
 use cfg\system\sys_log_type;
 use cfg\system\system_time_type;
 use cfg\user\user;
+use cfg\user\user_list;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\user\user_official_type;
@@ -104,7 +110,9 @@ use cfg\view\view;
 use cfg\view\view_link_type;
 use cfg\view\view_type;
 use cfg\word\triple;
+use cfg\word\triple_list;
 use cfg\word\word;
+use cfg\word\word_list;
 use shared\types\protection_type;
 use shared\types\share_type;
 
@@ -129,8 +137,21 @@ class def
         formula::class,
         //result::class,
         view::class,
-        //component::class,
+        component::class,
         user::class
+    ];
+
+    // classes that have a code id
+    // to select single database rows from the code with a unique key
+    const CODE_ID_CLASSES = [
+        word::class,
+        word_list::class,
+        triple::class,
+        triple_list::class,
+        user::class,
+        user_list::class,
+        component::class,
+        component_list::class,
     ];
 
     // type classes that have a csv file for the initial load

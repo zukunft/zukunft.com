@@ -777,11 +777,12 @@ class formula extends sandbox_typed
      * fill this formula based on the given formula
      *
      * @param formula|CombineObject|db_object_seq_id $obj word with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(formula|CombineObject|db_object_seq_id $obj): user_message
+    function fill(formula|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj);
+        $usr_msg = parent::fill($obj, $usr_req);
 
         if ($obj->ref_text != null) {
             $this->ref_text = $obj->ref_text;

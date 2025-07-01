@@ -580,15 +580,16 @@ class phrase extends combine_named
      * fill this word or triple based on the given phrase
      *
      * @param phrase|db_object_seq_id $phr word with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(phrase|db_object_seq_id $phr): user_message
+    function fill(phrase|db_object_seq_id $phr, user $usr_req): user_message
     {
         $usr_msg = new user_message();
         if ($this->is_word()) {
             if ($phr::class == phrase::class) {
                 if ($phr->is_word()) {
-                    $usr_msg->add($this->obj()->fill($phr->word()));
+                    $usr_msg->add($this->obj()->fill($phr->word(), $usr_req));
                 } else {
                     $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
                         [
@@ -597,7 +598,7 @@ class phrase extends combine_named
                         ]);
                 }
             } elseif ($phr::class == word::class) {
-                $usr_msg->add($this->obj()->fill($phr));
+                $usr_msg->add($this->obj()->fill($phr, $usr_req));
             } else {
                 $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
                     [
@@ -608,7 +609,7 @@ class phrase extends combine_named
         } else {
             if ($phr::class == phrase::class) {
                 if ($phr->is_triple()) {
-                    $usr_msg->add($this->obj()->fill($phr->triple()));
+                    $usr_msg->add($this->obj()->fill($phr->triple(), $usr_req));
                 } else {
                     $usr_msg->add_id_with_vars(msg_id::FILL_TRIPLE_WITH_OTHER,
                         [
@@ -617,7 +618,7 @@ class phrase extends combine_named
                         ]);
                 }
             } elseif ($phr::class == triple::class) {
-                $usr_msg->add($this->obj()->fill($phr));
+                $usr_msg->add($this->obj()->fill($phr, $usr_req));
             } else {
                 $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
                     [
@@ -1105,7 +1106,7 @@ class phrase extends combine_named
 
     /**
      * check if the word in the database needs to be updated
-     * e.g. for import  if this word has only the name set, the protection should not be updated in the database
+     * e.g. for import if this word has only the name set, the protection should not be updated in the database
      *
      * @param phrase $db_phr the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
