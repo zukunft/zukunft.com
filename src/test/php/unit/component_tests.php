@@ -49,6 +49,7 @@ class component_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init
         $sc = new sql_creator();
@@ -121,8 +122,8 @@ class component_tests
         $t->assert_api_to_dsp($cmp, new component_dsp());
 
         $t->subheader($ts . 'component im- and export');
-        $t->assert_ex_and_import($t->component());
-        $t->assert_ex_and_import($t->component_filled());
+        $t->assert_ex_and_import($t->component(), $usr_sys);
+        $t->assert_ex_and_import($t->component_filled(), $usr_sys);
         $json_file = 'unit/view/component_import.json';
         $t->assert_json_file(new component($usr), $json_file);
 

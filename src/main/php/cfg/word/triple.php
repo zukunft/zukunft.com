@@ -451,11 +451,17 @@ class triple extends sandbox_link_named
      * set the vars of this triple object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper_user(
+        array       $in_ex_json,
+        user        $usr_req,
+        data_object $dto = null,
+        object      $test_obj = null
+    ): user_message
     {
         global $phr_typ_cac;
         global $vrb_cac;
@@ -701,17 +707,18 @@ class triple extends sandbox_link_named
      * import a triple from a json object
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    function import_obj(array $in_ex_json, user $usr_req, object $test_obj = null): user_message
     {
         global $phr_typ_cac;
 
         log_debug();
 
         // set the object vars based on the json
-        $usr_msg = $this->import_mapper($in_ex_json, null, $test_obj);
+        $usr_msg = $this->import_mapper_user($in_ex_json, $usr_req, null, $test_obj);
 
         // save the triple in the database
         if (!$test_obj) {
@@ -736,7 +743,7 @@ class triple extends sandbox_link_named
                                 foreach ($value as $ref_data) {
                                     $ref_obj = new ref($this->user());
                                     $ref_obj->set_phrase($this->phrase());
-                                    $usr_msg->add($ref_obj->import_obj($ref_data, $test_obj));
+                                    $usr_msg->add($ref_obj->import_obj($ref_data, $usr_req, $test_obj));
                                     $this->ref_lst[] = $ref_obj;
                                 }
                             }
@@ -1151,11 +1158,12 @@ class triple extends sandbox_link_named
      * if the given name is an empty string the given name is removed
      *
      * @param triple|CombineObject|db_object_seq_id $obj word with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(triple|CombineObject|db_object_seq_id $obj): user_message
+    function fill(triple|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj);
+        $usr_msg = parent::fill($obj, $usr_req);
         // TODO use set and get function to enable phrase fill
         $trp = null;
         if ($obj::class == triple::class) {

@@ -9,7 +9,8 @@
   "refs": [
     {
       "name": "Second",
-      "type": "wikipedia"
+      "type": "wikipedia",
+      "from_phrase": "second"
     }
   ]
 }

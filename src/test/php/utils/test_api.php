@@ -86,6 +86,8 @@ class test_api extends create_test_objects
     const JSON_ID_ONLY = '{"id":0}';
     // an export json message for an empty object
     const JSON_NAME_ONLY = '{"name":""}';
+    // an export json message for an empty array object e.g.
+    const JSON_ARRAY_ONLY = '[]';
 
     /**
      * check if the HTML frontend object can be set based on the api json message

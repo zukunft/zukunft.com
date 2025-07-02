@@ -554,9 +554,9 @@ class import
                 $this->step_end($this->verbs_done);
             } elseif ($key == json_fields::WORDS) {
                 $this->step_start(msg_id::SAVE_SINGLE, word::class);
-                foreach ($json_obj as $word) {
+                foreach ($json_obj as $json_wrd) {
                     $wrd = new word($usr_trigger);
-                    $import_result = $wrd->import_obj($word);
+                    $import_result = $wrd->import_obj($json_wrd, $usr_trigger);
                     if ($import_result->is_ok()) {
                         $this->words_done++;
                     } else {
@@ -583,9 +583,9 @@ class import
                 $pos++;
             } elseif ($key == json_fields::TRIPLES) {
                 $this->step_start(msg_id::SAVE_SINGLE, triple::class);
-                foreach ($json_obj as $triple) {
+                foreach ($json_obj as $json_trp) {
                     $wrd_lnk = new triple($usr_trigger);
-                    $import_result = $wrd_lnk->import_obj($triple);
+                    $import_result = $wrd_lnk->import_obj($json_trp, $usr_trigger);
                     if ($import_result->is_ok()) {
                         $this->triples_done++;
                     } else {
@@ -597,9 +597,9 @@ class import
                 }
             } elseif ($key == json_fields::FORMULAS) {
                 $this->step_start(msg_id::SAVE_SINGLE, formula::class);
-                foreach ($json_obj as $formula) {
+                foreach ($json_obj as $json_frm) {
                     $frm = new formula($usr_trigger);
-                    $import_result = $frm->import_obj($formula);
+                    $import_result = $frm->import_obj($json_frm);
                     if ($import_result->is_ok()) {
                         $this->formulas_done++;
                         $frm_to_calc->add($frm);
@@ -612,9 +612,9 @@ class import
                 }
             } elseif ($key == json_fields::SOURCES) {
                 $this->step_start(msg_id::SAVE_SINGLE, source::class);
-                foreach ($json_obj as $value) {
+                foreach ($json_obj as $json_src) {
                     $src = new source($usr_trigger);
-                    $import_result = $src->import_obj($value);
+                    $import_result = $src->import_obj($json_src);
                     if ($import_result->is_ok()) {
                         $this->sources_done++;
                     } else {
@@ -626,9 +626,9 @@ class import
                 }
             } elseif ($key == json_fields::REFS) {
                 $this->step_start(msg_id::SAVE_SINGLE, ref::class);
-                foreach ($json_obj as $value) {
+                foreach ($json_obj as $json_ref) {
                     $ref = new ref($usr_trigger);
-                    $import_result = $ref->import_obj($value);
+                    $import_result = $ref->import_obj($json_ref);
                     if ($import_result->is_ok()) {
                         $this->refs_done++;
                     } else {
@@ -654,9 +654,9 @@ class import
                 }
             } elseif ($key == json_fields::VALUES) {
                 $this->step_start(msg_id::SAVE_SINGLE, value::class);
-                foreach ($json_obj as $value) {
+                foreach ($json_obj as $json_val) {
                     $val = new value($usr_trigger);
-                    $import_result = $val->import_obj($value);
+                    $import_result = $val->import_obj($json_val);
                     if ($import_result->is_ok()) {
                         $this->values_done++;
                     } else {
@@ -683,9 +683,9 @@ class import
                 }
             } elseif ($key == json_fields::VIEWS) {
                 $this->step_start(msg_id::SAVE_SINGLE, view::class);
-                foreach ($json_obj as $view) {
+                foreach ($json_obj as $json_msk) {
                     $view_obj = new view($usr_trigger);
-                    $import_result = $view_obj->import_obj($view);
+                    $import_result = $view_obj->import_obj($json_msk);
                     if ($import_result->is_ok()) {
                         $this->views_done++;
                     } else {
@@ -697,9 +697,9 @@ class import
                 }
             } elseif ($key == json_fields::COMPONENTS) {
                 $this->step_start(msg_id::SAVE_SINGLE, component::class);
-                foreach ($json_obj as $cmp) {
+                foreach ($json_obj as $json_cmp) {
                     $cmp_obj = new component($usr_trigger);
-                    $import_result = $cmp_obj->import_obj($cmp);
+                    $import_result = $cmp_obj->import_obj($json_cmp, $usr_trigger);
                     if ($import_result->is_ok()) {
                         $this->components_done++;
                     } else {
@@ -712,9 +712,9 @@ class import
             } elseif ($key == json_fields::CALC_VALIDATION) {
                 $this->step_start(msg_id::SAVE_SINGLE, result::class);
                 // TODO add a unit test
-                foreach ($json_obj as $value) {
+                foreach ($json_obj as $json_res) {
                     $res = new result($usr_trigger);
-                    $import_result = $res->import_obj($value);
+                    $import_result = $res->import_obj($json_res);
                     if ($import_result->is_ok()) {
                         $this->calc_validations_done++;
                         $res_to_validate->add($res);
@@ -1105,7 +1105,7 @@ class import
         $i = 0;
         foreach ($json_array as $wrd_json) {
             $wrd = new word($usr_trigger);
-            $usr_msg->add($wrd->import_mapper($wrd_json, $dto));
+            $usr_msg->add($wrd->import_mapper_user($wrd_json, $usr_trigger, $dto));
             $dto->add_word($wrd);
             $i++;
             $this->display_progress($i, $per_sec, $wrd->dsp_id());
@@ -1133,7 +1133,7 @@ class import
         $i = 0;
         foreach ($json_array as $trp_json) {
             $trp = new triple($usr_trigger);
-            $usr_msg->add($trp->import_mapper($trp_json, $dto));
+            $usr_msg->add($trp->import_mapper_user($trp_json, $usr_trigger, $dto));
             $dto->add_triple($trp);
             $i++;
             $this->display_progress($i, $per_sec, $trp->dsp_id());
@@ -1273,7 +1273,7 @@ class import
         $i = 0;
         foreach ($json_array as $cmp_json) {
             $cmp = new component($usr_trigger);
-            $usr_msg->add($cmp->import_mapper($cmp_json, $dto));
+            $usr_msg->add($cmp->import_mapper_user($cmp_json, $usr_trigger, $dto));
             $dto->add_component($cmp);
             $i++;
             $this->display_progress($i, $per_sec, $cmp->dsp_id());

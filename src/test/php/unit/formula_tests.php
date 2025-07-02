@@ -58,6 +58,7 @@ class formula_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init
         $lib = new library();
@@ -134,8 +135,8 @@ class formula_tests
         $t->assert_api_to_dsp($frm, new formula_dsp());
 
         $t->subheader($ts . 'im- and export');
-        $t->assert_ex_and_import($t->formula());
-        $t->assert_ex_and_import($t->formula_filled());
+        $t->assert_ex_and_import($t->formula(), $usr_sys);
+        $t->assert_ex_and_import($t->formula_filled(), $usr_sys);
         $json_file = 'unit/formula/scale_second_to_minute.json';
         $t->assert_json_file(new formula($usr), $json_file);
 

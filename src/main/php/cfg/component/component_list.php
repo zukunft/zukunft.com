@@ -51,6 +51,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
@@ -68,6 +69,7 @@ use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_link_named;
 use cfg\helper\combine_named;
 use cfg\helper\type_list;
+use cfg\user\user;
 use cfg\user\user_message;
 use cfg\view\view;
 use shared\helper\CombineObject;
@@ -278,15 +280,16 @@ class component_list extends sandbox_list_named
      * import a list of components from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(array $json_obj, user $usr_req, object $test_obj = null): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $dsp_json) {
             $cmp = new component($this->user());
-            $usr_msg->add($cmp->import_obj($dsp_json, $test_obj));
+            $usr_msg->add($cmp->import_obj($dsp_json, $usr_req, $test_obj));
             $this->add($cmp);
         }
 

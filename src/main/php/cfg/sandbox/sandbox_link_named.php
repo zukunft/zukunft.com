@@ -49,8 +49,10 @@ include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -63,8 +65,10 @@ use cfg\helper\data_object;
 use cfg\log\change_log_list;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\types\api_type_list;
+use shared\library;
 
 class sandbox_link_named extends sandbox_link
 {
@@ -137,6 +141,8 @@ class sandbox_link_named extends sandbox_link
      */
     function api_mapper(array $api_json): user_message
     {
+        global $usr;
+
         $msg = parent::api_mapper($api_json);
 
         foreach ($api_json as $key => $value) {
@@ -149,7 +155,7 @@ class sandbox_link_named extends sandbox_link
                 }
             }
             if ($key == json_fields::TYPE) {
-                $this->set_type_id($value);
+                $this->set_type_id($value, $usr);
             }
         }
         return $msg;
@@ -303,11 +309,24 @@ class sandbox_link_named extends sandbox_link
      * set the database id of the type
      *
      * @param int|null $type_id the database id of the type
-     * @return void
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message warning message for the user if the permissions are missing
      */
-    function set_type_id(?int $type_id): void
+    function set_type_id(?int $type_id, user $usr_req): user_message
     {
-        $this->type_id = $type_id;
+        $usr_msg = new user_message();
+        if ($usr_req->can_set_type_id()) {
+            $this->type_id = $type_id;
+        } else {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $usr_req->name(),
+                msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
+                msg_id::VAR_NAME => sql::FLD_TYPE_NAME,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $usr_msg;
     }
 
     /**

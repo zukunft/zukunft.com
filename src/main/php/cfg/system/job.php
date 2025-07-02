@@ -89,8 +89,11 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_REF_PATH . 'ref.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -107,10 +110,13 @@ use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\ref\ref;
 use cfg\user\user;
+use cfg\user\user_message;
 use DateTime;
 use DateTimeInterface;
-use shared\json_fields;
+use shared\enum\messages as msg_id;
 use shared\types\api_type_list;
+use shared\json_fields;
+use shared\library;
 
 class job extends db_object_seq_id_user
 {
@@ -245,9 +251,33 @@ class job extends db_object_seq_id_user
      * set and get
      */
 
-    function set_type_id(?int $type_id = null): void
+    /**
+     * set the database id of the type
+     *
+     * @param int|null $type_id the database id of the type
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message warning message for the user if the permissions are missing
+     */
+    function set_type_id(?int $type_id = null, user $usr_req = new user()): user_message
     {
-        $this->type_id = $type_id;
+        $usr_msg = new user_message();
+        if ($usr_req->can_set_type_id()) {
+            $this->type_id = $type_id;
+        } else {
+            // the type of a job can be set once if not defined already
+            if ($type_id === null) {
+                $this->type_id = $type_id;
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                    msg_id::VAR_USER_NAME => $usr_req->name(),
+                    msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
+                    msg_id::VAR_NAME => sql::FLD_TYPE_NAME,
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+                ]);
+            }
+        }
+        return $usr_msg;
     }
 
     function type_id(): ?int
@@ -255,10 +285,10 @@ class job extends db_object_seq_id_user
         return $this->type_id;
     }
 
-    function set_type(string $code_id): void
+    function set_type(string $code_id, user $usr_req): void
     {
         global $job_typ_cac;
-        $this->set_type_id($job_typ_cac->id($code_id));
+        $this->set_type_id($job_typ_cac->id($code_id), $usr_req);
     }
 
     function type_code_id(): string
@@ -379,6 +409,7 @@ class job extends db_object_seq_id_user
     {
 
         global $db_con;
+        global $usr;
 
         $result = 0;
         log_debug();
@@ -388,7 +419,7 @@ class job extends db_object_seq_id_user
             if ($code_id == '') {
                 log_debug('invalid batch job type');
             } else {
-                $this->set_type($code_id);
+                $this->set_type($code_id, $usr);
             }
         }
 

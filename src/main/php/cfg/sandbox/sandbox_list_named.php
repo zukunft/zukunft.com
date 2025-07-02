@@ -408,12 +408,13 @@ class sandbox_list_named extends sandbox_list
      */
     function fill_by_id(sandbox_list_named $lst_new): user_message
     {
+        global $usr;
         $usr_msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get_by_id($sbx_new->id());
                 if ($sbx_old != null) {
-                    $sbx_old->fill($sbx_new);
+                    $sbx_old->fill($sbx_new, $usr);
                 } else {
                     $this->add($sbx_new);
                 }
@@ -434,6 +435,7 @@ class sandbox_list_named extends sandbox_list
      */
     function fill_by_name(sandbox_list_named $db_lst, bool $fill_all = false): user_message
     {
+        global $usr;
         $usr_msg = new user_message();
 
         // loop over the objects of theis list because it is expected to be smaller than tha cache list
@@ -441,7 +443,7 @@ class sandbox_list_named extends sandbox_list
             if ($obj_to_fill->id() == 0 and $obj_to_fill->name($fill_all) != '') {
                 $db_obj = $db_lst->get_by_name($obj_to_fill->name($fill_all), $fill_all);
                 if ($db_obj != null) {
-                    $obj_to_fill->fill($db_obj);
+                    $obj_to_fill->fill($db_obj, $usr);
                 }
             } else {
                 $usr_msg->add_id_with_vars(msg_id::ID_OR_NAME_MISSING, [msg_id::VAR_ID => $obj_to_fill->dsp_id()]);

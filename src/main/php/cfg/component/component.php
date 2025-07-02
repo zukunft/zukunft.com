@@ -65,6 +65,7 @@ include_once MODEL_COMPONENT_PATH . 'component_db.php';
 include_once MODEL_COMPONENT_PATH . 'view_style.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
@@ -76,11 +77,15 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_CONST_PATH . 'components.php';
+include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_ENUM_PATH . 'user_profiles.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -91,6 +96,7 @@ use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
 use cfg\helper\data_object;
+use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_link;
@@ -100,10 +106,14 @@ use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\word;
+use shared\const\users;
 use shared\enum\change_actions;
+use shared\enum\user_profiles;
+use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\const\components;
 use shared\enum\messages as msg_id;
+use shared\library;
 use shared\types\api_type_list;
 use shared\types\position_types;
 
@@ -136,6 +146,17 @@ class component extends sandbox_typed
 
     // database fields additional to the user sandbox fields for the view component
 
+    // to select a specific system component by the program code
+    // the code id cannot be changed by the user
+    // so this field is not part of the table user_components
+    private ?string $code_id = null;
+
+    // to select a user interface language specific message
+    // e.g. "add word" or "Wort zufügen"
+    // the code id cannot be changed by the user
+    // so this field is not part of the table user_components
+    public ?msg_id $ui_msg_code_id = null;
+
     // the position in the linked view
     // TODO dismiss and use link order number instead
     public ?int $order_nbr = null;
@@ -150,17 +171,6 @@ class component extends sandbox_typed
     // e.g. for a "company cash flow statement" the "col word" could be "Year"
     //      "col2 word" could be "Quarter" to show the Quarters between the year upon request
     public ?int $word_id_col2 = null;
-
-    // to select a specific system component by the program code
-    // the code id cannot be changed by the user
-    // so this field is not part of the table user_components
-    public ?string $code_id = null;
-
-    // to select a user interface language specific message
-    // e.g. "add word" or "Wort zufügen"
-    // the code id cannot be changed by the user
-    // so this field is not part of the table user_components
-    public ?msg_id $ui_msg_code_id = null;
 
     // database fields repeated from the component link for a easy to use in memory view object
     // TODO create a component_phrase_link table with a type fields where the type can be at least row, row_right, col and sub_col
@@ -245,10 +255,17 @@ class component extends sandbox_typed
     ): bool
     {
         global $mtr;
+
+        // create a virtual one-time system user e.g. to set the code id
+        $usr_sys = new user();
+        $usr_sys->set_id(users::SYSTEM_ID);
+        $usr_sys->name = users::SYSTEM_NAME;
+        $usr_sys->set_profile(user_profiles::SYSTEM);
+
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
             if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
-                $this->code_id = $db_row[sql::FLD_CODE_ID];
+                $this->set_code_id($db_row[sql::FLD_CODE_ID], $usr_sys);
             }
             if (array_key_exists(component_db::FLD_UI_MSG_ID, $db_row)) {
                 $msg_id_txt = $db_row[component_db::FLD_UI_MSG_ID];
@@ -310,11 +327,17 @@ class component extends sandbox_typed
     /**
      * import a view component from a JSON object
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper_user(
+        array       $in_ex_json,
+        user        $usr_req,
+        data_object $dto = null,
+        object      $test_obj = null
+    ): user_message
     {
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
@@ -327,25 +350,23 @@ class component extends sandbox_typed
                 $this->set_style($style_name);
             }
         }
-        if ($this->user()->is_admin() or $this->user()->is_system()) {
-            if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-                $type_name = $in_ex_json[json_fields::TYPE_NAME];
-                if ($type_name != '') {
-                    $this->type_id = $this->type_id_by_code_id($type_name);
-                }
+        if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
+            $type_name = $in_ex_json[json_fields::TYPE_NAME];
+            if ($type_name != '') {
+                $this->set_type_id($this->type_id_by_code_id($type_name), $usr_req);
             }
-            if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-                $code_id = $in_ex_json[json_fields::CODE_ID];
-                if ($code_id != '') {
-                    $this->code_id = $code_id;
-                }
+        }
+        if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
+            $code_id = $in_ex_json[json_fields::CODE_ID];
+            if ($code_id != '') {
+                $this->set_code_id($code_id, $usr_req);
             }
-            if (key_exists(json_fields::UI_MSG_CODE_ID, $in_ex_json)) {
-                global $mtr;
-                $msg_id = $in_ex_json[json_fields::UI_MSG_CODE_ID];
-                if ($msg_id != '') {
-                    $this->ui_msg_code_id = $mtr->get($msg_id);
-                }
+        }
+        if (key_exists(json_fields::UI_MSG_CODE_ID, $in_ex_json)) {
+            global $mtr;
+            $msg_id = $in_ex_json[json_fields::UI_MSG_CODE_ID];
+            if ($msg_id != '') {
+                $this->set_ui_msg_code_id($mtr->get($msg_id), $usr_req);
             }
         }
 
@@ -391,12 +412,13 @@ class component extends sandbox_typed
     /**
      * import a view component from a JSON object
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    function import_obj(array $in_ex_json, user $usr_req, object $test_obj = null): user_message
     {
-        $usr_msg = $this->import_mapper($in_ex_json, null, $test_obj);
+        $usr_msg = $this->import_mapper_user($in_ex_json, $usr_req, null, $test_obj);
 
         if (!$test_obj) {
             if ($usr_msg->is_ok()) {
@@ -425,7 +447,7 @@ class component extends sandbox_typed
             $vars[json_fields::CODE_ID] = $this->code_id;
         }
         if ($this->ui_msg_code_id != null) {
-            $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
+            $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id->value;
         }
 
         // add the phrases used
@@ -614,6 +636,56 @@ class component extends sandbox_typed
         } else {
             return 0;
         }
+    }
+
+    /**
+     * set the ui message code id of this object to write the change to the db
+     * but only if the requesting user hat the permission to do so
+     *
+     * @param msg_id|null $ui_msg_id the updated message id
+     * @param user $usr the user who has requested the change
+     * @return user_message warning message for the user if the permissions are missing
+     */
+    function set_ui_msg_code_id(?msg_id $ui_msg_id, user $usr): user_message
+    {
+        $usr_msg = new user_message();
+        if ($usr->can_set_ui_msg_id()) {
+            $this->ui_msg_code_id = $ui_msg_id;
+        } else {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $usr->name(),
+                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_NAME => component_db::FLD_UI_MSG_ID,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the code id of this object to write the change to the db
+     * but only if the requesting user hat the permission to do so
+     *
+     * @param string|null $code_id the updated code id
+     * @param user $usr the user who has requested the change
+     * @return user_message warning message for the user if the permissions are missing
+     */
+    function set_code_id(?string $code_id, user $usr): user_message
+    {
+        $usr_msg = new user_message();
+        if ($usr->can_set_code_id()) {
+            $this->code_id = $code_id;
+        } else {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $usr->name(),
+                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_NAME => sql::FLD_CODE_ID,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $usr_msg;
     }
 
     /**
@@ -925,6 +997,33 @@ class component extends sandbox_typed
             $result = $frm->name();
         }
         return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this component based on the given component
+     * if the id is set in the given word loaded from the database but this import word does not yet have the db id, set the id
+     * if the given description is not set (null) the description is not remove
+     * if the given description is an empty string the description is removed
+     *
+     * @param component|CombineObject|db_object_seq_id $obj word with the values that should have been updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(component|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->code_id != null) {
+            $usr_msg->add($this->set_code_id($obj->code_id, $usr_req));
+        }
+        if ($obj->ui_msg_code_id != null) {
+            $usr_msg->add($this->set_ui_msg_code_id($obj->ui_msg_code_id, $usr_req));
+        }
+        return $usr_msg;
     }
 
 

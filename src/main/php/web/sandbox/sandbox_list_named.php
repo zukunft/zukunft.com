@@ -167,12 +167,14 @@ class sandbox_list_named extends sandbox_list
      */
     function fill_by_id(sandbox_list_named $lst_new): user_message
     {
+        global $usr;
+
         $usr_msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get_by_id($sbx_new->id());
                 if ($sbx_old != null) {
-                    $sbx_old->fill($sbx_new);
+                    $sbx_old->fill($sbx_new, $usr);
                 } else {
                     $this->add($sbx_new);
                 }

@@ -64,6 +64,7 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_WORD_PATH . 'triple.php';
@@ -87,6 +88,7 @@ use cfg\phrase\phrase_list;
 use cfg\sandbox\sandbox_link_named;
 use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_named;
+use cfg\user\user;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use shared\const\triples;
@@ -489,15 +491,16 @@ class triple_list extends sandbox_list_named
      * import a triple list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(array $json_obj, user $usr_req, object $test_obj = null): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $value) {
             $trp = new triple($this->user());
-            $usr_msg->add($trp->import_obj($value, $test_obj));
+            $usr_msg->add($trp->import_obj($value, $usr_req, $test_obj));
             $this->add($trp);
         }
 

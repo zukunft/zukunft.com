@@ -589,7 +589,7 @@ class phrase_list extends sandbox_list_named
             if ($key == json_fields::WORDS) {
                 foreach ($json_obj as $word) {
                     $wrd = new word($usr);
-                    $import_result = $wrd->import_mapper($word);
+                    $import_result = $wrd->import_mapper_user($word, $usr);
                     $this->add_by_name($wrd->phrase());
                     $usr_msg->add($import_result);
                 }

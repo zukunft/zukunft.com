@@ -32,6 +32,9 @@
 
 namespace shared\helper;
 
+use cfg\word\triple;
+use cfg\word\word;
+
 class CombineObject
 {
 
@@ -71,12 +74,12 @@ class CombineObject
      * set and get
      */
 
-    function set_obj(IdObject|TextIdObject|null $obj): void
+    function set_obj(IdObject|TextIdObject|triple|null $obj): void
     {
         $this->obj = $obj;
     }
 
-    function obj(): IdObject|TextIdObject|null
+    function obj(): IdObject|TextIdObject|word|triple|null
     {
         return $this->obj;
     }

@@ -168,8 +168,12 @@ class value_list extends sandbox_value_list
 
         foreach ($this->lst() as $val) {
             $phr_lst = $val->phrase_list();
-            $val->set_grp($phr_lst->get_grp_id(false));
-            //$usr_msg->add_message_text('');
+            if ($phr_lst->is_empty()) {
+                log_err('phrase list is empty for value ' . $val->dsp_id());
+            } else {
+                $val->set_grp($phr_lst->get_grp_id(false));
+                //$usr_msg->add_message_text('');
+            }
         }
         return $usr_msg;
 

@@ -93,6 +93,7 @@ use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_list;
 use cfg\config;
+use cfg\const\def;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
@@ -385,9 +386,10 @@ class test_base
 
     public user $usr1; // the main user for testing
     public user $usr2; // a second testing user e.g. to test the user sandbox
-    public user $usr_admin; // a user with the admin profile to test allow of admin functionality
     public user $usr_normal; // a user with the standard profile to test deny of admin functionality
     public user $usr_signup; // the system user to add new users to the database
+    public user $usr_admin; // a user with the admin profile to test allow of admin functionality
+    public user $usr_system; // a user with the system profile to test allow of system functionality
 
     private float $start_time; // time when all tests have started
     private float $exe_start_time; // time when the single test has started (end the end time of all tests)
@@ -444,6 +446,9 @@ class test_base
 
         $this->usr_admin = new user();
         $this->usr_admin->load_by_name(users::SYSTEM_TEST_ADMIN_NAME);
+
+        $this->usr_system = new user();
+        $this->usr_system->load_by_name(users::SYSTEM_NAME);
 
         $this->usr_normal = new user();
         $this->usr_normal->load_by_name(users::SYSTEM_TEST_NORMAL_NAME);
@@ -912,18 +917,23 @@ class test_base
      *
      * @param object $usr_obj the object which json im- and export functions should be tested
      * @param string $json_file_name the resource path name to the json sample file
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @return bool true if the json has no relevant differences
      */
-    function assert_json_file(object $usr_obj, string $json_file_name): bool
+    function assert_json_file(
+        object $usr_obj,
+        string $json_file_name,
+        ?user  $usr_req = null
+    ): bool
     {
-        global $usr_pro_cac;
-        $lib = new library();
+        if ($usr_req == null) {
+            $usr_req = $this->user_system();
+        }
+
         $file_text = $this->file($json_file_name);
         $json_in = json_decode($file_text, true);
-        if ($usr_obj::class == user::class) {
-            $admin_usr = new user();
-            $admin_usr->load_by_id(users::SYSTEM_ADMIN_ID);
-            $usr_obj->import_obj($json_in, $admin_usr, $this);
+        if (in_array( $usr_obj::class, def::CODE_ID_CLASSES)) {
+            $usr_obj->import_obj($json_in, $usr_req, $this);
         } else {
             $usr_obj->import_obj($json_in, $this);
         }
@@ -939,19 +949,24 @@ class test_base
      * check if an object can be recreated by exporting the object and
      * recreating the object based on the export json
      *
-     * @param object $usr_obj the object which json im- and export functions should be tested
+     * @param object $obj the object which json im- and export functions should be tested
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @return bool true if the object has no relevant differences
      */
-    function assert_ex_and_import(object $usr_obj): bool
+    function assert_ex_and_import(object $obj, user $usr_req): bool
     {
-        $json_before = $usr_obj->api_json([api_type::TEST_MODE]);
-        $json_ex = $usr_obj->export_json(false);
-        $new_obj = clone $usr_obj;
+        $json_before = $obj->api_json([api_type::TEST_MODE]);
+        $json_ex = $obj->export_json(false);
+        $new_obj = clone $obj;
         $new_obj->reset();
-        $new_obj->import_obj($json_ex, $this);
-        $json_after = $usr_obj->api_json([api_type::TEST_MODE]);
+        if (in_array( $obj::class, def::CODE_ID_CLASSES)) {
+            $new_obj->import_obj($json_ex, $usr_req, $this);
+        } else {
+            $new_obj->import_obj($json_ex, $this);
+        }
+        $json_after = $obj->api_json([api_type::TEST_MODE]);
         return $this->assert_json_string(
-            'ex- and import test for ' . $usr_obj::class, $json_after, $json_before);
+            'ex- and import test for ' . $obj::class, $json_after, $json_before);
     }
 
     /**
@@ -975,7 +990,11 @@ class test_base
         }
         $result_str = json_encode($result);
         $target_str = json_encode($target);
-        return $this->assert_empty($test_name, $diff, $result_str, $target_str);
+        if ($result_str == $target_str) {
+            return true;
+        } else {
+            return $this->assert_empty($test_name, $diff, $result_str, $target_str);
+        }
     }
 
     /**
@@ -2155,11 +2174,11 @@ class test_base
     /**
      * check the object loading by id and name
      *
-     * @param sandbox_named|sandbox_link_named|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
      * @param int|string $id the id of the object if not 1
      * @return bool the load object to use it for more tests
      */
-    function assert_load_by_id(sandbox_named|sandbox_link_named|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
+    function assert_load_by_id(sandbox_named|sandbox_link|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
     {
         // check the loading via id and check if the id has been mapped
         $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
@@ -3528,12 +3547,16 @@ class test_base
         sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $filled
     ): bool
     {
+
+        // create a virtual one-time system user e.g. to set the code id
+        $usr_sys = $this->user_system();
+
         $lib = new library();
         $class = $lib->class_to_name($empty::class);
         $test_name = $class . ' fill empty object and test via api json';
-        $original_json = $filled->api_json([api_type::TEST_MODE]);
-        $empty->fill($filled);
-        $filled_json = $empty->api_json([api_type::TEST_MODE]);
+        $original_json = $filled->api_json([api_type::TEST_MODE], $usr_sys);
+        $empty->fill($filled, $usr_sys);
+        $filled_json = $empty->api_json([api_type::TEST_MODE], $usr_sys);
         return $this->assert_json_string($test_name, $filled_json, $original_json);
     }
 
@@ -4063,6 +4086,21 @@ class test_base
     function has_file(string $test_resource_path): bool
     {
         return file_exists(test_files::RESOURCE_PATH . $test_resource_path);
+    }
+
+    /*
+     * overwrites
+     */
+
+    /**
+     * @return user a user used for unit testing with the system profile
+     */
+    function user_system(): user
+    {
+        $usr = new user();
+        $usr->set(users::SYSTEM_ID, users::SYSTEM_NAME, users::SYSTEM_EMAIL);
+        $usr->set_profile(user_profiles::SYSTEM);
+        return $usr;
     }
 
 }

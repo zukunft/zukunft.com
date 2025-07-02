@@ -777,11 +777,12 @@ class formula extends sandbox_typed
      * fill this formula based on the given formula
      *
      * @param formula|CombineObject|db_object_seq_id $obj word with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(formula|CombineObject|db_object_seq_id $obj): user_message
+    function fill(formula|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj);
+        $usr_msg = parent::fill($obj, $usr_req);
 
         if ($obj->ref_text != null) {
             $this->ref_text = $obj->ref_text;
@@ -1558,6 +1559,8 @@ class formula extends sandbox_typed
 
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $this->type_id = $frm_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
+        } else {
+            $this->type_id = $frm_typ_cac->id(formula_type::DEFAULT);
         }
         if (key_exists(json_fields::EXPRESSION, $in_ex_json)) {
             if ($in_ex_json[json_fields::EXPRESSION] <> '') {
@@ -1657,6 +1660,9 @@ class formula extends sandbox_typed
         if (isset($this->type_id)) {
             if ($this->type_id <> $frm_typ_cac->default_id()) {
                 $vars[json_fields::TYPE_NAME] = $frm_typ_cac->code_id($this->type_id);
+            } else {
+                // unset the type that might be set by the parent object
+                unset($vars[json_fields::TYPE_NAME]);
             }
         }
         if ($this->usr_text <> '') {

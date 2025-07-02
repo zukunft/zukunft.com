@@ -63,6 +63,7 @@ class value_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init
         $db_con = new sql_db();
@@ -212,8 +213,8 @@ class value_tests
         $t->assert_reset($val);
 
         $t->subheader($ts . 'value im- and export');
-        $t->assert_ex_and_import($t->value());
-        $t->assert_ex_and_import($t->value_16_filled());
+        $t->assert_ex_and_import($t->value(), $usr_sys);
+        $t->assert_ex_and_import($t->value_16_filled(), $usr_sys);
         $json_file = 'unit/value/speed_of_light.json';
         $t->assert_json_file(new value($usr), $json_file);
 

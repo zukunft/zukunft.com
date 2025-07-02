@@ -1929,6 +1929,7 @@ class value_base extends sandbox_value
     function save_field_trigger_update($db_con): string
     {
         global $job_typ_cac;
+        global $usr;
 
         $result = '';
 
@@ -1951,7 +1952,7 @@ class value_base extends sandbox_value
         log_debug('value->save_field_trigger_update group id "' . $this->grp()->id() . '" for user ' . $this->user()->name . '');
         if ($this->is_id_set()) {
             $job = new job($this->user());
-            $job->set_type(job_type_list::VALUE_UPDATE);
+            $job->set_type(job_type_list::VALUE_UPDATE, $usr);
             $job->obj = $this;
             $job->add();
         } else {

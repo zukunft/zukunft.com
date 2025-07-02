@@ -157,6 +157,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO define a phrase range for global prime phrases (e.g. 5124)
          and a range for pot prime terms
     TODO add a frontend cache e.g. for terms, formulas and view
+    TODO test if the redis memory db is faster than the object lists for caching
     TODO allow the user to configure the frontend cache size and show to the user suggestion in increase speed
     TODO add a backend cache e.g. for terms, formulas and view
     TODO allow the admin to configure the backend cache size and show to the user suggestion in increase speed
@@ -1626,7 +1627,7 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
         echo $html->header("", $style);
     }
 
-    return prg_restart($code_name, $style);
+    return prg_restart($code_name);
 }
 
 /**

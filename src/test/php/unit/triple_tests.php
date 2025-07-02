@@ -20,6 +20,7 @@ class triple_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init
         $sc = new sql_creator();
@@ -98,8 +99,8 @@ class triple_tests
         $t->assert_api_to_dsp($trp, new triple_dsp());
 
         $t->subheader($ts . 'import and export');
-        $t->assert_ex_and_import($t->triple());
-        $t->assert_ex_and_import($t->triple_filled_add());
+        $t->assert_ex_and_import($t->triple(), $usr_sys);
+        $t->assert_ex_and_import($t->triple_filled_add(), $usr_sys);
         $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($usr), $json_file);
 

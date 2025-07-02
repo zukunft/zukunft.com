@@ -155,88 +155,88 @@ enum messages: string
     case NONE = '';
 
     // messages with vars
-    case DIFF_ID = 'id is '
+    case DIFF_ID = 'id is "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_ID_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_NAME = 'name is '
+    case DIFF_NAME = 'name is "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
         . '"';
-    case DIFF_USER = 'user is '
+    case DIFF_USER = 'user is "'
         . self::VAR_START . self::VAR_USER . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_USER_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_OWNER = 'owner is '
+    case DIFF_OWNER = 'owner is "'
         . self::VAR_START . self::VAR_USER . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_USER_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_TYPE = 'type is '
+    case DIFF_TYPE = 'type is "'
         . self::VAR_START . self::VAR_TYPE . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_TYPE_CHK . self::VAR_END
-        . ' for "'
-        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '" for "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_SHARE = 'share permission is '
+    case DIFF_SHARE = 'share permission is "'
         . self::VAR_START . self::VAR_SHARE . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_SHARE_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_PROTECTION = 'modify protect is '
+    case DIFF_PROTECTION = 'modify protect is "'
         . self::VAR_START . self::VAR_PROTECT . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_PROTECT_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_EXCLUSION = 'exclusion is '
+    case DIFF_EXCLUSION = 'exclusion is "'
         . self::VAR_START . self::VAR_EXCLUDE . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_EXCLUDE_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_VALUE = 'value is '
+    case DIFF_VALUE = 'value is "'
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
         . '"';
-    case DIFF_VALUE_TYPE = 'value type is '
+    case DIFF_VALUE_TYPE = 'value type is "'
         . self::VAR_START . self::VAR_TYPE . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_TYPE_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
         . '"';
-    case DIFF_GROUP = 'group name is '
+    case DIFF_GROUP = 'group name is "'
         . self::VAR_START . self::VAR_GROUP . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_GROUP_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
         . '"';
-    case DIFF_SOURCE = 'source is '
+    case DIFF_SOURCE = 'source is "'
         . self::VAR_START . self::VAR_SOURCE . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_SOURCE_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
         . '"';
     case TRIM_NAME = 'trim "'
@@ -578,6 +578,14 @@ enum messages: string
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . '" cannot be updated due to missing privileges of the requesting user '
         . self::VAR_START . self::VAR_USER_PROFILE . self::VAR_END;
+    case NOT_ALLOWED_TO = 'user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" with profile '
+        . self::VAR_START . self::VAR_USER_PROFILE . self::VAR_END
+        . ' is not permitted to update '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
     case USER_IS_RESERVED = 'user name "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
         . '" is used by the system. Please use another name, which should not be one of these '
@@ -592,6 +600,11 @@ enum messages: string
     case CONFLICT_DB_ID = 'Unexpected conflict of the database id. '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' != '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
+
+    case IMPORT_PHRASE_NOT_FOUND = 'Cannot find word or triple "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" when importing '
         . self::VAR_START . self::VAR_ID . self::VAR_END;
 
     case IMPORT_SOURCE_NOT_FOUND = 'Cannot find source "'
@@ -830,6 +843,9 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' in the log failed.';
 
+    case PHRASE_NOT_FOUND = 'word or triple "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
     case REFERENCE_TYPE_NOT_FOUND = 'Reference type for {VAR_TYPE_NAME} not found';
     case VAR_TYPE_NAME = 'TYPE_NAME';
 

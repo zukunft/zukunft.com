@@ -735,11 +735,12 @@ class sandbox extends db_object_seq_id_user
      * if the given type is zero (not null) the type is removed
      *
      * @param sandbox|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(sandbox|CombineObject|db_object_seq_id $obj): user_message
+    function fill(sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj);
+        $usr_msg = parent::fill($obj, $usr_req);
         // e.g. if the import contains the information that this object is excluded for one user this excluded setting should also be imported
         if ($obj->is_exclusion_set()) {
             $this->set_excluded($obj->is_excluded());

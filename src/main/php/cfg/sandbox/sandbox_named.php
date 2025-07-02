@@ -396,11 +396,12 @@ class sandbox_named extends sandbox
      * if the given description is an empty string (not null) the description is removed
      *
      * @param sandbox_named|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(sandbox_named|CombineObject|db_object_seq_id $obj): user_message
+    function fill(sandbox_named|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($obj);
+        $usr_msg = parent::fill($obj, $usr_req);
         if ($obj->name() != null) {
             $this->set_name($obj->name());
         }

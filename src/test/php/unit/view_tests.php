@@ -47,6 +47,7 @@ class view_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init
         $sc = new sql_creator();
@@ -127,8 +128,8 @@ class view_tests
         $t->assert_api_to_dsp($msk, new view_dsp());
 
         $t->subheader($ts . 'im- and export');
-        $t->assert_ex_and_import($t->view());
-        $t->assert_ex_and_import($t->view_filled());
+        $t->assert_ex_and_import($t->view(), $usr_sys);
+        $t->assert_ex_and_import($t->view_filled(), $usr_sys);
         $json_file = 'unit/view/car_costs.json';
         $t->assert_json_file(new view($usr), $json_file);
 

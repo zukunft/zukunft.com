@@ -376,6 +376,45 @@ class data_object
         return $this->ip_lst;
     }
 
+
+    /*
+     * get
+     */
+
+    /**
+     * get a word or triple by the name from this cache object
+     * @param string $name the name of the word or triple
+     * @return phrase|null
+     */
+    function get_phrase_by_name(string $name): ?phrase
+    {
+        if ($this->phr_lst_dirty) {
+            $wrd = $this->word_list()->get_by_name($name);
+            $phr = $wrd?->phrase();
+            if ($phr == null) {
+                $trp = $this->triple_list()->get_by_name($name);
+                $phr = $trp?->phrase();
+            }
+            return $phr;
+        } else {
+            return $this->phrase_list()->get_by_name($name);
+        }
+    }
+
+    /**
+     * get a source by the name from this cache object
+     * @param string $name the name of the source
+     * @return source|null
+     */
+    function get_source_by_name(string $name): ?source
+    {
+        return $this->source_list()->get_by_name($name);
+    }
+
+    /*
+     * info
+     */
+
     /**
      * @return bool true if this context object contains a view list
      */
@@ -388,8 +427,13 @@ class data_object
         }
     }
 
+
+    /*
+     * modify
+     */
+
     /**
-     * add a name word without db id to the list
+     * add a named word without db id to the list
      * @param word $wrd with the name set
      * @return void
      */
@@ -401,7 +445,7 @@ class data_object
     }
 
     /**
-     * add a name verb without db id to the list
+     * add a named verb without db id to the list
      * @param verb $vrb with the name set
      * @return void
      */
@@ -421,6 +465,20 @@ class data_object
         $this->phr_lst_dirty = true;
         $this->trm_lst_dirty = true;
         $this->trp_lst->add_by_name($trp);
+    }
+
+    /**
+     * add a name phrase without db id to the list
+     * @param phrase $phr with the name set
+     * @return void
+     */
+    function add_phrase(phrase $phr): void
+    {
+        if ($phr->is_word()) {
+            $this->add_word($phr->word());
+        } else {
+            $this->add_triple($phr->triple());
+        }
     }
 
     /**
@@ -507,22 +565,6 @@ class data_object
     function add_message(msg_id $msg): void
     {
         $this->usr_msg->add_id($msg);
-    }
-
-    /**
-     * get a word or triple by the name from this cache object
-     * @param string $name the name of the word or triple
-     * @return phrase|null
-     */
-    function get_phrase_by_name(string $name): ?phrase
-    {
-        $wrd = $this->word_list()->get_by_name($name);
-        $phr = $wrd?->phrase();
-        if ($phr == null) {
-            $trp = $this->triple_list()->get_by_name($name);
-            $phr = $trp?->phrase();
-        }
-        return $phr;
     }
 
     function get_component_by_name(string $name): ?component
