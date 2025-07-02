@@ -125,6 +125,7 @@ use shared\enum\messages as msg_id;
 use shared\types\protection_type;
 use shared\types\share_type;
 use shared\types\view_type;
+use test\test_api;
 
 class library
 {
@@ -2258,6 +2259,24 @@ class library
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * get the filled test object related to the given class
+     * @param string $class the given main class name
+     * @return string witt the empty json for the class
+     */
+    function class_to_empty_json(string $class): string
+    {
+        $json = null;
+        switch ($class) {
+            case ref::class;
+                $json = test_api::JSON_ARRAY_ONLY;
+                break;
+            default:
+                $json = test_api::JSON_NAME_ONLY;
+        }
+        return $json;
     }
 
     /**

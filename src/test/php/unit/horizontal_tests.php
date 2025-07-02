@@ -51,6 +51,8 @@ use cfg\const\def;
 use cfg\db\sql_creator;
 use cfg\db\sql_type;
 use cfg\formula\formula;
+use cfg\helper\data_object;
+use cfg\ref\ref;
 use cfg\user\user;
 use cfg\view\view;
 use cfg\word\triple;
@@ -66,7 +68,6 @@ class horizontal_tests
 
         // init
         $lib = new library();
-        $sc = new sql_creator();
 
         // start the test section (ts)
         $ts = 'unit horizontal ';
@@ -74,11 +75,6 @@ class horizontal_tests
 
         $t->subheader($ts . 'fill');
         foreach (def::MAIN_CLASSES as $class) {
-            /*
-            if ($class == formula::class) {
-                log_debug('bugfix');
-            }
-            */
             $base_obj = $t->class_to_base_object($class);
             $filled_obj = $t->class_to_filled_object($class);
             $t->assert_fill($base_obj, $filled_obj);
@@ -133,25 +129,32 @@ class horizontal_tests
 
         $t->subheader($ts . 'im- and export');
         foreach (def::MAIN_CLASSES as $class) {
+            $dto = new data_object($t->usr1);
             // TODO add test to im- and export objects with the owner and a user that differs from the owner
             $test_name = 'export ' . $lib->class_to_name($class) . ' lead not to an empty export json';
             $filled_obj = $t->class_to_filled_object($class);
             // remember the db id, because the db id is never included in the export
             $id = $filled_obj->id();
+            // fill up cache to avoid db access in unit tests
+            if ($class == ref::class) {
+                $dto->add_phrase($filled_obj->phrase());
+                $dto->add_source($filled_obj->source);
+            }
             $ex_json = $filled_obj->export_json(false);
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
             $t->assert_not($test_name, $ex_json,  test_api::JSON_ID_ONLY);
             $test_name = 'cleared ' . $lib->class_to_name($class) . ' lead to an empty export json';
             $filled_obj->reset();
             $empty_json = json_encode($filled_obj->export_json(false));
-            $t->assert_json_string($test_name, $empty_json,  test_api::JSON_NAME_ONLY);
+            $empty_target_json = $lib->class_to_empty_json($class);
+            $t->assert_json_string($test_name, $empty_json,  $empty_target_json);
             $test_name = 'after import ' . $lib->class_to_name($class) . ' the export json matches the original json';
             if (in_array($class, def::CODE_ID_CLASSES)) {
                 // special case and more cases are covered in the separate user unit testing
                 $sys_usr = $t->user_system();
                 $filled_obj->import_mapper_user($ex_json, $sys_usr);
             } else {
-                $filled_obj->import_mapper($ex_json);
+                $filled_obj->import_mapper($ex_json, $dto);
             }
             // set the remembered id again , because the db id is never included in the export
             $filled_obj->set_id($id);

@@ -602,6 +602,11 @@ enum messages: string
         . ' != '
         . self::VAR_START . self::VAR_ID . self::VAR_END;
 
+    case IMPORT_PHRASE_NOT_FOUND = 'Cannot find word or triple "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" when importing '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
+
     case IMPORT_SOURCE_NOT_FOUND = 'Cannot find source "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" when importing '
@@ -838,6 +843,9 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' in the log failed.';
 
+    case PHRASE_NOT_FOUND = 'word or triple "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
     case REFERENCE_TYPE_NOT_FOUND = 'Reference type for {VAR_TYPE_NAME} not found';
     case VAR_TYPE_NAME = 'TYPE_NAME';
 

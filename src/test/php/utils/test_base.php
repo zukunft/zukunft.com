@@ -990,7 +990,11 @@ class test_base
         }
         $result_str = json_encode($result);
         $target_str = json_encode($target);
-        return $this->assert_empty($test_name, $diff, $result_str, $target_str);
+        if ($result_str == $target_str) {
+            return true;
+        } else {
+            return $this->assert_empty($test_name, $diff, $result_str, $target_str);
+        }
     }
 
     /**
@@ -2170,11 +2174,11 @@ class test_base
     /**
      * check the object loading by id and name
      *
-     * @param sandbox_named|sandbox_link_named|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
      * @param int|string $id the id of the object if not 1
      * @return bool the load object to use it for more tests
      */
-    function assert_load_by_id(sandbox_named|sandbox_link_named|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
+    function assert_load_by_id(sandbox_named|sandbox_link|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
     {
         // check the loading via id and check if the id has been mapped
         $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
@@ -3550,9 +3554,9 @@ class test_base
         $lib = new library();
         $class = $lib->class_to_name($empty::class);
         $test_name = $class . ' fill empty object and test via api json';
-        $original_json = $filled->api_json([api_type::TEST_MODE]);
+        $original_json = $filled->api_json([api_type::TEST_MODE], $usr_sys);
         $empty->fill($filled, $usr_sys);
-        $filled_json = $empty->api_json([api_type::TEST_MODE]);
+        $filled_json = $empty->api_json([api_type::TEST_MODE], $usr_sys);
         return $this->assert_json_string($test_name, $filled_json, $original_json);
     }
 

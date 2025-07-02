@@ -78,12 +78,14 @@ include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
 include_once MODEL_LOG_PATH . 'change_table_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
+include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
@@ -97,6 +99,7 @@ include_once WEB_REF_PATH . 'ref.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -113,10 +116,12 @@ use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\combine_named;
 use cfg\helper\data_object;
+use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_link;
 use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
@@ -124,6 +129,7 @@ use cfg\user\user;
 use cfg\user\user_message;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
+use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -339,17 +345,24 @@ class ref extends sandbox_link
         // reset of object not needed, because the calling function has just created the object
         if (key_exists(json_fields::SOURCE_NAME, $in_ex_json)) {
             $src_name = $in_ex_json[json_fields::SOURCE_NAME];
-            $src = new source($this->user());
-            if (!$test_obj) {
-                $src->load_by_name($src_name);
-                if ($src->id() == 0) {
-                    $usr_msg->add_id_with_vars(msg_id::IMPORT_SOURCE_NOT_FOUND, [
-                        msg_id::VAR_NAME => $src_name,
-                        msg_id::VAR_ID => $this->dsp_id()
-                    ]);
-                }
+            if ($dto != null) {
+                $src = $dto->get_source_by_name($src_name);
             } else {
-                $src->set_name($src_name);
+                $src = null;
+            }
+            if ($src == null) {
+                $src = new source($this->user());
+                if (!$test_obj) {
+                    $src->load_by_name($src_name);
+                    if ($src->id() == 0) {
+                        $usr_msg->add_id_with_vars(msg_id::IMPORT_SOURCE_NOT_FOUND, [
+                            msg_id::VAR_NAME => $src_name,
+                            msg_id::VAR_ID => $this->dsp_id()
+                        ]);
+                    }
+                } else {
+                    $src->set_name($src_name);
+                }
             }
             $this->source = $src;
         }
@@ -371,6 +384,29 @@ class ref extends sandbox_link
         }
         if (key_exists(json_fields::URL, $in_ex_json)) {
             $this->url = $in_ex_json[json_fields::URL];
+        }
+        if (key_exists(json_fields::FROM_PHRASE, $in_ex_json)) {
+            $phr_name = $in_ex_json[json_fields::FROM_PHRASE];
+            if ($dto != null) {
+                $phr = $dto->get_phrase_by_name($phr_name);
+            } else {
+                $phr = null;
+            }
+            if ($phr == null) {
+                $phr = new phrase($this->user());
+                if (!$test_obj) {
+                    $phr->load_by_name($phr_name);
+                    if ($phr->id() == 0) {
+                        $usr_msg->add_id_with_vars(msg_id::IMPORT_PHRASE_NOT_FOUND, [
+                            msg_id::VAR_NAME => $phr_name,
+                            msg_id::VAR_ID => $this->dsp_id()
+                        ]);
+                    }
+                } else {
+                    $phr->set_name($phr_name);
+                }
+            }
+            $this->set_phrase($phr);
         }
 
         return $usr_msg;
@@ -456,6 +492,10 @@ class ref extends sandbox_link
         if ($this->url <> '') {
             $vars[json_fields::URL] = $this->url;
         }
+        // TODO on export check always by the name not the id
+        if ($this->phrase_name() != '' and $this->phrase_name() != null) {
+            $vars[json_fields::FROM_PHRASE] = $this->phrase_name();
+        }
         return $vars;
     }
 
@@ -493,7 +533,15 @@ class ref extends sandbox_link
         $this->set_fob($phr);
     }
 
-    function set_phrase_by_id(?int $id): void
+    /**
+     * set the phrase by the id
+     * TODO use a cache to reduce db requests
+     *
+     * @param int|null $id
+     * @param phrase_list|null $phr_lst cache of phrases
+     * @return void
+     */
+    function set_phrase_by_id(?int $id, phrase_list $phr_lst = null): void
     {
         if ($id != null) {
             if ($id != 0) {
@@ -544,7 +592,7 @@ class ref extends sandbox_link
      */
     function from_id(): int
     {
-            return $this->phrase_id();
+        return $this->phrase_id();
     }
 
     /**
@@ -982,6 +1030,44 @@ class ref extends sandbox_link
         $log->add();
 
         return $log;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this reference based on the given reference
+     *
+     * @param ref|CombineObject|db_object_seq_id $obj word with the values that should have been updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(ref|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->url != null) {
+            $this->url = $obj->url;
+        }
+        if ($obj->external_key != null) {
+            $this->external_key = $obj->external_key;
+        }
+        if ($obj->phrase() != null) {
+            if ($obj->phrase()->id() != 0) {
+                $this->set_phrase($obj->phrase());
+            }
+        }
+        if ($obj->source != null) {
+            $this->source = $obj->source;
+        }
+        if ($obj->predicate_id() != 0) {
+            $this->set_predicate_id($obj->predicate_id());
+        }
+        if ($obj->description != null) {
+            $this->description = $obj->description;
+        }
+        return $usr_msg;
     }
 
 

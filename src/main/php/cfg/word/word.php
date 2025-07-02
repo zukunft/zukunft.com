@@ -368,6 +368,9 @@ class word extends sandbox_typed
                     $usr_msg->add($ref_obj->import_mapper($ref_data, $dto, $test_obj));
                     // TODO $dto should never be null if no direct import is used
                     $dto?->add_reference($ref_obj);
+                    if ($usr_msg->is_ok()) {
+                        $this->ref_lst[] = $ref_obj;
+                    }
                 }
             }
         }
@@ -457,7 +460,9 @@ class word extends sandbox_typed
 
             if ($this->id() <= 0) {
                 $usr_msg->add_id_with_vars(msg_id::WORD_NOT_SAVED, [msg_id::VAR_ID => $this->dsp_id()]);
+                /*
             } else {
+                // TODO check if not already done by the import_mapper_user
                 foreach ($in_ex_json as $key => $value) {
                     if ($usr_msg->is_ok()) {
                         if ($key == word_db::FLD_REFS) {
@@ -470,6 +475,7 @@ class word extends sandbox_typed
                         }
                     }
                 }
+                */
             }
         }
         return $usr_msg;

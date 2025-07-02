@@ -132,7 +132,7 @@ class def
         //verb::class,
         //triple::class,
         source::class,
-        //ref::class,
+        ref::class,
         //value::class,
         formula::class,
         //result::class,
