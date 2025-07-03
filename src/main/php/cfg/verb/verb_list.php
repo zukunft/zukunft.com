@@ -44,6 +44,7 @@ include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_WORD_PATH . 'triple_db.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
@@ -57,6 +58,7 @@ use cfg\sandbox\sandbox;
 use cfg\system\system_time_type;
 use cfg\user\user;
 use cfg\word\triple;
+use cfg\word\triple_db;
 use cfg\word\word;
 use shared\enum\foaf_direction;
 use shared\types\verbs;
@@ -149,9 +151,9 @@ class verb_list extends type_list
             // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
             $db_con->add_par(sql_par_type::INT, $phr->id());
             if ($direction == foaf_direction::UP) {
-                $qp->sql = $db_con->select_by_field(triple::FLD_FROM);
+                $qp->sql = $db_con->select_by_field(triple_db::FLD_FROM);
             } else {
-                $qp->sql = $db_con->select_by_field(triple::FLD_TO);
+                $qp->sql = $db_con->select_by_field(triple_db::FLD_TO);
             }
             $qp->par = $db_con->get_par();
         }

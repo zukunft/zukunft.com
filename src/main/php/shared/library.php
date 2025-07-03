@@ -2270,6 +2270,7 @@ class library
     {
         $json = null;
         switch ($class) {
+            case triple::class:
             case ref::class;
                 $json = test_api::JSON_ARRAY_ONLY;
                 break;

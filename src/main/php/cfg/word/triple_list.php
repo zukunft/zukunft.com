@@ -239,10 +239,10 @@ class triple_list extends sandbox_list_named
                         $trp->set_verb_id($db_row[verb::FLD_ID]);
                         // fill from
                         $trp->set_fob(new phrase($this->user()));
-                        $trp->fob()->row_mapper_sandbox($db_row, triple::FLD_FROM, '1');
+                        $trp->fob()->row_mapper_sandbox($db_row, triple_db::FLD_FROM, '1');
                         // fill to
                         $trp->set_tob(new phrase($this->user()));
-                        $trp->tob()->row_mapper_sandbox($db_row, triple::FLD_TO, '2');
+                        $trp->tob()->row_mapper_sandbox($db_row, triple_db::FLD_TO, '2');
                     } else {
                         log_info($trp->dsp_id() . ' is excluded');
                     }
@@ -297,7 +297,7 @@ class triple_list extends sandbox_list_named
     function load_sql_by_names(
         sql_creator $sc,
         array $names,
-        string $fld = triple::FLD_NAME
+        string $fld = triple_db::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);
@@ -322,7 +322,7 @@ class triple_list extends sandbox_list_named
         if (count($trp_ids) > 0) {
             $qp->name .= 'ids';
             $sc->set_name($qp->name);
-            $sc->add_where(triple::FLD_ID, $trp_ids, sql_par_type::INT_LIST);
+            $sc->add_where(triple_db::FLD_ID, $trp_ids, sql_par_type::INT_LIST);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -350,12 +350,12 @@ class triple_list extends sandbox_list_named
         if ($phr->id() <> 0) {
             $qp->name .= 'phr';
             if ($direction == foaf_direction::UP) {
-                $sc->add_where(triple::FLD_FROM, $phr->id());
+                $sc->add_where(triple_db::FLD_FROM, $phr->id());
             } elseif ($direction == foaf_direction::DOWN) {
-                $sc->add_where(triple::FLD_TO, $phr->id());
+                $sc->add_where(triple_db::FLD_TO, $phr->id());
             } elseif ($direction == foaf_direction::BOTH) {
-                $sc->add_where(triple::FLD_FROM, $phr->id(), sql_par_type::INT_OR);
-                $sc->add_where(triple::FLD_TO, $phr->id(), sql_par_type::INT_OR);
+                $sc->add_where(triple_db::FLD_FROM, $phr->id(), sql_par_type::INT_OR);
+                $sc->add_where(triple_db::FLD_TO, $phr->id(), sql_par_type::INT_OR);
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
@@ -396,14 +396,14 @@ class triple_list extends sandbox_list_named
         if (!$phr_lst->empty()) {
             $qp->name .= 'phr_lst';
             if ($direction == foaf_direction::UP) {
-                $sc->add_where(triple::FLD_FROM, $phr_lst->ids());
+                $sc->add_where(triple_db::FLD_FROM, $phr_lst->ids());
                 $qp->name .= '_' . $direction->value;
             } elseif ($direction == foaf_direction::DOWN) {
-                $sc->add_where(triple::FLD_TO, $phr_lst->ids());
+                $sc->add_where(triple_db::FLD_TO, $phr_lst->ids());
                 $qp->name .= '_' . $direction->value;
             } elseif ($direction == foaf_direction::BOTH) {
-                $sc->add_where(triple::FLD_FROM, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
-                $sc->add_where(triple::FLD_TO, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
+                $sc->add_where(triple_db::FLD_FROM, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
+                $sc->add_where(triple_db::FLD_TO, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
@@ -436,49 +436,49 @@ class triple_list extends sandbox_list_named
         }
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(array_merge(triple::FLD_NAMES_LINK, triple::FLD_NAMES));
-        $sc->set_usr_fields(triple::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(triple::FLD_NAMES_NUM_USR);
+        $sc->set_fields(array_merge(triple_db::FLD_NAMES_LINK, triple_db::FLD_NAMES));
+        $sc->set_usr_fields(triple_db::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(triple_db::FLD_NAMES_NUM_USR);
         // also load the linked user specific phrase with the same SQL statement (word until now)
         $sc->set_join_fields(
             phrase::FLD_NAMES,
             phrase::class,
-            triple::FLD_FROM,
+            triple_db::FLD_FROM,
             phrase::FLD_ID
         );
         $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
             phrase::class,
-            triple::FLD_FROM,
+            triple_db::FLD_FROM,
             phrase::FLD_ID
         );
         $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
             phrase::class,
-            triple::FLD_FROM,
+            triple_db::FLD_FROM,
             phrase::FLD_ID,
             true
         );
         $sc->set_join_fields(
             phrase::FLD_NAMES,
             phrase::class,
-            triple::FLD_TO,
+            triple_db::FLD_TO,
             phrase::FLD_ID
         );
         $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
             phrase::class,
-            triple::FLD_TO,
+            triple_db::FLD_TO,
             phrase::FLD_ID
         );
         $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
             phrase::class,
-            triple::FLD_TO,
+            triple_db::FLD_TO,
             phrase::FLD_ID,
             true
         );
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(verb::FLD_ID) . ', ' . triple::FLD_NAME_GIVEN);
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(verb::FLD_ID) . ', ' . triple_db::FLD_NAME_GIVEN);
         return $qp;
     }
 

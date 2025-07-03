@@ -101,6 +101,7 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
+//include_once MODEL_WORD_PATH . 'triple_db.php';
 include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
@@ -136,6 +137,7 @@ use cfg\user\user;
 use cfg\value\value_base;
 use cfg\view\view;
 use cfg\view\term_view;
+use cfg\word\triple_db;
 use cfg\word\word;
 use cfg\word\word_db;
 use shared\const\users;
@@ -543,12 +545,12 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::TRIPLE) {
                 $db_con->set_class(triple::class);
-                foreach (triple::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (triple_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::TRIPLE_USR) {
                 $db_con->set_class(triple::class, true);
-                foreach (triple::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (triple_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VALUE) {

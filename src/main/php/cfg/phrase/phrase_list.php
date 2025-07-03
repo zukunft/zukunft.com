@@ -79,6 +79,7 @@ include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_WORD_PATH . 'triple_db.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_PHRASE_PATH . 'trm_ids.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
@@ -103,6 +104,7 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_list;
 use cfg\verb\verb;
+use cfg\word\triple_db;
 use cfg\word\word;
 use cfg\word\word_list;
 use cfg\word\triple;
@@ -393,14 +395,14 @@ class phrase_list extends sandbox_list_named
         $qp = $this->load_sql($sc, 'sc_phr_lst');
         if (!$this->empty()) {
             if ($direction == foaf_direction::UP) {
-                $sc->add_where(triple::FLD_FROM, $this->ids());
+                $sc->add_where(triple_db::FLD_FROM, $this->ids());
                 $qp->name .= '_' . $direction->value;
             } elseif ($direction == foaf_direction::DOWN) {
-                $sc->add_where(triple::FLD_TO, $this->ids());
+                $sc->add_where(triple_db::FLD_TO, $this->ids());
                 $qp->name .= '_' . $direction->value;;
             } elseif ($direction == foaf_direction::BOTH) {
-                $sc->add_where(triple::FLD_FROM, $this->ids(), sql_par_type::INT_LIST_OR);
-                $sc->add_where(triple::FLD_TO, $this->ids(), sql_par_type::INT_LIST_OR);
+                $sc->add_where(triple_db::FLD_FROM, $this->ids(), sql_par_type::INT_LIST_OR);
+                $sc->add_where(triple_db::FLD_TO, $this->ids(), sql_par_type::INT_LIST_OR);
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
@@ -2417,13 +2419,13 @@ class phrase_list extends sandbox_list_named
         } else {
             if ($direction == foaf_direction::UP) {
                 $qp->name .= 'parents';
-                $sc->add_where(triple::FLD_FROM, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
-                $join_field = triple::FLD_TO;
+                $sc->add_where(triple_db::FLD_FROM, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
+                $join_field = triple_db::FLD_TO;
             } elseif ($direction == foaf_direction::DOWN) {
                 $qp->name .= 'children';
-                $sc->add_where(triple::FLD_TO, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
-                //$sql_where = sql_db::LNK_TBL . '.' . triple::FLD_TO . $sql_in . $db_con->par_name() . ')';
-                $join_field = triple::FLD_FROM;
+                $sc->add_where(triple_db::FLD_TO, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
+                //$sql_where = sql_db::LNK_TBL . '.' . triple_db::FLD_TO . $sql_in . $db_con->par_name() . ')';
+                $join_field = triple_db::FLD_FROM;
             } else {
                 log_err('Unknown direction ' . $direction->value);
             }

@@ -62,6 +62,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
 include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_WORD_PATH . 'triple_db.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
@@ -83,6 +84,7 @@ use cfg\sandbox\sandbox_named;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\user\user;
+use cfg\word\triple_db;
 use cfg\word\word;
 use cfg\word\triple;
 use cfg\word\word_db;
@@ -166,18 +168,18 @@ class term extends combine_named
             ['', formula::FLD_FORMULA_USER_TEXT]
         ], [phrase::FLD_TYPE, word_db::FLD_ID]],
         [triple::class, [
-            [triple::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
+            [triple_db::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
             [user::FLD_ID],
-            [[triple::FLD_NAME, triple::FLD_NAME_GIVEN, triple::FLD_NAME_AUTO], term::FLD_NAME],
+            [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], term::FLD_NAME],
             [sandbox_named::FLD_DESCRIPTION],
-            [triple::FLD_VALUES, self::FLD_USAGE],
+            [triple_db::FLD_VALUES, self::FLD_USAGE],
             [phrase::FLD_TYPE, self::FLD_TYPE],
             [sandbox::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
             ['', formula::FLD_FORMULA_TEXT],
             ['', formula::FLD_FORMULA_USER_TEXT]
-        ], ['', triple::FLD_ID]],
+        ], ['', triple_db::FLD_ID]],
         [formula::class, [
             [formula::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
             [user::FLD_ID],

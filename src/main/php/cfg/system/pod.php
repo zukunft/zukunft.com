@@ -38,12 +38,14 @@ include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_WORD_PATH . 'triple_db.php';
 
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\helper\type_object;
 use cfg\word\triple;
+use cfg\word\triple_db;
 
 class pod extends type_object
 {
@@ -65,7 +67,7 @@ class pod extends type_object
         [pod_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, pod_type::class, ''],
         [self::FLD_URL, sql_field_type::NAME, sql_field_default::NOT_NULL, '', '', ''],
         [pod_status::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, pod_status::class, ''],
-        [self::FLD_PARAM, sql_field_type::INT, sql_field_default::NULL, '', triple::class, '', triple::FLD_ID],
+        [self::FLD_PARAM, sql_field_type::INT, sql_field_default::NULL, '', triple::class, '', triple_db::FLD_ID],
     );
 
 }

@@ -130,7 +130,7 @@ class def
     const MAIN_CLASSES = [
         word::class,
         //verb::class,
-        //triple::class,
+        triple::class,
         source::class,
         ref::class,
         //value::class,

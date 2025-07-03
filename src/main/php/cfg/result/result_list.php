@@ -51,6 +51,7 @@ include_once MODEL_PHRASE_PATH . 'term_list.php';
 include_once MODEL_SYSTEM_PATH . 'job.php';
 include_once MODEL_SYSTEM_PATH . 'job_list.php';
 include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_WORD_PATH . 'triple_db.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -84,6 +85,7 @@ use cfg\user\user;
 use cfg\user\user_list;
 use cfg\user\user_message;
 use cfg\value\value_base;
+use cfg\word\triple_db;
 use cfg\word\word;
 use cfg\word\word_db;
 use shared\enum\messages as msg_id;
@@ -549,7 +551,7 @@ class result_list extends sandbox_value_list
             } elseif (get_class($obj) == word::class) {
                 $sql_by .= word_db::FLD_ID;
             } elseif (get_class($obj) == triple::class) {
-                $sql_by .= triple::FLD_ID;
+                $sql_by .= triple_db::FLD_ID;
             }
         }
         if ($sql_by == '') {
@@ -587,7 +589,7 @@ class result_list extends sandbox_value_list
                     // TODO check if the results are still correct if the user has excluded the triple
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
                     //$db_con->set_join_fields( array(result::FLD_GRP),sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,   result::FLD_GRP,         result::FLD_GRP);
-                    $qp->sql = $db_con->select_by_field_list(array(triple::FLD_ID));
+                    $qp->sql = $db_con->select_by_field_list(array(triple_db::FLD_ID));
                 }
             }
             $qp->par = $db_con->get_par();
