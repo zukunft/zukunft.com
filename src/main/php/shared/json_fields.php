@@ -150,6 +150,7 @@ class json_fields
     const REF_TEXT = 'ref_text'; // the formula expression in a database reference format
     const NEED_ALL_VAL = 'need_all_val'; // calculate and save the result only if all used values are not null
     const FORMULA_NAME_PHRASE = 'name_phrase'; // the phrase object for the formula name
+    const FORMULA_NAME = 'formula'; // the name of the formula for im- and export
 
     // batch job fields
     const TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested

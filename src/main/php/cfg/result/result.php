@@ -66,6 +66,8 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_multi.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
@@ -95,6 +97,8 @@ use cfg\formula\formula;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
+use cfg\helper\data_object;
+use cfg\helper\db_object_multi;
 use cfg\phrase\phrase_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_multi;
@@ -371,43 +375,120 @@ class result extends sandbox_value
     }
 
     /**
+     * TODO move the common parts to the parent object
      * map a result api json to this model result object
      * @param array $api_json the api array with the values that should be mapped
      */
     function api_mapper(array $api_json): user_message
     {
-        $usr_msg = new user_message();
-
         // make sure that there are no unexpected leftovers but keep the user
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
 
-        foreach ($api_json as $key => $value) {
+        $usr_msg = parent::api_mapper($api_json);
 
-            if ($key == json_fields::ID) {
-                $this->set_id($value);
+        if (array_key_exists(json_fields::PHRASES, $api_json)) {
+            $phr_lst = new phrase_list($this->user());
+            $usr_msg->add($phr_lst->api_mapper($api_json[json_fields::PHRASES]));
+            if ($usr_msg->is_ok()) {
+                $this->grp()->set_phrase_list($phr_lst);
             }
-
-            if ($key == json_fields::PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $usr_msg->add($phr_lst->api_mapper($value));
-                if ($usr_msg->is_ok()) {
-                    $this->grp()->set_phrase_list($phr_lst);
-                }
+        }
+        if (array_key_exists(json_fields::ID, $api_json)) {
+            $this->set_id($api_json[json_fields::ID]);
+        }
+        if (array_key_exists(json_fields::NUMBER, $api_json)) {
+            $value = $api_json[json_fields::NUMBER];
+            if (is_numeric($value)) {
+                $this->set_value($value);
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
+                    msg_id::VAR_VALUE => $value,
+                    msg_id::VAR_GROUP => $this->grp()->dsp_id()
+                ]);
             }
+        }
 
-            if ($key == json_fields::NUMBER) {
-                if (is_numeric($value)) {
-                    $this->set_value($value);
-                } else {
-                    $usr_msg->add_id_with_vars(msg_id::IMPORT_RESULT_NOT_NUMERIC, [
-                        msg_id::VAR_VALUE => $value,
-                        msg_id::VAR_GROUP => $this->grp()->dsp_id()
-                    ]);
-                }
+        return $usr_msg;
+    }
+
+    /**
+     * set the vars of this value object based on the given json without writing to the database
+     * TODO import the description and save it in the group description
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+
+        if (key_exists(json_fields::WORDS, $in_ex_json)) {
+            $phr_lst = new phrase_list($this->user());
+            $usr_msg->add($phr_lst->import_mapper($in_ex_json[json_fields::WORDS], $dto, $test_obj));
+            if ($usr_msg->is_ok()) {
+                $phr_grp = $phr_lst->get_grp_id(false);
+                $this->set_grp($phr_grp);
             }
+        }
 
+        if (key_exists(json_fields::FORMULA_NAME, $in_ex_json)) {
+            $frm_name = $in_ex_json[json_fields::FORMULA_NAME];
+            $frm = $dto->formula_list()->get_by_name($frm_name);
+            if ($frm == null) {
+                $usr_msg->add_id_with_vars(msg_id::FORMULA_MISSING_IMPORT, [
+                    msg_id::VAR_FORMULA => $frm_name,
+                    msg_id::VAR_JSON_TEXT => $in_ex_json
+                ]);
+                $frm = new formula($this->user());
+                $frm->set_name($frm_name);
+                $dto->source_list()->add_by_name($frm);
+            }
+            $this->frm = $frm;
+        }
+
+        return $this->common_mapper($in_ex_json, $usr_msg);
+    }
+
+    /**
+     * set the vars of this value object based on the given json
+     * that are the same for the api and the import mapper
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user_message $usr_msg the user message object to remember the message that should be shown to the user
+     * @return user_message the enriched user message
+     */
+    private function common_mapper(
+        array        $in_ex_json,
+        user_message $usr_msg
+    ): user_message
+    {
+        $lib = new library();
+
+        if (key_exists(json_fields::TIMESTAMP, $in_ex_json)) {
+            $value = $in_ex_json[json_fields::TIMESTAMP];
+            if (strtotime($value)) {
+                $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP,
+                    [msg_id::VAR_VALUE => $value, msg_id::VAR_ID => $this->dsp_id()]
+                );
+            }
+        }
+
+        if (key_exists(json_fields::NUMBER, $in_ex_json)) {
+            $value = $in_ex_json[json_fields::NUMBER];
+            if (is_numeric($value)) {
+                $this->set_value($value);
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC,
+                    [msg_id::VAR_VALUE => $value, msg_id::VAR_GROUP => $this->grp()->dsp_id()]
+                );
+            }
         }
 
         return $usr_msg;
@@ -683,8 +764,8 @@ class result extends sandbox_value
      */
     function load_by_id(
         int|string $id = 0,
-        ?sql_type $typ = null
-    ): int
+        ?sql_type  $typ = null
+    ): int|string
     {
         global $db_con;
         $result = 0;
@@ -1076,6 +1157,11 @@ class result extends sandbox_value
     {
         $vars = parent::export_json($do_load);
 
+        // the formula that has created the result
+        $vars[json_fields::FORMULA_NAME] = $this->frm->name();
+
+        // TODO add source group
+
         // add the value itself
         $vars[json_fields::NUMBER] = $this->number();
 
@@ -1182,6 +1268,34 @@ class result extends sandbox_value
         }
         return $id_lst;
     }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     *
+     * @param sandbox_value|db_object_multi $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox_value|db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->src_grp_id() != 0) {
+            $this->set_src_grp($obj->source_group());
+        }
+        if ($obj->formula_id() != 0) {
+            $this->set_formula($obj->frm);
+        }
+        if ($obj->value() != null) {
+            $this->set_value($obj->value());
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * display

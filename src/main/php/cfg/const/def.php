@@ -135,7 +135,7 @@ class def
         ref::class,
         value::class,
         formula::class,
-        //result::class,
+        result::class,
         view::class,
         component::class,
         user::class

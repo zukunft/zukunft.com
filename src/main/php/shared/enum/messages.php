@@ -376,6 +376,10 @@ enum messages: string
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
         . '" is missing in the import message '
         . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END;
+    case FORMULA_MISSING_IMPORT = 'formula "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '" is missing in the import message '
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
     case FORMULA_EXPRESSION_MISSING = 'formula expression is missing in '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
     case COMPONENT_MISSING = 'component with name "'

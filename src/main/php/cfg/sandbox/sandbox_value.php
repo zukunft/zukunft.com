@@ -305,7 +305,9 @@ class sandbox_value extends sandbox_multi
      */
     function api_mapper(array $api_json): user_message
     {
-        $this->set_last_update($api_json[json_fields::LAST_UPDATE]);
+        if (array_key_exists(json_fields::LAST_UPDATE, $api_json)) {
+            $this->set_last_update($api_json[json_fields::LAST_UPDATE]);
+        }
         return parent::api_mapper($api_json);
     }
 

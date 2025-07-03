@@ -53,6 +53,7 @@ use cfg\db\sql_type;
 use cfg\formula\formula;
 use cfg\helper\data_object;
 use cfg\ref\ref;
+use cfg\result\result;
 use cfg\user\user;
 use cfg\value\value;
 use cfg\view\view;
@@ -145,6 +146,8 @@ class horizontal_tests
                 $dto->add_source($filled_obj->source);
             } elseif ($class == value::class) {
                 $dto->add_source($filled_obj->source);
+            } elseif ($class == result::class) {
+                $dto->add_formula($filled_obj->frm);
             }
             $ex_json = $filled_obj->export_json(false);
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
