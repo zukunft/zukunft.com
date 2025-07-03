@@ -181,7 +181,6 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
-use cfg\export\export;
 use cfg\formula\expression;
 use cfg\group\group;
 use cfg\group\group_id;
@@ -457,11 +456,9 @@ class value_base extends sandbox_value
      */
     function api_mapper(array $api_json): user_message
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-
-        $usr_msg = new user_message();
         $lib = new library();
+
+        $usr_msg = parent::api_mapper($api_json);
 
         // make sure that there are no unexpected leftovers but keep the user
         // TODO check that it is always moved to sandbox object
@@ -470,59 +467,53 @@ class value_base extends sandbox_value
         $this->reset();
         $this->set_user($usr);
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::ID) {
-                $this->set_id($value);
+        if (array_key_exists(json_fields::PHRASES, $api_json)) {
+            $phr_lst = new phrase_list($this->user());
+            $usr_msg->add($phr_lst->api_mapper($api_json[json_fields::PHRASES]));
+            if ($usr_msg->is_ok()) {
+                $this->grp()->set_phrase_list($phr_lst);
             }
-
-            if ($key == json_fields::PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $usr_msg->add($phr_lst->api_mapper($value));
-                if ($usr_msg->is_ok()) {
-                    $this->grp()->set_phrase_list($phr_lst);
-                }
+        }
+        if (array_key_exists(json_fields::ID, $api_json)) {
+            $this->set_id($api_json[json_fields::ID]);
+        }
+        if (array_key_exists(json_fields::TIMESTAMP, $api_json)) {
+            $time_stamp = $api_json[json_fields::TIMESTAMP];
+            if (strtotime($time_stamp)) {
+                $this->time_stamp = $lib->get_datetime($time_stamp, $this->dsp_id(), 'JSON import');
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP, [
+                    msg_id::VAR_VALUE => $time_stamp,
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
             }
-
-            if ($key == json_fields::TIMESTAMP) {
-                if (strtotime($value)) {
-                    $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
-                } else {
-                    $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP, [
-                        msg_id::VAR_VALUE => $value, 
-                        msg_id::VAR_ID => $this->dsp_id()
-                    ]);
-                }
+        }
+        if (array_key_exists(json_fields::NUMBER, $api_json)) {
+            $value = $api_json[json_fields::NUMBER];
+            if (is_numeric($value)) {
+                $this->set_value($value);
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
+                    msg_id::VAR_VALUE => $value,
+                    msg_id::VAR_GROUP => $this->grp()->dsp_id()
+                ]);
             }
-
-            if ($key == json_fields::NUMBER) {
-                if (is_numeric($value)) {
-                    $this->set_value($value);
-                } else {
-                    $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
-                        msg_id::VAR_VALUE => $value, 
-                        msg_id::VAR_GROUP => $this->grp()->dsp_id()
-                    ]);
-                }
+        }
+        if (array_key_exists(json_fields::SHARE, $api_json)) {
+            $this->set_share_id($api_json[json_fields::SHARE]);
+        }
+        if (array_key_exists(json_fields::PROTECTION, $api_json)) {
+            $this->set_protection_id($api_json[json_fields::PROTECTION]);
+            /* TODO Prio 2 review
+            if ($api_json[json_fields::PROTECTION] <> protect_type_shared::NO_PROTECT) {
+                $get_ownership = true;
             }
-
-            if ($key == json_fields::SHARE) {
-                $this->set_share_id($shr_typ_cac->id($value));
-            }
-
-            if ($key == json_fields::PROTECTION) {
-                $this->set_protection_id($ptc_typ_cac->id($value));
-                if ($value <> protect_type_shared::NO_PROTECT) {
-                    $get_ownership = true;
-                }
-            }
-
-            if ($key == json_fields::SOURCE_NAME) {
-                $src = new source($this->user());
-                $src->set_name($value);
-                $this->source = $src;
-            }
-
+            */
+        }
+        if (array_key_exists(json_fields::SOURCE_NAME, $api_json)) {
+            $src = new source($this->user());
+            $src->set_name($api_json[json_fields::SOURCE_NAME]);
+            $this->source = $src;
         }
 
         return $usr_msg;
@@ -1029,6 +1020,29 @@ class value_base extends sandbox_value
         log_debug('done');
     }
 
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     *
+     * @param value_base|db_object_multi $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(value_base|db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->source() != null) {
+            $this->set_source($obj->source());
+        }
+        if ($obj->value() != null) {
+            $this->set_value($obj->value());
+        }
+        return $usr_msg;
+    }
 
 
     /*

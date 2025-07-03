@@ -54,6 +54,7 @@ use cfg\formula\formula;
 use cfg\helper\data_object;
 use cfg\ref\ref;
 use cfg\user\user;
+use cfg\value\value;
 use cfg\view\view;
 use cfg\word\triple;
 use shared\library;
@@ -141,6 +142,8 @@ class horizontal_tests
                 $dto->add_phrase($filled_obj->to());
             } elseif ($class == ref::class) {
                 $dto->add_phrase($filled_obj->phrase());
+                $dto->add_source($filled_obj->source);
+            } elseif ($class == value::class) {
                 $dto->add_source($filled_obj->source);
             }
             $ex_json = $filled_obj->export_json(false);

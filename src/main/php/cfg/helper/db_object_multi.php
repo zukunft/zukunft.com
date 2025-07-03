@@ -240,6 +240,33 @@ class db_object_multi extends db_object_key
 
 
     /*
+     * modify
+     */
+
+    /**
+     * fill this seq id object based on the given object
+     * if the given id is zero the id is never overwritten
+     * if the given id is not zero the id is set if not yet done
+     *
+     * @param db_object_multi $obj object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = new user_message();
+        if ($obj->id() != 0) {
+            if ($this->id() == 0) {
+                $this->set_id($obj->id());
+            } elseif ($obj->id() != $this->id()) {
+                $usr_msg->add_id_with_vars(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
+            }
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * information
      */
 

@@ -150,6 +150,7 @@ use cfg\result\result_list;
 use cfg\result\results;
 use cfg\sandbox\protection_type_list;
 use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_value;
 use cfg\sandbox\share_type_list;
 use cfg\system\job;
 use cfg\system\job_list;
@@ -529,9 +530,9 @@ class create_test_objects extends test_base
     /**
      * get the base test object related to the given class
      * @param string $class the given main class name
-     * @return sandbox|db_id_object_non_sandbox wit only a few vars filled
+     * @return sandbox|sandbox_value|db_id_object_non_sandbox wit only a few vars filled
      */
-    function class_to_base_object(string $class): sandbox|db_id_object_non_sandbox
+    function class_to_base_object(string $class): sandbox|sandbox_value|db_id_object_non_sandbox
     {
         $obj = null;
         switch ($class) {
@@ -577,9 +578,9 @@ class create_test_objects extends test_base
     /**
      * get the filled test object related to the given class
      * @param string $class the given main class name
-     * @return sandbox|db_id_object_non_sandbox wit only a few vars filled
+     * @return sandbox|sandbox_value|db_id_object_non_sandbox wit only a few vars filled
      */
-    function class_to_filled_object(string $class): sandbox|db_id_object_non_sandbox
+    function class_to_filled_object(string $class): sandbox|sandbox_value|db_id_object_non_sandbox
     {
         $obj = null;
         switch ($class) {
@@ -2588,7 +2589,7 @@ class create_test_objects extends test_base
         global $ptc_typ_cac;
         $grp = $this->group_16();
         $val = new value($this->usr1, round(values::PI_LONG, 13), $grp);
-        $val->set_source_id($this->source()->id());
+        $val->set_source($this->source());
         $val->exclude();
         $val->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $val->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));

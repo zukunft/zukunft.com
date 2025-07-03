@@ -2174,11 +2174,11 @@ class test_base
     /**
      * check the object loading by id and name
      *
-     * @param sandbox_named|sandbox_link|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
      * @param int|string $id the id of the object if not 1
      * @return bool the load object to use it for more tests
      */
-    function assert_load_by_id(sandbox_named|sandbox_link|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
+    function assert_load_by_id(sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
     {
         // check the loading via id and check if the id has been mapped
         $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;

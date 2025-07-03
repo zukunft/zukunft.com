@@ -78,6 +78,8 @@ class json_fields
     const TEXT_VALUE = 'text_value'; // a text value that should not be used for searching
     const GEO_VALUE = 'geo_value'; // a geolocation value or result
 
+    const LAST_UPDATE = 'last_update';
+
     // the code id of the view style of a view, component or component_link
     const STYLE = 'style';
 

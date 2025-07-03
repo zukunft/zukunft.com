@@ -1859,7 +1859,7 @@ class sql_creator
      * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change (including internal fields)
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param int|string $id the id of the db row that should be updated
-     * @param value_base|null $val the value object e.g. the select the correct log table
+     * @param sandbox_multi|null $val the value object e.g. the select the correct log table
      * @return sql_par with the sql and the list of parameters actually used
      */
     function sql_func_log_update(
@@ -1869,7 +1869,7 @@ class sql_creator
         sql_par_field_list $fvt_lst,
         sql_type_list      $sc_par_lst,
         int|string         $id,
-        value_base|null    $val = null
+        sandbox_multi|null $val = null
     ): sql_par
     {
         // set some var names to shorten the code lines

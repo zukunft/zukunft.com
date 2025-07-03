@@ -133,7 +133,7 @@ class def
         triple::class,
         source::class,
         ref::class,
-        //value::class,
+        value::class,
         formula::class,
         //result::class,
         view::class,

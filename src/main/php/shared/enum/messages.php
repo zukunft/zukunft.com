@@ -536,6 +536,16 @@ enum messages: string
     case FAILED_RELOAD_CLASS = 'Reload "'
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . '" failed';
+    case FAILED_RELOAD_VALUE = 'Reload '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
+        . '" failed';
+    case FAILED_RELOAD_OBJECT = 'Reload '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" failed';
     case TRIPLE_VERB_SET = 'verb for triple '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' set to '

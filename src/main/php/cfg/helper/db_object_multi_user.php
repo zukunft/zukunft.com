@@ -101,6 +101,28 @@ class db_object_multi_user extends db_object_multi
 
 
     /*
+     * modify
+     */
+
+    /**
+     * fill this db user object based on the given object
+     * if the given user id is not set (null) the user id is set
+     *
+     * @param db_object_multi_user|db_object_multi $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(db_object_multi_user|db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->user_id() != null) {
+            $this->set_user($obj->user());
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * information
      */
 

@@ -162,7 +162,8 @@ class sandbox_value extends sandbox
      */
     function api_mapper(array $json_array): user_message
     {
-        $usr_msg = new user_message();
+        $usr_msg = parent::api_mapper($json_array);
+
         if (array_key_exists(json_fields::ID, $json_array)) {
             $this->set_id($json_array[json_fields::ID]);
         } else {

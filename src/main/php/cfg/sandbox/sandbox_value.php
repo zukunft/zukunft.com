@@ -299,6 +299,16 @@ class sandbox_value extends sandbox_multi
         return parent::row_mapper_multi($db_row, $id_fld);
     }
 
+    /**
+     * map a value api json to this model value object
+     * @param array $api_json the api array with the values that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $this->set_last_update($api_json[json_fields::LAST_UPDATE]);
+        return parent::api_mapper($api_json);
+    }
+
 
     /*
      * set and get
@@ -1072,6 +1082,30 @@ class sandbox_value extends sandbox_multi
         $sc->set_fields(array(user::FLD_ID));
 
         return $this->load_sql_set_where($qp, $sc, $id_ext);
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     *
+     * @param sandbox_value|db_object_multi $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox_value|db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->grp() != null) {
+            $this->set_grp($obj->grp());
+        }
+        if ($obj->last_update() != null) {
+            $this->set_last_update($obj->last_update());
+        }
+        return $usr_msg;
     }
 
 
