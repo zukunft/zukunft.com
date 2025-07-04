@@ -47,6 +47,7 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 //include_once MODEL_PHRASE_PATH . 'phrase.php';
 //include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 //include_once MODEL_RESULT_PATH . 'result.php';
+//include_once MODEL_RESULT_PATH . 'result_db.php';
 //include_once MODEL_RESULT_PATH . 'result_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -72,6 +73,7 @@ use cfg\group\result_id;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\result\result;
+use cfg\result\result_db;
 use cfg\result\result_list;
 use cfg\user\user;
 use cfg\user\user_message;
@@ -225,7 +227,7 @@ class sandbox_value_list extends sandbox_list
         $tbl_lst = value_base::TBL_LIST;
         if ($class !== value::class) {
             $list_class = result_list::class;
-            $tbl_lst = result::TBL_LIST;
+            $tbl_lst = result_db::TBL_LIST;
         }
 
         $lib = new library();
@@ -446,24 +448,24 @@ class sandbox_value_list extends sandbox_list
         // overwrite the value settings for results
         if (!$lib->is_value($class)) {
             $list_class = result_list::class;
-            $fld_lst_std = result::FLD_NAMES_STD;
+            $fld_lst_std = result_db::FLD_NAMES_STD;
             if ($is_std) {
-                $fld_lst = result::FLD_NAMES_ALL;
+                $fld_lst = result_db::FLD_NAMES_ALL;
                 if ($is_prime or $is_main) {
-                    $fld_lst_dummy = result::FLD_NAMES_STD_DUMMY;
+                    $fld_lst_dummy = result_db::FLD_NAMES_STD_DUMMY;
                 } else {
-                    $fld_lst_dummy = result::FLD_NAMES_DUMMY;
+                    $fld_lst_dummy = result_db::FLD_NAMES_DUMMY;
                 }
             } else {
-                $fld_lst = result::FLD_NAMES_NON_STD;
-                $fld_lst_dummy = result::FLD_NAMES_DUMMY;
+                $fld_lst = result_db::FLD_NAMES_NON_STD;
+                $fld_lst_dummy = result_db::FLD_NAMES_DUMMY;
             }
-            $fld_lst_usr_ex_std = result::FLD_NAMES_DATE_USR_EX_STD;
-            $fld_lst_usr_num_ex_std = result::FLD_NAMES_NUM_USR_EX_STD;
+            $fld_lst_usr_ex_std = result_db::FLD_NAMES_DATE_USR_EX_STD;
+            $fld_lst_usr_num_ex_std = result_db::FLD_NAMES_NUM_USR_EX_STD;
             // TODO use const overwrites for the result types a.g. for geo location results
             $fld_lst_usr_txt = [];
-            $fld_lst_usr_num = result::FLD_NAMES_NUM_USR;
-            $fld_lst_usr_only = result::FLD_NAMES_USR_ONLY;
+            $fld_lst_usr_num = result_db::FLD_NAMES_NUM_USR;
+            $fld_lst_usr_only = result_db::FLD_NAMES_USR_ONLY;
         }
 
         $tbl_ext = $this->table_extension($tbl_types);
@@ -520,7 +522,7 @@ class sandbox_value_list extends sandbox_list
                 $sc->set_fields($fld_lst_std);
             } else {
                 if ($is_prime or $is_main) {
-                    $sc->set_fields(array_merge(result::FLD_NAMES_STD_NON_DUMMY, $fld_lst_std));
+                    $sc->set_fields(array_merge(result_db::FLD_NAMES_STD_NON_DUMMY, $fld_lst_std));
                 } else {
                     $sc->set_fields($fld_lst_std);
                 }

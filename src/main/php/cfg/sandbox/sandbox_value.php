@@ -61,6 +61,7 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_RESULT_PATH . 'result.php';
+include_once MODEL_RESULT_PATH . 'result_db.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -103,6 +104,7 @@ use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\ref\source;
 use cfg\result\result;
+use cfg\result\result_db;
 use cfg\value\value_geo;
 use cfg\value\value;
 use cfg\value\value_text;
@@ -742,7 +744,7 @@ class sandbox_value extends sandbox_multi
             // standard main: for results without user specific changes and for up to e prime phrases
             if ($this::class == result::class) {
                 $sc->set_class($this::class, new sql_type_list(), $ext_type . self::TBL_EXT_STD . sql_type::MAIN->extension());
-                $fields = array_merge(result::FLD_KEY_MAIN_STD, $fld_par, $this::FLD_ALL_SOURCE);
+                $fields = array_merge(result_db::FLD_KEY_MAIN_STD, $fld_par, $this::FLD_ALL_SOURCE);
                 $tbl_comment = $this::TBL_COMMENT_STD . $type_class_name . $this::TBL_COMMENT_STD_MAIN_CONT;
                 $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
                 $sql_index .= $sc->index_create($fields, true);
@@ -830,7 +832,7 @@ class sandbox_value extends sandbox_multi
         // main: for results based on up to eight prime phrases
         if ($this::class == result::class and $type_name != $this::TYPE_TIME_SERIES) {
             $sql .= $sc->sql_separator();
-            $fields = array_merge(result::FLD_KEY_MAIN, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
+            $fields = array_merge(result_db::FLD_KEY_MAIN, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
             $sc->set_class($this::class, new sql_type_list(), $ext_type . sql_type::MAIN->extension());
             $tbl_comment = $this::TBL_COMMENT_MAIN . $type_class_name . $this::TBL_COMMENT_MAIN_CONT;
             if ($comment_overwrite != '') {
@@ -839,7 +841,7 @@ class sandbox_value extends sandbox_multi
             $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
             $sql_index .= $sc->index_create($fields, true);
             $sql_foreign .= $sc->foreign_key_create($fields);
-            $fields = array_merge(result::FLD_KEY_MAIN_USER, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_usr_fields);
+            $fields = array_merge(result_db::FLD_KEY_MAIN_USER, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_usr_fields);
             // most user: for user changes in values based on up to four prime phrases
             $sc->set_class($this::class, new sql_type_list([sql_type::USER]), $ext_type . sql_type::MAIN->extension());
             $tbl_comment = $this::TBL_COMMENT_MAIN_USER . $type_class_name . $this::TBL_COMMENT_MAIN_USER_CONT;
@@ -1276,7 +1278,7 @@ class sandbox_value extends sandbox_multi
         $result = $this->id_field_group();
         if ($this->is_prime()) {
             if ($this::class == result::class and $sc_par_lst->is_standard()) {
-                // TODO merge with result::FLD_KEY_PRIME ?
+                // TODO merge with result_db::FLD_KEY_PRIME ?
                 $id_fields = $this->id_fields_prime(1, result_id::PRIME_PHRASES_STD);
                 $result = array_merge([formula::FLD_ID], $id_fields);
             } else {
@@ -1288,7 +1290,7 @@ class sandbox_value extends sandbox_multi
             }
         } elseif ($this->is_main()) {
             if ($this::class == result::class and $sc_par_lst->is_standard()) {
-                // TODO merge with result::FLD_KEY_PRIME ?
+                // TODO merge with result_db::FLD_KEY_PRIME ?
                 $id_fields = $this->id_fields_main(1, group_id::MAIN_PHRASES_STD);
                 $result = array_merge([formula::FLD_ID], $id_fields);
             } else {

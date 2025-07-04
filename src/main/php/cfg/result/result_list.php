@@ -258,7 +258,7 @@ class result_list extends sandbox_value_list
         $qp = new sql_par(result_list::class);
         $qp->name .= 'frm';
         $par_types = array();
-        foreach (result::TBL_LIST_EX_STD as $tbl_typ) {
+        foreach (result_db::TBL_LIST_EX_STD as $tbl_typ) {
             $qp_tbl = $this->load_sql_by_frm_single($sc, $frm, $tbl_typ);
 
             $qp->merge($qp_tbl);
@@ -345,7 +345,7 @@ class result_list extends sandbox_value_list
         $par_lst = clone $sc->par_list();
 
         // loop over the possible tables where the value might be stored in this pod
-        foreach (result::TBL_LIST as $tbl_typ) {
+        foreach (result_db::TBL_LIST as $tbl_typ) {
             $sc->reset();
             $sc->set_par_list($par_lst);
             $qp_tbl = $this->load_sql_by_phr_lst_single(
@@ -410,7 +410,7 @@ class result_list extends sandbox_value_list
     ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(result::FLD_ID, $ids);
+        $sc->add_where(result_db::FLD_ID, $ids);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -442,7 +442,7 @@ class result_list extends sandbox_value_list
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(result::FLD_NAMES);
+        $sc->set_fields(result_db::FLD_NAMES);
         return $qp;
     }
 
@@ -486,11 +486,11 @@ class result_list extends sandbox_value_list
     {
         $qp = $this->load_sql($sc, 'src_grp');
         if ($grp->is_prime()) {
-            $sc->add_where(result::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
+            $sc->add_where(result_db::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
         } elseif ($grp->is_big()) {
-            $sc->add_where(result::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
+            $sc->add_where(result_db::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
         } else {
-            $sc->add_where(result::FLD_SOURCE_GRP, $grp->id());
+            $sc->add_where(result_db::FLD_SOURCE_GRP, $grp->id());
         }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -510,7 +510,7 @@ class result_list extends sandbox_value_list
         $lib = new library();
         // TODO shorten the code
         $ext_lst = array();
-        foreach (result::TBL_EXT_LST as $ext) {
+        foreach (result_db::TBL_EXT_LST as $ext) {
             $ext_lst[] = $ext->extension();
         }
         $qp->name =
@@ -544,7 +544,7 @@ class result_list extends sandbox_value_list
                 $sql_by .= formula::FLD_ID;
             } elseif (get_class($obj) == group::class) {
                 if ($by_source) {
-                    $sql_by .= result::FLD_SOURCE_GRP;
+                    $sql_by .= result_db::FLD_SOURCE_GRP;
                 } else {
                     $sql_by .= group::FLD_ID;
                 }
@@ -565,7 +565,7 @@ class result_list extends sandbox_value_list
             $db_con->set_id_field($res->id_field());
             $qp->name .= $sql_by;
             $db_con->set_name($qp->name);
-            $db_con->set_fields(result::FLD_NAMES);
+            $db_con->set_fields(result_db::FLD_NAMES);
             $db_con->set_usr($this->user()->id());
             if ($obj->id() > 0) {
                 if (get_class($obj) == formula::class) {
@@ -575,7 +575,7 @@ class result_list extends sandbox_value_list
                     $db_con->add_par(sql_par_type::INT, $obj->id());
                     $link_fields = array();
                     if ($by_source) {
-                        $link_fields[] = result::FLD_SOURCE_GRP;
+                        $link_fields[] = result_db::FLD_SOURCE_GRP;
                     } else {
                         $link_fields[] = group::FLD_ID;
                     }
@@ -583,12 +583,12 @@ class result_list extends sandbox_value_list
                 } elseif (get_class($obj) == word::class) {
                     // TODO check if the results are still correct if the user has excluded the word
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
-                    // $db_con->set_join_fields(                        array(result::FLD_GRP),                        sql_db::TBL_GROUP_LINK,                        result::FLD_GRP,                        result::FLD_GRP);
+                    // $db_con->set_join_fields(                        array(result_db::FLD_GRP),                        sql_db::TBL_GROUP_LINK,                        result_db::FLD_GRP,                        result_db::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(word_db::FLD_ID));
                 } elseif (get_class($obj) == triple::class) {
                     // TODO check if the results are still correct if the user has excluded the triple
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
-                    //$db_con->set_join_fields( array(result::FLD_GRP),sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,   result::FLD_GRP,         result::FLD_GRP);
+                    //$db_con->set_join_fields( array(result_db::FLD_GRP),sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,   result_db::FLD_GRP,         result_db::FLD_GRP);
                     $qp->sql = $db_con->select_by_field_list(array(triple_db::FLD_ID));
                 }
             }

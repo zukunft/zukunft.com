@@ -1289,7 +1289,7 @@ class formula extends sandbox_typed
                 if ($res->num_text == '') {
                     log_err('num text is empty nothing needs to be done, but actually this should never happen');
                 } else {
-                    if ($res->last_val_update > $res->last_update) {
+                    if ($res->last_val_update > $res->last_update()) {
                         // check if all needed value exist
                         $can_calc = false;
                         if ($this->need_all_val) {

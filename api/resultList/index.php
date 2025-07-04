@@ -58,7 +58,6 @@ $db_con = prg_start("api/resultList", "", false);
 // TODO use a json with the ids
 // TODO add load by phrase list, formula and source
 $ids = $_GET[api::URL_VAR_ID_LST] ?? '';
-$ids = explode(",", $ids);
 
 $msg = '';
 $result = ''; // reset the json message string
@@ -71,6 +70,7 @@ $msg .= $usr->get();
 if ($usr->id() > 0) {
 
     if ($ids != '') {
+        $ids = explode(",", $ids);
         $lst = new result_list($usr);
         $lst->load_by_ids($ids);
         $result = $lst->api_json();
