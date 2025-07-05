@@ -418,6 +418,9 @@ enum messages: string
     case VIEW_TYPE_NOT_FOUND = 'view type "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" not found';
+    case VIEW_STYLE_NOT_FOUND = 'view style "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
     case VIEW_IMPORT_ERROR = ' when importing '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case VIEW_NAME_MISSING = 'name in view missing';

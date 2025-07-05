@@ -1459,21 +1459,65 @@ class value_base extends sandbox_value
      */
     function save_from_api_msg(array $api_json, bool $do_save = true): user_message
     {
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+
         log_debug();
         $usr_msg = new user_message();
 
-        foreach ($api_json as $key => $value) {
+        $lib = new library();
 
-            if ($key == json_fields::WORDS) {
-                $grp = new group($this->user());
-                $usr_msg->add($grp->save_from_api_msg($value, $do_save));
-                if ($usr_msg->is_ok()) {
-                    $this->set_grp($grp);
+        if (array_key_exists(json_fields::WORDS, $api_json)) {
+            $grp = new group($this->user());
+            $usr_msg->add($grp->save_from_api_msg($api_json[json_fields::WORDS], $do_save));
+            if ($usr_msg->is_ok()) {
+                $this->set_grp($grp);
+            }
+        }
+
+        if (array_key_exists(json_fields::TIMESTAMP, $api_json)) {
+            if (strtotime($api_json[json_fields::TIMESTAMP])) {
+                $this->time_stamp = $lib->get_datetime($api_json[json_fields::TIMESTAMP], $this->dsp_id(), 'JSON import');
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP, [
+                    msg_id::VAR_VALUE => $api_json[json_fields::TIMESTAMP],
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
+            }
+        }
+
+        if (array_key_exists(json_fields::NUMBER, $api_json)) {
+            if (is_numeric($api_json[json_fields::NUMBER])) {
+                $this->set_value($api_json[json_fields::NUMBER]);
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
+                    msg_id::VAR_GROUP => $this->grp()->dsp_id(),
+                    msg_id::VAR_VALUE => $api_json[json_fields::NUMBER]
+                ]);
+            }
+        }
+
+        if (array_key_exists(json_fields::SHARE, $api_json)) {
+            $this->set_share_id($shr_typ_cac->id($api_json[json_fields::SHARE]));
+        }
+
+        if (array_key_exists(json_fields::PROTECTION, $api_json)) {
+            $this->set_protection_id($ptc_typ_cac->id($api_json[json_fields::PROTECTION]));
+            if ($api_json[json_fields::PROTECTION] <> protect_type_shared::NO_PROTECT) {
+                $get_ownership = true;
+            }
+        }
+
+        if (array_key_exists(json_fields::SOURCE_NAME, $api_json)) {
+            $src = new source($this->user());
+            $src->set_name($api_json[json_fields::SOURCE_NAME]);
+            if ($usr_msg->is_ok() and $do_save) {
+                $src->load_by_name($api_json[json_fields::SOURCE_NAME]);
+                if ($src->id() == 0) {
+                    $src->save();
                 }
             }
-
-            $usr_msg->add($this->set_fields_from_json($key, $value, $usr_msg, $do_save));
-
+            $this->source = $src;
         }
 
         if ($usr_msg->is_ok() and $do_save) {
@@ -1518,9 +1562,9 @@ class value_base extends sandbox_value
                 $this->set_value($value);
             } else {
                 $msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
-                    msg_id::VAR_GROUP => $this->grp()->dsp_id(), 
+                    msg_id::VAR_GROUP => $this->grp()->dsp_id(),
                     msg_id::VAR_VALUE => $value
-                    ]);
+                ]);
             }
         }
 

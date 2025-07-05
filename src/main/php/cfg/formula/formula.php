@@ -403,11 +403,9 @@ class formula extends sandbox_typed
     {
         $msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-            if ($key == json_fields::USR_TEXT) {
-                if ($value <> '') {
-                    $this->set_user_text($value);
-                }
+        if (array_key_exists(json_fields::USR_TEXT, $api_json)) {
+            if ($api_json[json_fields::USR_TEXT] <> '') {
+                $this->set_user_text($api_json[json_fields::USR_TEXT]);
             }
         }
 

@@ -267,21 +267,17 @@ class component_link extends sandbox_link
     {
         $msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-            if ($value != null) {
-                if ($key == json_fields::POS) {
-                    $this->order_nbr = $value;
-                }
-                if ($key == json_fields::TYPE) {
-                    $this->set_predicate_id($value);
-                }
-                if ($key == json_fields::POS_TYPE) {
-                    $this->set_pos_type_by_id($value);
-                }
-                if ($key == json_fields::STYLE) {
-                    $this->set_style_by_id($value);
-                }
-            }
+        if (array_key_exists(json_fields::POS, $api_json)) {
+            $this->order_nbr = $api_json[json_fields::POS];
+        }
+        if (array_key_exists(json_fields::TYPE, $api_json)) {
+            $this->set_predicate_id($api_json[json_fields::TYPE]);
+        }
+        if (array_key_exists(json_fields::POS_TYPE, $api_json)) {
+            $this->set_pos_type_by_id($api_json[json_fields::POS_TYPE]);
+        }
+        if (array_key_exists(json_fields::STYLE, $api_json)) {
+            $this->set_style_by_id($api_json[json_fields::STYLE]);
         }
 
         return $msg;

@@ -578,9 +578,9 @@ class create_test_objects extends test_base
     /**
      * get the filled test object related to the given class
      * @param string $class the given main class name
-     * @return sandbox|sandbox_value|db_id_object_non_sandbox wit only a few vars filled
+     * @return triple|ref|value|result|sandbox|sandbox_value|db_id_object_non_sandbox wit only a few vars filled
      */
-    function class_to_filled_object(string $class): sandbox|sandbox_value|db_id_object_non_sandbox
+    function class_to_filled_object(string $class): triple|ref|value|result|sandbox|sandbox_value|db_id_object_non_sandbox
     {
         $obj = null;
         switch ($class) {
@@ -3267,7 +3267,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return view with all fields set and a reseved test name for testing the db write function
+     * @return view with all fields set and a reserved test name for testing the db write function
      */
     function view_filled_add(): view
     {

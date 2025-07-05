@@ -393,15 +393,11 @@ class sandbox_multi extends db_object_multi_user
         $this->reset();
         $this->set_user($usr);
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::SHARE) {
-                $this->share_id = $value;
-            }
-            if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $value;
-            }
-
+        if (array_key_exists(json_fields::SHARE, $api_json)) {
+            $this->share_id = $api_json[json_fields::SHARE];
+        }
+        if (array_key_exists(json_fields::PROTECTION, $api_json)) {
+            $this->protection_id = $api_json[json_fields::PROTECTION];
         }
 
         return $usr_msg;

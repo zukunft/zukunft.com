@@ -276,44 +276,27 @@ class word extends sandbox_typed
      */
     function api_mapper(array $api_json): user_message
     {
-        $msg = parent::api_mapper($api_json);
+        $usr_msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
+        // it is expected that the code id is set via import by an admin not via api
 
-            // TODO move plural to language forms
-            if ($key == json_fields::PLURAL) {
-                if ($value <> '') {
-                    $this->plural = $value;
-                }
+        // TODO move plural to language forms
+        if (array_key_exists(json_fields::PLURAL, $api_json)) {
+            if ($api_json[json_fields::PLURAL] <> '') {
+                $this->plural = $api_json[json_fields::PLURAL];
             }
-            /*
-            if ($key == exp_obj::FLD_VIEW) {
-                $wrd_view = new view($this->user());
-                if ($do_save) {
-                    $wrd_view->load_by_name($value);
-                    if ($wrd_view->id() == 0) {
-                        $result->add_message_text('Cannot find view >' . $value . '< when importing ' . $this->dsp_id());
-                    } else {
-                        $this->view_id = $wrd_view->id();
-                    }
-                } else {
-                    $wrd_view->set_name($value);
-                }
-                $this->view = $wrd_view;
-            }
-
-            if ($key == json_fields::PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $msg->add($phr_lst->db_obj($value));
-                if ($msg->is_ok()) {
-                    $this->grp->phr_lst = $phr_lst;
-                }
-            }
-            */
-
         }
 
-        return $msg;
+        if (array_key_exists(json_fields::VIEW, $api_json)) {
+            $msk = new view($this->user());
+            $id = $api_json[json_fields::VIEW];
+            if ($id != 0) {
+                $msk->set_id($id);
+                $this->view = $msk;
+            }
+        }
+
+        return $usr_msg;
     }
 
     /**

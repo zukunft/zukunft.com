@@ -298,31 +298,27 @@ class ref extends sandbox_link
     {
         $msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::PHRASE) {
-                if ($value != '' and $value != 0) {
-                    $phr = new phrase($this->user());
-                    $phr->set_id($value);
-                    $this->set_phrase($phr);
-                }
+        if (array_key_exists(json_fields::PHRASE, $api_json)) {
+            if ($api_json[json_fields::PHRASE] != '' and $api_json[json_fields::PHRASE] != 0) {
+                $phr = new phrase($this->user());
+                $phr->set_id($api_json[json_fields::PHRASE]);
+                $this->set_phrase($phr);
             }
-            if ($key == json_fields::EXTERNAL_KEY) {
-                if ($value <> '') {
-                    $this->external_key = $value;
-                }
+        }
+        if (array_key_exists(json_fields::EXTERNAL_KEY, $api_json)) {
+            if ($api_json[json_fields::EXTERNAL_KEY] != '') {
+                $this->external_key = $api_json[json_fields::EXTERNAL_KEY];
             }
-            if ($key == json_fields::URL) {
-                if ($value <> '') {
-                    $this->url = $value;
-                }
+        }
+        if (array_key_exists(json_fields::URL, $api_json)) {
+            if ($api_json[json_fields::URL] != '') {
+                $this->url = $api_json[json_fields::URL];
             }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            if ($api_json[json_fields::DESCRIPTION] != '') {
+                $this->description = $api_json[json_fields::DESCRIPTION];
             }
-
         }
 
         return $msg;

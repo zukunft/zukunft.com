@@ -310,16 +310,15 @@ class component extends sandbox_typed
     {
         $msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-            // TODO the code id might be not be mapped because this can never be changed by the user
-            if ($key == json_fields::CODE_ID) {
-                $this->code_id = $value;
-            }
-            if ($key == json_fields::UI_MSG_CODE_ID) {
-                global $mtr;
-                $this->ui_msg_code_id = $mtr->get($value);
-            }
+        // it is expected that the code id is set via import by an admin not via api
+        if (array_key_exists(json_fields::CODE_ID, $api_json)) {
+            $this->code_id = $api_json[json_fields::CODE_ID];
         }
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID, $api_json)) {
+            global $mtr;
+            $this->ui_msg_code_id = $mtr->get($api_json[json_fields::UI_MSG_CODE_ID]);
+        }
+        // TODO map e.g. the $row_phrase
 
         return $msg;
     }

@@ -402,19 +402,14 @@ class sandbox extends db_object_seq_id_user
         $this->reset();
         $this->set_user($usr);
 
-        // TODO use the array_key_exists function because it is expected to be faster than looping over the array several times
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::ID) {
-                $this->set_id($value);
-            }
-            if ($key == json_fields::SHARE) {
-                $this->share_id = $value;
-            }
-            if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $value;
-            }
-
+        if (array_key_exists(json_fields::ID, $api_json)) {
+            $this->set_id($api_json[json_fields::ID]);
+        }
+        if (array_key_exists(json_fields::SHARE, $api_json)) {
+            $this->share_id = $api_json[json_fields::SHARE];
+        }
+        if (array_key_exists(json_fields::PROTECTION, $api_json)) {
+            $this->protection_id = $api_json[json_fields::PROTECTION];
         }
 
         return $usr_msg;

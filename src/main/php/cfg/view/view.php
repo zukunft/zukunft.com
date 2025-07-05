@@ -70,8 +70,10 @@ include_once MODEL_COMPONENT_PATH . 'component_list.php';
 include_once MODEL_COMPONENT_PATH . 'position_type.php';
 include_once MODEL_COMPONENT_PATH . 'view_style.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once MODEL_LANGUAGE_PATH . 'language.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
@@ -83,6 +85,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'term_view.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
 include_once SHARED_CONST_PATH . 'views.php';
@@ -106,6 +109,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\data_object;
+use cfg\helper\db_object_seq_id;
 use cfg\helper\type_list;
 use cfg\helper\type_object;
 use cfg\language\language;
@@ -117,7 +121,9 @@ use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\messages;
 use shared\enum\messages as msg_id;
+use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\library;
 use shared\const\views;
@@ -284,36 +290,15 @@ class view extends sandbox_typed
      */
     function api_mapper(array $api_json): user_message
     {
-        $msg = parent::api_mapper($api_json);
+        $usr_msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
+        // it is expected that the code id is set via import by an admin not via api
 
-            if ($key == json_fields::CODE_ID) {
-                if ($value <> '') {
-                    $this->code_id = $value;
-                }
-            }
-            /* TODO review
-            if ($key == exp_obj::FLD_VIEW) {
-                $wrd_view = new view($this->user());
-                if ($do_save) {
-                    $wrd_view->load_by_name($value);
-                    if ($wrd_view->id() == 0) {
-                        $result->add_message_text('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
-                    } else {
-                        $this->view_id = $wrd_view->id();
-                    }
-                } else {
-                    $wrd_view->set_name($value);
-                }
-                $this->view = $wrd_view;
-            }
-
-            */
-
+        if (array_key_exists(json_fields::STYLE, $api_json)) {
+            $this->set_style_by_id($api_json[json_fields::STYLE]);
         }
 
-        return $msg;
+        return $usr_msg;
     }
 
     /**
@@ -338,6 +323,9 @@ class view extends sandbox_typed
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
         // first save the parameters of the view itself
+        if (key_exists(json_fields::STYLE, $in_ex_json)) {
+            $usr_msg->add($this->set_style($in_ex_json[json_fields::STYLE]));
+        }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             if ($in_ex_json[json_fields::TYPE_NAME] != '') {
                 $type_id = $this->type_id_by_code_id($in_ex_json[json_fields::TYPE_NAME]);
@@ -416,7 +404,12 @@ class view extends sandbox_typed
             $vars[json_fields::EXCLUDED] = true;
         } else {
             $vars = parent::api_json_array($typ_lst, $usr);
+
+            // the code id is included in the api message towards the frontend
+            // but not overwritten via api message
             $vars[json_fields::CODE_ID] = $this->code_id;
+
+            $vars[json_fields::STYLE] = $this->style_id();
             if ($this->cmp_lnk_lst != null) {
                 $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($typ_lst);
             }
@@ -580,6 +573,7 @@ class view extends sandbox_typed
         $vars = parent::export_json($do_load);
 
         global $msk_typ_cac;
+        global $msk_sty_cac;
 
         // TODO avoid the var overwrite be overwriting the type_name() function
         if (isset($this->type_id)) {
@@ -595,6 +589,12 @@ class view extends sandbox_typed
         //      include the code id also in the im- and export, but restrict the code id object changes to develop and system users
         if ($this->code_id != null) {
             $vars[json_fields::CODE_ID] = $this->code_id;
+        }
+
+        if ($this->style_id() != null) {
+            if ($this->style_id() <> $msk_sty_cac->default_id()) {
+                $vars[json_fields::STYLE] = $msk_sty_cac->code_id($this->style_id());
+            }
         }
 
         // add the view components used
@@ -643,16 +643,25 @@ class view extends sandbox_typed
      * set the default style for this view by the code id
      *
      * @param string|null $code_id the code id of the display style use for im and export
-     * @return void
+     * @return user_message
      */
-    function set_style(?string $code_id): void
+    function set_style(?string $code_id): user_message
     {
         global $msk_sty_cac;
+        $usr_msg = new user_message();
         if ($code_id == null) {
             $this->style = null;
         } else {
-            $this->style = $msk_sty_cac->get_by_code_id($code_id);
+            if ($msk_sty_cac->has_code_id($code_id)) {
+                $this->style = $msk_sty_cac->get_by_code_id($code_id);
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::VIEW_STYLE_NOT_FOUND, [
+                    msg_id::VAR_NAME => $code_id
+                ]);
+                $this->style = null;
+            }
         }
+        return $usr_msg;
     }
 
     /**
@@ -1201,6 +1210,29 @@ class view extends sandbox_typed
         $usr_msg = new user_message();
         // TODO implement
         $usr_msg->add_id(msg_id::NOT_YET_IMPLEMENTED);
+        return $usr_msg;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     * if the given type is not set (null) the type is not removed
+     * if the given type is zero (not null) the type is removed
+     *
+     * @param view|sandbox_typed|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(view|sandbox_typed|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->style_id() != null) {
+            $this->set_style_by_id($obj->style_id());
+        }
         return $usr_msg;
     }
 

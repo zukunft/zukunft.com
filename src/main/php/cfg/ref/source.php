@@ -235,14 +235,8 @@ class source extends sandbox_typed
     {
         $msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::URL) {
-                if ($value <> '') {
-                    $this->url = $value;
-                }
-            }
-
+        if (array_key_exists(json_fields::URL, $api_json)) {
+            $this->url = $api_json[json_fields::URL];
         }
 
         return $msg;
@@ -310,20 +304,17 @@ class source extends sandbox_typed
         log_debug();
         $usr_msg = new user_message();
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::NAME) {
-                $this->name = $value;
-            }
-            if ($key == self::FLD_URL) {
-                $this->url = $value;
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                $this->description = $value;
-            }
-            if ($key == json_fields::TYPE) {
-                $this->type_id = $value;
-            }
+        if (array_key_exists(json_fields::NAME, $api_json)) {
+            $this->name = $api_json[json_fields::NAME];
+        }
+        if (array_key_exists(json_fields::URL, $api_json)) {
+            $this->url = $api_json[json_fields::URL];
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            $this->description = $api_json[json_fields::DESCRIPTION];
+        }
+        if (array_key_exists(json_fields::TYPE, $api_json)) {
+            $this->type_id = $api_json[json_fields::TYPE];
         }
 
         if ($usr_msg->is_ok() and $do_save) {

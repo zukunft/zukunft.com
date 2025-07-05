@@ -195,19 +195,18 @@ class sandbox_named extends sandbox
      */
     function api_mapper(array $api_json): user_message
     {
-        $msg = parent::api_mapper($api_json);
+        $usr_msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
+        if (array_key_exists(json_fields::NAME, $api_json)) {
+            $this->set_name($api_json[json_fields::NAME]);
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            if ($api_json[json_fields::DESCRIPTION] <> '') {
+                $this->description = $api_json[json_fields::DESCRIPTION];
             }
         }
-        return $msg;
+
+        return $usr_msg;
     }
 
     /**
@@ -367,7 +366,7 @@ class sandbox_named extends sandbox
      */
     function description(): ?string
     {
-            return $this->description;
+        return $this->description;
     }
 
     /**
