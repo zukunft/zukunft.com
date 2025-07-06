@@ -168,9 +168,9 @@ class sandbox_tests
 
         // test if two sources are supposed to be the same
         $src1 = new source($usr);
-        $src1->set(1, sources::IPCC_AR6_SYNTHESIS);
+        $src1->set(sources::SIB_ID, sources::IPCC_AR6_SYNTHESIS);
         $src2 = new source($usr);
-        $src2->set(2, sources::IPCC_AR6_SYNTHESIS);
+        $src2->set(sources::WIKIDATA_ID, sources::IPCC_AR6_SYNTHESIS);
         $result = $src1->is_same($src2);
         $t->assert("are two sources supposed to be the same", $result, true);
 

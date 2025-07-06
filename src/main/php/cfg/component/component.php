@@ -409,28 +409,6 @@ class component extends sandbox_typed
      */
 
     /**
-     * import a view component from a JSON object
-     * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, user $usr_req, object $test_obj = null): user_message
-    {
-        $usr_msg = $this->import_mapper_user($in_ex_json, $usr_req, null, $test_obj);
-
-        if (!$test_obj) {
-            if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
-            } else {
-                log_debug('not saved because ' . $usr_msg->get_last_message());
-            }
-        }
-
-        return $usr_msg;
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
@@ -478,30 +456,17 @@ class component extends sandbox_typed
      */
 
     /**
-     * set the most used view component vars with one set statement
-     * @param int $id mainly for test creation the database id of the view component
-     * @param string $name mainly for test creation the name of the view component
-     * @param string $type_code_id the code id of the predefined view component type
-     */
-    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
-    {
-        parent::set($id, $name);
-
-        if ($type_code_id != '') {
-            $this->set_type($type_code_id);
-        }
-    }
-
-    /**
      * set the view component type
      *
-     * @param string $type_code_id the code id that should be added to this view component
-     * @return void
+     * @param string $code_id the code id that should be added to this view component
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $type_code_id): void
+    function set_type(string $code_id, user $usr_req = new user()): user_message
     {
         global $cmp_typ_cac;
-        $this->type_id = $cmp_typ_cac->id($type_code_id);
+        return parent::set_type_by_code_id(
+            $code_id, $cmp_typ_cac, msg_id::COMPONENT_TYPE_NOT_FOUND, $usr_req);
     }
 
     /**
@@ -663,6 +628,14 @@ class component extends sandbox_typed
     }
 
     /**
+     * @return msg_id|null the message id or null
+     */
+    function ui_msg_code_id(): ?msg_id
+    {
+        return $this->ui_msg_code_id;
+    }
+
+    /**
      * set the code id of this object to write the change to the db
      * but only if the requesting user hat the permission to do so
      *
@@ -685,6 +658,14 @@ class component extends sandbox_typed
             ]);
         }
         return $usr_msg;
+    }
+
+    /**
+     * @return string|null the unique key or null if the component is not used by the system
+     */
+    function code_id(): ?string
+    {
+        return $this->code_id;
     }
 
     /**

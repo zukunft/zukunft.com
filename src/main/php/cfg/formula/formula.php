@@ -444,36 +444,23 @@ class formula extends sandbox_typed
      */
 
     /**
-     * set the most used object vars with one set statement
-     * @param int $id mainly for test creation the database id of the formula
-     * @param string $name mainly for test creation the name of the formula
-     * @param string $type_code_id the code id of the predefined formula type
-     */
-    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
-    {
-        parent::set($id, $name);
-
-        if ($type_code_id != '') {
-            $this->set_type($type_code_id);
-        }
-    }
-
-    /**
      * set the predefined type of this formula
      *
-     * @param string $type_code_id the code id that should be added to this formula
-     * @return void
+     * @param string $code_id the code id that should be added to this formula
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $type_code_id): void
+    function set_type(string $code_id, user $usr_req = new user()): user_message
     {
         global $frm_typ_cac;
-        $this->type_id = $frm_typ_cac->id($type_code_id);
+        return parent::set_type_by_code_id(
+            $code_id, $frm_typ_cac, msg_id::FORMULA_TYPE_NOT_FOUND, $usr_req);
     }
 
     /**
      * set the value to rank the formulas by usage
      *
-     * @param int $usage a higher value moves the formula to the top of the selection list
+     * @param int|null $usage a higher value moves the formula to the top of the selection list
      * @return void
      */
     function set_usage(?int $usage): void
@@ -1162,7 +1149,7 @@ class formula extends sandbox_typed
                     // fill each results created by any previous number filling
                     foreach ($res_lst->lst() as $res) {
                         // fill each results created by any previous number filling
-                        if ($res->val_missing == False) {
+                        if (!$res->val_missing) {
                             if ($fig_lst->fig_missing and $this->need_all_val) {
                                 log_debug('figure missing');
                                 $res->val_missing = True;
@@ -1186,7 +1173,7 @@ class formula extends sandbox_typed
                         $res_master = clone $res;
                         $fig_nbr = 1;
                         foreach ($fig_lst->lst() as $fig) {
-                            if ($res->val_missing == False) {
+                            if (!$res->val_missing) {
                                 if ($fig_lst->fig_missing and $this->need_all_val) {
                                     log_debug('figure missing');
                                     $res->val_missing = True;
@@ -1306,7 +1293,7 @@ class formula extends sandbox_typed
                             log_debug('always calculate ' . $this->dsp_id());
                             $can_calc = true;
                         }
-                        if ($can_calc == true) {
+                        if ($can_calc) {
                             log_debug('calculate ' . $res->num_text . ' for ' . $phr_lst->dsp_id());
                             $calc = new math;
                             $res->set_number($calc->parse($res->num_text));
@@ -1341,7 +1328,7 @@ class formula extends sandbox_typed
     /**
      * calculate the result for one formula for one user
      * and save the result in the database
-     * @param phrase_list $phr_lst is the context for the value retrieval and it also contains any time words
+     * @param phrase_list $phr_lst is the context for the value retrieval, and it also contains any time words
      * the time words are only separated right before saving to the database
      * always returns an array of results
      * TODO check if calculation is really needed
@@ -1437,7 +1424,7 @@ class formula extends sandbox_typed
                                     // but probably this is not needed, because the source words are also saved
                                     //$scale_wrd_lst = $res_add_wrd_lst->scaling_lst ();
                                     //$res->grp()->phrase_list()->merge($scale_wrd_lst->lst);
-                                    //zu_debug(self::class . '->calc -> added the scaling word "'.implode(",",$scale_wrd_lst->names()).'" to the result words "'.implode(",",$res->grp()->phrase_list()->names()).'"');
+                                    //zu_debug(self::class . '->calc -> added the scaling word '.implode(",",$scale_wrd_lst->names()).' to the result words "'.implode(",",$res->grp()->phrase_list()->names()).'"');
                                 }
 
                                 // if the formula is a scaling formula, remove the obsolete scaling word from the source words
@@ -1578,22 +1565,19 @@ class formula extends sandbox_typed
      * import a formula from a JSON object
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    function import_obj(
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
-        log_debug();
-
-        // set the object vars based on the json
-        $usr_msg = $this->import_mapper($in_ex_json, null, $test_obj);
-
-        // save the formula in the database
-        if (!$test_obj) {
-            if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
-            }
-        }
+        $usr_msg = parent::import_obj($in_ex_json, $usr_req, $dto, $test_obj);
 
         // assign the formula to the words and triple
         if ($usr_msg->is_ok()) {

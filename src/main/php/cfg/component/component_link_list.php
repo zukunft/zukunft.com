@@ -348,6 +348,14 @@ class component_link_list extends sandbox_link_list
     {
         $usr_msg = new user_message();
         foreach ($this->lst() as $sbx) {
+            // save upfront and missing components
+            $cmp = $sbx->component();
+            if (!$cmp->is_valid()) {
+                if ($cmp->db_ready()) {
+                    $usr_msg->add($cmp->save());
+                }
+            }
+            // save the link of the view to the component
             $usr_msg->add($sbx->save());
         }
         return $usr_msg;

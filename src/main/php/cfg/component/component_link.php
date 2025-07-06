@@ -323,7 +323,7 @@ class component_link extends sandbox_link
                 and array_key_exists(json_fields::STYLE, $in_ex_json))) {
 
             // get component from dto by name
-            $cmp = $dto->get_component_by_name($in_ex_json[json_fields::NAME]);
+            $cmp = $dto?->get_component_by_name($in_ex_json[json_fields::NAME]);
             if ($cmp == null) {
                 $usr_msg->add_id_with_vars(msg_id::COMPONENT_MISSING, [
                     msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME],
@@ -339,7 +339,7 @@ class component_link extends sandbox_link
                 msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME]
             ]);
             $cmp = new component($usr);
-            $cmp->import_obj($in_ex_json, $usr, $test_obj);
+            $cmp->import_obj($in_ex_json, $usr, $dto, $test_obj);
         }
 
         // set the link position and type

@@ -49,6 +49,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -64,6 +65,7 @@ use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\helper\data_object;
 use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_link_named;
@@ -281,15 +283,21 @@ class component_list extends sandbox_list_named
      *
      * @param array $json_obj an array with the data of the json object
      * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, user $usr_req, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $dsp_json) {
             $cmp = new component($this->user());
-            $usr_msg->add($cmp->import_obj($dsp_json, $usr_req, $test_obj));
+            $usr_msg->add($cmp->import_obj($dsp_json, $usr_req, $dto, $test_obj));
             $this->add($cmp);
         }
 

@@ -442,29 +442,6 @@ class ref extends sandbox_link
      */
 
     /**
-     * import a link to external database from an imported json object
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
-    {
-        $usr_msg = $this->import_mapper($in_ex_json, null, $test_obj);
-
-        // to be able to log the object names
-        if (!$test_obj) {
-            if ($this->load_objects()) {
-                if ($usr_msg->is_ok()) {
-                    $usr_msg->add($this->save());
-                }
-            }
-        }
-
-        return $usr_msg;
-    }
-
-    /**
      * create an array with the export json fields of this reference excluding e.g. the database id
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields

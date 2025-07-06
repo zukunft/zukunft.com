@@ -78,8 +78,9 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once WEB_REF_PATH . 'source.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_CONST_PATH . 'sources.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use cfg\db\sql;
@@ -99,9 +100,10 @@ use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
 use cfg\user\user_message;
-use shared\json_fields;
 use shared\const\sources;
+use shared\enum\messages as msg_id;
 use shared\types\api_type_list;
+use shared\json_fields;
 
 class source extends sandbox_typed
 {
@@ -330,30 +332,6 @@ class source extends sandbox_typed
      */
 
     /**
-     * import a source from an object
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
-    {
-        global $src_typ_cac;
-
-        log_debug();
-        $usr_msg = $this->import_mapper($in_ex_json, null, $test_obj);
-
-        // save the source in the database
-        if (!$test_obj) {
-            if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
-            }
-        }
-
-        return $usr_msg;
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
@@ -378,30 +356,17 @@ class source extends sandbox_typed
      */
 
     /**
-     * set the most used object vars with one set statement
-     * @param int $id mainly for test creation the database id of the source
-     * @param string $name mainly for test creation the name of the source
-     * @param string $type_code_id the code id of the predefined source type
-     */
-    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
-    {
-        parent::set($id, $name);
-
-        if ($type_code_id != '') {
-            $this->set_type($type_code_id);
-        }
-    }
-
-    /**
      * set the predefined type of this source
      *
-     * @param string $type_code_id the code id that should be added to this source
-     * @return void
+     * @param string $code_id the code id that should be added to this source
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $type_code_id): void
+    function set_type(string $code_id, user $usr_req = new user()): user_message
     {
         global $src_typ_cac;
-        $this->type_id = $src_typ_cac->id($type_code_id);
+        return parent::set_type_by_code_id(
+            $code_id, $src_typ_cac, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
     }
 
 

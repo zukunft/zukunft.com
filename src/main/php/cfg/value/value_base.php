@@ -1344,13 +1344,20 @@ class value_base extends sandbox_value
      * TODO import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    function import_obj(
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         log_debug();
-        $result = parent::import_obj($in_ex_json, $test_obj);
+        $result = parent::import_obj($in_ex_json, $usr_req, $dto, $test_obj);
 
         if ($test_obj) {
             $do_save = false;

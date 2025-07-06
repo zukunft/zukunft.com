@@ -44,6 +44,7 @@ include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
@@ -62,6 +63,7 @@ include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
+use cfg\helper\data_object;
 use cfg\sandbox\sandbox_value_list;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -665,15 +667,22 @@ class result_list extends sandbox_value_list
      * import a list of results from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $res_json) {
             $res = new result($this->user());
-            $usr_msg->add($res->import_obj($res_json, $test_obj));
+            $usr_msg->add($res->import_obj($res_json, $usr_req, $dto, $test_obj));
             $this->add($res);
         }
 

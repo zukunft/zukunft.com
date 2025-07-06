@@ -43,6 +43,7 @@ use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
+use cfg\phrase\phrase;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
 use cfg\word\word;
@@ -175,7 +176,7 @@ class word_tests
         $wrd_db_after = clone $wrd_db;
         $wrd_db_after->fill($wrd_imp, $usr_sys);
         $non_do_fld_names = $wrd_db->db_fields_changed($wrd_db_after)->names();
-        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [sandbox::FLD_PROTECT]);
+        $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, [phrase::FLD_TYPE, sandbox::FLD_PROTECT]);
         $test_name = 'check if importing just the word name does not overwrite any database fields';
         $wrd_db = $t->word_filled();
         $wrd_imp = $t->word_name_only();

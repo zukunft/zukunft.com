@@ -269,7 +269,9 @@ enum messages: string
     case TRIPLE_ID_ADDITIONAL = 'triple id additional of "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';
-    case TRIPLE_NOT_SAVED = 'triple "'
+    case IMPORT_NOT_SAVED = 'import of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '" cannot be saved';
     case PHRASE_MISSING_MSG = 'phrase "'
@@ -415,7 +417,19 @@ enum messages: string
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case MANDATORY_FIELD_NAME_MISSING = 'Mandatory field name missing in API JSON '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case PHRASE_TYPE_NOT_FOUND = 'word/triple type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case SOURCE_TYPE_NOT_FOUND = 'source type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case FORMULA_TYPE_NOT_FOUND = 'formula type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
     case VIEW_TYPE_NOT_FOUND = 'view type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case COMPONENT_TYPE_NOT_FOUND = 'component type "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" not found';
     case VIEW_STYLE_NOT_FOUND = 'view style "'

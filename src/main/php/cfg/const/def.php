@@ -57,8 +57,6 @@ namespace cfg\const;
 //include_once MODEL_REF_PATH . 'source.php';
 //include_once MODEL_REF_PATH . 'source_type.php';
 //include_once MODEL_USER_PATH . 'user_official_type.php';
-//include_once MODEL_VIEW_PATH . 'view_type.php';
-//include_once MODEL_VIEW_PATH . 'view_link_type.php';
 //include_once MODEL_RESULT_PATH . 'result.php';
 //include_once MODEL_USER_PATH . 'user_profile.php';
 //include_once MODEL_USER_PATH . 'user.php';
@@ -67,6 +65,9 @@ namespace cfg\const;
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
+//include_once MODEL_VIEW_PATH . 'view_list.php';
+//include_once MODEL_VIEW_PATH . 'view_type.php';
+//include_once MODEL_VIEW_PATH . 'view_link_type.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
 //include_once MODEL_WORD_PATH . 'triple_list.php';
 //include_once MODEL_WORD_PATH . 'word.php';
@@ -108,6 +109,7 @@ use cfg\value\value;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\view\view_link_type;
+use cfg\view\view_list;
 use cfg\view\view_type;
 use cfg\word\triple;
 use cfg\word\triple_list;
@@ -143,6 +145,8 @@ class def
 
     // classes that have a code id
     // to select single database rows from the code with a unique key
+    // or a type which cannot be changed by IP users
+    // so the requesting user needs to be included in the mapping request
     const CODE_ID_CLASSES = [
         word::class,
         word_list::class,
@@ -150,8 +154,15 @@ class def
         triple_list::class,
         user::class,
         user_list::class,
+        view::class,
+        view_list::class,
         component::class,
         component_list::class,
+    ];
+
+    // classes that have a user interface message code id
+    const UI_MSG_CODE_ID_CLASSES = [
+        component::class,
     ];
 
     // type classes that have a csv file for the initial load

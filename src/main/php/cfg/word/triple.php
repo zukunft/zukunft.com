@@ -176,6 +176,9 @@ class triple extends sandbox_link_named
     // the generated name based on the linked objects and saved in the database for faster searching
     private string $name_generated;
 
+    // to select single triple used by the system without using the type that can potentially select more than one triple
+    private ?string $code_id;
+
     // to cache the query results
     // the total number of values linked to this triple as an indication how common the triple is and to sort the triples
     public ?int $values;
@@ -203,8 +206,6 @@ class triple extends sandbox_link_named
         $this->rename_can_switch = UI_CAN_CHANGE_triple_NAME;
 
         $this->reset();
-        $this->name_given = null;
-        $this->name_generated = '';
 
         // also create the link objects because there is now case where they are supposed to be null
         $this->create_objects();
@@ -219,6 +220,7 @@ class triple extends sandbox_link_named
         $this->set_name(null);
         $this->name_given = null;
         $this->name_generated = '';
+        $this->code_id = null;
         $this->values = null;
 
         $this->view = null;
@@ -370,7 +372,14 @@ class triple extends sandbox_link_named
                     } else {
                         $phr = $dto->get_phrase_by_name($value);
                         if ($phr == null) {
-                            $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
+                            // create a phrase without saving to the database
+                            $phr = new phrase($this->user());
+                            $phr->set_name($value, word::class);
+                            if ($phr->db_ready()) {
+                                $this->set_from($phr);
+                            } else {
+                                $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
+                            }
                         } else {
                             $this->set_from($phr);
                         }
@@ -391,7 +400,14 @@ class triple extends sandbox_link_named
                 } else {
                     $phr = $dto->get_phrase_by_name($value);
                     if ($phr == null) {
-                        $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
+                        // create a phrase without saving to the database
+                        $phr = new phrase($this->user());
+                        $phr->set_name($value, word::class);
+                        if ($phr->db_ready()) {
+                            $this->set_to($phr);
+                        } else {
+                            $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
+                        }
                     } else {
                         $this->set_to($phr);
                     }
@@ -593,47 +609,28 @@ class triple extends sandbox_link_named
      *
      * @param array $in_ex_json an array with the data of the json object
      * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, user $usr_req, object $test_obj = null): user_message
+    function import_obj(
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
-        global $phr_typ_cac;
+        $usr_msg = parent::import_obj($in_ex_json, $usr_req, $dto, $test_obj);
 
-        log_debug();
-
-        // set the object vars based on the json
-        $usr_msg = $this->import_mapper_user($in_ex_json, $usr_req, null, $test_obj);
-
-        // save the triple in the database
-        if (!$test_obj) {
-            if ($usr_msg->is_ok()) {
-                // remove unneeded given names
-                $this->set_names();
-                $usr_msg->add($this->save());
-            }
-        }
-
-        // add related parameters to the word object
+        // add related parameters to the triple object
         if ($usr_msg->is_ok()) {
-            log_debug('saved ' . $this->dsp_id());
-
-            if (!$test_obj) {
-                if ($this->id() == 0) {
-                    $usr_msg->add_id_with_vars(msg_id::TRIPLE_NOT_SAVED, [msg_id::VAR_ID => $this->dsp_id()]);
-                } else {
-                    foreach ($in_ex_json as $key => $value) {
-                        if ($usr_msg->is_ok()) {
-                            if ($key == triple_db::FLD_REFS) {
-                                foreach ($value as $ref_data) {
-                                    $ref_obj = new ref($this->user());
-                                    $ref_obj->set_phrase($this->phrase());
-                                    $usr_msg->add($ref_obj->import_obj($ref_data, $usr_req));
-                                    $this->ref_lst[] = $ref_obj;
-                                }
-                            }
-                        }
-                    }
+            if (key_exists(json_fields::REFS, $in_ex_json)) {
+                $ref_json = $in_ex_json[json_fields::REFS];
+                foreach ($ref_json as $ref_data) {
+                    $ref_obj = new ref($this->user());
+                    $ref_obj->set_phrase($this->phrase());
+                    $usr_msg->add($ref_obj->import_obj($ref_data, $usr_req, $dto, $test_obj));
+                    $this->ref_lst[] = $ref_obj;
                 }
             }
         }
@@ -989,6 +986,39 @@ class triple extends sandbox_link_named
     {
         return $this->type_id;
     }
+
+    /**
+     * set the unique id to select a single triple by the program
+     *r
+     * @param string|null $code_id the unique key to select a word used by the system e.g. for the system configuration
+     * @param user $usr the user who has requested the change
+     * @return user_message warning message for the user if the permissions are missing
+     */
+    function set_code_id(?string $code_id, user $usr): user_message
+    {
+        $usr_msg = new user_message();
+        if ($usr->can_set_code_id()) {
+            $this->code_id = $code_id;
+        } else {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $usr->name(),
+                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_NAME => sql::FLD_CODE_ID,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return string|null the unique key or null if the word is not used by the system
+     */
+    function code_id(): ?string
+    {
+        return $this->code_id;
+    }
+
 
     /**
      * @return int the id of the default view for this triple or null if no view is preferred

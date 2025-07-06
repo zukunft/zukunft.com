@@ -289,9 +289,8 @@ class sandbox_named extends sandbox
      * set the most used object vars with one set statement
      * @param int $id mainly for test creation the database id of the named user sandbox object
      * @param string $name mainly for test creation the name of the named user sandbox object
-     * @param string $type_code_id the code id of the predefined object type only used by some child objects
      */
-    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
+    function set(int $id = 0, string $name = ''): void
     {
         parent::set_id($id);
 

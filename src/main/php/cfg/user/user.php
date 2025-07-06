@@ -1314,10 +1314,16 @@ class user extends db_id_object_non_sandbox
      *
      * @param array $json_obj an array with the data of the json object
      * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, user $usr_req, object $test_obj = null): user_message
+    function import_obj(
+        array $json_obj,
+        user $usr_req,
+        ?data_object $dto = null,
+        object $test_obj = null
+    ): user_message
     {
         global $usr_pro_cac;
 
@@ -1328,7 +1334,7 @@ class user extends db_id_object_non_sandbox
         // reset all parameters of this user object
         $this->reset();
 
-        $usr_msg = $this->import_mapper_user($json_obj, $usr_req);
+        $usr_msg = $this->import_mapper_user($json_obj, $usr_req, $dto);
 
         // reset all parameters of this user object
         $this->reset();

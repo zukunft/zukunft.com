@@ -415,56 +415,6 @@ class word extends sandbox_typed
      */
 
     /**
-     * import a word from a json data word object and write it to the database
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, user $usr_req, object $test_obj = null): user_message
-    {
-
-        log_debug();
-
-        // set the object vars based on the json
-        $usr_msg = $this->import_mapper_user($in_ex_json, $usr_req, null, $test_obj);
-
-        // save the word in the database
-        if ($test_obj == null) {
-            if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
-            }
-        }
-
-        // add related parameters to the word object
-        if ($usr_msg->is_ok()) {
-            log_debug('saved ' . $this->dsp_id());
-
-            if ($this->id() <= 0) {
-                $usr_msg->add_id_with_vars(msg_id::WORD_NOT_SAVED, [msg_id::VAR_ID => $this->dsp_id()]);
-                /*
-            } else {
-                // TODO check if not already done by the import_mapper_user
-                foreach ($in_ex_json as $key => $value) {
-                    if ($usr_msg->is_ok()) {
-                        if ($key == word_db::FLD_REFS) {
-                            foreach ($value as $ref_data) {
-                                $ref_obj = new ref($this->user());
-                                $ref_obj->set_phrase($this->phrase());
-                                $usr_msg->add($ref_obj->import_obj($ref_data, $test_obj));
-                                $this->ref_lst[] = $ref_obj;
-                            }
-                        }
-                    }
-                }
-                */
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
@@ -511,36 +461,23 @@ class word extends sandbox_typed
      */
 
     /**
-     * set the most used object vars with one set statement
-     * @param int $id mainly for test creation the database id of the word
-     * @param string $name mainly for test creation the name of the word
-     * @param string $type_code_id the code id of the predefined phrase type
-     */
-    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
-    {
-        parent::set($id, $name);
-
-        if ($type_code_id != '') {
-            $this->set_type($type_code_id);
-        }
-    }
-
-    /**
      * set the phrase type of this word
      *
-     * @param string $type_code_id the code id that should be added to this word
-     * @return void
+     * @param string $code_id the code id that should be added to this word
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $type_code_id): void
+    function set_type(string $code_id, user $usr_req = new user()): user_message
     {
         global $phr_typ_cac;
-        $this->type_id = $phr_typ_cac->id($type_code_id);
+        return parent::set_type_by_code_id(
+            $code_id, $phr_typ_cac, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
     }
 
     /**
      * set the unique id to select a single word by the program
      *r
-     * @param string|null $code_id the unique key to select a word used by the system e.g. for the system configuration
+     * @param string|null $code_id the unique key to select a word used by the system e.g. for the system or configuration
      * @param user $usr the user who has requested the change
      * @return user_message warning message for the user if the permissions are missing
      */

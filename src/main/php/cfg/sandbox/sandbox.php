@@ -72,7 +72,6 @@ namespace cfg\sandbox;
 
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
 //include_once MODEL_COMPONENT_PATH . 'component.php';
 //include_once MODEL_COMPONENT_PATH . 'component_link.php';
 //include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
@@ -86,6 +85,7 @@ include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
+include_once MODEL_CONST_PATH . 'def.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
@@ -112,6 +112,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'protection_type.php';
@@ -123,6 +124,7 @@ include_once SHARED_PATH . 'library.php';
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_type;
+use cfg\const\def;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -497,6 +499,46 @@ class sandbox extends db_object_seq_id_user
     /*
      * im- and export
      */
+
+    /**
+     * set the vars of this sandbox object based on an import json array
+     *
+     * @param array $in_ex_json an array with the data of the json object but without any database ids
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
+    {
+        log_debug();
+
+        if (in_array( $this::class, def::CODE_ID_CLASSES)) {
+            $usr_msg = $this->import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
+        } else {
+            $usr_msg = $this->import_mapper($in_ex_json, $dto, $test_obj);
+        }
+
+        // save this object in the database
+        if (!$test_obj) {
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
+            }
+        }
+
+        return $usr_msg;
+    }
 
     /**
      * create an array with the export json fields
@@ -1935,6 +1977,20 @@ class sandbox extends db_object_seq_id_user
             }
         } else {
             $sc_par_lst->add(sql_type::USER);
+            // make sure that the code id never differs between the standard row and the user row
+            if (in_array( $this::class, def::CODE_ID_CLASSES)) {
+                if ($this->code_id() != $norm_obj->code_id()) {
+                    $this->set_code_id($norm_obj->code_id(), $this->user());
+                    log_warning('code id has been changed in ' . $this->dsp_id() . ' with is not expected');
+                }
+            }
+            // make sure that the ui msg code id never differs between the standard row and the user row
+            if (in_array( $this::class, def::UI_MSG_CODE_ID_CLASSES)) {
+                if ($this->ui_msg_code_id() != $norm_obj->ui_msg_code_id()) {
+                    $this->set_ui_msg_code_id($norm_obj->ui_msg_code_id(), $this->user());
+                    log_warning('ui message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
+                }
+            }
             // TODO check why $this seems to be here updated but not in the sandbox multi object
             if ($this->has_usr_cfg()) {
                 if ($this->no_diff($norm_obj)) {
@@ -4100,6 +4156,62 @@ class sandbox extends db_object_seq_id_user
     function is_value_obj(): bool
     {
         return false;
+    }
+
+
+    /*
+     * overwrite
+     */
+
+    /**
+     * set the vars of this view object based on the given json without writing to the database
+     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit testing object
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper_user(
+        array       $in_ex_json,
+        user        $usr_req,
+        data_object $dto = null,
+        object      $test_obj = null
+    ): user_message
+    {
+        log_err('overwrite of import_mapper_user missing in ' . $this::class);
+        return new user_message();
+    }
+
+    function set_code_id(?string $code_id, user $usr): user_message
+    {
+        $msg = 'code id change has been requested to be set but ' . $this->dsp_id() .  ' is not expected to have a code id';
+        log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_text($msg);
+        return $usr_msg;
+    }
+
+    function code_id(): ?string
+    {
+        log_err('code id has been requested but ' . $this->dsp_id() .  ' is not expected to have a code id');
+        return '';
+    }
+
+    function set_ui_msg_code_id(?msg_id $ui_msg_id, user $usr): user_message
+    {
+        $msg = 'frontend message code id has been requested to be set but ' . $this->dsp_id() .  ' is not expected to have a code id';
+        log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_text($msg);
+        return $usr_msg;
+    }
+
+    function ui_msg_code_id(): ?msg_id
+    {
+        log_err('a frontend message code id change has been requested but ' . $this->dsp_id() .  ' is not expected to have a code id');
+        return null;
     }
 
 

@@ -48,6 +48,7 @@ use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\formula\formula;
+use cfg\helper\data_object;
 use cfg\system\ip_range;
 use cfg\system\ip_range_list;
 use cfg\system\session;
@@ -77,6 +78,7 @@ class system_tests
     {
 
         global $usr;
+        // TODO move system user to a test object vars
         global $usr_sys;
         global $sql_names;
         global $sys_log_sta_cac;
@@ -307,7 +309,7 @@ class system_tests
         $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
-        $ip_range->import_obj($json_in, $t);
+        $ip_range->import_obj($json_in, $usr_sys, new data_object($usr), $t);
         $json_ex = $ip_range->export_json();
         $result = $lib->json_is_similar($json_in, $json_ex);
         $t->assert_true('ip_range->import check', $result);
@@ -322,7 +324,7 @@ class system_tests
         $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
-        $ip_range->import_obj($json_in, $t);
+        $ip_range->import_obj($json_in, $usr_sys, new data_object($usr), $t);
         $test_ip = '66.249.64.95';
         $result = $ip_range->includes($test_ip);
         $t->assert_true('ip_range->includes check', $result);

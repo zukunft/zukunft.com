@@ -109,7 +109,7 @@ class phrase_list_tests
         // sql to load a list of phrases by a phrase list
         $phr_lst = new phrase_list($usr);
         $wrd = new word($usr);
-        $wrd->set(1, words::CH);
+        $wrd->set(words::DEFAULT_WORD_ID, words::CH);
         $phr_lst->add($wrd->phrase());
         $vrb = $vrb_cac->get_verb(verbs::PART_NAME);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
@@ -200,7 +200,7 @@ class phrase_list_tests
     {
         global $usr;
         $wrd = new word($usr);
-        $wrd->set(1, words::TEST_ADD);
+        $wrd->set(words::DEFAULT_WORD_ID, words::TEST_ADD);
         return $wrd->phrase();
     }
 
@@ -213,7 +213,7 @@ class phrase_list_tests
         global $phr_typ_cac;
 
         $wrd = new word($usr);
-        $wrd->set(2, words::TEST_RENAMED);
+        $wrd->set(words::CONST_ID, words::TEST_RENAMED);
         $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         return $wrd->phrase();
     }

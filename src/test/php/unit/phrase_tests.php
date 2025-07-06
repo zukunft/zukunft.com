@@ -95,7 +95,7 @@ class phrase_tests
 
         // check the Postgres query syntax
         $wrd_company = new word($usr);
-        $wrd_company->set(2, words::COMPANY);
+        $wrd_company->set(words::CONST_ID, words::COMPANY);
         $sql_name = 'phrase_list_related';
         $file_name = $t->resource_path . $sql_name . test_base::FILE_EXT;
         $created_sql = $phr->sql_list($wrd_company);

@@ -306,10 +306,17 @@ class view extends sandbox_typed
      * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit testing object
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper_user(
+        array       $in_ex_json,
+        user        $usr_req,
+        data_object $dto = null,
+        object      $test_obj = null
+    ): user_message
     {
         // TODO use a requesting user because the object user might differ from the user who is requesting the import
         // TODO all objects wit a code id must have a requesting user
@@ -323,21 +330,14 @@ class view extends sandbox_typed
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
         // first save the parameters of the view itself
+        // TODO aline all type_list mappings with this set_style call
         if (key_exists(json_fields::STYLE, $in_ex_json)) {
             $usr_msg->add($this->set_style($in_ex_json[json_fields::STYLE]));
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            if ($in_ex_json[json_fields::TYPE_NAME] != '') {
-                $type_id = $this->type_id_by_code_id($in_ex_json[json_fields::TYPE_NAME]);
-                if ($type_id == type_list::CODE_ID_NOT_FOUND) {
-                    $usr_msg->add_id_with_vars(msg_id::VIEW_TYPE_NOT_FOUND, [
-                        msg_id::VAR_NAME => $in_ex_json[json_fields::TYPE_NAME]
-                    ]);
-                } else {
-                    $this->type_id = $type_id;
-                }
-            }
+            $usr_msg->add($this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_req));
         }
+        // TODO add the permission to change the code id to all import code id imports
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($in_ex_json[json_fields::CODE_ID] != '') {
                 $this->code_id = $in_ex_json[json_fields::CODE_ID];
@@ -428,110 +428,32 @@ class view extends sandbox_typed
      * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit testing object
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    function import_obj(
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
-        log_debug();
-
-        // reset the all parameters for the word object but keep the user
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
-        $result = parent::import_mapper($in_ex_json, null, $test_obj);
-
-        // first save the parameters of the view itself
-        foreach ($in_ex_json as $key => $value) {
-
-            if ($key == json_fields::TYPE_NAME) {
-                if ($value != '') {
-                    $type_id = $this->type_id_by_code_id($value);
-                    if ($type_id == type_list::CODE_ID_NOT_FOUND) {
-                        $result->add_id_with_vars(msg_id::VIEW_TYPE_NOT_FOUND, [msg_id::VAR_NAME => $value]);
-                    } else {
-                        $this->type_id = $type_id;
-                    }
-                }
-            }
-            if ($key == json_fields::CODE_ID) {
-                if ($value != '') {
-                    if ($this->user()->is_admin() or $this->user()->is_system()) {
-                        $this->code_id = $value;
-                    }
-                }
-            }
-        }
+        $usr_msg = parent::import_obj($in_ex_json, $usr_req, $dto, $test_obj);
 
         if (!$test_obj) {
             if ($this->name == '') {
-                $result->add_id(msg_id::VIEW_NAME_MISSING);
+                $usr_msg->add_id(msg_id::VIEW_NAME_MISSING);
             } else {
-                $result->add($this->save());
+                $usr_msg->add($this->save());
 
-                if ($result->is_ok()) {
+                if ($usr_msg->is_ok()) {
+                    // TODO save also the components
+                    //$dsp_lnk = new component_link();
                     // TODO save also the links
                     //$dsp_lnk = new component_link();
                     log_debug($this->dsp_id());
-                }
-            }
-        }
-
-        // after saving (or remembering) add the view components
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == self::FLD_COMPONENT) {
-                $json_lst = $value;
-                $cmp_pos = 1;
-                foreach ($json_lst as $json_cmp) {
-                    $cmp = new component($usr);
-                    $style_code_id = null;
-                    $pos_type_code_id = null;
-                    // if for the component only the position and name is defined
-                    // do not overwrite an existing component
-                    // instead just add the existing component
-                    if ((count($json_cmp) == 2
-                            and array_key_exists(json_fields::POSITION, $json_cmp)
-                            and array_key_exists(json_fields::NAME, $json_cmp))
-                        or (count($json_cmp) == 3
-                            and array_key_exists(json_fields::POSITION, $json_cmp)
-                            and array_key_exists(json_fields::NAME, $json_cmp)
-                            and array_key_exists(json_fields::POS_TYPE, $json_cmp))
-                        or (count($json_cmp) == 3
-                            and array_key_exists(json_fields::POSITION, $json_cmp)
-                            and array_key_exists(json_fields::NAME, $json_cmp)
-                            and array_key_exists(json_fields::STYLE, $json_cmp))
-                        or (count($json_cmp) == 4
-                            and array_key_exists(json_fields::POSITION, $json_cmp)
-                            and array_key_exists(json_fields::NAME, $json_cmp)
-                            and array_key_exists(json_fields::POS_TYPE, $json_cmp)
-                            and array_key_exists(json_fields::STYLE, $json_cmp))) {
-                        if ($test_obj == null) {
-                            $cmp->load_by_name($json_cmp[json_fields::NAME]);
-                        }
-                        if (array_key_exists(json_fields::POS_TYPE, $json_cmp)) {
-                            $pos_type_code_id = $json_cmp[json_fields::POS_TYPE];
-                        }
-                        if (array_key_exists(json_fields::STYLE
-                            , $json_cmp)) {
-                            $style_code_id = $json_cmp[json_fields::STYLE];
-                        }
-                        // if the component does not jet exist
-                        // nevertheless create the component
-                        // but send a warning message
-                        if ($cmp->id() <= 0) {
-                            log_warning('Component ' . $json_cmp[json_fields::NAME]
-                                . ' has not yet been created, but is supposed to be at position '
-                                . $json_cmp[json_fields::POSITION] . ' of a view ');
-                            $cmp->import_obj($json_cmp, $usr, $test_obj);
-                        }
-                    } else {
-                        log_warning('overwriting the component by the view');
-                        $cmp->import_obj($json_cmp, $usr, $test_obj);
-                    }
-                    // on import first add all view components to the view object and save them all at once
-                    // TODO overwrite the style or position type
-                    $this->save_component($cmp, $cmp_pos, $pos_type_code_id, $style_code_id, $test_obj);
-                    $cmp_pos++;
                 }
             }
         }
@@ -555,12 +477,14 @@ class view extends sandbox_typed
             }
         }
 
-        if (!$result->is_ok()) {
+        if (!$usr_msg->is_ok()) {
             $lib = new library();
-            $result->add_id_with_vars(msg_id::VIEW_IMPORT_ERROR, [msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)]);
+            $usr_msg->add_id_with_vars(msg_id::VIEW_IMPORT_ERROR, [
+                msg_id::VAR_JSON_TEXT => $lib->dsp_array($in_ex_json)
+            ]);
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -613,37 +537,24 @@ class view extends sandbox_typed
      */
 
     /**
-     * set the most used object vars with one set statement
-     * @param int $id mainly for test creation the database id of the view
-     * @param string $name mainly for test creation the name of the view
-     * @param string $type_code_id the code id of the predefined view type
-     */
-    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
-    {
-        parent::set($id, $name);
-
-        if ($type_code_id != '') {
-            $this->set_type($type_code_id);
-        }
-    }
-
-    /**
      * set the view type
      *
-     * @param string $type_code_id the code id that should be added to this view
-     * @return void
+     * @param string|null $code_id the code id that should be added to this view
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $type_code_id): void
+    function set_type(?string $code_id, user $usr_req = new user()): user_message
     {
         global $msk_typ_cac;
-        $this->type_id = $msk_typ_cac->id($type_code_id);
+        return parent::set_type_by_code_id(
+            $code_id, $msk_typ_cac, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
     }
 
     /**
      * set the default style for this view by the code id
      *
      * @param string|null $code_id the code id of the display style use for im and export
-     * @return user_message
+     * @return user_message a warning if the style code id is not found
      */
     function set_style(?string $code_id): user_message
     {

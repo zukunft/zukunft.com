@@ -40,6 +40,7 @@ include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 //include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_LOG_PATH . 'change_action.php';
@@ -57,6 +58,7 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
 use cfg\log\change;
 use cfg\user\user;
@@ -300,10 +302,17 @@ class ip_range extends db_object_seq_id
      * import an ip range from an imported json object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         $usr_msg = parent::import_db_obj($this, $test_obj);
 

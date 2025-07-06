@@ -631,7 +631,7 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(words::MATH_ID, words::MATH);
         $wrd->description = words::MATH_COM;
-        $wrd->set_type(phrase_type_shared::NORMAL);
+        $wrd->set_type(phrase_type_shared::NORMAL, $this->usr1);
         global $ptc_typ_cac;
         $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $wrd;
@@ -683,7 +683,7 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(words::MATH_ID, words::MATH);
         $wrd->description = words::MATH_COM;
-        $wrd->set_type(phrase_type_shared::NORMAL);
+        $wrd->set_type(phrase_type_shared::SCALING, $this->usr1);
         $wrd->set_code_id(words::MATH, $this->usr_system);
         $wrd->plural = words::MATH_PLURAL;
         $wrd->set_view_id(views::START_ID);
@@ -755,7 +755,7 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(words::CONST_ID, words::CONST_NAME);
         $wrd->description = words::CONST_COM;
-        $wrd->set_type(phrase_type_shared::MATH_CONST);
+        $wrd->set_type(phrase_type_shared::MATH_CONST, $this->usr1);
         global $ptc_typ_cac;
         $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $wrd;
@@ -769,7 +769,7 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(words::PI_SYMBOL_ID, words::PI_SYMBOL);
         $wrd->description = words::PI_SYMBOL_COM;
-        $wrd->set_type(phrase_type_shared::MATH_CONST);
+        $wrd->set_type(phrase_type_shared::MATH_CONST, $this->usr1);
         global $ptc_typ_cac;
         $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $wrd;
@@ -783,7 +783,7 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(words::PI_ID, words::PI);
         $wrd->description = words::PI_COM;
-        $wrd->set_type(phrase_type_shared::MATH_CONST);
+        $wrd->set_type(phrase_type_shared::MATH_CONST, $this->usr1);
         global $ptc_typ_cac;
         $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $wrd;
@@ -816,7 +816,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::E_SYMBOL_ID, words::E_SYMBOL);
-        $wrd->set_type(phrase_type_shared::MATH_CONST);
+        $wrd->set_type(phrase_type_shared::MATH_CONST, $this->usr1);
         return $wrd;
     }
 
@@ -827,7 +827,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::E_ID, words::E);
-        $wrd->set_type(phrase_type_shared::MATH_CONST);
+        $wrd->set_type(phrase_type_shared::MATH_CONST, $this->usr1);
         return $wrd;
     }
 
@@ -838,7 +838,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::YEAR_CAP_ID, words::YEAR_CAP);
-        $wrd->set_type(phrase_type_shared::TIME);
+        $wrd->set_type(phrase_type_shared::TIME, $this->usr1);
         return $wrd;
     }
 
@@ -849,7 +849,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::YEAR_2019_ID, words::YEAR_2019);
-        $wrd->set_type(phrase_type_shared::TIME);
+        $wrd->set_type(phrase_type_shared::TIME, $this->usr1);
         return $wrd;
     }
 
@@ -860,7 +860,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::YEAR_2020_ID, words::YEAR_2020);
-        $wrd->set_type(phrase_type_shared::TIME);
+        $wrd->set_type(phrase_type_shared::TIME, $this->usr1);
         $wrd->set_description(words::YEAR_2020_COM);
         return $wrd;
     }
@@ -872,7 +872,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::PCT_ID, words::PCT);
-        $wrd->set_type(phrase_type_shared::PERCENT);
+        $wrd->set_type(phrase_type_shared::PERCENT, $this->usr1);
         return $wrd;
     }
 
@@ -932,7 +932,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::THIS_ID, words::THIS_NAME);
-        $wrd->set_type(phrase_type_shared::THIS);
+        $wrd->set_type(phrase_type_shared::THIS, $this->usr1);
         return $wrd;
     }
 
@@ -940,7 +940,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::PRIOR_ID, words::PRIOR_NAME);
-        $wrd->set_type(phrase_type_shared::PRIOR);
+        $wrd->set_type(phrase_type_shared::PRIOR, $this->usr1);
         return $wrd;
     }
 
@@ -948,7 +948,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::ONE_ID, words::ONE);
-        $wrd->set_type(phrase_type_shared::SCALING_HIDDEN);
+        $wrd->set_type(phrase_type_shared::SCALING_HIDDEN, $this->usr1);
         return $wrd;
     }
 
@@ -956,7 +956,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::MIO_ID, words::MIO_SHORT);
-        $wrd->set_type(phrase_type_shared::SCALING);
+        $wrd->set_type(phrase_type_shared::SCALING, $this->usr1);
         return $wrd;
     }
 
@@ -1303,7 +1303,7 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_const()->phrase());
         $trp->set_verb($this->verb_part());
         $trp->set_to($this->word()->phrase());
-        $trp->set_type(phrase_type_shared::MATH_CONST);
+        $trp->set_type(phrase_type_shared::MATH_CONST, $this->usr1);
         global $ptc_typ_cac;
         $trp->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $trp;
@@ -1380,7 +1380,7 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_pi()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->triple()->phrase());
-        $trp->set_type(phrase_type_shared::TRIPLE_HIDDEN);
+        $trp->set_type(phrase_type_shared::TRIPLE_HIDDEN, $this->usr1);
         return $trp;
     }
 
@@ -1430,7 +1430,7 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_e()->phrase());
         $trp->set_verb($this->verb_is());
         $trp->set_to($this->triple()->phrase());
-        $trp->set_type(phrase_type_shared::TRIPLE_HIDDEN);
+        $trp->set_type(phrase_type_shared::TRIPLE_HIDDEN, $this->usr1);
         return $trp;
     }
 
@@ -2654,19 +2654,19 @@ class create_test_objects extends test_base
     function formula(): formula
     {
         $frm = new formula($this->usr1);
-        $frm->set(1, formulas::SCALE_TO_SEC);
+        $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_TO_SEC);
         $frm->set_user_text(formulas::SCALE_TO_SEC_EXP, $this->term_list_time());
-        $frm->set_type(formula_type::CALC);
+        $frm->set_type(formula_type::CALC, $this->usr1);
         return $frm;
     }
 
     /**
-     * @return formula with only the name set to test reseving the name
+     * @return formula with only the name set to test reserving the name
      */
     function formula_name_only(): formula
     {
         $frm = new formula($this->usr1);
-        $frm->set(1, formulas::SCALE_MIO_EXP);
+        $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_MIO_EXP);
         return $frm;
     }
 
@@ -2678,9 +2678,9 @@ class create_test_objects extends test_base
         global $shr_typ_cac;
         global $ptc_typ_cac;
         $frm = new formula($this->usr1);
-        $frm->set(1, formulas::SCALE_TO_SEC);
+        $frm->set(formulas::SCALE_TO_SEC_ID, formulas::SCALE_TO_SEC);
         $frm->set_user_text(formulas::SCALE_TO_SEC_EXP, $this->term_list_time());
-        $frm->set_type(formula_type::CALC);
+        $frm->set_type(formula_type::CALC, $this->usr1);
         $frm->description = formulas::SCALE_TO_SEC_COM;
         $frm->need_all_val = true;
         $frm->last_update = new DateTime(sys_log_tests::TV_TIME);
@@ -2712,7 +2712,7 @@ class create_test_objects extends test_base
         $frm = new formula($this->usr1);
         $frm->set(formulas::INCREASE_ID, formulas::INCREASE);
         $frm->set_user_text(formulas::INCREASE_EXP, $this->term_list_increase());
-        $frm->set_type(formula_type::CALC);
+        $frm->set_type(formula_type::CALC, $this->usr1);
         return $frm;
     }
 
@@ -2724,7 +2724,7 @@ class create_test_objects extends test_base
         $frm = new formula($this->usr1);
         $frm->set(formulas::THIS_ID, formulas::THIS_NAME);
         $frm->set_user_text(formulas::THIS_EXP, $this->phrase_list_increase()->term_list());
-        $frm->set_type(formula_type::THIS);
+        $frm->set_type(formula_type::THIS, $this->usr1);
         return $frm;
     }
 
@@ -2736,7 +2736,7 @@ class create_test_objects extends test_base
         $frm = new formula($this->usr1);
         $frm->set(formulas::PRIOR_ID, formulas::PRIOR);
         $frm->set_user_text(formulas::PRIOR_EXP, $this->phrase_list_increase()->term_list());
-        $frm->set_type(formula_type::PREV);
+        $frm->set_type(formula_type::PREV, $this->usr1);
         return $frm;
     }
 
@@ -2786,7 +2786,7 @@ class create_test_objects extends test_base
         $frm = new formula($this->usr1);
         $frm->set_name(formulas::SYSTEM_TEXT_ADD_VIA_FUNC);
         $frm->set_user_text(formulas::INCREASE_EXP, $this->term_list_increase());
-        $frm->set_type(formula_type::CALC);
+        $frm->set_type(formula_type::CALC, $this->usr1);
         return $frm;
     }
 
@@ -2799,7 +2799,7 @@ class create_test_objects extends test_base
         $frm = new formula($this->usr1);
         $frm->set_name(formulas::SYSTEM_TEXT_ADD_VIA_SQL);
         $frm->set_user_text(formulas::INCREASE_EXP, $this->phrase_list_increase()->term_list());
-        $frm->set_type(formula_type::CALC);
+        $frm->set_type(formula_type::CALC, $this->usr1);
         return $frm;
     }
 
@@ -2962,7 +2962,8 @@ class create_test_objects extends test_base
     function source(): source
     {
         $src = new source($this->usr1);
-        $src->set(sources::SIB_ID, sources::SIB, source_types::PDF);
+        $src->set(sources::SIB_ID, sources::SIB);
+        $src->set_type(source_types::PDF, $this->usr1);
         $src->description = sources::SIB_COM;
         $src->url = sources::SIB_URL;
         return $src;
@@ -2983,7 +2984,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return source with all fields set and a reseved test name for testing the db write function
+     * @return source with all fields set and a reserved test name for testing the db write function
      */
     function source_filled_add(): source
     {
@@ -3000,7 +3001,8 @@ class create_test_objects extends test_base
     function source_ref(): source
     {
         $src = new source($this->usr1);
-        $src->set(sources::WIKIDATA_ID, sources::WIKIDATA, source_types::CSV);
+        $src->set(sources::WIKIDATA_ID, sources::WIKIDATA);
+        $src->set_type(source_types::CSV, $this->usr1);
         return $src;
     }
 
@@ -3141,7 +3143,7 @@ class create_test_objects extends test_base
     function view(): view
     {
         $msk = new view($this->usr1);
-        $msk->set(1, views::START_NAME);
+        $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
         $msk->code_id = views::START_CODE;
         return $msk;
@@ -3151,10 +3153,10 @@ class create_test_objects extends test_base
     {
         global $ptc_typ_cac;
         $msk = new view($this->usr1);
-        $msk->set(1, views::START_NAME);
+        $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
         $msk->code_id = views::START_CODE;
-        $msk->set_type(view_type::ENTRY);
+        $msk->set_type(view_type::ENTRY, $this->usr1);
         $msk->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $msk;
     }
@@ -3242,7 +3244,7 @@ class create_test_objects extends test_base
     function view_added(): view
     {
         $msk = new view($this->usr1);
-        $msk->set(1, views::START_NAME);
+        $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
         return $msk;
     }
@@ -3255,10 +3257,10 @@ class create_test_objects extends test_base
         global $shr_typ_cac;
         global $ptc_typ_cac;
         $msk = new view($this->usr1);
-        $msk->set(1, views::START_NAME);
+        $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
         $msk->code_id = views::START_CODE;
-        $msk->set_type(view_type::DETAIL);
+        $msk->set_type(view_type::ENTRY, $this->usr1);
         $msk->set_style(view_styles::COL_SM_4);
         $msk->exclude();
         $msk->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
@@ -3400,7 +3402,8 @@ class create_test_objects extends test_base
     function component(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(components::WORD_ID, components::WORD_NAME, comp_type_shared::PHRASE_NAME);
+        $cmp->set(components::WORD_ID, components::WORD_NAME);
+        $cmp->set_type(comp_type_shared::PHRASE_NAME, $this->usr1);
         $cmp->description = components::WORD_COM;
         return $cmp;
     }
@@ -3408,7 +3411,8 @@ class create_test_objects extends test_base
     function component_matrix(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(components::MATRIX_ID, components::MATRIX_NAME, comp_type_shared::CALC_SHEET);
+        $cmp->set(components::MATRIX_ID, components::MATRIX_NAME);
+        $cmp->set_type(comp_type_shared::CALC_SHEET, $this->usr1);
         $cmp->description = components::MATRIX_COM;
         return $cmp;
     }
@@ -3421,9 +3425,9 @@ class create_test_objects extends test_base
         global $shr_typ_cac;
         global $ptc_typ_cac;
         $cmp = new component($this->usr1);
-        $cmp->set(1, components::WORD_NAME, comp_type_shared::PHRASE_NAME);
+        $cmp->set(components::WORD_ID, components::WORD_NAME);
         $cmp->description = components::WORD_COM;
-        $cmp->set_type(comp_type_shared::TEXT);
+        $cmp->set_type(comp_type_shared::TEXT, $this->usr1);
         $cmp->set_style(view_styles::COL_SM_4);
         $cmp->set_code_id(components::FORM_TITLE, $this->usr_system);
         $cmp->ui_msg_code_id = msg_id::PLEASE_SELECT;
@@ -3457,7 +3461,7 @@ class create_test_objects extends test_base
     {
         $cmp = new component($this->usr1);
         $cmp->set_name(components::TEST_ADD_VIA_FUNC_NAME);
-        $cmp->set_type(comp_type_shared::TEXT);
+        $cmp->set_type(comp_type_shared::TEXT, $this->usr1);
         return $cmp;
     }
 
@@ -3468,14 +3472,15 @@ class create_test_objects extends test_base
     {
         $cmp = new component($this->usr1);
         $cmp->set_name(components::TEST_ADD_VIA_SQL_NAME);
-        $cmp->set_type(comp_type_shared::TEXT);
+        $cmp->set_type(comp_type_shared::TEXT, $this->usr1);
         return $cmp;
     }
 
     function component_word_add_title(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(1, components::FORM_TITLE_NAME, comp_type_shared::FORM_TITLE);
+        $cmp->set(components::WORD_ID, components::FORM_TITLE_NAME);
+        $cmp->set_type(comp_type_shared::FORM_TITLE, $this->usr1);
         $cmp->description = components::FORM_TITLE_COM;
         $cmp->set_code_id(components::FORM_TITLE, $this->usr_system);
         return $cmp;
@@ -3484,7 +3489,8 @@ class create_test_objects extends test_base
     function component_word_add_back_stack(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(2, components::FORM_BACK_NAME, comp_type_shared::FORM_BACK);
+        $cmp->set(components::MATRIX_ID, components::FORM_BACK_NAME);
+        $cmp->set_type(comp_type_shared::FORM_BACK, $this->usr1);
         $cmp->description = components::FORM_BACK_COM;
         $cmp->set_code_id(components::FORM_BACK, $this->usr_system);
         return $cmp;
@@ -3493,7 +3499,8 @@ class create_test_objects extends test_base
     function component_word_add_button_confirm(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(3, components::FORM_CONFIRM_NAME, comp_type_shared::FORM_CONFIRM);
+        $cmp->set(3, components::FORM_CONFIRM_NAME);
+        $cmp->set_type(comp_type_shared::FORM_CONFIRM, $this->usr1);
         $cmp->description = components::FORM_CONFIRM_COM;
         $cmp->set_code_id(components::FORM_CONFIRM, $this->usr_system);
         return $cmp;
@@ -3502,7 +3509,8 @@ class create_test_objects extends test_base
     function component_word_add_name(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(components::FORM_NAME_ID, components::FORM_NAME_NAME, comp_type_shared::FORM_NAME);
+        $cmp->set(components::FORM_NAME_ID, components::FORM_NAME_NAME);
+        $cmp->set_type(comp_type_shared::FORM_NAME, $this->usr1);
         $cmp->description = components::FORM_NAME_COM;
         $cmp->set_code_id(components::FORM_NAME, $this->usr_system);
         return $cmp;
@@ -3511,7 +3519,8 @@ class create_test_objects extends test_base
     function component_word_add_description(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(5, components::FORM_DESCRIPTION_NAME, comp_type_shared::FORM_DESCRIPTION);
+        $cmp->set(5, components::FORM_DESCRIPTION_NAME);
+        $cmp->set_type(comp_type_shared::FORM_DESCRIPTION, $this->usr1);
         $cmp->description = components::FORM_DESCRIPTION_COM;
         $cmp->set_code_id(components::FORM_DESCRIPTION, $this->usr_system);
         return $cmp;
@@ -3520,7 +3529,8 @@ class create_test_objects extends test_base
     function component_word_add_plural(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(components::FORM_PLURAL_ID, components::FORM_PLURAL_NAME, comp_type_shared::FORM_PLURAL);
+        $cmp->set(components::FORM_PLURAL_ID, components::FORM_PLURAL_NAME);
+        $cmp->set_type(comp_type_shared::FORM_PLURAL, $this->usr1);
         $cmp->description = components::FORM_PLURAL_COM;
         $cmp->set_code_id(components::FORM_PLURAL, $this->usr_system);
         return $cmp;
@@ -3529,7 +3539,8 @@ class create_test_objects extends test_base
     function component_word_add_phrase_type(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(6, components::FORM_PHRASE_TYPE_NAME, comp_type_shared::FORM_PHRASE_TYPE);
+        $cmp->set(6, components::FORM_PHRASE_TYPE_NAME);
+        $cmp->set_type(comp_type_shared::FORM_PHRASE_TYPE, $this->usr1);
         $cmp->description = components::FORM_PHRASE_TYPE_COM;
         $cmp->set_code_id(components::FORM_PHRASE_TYPE, $this->usr_system);
         return $cmp;
@@ -3538,7 +3549,8 @@ class create_test_objects extends test_base
     function component_word_add_share_type(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(7, components::FORM_SHARE_TYPE_NAME, comp_type_shared::FORM_SHARE_TYPE);
+        $cmp->set(7, components::FORM_SHARE_TYPE_NAME);
+        $cmp->set_type(comp_type_shared::FORM_SHARE_TYPE, $this->usr1);
         $cmp->description = components::FORM_SHARE_TYPE_COM;
         $cmp->set_code_id(components::FORM_SHARE_TYPE, $this->usr_system);
         return $cmp;
@@ -3547,7 +3559,8 @@ class create_test_objects extends test_base
     function component_word_add_protection_type(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(8, components::FORM_PROTECTION_TYPE_NAME, comp_type_shared::FORM_PROTECTION_TYPE);
+        $cmp->set(8, components::FORM_PROTECTION_TYPE_NAME);
+        $cmp->set_type(comp_type_shared::FORM_PROTECTION_TYPE, $this->usr1);
         $cmp->description = components::FORM_PROTECTION_TYPE_COM;
         $cmp->set_code_id(components::FORM_PROTECTION_TYPE, $this->usr_system);
         return $cmp;
@@ -3556,7 +3569,8 @@ class create_test_objects extends test_base
     function component_word_add_cancel(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(9, components::FORM_CANCEL_NAME, comp_type_shared::FORM_CANCEL);
+        $cmp->set(9, components::FORM_CANCEL_NAME);
+        $cmp->set_type(comp_type_shared::FORM_CANCEL, $this->usr1);
         $cmp->description = components::FORM_CANCEL_COM;
         $cmp->set_code_id(components::FORM_CANCEL, $this->usr_system);
         return $cmp;
@@ -3565,7 +3579,8 @@ class create_test_objects extends test_base
     function component_word_add_save(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(10, components::FORM_SAVE_NAME, comp_type_shared::FORM_SAVE);
+        $cmp->set(10, components::FORM_SAVE_NAME);
+        $cmp->set_type(comp_type_shared::FORM_SAVE, $this->usr1);
         $cmp->description = components::FORM_SAVE_COM;
         $cmp->set_code_id(components::FORM_SAVE, $this->usr_system);
         return $cmp;
@@ -3574,7 +3589,8 @@ class create_test_objects extends test_base
     function component_word_add_form_end(): component
     {
         $cmp = new component($this->usr1);
-        $cmp->set(11, components::FORM_END_NAME, comp_type_shared::FORM_END);
+        $cmp->set(11, components::FORM_END_NAME);
+        $cmp->set_type(comp_type_shared::FORM_END, $this->usr1);
         $cmp->description = components::FORM_END_COM;
         $cmp->set_code_id(components::FORM_END, $this->usr_system);
         return $cmp;
@@ -4166,7 +4182,7 @@ class create_test_objects extends test_base
         $wrd->set_name($wrd_name);
 
         if ($wrd_type_code_id != null) {
-            $wrd->set_type($wrd_type_code_id);
+            $wrd->set_type($wrd_type_code_id, $test_usr);
         }
         return $wrd;
     }

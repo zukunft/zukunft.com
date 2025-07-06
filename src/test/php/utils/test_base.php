@@ -107,6 +107,7 @@ use cfg\formula\formula_list;
 use cfg\group\group;
 use cfg\helper\combine_named;
 use cfg\helper\combine_object;
+use cfg\helper\data_object;
 use cfg\helper\db_id_object_non_sandbox;
 use cfg\helper\db_object_seq_id;
 use cfg\log\change;
@@ -917,7 +918,7 @@ class test_base
      *
      * @param object $usr_obj the object which json im- and export functions should be tested
      * @param string $json_file_name the resource path name to the json sample file
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param user|null $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @return bool true if the json has no relevant differences
      */
     function assert_json_file(
@@ -932,17 +933,14 @@ class test_base
 
         $file_text = $this->file($json_file_name);
         $json_in = json_decode($file_text, true);
-        if (in_array( $usr_obj::class, def::CODE_ID_CLASSES)) {
-            $usr_obj->import_obj($json_in, $usr_req, $this);
-        } else {
-            $usr_obj->import_obj($json_in, $this);
-        }
+        $dto = new data_object($usr_req);
+        $usr_obj->import_obj($json_in, $usr_req, $dto, $this);
         $this->set_id_for_unit_tests($usr_obj);
         $json_ex = $usr_obj->export_json(false);
         // TODO remove, for faster debugging only
         $json_in_txt = json_encode($json_in);
         $json_ex_txt = json_encode($json_ex);
-        return $this->assert_json($this->name . 'import check name', $json_in, $json_ex);
+        return $this->assert_json($this->name . 'import check name', $json_ex, $json_in);
     }
 
     /**
@@ -959,11 +957,8 @@ class test_base
         $json_ex = $obj->export_json(false);
         $new_obj = clone $obj;
         $new_obj->reset();
-        if (in_array( $obj::class, def::CODE_ID_CLASSES)) {
-            $new_obj->import_obj($json_ex, $usr_req, $this);
-        } else {
-            $new_obj->import_obj($json_ex, $this);
-        }
+        $dto = new data_object($usr_req);
+        $new_obj->import_obj($json_ex, $usr_req, $dto, $this);
         $json_after = $obj->api_json([api_type::TEST_MODE]);
         return $this->assert_json_string(
             'ex- and import test for ' . $obj::class, $json_after, $json_before);

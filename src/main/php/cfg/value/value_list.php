@@ -56,6 +56,7 @@ include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'value_type_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
@@ -85,6 +86,7 @@ use cfg\db\sql_type;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
+use cfg\helper\data_object;
 use cfg\helper\value_type_list;
 use cfg\import\import;
 use cfg\phrase\phrase;
@@ -860,10 +862,17 @@ class value_list extends sandbox_value_list
      * import a value from an external object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         global $shr_typ_cac;
         global $ptc_typ_cac;
