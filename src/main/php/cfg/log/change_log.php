@@ -87,6 +87,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_FORMULA_PATH . 'formula_db.php';
 //include_once MODEL_FORMULA_PATH . 'formula_link.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 //include_once MODEL_REF_PATH . 'ref.php';
@@ -121,6 +122,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\formula\formula_db;
 use cfg\helper\db_object_seq_id;
 use cfg\helper\db_object_seq_id_user;
 use cfg\helper\type_object;
@@ -565,12 +567,12 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::FORMULA) {
                 $db_con->set_class(formula::class);
-                foreach (formula::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (formula_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA_USR) {
                 $db_con->set_class(formula::class, true);
-                foreach (formula::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (formula_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA_LINK) {

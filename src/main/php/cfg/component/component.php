@@ -64,6 +64,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_COMPONENT_PATH . 'component_db.php';
 include_once MODEL_COMPONENT_PATH . 'view_style.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_LOG_PATH . 'change.php';
@@ -95,6 +96,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
@@ -288,8 +290,8 @@ class component extends sandbox_typed
             if (array_key_exists(component_db::FLD_LINK_TYPE, $db_row)) {
                 $this->link_type_id = $db_row[component_db::FLD_LINK_TYPE];
             }
-            if (array_key_exists(formula::FLD_ID, $db_row)) {
-                $this->formula_id = $db_row[formula::FLD_ID];
+            if (array_key_exists(formula_db::FLD_ID, $db_row)) {
+                $this->formula_id = $db_row[formula_db::FLD_ID];
             }
             if (array_key_exists(component_db::FLD_COL_PHRASE, $db_row)) {
                 $this->load_col_phrase($db_row[component_db::FLD_COL_PHRASE]);
@@ -1263,7 +1265,7 @@ class component extends sandbox_typed
             $log->std_value = $std_rec->load_formula();
             $log->std_id = $std_rec->formula_id;
             $log->row_id = $this->id();
-            $log->set_field(formula::FLD_ID);
+            $log->set_field(formula_db::FLD_ID);
             $usr_msg = $this->save_field_user($db_con, $log);
         }
         return $usr_msg;
@@ -1362,7 +1364,7 @@ class component extends sandbox_typed
                 component_db::FLD_ROW_PHRASE,
                 component_db::FLD_COL_PHRASE,
                 component_db::FLD_COL2_PHRASE,
-                formula::FLD_ID,
+                formula_db::FLD_ID,
                 //component_db::FLD_LINK_COMP,
                 //component_db::FLD_LINK_COMP_TYPE,
                 component_db::FLD_LINK_TYPE,
@@ -1521,8 +1523,8 @@ class component extends sandbox_typed
         if ($sbx->formula_id() <> $this->formula_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . formula::FLD_ID,
-                    $cng_fld_cac->id($table_id . formula::FLD_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_ID,
+                    $cng_fld_cac->id($table_id . formula_db::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1531,9 +1533,9 @@ class component extends sandbox_typed
                 $old_val = null;
             }
             $lst->add_field(
-                formula::FLD_ID,
+                formula_db::FLD_ID,
                 $this->formula_id(),
-                formula::FLD_ID_SQL_TYP,
+                formula_db::FLD_ID_SQL_TYP,
                 $old_val
             );
         }

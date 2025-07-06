@@ -89,7 +89,7 @@ class user_dsp_old extends user
         log_debug($dsp_type . ' errors for user ' . $this->name);
 
         $result = '';
-        $err_lst = new sys_log_list;
+        $err_lst = new sys_log_list_dsp;
         $err_lst->set_user($this);
         $err_lst->page = $page;
         $err_lst->size = $size;
@@ -348,12 +348,12 @@ class user_dsp_old extends user
                 $result .= '<th>common formula</th>';
                 $result .= '</tr><tr>';
             }
-            $result .= '<td>' . $frm_row[formula::FLD_NAME] . '</td>';
+            $result .= '<td>' . $frm_row[formula_db::FLD_NAME] . '</td>';
             $result .= '<td>' . $frm_row['usr_formula_text'] . '</td>';
-            $result .= '<td>' . $frm_row[formula::FLD_FORMULA_TEXT] . '</td>';
-            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
-            $url = '/http/user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula::FLD_ID] . '&back=' . $back . '';
-            $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $frm_row[formula::FLD_FORMULA_TEXT], $url) . '</td>';
+            $result .= '<td>' . $frm_row[formula_db::FLD_FORMULA_TEXT] . '</td>';
+            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula_db::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
+            $url = '/http/user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula_db::FLD_ID] . '&back=' . $back . '';
+            $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $frm_row[formula_db::FLD_FORMULA_TEXT], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= $html->dsp_tbl_end();
@@ -416,7 +416,7 @@ class user_dsp_old extends user
                 // create the formula_link objects with the minimal parameter needed
                 $frm_usr = new formula_link($this);
                 $frm_usr->set_id($sbx_row['id']);
-                $frm_usr->formula()->set_id($sbx_row[formula::FLD_ID]);
+                $frm_usr->formula()->set_id($sbx_row[formula_db::FLD_ID]);
                 $frm_usr->phrase()->set_id($sbx_row[phrase::FLD_ID]);
                 $frm_usr->predicate_id = $sbx_row['usr_type'];
                 $frm_usr->set_excluded($sbx_row['usr_excluded']);

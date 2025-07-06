@@ -92,6 +92,7 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 //include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_FORMULA_PATH . 'formula_db.php';
 //include_once MODEL_FORMULA_PATH . 'formula_link.php';
 //include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 include_once MODEL_LOG_PATH . 'change.php';
@@ -136,6 +137,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\formula\formula_link;
 use cfg\formula\formula_link_type;
 use cfg\helper\combine_named;
@@ -3707,7 +3709,7 @@ class sandbox extends db_object_seq_id_user
 
         // remove the internal last update field from the list of field that should be logged
         $fld_lst_log = array_diff($fld_lst_ex_log_and_key, [
-            formula::FLD_LAST_UPDATE
+            formula_db::FLD_LAST_UPDATE
         ]);
 
         // create the query parameters for the log entries for the single fields
@@ -3915,7 +3917,7 @@ class sandbox extends db_object_seq_id_user
 
         // remove the internal last update field from the list of field that should be logged
         $fld_lst_log = array_diff($fld_lst_chg, [
-            formula::FLD_LAST_UPDATE
+            formula_db::FLD_LAST_UPDATE
         ]);
 
         // add the row id

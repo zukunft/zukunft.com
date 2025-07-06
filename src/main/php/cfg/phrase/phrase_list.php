@@ -110,6 +110,7 @@ use cfg\word\word_list;
 use cfg\word\triple;
 use cfg\word\triple_list;
 use shared\enum\foaf_direction;
+use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\types\phrase_type as phrase_type_shared;
@@ -273,6 +274,7 @@ class phrase_list extends sandbox_list_named
         }
         return $result;
     }
+
 
     /*
      * sql
@@ -562,16 +564,41 @@ class phrase_list extends sandbox_list_named
      * import a word list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_names(array $json_obj): user_message
+    function import_map_names(array $json_obj, data_object $dto = null): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $word_name) {
-            $wrd = new word($this->user());
-            $wrd->set_name($word_name);
-            $this->add($wrd->phrase());
+            $phr = null;
+            $phr = $dto?->get_phrase_by_name($word_name);
+            if ($phr == null and $word_name != '') {
+                $wrd = new word($this->user());
+                $wrd->set_name($word_name);
+                $phr = $wrd->phrase();
+            }
+            if ($phr == null) {
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_SOURCE_NOT_FOUND, [
+
+                ]);
+            } else {
+                $this->add($phr);
+            }
         }
+        return $usr_msg;
+    }
+
+    /**
+     * import a word list object from a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_names(array $json_obj, data_object $dto = null): user_message
+    {
+        $usr_msg = $this->import_map_names($json_obj, $dto);
         $this->save();
 
         return $usr_msg;

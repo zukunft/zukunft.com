@@ -79,6 +79,7 @@ include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_FORMULA_PATH . 'formula_link.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
@@ -118,6 +119,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\formula\formula_link;
 use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
@@ -737,7 +739,7 @@ class word extends sandbox_typed
     function load_sql_by_formula_name(sql_creator $sc, string $name): sql_par
     {
         global $phr_typ_cac;
-        $qp = parent::load_sql_usr_num($sc, $this, formula::FLD_NAME);
+        $qp = parent::load_sql_usr_num($sc, $this, formula_db::FLD_NAME);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
         $sc->add_where(phrase::FLD_TYPE, $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST);
         $qp->sql = $sc->sql();
@@ -826,15 +828,15 @@ class word extends sandbox_typed
         $qp = new sql_par(self::class);
         $qp->name = 'word_formula_by_id';
         $db_con->set_name($qp->name);
-        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+        $db_con->set_link_fields(formula_db::FLD_ID, phrase::FLD_ID);
         $db_con->set_where_link_no_fld(0, 0, $this->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         $db_row = $db_con->get1($qp);
         $frm = new formula($this->user());
         if ($db_row !== false) {
-            if ($db_row[formula::FLD_ID] > 0) {
-                $frm->load_by_id($db_row[formula::FLD_ID]);
+            if ($db_row[formula_db::FLD_ID] > 0) {
+                $frm->load_by_id($db_row[formula_db::FLD_ID]);
             }
         }
 

@@ -112,7 +112,7 @@ class formula_list extends sandbox_list_named
                     $excluded = $db_row[sandbox::FLD_EXCLUDED];
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
-                    $frm_id = $db_row[formula::FLD_ID];
+                    $frm_id = $db_row[formula_db::FLD_ID];
                     if ($frm_id > 0 and !in_array($frm_id, $this->ids())) {
                         $frm = new formula($this->user());
                         $frm->row_mapper_sandbox($db_row);
@@ -162,8 +162,8 @@ class formula_list extends sandbox_list_named
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
-        $sc->set_usr_fields(formula::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
+        $sc->set_usr_fields(formula_db::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(formula_db::FLD_NAMES_NUM_USR);
         return $qp;
     }
 
@@ -184,7 +184,7 @@ class formula_list extends sandbox_list_named
     {
         $qp = $this->load_sql($sc, 'frm_ids');
         if (count($frm_ids) > 0) {
-            $sc->add_where(formula::FLD_ID, $frm_ids, sql_par_type::INT_LIST);
+            $sc->add_where(formula_db::FLD_ID, $frm_ids, sql_par_type::INT_LIST);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -203,7 +203,7 @@ class formula_list extends sandbox_list_named
     function load_sql_by_names(
         sql_creator $sc,
         array       $names,
-        string      $fld = formula::FLD_NAME
+        string      $fld = formula_db::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);
@@ -218,7 +218,7 @@ class formula_list extends sandbox_list_named
     function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
-        $sc->add_where(formula::FLD_NAME, $pattern, sql_par_type::LIKE_R);
+        $sc->add_where(formula_db::FLD_NAME, $pattern, sql_par_type::LIKE_R);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -237,8 +237,8 @@ class formula_list extends sandbox_list_named
             $sc->set_join_fields(
                 array(phrase::FLD_ID),
                 formula_link::class,
-                formula::FLD_ID,
-                formula::FLD_ID
+                formula_db::FLD_ID,
+                formula_db::FLD_ID
             );
             $sc->add_where(phrase::FLD_ID, $phr->id(), null, sql_db::LNK_TBL);
             $qp->sql = $sc->sql();
@@ -262,8 +262,8 @@ class formula_list extends sandbox_list_named
             $sc->set_join_fields(
                 array(phrase::FLD_ID),
                 formula_link::class,
-                formula::FLD_ID,
-                formula::FLD_ID
+                formula_db::FLD_ID,
+                formula_db::FLD_ID
             );
             $sc->add_where(phrase::FLD_ID, $phr_lst->id_lst(), null, sql_db::LNK_TBL);
             $qp->sql = $sc->sql();
@@ -292,10 +292,10 @@ class formula_list extends sandbox_list_named
         $qp = $this->load_sql($sc, $type_query_name . '_ref');
         if ($ref_id > 0) {
             $sc->set_join_fields(
-                array(formula::FLD_ID),
+                array(formula_db::FLD_ID),
                 element::class,
-                formula::FLD_ID,
-                formula::FLD_ID
+                formula_db::FLD_ID,
+                formula_db::FLD_ID
             );
             $sc->add_where(element::FLD_REF_ID, $ref_id, null, sql_db::LNK_TBL);
             $sc->add_where(element::FLD_TYPE, $par_type_id, null, sql_db::LNK_TBL);
@@ -388,10 +388,10 @@ class formula_list extends sandbox_list_named
         $db_con->set_all();
         $qp->name = $class . '_all';
         $db_con->set_name($qp->name);
-        $db_con->set_usr_fields(formula::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
+        $db_con->set_usr_fields(formula_db::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(formula_db::FLD_NAMES_NUM_USR);
         if ($limit > 0) {
-            $db_con->set_order(formula::FLD_ID);
+            $db_con->set_order(formula_db::FLD_ID);
             $db_con->set_page_par($limit, $page);
             $qp->sql = $db_con->select_all();
         } else {

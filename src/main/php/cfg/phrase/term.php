@@ -54,6 +54,7 @@ include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_VERB_PATH . 'verb.php';
@@ -70,6 +71,7 @@ include_once SHARED_TYPES_PATH . 'share_type.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_PATH . 'library.php';
 
+use cfg\formula\formula_db;
 use cfg\helper\combine_named;
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -119,8 +121,8 @@ class term extends combine_named
     // which database should be able to handle and only a few hundred are expected to be sent to via api at once
     const FLD_NAMES_USR = array(
         sandbox_named::FLD_DESCRIPTION,
-        formula::FLD_FORMULA_TEXT,
-        formula::FLD_FORMULA_USER_TEXT
+        formula_db::FLD_FORMULA_TEXT,
+        formula_db::FLD_FORMULA_USER_TEXT
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -164,8 +166,8 @@ class term extends combine_named
             [sandbox::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
-            ['', formula::FLD_FORMULA_TEXT],
-            ['', formula::FLD_FORMULA_USER_TEXT]
+            ['', formula_db::FLD_FORMULA_TEXT],
+            ['', formula_db::FLD_FORMULA_USER_TEXT]
         ], [phrase::FLD_TYPE, word_db::FLD_ID]],
         [triple::class, [
             [triple_db::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
@@ -177,22 +179,22 @@ class term extends combine_named
             [sandbox::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
-            ['', formula::FLD_FORMULA_TEXT],
-            ['', formula::FLD_FORMULA_USER_TEXT]
+            ['', formula_db::FLD_FORMULA_TEXT],
+            ['', formula_db::FLD_FORMULA_USER_TEXT]
         ], ['', triple_db::FLD_ID]],
         [formula::class, [
-            [formula::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
+            [formula_db::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
             [user::FLD_ID],
-            [formula::FLD_NAME, term::FLD_NAME],
+            [formula_db::FLD_NAME, term::FLD_NAME],
             [sandbox_named::FLD_DESCRIPTION],
-            [formula::FLD_USAGE, self::FLD_USAGE],
-            [formula::FLD_TYPE, self::FLD_TYPE],
+            [formula_db::FLD_USAGE, self::FLD_USAGE],
+            [formula_db::FLD_TYPE, self::FLD_TYPE],
             [sandbox::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
-            [formula::FLD_FORMULA_TEXT],
-            [formula::FLD_FORMULA_USER_TEXT]
-        ], ['', formula::FLD_ID]],
+            [formula_db::FLD_FORMULA_TEXT],
+            [formula_db::FLD_FORMULA_USER_TEXT]
+        ], ['', formula_db::FLD_ID]],
         [verb::class, [
             [verb::FLD_ID, term::FLD_ID, self::FLD_VERB_ID_TO_TERM_ID],
             [sql::NULL_VALUE, user::FLD_ID, sql::FLD_CONST],
@@ -203,8 +205,8 @@ class term extends combine_named
             [sql::NULL_VALUE, sandbox::FLD_EXCLUDED, sql::FLD_CONST],
             [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql::FLD_CONST],
             [protect_type_shared::ADMIN_ID, sandbox::FLD_PROTECT, sql::FLD_CONST],
-            ['', formula::FLD_FORMULA_TEXT],
-            ['', formula::FLD_FORMULA_USER_TEXT]
+            ['', formula_db::FLD_FORMULA_TEXT],
+            ['', formula_db::FLD_FORMULA_USER_TEXT]
         ], ['', verb::FLD_ID]]
     ];
 

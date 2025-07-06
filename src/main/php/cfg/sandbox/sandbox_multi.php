@@ -72,6 +72,7 @@ include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_ELEMENT_PATH . 'element.php';
 //include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_FORMULA_PATH . 'formula_db.php';
 //include_once MODEL_FORMULA_PATH . 'formula_link.php';
 //include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 //include_once MODEL_GROUP_PATH . 'group.php';
@@ -134,6 +135,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\formula\formula_db;
 use cfg\helper\data_object;
 use cfg\helper\db_object_multi;
 use cfg\helper\db_object_multi_user;
@@ -3818,7 +3820,7 @@ class sandbox_multi extends db_object_multi_user
 
         // remove the internal last update field from the list of field that should be logged
         $fld_lst_log = array_diff($fld_lst_ex_log_and_key, [
-            formula::FLD_LAST_UPDATE
+            formula_db::FLD_LAST_UPDATE
         ]);
 
         // create the query parameters for the log entries for the single fields
@@ -3945,7 +3947,7 @@ class sandbox_multi extends db_object_multi_user
 
         // remove the internal last update field from the list of field that should be logged
         $fld_lst_log = array_diff($fld_lst_chg, [
-            formula::FLD_LAST_UPDATE
+            formula_db::FLD_LAST_UPDATE
         ]);
 
         // add the row id

@@ -87,7 +87,7 @@ class formula_link_list extends sandbox_link_list
         $sc->set_class(formula_link::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(array(formula::FLD_ID, phrase::FLD_ID));
+        $sc->set_fields(array(formula_db::FLD_ID, phrase::FLD_ID));
         $sc->set_usr_num_fields(formula_link::FLD_NAMES_NUM_USR);
         // also load the linked user specific phrase with the same SQL statement
         $sc->set_join_fields(
@@ -122,7 +122,7 @@ class formula_link_list extends sandbox_link_list
     {
         $qp = $this->load_sql($sc, 'frm_id');
         if ($frm_id > 0) {
-            $sc->add_where(formula::FLD_ID, $frm_id);
+            $sc->add_where(formula_db::FLD_ID, $frm_id);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';

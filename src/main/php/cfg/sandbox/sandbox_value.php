@@ -46,6 +46,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'result_id.php';
@@ -90,6 +91,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\result_id;
@@ -1174,7 +1176,7 @@ class sandbox_value extends sandbox_multi
             if ($this::class == result::class) {
                 // results are always depending on a formula
                 $lst->add_field(
-                    formula::FLD_ID,
+                    formula_db::FLD_ID,
                     $this->formula_id(),
                     sql_field_type::INT_SMALL
                 );
@@ -1200,7 +1202,7 @@ class sandbox_value extends sandbox_multi
             }
         } elseif ($this::class == result::class and $this->is_main()) {
             $lst->add_field(
-                formula::FLD_ID,
+                formula_db::FLD_ID,
                 $this->formula_id(),
                 sql_field_type::INT_SMALL
             );
@@ -1280,10 +1282,10 @@ class sandbox_value extends sandbox_multi
             if ($this::class == result::class and $sc_par_lst->is_standard()) {
                 // TODO merge with result_db::FLD_KEY_PRIME ?
                 $id_fields = $this->id_fields_prime(1, result_id::PRIME_PHRASES_STD);
-                $result = array_merge([formula::FLD_ID], $id_fields);
+                $result = array_merge([formula_db::FLD_ID], $id_fields);
             } else {
                 if ($this::class == result::class) {
-                    $result = array_merge([formula::FLD_ID], $this->id_fields_prime());
+                    $result = array_merge([formula_db::FLD_ID], $this->id_fields_prime());
                 } else {
                     $result = $this->id_fields_prime();
                 }
@@ -1292,9 +1294,9 @@ class sandbox_value extends sandbox_multi
             if ($this::class == result::class and $sc_par_lst->is_standard()) {
                 // TODO merge with result_db::FLD_KEY_PRIME ?
                 $id_fields = $this->id_fields_main(1, group_id::MAIN_PHRASES_STD);
-                $result = array_merge([formula::FLD_ID], $id_fields);
+                $result = array_merge([formula_db::FLD_ID], $id_fields);
             } else {
-                $result = array_merge([formula::FLD_ID], $this->id_fields_main());
+                $result = array_merge([formula_db::FLD_ID], $this->id_fields_main());
             }
         }
         return $result;

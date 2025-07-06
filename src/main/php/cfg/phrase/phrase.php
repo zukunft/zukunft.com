@@ -77,6 +77,7 @@ include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 //include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_FORMULA_PATH . 'formula_link.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
@@ -101,6 +102,7 @@ include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
+use cfg\formula\formula_db;
 use cfg\helper\combine_named;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -915,15 +917,15 @@ class phrase extends combine_named
         $qp = new sql_par(self::class);
         $qp->name = 'phrase_formula_by_id';
         $db_con->set_name($qp->name);
-        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+        $db_con->set_link_fields(formula_db::FLD_ID, phrase::FLD_ID);
         $db_con->set_where_link_no_fld(0, 0, $this->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         $db_row = $db_con->get1($qp);
         $frm = new formula($this->user());
         if ($db_row !== false) {
-            if ($db_row[formula::FLD_ID] > 0) {
-                $frm->load_by_id($db_row[formula::FLD_ID]);
+            if ($db_row[formula_db::FLD_ID] > 0) {
+                $frm->load_by_id($db_row[formula_db::FLD_ID]);
             }
         }
 

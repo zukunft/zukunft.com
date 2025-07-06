@@ -41,6 +41,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
@@ -63,6 +64,7 @@ include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'library.php';
 
+use cfg\formula\formula_db;
 use cfg\helper\data_object;
 use cfg\sandbox\sandbox_value_list;
 use cfg\db\sql_creator;
@@ -387,7 +389,7 @@ class result_list extends sandbox_value_list
             new sql_field_list(),
             new sql_type_list()
         );
-        $sc->add_where(formula::FLD_ID, $frm->id());
+        $sc->add_where(formula_db::FLD_ID, $frm->id());
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
 
@@ -543,7 +545,7 @@ class result_list extends sandbox_value_list
         $sql_by = '';
         if ($obj->id() > 0) {
             if (get_class($obj) == formula::class) {
-                $sql_by .= formula::FLD_ID;
+                $sql_by .= formula_db::FLD_ID;
             } elseif (get_class($obj) == group::class) {
                 if ($by_source) {
                     $sql_by .= result_db::FLD_SOURCE_GRP;
@@ -572,7 +574,7 @@ class result_list extends sandbox_value_list
             if ($obj->id() > 0) {
                 if (get_class($obj) == formula::class) {
                     $db_con->add_par(sql_par_type::INT, $obj->id());
-                    $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID));
+                    $qp->sql = $db_con->select_by_field_list(array(formula_db::FLD_ID));
                 } elseif (get_class($obj) == group::class) {
                     $db_con->add_par(sql_par_type::INT, $obj->id());
                     $link_fields = array();
@@ -833,9 +835,9 @@ class result_list extends sandbox_value_list
             // build the single calculation request
             $calc_row = array();
             $calc_row['usr_id'] = $this->user()->id();
-            $calc_row['frm_id'] = $frm_row[formula::FLD_ID];
-            $calc_row['frm_name'] = $frm_row[formula::FLD_NAME];
-            $calc_row['frm_text'] = $frm_row[formula::FLD_FORMULA_TEXT];
+            $calc_row['frm_id'] = $frm_row[formula_db::FLD_ID];
+            $calc_row['frm_name'] = $frm_row[formula_db::FLD_NAME];
+            $calc_row['frm_text'] = $frm_row[formula_db::FLD_FORMULA_TEXT];
             $calc_row['trm_ids'] = $phr_ids;
             $result[] = $calc_row;
         }

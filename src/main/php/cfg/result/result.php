@@ -63,6 +63,7 @@ include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 include_once MODEL_FORMULA_PATH . 'expression.php';
 include_once MODEL_FORMULA_PATH . 'figure.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
@@ -94,6 +95,7 @@ use cfg\db\sql_type_list;
 use cfg\element\element_list;
 use cfg\formula\figure;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
@@ -204,7 +206,7 @@ class result extends sandbox_value
         $lib = new library();
         $result = parent::row_mapper_multi($db_row, $ext, result_db::FLD_ID);
         if ($result) {
-            $this->frm->set_id($db_row[formula::FLD_ID]);
+            $this->frm->set_id($db_row[formula_db::FLD_ID]);
             if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
                 $this->src_grp->set_id((int)$db_row[result_db::FLD_SOURCE_GRP]);
             } else {
@@ -571,7 +573,7 @@ class result extends sandbox_value
     {
         $qp = $this->load_sql($sc, 'frm_grp');
         $sc->set_name($qp->name);
-        $sc->add_where(formula::FLD_ID, $frm->id());
+        $sc->add_where(formula_db::FLD_ID, $frm->id());
         $sc->add_where(result_db::FLD_GRP, $grp->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -590,7 +592,7 @@ class result extends sandbox_value
     {
         $qp = $this->load_sql($sc, 'frm_grp_lst');
         $sc->set_name($qp->name);
-        $sc->add_where(formula::FLD_ID, $frm->id());
+        $sc->add_where(formula_db::FLD_ID, $frm->id());
         $sc->add_where(result_db::FLD_GRP, $lst->ids());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -1495,7 +1497,7 @@ class result extends sandbox_value
         $fields = parent::db_fields_all();
         if (!$sc_par_lst->is_standard()) {
             $fields[] = result_db::FLD_SOURCE . group::FLD_ID;
-            $fields[] = formula::FLD_ID;
+            $fields[] = formula_db::FLD_ID;
             $fields = array_merge($fields, $this->db_fields_all_sandbox());
         }
         return $fields;
@@ -1525,9 +1527,9 @@ class result extends sandbox_value
             }
             if ($sbx->formula_id() <> $this->formula_id()) {
                 $lst->add_field(
-                    formula::FLD_ID,
+                    formula_db::FLD_ID,
                     $this->formula_id(),
-                    formula::FLD_ID_SQL_TYP
+                    formula_db::FLD_ID_SQL_TYP
                 );
             }
             // if any field has been updated, update the last_update field also

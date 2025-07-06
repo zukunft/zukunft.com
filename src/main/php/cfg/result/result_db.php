@@ -40,6 +40,7 @@ include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
@@ -51,6 +52,7 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_type;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\group\group;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_multi;
@@ -87,7 +89,7 @@ class result_db
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
-        formula::FLD_ID,
+        formula_db::FLD_ID,
         user::FLD_ID,
         self::FLD_SOURCE_GRP,
         sandbox_multi::FLD_VALUE,
@@ -96,17 +98,17 @@ class result_db
     const FLD_NAMES_ALL = array(
         user::FLD_ID,
         self::FLD_SOURCE_GRP,
-        formula::FLD_ID,
+        formula_db::FLD_ID,
         sandbox_multi::FLD_VALUE,
     );
     const FLD_NAMES_NON_STD = array(
         user::FLD_ID,
         self::FLD_SOURCE_GRP,
-        formula::FLD_ID,
+        formula_db::FLD_ID,
     );
     const FLD_NAMES_STD = array(
         self::FLD_SOURCE_GRP,
-        formula::FLD_ID,
+        formula_db::FLD_ID,
         sandbox_multi::FLD_VALUE,
     );
     // fields that are not part of the standard result table, but that needs to be included for a correct union field match
@@ -115,12 +117,12 @@ class result_db
         self::FLD_SOURCE_GRP,
     );
     const FLD_NAMES_STD_NON_DUMMY = array(
-        formula::FLD_ID,
+        formula_db::FLD_ID,
     );
     const FLD_NAMES_DUMMY = array(
         user::FLD_ID,
         self::FLD_SOURCE_GRP,
-        formula::FLD_ID,
+        formula_db::FLD_ID,
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR_EX_STD = array(
@@ -174,13 +176,13 @@ class result_db
     );
 
     const FLD_KEY_PRIME = array(
-        [formula::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'formula id that is part of the prime key for a'],
+        [formula_db::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'formula id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
     );
     const FLD_KEY_MAIN_STD = array(
-        [formula::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'formula id that is part of the prime key for a'],
+        [formula_db::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'formula id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
@@ -200,7 +202,7 @@ class result_db
         [sandbox_value::FLD_ID_PREFIX . '8', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
     );
     const FLD_KEY_PRIME_USER = array(
-        [formula::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'formula id that is with the user id part of the prime key for a'],
+        [formula_db::FLD_ID, sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'formula id that is with the user id part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
@@ -217,7 +219,7 @@ class result_db
     );
     const FLD_ALL_CHANGED = array(
         [sandbox_multi::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
-        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, 'the id of the formula which has been used to calculate this result'],
+        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, 'the id of the formula which has been used to calculate this result'],
     );
     const FLD_ALL_SOURCE = array();
     const FLD_ALL_SOURCE_GROUP = array(

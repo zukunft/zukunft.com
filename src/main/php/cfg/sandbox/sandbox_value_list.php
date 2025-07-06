@@ -41,6 +41,7 @@ include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_db.php';
 //include_once MODEL_GROUP_PATH . 'group.php';
 //include_once MODEL_GROUP_PATH . 'group_id.php';
 //include_once MODEL_GROUP_PATH . 'result_id.php';
@@ -67,6 +68,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\result_id;
@@ -344,7 +346,7 @@ class sandbox_value_list extends sandbox_list
                 $max_phr = result_id::PRIME_PHRASES_STD;
                 if ($frm_pos != 0) {
                     $sc->add_where_no_par(
-                        '', formula::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
+                        '', formula_db::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
                 }
             }
             $this->load_sql_set_phrase_fields($sc, $phr_pos_lst, $or, $max_phr);
@@ -358,7 +360,7 @@ class sandbox_value_list extends sandbox_list
             }
             if ($frm_pos != 0) {
                 $sc->add_where_no_par(
-                    '', formula::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
+                    '', formula_db::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
             }
             $this->load_sql_set_phrase_fields($sc, $phr_pos_lst, $or, $max_phr);
         } else {
