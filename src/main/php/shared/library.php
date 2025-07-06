@@ -33,6 +33,7 @@
 namespace shared;
 
 include_once SERVICE_PATH . 'config.php';
+include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_CONST_PATH . 'def.php';
 
 use cfg\component\view_style;
@@ -48,7 +49,7 @@ use cfg\log\change_values_time_norm;
 use cfg\log\change_values_time_prime;
 use cfg\ref\source_type;
 use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_value;
+use cfg\ref\source_db;
 use cfg\system\session;
 use cfg\system\sys_log_status;
 use cfg\system\sys_log_status_list;
@@ -2510,7 +2511,7 @@ class library
                 phrase::FLD_TYPE => 'pty',
                 value_base::FLD_ID => 'grp',
                 user::FLD_ID => 'usr',
-                source::FLD_ID => 'src',
+                source_db::FLD_ID => 'src',
                 sandbox_multi::FLD_VALUE => 'val',
                 sandbox_multi::FLD_LAST_UPDATE => 'upd',
                 phrase::FLD_ID . '_1',

@@ -123,6 +123,7 @@ include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_RESULT_PATH . 'result_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
@@ -167,6 +168,7 @@ use cfg\log\changes_norm;
 use cfg\ref\source;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_multi;
+use cfg\ref\source_db;
 use cfg\system\log;
 use shared\const\chars;
 use shared\enum\change_actions;
@@ -229,7 +231,7 @@ class value_base extends sandbox_value
     const FLD_NAMES = array();
     const FLD_NAMES_STD = array(
         self::FLD_VALUE,
-        source::FLD_ID,
+        source_db::FLD_ID,
     );
     // fields that are not part of the standard result table, but that needs to be included for a correct union field match
     const FLD_NAMES_STD_DUMMY = array(
@@ -257,14 +259,14 @@ class value_base extends sandbox_value
     // list of the user specific numeric database field names for numeric tables and queries
     const FLD_NAMES_NUM_USR = array(
         self::FLD_VALUE,
-        source::FLD_ID,
+        source_db::FLD_ID,
         self::FLD_LAST_UPDATE,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // list of the user specific numeric database field names for text tables and queries
     const FLD_NAMES_NUM_USR_TEXT = array(
-        source::FLD_ID,
+        source_db::FLD_ID,
         self::FLD_LAST_UPDATE,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
@@ -272,14 +274,14 @@ class value_base extends sandbox_value
     // list of the user specific numeric database field names for timetables and queries
     const FLD_NAMES_NUM_USR_TIME = array(
         self::FLD_VALUE_TIME,
-        source::FLD_ID,
+        source_db::FLD_ID,
         self::FLD_LAST_UPDATE,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // list of the user specific numeric database field names for geo point tables and queries
     const FLD_NAMES_NUM_USR_GEO = array(
-        source::FLD_ID,
+        source_db::FLD_ID,
         self::FLD_LAST_UPDATE,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
@@ -287,7 +289,7 @@ class value_base extends sandbox_value
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_VALUE,
-        source::FLD_ID,
+        source_db::FLD_ID,
         self::FLD_LAST_UPDATE,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
@@ -444,7 +446,7 @@ class value_base extends sandbox_value
                 log_err('Value for ' . $this::FLD_VALUE . ' is undefined');
             }
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific
-            $this->set_source_id($db_row[source::FLD_ID]);
+            $this->set_source_id($db_row[source_db::FLD_ID]);
             $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE]));
         }
         return $result;
@@ -2112,7 +2114,7 @@ class value_base extends sandbox_value
             $log->std_value = $std_rec->source_name();
             $log->std_id = $std_rec->get_source_id();
             $this->save_set_log_id($log);
-            $log->set_field(source::FLD_ID);
+            $log->set_field(source_db::FLD_ID);
             $result = $this->save_field_user($db_con, $log);
         }
         return $result;
@@ -2475,7 +2477,7 @@ class value_base extends sandbox_value
     {
         $fields = parent::db_fields_all();
         if (!$sc_par_lst->is_standard()) {
-            $fields[] = source::FLD_ID;
+            $fields[] = source_db::FLD_ID;
             $fields = array_merge($fields, $this->db_fields_all_sandbox());
         }
         return $fields;
@@ -2506,13 +2508,13 @@ class value_base extends sandbox_value
             if ($sbx->source_id() <> $this->source_id() or $sc_par_lst->is_usr_tbl()) {
                 if ($sc_par_lst->incl_log()) {
                     $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
-                        $cng_fld_cac->id($table_id . source::FLD_ID),
+                        sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
+                        $cng_fld_cac->id($table_id . source_db::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 $lst->add_field(
-                    source::FLD_ID,
+                    source_db::FLD_ID,
                     $this->source_id(),
                     sql_field_type::INT
                 );

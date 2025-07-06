@@ -39,6 +39,7 @@ include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
@@ -50,6 +51,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\import\import;
 use cfg\sandbox\sandbox_list_named;
+use cfg\ref\source_db;
 use cfg\user\user_message;
 use shared\enum\messages as msg_id;
 use shared\const\triples;
@@ -97,9 +99,9 @@ class source_list extends sandbox_list_named
         $sc->set_class(source::class);
         $sc->set_name($qp->name);
 
-        $sc->set_fields(source::FLD_NAMES);
-        $sc->set_usr_fields(source::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(source::FLD_NAMES_NUM_USR);
+        $sc->set_fields(source_db::FLD_NAMES);
+        $sc->set_usr_fields(source_db::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(source_db::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -121,8 +123,8 @@ class source_list extends sandbox_list_named
     ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(source::FLD_ID, $ids);
-        $sc->set_order(source::FLD_ID, sql::ORDER_ASC);
+        $sc->add_where(source_db::FLD_ID, $ids);
+        $sc->set_order(source_db::FLD_ID, sql::ORDER_ASC);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -139,7 +141,7 @@ class source_list extends sandbox_list_named
     function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
-        $sc->add_where(source::FLD_NAME, $pattern, sql_par_type::LIKE_R);
+        $sc->add_where(source_db::FLD_NAME, $pattern, sql_par_type::LIKE_R);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -203,7 +205,7 @@ class source_list extends sandbox_list_named
     function load_sql_by_names(
         sql_creator $sc,
         array $names,
-        string $fld = source::FLD_NAME
+        string $fld = source_db::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);

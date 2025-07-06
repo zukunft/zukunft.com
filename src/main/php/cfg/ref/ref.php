@@ -94,6 +94,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_REF_PATH . 'ref_type.php';
 include_once MODEL_REF_PATH . 'ref_type_list.php';
 include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once WEB_REF_PATH . 'ref.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
@@ -125,6 +126,7 @@ use cfg\phrase\phrase_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
+use cfg\ref\source_db;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\enum\change_actions;
@@ -175,7 +177,7 @@ class ref extends sandbox_link
     );
     // list of user specific numeric field names
     const FLD_NAMES_NUM_USR = array(
-        source::FLD_ID,
+        source_db::FLD_ID,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
@@ -198,7 +200,7 @@ class ref extends sandbox_link
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
-        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
+        [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
         [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
@@ -279,7 +281,7 @@ class ref extends sandbox_link
             $this->set_predicate_id($db_row[self::FLD_TYPE]);
             $this->url = $db_row[self::FLD_URL];
             $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
-            $this->set_source_by_id($db_row[source::FLD_ID]);
+            $this->set_source_by_id($db_row[source_db::FLD_ID]);
             if ($this->load_objects()) {
                 $result = true;
                 log_debug('done ' . $this->dsp_id());
@@ -1321,7 +1323,7 @@ class ref extends sandbox_link
                 phrase::FLD_ID,
                 self::FLD_EX_KEY,
                 self::FLD_URL,
-                source::FLD_ID,
+                source_db::FLD_ID,
                 sandbox_named::FLD_DESCRIPTION,
             ],
             parent::db_fields_all_sandbox()
@@ -1424,14 +1426,14 @@ class ref extends sandbox_link
         if ($sbx->source?->id() <> $this->source?->id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
-                    $cng_fld_cac->id($table_id . source::FLD_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
+                    $cng_fld_cac->id($table_id . source_db::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
-                source::FLD_ID,
-                source::FLD_NAME,
+                source_db::FLD_ID,
+                source_db::FLD_NAME,
                 $this->source,
                 $sbx->source
             );

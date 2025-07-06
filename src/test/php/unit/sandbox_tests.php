@@ -37,6 +37,7 @@ include_once DB_PATH . 'sql.php';
 include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_WORD_PATH . 'triple_db.php';
 include_once SHARED_CONST_PATH . 'words.php';
@@ -58,6 +59,7 @@ use cfg\ref\source_type;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
+use cfg\ref\source_db;
 use cfg\user\user;
 use cfg\value\value;
 use cfg\verb\verb;
@@ -499,7 +501,7 @@ class sandbox_tests
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_class(source::class);
         $db_con->set_fields(array(sql::FLD_CODE_ID));
-        $db_con->set_usr_fields(array(source::FLD_URL, sandbox_named::FLD_DESCRIPTION));
+        $db_con->set_usr_fields(array(source_db::FLD_URL, sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();
@@ -521,7 +523,7 @@ class sandbox_tests
         // ... same for search by name
         $db_con->set_class(source::class);
         $db_con->set_fields(array(sql::FLD_CODE_ID));
-        $db_con->set_usr_fields(array(source::FLD_URL, sandbox_named::FLD_DESCRIPTION));
+        $db_con->set_usr_fields(array(source_db::FLD_URL, sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
         $db_con->set_where_std(0, 'wikidata');
         $created_sql = $db_con->select_by_set_id();
@@ -544,7 +546,7 @@ class sandbox_tests
         // ... same for search by code_id
         $db_con->set_class(source::class);
         $db_con->set_fields(array(sql::FLD_CODE_ID));
-        $db_con->set_usr_fields(array(source::FLD_URL, sandbox_named::FLD_DESCRIPTION));
+        $db_con->set_usr_fields(array(source_db::FLD_URL, sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
         $db_con->set_where_std(0, '', 'wikidata');
         $created_sql = $db_con->select_by_set_id();

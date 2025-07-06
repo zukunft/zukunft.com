@@ -91,6 +91,7 @@ include_once MODEL_LOG_PATH . 'change_log.php';
 //include_once MODEL_LOG_PATH . 'change_table_list.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 //include_once MODEL_REF_PATH . 'source.php';
+//include_once MODEL_REF_PATH . 'source_db.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
 //include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_USER_PATH . 'user_db.php';
@@ -128,6 +129,7 @@ use cfg\helper\type_object;
 use cfg\log\change_action;
 use cfg\log\change_log;
 use cfg\phrase\term;
+use cfg\ref\source_db;
 use cfg\system\ip_range_list;
 use cfg\log\change;
 use cfg\sandbox\sandbox_named;
@@ -2608,7 +2610,7 @@ class user extends db_id_object_non_sandbox
             }
             $lst->add_link_field(
                 user_db::FLD_SOURCE,
-                source::FLD_NAME,
+                source_db::FLD_NAME,
                 $this->source,
                 $db_usr->source
             );

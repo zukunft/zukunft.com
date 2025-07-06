@@ -61,6 +61,7 @@ include_once MODEL_LOG_PATH . 'change_value.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_RESULT_PATH . 'result.php';
 include_once MODEL_RESULT_PATH . 'result_db.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
@@ -107,6 +108,7 @@ use cfg\phrase\phrase_list;
 use cfg\ref\source;
 use cfg\result\result;
 use cfg\result\result_db;
+use cfg\ref\source_db;
 use cfg\value\value_geo;
 use cfg\value\value;
 use cfg\value\value_text;
@@ -221,11 +223,11 @@ class sandbox_value extends sandbox_multi
         [value_base::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, '', '', 'the user specific geolocation change'],
     );
     const FLD_ALL_SOURCE = array(
-        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, 'the source of the value as given by the user'],
+        [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, 'the source of the value as given by the user'],
     );
     // TODO use this for the user tables
     const FLD_USER_SOURCE = array(
-        [source::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_USER_SOURCE_COM],
+        [source_db::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_USER_SOURCE_COM],
     );
     const FLD_ALL_CHANGED = array(
         [self::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
@@ -1259,7 +1261,7 @@ class sandbox_value extends sandbox_multi
                     or $this::class == value_text::class
                     or $this::class == value_geo::class)) {
                 $lst->add_field(
-                    source::FLD_ID,
+                    source_db::FLD_ID,
                     $this->source()?->id(),
                     db_object_seq_id::FLD_ID_SQL_TYP
                 );

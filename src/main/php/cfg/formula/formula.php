@@ -170,15 +170,6 @@ class formula extends sandbox_typed
     const FLD_NAMES_USR = formula_db::FLD_NAMES_USR;
     const FLD_NAMES_NUM_USR = formula_db::FLD_NAMES_NUM_USR;
     const ALL_SANDBOX_FLD_NAMES = formula_db::ALL_SANDBOX_FLD_NAMES;
-    /*
-    const FLD_ID_SQL_TYP = formula_db::FLD_ID_SQL_TYP;
-    const FLD_NAME_COM = formula_db::FLD_NAME_COM;
-    const FLD_NAME = formula_db::FLD_NAME;
-    const FLD_TYPE_COM = formula_db::FLD_TYPE_COM;
-    const FLD_TYPE = formula_db::FLD_TYPE;
-    const FLD_DESCRIPTION_COM = formula_db::FLD_DESCRIPTION_COM;
-    const FLD_LAST_UPDATE = formula_db::FLD_LAST_UPDATE;
-    */
 
 
     /*

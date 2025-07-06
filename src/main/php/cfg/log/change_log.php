@@ -92,6 +92,7 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 //include_once MODEL_REF_PATH . 'ref.php';
 //include_once MODEL_REF_PATH . 'source.php';
+//include_once MODEL_REF_PATH . 'source_db.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_USER_PATH . 'user.php';
 //include_once MODEL_USER_PATH . 'user_db.php';
@@ -128,6 +129,7 @@ use cfg\helper\db_object_seq_id_user;
 use cfg\helper\type_object;
 use cfg\formula\formula;
 use cfg\formula\formula_link;
+use cfg\ref\source_db;
 use cfg\sandbox\sandbox_link;
 use cfg\ref\ref;
 use cfg\ref\source;
@@ -632,12 +634,12 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::SOURCE) {
                 $db_con->set_class(source::class);
-                foreach (source::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (source_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::SOURCE_USR) {
                 $db_con->set_class(source::class, true);
-                foreach (source::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (source_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } else {
