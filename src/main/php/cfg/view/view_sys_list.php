@@ -131,7 +131,7 @@ class view_sys_list extends type_list
         $msk = new view($this->user());
         $sc->set_id_field($msk->id_field());
         $sc->add_where(sql::FLD_CODE_ID, '', sql_par_type::NOT_NULL);
-        $sc->set_order(view::FLD_ID);
+        $sc->set_order(view_db::FLD_ID);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;

@@ -88,6 +88,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
+//include_once MODEL_VIEW_PATH . 'view_db.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'word_list.php';
@@ -132,6 +133,7 @@ use cfg\user\user_message;
 use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\view\view;
+use cfg\view\view_db;
 use shared\const\triples;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
@@ -2788,7 +2790,7 @@ class triple extends sandbox_link_named
             }
             $lst->add_link_field(
                 triple_db::FLD_VIEW,
-                view::FLD_NAME,
+                view_db::FLD_NAME,
                 $this->view,
                 $sbx->view
             );

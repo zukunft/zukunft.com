@@ -32,12 +32,14 @@
 
 namespace unit_write;
 
+include_once MODEL_VIEW_PATH . 'view_db.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 
 use cfg\log\change;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\view\view;
+use cfg\view\view_db;
 use cfg\view\view_type;
 use cfg\word\word;
 use html\view\view as view_dsp;
@@ -125,7 +127,7 @@ class view_write_tests
         $t->display('view->load the added "' . $msk->name() . '"', $target, $result);
 
         // check if the view adding has been logged
-        $result = $t->log_last_by_field($msk, view::FLD_NAME, $msk->id(), true);
+        $result = $t->log_last_by_field($msk, view_db::FLD_NAME, $msk->id(), true);
         $target = users::SYSTEM_TEST_NAME . ' added "System Test View"';
         $t->display('view->save adding logged for "' . views::TEST_ADD_NAME . '"', $target, $result);
 
@@ -157,7 +159,7 @@ class view_write_tests
         $t->display('view->load renamed view "' . views::TEST_RENAMED_NAME . '"', $target, $result);
 
         // check if the view renaming has been logged
-        $result = $t->log_last_by_field($dsp_renamed, view::FLD_NAME, $dsp_renamed->id(), true);
+        $result = $t->log_last_by_field($dsp_renamed, view_db::FLD_NAME, $dsp_renamed->id(), true);
         $target = users::SYSTEM_TEST_NAME . ' changed "System Test View" to "System Test View Renamed"';
         $t->display('view->save rename logged for "' . views::TEST_RENAMED_NAME . '"', $target, $result);
 
@@ -186,7 +188,7 @@ class view_write_tests
             $target = users::SYSTEM_TEST_NAME . ' added "Just added for testing the user sandbox"';
         }
         $t->display('view->load comment for "' . views::TEST_RENAMED_NAME . '" logged', $target, $result);
-        $result = $t->log_last_by_field($dsp_reloaded, view::FLD_TYPE, $dsp_reloaded->id(), true);
+        $result = $t->log_last_by_field($dsp_reloaded, view_db::FLD_TYPE, $dsp_reloaded->id(), true);
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "word default" to "entry view"';
         // TODO fix it
         if ($result != $target) {

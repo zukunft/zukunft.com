@@ -89,7 +89,7 @@ class term_view extends sandbox_link
     const FLD_NAMES = array(
         term::FLD_ID,
         view_link_type::FLD_ID,
-        view::FLD_ID
+        view_db::FLD_ID
     );
     //
     const FLD_NAMES_USR = array(
@@ -107,7 +107,7 @@ class term_view extends sandbox_link
     // list of fields that select the objects that should be linked
     const FLD_LST_LINK = array(
         [term::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
-        [view::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
+        [view_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
         [view_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, view_link_type::class, self::FLD_TYPE_COM],
     );
     // list of MANDATORY fields that CAN be CHANGEd by the user
@@ -168,7 +168,7 @@ class term_view extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $msk = new view($this->user());
-            $msk->set_id($db_row[view::FLD_ID]);
+            $msk->set_id($db_row[view_db::FLD_ID]);
             $this->set_view($msk);
             $trm = new term($this->user());
             $trm->set_id($db_row[term::FLD_ID]);
@@ -257,7 +257,7 @@ class term_view extends sandbox_link
      */
     function from_field(): string
     {
-        return view::FLD_ID;
+        return view_db::FLD_ID;
     }
 
     /**
@@ -419,7 +419,7 @@ class term_view extends sandbox_link
         if ($this->id() > 0) {
             $sc->add_where($this->id_field(), $this->id());
         } elseif ($this->view()->id() > 0 and $this->term()->id() != 0) {
-            $sc->add_where(view::FLD_ID, $this->view()->id());
+            $sc->add_where(view_db::FLD_ID, $this->view()->id());
             $sc->add_where(term::FLD_ID, $this->term()->id());
         } else {
             if ($this->view()->id() > 0) {

@@ -55,6 +55,7 @@ include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_VIEW_PATH . 'view_db.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
@@ -74,6 +75,7 @@ use cfg\helper\type_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\view\view;
+use cfg\view\view_db;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
 use shared\helper\TextIdObject;
@@ -227,7 +229,7 @@ class component_list extends sandbox_list_named
             component_link::class,
             component::FLD_ID,
             component::FLD_ID);
-        $sc->add_where(view::FLD_ID, $id, null, sql_db::LNK_TBL);
+        $sc->add_where(view_db::FLD_ID, $id, null, sql_db::LNK_TBL);
         $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();

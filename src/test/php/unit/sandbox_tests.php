@@ -39,6 +39,7 @@ include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VIEW_PATH . 'view_db.php';
 include_once MODEL_WORD_PATH . 'triple_db.php';
 include_once SHARED_CONST_PATH . 'words.php';
 
@@ -64,6 +65,7 @@ use cfg\user\user;
 use cfg\value\value;
 use cfg\verb\verb;
 use cfg\view\view;
+use cfg\view\view_db;
 use cfg\word\triple;
 use cfg\word\triple_db;
 use cfg\word\word;
@@ -662,7 +664,7 @@ class sandbox_tests
 
         // test the view load_standard SQL creation
         $db_con->set_class(view::class);
-        $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, view::FLD_TYPE, sandbox::FLD_EXCLUDED));
+        $db_con->set_fields(array(sandbox_named::FLD_DESCRIPTION, view_db::FLD_TYPE, sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT view_id,
@@ -677,7 +679,7 @@ class sandbox_tests
         // test the view load SQL creation
         $db_con->set_class(view::class);
         $db_con->set_usr_fields(array(sandbox_named::FLD_DESCRIPTION));
-        $db_con->set_usr_num_fields(array(view::FLD_TYPE, sandbox::FLD_EXCLUDED));
+        $db_con->set_usr_num_fields(array(view_db::FLD_TYPE, sandbox::FLD_EXCLUDED));
         $db_con->set_where_std(1);
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT 
@@ -696,7 +698,7 @@ class sandbox_tests
 
         // test the component_link load_standard SQL creation
         $db_con->set_class(component_link::class);
-        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
+        $db_con->set_link_fields(view_db::FLD_ID, component::FLD_ID);
         $db_con->set_fields(array(component_link::FLD_ORDER_NBR, component_link::FLD_POS_TYPE, sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1, 2, 3);
         $created_sql = $db_con->select_by_set_id();
@@ -712,7 +714,7 @@ class sandbox_tests
 
         // ... same but select by the link ids
         $db_con->set_class(component_link::class);
-        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
+        $db_con->set_link_fields(view_db::FLD_ID, component::FLD_ID);
         $db_con->set_fields(array(component_link::FLD_ORDER_NBR, component_link::FLD_POS_TYPE, sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(0, 2, 3);
         $created_sql = $db_con->select_by_set_id();
@@ -728,7 +730,7 @@ class sandbox_tests
 
         // test the component_link load SQL creation
         $db_con->set_class(component_link::class);
-        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
+        $db_con->set_link_fields(view_db::FLD_ID, component::FLD_ID);
         $db_con->set_usr_num_fields(array(component_link::FLD_ORDER_NBR, component_link::FLD_POS_TYPE, sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1, 2, 3);
         $created_sql = $db_con->select_by_set_id();
@@ -1078,7 +1080,7 @@ class sandbox_tests
 
         // test the component_link load_standard SQL creation
         $db_con->set_class(component_link::class);
-        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
+        $db_con->set_link_fields(view_db::FLD_ID, component::FLD_ID);
         $db_con->set_fields(array('order_nbr', 'position_type_id', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1);
         $created_sql = $db_con->select_by_set_id();
@@ -1095,7 +1097,7 @@ class sandbox_tests
 
         // test the component_link load SQL creation
         $db_con->set_class(component_link::class);
-        $db_con->set_link_fields(view::FLD_ID, component::FLD_ID);
+        $db_con->set_link_fields(view_db::FLD_ID, component::FLD_ID);
         $db_con->set_usr_num_fields(array('order_nbr', 'position_type_id', sandbox::FLD_EXCLUDED));
         $db_con->set_where_link_no_fld(1, 2, 3);
         $created_sql = $db_con->select_by_set_id();
@@ -1348,7 +1350,7 @@ class sandbox_tests
         $db_con->db_type = sql_db::POSTGRES;
         $db_con->set_class(component_link::class);
         //$db_con->set_join_fields(array('position_type'), 'position_type');
-        $db_con->set_fields(array(view::FLD_ID, component::FLD_ID));
+        $db_con->set_fields(array(view_db::FLD_ID, component::FLD_ID));
         $db_con->set_usr_num_fields(array('order_nbr', 'position_type_id', sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('s.component_id = 1');
         $created_sql = $db_con->select_by_set_id();

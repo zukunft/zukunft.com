@@ -813,9 +813,9 @@ class user_dsp_old extends user
                         // to review: load all user views with one query
                         $dsp_other = clone $dsp_usr;
                         $dsp_other->set_user($usr_other);
-                        $dsp_other->set_name($dsp_other_row[view::FLD_NAME]);
+                        $dsp_other->set_name($dsp_other_row[view_db::FLD_NAME]);
                         $dsp_other->description = $dsp_other_row[sandbox_named::FLD_DESCRIPTION];
-                        $dsp_other->set_type_id($dsp_other_row[view::FLD_TYPE]);
+                        $dsp_other->set_type_id($dsp_other_row[view_db::FLD_TYPE]);
                         $dsp_other->set_excluded($dsp_other_row[sandbox::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
@@ -1085,7 +1085,7 @@ class user_dsp_old extends user
                 // create the component_link objects with the minimal parameter needed
                 $dsp_usr = new component_link($this);
                 $dsp_usr->set_id($sbx_row['id']);
-                $dsp_usr->view()->set_id($sbx_row[view::FLD_ID]);
+                $dsp_usr->view()->set_id($sbx_row[view_db::FLD_ID]);
                 $dsp_usr->component()->set_id($sbx_row[component::FLD_ID]);
                 $dsp_usr->order_nbr = $sbx_row['usr_order'];
                 $dsp_usr->position_type = $sbx_row['usr_type'];

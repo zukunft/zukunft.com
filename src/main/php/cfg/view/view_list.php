@@ -47,6 +47,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_VIEW_PATH . 'view_db.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 
 use cfg\component\component;
@@ -141,7 +142,7 @@ class view_list extends sandbox_list_named
 
         $typ_lst = new type_list();
         $sc->add_where(
-            view::FLD_TYPE,
+            view_db::FLD_TYPE,
             implode(',', $typ_lst->view_id_list(view_type::SYSTEM_TYPES)),
             sql_par_type::CONST_NOT_IN);
 
@@ -164,9 +165,9 @@ class view_list extends sandbox_list_named
         $qp->name .= $query_name;
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(view::FLD_NAMES);
-        $sc->set_usr_fields(view::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(view::FLD_NAMES_NUM_USR);
+        $sc->set_fields(view_db::FLD_NAMES);
+        $sc->set_usr_fields(view_db::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(view_db::FLD_NAMES_NUM_USR);
         return $qp;
     }
 
@@ -183,8 +184,8 @@ class view_list extends sandbox_list_named
         $sc->set_join_fields(
             component_link::FLD_NAMES,
             component_link::class,
-            view::FLD_ID,
-            view::FLD_ID);
+            view_db::FLD_ID,
+            view_db::FLD_ID);
         $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $sc->add_where(component::FLD_ID, $id, sql_par_type::INT, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();

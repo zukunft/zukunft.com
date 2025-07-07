@@ -87,6 +87,7 @@ include_once MODEL_SANDBOX_PATH . 'share_type.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_VIEW_PATH . 'view_db.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_RESULT_PATH . 'result.php';
@@ -136,6 +137,7 @@ use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\view\view;
+use cfg\view\view_db;
 use cfg\word\triple;
 use cfg\word\word;
 use DateTime;
@@ -2871,7 +2873,7 @@ class formula extends sandbox_typed
             }
             $lst->add_link_field(
                 formula_db::FLD_VIEW,
-                view::FLD_NAME,
+                view_db::FLD_NAME,
                 $this->view,
                 $sbx->view
             );

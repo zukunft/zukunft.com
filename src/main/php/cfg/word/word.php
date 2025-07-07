@@ -96,6 +96,7 @@ include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_VIEW_PATH . 'view_db.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once SHARED_CONST_PATH . 'users.php';
@@ -136,6 +137,7 @@ use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
 use cfg\view\view;
+use cfg\view\view_db;
 use shared\const\users;
 use shared\enum\change_actions;
 use shared\enum\foaf_direction;
@@ -1858,7 +1860,7 @@ class word extends sandbox_typed
             }
             $lst->add_link_field(
                 word_db::FLD_VIEW,
-                view::FLD_NAME,
+                view_db::FLD_NAME,
                 $this->view,
                 $sbx->view
             );
