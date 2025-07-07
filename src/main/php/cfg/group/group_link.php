@@ -38,14 +38,14 @@ include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_WORD_PATH . 'triple_db.php';
 
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_creator;
 use cfg\db\sql_par_type;
 use cfg\helper\db_object_seq_id;
-use cfg\word\triple;
+use cfg\word\triple_db;
 
 class group_link extends db_object_seq_id
 {
@@ -55,7 +55,7 @@ class group_link extends db_object_seq_id
     // all database field names excluding the id
     const FLD_NAMES = array(
         group::FLD_ID,
-        triple::FLD_ID
+        triple_db::FLD_ID
     );
 
     // database fields
@@ -81,7 +81,7 @@ class group_link extends db_object_seq_id
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $this->grp_id = $db_row[group::FLD_ID];
-            $this->trp_id = $db_row[triple::FLD_ID];
+            $this->trp_id = $db_row[triple_db::FLD_ID];
         }
         return $result;
     }

@@ -37,6 +37,7 @@ namespace html\result;
 include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
 include_once WEB_FIGURE_PATH . 'figure.php';
 include_once WEB_FORMULA_PATH . 'formula.php';
+include_once WEB_GROUP_PATH . 'group.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_HTML_PATH . 'html_base.php';
@@ -44,6 +45,7 @@ include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 use html\formula\formula;
+use html\group\group;
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox\sandbox_value;
@@ -55,6 +57,13 @@ use shared\library;
 
 class result extends sandbox_value
 {
+
+    // the phrase group used that selected the numbers to calculate this result
+    public ?group $src_grp = null;
+
+    // the formula object used to calculate this result
+    public ?formula $frm = null;
+
 
     /*
      * set and get
@@ -69,6 +78,13 @@ class result extends sandbox_value
     function api_mapper(array $json_array): user_message
     {
         $usr_msg = parent::api_mapper($json_array);
+
+        if (array_key_exists(json_fields::FORMULA_ID, $json_array)) {
+            $frm = new formula();
+            $frm->set_id($json_array[json_fields::FORMULA_ID]);
+            $this->frm = $frm;
+        }
+
         /* TODO add all result fields that are not part of the sandbox value object
         if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
             $this->set_usr_text($json_array[json_fields::USER_TEXT]);
@@ -130,7 +146,10 @@ class result extends sandbox_value
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[json_fields::PHRASES] = $this->grp()->phr_lst()->api_array();
+        if ($this->frm != null) {
+            $vars[json_fields::FORMULA_ID] = $this->frm->id();
+        }
+        //$vars[json_fields::PHRASES] = $this->grp()->phr_lst()->api_array();
         $vars[json_fields::NUMBER] = $this->number();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

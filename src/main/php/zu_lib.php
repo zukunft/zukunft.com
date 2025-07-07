@@ -15,6 +15,12 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     but first this needs to be prioritized:
 
+    TODO clean up import_mapper and move all mapping from import_obj to the mapper
+    TODO clean up import_mapper by replacing foreach with array_has_key
+    TODO move db const to e.g. formula_db.php
+    TODO activate the class section test
+    TODO save the config for backend, frontend and user as a cache json file and use to trigger for recreation
+
     TODO Release 0.0.3
     TODO Release 0.0.4
 

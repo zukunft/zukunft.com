@@ -77,6 +77,7 @@ include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 //include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_FORMULA_PATH . 'formula_link.php';
 include_once MODEL_GROUP_PATH . 'group_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
@@ -90,6 +91,7 @@ include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_db.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once MODEL_WORD_PATH . 'triple.php';
+include_once MODEL_WORD_PATH . 'triple_db.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
@@ -100,6 +102,7 @@ include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
+use cfg\formula\formula_db;
 use cfg\helper\combine_named;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -117,6 +120,7 @@ use cfg\verb\verb;
 use cfg\verb\verb_list;
 use cfg\user\user;
 use cfg\user\user_message;
+use cfg\word\triple_db;
 use cfg\word\word;
 use cfg\word\word_db;
 use cfg\word\word_list;
@@ -197,16 +201,16 @@ class phrase extends combine_named
             [sandbox::FLD_PROTECT]
         ], word_db::FLD_ID],
         [triple::class, [
-            [triple::FLD_ID, phrase::FLD_ID, '* -1'],
+            [triple_db::FLD_ID, phrase::FLD_ID, '* -1'],
             [user::FLD_ID],
-            [[triple::FLD_NAME, triple::FLD_NAME_GIVEN, triple::FLD_NAME_AUTO], phrase::FLD_NAME],
+            [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], phrase::FLD_NAME],
             [sandbox_named::FLD_DESCRIPTION],
-            [triple::FLD_VALUES],
+            [triple_db::FLD_VALUES],
             [phrase::FLD_TYPE],
             [sandbox::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT]
-        ], triple::FLD_ID]
+        ], triple_db::FLD_ID]
     ];
 
 
@@ -313,10 +317,10 @@ class phrase extends combine_named
                     $trp->set_protection_id($db_row[sandbox::FLD_PROTECT . $fld_ext]);
                 }
                 // not yet loaded with initial load
-                // $trp->name = $db_row[triple::FLD_NAME_GIVEN . $fld_ext];
+                // $trp->name = $db_row[triple_db::FLD_NAME_GIVEN . $fld_ext];
                 // $trp->set_owner_id($db_row[_user::FLD_ID . $fld_ext]);
-                // $trp->from->set_id($db_row[triple::FLD_FROM]);
-                // $trp->to->set_id($db_row[triple::FLD_TO]);
+                // $trp->from->set_id($db_row[triple_db::FLD_FROM]);
+                // $trp->to->set_id($db_row[triple_db::FLD_TO]);
                 // $trp->verb->set_id($db_row[verb::FLD_ID]);
                 $this->obj = $trp;
                 $result = true;
@@ -913,15 +917,15 @@ class phrase extends combine_named
         $qp = new sql_par(self::class);
         $qp->name = 'phrase_formula_by_id';
         $db_con->set_name($qp->name);
-        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+        $db_con->set_link_fields(formula_db::FLD_ID, phrase::FLD_ID);
         $db_con->set_where_link_no_fld(0, 0, $this->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         $db_row = $db_con->get1($qp);
         $frm = new formula($this->user());
         if ($db_row !== false) {
-            if ($db_row[formula::FLD_ID] > 0) {
-                $frm->load_by_id($db_row[formula::FLD_ID]);
+            if ($db_row[formula_db::FLD_ID] > 0) {
+                $frm->load_by_id($db_row[formula_db::FLD_ID]);
             }
         }
 
@@ -1382,7 +1386,7 @@ class phrase extends combine_named
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple::FLD_FROM, triple::FLD_TO, $this->id(), verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple_db::FLD_FROM, triple_db::FLD_TO, $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1411,7 +1415,7 @@ class phrase extends combine_named
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple::FLD_TO, triple::FLD_FROM, $this->id(), verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple_db::FLD_TO, triple_db::FLD_FROM, $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {

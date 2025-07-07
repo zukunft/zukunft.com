@@ -64,6 +64,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_COMPONENT_PATH . 'component_db.php';
 include_once MODEL_COMPONENT_PATH . 'view_style.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_LOG_PATH . 'change.php';
@@ -95,6 +96,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
@@ -288,8 +290,8 @@ class component extends sandbox_typed
             if (array_key_exists(component_db::FLD_LINK_TYPE, $db_row)) {
                 $this->link_type_id = $db_row[component_db::FLD_LINK_TYPE];
             }
-            if (array_key_exists(formula::FLD_ID, $db_row)) {
-                $this->formula_id = $db_row[formula::FLD_ID];
+            if (array_key_exists(formula_db::FLD_ID, $db_row)) {
+                $this->formula_id = $db_row[formula_db::FLD_ID];
             }
             if (array_key_exists(component_db::FLD_COL_PHRASE, $db_row)) {
                 $this->load_col_phrase($db_row[component_db::FLD_COL_PHRASE]);
@@ -310,16 +312,15 @@ class component extends sandbox_typed
     {
         $msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-            // TODO the code id might be not be mapped because this can never be changed by the user
-            if ($key == json_fields::CODE_ID) {
-                $this->code_id = $value;
-            }
-            if ($key == json_fields::UI_MSG_CODE_ID) {
-                global $mtr;
-                $this->ui_msg_code_id = $mtr->get($value);
-            }
+        // it is expected that the code id is set via import by an admin not via api
+        if (array_key_exists(json_fields::CODE_ID, $api_json)) {
+            $this->code_id = $api_json[json_fields::CODE_ID];
         }
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID, $api_json)) {
+            global $mtr;
+            $this->ui_msg_code_id = $mtr->get($api_json[json_fields::UI_MSG_CODE_ID]);
+        }
+        // TODO map e.g. the $row_phrase
 
         return $msg;
     }
@@ -410,28 +411,6 @@ class component extends sandbox_typed
      */
 
     /**
-     * import a view component from a JSON object
-     * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, user $usr_req, object $test_obj = null): user_message
-    {
-        $usr_msg = $this->import_mapper_user($in_ex_json, $usr_req, null, $test_obj);
-
-        if (!$test_obj) {
-            if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
-            } else {
-                log_debug('not saved because ' . $usr_msg->get_last_message());
-            }
-        }
-
-        return $usr_msg;
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load true if any missing data should be loaded while creating the array
      * @return array with the json fields
@@ -479,30 +458,17 @@ class component extends sandbox_typed
      */
 
     /**
-     * set the most used view component vars with one set statement
-     * @param int $id mainly for test creation the database id of the view component
-     * @param string $name mainly for test creation the name of the view component
-     * @param string $type_code_id the code id of the predefined view component type
-     */
-    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
-    {
-        parent::set($id, $name);
-
-        if ($type_code_id != '') {
-            $this->set_type($type_code_id);
-        }
-    }
-
-    /**
      * set the view component type
      *
-     * @param string $type_code_id the code id that should be added to this view component
-     * @return void
+     * @param string $code_id the code id that should be added to this view component
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $type_code_id): void
+    function set_type(string $code_id, user $usr_req = new user()): user_message
     {
         global $cmp_typ_cac;
-        $this->type_id = $cmp_typ_cac->id($type_code_id);
+        return parent::set_type_by_code_id(
+            $code_id, $cmp_typ_cac, msg_id::COMPONENT_TYPE_NOT_FOUND, $usr_req);
     }
 
     /**
@@ -664,6 +630,14 @@ class component extends sandbox_typed
     }
 
     /**
+     * @return msg_id|null the message id or null
+     */
+    function ui_msg_code_id(): ?msg_id
+    {
+        return $this->ui_msg_code_id;
+    }
+
+    /**
      * set the code id of this object to write the change to the db
      * but only if the requesting user hat the permission to do so
      *
@@ -686,6 +660,14 @@ class component extends sandbox_typed
             ]);
         }
         return $usr_msg;
+    }
+
+    /**
+     * @return string|null the unique key or null if the component is not used by the system
+     */
+    function code_id(): ?string
+    {
+        return $this->code_id;
     }
 
     /**
@@ -1283,7 +1265,7 @@ class component extends sandbox_typed
             $log->std_value = $std_rec->load_formula();
             $log->std_id = $std_rec->formula_id;
             $log->row_id = $this->id();
-            $log->set_field(formula::FLD_ID);
+            $log->set_field(formula_db::FLD_ID);
             $usr_msg = $this->save_field_user($db_con, $log);
         }
         return $usr_msg;
@@ -1382,7 +1364,7 @@ class component extends sandbox_typed
                 component_db::FLD_ROW_PHRASE,
                 component_db::FLD_COL_PHRASE,
                 component_db::FLD_COL2_PHRASE,
-                formula::FLD_ID,
+                formula_db::FLD_ID,
                 //component_db::FLD_LINK_COMP,
                 //component_db::FLD_LINK_COMP_TYPE,
                 component_db::FLD_LINK_TYPE,
@@ -1541,8 +1523,8 @@ class component extends sandbox_typed
         if ($sbx->formula_id() <> $this->formula_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . formula::FLD_ID,
-                    $cng_fld_cac->id($table_id . formula::FLD_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_ID,
+                    $cng_fld_cac->id($table_id . formula_db::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1551,9 +1533,9 @@ class component extends sandbox_typed
                 $old_val = null;
             }
             $lst->add_field(
-                formula::FLD_ID,
+                formula_db::FLD_ID,
                 $this->formula_id(),
-                formula::FLD_ID_SQL_TYP,
+                formula_db::FLD_ID_SQL_TYP,
                 $old_val
             );
         }

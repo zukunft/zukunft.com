@@ -32,15 +32,19 @@
 
 namespace unit_read;
 
+include_once MODEL_FORMULA_PATH . 'formula_db.php';
+include_once MODEL_WORD_PATH . 'triple_db.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\phrase\phrase;
 use cfg\phrase\term;
 use cfg\verb\verb;
 use cfg\word\triple;
+use cfg\word\triple_db;
 use cfg\word\word;
 use cfg\word\word_db;
 use shared\const\formulas;
@@ -83,7 +87,7 @@ class term_read_tests
         $trm->set_obj_from_class(triple::class);
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
-        $trm->row_mapper_sandbox($db_row, triple::FLD_ID, triple::FLD_NAME, phrase::FLD_TYPE);
+        $trm->row_mapper_sandbox($db_row, triple_db::FLD_ID, triple_db::FLD_NAME, phrase::FLD_TYPE);
         $t->assert($t->name . ' triple row mapper', $trm->name(), triples::MATH_CONST);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), triple::class);
@@ -97,7 +101,7 @@ class term_read_tests
         $trm->set_obj_from_class(formula::class);
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
-        $trm->row_mapper_sandbox($db_row, formula::FLD_ID, formula::FLD_NAME, formula::FLD_TYPE);
+        $trm->row_mapper_sandbox($db_row, formula_db::FLD_ID, formula_db::FLD_NAME, formula_db::FLD_TYPE);
         $t->assert($t->name . ' formula row mapper', $trm->name(), formulas::SCALE_TO_SEC);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), formula::class);

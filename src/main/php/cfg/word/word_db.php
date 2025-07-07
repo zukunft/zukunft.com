@@ -3,7 +3,7 @@
 /*
 
     model/word/word_db.php - the database const for word tables
-    --------------------
+    ----------------------
 
     The main sections of this object are
     - db const:          const for the database link

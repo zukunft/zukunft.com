@@ -41,7 +41,7 @@ namespace cfg\db;
 include_once DB_PATH . 'sql_par_field.php';
 //include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
@@ -52,9 +52,9 @@ include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_PATH . 'library.php';
 
+use cfg\formula\formula_db;
 use cfg\helper\combine_named;
 use cfg\helper\db_object_seq_id;
-use cfg\formula\formula;
 use cfg\log\change;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link_named;
@@ -434,7 +434,7 @@ class sql_par_field_list
     function is_empty_except_internal_fields(): bool
     {
         $names = array_diff($this->names(),
-            [sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID, user::FLD_ID, formula::FLD_LAST_UPDATE]);
+            [sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID, user::FLD_ID, formula_db::FLD_LAST_UPDATE]);
         if (count($names) == 0) {
             return true;
         } else {

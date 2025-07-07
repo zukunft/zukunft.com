@@ -87,20 +87,25 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_FORMULA_PATH . 'formula_db.php';
 //include_once MODEL_FORMULA_PATH . 'formula_link.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
 //include_once MODEL_REF_PATH . 'ref.php';
+include_once MODEL_REF_PATH . 'ref_db.php';
 //include_once MODEL_REF_PATH . 'source.php';
+//include_once MODEL_REF_PATH . 'source_db.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_USER_PATH . 'user.php';
 //include_once MODEL_USER_PATH . 'user_db.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VALUE_PATH . 'value_db.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_VIEW_PATH . 'term_view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
 //include_once MODEL_WORD_PATH . 'word_db.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
+//include_once MODEL_WORD_PATH . 'triple_db.php';
 include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
@@ -120,26 +125,30 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\formula\formula_db;
 use cfg\helper\db_object_seq_id;
 use cfg\helper\db_object_seq_id_user;
 use cfg\helper\type_object;
 use cfg\formula\formula;
 use cfg\formula\formula_link;
+use cfg\ref\source_db;
+use cfg\ref\ref_db;
 use cfg\sandbox\sandbox_link;
 use cfg\ref\ref;
 use cfg\ref\source;
 use cfg\user\user_db;
 use cfg\value\value;
+use cfg\value\value_db;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\user\user;
 use cfg\value\value_base;
 use cfg\view\view;
 use cfg\view\term_view;
+use cfg\word\triple_db;
 use cfg\word\word;
 use cfg\word\word_db;
 use shared\const\users;
-use shared\enum\change_actions;
 use shared\enum\change_tables;
 use shared\json_fields;
 use shared\library;
@@ -543,32 +552,32 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::TRIPLE) {
                 $db_con->set_class(triple::class);
-                foreach (triple::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (triple_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::TRIPLE_USR) {
                 $db_con->set_class(triple::class, true);
-                foreach (triple::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (triple_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VALUE) {
                 $db_con->set_class(value::class);
-                foreach (value_base::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (value_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VALUE_USR) {
                 $db_con->set_class(value::class, true);
-                foreach (value_base::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (value_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA) {
                 $db_con->set_class(formula::class);
-                foreach (formula::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (formula_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA_USR) {
                 $db_con->set_class(formula::class, true);
-                foreach (formula::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (formula_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA_LINK) {
@@ -618,22 +627,22 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::REF) {
                 $db_con->set_class(ref::class);
-                foreach (ref::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (ref_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::REF_USR) {
                 $db_con->set_class(ref::class, true);
-                foreach (ref::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (ref_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::SOURCE) {
                 $db_con->set_class(source::class);
-                foreach (source::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (source_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::SOURCE_USR) {
                 $db_con->set_class(source::class, true);
-                foreach (source::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (source_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } else {

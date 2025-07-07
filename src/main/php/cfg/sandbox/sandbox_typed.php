@@ -49,7 +49,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_db.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-//include_once MODEL_PHRASE_PATH . 'phrase.php';
+//include_once MODEL_HELPER_PATH . 'type_list.php';
 //include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -63,7 +63,7 @@ include_once SHARED_PATH . 'library.php';
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\helper\db_object_seq_id;
-use cfg\phrase\phrase;
+use cfg\helper\type_list;
 use cfg\ref\source;
 use cfg\user\user;
 use cfg\user\user_message;
@@ -161,6 +161,38 @@ class sandbox_typed extends sandbox_named
                 msg_id::VAR_NAME => sql::FLD_TYPE_NAME,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the type based on the given code id and type list
+     *
+     * @param string|null $code_id the code id that should be added to this view
+     * @param type_list $typ_lst the parent object specific preloaded list of types
+     * @param msg_id $msg_id the id of the message used to report a missing type
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
+     */
+    function set_type_by_code_id(
+        ?string   $code_id,
+        type_list $typ_lst,
+        msg_id    $msg_id,
+        user      $usr_req = new user()
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        if ($code_id == null) {
+            $this->type_id = null;
+        } else {
+            if ($typ_lst->has_code_id($code_id)) {
+                $this->set_type_id($typ_lst->id($code_id), $usr_req);
+            } else {
+                $usr_msg->add_id_with_vars($msg_id, [
+                    msg_id::VAR_NAME => $code_id
+                ]);
+                $this->type_id = null;
+            }
         }
         return $usr_msg;
     }

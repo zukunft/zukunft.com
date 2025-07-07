@@ -82,12 +82,14 @@ include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
+include_once MODEL_REF_PATH . 'ref_db.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_SYSTEM_PATH . 'job_type.php';
 include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_REF_PATH . 'ref.php';
+include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
@@ -105,10 +107,12 @@ use cfg\db\sql_type_list;
 use cfg\helper\db_object_seq_id_user;
 use cfg\formula\formula;
 use cfg\helper\type_object;
+use cfg\ref\ref_db;
 use cfg\ref\source;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\ref\ref;
+use cfg\ref\source_db;
 use cfg\user\user;
 use cfg\user\user_message;
 use DateTime;
@@ -180,8 +184,8 @@ class job extends db_object_seq_id_user
         [self::FLD_PARAMETER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PARAMETER_COM, phrase::FLD_ID],
         [self::FLD_CHANGE_FIELD, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_CHANGE_FIELD_COM],
         [self::FLD_ROW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_COM],
-        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
-        [ref::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
+        [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
+        [ref_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
     );
 
 

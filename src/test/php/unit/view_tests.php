@@ -117,6 +117,8 @@ class view_tests
 
         $t->subheader($ts . 'api');
         $msk = $t->view_filled();
+        // remove the code id for the api compare test because the code id should not be updated over the api
+        $msk->code_id = null;
         $t->assert_api_json($msk);
         $msk = $t->view_protected();
         $t->assert_api($msk);

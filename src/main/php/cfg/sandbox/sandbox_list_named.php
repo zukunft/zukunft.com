@@ -41,6 +41,7 @@ include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_list.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
@@ -72,6 +73,7 @@ use cfg\db\sql_par_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
 use cfg\import\import;
 use cfg\phrase\phrase;
@@ -250,6 +252,30 @@ class sandbox_list_named extends sandbox_list
         $sc->set_name($qp->name);
 
         return $qp;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * import a list of views from a JSON array object
+     *
+     * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
+    {
+        return new user_message();
     }
 
 

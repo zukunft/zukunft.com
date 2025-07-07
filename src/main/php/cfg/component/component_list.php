@@ -49,11 +49,13 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_VIEW_PATH . 'view_db.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_HELPER_PATH . 'TextIdObject.php';
@@ -64,6 +66,7 @@ use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\helper\data_object;
 use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_link_named;
@@ -72,6 +75,7 @@ use cfg\helper\type_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\view\view;
+use cfg\view\view_db;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
 use shared\helper\TextIdObject;
@@ -225,7 +229,7 @@ class component_list extends sandbox_list_named
             component_link::class,
             component::FLD_ID,
             component::FLD_ID);
-        $sc->add_where(view::FLD_ID, $id, null, sql_db::LNK_TBL);
+        $sc->add_where(view_db::FLD_ID, $id, null, sql_db::LNK_TBL);
         $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -281,15 +285,21 @@ class component_list extends sandbox_list_named
      *
      * @param array $json_obj an array with the data of the json object
      * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, user $usr_req, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $dsp_json) {
             $cmp = new component($this->user());
-            $usr_msg->add($cmp->import_obj($dsp_json, $usr_req, $test_obj));
+            $usr_msg->add($cmp->import_obj($dsp_json, $usr_req, $dto, $test_obj));
             $this->add($cmp);
         }
 

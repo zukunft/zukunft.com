@@ -40,12 +40,14 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_link.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_VIEW_PATH . 'view_db.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 
 use cfg\component\component;
@@ -55,6 +57,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\helper\combine_named;
+use cfg\helper\data_object;
 use cfg\helper\type_list;
 use cfg\sandbox\sandbox_link_named;
 use cfg\sandbox\sandbox_list_named;
@@ -139,7 +142,7 @@ class view_list extends sandbox_list_named
 
         $typ_lst = new type_list();
         $sc->add_where(
-            view::FLD_TYPE,
+            view_db::FLD_TYPE,
             implode(',', $typ_lst->view_id_list(view_type::SYSTEM_TYPES)),
             sql_par_type::CONST_NOT_IN);
 
@@ -162,9 +165,9 @@ class view_list extends sandbox_list_named
         $qp->name .= $query_name;
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(view::FLD_NAMES);
-        $sc->set_usr_fields(view::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(view::FLD_NAMES_NUM_USR);
+        $sc->set_fields(view_db::FLD_NAMES);
+        $sc->set_usr_fields(view_db::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(view_db::FLD_NAMES_NUM_USR);
         return $qp;
     }
 
@@ -181,8 +184,8 @@ class view_list extends sandbox_list_named
         $sc->set_join_fields(
             component_link::FLD_NAMES,
             component_link::class,
-            view::FLD_ID,
-            view::FLD_ID);
+            view_db::FLD_ID,
+            view_db::FLD_ID);
         $sc->set_order(component_link::FLD_ORDER_NBR, '', sql_db::LNK_TBL);
         $sc->add_where(component::FLD_ID, $id, sql_par_type::INT, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
@@ -226,15 +229,22 @@ class view_list extends sandbox_list_named
      * import a list of views from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $dsp_json) {
             $msk = new view($this->user());
-            $usr_msg->add($msk->import_obj($dsp_json, $test_obj));
+            $usr_msg->add($msk->import_obj($dsp_json, $usr_req, $dto, $test_obj));
             $this->add($msk);
         }
 

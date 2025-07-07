@@ -49,6 +49,8 @@ include_once SHARED_ENUM_PATH . 'change_fields.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'library.php';
 
+use cfg\db\sql;
+use cfg\db\sql_db;
 use html\component\component_exe as component;
 use html\formula\formula;
 use html\rest_ctrl;
@@ -190,7 +192,7 @@ class user_log_display
             $result .= $html->dsp_tbl_start_hist();
             foreach ($db_lst as $db_row) {
                 // display the row only if the field is not an "admin only" field
-                //if ($db_row["code_id"] <> formula::FLD_REF_TEXT) {
+                //if ($db_row["code_id"] <> formula_db::FLD_REF_TEXT) {
                 $row_nbr++;
                 $result .= '<tr>';
                 if ($row_nbr == 1) {

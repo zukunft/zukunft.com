@@ -513,7 +513,7 @@ class value extends sandbox_value
 
         // get value changes by the user that are not standard
         $sql = "SELECT v.group_id,
-                    " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(value_db::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                    t.word_id,
                    t.word_name
               FROM groups g,

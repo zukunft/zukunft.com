@@ -41,11 +41,13 @@ include_once WEB_USER_PATH . 'user.php';
 include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_VIEW_PATH . 'view.php';
 include_once WEB_WORD_PATH . 'triple.php';
+include_once MODEL_WORD_PATH . 'triple_db.php';
 include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
 include_once WEB_LOG_PATH . 'user_log_display.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_VIEW_PATH . 'view.php';
 
+use cfg\word\triple_db;
 use html\html_base;
 use html\log\user_log_display;
 use html\system\sys_log_list as sys_log_list_dsp;
@@ -87,7 +89,7 @@ class user_dsp_old extends user
         log_debug($dsp_type . ' errors for user ' . $this->name);
 
         $result = '';
-        $err_lst = new sys_log_list;
+        $err_lst = new sys_log_list_dsp;
         $err_lst->set_user($this);
         $err_lst->page = $page;
         $err_lst->size = $size;
@@ -207,7 +209,7 @@ class user_dsp_old extends user
                 } else {
                     $from_id = $sbx_row[triple_db::FLD_FROM];
                     $vrb_id = $sbx_row[verb::FLD_ID];
-                    $to_id = $sbx_row[triple::FLD_TO];
+                    $to_id = $sbx_row[triple_db::FLD_TO];
                     $trp_usr->load_by_link_id($from_id, $vrb_id, $to_id);
                 }
                 $trp_usr->set_name($sbx_row['usr_name']);
@@ -346,12 +348,12 @@ class user_dsp_old extends user
                 $result .= '<th>common formula</th>';
                 $result .= '</tr><tr>';
             }
-            $result .= '<td>' . $frm_row[formula::FLD_NAME] . '</td>';
+            $result .= '<td>' . $frm_row[formula_db::FLD_NAME] . '</td>';
             $result .= '<td>' . $frm_row['usr_formula_text'] . '</td>';
-            $result .= '<td>' . $frm_row[formula::FLD_FORMULA_TEXT] . '</td>';
-            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
-            $url = '/http/user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula::FLD_ID] . '&back=' . $back . '';
-            $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $frm_row[formula::FLD_FORMULA_TEXT], $url) . '</td>';
+            $result .= '<td>' . $frm_row[formula_db::FLD_FORMULA_TEXT] . '</td>';
+            //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula_db::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
+            $url = '/http/user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula_db::FLD_ID] . '&back=' . $back . '';
+            $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $frm_row[formula_db::FLD_FORMULA_TEXT], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= $html->dsp_tbl_end();
@@ -414,7 +416,7 @@ class user_dsp_old extends user
                 // create the formula_link objects with the minimal parameter needed
                 $frm_usr = new formula_link($this);
                 $frm_usr->set_id($sbx_row['id']);
-                $frm_usr->formula()->set_id($sbx_row[formula::FLD_ID]);
+                $frm_usr->formula()->set_id($sbx_row[formula_db::FLD_ID]);
                 $frm_usr->phrase()->set_id($sbx_row[phrase::FLD_ID]);
                 $frm_usr->predicate_id = $sbx_row['usr_type'];
                 $frm_usr->set_excluded($sbx_row['usr_excluded']);
@@ -811,9 +813,9 @@ class user_dsp_old extends user
                         // to review: load all user views with one query
                         $dsp_other = clone $dsp_usr;
                         $dsp_other->set_user($usr_other);
-                        $dsp_other->set_name($dsp_other_row[view::FLD_NAME]);
+                        $dsp_other->set_name($dsp_other_row[view_db::FLD_NAME]);
                         $dsp_other->description = $dsp_other_row[sandbox_named::FLD_DESCRIPTION];
-                        $dsp_other->set_type_id($dsp_other_row[view::FLD_TYPE]);
+                        $dsp_other->set_type_id($dsp_other_row[view_db::FLD_TYPE]);
                         $dsp_other->set_excluded($dsp_other_row[sandbox::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
@@ -1083,7 +1085,7 @@ class user_dsp_old extends user
                 // create the component_link objects with the minimal parameter needed
                 $dsp_usr = new component_link($this);
                 $dsp_usr->set_id($sbx_row['id']);
-                $dsp_usr->view()->set_id($sbx_row[view::FLD_ID]);
+                $dsp_usr->view()->set_id($sbx_row[view_db::FLD_ID]);
                 $dsp_usr->component()->set_id($sbx_row[component::FLD_ID]);
                 $dsp_usr->order_nbr = $sbx_row['usr_order'];
                 $dsp_usr->position_type = $sbx_row['usr_type'];

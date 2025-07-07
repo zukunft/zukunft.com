@@ -59,6 +59,7 @@ include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
@@ -82,6 +83,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\helper\combine_named;
+use cfg\helper\data_object;
 use cfg\import\import;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
@@ -239,10 +241,10 @@ class triple_list extends sandbox_list_named
                         $trp->set_verb_id($db_row[verb::FLD_ID]);
                         // fill from
                         $trp->set_fob(new phrase($this->user()));
-                        $trp->fob()->row_mapper_sandbox($db_row, triple::FLD_FROM, '1');
+                        $trp->fob()->row_mapper_sandbox($db_row, triple_db::FLD_FROM, '1');
                         // fill to
                         $trp->set_tob(new phrase($this->user()));
-                        $trp->tob()->row_mapper_sandbox($db_row, triple::FLD_TO, '2');
+                        $trp->tob()->row_mapper_sandbox($db_row, triple_db::FLD_TO, '2');
                     } else {
                         log_info($trp->dsp_id() . ' is excluded');
                     }
@@ -296,8 +298,8 @@ class triple_list extends sandbox_list_named
      */
     function load_sql_by_names(
         sql_creator $sc,
-        array $names,
-        string $fld = triple::FLD_NAME
+        array       $names,
+        string      $fld = triple_db::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);
@@ -322,7 +324,7 @@ class triple_list extends sandbox_list_named
         if (count($trp_ids) > 0) {
             $qp->name .= 'ids';
             $sc->set_name($qp->name);
-            $sc->add_where(triple::FLD_ID, $trp_ids, sql_par_type::INT_LIST);
+            $sc->add_where(triple_db::FLD_ID, $trp_ids, sql_par_type::INT_LIST);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -350,12 +352,12 @@ class triple_list extends sandbox_list_named
         if ($phr->id() <> 0) {
             $qp->name .= 'phr';
             if ($direction == foaf_direction::UP) {
-                $sc->add_where(triple::FLD_FROM, $phr->id());
+                $sc->add_where(triple_db::FLD_FROM, $phr->id());
             } elseif ($direction == foaf_direction::DOWN) {
-                $sc->add_where(triple::FLD_TO, $phr->id());
+                $sc->add_where(triple_db::FLD_TO, $phr->id());
             } elseif ($direction == foaf_direction::BOTH) {
-                $sc->add_where(triple::FLD_FROM, $phr->id(), sql_par_type::INT_OR);
-                $sc->add_where(triple::FLD_TO, $phr->id(), sql_par_type::INT_OR);
+                $sc->add_where(triple_db::FLD_FROM, $phr->id(), sql_par_type::INT_OR);
+                $sc->add_where(triple_db::FLD_TO, $phr->id(), sql_par_type::INT_OR);
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
@@ -396,14 +398,14 @@ class triple_list extends sandbox_list_named
         if (!$phr_lst->empty()) {
             $qp->name .= 'phr_lst';
             if ($direction == foaf_direction::UP) {
-                $sc->add_where(triple::FLD_FROM, $phr_lst->ids());
+                $sc->add_where(triple_db::FLD_FROM, $phr_lst->ids());
                 $qp->name .= '_' . $direction->value;
             } elseif ($direction == foaf_direction::DOWN) {
-                $sc->add_where(triple::FLD_TO, $phr_lst->ids());
+                $sc->add_where(triple_db::FLD_TO, $phr_lst->ids());
                 $qp->name .= '_' . $direction->value;
             } elseif ($direction == foaf_direction::BOTH) {
-                $sc->add_where(triple::FLD_FROM, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
-                $sc->add_where(triple::FLD_TO, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
+                $sc->add_where(triple_db::FLD_FROM, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
+                $sc->add_where(triple_db::FLD_TO, $phr_lst->ids(), sql_par_type::INT_LIST_OR);
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
@@ -436,49 +438,49 @@ class triple_list extends sandbox_list_named
         }
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(array_merge(triple::FLD_NAMES_LINK, triple::FLD_NAMES));
-        $sc->set_usr_fields(triple::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(triple::FLD_NAMES_NUM_USR);
+        $sc->set_fields(array_merge(triple_db::FLD_NAMES_LINK, triple_db::FLD_NAMES));
+        $sc->set_usr_fields(triple_db::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(triple_db::FLD_NAMES_NUM_USR);
         // also load the linked user specific phrase with the same SQL statement (word until now)
         $sc->set_join_fields(
             phrase::FLD_NAMES,
             phrase::class,
-            triple::FLD_FROM,
+            triple_db::FLD_FROM,
             phrase::FLD_ID
         );
         $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
             phrase::class,
-            triple::FLD_FROM,
+            triple_db::FLD_FROM,
             phrase::FLD_ID
         );
         $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
             phrase::class,
-            triple::FLD_FROM,
+            triple_db::FLD_FROM,
             phrase::FLD_ID,
             true
         );
         $sc->set_join_fields(
             phrase::FLD_NAMES,
             phrase::class,
-            triple::FLD_TO,
+            triple_db::FLD_TO,
             phrase::FLD_ID
         );
         $sc->set_join_usr_fields(
             phrase::FLD_NAMES_USR,
             phrase::class,
-            triple::FLD_TO,
+            triple_db::FLD_TO,
             phrase::FLD_ID
         );
         $sc->set_join_usr_num_fields(
             phrase::FLD_NAMES_NUM_USR,
             phrase::class,
-            triple::FLD_TO,
+            triple_db::FLD_TO,
             phrase::FLD_ID,
             true
         );
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(verb::FLD_ID) . ', ' . triple::FLD_NAME_GIVEN);
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(verb::FLD_ID) . ', ' . triple_db::FLD_NAME_GIVEN);
         return $qp;
     }
 
@@ -492,15 +494,21 @@ class triple_list extends sandbox_list_named
      *
      * @param array $json_obj an array with the data of the json object
      * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, user $usr_req, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $value) {
             $trp = new triple($this->user());
-            $usr_msg->add($trp->import_obj($value, $usr_req, $test_obj));
+            $usr_msg->add($trp->import_obj($value, $usr_req, $dto, $test_obj));
             $this->add($trp);
         }
 
@@ -569,10 +577,10 @@ class triple_list extends sandbox_list_named
      */
     function diff_msg(
         sandbox_list_named $sbx_lst,
-        msg_id $msg_missing = msg_id::TRIPLE_MISSING,
-        msg_id $msg_id_missing = msg_id::TRIPLE_ID_MISSING,
-        msg_id $msg_additional = msg_id::TRIPLE_ADDITIONAL,
-        msg_id $msg_id_additional = msg_id::TRIPLE_ID_ADDITIONAL
+        msg_id             $msg_missing = msg_id::TRIPLE_MISSING,
+        msg_id             $msg_id_missing = msg_id::TRIPLE_ID_MISSING,
+        msg_id             $msg_additional = msg_id::TRIPLE_ADDITIONAL,
+        msg_id             $msg_id_additional = msg_id::TRIPLE_ID_ADDITIONAL
     ): user_message
     {
         return parent::diff_msg($sbx_lst,

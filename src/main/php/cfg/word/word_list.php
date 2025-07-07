@@ -59,6 +59,7 @@ include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_PHRASE_PATH . 'phr_ids.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
@@ -91,6 +92,7 @@ use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\helper\combine_named;
+use cfg\helper\data_object;
 use cfg\import\import;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
@@ -374,12 +376,12 @@ class word_list extends sandbox_list_named
         } else {
             if ($direction == foaf_direction::UP) {
                 $qp->name .= 'parents';
-                $sc->add_where(triple::FLD_FROM, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
-                $join_field = triple::FLD_TO;
+                $sc->add_where(triple_db::FLD_FROM, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
+                $join_field = triple_db::FLD_TO;
             } elseif ($direction == foaf_direction::DOWN) {
                 $qp->name .= 'children';
-                $sc->add_where(triple::FLD_TO, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
-                $join_field = triple::FLD_FROM;
+                $sc->add_where(triple_db::FLD_TO, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
+                $join_field = triple_db::FLD_FROM;
             } else {
                 log_err('Unknown direction ' . $direction->value);
             }
@@ -517,15 +519,21 @@ class word_list extends sandbox_list_named
      *
      * @param array $json_obj an array with the data of the json object
      * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, user $usr_req, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $value) {
             $wrd = new word($this->user());
-            $usr_msg->add($wrd->import_obj($value, $usr_req, $test_obj));
+            $usr_msg->add($wrd->import_obj($value, $usr_req, $dto, $test_obj));
             $this->add($wrd);
         }
 

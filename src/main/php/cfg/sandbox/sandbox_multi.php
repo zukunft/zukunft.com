@@ -72,6 +72,7 @@ include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_ELEMENT_PATH . 'element.php';
 //include_once MODEL_FORMULA_PATH . 'formula.php';
+//include_once MODEL_FORMULA_PATH . 'formula_db.php';
 //include_once MODEL_FORMULA_PATH . 'formula_link.php';
 //include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
 //include_once MODEL_GROUP_PATH . 'group.php';
@@ -109,6 +110,7 @@ include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
+//include_once MODEL_VALUE_PATH . 'value_db.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
@@ -134,6 +136,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\formula\formula_db;
 use cfg\helper\data_object;
 use cfg\helper\db_object_multi;
 use cfg\helper\db_object_multi_user;
@@ -173,6 +176,7 @@ use cfg\user\user_list;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_base;
+use cfg\value\value_db;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\word;
@@ -393,15 +397,11 @@ class sandbox_multi extends db_object_multi_user
         $this->reset();
         $this->set_user($usr);
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::SHARE) {
-                $this->share_id = $value;
-            }
-            if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $value;
-            }
-
+        if (array_key_exists(json_fields::SHARE, $api_json)) {
+            $this->share_id = $api_json[json_fields::SHARE];
+        }
+        if (array_key_exists(json_fields::PROTECTION, $api_json)) {
+            $this->protection_id = $api_json[json_fields::PROTECTION];
         }
 
         return $usr_msg;
@@ -463,13 +463,42 @@ class sandbox_multi extends db_object_multi_user
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        return $this->common_json();
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+
+        $vars = [];
+
+        // add the share type
+        if ($this->share_id != null
+            and $this->share_id > 0
+            and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
+            $vars[json_fields::SHARE] = $this->share_id;
+        }
+
+        // add the protection type
+        if ($this->protection_id != null
+            and $this->protection_id > 0
+            and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+            $vars[json_fields::PROTECTION] = $this->protection_id;
+        }
+
+        return $vars;
     }
 
 
     /*
      * set and get
      */
+
+    /**
+     * set the vars of this object based on json string from the frontend object
+     * @param string $api_json
+     * @return user_message
+     */
+    function set_from_api(string $api_json): user_message
+    {
+        return $this->api_mapper(json_decode($api_json, true));
+    }
 
     /**
      * set the excluded field from a database value
@@ -574,6 +603,18 @@ class sandbox_multi extends db_object_multi_user
     function source_id(): ?int
     {
         return null;
+    }
+
+    /**
+     * @return bool true if the excluded field is set
+     */
+    function is_exclusion_set(): bool
+    {
+        if ($this->excluded == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
 
@@ -752,7 +793,7 @@ class sandbox_multi extends db_object_multi_user
      * create the SQL to load a sandbox object with numeric user specific fields
      *
      * @param sql_creator $sc with the target db_type set
-     * @param sandbox $sbx the name of the child class from where the call has been triggered
+     * @param sandbox_multi $sbx the name of the child class from where the call has been triggered
      * @param string $query_name the name extension to make the query name unique
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
@@ -820,6 +861,39 @@ class sandbox_multi extends db_object_multi_user
     {
         log_err('The dummy parent method get_similar has been called, which should never happen');
         return true;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     * if the given type is not set (null) the type is not removed
+     * if the given type is zero (not null) the type is removed
+     *
+     * @param sandbox_multi|db_object_multi $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox_multi|db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        // e.g. if the import contains the information that this object is excluded for one user this excluded setting should also be imported
+        if ($obj->is_exclusion_set()) {
+            $this->set_excluded($obj->is_excluded());
+        }
+        if ($obj->owner_id() != null) {
+            $this->set_owner_id($obj->owner_id());
+        }
+        if ($obj->share_id() != null) {
+            $this->set_share_id($obj->share_id());
+        }
+        if ($obj->protection_id() != null) {
+            $this->set_protection_id($obj->protection_id());
+        }
+        return $usr_msg;
     }
 
 
@@ -971,10 +1045,17 @@ class sandbox_multi extends db_object_multi_user
      * e.g. the share and protection settings
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    function import_obj(
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         global $shr_typ_cac;
         global $ptc_typ_cac;
@@ -1012,7 +1093,26 @@ class sandbox_multi extends db_object_multi_user
      */
     function export_json(bool $do_load = true): array
     {
-        return $this->common_json();
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+
+        $vars = [];
+
+        // add the share type
+        if ($this->share_id != null
+            and $this->share_id > 0
+            and $this->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
+            $vars[json_fields::SHARE] = $this->share_type_code_id();
+        }
+
+        // add the protection type
+        if ($this->protection_id != null
+            and $this->protection_id > 0
+            and $this->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+            $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
+        }
+
+        return $vars;
     }
 
     private function common_json(): array
@@ -2858,12 +2958,18 @@ class sandbox_multi extends db_object_multi_user
                     $db_rec->reset();
                     $db_rec->set_user($this->user());
                     if ($db_rec->load_by_id($this->id()) != $this->id()) {
-                        $usr_msg->add_id_with_vars(msg_id::OBJECT_RELOADING_FAILED, [msg_id::VAR_VALUE => $class_name]);
+                        $usr_msg->add_id_with_vars(msg_id::FAILED_RELOAD_OBJECT, [
+                            msg_id::VAR_CLASS_NAME => $class_name,
+                            msg_id::VAR_VAL_ID => $this->id()
+                        ]);
                     } else {
                         log_debug('reloaded from db');
                         if ($this->is_link_obj()) {
                             if (!$db_rec->load_objects()) {
-                                $usr_msg->add_id_with_vars(msg_id::OBJECT_RELOADING_FAILED, [msg_id::VAR_VALUE => $class_name]);
+                                $usr_msg->add_id_with_vars(msg_id::FAILED_RELOAD_OBJECT, [
+                                    msg_id::VAR_VALUE => $class_name,
+                                    msg_id::VAR_NAME => $this->name()
+                                ]);
                             }
                             // configure the global database connection object again to overwrite any changes from load_objects
                             $db_con->set_class($this::class);
@@ -3408,9 +3514,9 @@ class sandbox_multi extends db_object_multi_user
         $fld_lst_ex_id_and_val = array_diff($fld_lst_ex_id, [
             change_action::FLD_ID,
             sandbox_multi::FLD_VALUE,
-            value_base::FLD_VALUE_TIME,
-            value_base::FLD_VALUE_TEXT,
-            value_base::FLD_VALUE_GEO,
+            value_db::FLD_VALUE_TIME,
+            value_db::FLD_VALUE_TEXT,
+            value_db::FLD_VALUE_GEO,
             sandbox_multi::FLD_LAST_UPDATE
         ]);
 
@@ -3460,11 +3566,11 @@ class sandbox_multi extends db_object_multi_user
         if ($this->is_numeric()) {
             $val_fld = $fvt_lst_all->get(sandbox_multi::FLD_VALUE, true);
         } elseif ($this->is_time_value()) {
-            $val_fld = $fvt_lst_all->get(value_base::FLD_VALUE_TIME, true);
+            $val_fld = $fvt_lst_all->get(value_db::FLD_VALUE_TIME, true);
         } elseif ($this->is_text_value()) {
-            $val_fld = $fvt_lst_all->get(value_base::FLD_VALUE_TEXT, true);
+            $val_fld = $fvt_lst_all->get(value_db::FLD_VALUE_TEXT, true);
         } elseif ($this->is_geo_value()) {
-            $val_fld = $fvt_lst_all->get(value_base::FLD_VALUE_GEO, true);
+            $val_fld = $fvt_lst_all->get(value_db::FLD_VALUE_GEO, true);
         } else {
             $val_fld = $fvt_lst_all->get(sandbox_multi::FLD_VALUE, true);
         }
@@ -3716,7 +3822,7 @@ class sandbox_multi extends db_object_multi_user
 
         // remove the internal last update field from the list of field that should be logged
         $fld_lst_log = array_diff($fld_lst_ex_log_and_key, [
-            formula::FLD_LAST_UPDATE
+            formula_db::FLD_LAST_UPDATE
         ]);
 
         // create the query parameters for the log entries for the single fields
@@ -3843,7 +3949,7 @@ class sandbox_multi extends db_object_multi_user
 
         // remove the internal last update field from the list of field that should be logged
         $fld_lst_log = array_diff($fld_lst_chg, [
-            formula::FLD_LAST_UPDATE
+            formula_db::FLD_LAST_UPDATE
         ]);
 
         // add the row id

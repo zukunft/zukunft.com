@@ -269,7 +269,9 @@ enum messages: string
     case TRIPLE_ID_ADDITIONAL = 'triple id additional of "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';
-    case TRIPLE_NOT_SAVED = 'triple "'
+    case IMPORT_NOT_SAVED = 'import of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '" cannot be saved';
     case PHRASE_MISSING_MSG = 'phrase "'
@@ -376,6 +378,10 @@ enum messages: string
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
         . '" is missing in the import message '
         . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END;
+    case FORMULA_MISSING_IMPORT = 'formula "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '" is missing in the import message '
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
     case FORMULA_EXPRESSION_MISSING = 'formula expression is missing in '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
     case COMPONENT_MISSING = 'component with name "'
@@ -411,7 +417,22 @@ enum messages: string
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case MANDATORY_FIELD_NAME_MISSING = 'Mandatory field name missing in API JSON '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case PHRASE_TYPE_NOT_FOUND = 'word/triple type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case SOURCE_TYPE_NOT_FOUND = 'source type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case FORMULA_TYPE_NOT_FOUND = 'formula type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
     case VIEW_TYPE_NOT_FOUND = 'view type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case COMPONENT_TYPE_NOT_FOUND = 'component type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case VIEW_STYLE_NOT_FOUND = 'view style "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" not found';
     case VIEW_IMPORT_ERROR = ' when importing '
@@ -535,6 +556,16 @@ enum messages: string
         . '" already exists. Do you really want to create both sides?';
     case FAILED_RELOAD_CLASS = 'Reload "'
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . '" failed';
+    case FAILED_RELOAD_VALUE = 'Reload '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
+        . '" failed';
+    case FAILED_RELOAD_OBJECT = 'Reload '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" failed';
     case TRIPLE_VERB_SET = 'verb for triple '
         . self::VAR_START . self::VAR_ID . self::VAR_END

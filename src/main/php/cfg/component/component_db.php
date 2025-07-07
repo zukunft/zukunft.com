@@ -57,6 +57,7 @@ include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once MODEL_COMPONENT_PATH . 'view_style.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
@@ -65,6 +66,7 @@ use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
 use cfg\helper\type_object;
@@ -123,7 +125,7 @@ class component_db
         [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
         // TODO link with a foreign key to phrases (or terms?) if link to a view is allowed
         [self::FLD_ROW_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_PHRASE_COM],
-        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
+        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
         [self::FLD_COL_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_COL_PHRASE_COM],
         [self::FLD_COL2_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_COL2_PHRASE_COM],
         [self::FLD_LINK_COMP, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_COM],
@@ -151,7 +153,7 @@ class component_db
         self::FLD_STYLE,
         self::FLD_ROW_PHRASE,
         self::FLD_LINK_TYPE,
-        formula::FLD_ID,
+        formula_db::FLD_ID,
         self::FLD_COL_PHRASE,
         self::FLD_COL2_PHRASE,
         sandbox::FLD_EXCLUDED,
@@ -166,7 +168,7 @@ class component_db
         self::FLD_STYLE,
         self::FLD_ROW_PHRASE,
         self::FLD_LINK_TYPE,
-        formula::FLD_ID,
+        formula_db::FLD_ID,
         self::FLD_COL_PHRASE,
         self::FLD_COL2_PHRASE,
         sandbox::FLD_EXCLUDED,

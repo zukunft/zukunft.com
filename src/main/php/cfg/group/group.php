@@ -249,18 +249,14 @@ class group extends sandbox_multi
     {
         $msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::ID) {
-                $this->set_id($value);
-            }
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                $this->set_description($value);
-            }
-
+        if (array_key_exists(json_fields::ID, $api_json)) {
+            $this->set_id($api_json[json_fields::ID]);
+        }
+        if (array_key_exists(json_fields::NAME, $api_json)) {
+            $this->set_name($api_json[json_fields::NAME]);
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            $this->set_description($api_json[json_fields::DESCRIPTION]);
         }
 
         return $msg;
@@ -1660,11 +1656,8 @@ class group extends sandbox_multi
         log_debug();
         $usr_msg = new user_message();
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::NAME) {
-                $this->name = $value;
-            }
+        if (array_key_exists(json_fields::NAME, $api_json)) {
+            $this->name = $api_json[json_fields::NAME];
         }
 
         if ($usr_msg->is_ok() and $do_save) {

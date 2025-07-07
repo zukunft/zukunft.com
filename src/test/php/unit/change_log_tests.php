@@ -40,6 +40,7 @@ include_once MODEL_LOG_PATH . 'changes_norm.php';
 include_once MODEL_LOG_PATH . 'changes_big.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
 include_once SHARED_CONST_PATH . 'triples.php';
+include_once MODEL_WORD_PATH . 'triple_db.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -60,6 +61,7 @@ use cfg\sandbox\sandbox_value;
 use cfg\user\user;
 use cfg\value\value;
 use cfg\word\triple;
+use cfg\word\triple_db;
 use cfg\word\word;
 use cfg\word\word_db;
 use html\log\user_log_display;
@@ -196,7 +198,7 @@ class change_log_tests
         $this->assert_sql_list_by_field(word::class, '', 1, $log_lst, $db_con, $t, $test_name);
         $test_name = 'get the name changes of a word';
         $this->assert_sql_list_by_field(word::class, word_db::FLD_NAME, 1, $log_lst, $db_con, $t, $test_name);
-        $this->assert_sql_list_by_field(triple::class, triple::FLD_NAME_GIVEN, 1, $log_lst, $db_con, $t);
+        $this->assert_sql_list_by_field(triple::class, triple_db::FLD_NAME_GIVEN, 1, $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group_16()->id(), $log_lst, $db_con, $t);
         $this->assert_sql_list_by_field(group::class, group::FLD_NAME, $t->group_17_plus()->id(), $log_lst, $db_con, $t);

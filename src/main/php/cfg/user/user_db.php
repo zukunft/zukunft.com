@@ -68,6 +68,7 @@ include_once DB_PATH . 'sql_field_type.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 //include_once MODEL_REF_PATH . 'source.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
+//include_once MODEL_WORD_PATH . 'triple_db.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 
 use cfg\helper\db_object_seq_id;
@@ -78,6 +79,7 @@ use cfg\sandbox\sandbox_named;
 use cfg\ref\source;
 use cfg\word\triple;
 use cfg\view\view;
+use cfg\word\triple_db;
 
 class user_db extends db_object_seq_id
 {
@@ -206,8 +208,8 @@ class user_db extends db_object_seq_id
         // offline verification
         [self::FLD_FIRST_NAME, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
         [self::FLD_LAST_NAME, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
-        [self::FLD_NAME_TRIPLE_ID, sql_field_type::INT, sql_field_default::NULL, '', triple::class, self::FLD_NAME_TRIPLE_COM, triple::FLD_ID],
-        [self::FLD_GEO_TRIPLE_ID, sql_field_type::INT, sql_field_default::NULL, '', triple::class, self::FLD_GEO_TRIPLE_COM, triple::FLD_ID],
+        [self::FLD_NAME_TRIPLE_ID, sql_field_type::INT, sql_field_default::NULL, '', triple::class, self::FLD_NAME_TRIPLE_COM, triple_db::FLD_ID],
+        [self::FLD_GEO_TRIPLE_ID, sql_field_type::INT, sql_field_default::NULL, '', triple::class, self::FLD_GEO_TRIPLE_COM, triple_db::FLD_ID],
         [self::FLD_GEO_STATUS, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', ''],
         [self::FLD_OFFICIAL_ID, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_OFFICIAL_ID_COM],
         [self::FLD_OFFICIAL_TYPE_ID, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', ''],

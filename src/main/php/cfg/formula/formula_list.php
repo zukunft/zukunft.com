@@ -38,6 +38,7 @@ include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_ELEMENT_PATH . 'element.php';
 include_once MODEL_IMPORT_PATH . 'import.php';
+include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
@@ -45,23 +46,22 @@ include_once MODEL_PHRASE_PATH . 'term_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
+include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
+include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_FORMULA_PATH . 'formula_list.php';
 include_once SHARED_CALC_PATH . 'parameter_type.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_PATH . 'library.php';
 
-use cfg\config;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\element\element;
+use cfg\helper\data_object;
 use cfg\import\import;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
@@ -70,6 +70,7 @@ use cfg\phrase\term_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_named;
+use cfg\user\user;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\word\triple;
@@ -111,7 +112,7 @@ class formula_list extends sandbox_list_named
                     $excluded = $db_row[sandbox::FLD_EXCLUDED];
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
-                    $frm_id = $db_row[formula::FLD_ID];
+                    $frm_id = $db_row[formula_db::FLD_ID];
                     if ($frm_id > 0 and !in_array($frm_id, $this->ids())) {
                         $frm = new formula($this->user());
                         $frm->row_mapper_sandbox($db_row);
@@ -161,8 +162,8 @@ class formula_list extends sandbox_list_named
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
-        $sc->set_usr_fields(formula::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
+        $sc->set_usr_fields(formula_db::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(formula_db::FLD_NAMES_NUM_USR);
         return $qp;
     }
 
@@ -183,7 +184,7 @@ class formula_list extends sandbox_list_named
     {
         $qp = $this->load_sql($sc, 'frm_ids');
         if (count($frm_ids) > 0) {
-            $sc->add_where(formula::FLD_ID, $frm_ids, sql_par_type::INT_LIST);
+            $sc->add_where(formula_db::FLD_ID, $frm_ids, sql_par_type::INT_LIST);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -201,8 +202,8 @@ class formula_list extends sandbox_list_named
      */
     function load_sql_by_names(
         sql_creator $sc,
-        array $names,
-        string $fld = formula::FLD_NAME
+        array       $names,
+        string      $fld = formula_db::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);
@@ -217,7 +218,7 @@ class formula_list extends sandbox_list_named
     function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
-        $sc->add_where(formula::FLD_NAME, $pattern, sql_par_type::LIKE_R);
+        $sc->add_where(formula_db::FLD_NAME, $pattern, sql_par_type::LIKE_R);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -236,8 +237,8 @@ class formula_list extends sandbox_list_named
             $sc->set_join_fields(
                 array(phrase::FLD_ID),
                 formula_link::class,
-                formula::FLD_ID,
-                formula::FLD_ID
+                formula_db::FLD_ID,
+                formula_db::FLD_ID
             );
             $sc->add_where(phrase::FLD_ID, $phr->id(), null, sql_db::LNK_TBL);
             $qp->sql = $sc->sql();
@@ -261,8 +262,8 @@ class formula_list extends sandbox_list_named
             $sc->set_join_fields(
                 array(phrase::FLD_ID),
                 formula_link::class,
-                formula::FLD_ID,
-                formula::FLD_ID
+                formula_db::FLD_ID,
+                formula_db::FLD_ID
             );
             $sc->add_where(phrase::FLD_ID, $phr_lst->id_lst(), null, sql_db::LNK_TBL);
             $qp->sql = $sc->sql();
@@ -291,10 +292,10 @@ class formula_list extends sandbox_list_named
         $qp = $this->load_sql($sc, $type_query_name . '_ref');
         if ($ref_id > 0) {
             $sc->set_join_fields(
-                array(formula::FLD_ID),
+                array(formula_db::FLD_ID),
                 element::class,
-                formula::FLD_ID,
-                formula::FLD_ID
+                formula_db::FLD_ID,
+                formula_db::FLD_ID
             );
             $sc->add_where(element::FLD_REF_ID, $ref_id, null, sql_db::LNK_TBL);
             $sc->add_where(element::FLD_TYPE, $par_type_id, null, sql_db::LNK_TBL);
@@ -387,10 +388,10 @@ class formula_list extends sandbox_list_named
         $db_con->set_all();
         $qp->name = $class . '_all';
         $db_con->set_name($qp->name);
-        $db_con->set_usr_fields(formula::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
+        $db_con->set_usr_fields(formula_db::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(formula_db::FLD_NAMES_NUM_USR);
         if ($limit > 0) {
-            $db_con->set_order(formula::FLD_ID);
+            $db_con->set_order(formula_db::FLD_ID);
             $db_con->set_page_par($limit, $page);
             $qp->sql = $db_con->select_all();
         } else {
@@ -543,15 +544,22 @@ class formula_list extends sandbox_list_named
      * import a list of formulas from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $value) {
             $frm = new formula($this->user());
-            $usr_msg->add($frm->import_obj($value, $test_obj));
+            $usr_msg->add($frm->import_obj($value, $usr_req, $dto, $test_obj));
             // add a dummy id for unit testing
             if ($test_obj) {
                 $frm->set_id($test_obj->seq_id());

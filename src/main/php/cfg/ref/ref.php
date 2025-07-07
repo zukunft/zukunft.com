@@ -108,8 +108,6 @@ include_once SHARED_PATH . 'library.php';
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
@@ -146,66 +144,22 @@ class ref extends sandbox_link
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
     const TBL_COMMENT = 'to link external data to internal for synchronisation';
-    const FLD_ID = 'ref_id';
-    const FLD_USER_COM = 'the user who has created or adjusted the reference';
-    const FLD_EX_KEY_COM = 'the unique external key used in the other system';
-    const FLD_EX_KEY = 'external_key';
-    const FLD_EX_KEY_SQL_TYP = sql_field_type::NAME;
-    const FLD_TYPE = 'ref_type_id';
-    const FLD_URL_COM = 'the concrete url for the entry including the item id';
-    const FLD_URL = 'url';
-    const FLD_URL_SQL_TYP = sql_field_type::TEXT;
-    const FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
-    const FLD_SOURCE = 'source_id';
-    const FLD_PHRASE_COM = 'the phrase for which the external data should be synchronised';
+
+    // forward the const to enable usage of $this::CONST_NAME
+    const FLD_ID = ref_db::FLD_ID;
+    const FLD_NAMES = ref_db::FLD_NAMES;
+    const FLD_NAMES_USR = ref_db::FLD_NAMES_USR;
+    const FLD_NAMES_NUM_USR = ref_db::FLD_NAMES_NUM_USR;
+    const ALL_SANDBOX_FLD_NAMES = ref_db::ALL_SANDBOX_FLD_NAMES;
+    const FLD_LST_MUST_BUT_STD_ONLY = ref_db::FLD_LST_MUST_BUT_STD_ONLY;
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = ref_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
+    const FLD_LST_USER_CAN_CHANGE = ref_db::FLD_LST_USER_CAN_CHANGE;
+    const FLD_LST_NON_CHANGEABLE = ref_db::FLD_LST_NON_CHANGEABLE;
+
     // char used to create one unique key string for the reference
     private const SEP = '|';
     private const ESC_CHR = '|';
 
-    // field names that cannot be user specific
-    const FLD_NAMES = array(
-        phrase::FLD_ID,
-        self::FLD_TYPE
-    );
-    // list of user specific text field names
-    const FLD_NAMES_USR = array(
-        self::FLD_EX_KEY,
-        self::FLD_URL,
-        sandbox_named::FLD_DESCRIPTION
-    );
-    // list of user specific numeric field names
-    const FLD_NAMES_NUM_USR = array(
-        source::FLD_ID,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
-    );
-    // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
-        self::FLD_EX_KEY,
-        self::FLD_URL,
-        sandbox_named::FLD_DESCRIPTION,
-        sandbox::FLD_EXCLUDED
-    );
-    // list of fields that must be set
-    const FLD_LST_MUST_BUT_STD_ONLY = array(
-        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
-    );
-    // list of fields that must be set, but CAN be changed by the user
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
-    );
-    // list of fields that CAN be changed by the user
-    const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
-        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
-        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
-    );
-    // list of fields that CANNOT be changed by the user
-    const FLD_LST_NON_CHANGEABLE = array(
-        [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PHRASE_COM],
-        [ref_type::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, ref_type::class, ref_type::TBL_COMMENT],
-    );
 
     // persevered reference names for unit and integration tests
     const TEST_REF_NAME = 'System Test Reference Name';
@@ -275,11 +229,11 @@ class ref extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_phrase_by_id($db_row[phrase::FLD_ID]);
-            $this->external_key = $db_row[self::FLD_EX_KEY];
-            $this->set_predicate_id($db_row[self::FLD_TYPE]);
-            $this->url = $db_row[self::FLD_URL];
+            $this->external_key = $db_row[ref_db::FLD_EX_KEY];
+            $this->set_predicate_id($db_row[ref_db::FLD_TYPE]);
+            $this->url = $db_row[ref_db::FLD_URL];
             $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
-            $this->set_source_by_id($db_row[source::FLD_ID]);
+            $this->set_source_by_id($db_row[source_db::FLD_ID]);
             if ($this->load_objects()) {
                 $result = true;
                 log_debug('done ' . $this->dsp_id());
@@ -298,31 +252,27 @@ class ref extends sandbox_link
     {
         $msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::PHRASE) {
-                if ($value != '' and $value != 0) {
-                    $phr = new phrase($this->user());
-                    $phr->set_id($value);
-                    $this->set_phrase($phr);
-                }
+        if (array_key_exists(json_fields::PHRASE, $api_json)) {
+            if ($api_json[json_fields::PHRASE] != '' and $api_json[json_fields::PHRASE] != 0) {
+                $phr = new phrase($this->user());
+                $phr->set_id($api_json[json_fields::PHRASE]);
+                $this->set_phrase($phr);
             }
-            if ($key == json_fields::EXTERNAL_KEY) {
-                if ($value <> '') {
-                    $this->external_key = $value;
-                }
+        }
+        if (array_key_exists(json_fields::EXTERNAL_KEY, $api_json)) {
+            if ($api_json[json_fields::EXTERNAL_KEY] != '') {
+                $this->external_key = $api_json[json_fields::EXTERNAL_KEY];
             }
-            if ($key == json_fields::URL) {
-                if ($value <> '') {
-                    $this->url = $value;
-                }
+        }
+        if (array_key_exists(json_fields::URL, $api_json)) {
+            if ($api_json[json_fields::URL] != '') {
+                $this->url = $api_json[json_fields::URL];
             }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            if ($api_json[json_fields::DESCRIPTION] != '') {
+                $this->description = $api_json[json_fields::DESCRIPTION];
             }
-
         }
 
         return $msg;
@@ -444,29 +394,6 @@ class ref extends sandbox_link
     /*
      * im- and export
      */
-
-    /**
-     * import a link to external database from an imported json object
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
-    {
-        $usr_msg = $this->import_mapper($in_ex_json, null, $test_obj);
-
-        // to be able to log the object names
-        if (!$test_obj) {
-            if ($this->load_objects()) {
-                if ($usr_msg->is_ok()) {
-                    $usr_msg->add($this->save());
-                }
-            }
-        }
-
-        return $usr_msg;
-    }
 
     /**
      * create an array with the export json fields of this reference excluding e.g. the database id
@@ -821,9 +748,9 @@ class ref extends sandbox_link
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR,
+            ref_db::FLD_NAMES,
+            ref_db::FLD_NAMES_USR,
+            ref_db::FLD_NAMES_NUM_USR,
             array(user::FLD_ID)
         ));
 
@@ -872,7 +799,7 @@ class ref extends sandbox_link
     {
         $qp = $this->load_sql($sc, 'link_ids');
         $sc->add_where(phrase::FLD_ID, $phr_id);
-        $sc->add_where(self::FLD_TYPE, $type_id);
+        $sc->add_where(ref_db::FLD_TYPE, $type_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -895,7 +822,7 @@ class ref extends sandbox_link
 
     function all_sandbox_fields(): array
     {
-        return self::ALL_SANDBOX_FLD_NAMES;
+        return ref_db::ALL_SANDBOX_FLD_NAMES;
     }
 
     /**
@@ -937,7 +864,7 @@ class ref extends sandbox_link
      */
     function to_field(): string
     {
-        return self::FLD_EX_KEY;
+        return ref_db::FLD_EX_KEY;
     }
 
     function to_value(): string
@@ -1118,7 +1045,7 @@ class ref extends sandbox_link
                 $log->new_value = $this->url;
                 $log->std_value = $std_rec->url;
                 $log->row_id = $this->id();
-                $log->set_field(self::FLD_URL);
+                $log->set_field(ref_db::FLD_URL);
                 $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
@@ -1144,7 +1071,7 @@ class ref extends sandbox_link
             $log->std_value = $std_rec->source_name();
             $log->std_id = $std_rec->source_id();
             $log->row_id = $this->id();
-            $log->set_field(self::FLD_SOURCE);
+            $log->set_field(ref_db::FLD_SOURCE);
             $usr_msg->add($this->save_field_user($db_con, $log));
         }
         return $usr_msg;
@@ -1196,7 +1123,7 @@ class ref extends sandbox_link
                 $db_con->set_usr($this->user()->id());
 
                 $this->set_id($db_con->insert_old(
-                    array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
+                    array(phrase::FLD_ID, ref_db::FLD_EX_KEY, ref_db::FLD_TYPE),
                     array($this->phrase_id(), $this->external_key, $this->predicate_id)));
                 if ($this->id() > 0) {
                     // update the id in the log for the correct reference
@@ -1306,7 +1233,7 @@ class ref extends sandbox_link
                 $log = $this->log_link_upd($db_rec);
                 if ($log->id() > 0) {
                     $db_con->set_class(ref::class);
-                    if ($db_con->update_old($this->id(), self::FLD_EX_KEY, $this->external_key)) {
+                    if ($db_con->update_old($this->id(), ref_db::FLD_EX_KEY, $this->external_key)) {
                         log_debug('ref->save update ... done.');
                     }
                 }
@@ -1344,11 +1271,11 @@ class ref extends sandbox_link
         return array_merge(
             parent::db_all_fields_link($sc_par_lst),
             [
-                self::FLD_TYPE,
+                ref_db::FLD_TYPE,
                 phrase::FLD_ID,
-                self::FLD_EX_KEY,
-                self::FLD_URL,
-                source::FLD_ID,
+                ref_db::FLD_EX_KEY,
+                ref_db::FLD_URL,
+                source_db::FLD_ID,
                 sandbox_named::FLD_DESCRIPTION,
             ],
             parent::db_fields_all_sandbox()
@@ -1417,8 +1344,8 @@ class ref extends sandbox_link
         if ($sbx->external_key <> $this->external_key) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_EX_KEY,
-                    $cng_fld_cac->id($table_id . self::FLD_EX_KEY),
+                    sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_EX_KEY,
+                    $cng_fld_cac->id($table_id . ref_db::FLD_EX_KEY),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -1427,38 +1354,38 @@ class ref extends sandbox_link
                 $old_key = null;
             }
             $lst->add_field(
-                self::FLD_EX_KEY,
+                ref_db::FLD_EX_KEY,
                 $this->external_key,
-                self::FLD_EX_KEY_SQL_TYP,
+                ref_db::FLD_EX_KEY_SQL_TYP,
                 $old_key
             );
         }
         if ($sbx->url <> $this->url) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_URL,
-                    $cng_fld_cac->id($table_id . self::FLD_URL),
+                    sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_URL,
+                    $cng_fld_cac->id($table_id . ref_db::FLD_URL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                self::FLD_URL,
+                ref_db::FLD_URL,
                 $this->url,
-                self::FLD_URL_SQL_TYP,
+                ref_db::FLD_URL_SQL_TYP,
                 $sbx->url
             );
         }
         if ($sbx->source?->id() <> $this->source?->id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
-                    $cng_fld_cac->id($table_id . source::FLD_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
+                    $cng_fld_cac->id($table_id . source_db::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
-                source::FLD_ID,
-                source::FLD_NAME,
+                source_db::FLD_ID,
+                source_db::FLD_NAME,
                 $this->source,
                 $sbx->source
             );

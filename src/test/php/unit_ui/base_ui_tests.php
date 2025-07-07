@@ -191,7 +191,8 @@ class base_ui_tests
         $t->subheader('unit html view component tests');
 
         $cmp = new component($usr);
-        $cmp->set(1, components::TEST_ADD_NAME, comp_type_shared::TEXT);
+        $cmp->set(components::WORD_ID, components::TEST_ADD_NAME);
+        $cmp->set_type(comp_type_shared::TEXT, $usr);
         $cmp_dsp = new component_dsp($cmp->api_json());
         $t->html_test($cmp_dsp->html(), '', 'component_text', $t);
 

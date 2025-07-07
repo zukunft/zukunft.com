@@ -145,18 +145,16 @@ class sandbox_link_named extends sandbox_link
 
         $msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
+        if (array_key_exists(json_fields::NAME, $api_json)) {
+            $this->set_name($api_json[json_fields::NAME]);
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            if ($api_json[json_fields::DESCRIPTION] <> '') {
+                $this->description = $api_json[json_fields::DESCRIPTION];
             }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
-            }
-            if ($key == json_fields::TYPE) {
-                $this->set_type_id($value, $usr);
-            }
+        }
+        if (array_key_exists(json_fields::TYPE, $api_json)) {
+            $this->set_type_id($api_json[json_fields::TYPE], $usr);
         }
         return $msg;
     }

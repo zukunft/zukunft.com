@@ -53,7 +53,9 @@ use cfg\db\sql_type;
 use cfg\formula\formula;
 use cfg\helper\data_object;
 use cfg\ref\ref;
+use cfg\result\result;
 use cfg\user\user;
+use cfg\value\value;
 use cfg\view\view;
 use cfg\word\triple;
 use shared\library;
@@ -136,9 +138,16 @@ class horizontal_tests
             // remember the db id, because the db id is never included in the export
             $id = $filled_obj->id();
             // fill up cache to avoid db access in unit tests
-            if ($class == ref::class) {
+            if ($class == triple::class) {
+                $dto->add_phrase($filled_obj->from());
+                $dto->add_phrase($filled_obj->to());
+            } elseif ($class == ref::class) {
                 $dto->add_phrase($filled_obj->phrase());
                 $dto->add_source($filled_obj->source);
+            } elseif ($class == value::class) {
+                $dto->add_source($filled_obj->source);
+            } elseif ($class == result::class) {
+                $dto->add_formula($filled_obj->frm);
             }
             $ex_json = $filled_obj->export_json(false);
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
@@ -152,7 +161,7 @@ class horizontal_tests
             if (in_array($class, def::CODE_ID_CLASSES)) {
                 // special case and more cases are covered in the separate user unit testing
                 $sys_usr = $t->user_system();
-                $filled_obj->import_mapper_user($ex_json, $sys_usr);
+                $filled_obj->import_mapper_user($ex_json, $sys_usr, $dto);
             } else {
                 $filled_obj->import_mapper($ex_json, $dto);
             }

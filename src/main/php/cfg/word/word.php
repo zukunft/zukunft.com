@@ -79,6 +79,7 @@ include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_FORMULA_PATH . 'formula_link.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
@@ -95,6 +96,7 @@ include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_VIEW_PATH . 'view.php';
+include_once MODEL_VIEW_PATH . 'view_db.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once SHARED_CONST_PATH . 'users.php';
@@ -118,6 +120,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\formula\formula_link;
 use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
@@ -134,6 +137,7 @@ use cfg\value\value_list;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
 use cfg\view\view;
+use cfg\view\view_db;
 use shared\const\users;
 use shared\enum\change_actions;
 use shared\enum\foaf_direction;
@@ -276,44 +280,27 @@ class word extends sandbox_typed
      */
     function api_mapper(array $api_json): user_message
     {
-        $msg = parent::api_mapper($api_json);
+        $usr_msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
+        // it is expected that the code id is set via import by an admin not via api
 
-            // TODO move plural to language forms
-            if ($key == json_fields::PLURAL) {
-                if ($value <> '') {
-                    $this->plural = $value;
-                }
+        // TODO move plural to language forms
+        if (array_key_exists(json_fields::PLURAL, $api_json)) {
+            if ($api_json[json_fields::PLURAL] <> '') {
+                $this->plural = $api_json[json_fields::PLURAL];
             }
-            /*
-            if ($key == exp_obj::FLD_VIEW) {
-                $wrd_view = new view($this->user());
-                if ($do_save) {
-                    $wrd_view->load_by_name($value);
-                    if ($wrd_view->id() == 0) {
-                        $result->add_message_text('Cannot find view >' . $value . '< when importing ' . $this->dsp_id());
-                    } else {
-                        $this->view_id = $wrd_view->id();
-                    }
-                } else {
-                    $wrd_view->set_name($value);
-                }
-                $this->view = $wrd_view;
-            }
-
-            if ($key == json_fields::PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $msg->add($phr_lst->db_obj($value));
-                if ($msg->is_ok()) {
-                    $this->grp->phr_lst = $phr_lst;
-                }
-            }
-            */
-
         }
 
-        return $msg;
+        if (array_key_exists(json_fields::VIEW, $api_json)) {
+            $msk = new view($this->user());
+            $id = $api_json[json_fields::VIEW];
+            if ($id != 0) {
+                $msk->set_id($id);
+                $this->view = $msk;
+            }
+        }
+
+        return $usr_msg;
     }
 
     /**
@@ -432,56 +419,6 @@ class word extends sandbox_typed
      */
 
     /**
-     * import a word from a json data word object and write it to the database
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
-     */
-    function import_obj(array $in_ex_json, user $usr_req, object $test_obj = null): user_message
-    {
-
-        log_debug();
-
-        // set the object vars based on the json
-        $usr_msg = $this->import_mapper_user($in_ex_json, $usr_req, null, $test_obj);
-
-        // save the word in the database
-        if ($test_obj == null) {
-            if ($usr_msg->is_ok()) {
-                $usr_msg->add($this->save());
-            }
-        }
-
-        // add related parameters to the word object
-        if ($usr_msg->is_ok()) {
-            log_debug('saved ' . $this->dsp_id());
-
-            if ($this->id() <= 0) {
-                $usr_msg->add_id_with_vars(msg_id::WORD_NOT_SAVED, [msg_id::VAR_ID => $this->dsp_id()]);
-                /*
-            } else {
-                // TODO check if not already done by the import_mapper_user
-                foreach ($in_ex_json as $key => $value) {
-                    if ($usr_msg->is_ok()) {
-                        if ($key == word_db::FLD_REFS) {
-                            foreach ($value as $ref_data) {
-                                $ref_obj = new ref($this->user());
-                                $ref_obj->set_phrase($this->phrase());
-                                $usr_msg->add($ref_obj->import_obj($ref_data, $test_obj));
-                                $this->ref_lst[] = $ref_obj;
-                            }
-                        }
-                    }
-                }
-                */
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
      * create an array with the export json fields
      * @param bool $do_load to switch off the database load for unit tests
      * @return array the filled array used to create the user export json
@@ -528,36 +465,23 @@ class word extends sandbox_typed
      */
 
     /**
-     * set the most used object vars with one set statement
-     * @param int $id mainly for test creation the database id of the word
-     * @param string $name mainly for test creation the name of the word
-     * @param string $type_code_id the code id of the predefined phrase type
-     */
-    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
-    {
-        parent::set($id, $name);
-
-        if ($type_code_id != '') {
-            $this->set_type($type_code_id);
-        }
-    }
-
-    /**
      * set the phrase type of this word
      *
-     * @param string $type_code_id the code id that should be added to this word
-     * @return void
+     * @param string $code_id the code id that should be added to this word
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $type_code_id): void
+    function set_type(string $code_id, user $usr_req = new user()): user_message
     {
         global $phr_typ_cac;
-        $this->type_id = $phr_typ_cac->id($type_code_id);
+        return parent::set_type_by_code_id(
+            $code_id, $phr_typ_cac, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
     }
 
     /**
      * set the unique id to select a single word by the program
      *r
-     * @param string|null $code_id the unique key to select a word used by the system e.g. for the system configuration
+     * @param string|null $code_id the unique key to select a word used by the system e.g. for the system or configuration
      * @param user $usr the user who has requested the change
      * @return user_message warning message for the user if the permissions are missing
      */
@@ -817,7 +741,7 @@ class word extends sandbox_typed
     function load_sql_by_formula_name(sql_creator $sc, string $name): sql_par
     {
         global $phr_typ_cac;
-        $qp = parent::load_sql_usr_num($sc, $this, formula::FLD_NAME);
+        $qp = parent::load_sql_usr_num($sc, $this, formula_db::FLD_NAME);
         $sc->add_where($this->name_field(), $name, sql_par_type::TEXT_USR);
         $sc->add_where(phrase::FLD_TYPE, $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK), sql_par_type::CONST);
         $qp->sql = $sc->sql();
@@ -906,15 +830,15 @@ class word extends sandbox_typed
         $qp = new sql_par(self::class);
         $qp->name = 'word_formula_by_id';
         $db_con->set_name($qp->name);
-        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+        $db_con->set_link_fields(formula_db::FLD_ID, phrase::FLD_ID);
         $db_con->set_where_link_no_fld(0, 0, $this->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         $db_row = $db_con->get1($qp);
         $frm = new formula($this->user());
         if ($db_row !== false) {
-            if ($db_row[formula::FLD_ID] > 0) {
-                $frm->load_by_id($db_row[formula::FLD_ID]);
+            if ($db_row[formula_db::FLD_ID] > 0) {
+                $frm->load_by_id($db_row[formula_db::FLD_ID]);
             }
         }
 
@@ -1311,7 +1235,7 @@ class word extends sandbox_typed
         $link_id = $vrb_cac->id(verbs::FOLLOW);
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple::FLD_FROM, triple::FLD_TO, $this->id(), verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple_db::FLD_FROM, triple_db::FLD_TO, $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1337,7 +1261,7 @@ class word extends sandbox_typed
         $link_id = $vrb_cac->id(verbs::FOLLOW);
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple::FLD_TO, triple::FLD_FROM, $this->id(), verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple_db::FLD_TO, triple_db::FLD_FROM, $this->id(), verb::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1936,7 +1860,7 @@ class word extends sandbox_typed
             }
             $lst->add_link_field(
                 word_db::FLD_VIEW,
-                view::FLD_NAME,
+                view_db::FLD_NAME,
                 $this->view,
                 $sbx->view
             );

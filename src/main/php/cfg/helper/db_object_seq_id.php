@@ -360,6 +360,7 @@ class db_object_seq_id extends db_object
      * fill this seq id object based on the given object
      * if the given id is zero the id is never overwritten
      * if the given id is not zero the id is set if not yet done
+     * similar to db_object_multi->fill
      *
      * @param CombineObject|db_object_seq_id $obj object with the values that should be updated e.g. based on the import
      * @param user $usr_req the user who has requested the fill

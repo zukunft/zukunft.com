@@ -91,6 +91,7 @@ include_once MODEL_LOG_PATH . 'change_log.php';
 //include_once MODEL_LOG_PATH . 'change_table_list.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 //include_once MODEL_REF_PATH . 'source.php';
+//include_once MODEL_REF_PATH . 'source_db.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
 //include_once MODEL_WORD_PATH . 'triple_list.php';
 include_once MODEL_USER_PATH . 'user_db.php';
@@ -128,6 +129,7 @@ use cfg\helper\type_object;
 use cfg\log\change_action;
 use cfg\log\change_log;
 use cfg\phrase\term;
+use cfg\ref\source_db;
 use cfg\system\ip_range_list;
 use cfg\log\change;
 use cfg\sandbox\sandbox_named;
@@ -1314,10 +1316,16 @@ class user extends db_id_object_non_sandbox
      *
      * @param array $json_obj an array with the data of the json object
      * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, user $usr_req, object $test_obj = null): user_message
+    function import_obj(
+        array $json_obj,
+        user $usr_req,
+        ?data_object $dto = null,
+        object $test_obj = null
+    ): user_message
     {
         global $usr_pro_cac;
 
@@ -1328,7 +1336,7 @@ class user extends db_id_object_non_sandbox
         // reset all parameters of this user object
         $this->reset();
 
-        $usr_msg = $this->import_mapper_user($json_obj, $usr_req);
+        $usr_msg = $this->import_mapper_user($json_obj, $usr_req, $dto);
 
         // reset all parameters of this user object
         $this->reset();
@@ -2602,7 +2610,7 @@ class user extends db_id_object_non_sandbox
             }
             $lst->add_link_field(
                 user_db::FLD_SOURCE,
-                source::FLD_NAME,
+                source_db::FLD_NAME,
                 $this->source,
                 $db_usr->source
             );

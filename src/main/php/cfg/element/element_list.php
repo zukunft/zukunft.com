@@ -39,7 +39,7 @@ namespace cfg\element;
 
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
+include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
@@ -48,7 +48,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
-use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\phrase\term_list;
 use cfg\sandbox\sandbox_list;
 use cfg\system\sys_log_level;
@@ -141,7 +141,7 @@ class element_list extends sandbox_list
     {
         $qp = $this->load_sql($sc, 'frm_id');
         if ($frm_id > 0) {
-            $sc->add_where(formula::FLD_ID, $frm_id);
+            $sc->add_where(formula_db::FLD_ID, $frm_id);
             $sc->add_where(user::FLD_ID, $this->user()->id());
             $qp->sql = $sc->sql();
         } else {
@@ -162,7 +162,7 @@ class element_list extends sandbox_list
     {
         $qp = $this->load_sql($sc, 'frm_and_type_id');
         if ($frm_id > 0 and $elm_type_id != 0) {
-            $sc->add_where(formula::FLD_ID, $frm_id);
+            $sc->add_where(formula_db::FLD_ID, $frm_id);
             $sc->add_where(element::FLD_TYPE, $elm_type_id);
             $sc->add_where(user::FLD_ID, $this->user()->id());
             $qp->sql = $sc->sql();

@@ -108,7 +108,7 @@ class formula_link extends sandbox_link
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        formula::FLD_ID,
+        formula_db::FLD_ID,
         phrase::FLD_ID,
         user::FLD_ID,
         formula_link_type::FLD_ID,
@@ -119,7 +119,7 @@ class formula_link extends sandbox_link
     );
     // list of the link database field names
     const FLD_NAMES_LINK = array(
-        formula::FLD_ID,
+        formula_db::FLD_ID,
         phrase::FLD_ID
     );
     // all database field names excluding the id
@@ -145,7 +145,7 @@ class formula_link extends sandbox_link
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
-        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, ''],
+        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, ''],
         [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
     );
 
@@ -214,7 +214,7 @@ class formula_link extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             // TODO load by if from cache?
-            $this->formula()->set_id($db_row[formula::FLD_ID]);
+            $this->formula()->set_id($db_row[formula_db::FLD_ID]);
             $this->phrase()->set_id($db_row[phrase::FLD_ID]);
             $this->predicate_id = $db_row[formula_link_type::FLD_ID];
             $this->order_nbr = $db_row[formula_link::FLD_ORDER];
@@ -401,7 +401,7 @@ class formula_link extends sandbox_link
         if ($this->id() != 0) {
             $sc->add_where($this->id_field(), $this->id());
         } elseif ($this->formula_id() != 0 and $this->phrase_id() != 0) {
-            $sc->add_where(formula::FLD_ID, $this->formula_id());
+            $sc->add_where(formula_db::FLD_ID, $this->formula_id());
             $sc->add_where(phrase::FLD_ID, $this->phrase_id());
         } else {
             log_err('Cannot load default formula link because no unique field is set');
@@ -488,7 +488,7 @@ class formula_link extends sandbox_link
 
     function from_field(): string
     {
-        return formula::FLD_ID;
+        return formula_db::FLD_ID;
     }
 
     function to_field(): string

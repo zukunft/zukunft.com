@@ -532,7 +532,7 @@ class group_list extends sandbox_list
                 // add the phrase group of the value or formula result add the time using a combined index
                 // because a time word should never be part of a phrase group to have a useful number of groups
                 log_debug('add id ' . $val_row[group::FLD_ID]);
-                // log_debug('add time id ' . $val_row[value::FLD_TIME_WORD]);
+                // log_debug('add time id ' . $val_row[value_db::FLD_TIME_WORD]);
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
                 $val_grp = new group($this->user());
                 $val_grp->load_by_id($val_row[group::FLD_ID]);
@@ -555,7 +555,7 @@ class group_list extends sandbox_list
                     $changed++;
                 }
                 /* TODO deprecate now
-                if ($this->add_grp_time_id($grp_to_add->id(), $val_row[value::FLD_TIME_WORD])) {
+                if ($this->add_grp_time_id($grp_to_add->id(), $val_row[value_db::FLD_TIME_WORD])) {
                     $added++;
                     $changed++;
                     log_debug('added ' . $added . ' in ' . $lib->dsp_count($this->grp_time_ids));

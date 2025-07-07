@@ -167,12 +167,8 @@ class sandbox_link extends sandbox
 
         $msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::PREDICATE) {
-                $this->predicate_id = $value;
-            }
-
+        if (array_key_exists(json_fields::PREDICATE, $api_json)) {
+            $this->predicate_id = $api_json[json_fields::PREDICATE];
         }
 
         return $msg;

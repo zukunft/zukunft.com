@@ -652,7 +652,7 @@ class type_list
         $lib = new library();
         $result = 0;
         if ($code_id != '' and $code_id != null) {
-            if (array_key_exists($code_id, $this->hash)) {
+            if ($this->has_code_id($code_id)) {
                 $result = $this->hash[$code_id];
             } else {
                 if ($this->usr_can_add) {
@@ -736,6 +736,11 @@ class type_list
             log_debug('Type id not set');
         }
         return $result;
+    }
+
+    function has_code_id(string $code_id): bool
+    {
+        return array_key_exists($code_id, $this->hash);
     }
 
     /**

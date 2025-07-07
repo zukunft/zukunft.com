@@ -46,6 +46,7 @@ include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_REF_PATH . 'source.php';
+include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -62,6 +63,7 @@ use cfg\group\group;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_value;
 use cfg\ref\source;
+use cfg\ref\source_db;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\enum\messages as msg_id;
@@ -89,7 +91,7 @@ class value_time_series extends sandbox_value
 
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
-        source::FLD_ID,
+        source_db::FLD_ID,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
@@ -163,9 +165,9 @@ class value_time_series extends sandbox_value
         $result = parent::row_mapper_multi($db_row, '', self::FLD_ID);
         if ($result) {
             $this->grp()->set_id($db_row[group::FLD_ID]);
-            if ($db_row[source::FLD_ID] > 0) {
+            if ($db_row[source_db::FLD_ID] > 0) {
                 $this->source = new source($this->user());
-                $this->source->set_id($db_row[source::FLD_ID]);
+                $this->source->set_id($db_row[source_db::FLD_ID]);
             }
             $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id()));
         }
