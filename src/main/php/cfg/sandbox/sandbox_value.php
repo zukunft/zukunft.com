@@ -69,6 +69,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_db.php';
 //include_once MODEL_VALUE_PATH . 'value_time.php';
 //include_once MODEL_VALUE_PATH . 'value_text.php';
 //include_once MODEL_VALUE_PATH . 'value_geo.php';
@@ -109,6 +110,7 @@ use cfg\ref\source;
 use cfg\result\result;
 use cfg\result\result_db;
 use cfg\ref\source_db;
+use cfg\value\value_db;
 use cfg\value\value_geo;
 use cfg\value\value;
 use cfg\value\value_text;
@@ -205,22 +207,22 @@ class sandbox_value extends sandbox_multi
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', 'the user specific numeric value change'],
     );
     const FLD_ALL_VALUE_TEXT = array(
-        [value_base::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', 'the text value given by the user'],
+        [value_db::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', 'the text value given by the user'],
     );
     const FLD_ALL_VALUE_TIME = array(
-        [value_base::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NOT_NULL, '', '', 'the timestamp given by the user'],
+        [value_db::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NOT_NULL, '', '', 'the timestamp given by the user'],
     );
     const FLD_ALL_VALUE_GEO = array(
-        [value_base::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NOT_NULL, '', '', 'the geolocation given by the user'],
+        [value_db::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NOT_NULL, '', '', 'the geolocation given by the user'],
     );
     const FLD_ALL_VALUE_TEXT_USER = array(
-        [value_base::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific text value change'],
+        [value_db::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific text value change'],
     );
     const FLD_ALL_VALUE_TIME_USER = array(
-        [value_base::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NULL, '', '', 'the user specific timestamp change'],
+        [value_db::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NULL, '', '', 'the user specific timestamp change'],
     );
     const FLD_ALL_VALUE_GEO_USER = array(
-        [value_base::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, '', '', 'the user specific geolocation change'],
+        [value_db::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, '', '', 'the user specific geolocation change'],
     );
     const FLD_ALL_SOURCE = array(
         [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, 'the source of the value as given by the user'],
@@ -2023,11 +2025,11 @@ class sandbox_value extends sandbox_multi
         if ($this->is_numeric()) {
             $fields[] = self::FLD_VALUE;
         } elseif ($this->is_time_value()) {
-            $fields[] = value_base::FLD_VALUE_TIME;
+            $fields[] = value_db::FLD_VALUE_TIME;
         } elseif ($this->is_text_value()) {
-            $fields[] = value_base::FLD_VALUE_TEXT;
+            $fields[] = value_db::FLD_VALUE_TEXT;
         } elseif ($this->is_geo_value()) {
-            $fields[] = value_base::FLD_VALUE_GEO;
+            $fields[] = value_db::FLD_VALUE_GEO;
         } else {
             $fields[] = self::FLD_VALUE;
         }
@@ -2108,21 +2110,21 @@ class sandbox_value extends sandbox_multi
             if ($sbx->value() !== $this->value()) {
                 if ($do_log) {
                     $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . value_base::FLD_VALUE_TIME,
-                        $cng_fld_cac->id($table_id . value_base::FLD_VALUE_TIME),
+                        sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_TIME,
+                        $cng_fld_cac->id($table_id . value_db::FLD_VALUE_TIME),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 if ($is_update) {
                     $lst->add_field(
-                        value_base::FLD_VALUE_TIME,
+                        value_db::FLD_VALUE_TIME,
                         $this->value(),
                         sql_field_type::TIME,
                         $sbx->number()
                     );
                 } else {
                     $lst->add_field(
-                        value_base::FLD_VALUE_TIME,
+                        value_db::FLD_VALUE_TIME,
                         $this->value(),
                         sql_field_type::TIME
                     );
@@ -2132,21 +2134,21 @@ class sandbox_value extends sandbox_multi
             if ($sbx->value() !== $this->value()) {
                 if ($do_log) {
                     $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . value_base::FLD_VALUE_TEXT,
-                        $cng_fld_cac->id($table_id . value_base::FLD_VALUE_TEXT),
+                        sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_TEXT,
+                        $cng_fld_cac->id($table_id . value_db::FLD_VALUE_TEXT),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 if ($is_update) {
                     $lst->add_field(
-                        value_base::FLD_VALUE_TEXT,
+                        value_db::FLD_VALUE_TEXT,
                         $this->value(),
                         sql_field_type::TEXT,
                         $sbx->value()
                     );
                 } else {
                     $lst->add_field(
-                        value_base::FLD_VALUE_TEXT,
+                        value_db::FLD_VALUE_TEXT,
                         $this->value(),
                         sql_field_type::TEXT
                     );
@@ -2156,21 +2158,21 @@ class sandbox_value extends sandbox_multi
             if ($sbx->value() !== $this->value()) {
                 if ($do_log) {
                     $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . value_base::FLD_VALUE_GEO,
-                        $cng_fld_cac->id($table_id . value_base::FLD_VALUE_GEO),
+                        sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_GEO,
+                        $cng_fld_cac->id($table_id . value_db::FLD_VALUE_GEO),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 if ($is_update) {
                     $lst->add_field(
-                        value_base::FLD_VALUE_GEO,
+                        value_db::FLD_VALUE_GEO,
                         $this->value(),
                         sql_field_type::NUMERIC_FLOAT,
                         $sbx->value()
                     );
                 } else {
                     $lst->add_field(
-                        value_base::FLD_VALUE_GEO,
+                        value_db::FLD_VALUE_GEO,
                         $this->value(),
                         sql_field_type::NUMERIC_FLOAT
                     );
@@ -2241,7 +2243,7 @@ class sandbox_value extends sandbox_multi
             $result[] = group::FLD_ID;
         }
         if ($sbx->number() <> $this->number()) {
-            $result[] = value_base::FLD_VALUE;
+            $result[] = value_db::FLD_VALUE;
         }
         return $result;
     }

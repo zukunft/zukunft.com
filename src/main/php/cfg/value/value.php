@@ -72,6 +72,7 @@ class value extends value_base
     const FLD_USER_COM = 'the user specific numeric value change';
 
     // database field with the sql type specification
+    const FLD_NAMES_STD = value_db::FLD_NAMES_STD;
     const FLD_ALL_VALUE = array(
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, '', '', self::FLD_COM],
     );

@@ -52,6 +52,7 @@ include_once MODEL_LOG_PATH . 'change_values_text_norm.php';
 include_once MODEL_LOG_PATH . 'change_values_text_big.php';
 include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -65,6 +66,7 @@ use cfg\log\change_values_text_norm;
 use cfg\log\change_values_text_prime;
 use cfg\sandbox\sandbox;
 use cfg\ref\source_db;
+use cfg\sandbox\sandbox_multi;
 use cfg\user\user;
 use DateTime;
 use shared\json_fields;
@@ -101,7 +103,7 @@ class value_text extends value_base
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         source_db::FLD_ID,
-        self::FLD_LAST_UPDATE,
+        sandbox_multi::FLD_LAST_UPDATE,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
@@ -109,7 +111,7 @@ class value_text extends value_base
     const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_VALUE,
         source_db::FLD_ID,
-        self::FLD_LAST_UPDATE,
+        sandbox_multi::FLD_LAST_UPDATE,
         sandbox::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );

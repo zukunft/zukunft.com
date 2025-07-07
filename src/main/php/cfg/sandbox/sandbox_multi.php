@@ -110,6 +110,7 @@ include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
+//include_once MODEL_VALUE_PATH . 'value_db.php';
 include_once MODEL_VERB_PATH . 'verb.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
@@ -175,6 +176,7 @@ use cfg\user\user_list;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_base;
+use cfg\value\value_db;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\word;
@@ -3512,9 +3514,9 @@ class sandbox_multi extends db_object_multi_user
         $fld_lst_ex_id_and_val = array_diff($fld_lst_ex_id, [
             change_action::FLD_ID,
             sandbox_multi::FLD_VALUE,
-            value_base::FLD_VALUE_TIME,
-            value_base::FLD_VALUE_TEXT,
-            value_base::FLD_VALUE_GEO,
+            value_db::FLD_VALUE_TIME,
+            value_db::FLD_VALUE_TEXT,
+            value_db::FLD_VALUE_GEO,
             sandbox_multi::FLD_LAST_UPDATE
         ]);
 
@@ -3564,11 +3566,11 @@ class sandbox_multi extends db_object_multi_user
         if ($this->is_numeric()) {
             $val_fld = $fvt_lst_all->get(sandbox_multi::FLD_VALUE, true);
         } elseif ($this->is_time_value()) {
-            $val_fld = $fvt_lst_all->get(value_base::FLD_VALUE_TIME, true);
+            $val_fld = $fvt_lst_all->get(value_db::FLD_VALUE_TIME, true);
         } elseif ($this->is_text_value()) {
-            $val_fld = $fvt_lst_all->get(value_base::FLD_VALUE_TEXT, true);
+            $val_fld = $fvt_lst_all->get(value_db::FLD_VALUE_TEXT, true);
         } elseif ($this->is_geo_value()) {
-            $val_fld = $fvt_lst_all->get(value_base::FLD_VALUE_GEO, true);
+            $val_fld = $fvt_lst_all->get(value_db::FLD_VALUE_GEO, true);
         } else {
             $val_fld = $fvt_lst_all->get(sandbox_multi::FLD_VALUE, true);
         }

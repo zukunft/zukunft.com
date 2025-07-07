@@ -138,7 +138,7 @@ class value_list extends sandbox_value_list
                     $excluded = $db_row[sandbox::FLD_EXCLUDED];
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
-                    if (array_key_exists(value::FLD_VALUE, $db_row)) {
+                    if (array_key_exists(value_db::FLD_VALUE, $db_row)) {
                         $obj_to_add = new value($this->user());
                     } elseif (array_key_exists(value_text::FLD_VALUE, $db_row)) {
                         $obj_to_add = new value_text($this->user());
@@ -426,7 +426,7 @@ class value_list extends sandbox_value_list
         $par_lst = clone $sc->par_list();
 
         // loop over the possible tables where the value might be stored in this pod
-        foreach (value_base::TBL_LIST as $tbl_typ) {
+        foreach (value_db::TBL_LIST as $tbl_typ) {
             // reset but keep the parameter list
             $sc->reset();
             $qp_tbl = $this->load_sql_by_phr_single($sc, $pos_phr, $pos_grp, $pos_usr, $tbl_typ, $par_lst, $sc_par_lst);
@@ -478,9 +478,9 @@ class value_list extends sandbox_value_list
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(value_base::FLD_NAMES);
-        //$sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
-        //$sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+        $sc->set_fields(value_db::FLD_NAMES);
+        //$sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
+        //$sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
         //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word_db::FLD_VALUES) . ' DESC, ' . word_db::FLD_NAME);
         return $qp;
     }
@@ -671,7 +671,7 @@ class value_list extends sandbox_value_list
                     $sc->set_usr_num_fields($num_fld_lst, false);
                     $sc->set_usr_geo_fields($geo_fld_lst, false);
                 }
-                $sc->set_usr_only_fields(value_base::FLD_NAMES_USR_ONLY);
+                $sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
                 for ($pos = 1; $pos <= $max_row_ids; $pos++) {
                     // the array of the phrase ids starts with 0 whereas the phrase id fields start with 1
                     $id_pos = $pos - 1;
@@ -731,11 +731,11 @@ class value_list extends sandbox_value_list
                 }
                 $qp_tbl = $this->load_sql_multi($sc, 'grp_lst', $sc_par_lst);
                 if ($par_offset == 0) {
-                    $sc->set_usr_num_fields(value_base::FLD_NAMES_NUM_USR);
+                    $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
                 } else {
-                    $sc->set_usr_num_fields(value_base::FLD_NAMES_NUM_USR, false);
+                    $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR, false);
                 }
-                $sc->set_usr_only_fields(value_base::FLD_NAMES_USR_ONLY);
+                $sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
                 for ($pos = 1; $pos <= $max_row_ids; $pos++) {
                     // the array of the phrase ids starts with o whereas the phrase id fields start with 1
                     $id_pos = $pos - 1;
@@ -1430,7 +1430,7 @@ class value_list extends sandbox_value_list
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
             $val = new value($this->user());
-            $val->load_by_id($db_val[value::FLD_ID]);
+            $val->load_by_id($db_val[value_db::FLD_ID]);
             if (!$val->check()) {
                 $result = false;
             }

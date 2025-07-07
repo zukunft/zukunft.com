@@ -56,6 +56,7 @@ include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
 include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
 include_once MODEL_RESULT_PATH . 'results.php';
 include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VALUE_PATH . 'value_db.php';
 include_once MODEL_VALUE_PATH . 'value_time.php';
 include_once MODEL_VALUE_PATH . 'value_text.php';
 include_once MODEL_VALUE_PATH . 'value_geo.php';
@@ -161,6 +162,7 @@ use cfg\system\sys_log_status_list;
 use cfg\user\user;
 use cfg\user\user_profile_list;
 use cfg\value\value;
+use cfg\value\value_db;
 use cfg\value\value_geo;
 use cfg\value\value_list;
 use cfg\value\value_text;
@@ -3907,7 +3909,7 @@ class create_test_objects extends test_base
             change_values_prime::class,
             change_values_big::class,
             change_values_norm::class
-            => value::FLD_VALUE,
+            => value_db::FLD_VALUE,
             change_values_time_prime::class,
             change_values_time_big::class,
             change_values_time_norm::class

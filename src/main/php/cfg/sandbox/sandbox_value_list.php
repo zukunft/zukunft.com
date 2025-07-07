@@ -53,6 +53,7 @@ include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VALUE_PATH . 'value_db.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
 //include_once MODEL_VALUE_PATH . 'value_text.php';
@@ -81,6 +82,7 @@ use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_base;
+use cfg\value\value_db;
 use cfg\value\value_list;
 use shared\enum\messages as msg_id;
 use shared\library;
@@ -226,7 +228,7 @@ class sandbox_value_list extends sandbox_list
     {
         // differences between value and result list
         $list_class = value_list::class;
-        $tbl_lst = value_base::TBL_LIST;
+        $tbl_lst = value_db::TBL_LIST;
         if ($class !== value::class) {
             $list_class = result_list::class;
             $tbl_lst = result_db::TBL_LIST;
@@ -438,14 +440,14 @@ class sandbox_value_list extends sandbox_list
         // set the default settings for values
         $val = $sc_typ_lst->value_object($this->user());
         $list_class = value_list::class;
-        $fld_lst = value_base::FLD_NAMES;
+        $fld_lst = value_db::FLD_NAMES;
         $fld_lst_std = $val::FLD_NAMES_STD;
-        $fld_lst_dummy = value_base::FLD_NAMES_STD_DUMMY;
-        $fld_lst_usr_ex_std = value_base::FLD_NAMES_DATE_USR_EX_STD;
-        $fld_lst_usr_num_ex_std = value_base::FLD_NAMES_NUM_USR_EX_STD;
+        $fld_lst_dummy = value_db::FLD_NAMES_STD_DUMMY;
+        $fld_lst_usr_ex_std = value_db::FLD_NAMES_DATE_USR_EX_STD;
+        $fld_lst_usr_num_ex_std = value_db::FLD_NAMES_NUM_USR_EX_STD;
         $fld_lst_usr_txt = $val::FLD_NAMES_USR;
         $fld_lst_usr_num = $val::FLD_NAMES_NUM_USR;
-        $fld_lst_usr_only = value_base::FLD_NAMES_USR_ONLY;
+        $fld_lst_usr_only = value_db::FLD_NAMES_USR_ONLY;
 
         // overwrite the value settings for results
         if (!$lib->is_value($class)) {

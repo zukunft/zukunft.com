@@ -33,8 +33,9 @@
 namespace shared;
 
 include_once SERVICE_PATH . 'config.php';
-include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_CONST_PATH . 'def.php';
+include_once MODEL_REF_PATH . 'source_db.php';
+include_once MODEL_VALUE_PATH . 'value_db.php';
 
 use cfg\component\view_style;
 use cfg\const\def;
@@ -57,6 +58,7 @@ use cfg\system\sys_log_type;
 use cfg\system\system_time;
 use cfg\user\user_official_type;
 use cfg\value\value;
+use cfg\value\value_db;
 use cfg\value\value_geo;
 use cfg\value\value_text;
 use cfg\value\value_time;
@@ -2509,7 +2511,7 @@ class library
                 word_db::FLD_NAME => 'wrd',
                 sandbox_named::FLD_DESCRIPTION => 'des',
                 phrase::FLD_TYPE => 'pty',
-                value_base::FLD_ID => 'grp',
+                value_db::FLD_ID => 'grp',
                 user::FLD_ID => 'usr',
                 source_db::FLD_ID => 'src',
                 sandbox_multi::FLD_VALUE => 'val',

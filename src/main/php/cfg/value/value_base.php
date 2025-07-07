@@ -83,7 +83,6 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_field_list.php';
@@ -125,7 +124,6 @@ include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_RESULT_PATH . 'result_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once MODEL_SYSTEM_PATH . 'job.php';
@@ -166,7 +164,6 @@ use cfg\log\change_values_time_prime;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
 use cfg\ref\source;
-use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_multi;
 use cfg\ref\source_db;
 use cfg\system\log;
@@ -179,7 +176,6 @@ use shared\types\api_type_list;
 use shared\types\protection_type as protect_type_shared;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
@@ -211,103 +207,20 @@ class value_base extends sandbox_value
      * db const
      */
 
-    // object specific database and JSON object field names
-    const FLD_ID = 'group_id';
-    // TODO move the sandbox value object
-    const FLD_VALUE_TEXT = 'text_value';
-    const FLD_VALUE_TIME = 'time_value';
-    const FLD_VALUE_GEO = 'geo_value';
-    const FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
-    const FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
-    const FLD_VALUE_TS_ID = 'value_time_series_id';
-    const FLD_ALL_TIME_SERIES = array(
-        [self::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM],
-    );
-    const FLD_ALL_TIME_SERIES_USER = array(
-        [self::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM_USER],
-    );
+    // forward the const to enable usage of $this::CONST_NAME
+    const FLD_ID = value_db::FLD_ID;
+    const FLD_VALUE_TEXT = value_db::FLD_VALUE_TEXT;
+    const FLD_VALUE_TIME = value_db::FLD_VALUE_TIME;
+    const FLD_VALUE_GEO = value_db::FLD_VALUE_GEO;
 
     // all database field names excluding the id and excluding the user specific fields
-    const FLD_NAMES = array();
-    const FLD_NAMES_STD = array(
-        self::FLD_VALUE,
-        source_db::FLD_ID,
-    );
-    // fields that are not part of the standard result table, but that needs to be included for a correct union field match
-    const FLD_NAMES_STD_DUMMY = array(
-        user::FLD_ID,
-    );
-    // list of the user specific numeric database field names
-    const FLD_NAMES_NUM_USR_EX_STD = array(
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
-    // list of the user specific datetime database field names
-    const FLD_NAMES_DATE_USR_EX_STD = array(
-        self::FLD_LAST_UPDATE
-    );
-    // list of the user specific database text field names for numeric tables and queries
-    const FLD_NAMES_USR = array();
-    // list of the user specific database text field names for text tables and queries
-    const FLD_NAMES_USR_TEXT = array(
-        self::FLD_VALUE_TEXT,
-    );
-    // list of the user specific database text field names for geo point tables and queries
-    const FLD_NAMES_USR_GEO = array(
-        self::FLD_VALUE_GEO,
-    );
-    // list of the user specific numeric database field names for numeric tables and queries
-    const FLD_NAMES_NUM_USR = array(
-        self::FLD_VALUE,
-        source_db::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
-    // list of the user specific numeric database field names for text tables and queries
-    const FLD_NAMES_NUM_USR_TEXT = array(
-        source_db::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
-    // list of the user specific numeric database field names for timetables and queries
-    const FLD_NAMES_NUM_USR_TIME = array(
-        self::FLD_VALUE_TIME,
-        source_db::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
-    // list of the user specific numeric database field names for geo point tables and queries
-    const FLD_NAMES_NUM_USR_GEO = array(
-        source_db::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
-    // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
-        self::FLD_VALUE,
-        source_db::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
-    // list of field names that are only on the user sandbox row
-    // e.g. the standard value does not need the share type, because it is by definition public (even if share types within a group of users needs to be defined, the value for the user group are also user sandbox table)
-    const FLD_NAMES_USR_ONLY = array(
-        sandbox::FLD_CHANGE_USER,
-        sandbox::FLD_SHARE
-    );
-    // list of fixed tables where a value might be stored
-    const TBL_LIST = array(
-        [sql_type::PRIME, sql_type::STANDARD],
-        [sql_type::MOST, sql_type::STANDARD],
-        [sql_type::MOST],
-        [sql_type::PRIME],
-        [sql_type::BIG]
-    );
+    const FLD_NAMES = value_db::FLD_NAMES;
+    const FLD_NAMES_STD = value_db::FLD_NAMES_STD;
+    const FLD_NAMES_USR = value_db::FLD_NAMES_USR;
+    const FLD_NAMES_NUM_USR = value_db::FLD_NAMES_NUM_USR;
+    const FLD_ALL_TIME_SERIES = value_db::FLD_ALL_TIME_SERIES;
+    const FLD_ALL_TIME_SERIES_USER = value_db::FLD_ALL_TIME_SERIES_USER;
+    const ALL_SANDBOX_FLD_NAMES = value_db::ALL_SANDBOX_FLD_NAMES;
 
 
     /*
@@ -389,7 +302,7 @@ class value_base extends sandbox_value
         string $ext,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = self::FLD_ID,
+        string $id_fld = value_db::FLD_ID,
         bool   $one_id_fld = true
     ): bool
     {
@@ -447,7 +360,7 @@ class value_base extends sandbox_value
             }
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific
             $this->set_source_id($db_row[source_db::FLD_ID]);
-            $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE]));
+            $this->set_last_update($lib->get_datetime($db_row[sandbox_multi::FLD_LAST_UPDATE]));
         }
         return $result;
     }
@@ -867,22 +780,22 @@ class value_base extends sandbox_value
         $sc->set_id_field($this->id_field($sc_par_lst));
 
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_fields(value_db::FLD_NAMES);
         if ($this->is_numeric()) {
-            $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+            $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
         } elseif ($this->is_time_value()) {
-            $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR_TIME);
+            $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR_TIME);
         } elseif ($this->is_text_value()) {
-            $sc->set_usr_fields(self::FLD_NAMES_USR_TEXT);
-            $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR_TEXT);
+            $sc->set_usr_fields(value_db::FLD_NAMES_USR_TEXT);
+            $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR_TEXT);
         } elseif ($this->is_geo_value()) {
-            $sc->set_usr_fields(self::FLD_NAMES_USR_GEO);
-            $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR_GEO);
+            $sc->set_usr_fields(value_db::FLD_NAMES_USR_GEO);
+            $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR_GEO);
         } else {
             // fallback option
-            $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+            $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
         }
-        $sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
+        $sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
 
         return $qp;
     }
@@ -897,35 +810,35 @@ class value_base extends sandbox_value
     {
         if ($this->is_numeric()) {
             $fld_lst = array_merge(
-                self::FLD_NAMES,
-                self::FLD_NAMES_NUM_USR,
+                value_db::FLD_NAMES,
+                value_db::FLD_NAMES_NUM_USR,
                 array(user::FLD_ID)
             );
         } elseif ($this->is_time_value()) {
             $fld_lst = array_merge(
-                self::FLD_NAMES,
-                self::FLD_NAMES_NUM_USR_TIME,
+                value_db::FLD_NAMES,
+                value_db::FLD_NAMES_NUM_USR_TIME,
                 array(user::FLD_ID)
             );
         } elseif ($this->is_text_value()) {
             $fld_lst = array_merge(
-                self::FLD_NAMES,
-                self::FLD_NAMES_USR_TEXT,
-                self::FLD_NAMES_NUM_USR_TEXT,
+                value_db::FLD_NAMES,
+                value_db::FLD_NAMES_USR_TEXT,
+                value_db::FLD_NAMES_NUM_USR_TEXT,
                 array(user::FLD_ID)
             );
         } elseif ($this->is_geo_value()) {
             $fld_lst = array_merge(
-                self::FLD_NAMES,
-                self::FLD_NAMES_USR_GEO,
-                self::FLD_NAMES_NUM_USR_GEO,
+                value_db::FLD_NAMES,
+                value_db::FLD_NAMES_USR_GEO,
+                value_db::FLD_NAMES_NUM_USR_GEO,
                 array(user::FLD_ID)
             );
         } else {
             // fallback option
             $fld_lst = array_merge(
-                self::FLD_NAMES,
-                self::FLD_NAMES_NUM_USR,
+                value_db::FLD_NAMES,
+                value_db::FLD_NAMES_NUM_USR,
                 array(user::FLD_ID)
             );
         }
@@ -2004,7 +1917,7 @@ class value_base extends sandbox_value
         $ext = $this->grp()->table_extension();
         $db_con->set_class(self::class, false, $ext);
         $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(value_base::FLD_LAST_UPDATE, sql::NOW, sql_field_type::TIME);
+        $fvt_lst->add_field(sandbox_multi::FLD_LAST_UPDATE, sql::NOW, sql_field_type::TIME);
         $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
         try {
             $db_con->exe_par($qp);
@@ -2065,7 +1978,7 @@ class value_base extends sandbox_value
                 $log->new_value = $this->value();
                 $log->std_value = $std_rec->value();
                 $this->save_set_log_id($log);
-                $log->set_field(self::FLD_VALUE_TEXT);
+                $log->set_field(value_db::FLD_VALUE_TEXT);
                 $result .= $this->save_field_user($db_con, $log);
                 $updated = true;
             }
@@ -2076,7 +1989,7 @@ class value_base extends sandbox_value
                 $log->new_value = $this->value();
                 $log->std_value = $std_rec->value();
                 $this->save_set_log_id($log);
-                $log->set_field(self::FLD_VALUE_GEO);
+                $log->set_field(value_db::FLD_VALUE_GEO);
                 $result .= $this->save_field_user($db_con, $log);
                 $updated = true;
             }
@@ -2087,7 +2000,7 @@ class value_base extends sandbox_value
                 $log->new_value = $this->number();
                 $log->std_value = $std_rec->number();
                 $this->save_set_log_id($log);
-                $log->set_field(self::FLD_VALUE);
+                $log->set_field(value_db::FLD_VALUE);
                 $result .= $this->save_field_user($db_con, $log);
             }
         }
@@ -2310,7 +2223,7 @@ class value_base extends sandbox_value
                 //    $this->set_id($ins_result->get_row_id());
                 //}
                 //$db_con->set_type(self::class);
-                //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp()->id(), $this->user()->id, $this->number, sql::NOW)));
+                //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, value_db::FLD_VALUE, sandbox_multi::FLD_LAST_UPDATE), array($this->grp()->id(), $this->user()->id, $this->number, sql::NOW)));
                 if ($this->is_id_set()) {
                     // update the reference in the log
                     if ($this->grp()->is_prime()) {

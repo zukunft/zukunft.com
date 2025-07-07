@@ -98,6 +98,7 @@ include_once MODEL_REF_PATH . 'ref_db.php';
 //include_once MODEL_USER_PATH . 'user.php';
 //include_once MODEL_USER_PATH . 'user_db.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
+//include_once MODEL_VALUE_PATH . 'value_db.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_VIEW_PATH . 'term_view.php';
@@ -137,6 +138,7 @@ use cfg\ref\ref;
 use cfg\ref\source;
 use cfg\user\user_db;
 use cfg\value\value;
+use cfg\value\value_db;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\user\user;
@@ -560,12 +562,12 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::VALUE) {
                 $db_con->set_class(value::class);
-                foreach (value_base::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (value_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VALUE_USR) {
                 $db_con->set_class(value::class, true);
-                foreach (value_base::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (value_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA) {

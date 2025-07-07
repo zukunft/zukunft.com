@@ -831,7 +831,7 @@ class sql_db
         $result = false;
         if ($this->db_type == sql_db::POSTGRES) {
             try {
-                $this->postgres_link = pg_connect('host=' . SQL_DB_HOST . ' dbname='. SQL_DB_NAME . ' user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
+                $this->postgres_link = pg_connect('host=' . SQL_DB_HOST . ' dbname=' . SQL_DB_NAME . ' user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
                 $result = true;
             } catch (Exception $e) {
                 log_fatal('Cannot connect to database due to ' . $e->getMessage(), 'sql_db open');
@@ -908,31 +908,31 @@ class sql_db
         $result = false;
         $sys_times->switch(system_time_type::DB_WRITE);
 
-        // ask the user for the database server, admin user and pw
         $db_server = SQL_DB_HOST;
-        $db_admin_user = SQL_DB_ADMIN_USER;
-        $db_admin_password = SQL_DB_ADMIN_PASSWD; // would be different form the db user password
-        // connect with db admin user
-        $this->postgres_link = pg_connect('host=' . $db_server . ' user=' . $db_admin_user . ' password=' . $db_admin_password);
-        // create zukunft user
-        $sql_name = 'db_setup_create_role';
-        $sql = resource_file('db/setup/postgres/db_create_user.sql');
+        // try to connect with the zukunft user that has been created by the installation script
+        $conn_str = 'host=' . $db_server . ' dbname=postgres user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
         try {
-            $sql_result = $this->exe($sql);
-            if (!$sql_result) {
-                // show the error message direct to the setup user because database does not yet exist
-                echo 'ERROR: creation of the technical pod user failed ';
-                echo 'due to ' . pg_last_error();
+            $this->postgres_link = pg_connect($conn_str);
+            if ($this->postgres_link === false) {
+                // if the zukunft user is missing
+                if ($this->setup_db_zukunft_user_via_db_admin()) {
+                    // retry to connect with zukunft user
+                    $conn_str = 'host=' . $db_server . ' dbname=postgres user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
+                    $this->postgres_link = pg_connect($conn_str);
+                }
             }
         } catch (Exception $e) {
-            // show the error message direct to the setup user because database does not yet exist
-            echo 'FATAL ERROR: creation of the technical pod user failed ';
+            echo 'cannot connect via zukunft user ';
             echo 'due to ' . $e->getMessage();
+            echo ' retry via db admin';
+            // if the zukunft user connection failed
+            if ($this->setup_db_zukunft_user_via_db_admin()) {
+                // retry to connect with zukunft user
+                $conn_str = 'host=' . $db_server . ' dbname=postgres user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
+                $this->postgres_link = pg_connect($conn_str);
+            }
         }
-        $this->close();
-        // connect with zukunft user
-        $conn_str = 'host=' . $db_server . ' dbname=postgres user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
-        $this->postgres_link = pg_connect($conn_str);
+
         if ($this->postgres_link !== false) {
             $sql = resource_file('db/setup/postgres/db_create_database.sql');
             try {
@@ -949,7 +949,7 @@ class sql_db
             }
         }
         $this->close();
-        // connect with zukunft user
+        // reconnect with zukunft user
         $conn_str = 'host=' . $db_server . ' dbname=' . SQL_DB_NAME . ' user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
         $this->postgres_link = pg_connect($conn_str);
         $db_tmp = new sql_db();
@@ -972,6 +972,34 @@ class sql_db
         $sys_times->switch();
 
         // create the tables and view
+        return $result;
+    }
+
+    function setup_db_zukunft_user_via_db_admin(): bool
+    {
+        // ask the user for the database server admin user and pw as a fallback
+        $result = false;
+        $db_server = SQL_DB_HOST;
+        $db_admin_user = SQL_DB_ADMIN_USER;
+        $db_admin_password = SQL_DB_ADMIN_PASSWD; // would be different form the db user password
+        // connect with db admin user
+        $this->postgres_link = pg_connect('host=' . $db_server . ' user=' . $db_admin_user . ' password=' . $db_admin_password);
+        // create zukunft user
+        $sql_name = 'db_setup_create_role';
+        $sql = resource_file('db/setup/postgres/db_create_user.sql');
+        try {
+            $sql_result = $this->exe($sql);
+            if (!$sql_result) {
+                // show the error message direct to the setup user because database does not yet exist
+                echo 'ERROR: creation of the technical pod user failed ';
+                echo 'due to ' . pg_last_error();
+            }
+        } catch (Exception $e) {
+            // show the error message direct to the setup user because database does not yet exist
+            echo 'FATAL ERROR: creation of the technical pod user failed ';
+            echo 'due to ' . $e->getMessage();
+        }
+        $this->close();
         return $result;
     }
 
@@ -4919,7 +4947,7 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $sql_check .= "TABLE_NAME = '" . $table_name . "';";
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $sql_check .= "TABLE_SCHEMA = '".SQL_DB_NAME_MYSQL."' AND TABLE_NAME = '" . $table_name . "';";
+            $sql_check .= "TABLE_SCHEMA = '" . SQL_DB_NAME_MYSQL . "' AND TABLE_NAME = '" . $table_name . "';";
         } else {
             $msg = 'Unknown database type "' . $this->db_type . '"';
             log_err($msg, 'sql_db->has_column');
@@ -4947,7 +4975,7 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $sql_check = "SELECT TRUE FROM pg_attribute WHERE attrelid = '" . $table_name . "'::regclass AND  attname = '" . $column_name . "' AND NOT attisdropped ";
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $sql_check = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '".SQL_DB_NAME_MYSQL."' AND TABLE_NAME = '" . $table_name . "' AND COLUMN_NAME = '" . $column_name . "';";
+            $sql_check = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" . SQL_DB_NAME_MYSQL . "' AND TABLE_NAME = '" . $table_name . "' AND COLUMN_NAME = '" . $column_name . "';";
         } else {
             $msg = 'Unknown database type "' . $this->db_type . '"';
             log_err($msg, 'sql_db->has_column');
@@ -4991,9 +5019,9 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $sql = "SELECT column_name FROM information_schema.columns WHERE table_name   = '" . $tbl_name . "';";
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '".SQL_DB_NAME_MYSQL."' AND TABLE_NAME = '" . $tbl_name . "';";
+            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" . SQL_DB_NAME_MYSQL . "' AND TABLE_NAME = '" . $tbl_name . "';";
         } else {
-            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '".SQL_DB_NAME_MYSQL."' AND TABLE_NAME = '" . $tbl_name . "';";
+            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" . SQL_DB_NAME_MYSQL . "' AND TABLE_NAME = '" . $tbl_name . "';";
         }
         $sql_result = $this->get_internal($sql);
         foreach ($sql_result as $row) {
@@ -5035,12 +5063,12 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $sql_check = "SELECT" . " TRUE 
                             FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS 
-                           WHERE CONSTRAINT_CATALOG = '".SQL_DB_NAME."' 
+                           WHERE CONSTRAINT_CATALOG = '" . SQL_DB_NAME . "' 
                              AND CONSTRAINT_NAME = '" . $key_name . "';";
         } elseif ($this->db_type == sql_db::MYSQL) {
             $sql_check = "SELECT" . " TRUE 
                             FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS 
-                           WHERE CONSTRAINT_SCHEMA = '".SQL_DB_NAME_MYSQL."' 
+                           WHERE CONSTRAINT_SCHEMA = '" . SQL_DB_NAME_MYSQL . "' 
                              AND TABLE_NAME = '" . $table_name . "' 
                              AND CONSTRAINT_NAME = '" . $key_name . "';";
         } else {
@@ -5385,7 +5413,7 @@ class sql_db
             $qp->sql .= " table_name = '" . $table_name . "';";
             $qp->name .= $table_name;
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $qp->sql .= " TABLE_SCHEMA = '".SQL_DB_NAME_MYSQL."' AND TABLE_NAME = '" . $table_name . "';";
+            $qp->sql .= " TABLE_SCHEMA = '" . SQL_DB_NAME_MYSQL . "' AND TABLE_NAME = '" . $table_name . "';";
             $qp->name .= $table_name;
         } else {
             $qp->sql = '';
