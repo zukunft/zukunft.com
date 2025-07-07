@@ -16,10 +16,8 @@ This program should
 Development installation
 ------------------------
 
-Target installation (to be tested):
-To install this version 0.0.3 on a debian system (https://wiki.debian.org/):
+To install this version 0.0.3 on a debian system (https://wiki.debian.org/) do:
 
-Steps:
 1. Clone the repository:
    ```bash
    git clone -b develop https://github.com/zukunft/zukunft.com.git

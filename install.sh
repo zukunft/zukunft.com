@@ -254,10 +254,14 @@ downloadAndInstallZukunft() {
     php "$WWW_ROOT/test/reset_db.php"
 
     # TODO check result and create warning if it does not end with
+    # TODO fix the errors on the first run that are caused e.g. by the missing db rows
     #      0 test errors
     #      0 internal errors
 
     # test the zukunft.com
+    php "$WWW_ROOT/test/test.php"
+
+    # TODO fix the errors on the second run that are caused e.g. by the missing api
     php "$WWW_ROOT/test/test.php"
 
     # TODO check result and create warning if it does not end with
