@@ -835,17 +835,25 @@ class sql_db
             try {
                 $conn_str = $this->pg_conn_str($db_name);
                 $this->postgres_link = pg_connect($conn_str);
-                $result = true;
+                if ($this->postgres_link !== false) {
+                    $result = true;
+                } else {
+                    log_fatal('Cannot connect ' . $this->pg_conn_desc(), 'sql_db->open');
+                }
             } catch (Exception $e) {
                 log_fatal('Cannot connect ' . $this->pg_conn_desc() .
-                    ' due to ' . $e->getMessage(), 'sql_db open');
+                    ' due to ' . $e->getMessage(), 'sql_db->open');
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
             $this->mysql = mysqli_connect(SQL_DB_HOST,
                 SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, SQL_DB_NAME_MYSQL)
             or die('Could not connect ' . $this->mysql_conn_desc() .
                 ' ' . mysqli_error($this->mysql));
-            $result = true;
+            if ($this->mysql !== false) {
+                $result = true;
+            } else {
+                log_fatal('Cannot connect ' . $this->mysql_conn_desc(), 'sql_db->open');
+            }
         } else {
             log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
         }
@@ -1058,7 +1066,7 @@ class sql_db
             } catch (Exception $e) {
                 // show the error message direct to the setup user because database does not yet exist
                 log_fatal('creation of the database failed due to ' . $e->getMessage(),
-                'sql_db->setup');
+                    'sql_db->setup');
             }
             $this->close();
         }
