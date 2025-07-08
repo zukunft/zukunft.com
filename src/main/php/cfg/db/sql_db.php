@@ -290,6 +290,7 @@ use Exception;
 use mysqli;
 use mysqli_result;
 use PDOException;
+use PgSql\Connection;
 use shared\const\triples;
 use shared\const\users;
 use shared\const\words;
@@ -305,7 +306,7 @@ class sql_db
 {
 
     // these databases can be used at the moment (must be the same as in zu_lib)
-    const POSTGRES = "Postgres";
+    const POSTGRES = "postgres";
     const MYSQL = "MySQL";
     const DB_LIST = [POSTGRES, MYSQL];
 
@@ -617,9 +618,8 @@ class sql_db
      */
 
     public ?string $db_type = null;                 // the database type which should be used for this connection e.g. Postgres or MYSQL
-    // TODO change type to PgSql\Connection with php 8.1
-    public $postgres_link;                          // the link object to the database
-    public mysqli $mysql;                           // the MySQL object to the database
+    public connection|bool $postgres_link;          // the link object to the database
+    public mysqli|bool $mysql;                      // the MySQL object to the database
 
     private int $reconnect_delay = 0;               // number of seconds of the last reconnect retry delay
 
@@ -712,6 +712,8 @@ class sql_db
     function __construct()
     {
         $this->db_type = sql_db::POSTGRES;
+        $this->postgres_link = false;
+        $this->mysql = false;
     }
 
     /*
@@ -824,26 +826,144 @@ class sql_db
      * open the database link
      * @return bool true if the database has successfully been connected
      */
-    function open(): bool
+    function open(string $db_name = SQL_DB_NAME): bool
     {
         log_debug();
 
         $result = false;
         if ($this->db_type == sql_db::POSTGRES) {
             try {
-                $this->postgres_link = pg_connect('host=' . SQL_DB_HOST . ' dbname=' . SQL_DB_NAME . ' user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
+                $conn_str = $this->pg_conn_str($db_name);
+                $this->postgres_link = pg_connect($conn_str);
                 $result = true;
             } catch (Exception $e) {
-                log_fatal('Cannot connect to database due to ' . $e->getMessage(), 'sql_db open');
+                log_fatal('Cannot connect ' . $this->pg_conn_desc() .
+                    ' due to ' . $e->getMessage(), 'sql_db open');
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $this->mysql = mysqli_connect(SQL_DB_HOST, SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, SQL_DB_NAME_MYSQL) or die('Could not connect: ' . mysqli_error($this->mysql));
+            $this->mysql = mysqli_connect(SQL_DB_HOST,
+                SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, SQL_DB_NAME_MYSQL)
+            or die('Could not connect ' . $this->mysql_conn_desc() .
+                ' ' . mysqli_error($this->mysql));
             $result = true;
         } else {
             log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
         }
 
         return $result;
+    }
+
+    /**
+     * open the database link using general database admin user
+     * @return bool true if the database has successfully been connected
+     */
+    function open_via_db_admin(): bool
+    {
+        log_debug();
+
+        $result = false;
+        if ($this->db_type == sql_db::POSTGRES) {
+            try {
+                $this->postgres_link = pg_connect($this->pg_conn_str_admin());
+                $result = true;
+            } catch (Exception $e) {
+                log_fatal('Cannot connect ' . $this->pg_conn_desc() .
+                    ' due to ' . $e->getMessage(), 'sql_db open');
+            }
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $this->mysql = mysqli_connect(SQL_DB_HOST,
+                SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, SQL_DB_NAME_MYSQL)
+            or die('Could not connect ' . $this->mysql_conn_desc() .
+                ' ' . mysqli_error($this->mysql));
+            $result = true;
+        } else {
+            log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return bool true if the database connection is open
+     */
+    function is_open(): bool
+    {
+        $result = false;
+        if ($this->db_type == sql_db::POSTGRES) {
+            if ($this->postgres_link !== false) {
+                $result = true;
+            }
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            if ($this->mysql !== false) {
+                $result = true;
+            }
+        } else {
+            log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the postgres connection string for the technical zukunft user
+     */
+    private function pg_conn_str(string $db_name = SQL_DB_NAME): string
+    {
+        return
+            'host=' . SQL_DB_HOST .
+            ' dbname=' . $db_name .
+            ' user=' . SQL_DB_USER .
+            ' password=' . SQL_DB_PASSWD;
+    }
+
+    /**
+     * @return string the postgres connection description for the technical zukunft user
+     *                without the full password for logging
+     */
+    private function pg_conn_desc(string $db_name = SQL_DB_NAME): string
+    {
+        return
+            'user ' . SQL_DB_USER .
+            ' (' . substr(SQL_DB_PASSWD, 0, 3) . ') ' .
+            ' to database ' . $db_name .
+            '@' . SQL_DB_HOST;
+    }
+
+    /**
+     * @return string the postgres admin connection description for the technical zukunft user
+     *                without the full password for logging
+     */
+    private function pg_conn_desc_admin(): string
+    {
+        return
+            'user ' . SQL_DB_ADMIN_USER .
+            ' (' . substr(SQL_DB_ADMIN_PASSWD, 0, 3) . ') ' .
+            ' to database ' . SQL_DB_ADMIN_DB .
+            '@' . SQL_DB_HOST;
+    }
+
+    /**
+     * @return string the MySQL connection description for the technical zukunft user
+     *                without the full password for logging
+     */
+    private function mysql_conn_desc(): string
+    {
+        return
+            'user ' . SQL_DB_USER_MYSQL .
+            ' (' . substr(SQL_DB_PASSWD_MYSQL, 0, 3) . ') ' .
+            ' to database ' . SQL_DB_NAME_MYSQL .
+            '@' . SQL_DB_HOST;
+    }
+
+    /**
+     * @return string the postgres connection string for the postgres admin user
+     */
+    private function pg_conn_str_admin(): string
+    {
+        return
+            'host=' . SQL_DB_HOST .
+            ' dbname=' . SQL_DB_ADMIN_DB .
+            ' user=' . SQL_DB_ADMIN_USER .
+            ' password=' . SQL_DB_ADMIN_PASSWD;
     }
 
     /**
@@ -882,9 +1002,9 @@ class sql_db
     {
         if ($this->db_type == sql_db::POSTGRES) {
             // TODO null check can be removed once the type declaration is set to PgSql\Connection using php 8.1
-            if ($this->postgres_link != null) {
+            if ($this->postgres_link !== false) {
                 pg_close($this->postgres_link);
-                $this->postgres_link = null;
+                $this->postgres_link = false;
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
             mysqli_close($this->mysql);
@@ -892,12 +1012,12 @@ class sql_db
             log_err('Database type ' . $this->db_type . ' not yet implemented');
         }
 
-
         log_debug("done");
     }
 
     /**
-     * create the technical database user and the database structure for the zukunft.com pod
+     * create the technical database user
+     * and the database structure for the zukunft.com pod
      *
      * @return bool true if the pod setup has been successful
      */
@@ -908,70 +1028,53 @@ class sql_db
         $result = false;
         $sys_times->switch(system_time_type::DB_WRITE);
 
-        $db_server = SQL_DB_HOST;
-        // try to connect with the zukunft user that has been created by the installation script
-        $conn_str = 'host=' . $db_server . ' dbname=postgres user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
-        try {
-            $this->postgres_link = pg_connect($conn_str);
-            if ($this->postgres_link === false) {
-                // if the zukunft user is missing
-                if ($this->setup_db_zukunft_user_via_db_admin()) {
-                    // retry to connect with zukunft user
-                    $conn_str = 'host=' . $db_server . ' dbname=postgres user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
-                    $this->postgres_link = pg_connect($conn_str);
-                }
-            }
-        } catch (Exception $e) {
-            echo 'cannot connect via zukunft user ';
-            echo 'due to ' . $e->getMessage();
-            echo ' retry via db admin';
-            // if the zukunft user connection failed
+        // try to connect again with the zukunft user
+        // that should have been created by the installation script
+        if (!$this->open()) {
+            // create the zukunft database user
             if ($this->setup_db_zukunft_user_via_db_admin()) {
-                // retry to connect with zukunft user
-                $conn_str = 'host=' . $db_server . ' dbname=postgres user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
-                $this->postgres_link = pg_connect($conn_str);
+                // retry to connect with zukunft user but with the standard database
+                if ($this->open($this->database_name_of_the_db_admin_user())) {
+                    log_warning('database user has unexpected been recreated');
+                } else {
+                    log_fatal('database user cannot be created', 'sql_db->setup');
+                }
             }
         }
 
-        if ($this->postgres_link !== false) {
-            $sql = resource_file('db/setup/postgres/db_create_database.sql');
+        // try to create the database
+        // that should have been created by the installation script
+        if (!$this->is_open()) {
+            log_fatal('cannot create database with the zukunft user because reopen failed', 'sql_db->setup');
+        } else {
+            $sql = $this->sql_to_create_database();
             try {
                 $sql_result = $this->exe($sql);
                 if (!$sql_result) {
                     // show the error message direct to the setup user because database does not yet exist
-                    echo 'ERROR: creation of the database failed ';
-                    echo 'due to ' . pg_last_error();
+                    log_fatal('creation of the database failed due to ' . pg_last_error(),
+                        'sql_db->setup');
                 }
             } catch (Exception $e) {
                 // show the error message direct to the setup user because database does not yet exist
-                echo 'FATAL ERROR: creation of the database failed ';
-                echo 'due to ' . $e->getMessage();
+                log_fatal('creation of the database failed due to ' . $e->getMessage(),
+                'sql_db->setup');
             }
+            $this->close();
         }
-        $this->close();
-        // reconnect with zukunft user
-        $conn_str = 'host=' . $db_server . ' dbname=' . SQL_DB_NAME . ' user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
-        $this->postgres_link = pg_connect($conn_str);
-        $db_tmp = new sql_db();
-        if ($this->postgres_link !== false) {
-            $sql = resource_file(DB_RES_SUB_PATH . DB_SETUP_SUB_PATH . $db_tmp->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
-            try {
-                $sql_result = $this->exe($sql);
-                if (!$sql_result) {
-                    // show the error message direct to the setup user because database does not yet exist
-                    echo 'ERROR: creation of the database failed ';
-                    echo 'due to ' . pg_last_error();
-                }
-            } catch (Exception $e) {
-                // show the error message direct to the setup user because database does not yet exist
-                echo 'FATAL ERROR: creation of the database failed ';
-                echo 'due to ' . $e->getMessage();
+
+        // reopen the database connection with the zukunft user and the zukunft database
+        // and try to create the database structure
+        if (!$this->open()) {
+            log_fatal('reopening of the database connection with the zukunft user failed', 'sql_db->setup');
+        } else {
+            $usr_msg = $this->setup_db();
+            if ($usr_msg->is_ok()) {
+                $result = true;
             }
-            $result = true;
         }
         $sys_times->switch();
 
-        // create the tables and view
         return $result;
     }
 
@@ -979,27 +1082,27 @@ class sql_db
     {
         // ask the user for the database server admin user and pw as a fallback
         $result = false;
-        $db_server = SQL_DB_HOST;
-        $db_admin_user = SQL_DB_ADMIN_USER;
-        $db_admin_password = SQL_DB_ADMIN_PASSWD; // would be different form the db user password
-        // connect with db admin user
-        $this->postgres_link = pg_connect('host=' . $db_server . ' user=' . $db_admin_user . ' password=' . $db_admin_password);
-        // create zukunft user
-        $sql_name = 'db_setup_create_role';
-        $sql = resource_file('db/setup/postgres/db_create_user.sql');
-        try {
-            $sql_result = $this->exe($sql);
-            if (!$sql_result) {
+        // connect with general db admin user
+        if ($this->open_via_db_admin()) {
+
+            // create zukunft user
+            $sql = $this->sql_to_create_database_role();
+            try {
+                $sql_result = $this->exe($sql);
+                if (!$sql_result) {
+                    // show the error message direct to the setup user because database does not yet exist
+                    echo 'ERROR: creation of the technical pod user failed ';
+                    echo 'due to ' . pg_last_error();
+                } else {
+                    $result = true;
+                }
+            } catch (Exception $e) {
                 // show the error message direct to the setup user because database does not yet exist
-                echo 'ERROR: creation of the technical pod user failed ';
-                echo 'due to ' . pg_last_error();
+                echo 'FATAL ERROR: creation of the technical pod user failed ';
+                echo 'due to ' . $e->getMessage();
             }
-        } catch (Exception $e) {
-            // show the error message direct to the setup user because database does not yet exist
-            echo 'FATAL ERROR: creation of the technical pod user failed ';
-            echo 'due to ' . $e->getMessage();
+            $this->close();
         }
-        $this->close();
         return $result;
     }
 
@@ -1017,7 +1120,7 @@ class sql_db
         $usr_msg = new user_message();
 
         // create the tables, db indexes and foreign keys
-        $sql = resource_file(DB_RES_SUB_PATH . DB_SETUP_SUB_PATH . $this->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
+        $sql = $this->sql_to_create_database_structure();
         try {
             // because no log yet exists here echo instead of log_echo() is used
             echo 'Run db setup sql script' . "\n";
@@ -4863,7 +4966,8 @@ class sql_db
                 if (!isset($this->mysql)) {
                     $result = $this->sql_escape($result);
                 } else {
-                    $result = mysqli_real_escape_string($this->mysql, $result);
+                    //$result = mysqli_real_escape_string($this->mysql, $result);
+                    $result = str_replace("'", "\'", $result);
                 }
 
                 // undo the double high quote escape char, because this is not needed if the string is capsuled by single high quote
@@ -5816,5 +5920,75 @@ class sql_db
         return $result;
     }
 
+
+    /*
+     * db type const
+     */
+
+    /**
+     * depending on the used database type
+     * the name of the database that is always been expected in the database
+     * @return string with the database name e.g. postgres for postgres
+     */
+    private function database_name_of_the_db_admin_user(): string
+    {
+        if ($this->db_type == sql_db::POSTGRES) {
+            $db_name = SQL_DB_ADMIN_DB;
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $db_name = SQL_DB_ADMIN_DB_MYSQL;
+        } else {
+            $db_name = SQL_DB_ADMIN_DB;
+            log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
+        }
+        return $db_name;
+    }
+
+    /**
+     * depending on the used database type
+     * the sql statement to create a database role
+     * @return string with the sql e.g. CREATE ROLE zukunft
+     */
+    private function sql_to_create_database_role(): string
+    {
+        return $this->sql_setup_file(files::DB_ROLE_FILE);
+    }
+
+    /**
+     * depending on the used database type
+     * the sql statement to create a database itself
+     * @return string with the sql e.g. CREATE ROLE zukunft
+     */
+    private function sql_to_create_database(): string
+    {
+        return $this->sql_setup_file(files::DB_CREATE_FILE);
+    }
+
+    /**
+     * depending on the used database type
+     * the sql statement to create a database structure
+     * @return string with the sql e.g. CREATE ROLE zukunft
+     */
+    public function sql_to_create_database_structure(): string
+    {
+        return $this->sql_setup_file(files::DB_STRUCTURE_FILE);
+    }
+
+    /**
+     * depending on the used database type
+     * a sql setup statement
+     * @return string with the sql e.g. CREATE ROLE zukunft
+     */
+    private function sql_setup_file(string $file_name): string
+    {
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql = file_get_contents(files::DB_SETUP_PG_PATH . $file_name);
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $sql = file_get_contents(files::DB_SETUP_MYSQL_PATH . $file_name);
+        } else {
+            $sql = file_get_contents(files::DB_SETUP_PG_PATH . $file_name);
+            log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
+        }
+        return $sql;
+    }
 
 }

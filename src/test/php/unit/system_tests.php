@@ -523,11 +523,13 @@ class system_tests
                         }
                     }
                     if (!$found) {
-                        $sub_path = $lib->str_right_of($base_path, '../');
-                        $test_name = 'includes missing in ' . $path . '\\' . $class
-                            . ' in ' . $sub_path . $code_file
-                            . ' (' . $pos . ' of ' . count($code_files) . ')';
-                        $t->assert($test_name, '', $class);
+                        if (!in_array($path . '\\' . $class,PATH_NO_INCLUDE)) {
+                            $sub_path = $lib->str_right_of($base_path, '../');
+                            $test_name = 'includes missing in ' . $path . '\\' . $class
+                                . ' in ' . $sub_path . $code_file
+                                . ' (' . $pos . ' of ' . count($code_files) . ')';
+                            $t->assert($test_name, '', $class);
+                        }
                     }
                 } else {
                     log_debug($class . ' is expected to be a PHP default library');

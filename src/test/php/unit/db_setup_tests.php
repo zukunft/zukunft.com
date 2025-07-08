@@ -55,7 +55,7 @@ class db_setup_tests
         $db = new sql_db();
         foreach (sql_db::DB_LIST as $db_type) {
             $db->db_type = $db_type;
-            $sql_fixed = resource_file(DB_RES_SUB_PATH . DB_SETUP_SUB_PATH . $db->path($db_type) . DB_SETUP_SQL_FILE);
+            $sql_fixed = $db->sql_to_create_database_structure();
             $sql_fixed_trim = $lib->trim_sql($sql_fixed);
             foreach (sql_db::DB_TABLE_CLASSES as $class) {
                 $name = $lib->class_to_name($class);

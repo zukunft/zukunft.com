@@ -31,8 +31,10 @@
 
 namespace unit;
 
+include_once MODEL_CONST_PATH . 'files.php';
 include_once TEST_CONST_PATH . 'files.php';
 
+use cfg\const\files;
 use cfg\db\sql_creator;
 use cfg\formula\formula;
 use html\user\user;
@@ -52,6 +54,13 @@ class sql_tests
         // start the test section (ts)
         $ts = 'unit sql ';
         $t->header($ts);
+
+        $t->subheader($ts . 'role');
+        $test_name = ' user role postgres';
+        $created = $sc->create_db_role(SQL_DB_USER_DEFAULT, SQL_DB_PASSWD_FALLBACK);
+        $expected = file_get_contents(files::DB_SETUP_PG_PATH . files::DB_ROLE_FILE);
+        $t->assert_sql($test_name, $created, $expected);
+        //$test_name = ' user role mysql';
 
         $t->subheader($ts . 'count');
         $test_name = ' count of formulas';

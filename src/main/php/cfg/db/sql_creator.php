@@ -5652,6 +5652,32 @@ class sql_creator
 
 
     /*
+     * db roles
+     */
+
+    /**
+     * create the SQL statement to add a role to the database
+     * TODO review and test the MySQL role
+     * @param string $name
+     * @param string $pw
+     * @return string the sql statement to create a role
+     */
+    function create_db_role(string $name, string $pw): string
+    {
+        $sql = sql::ROLE_CREATE . ' ' . $name . ' ';
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql .= sql::ROLE_WITH . ' ' . sql::PASSWORD . $pw . sql::PASSWORD_END;
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $sql .= sql::ROLE_WITH_MYSQL . ' ' . sql::PASSWORD . $pw . sql::PASSWORD_END;
+        } else {
+            log_err('Unexpected database type ' . $this->db_type);
+        }
+        $sql .= sql::SEP;
+        return $sql;
+    }
+
+
+    /*
      * internal helper
      */
 

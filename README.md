@@ -92,7 +92,7 @@ To install this version 0.0.3 use a LAPP or (LAMP for MySQL) server (https://wik
 2) copy all files of bootstrap 4.1.3 or higher to /var/www/html/lib_external/bootstrap/4.1.3/
 3) copy all files of fontawesome to /var/www/html/lib_external/fontawesome/
 4) create a user "zukunft_db_root" in Postgres (or MySQL) and remember the password
-5) change the password "xxx" in db_link/zu_lib_sql_link.php with the password used in 2)
+5) change the password "xxx" in .env with the password used in 2)
 6) run the script "src/test/reset_db.php" local on the server and if the result is 0 test errors 0 internal errors delete the script
 7) test if the installation is running fine by calling http://yourserver.com/test/test.php 
    (until this version 0.0.3 is finished try to run test.php in a terminal in case of errors)
