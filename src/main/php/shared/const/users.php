@@ -61,7 +61,7 @@ class users
     const SYSTEM_ADMIN_COM = 'the fallback zukunft.com admin user that should only be used in a break-glass event to recover other admin users';
     const SYSTEM_ADMIN_CODE_ID = 'admin';
     const SYSTEM_ADMIN_EMAIL = 'admin@zukunft.com';
-    const SYSTEM_ADMIN_IP = 'localhost'; // as a second line of defence to prevent remote manipulation
+    const SYSTEM_ADMIN_IP = SYSTEM_ADMIN_IP;
 
     // the user that performs the system tests
     const SYSTEM_TEST_ID = 3;

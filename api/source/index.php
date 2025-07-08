@@ -53,43 +53,46 @@ use shared\types\api_type;
 // open database
 $db_con = prg_start("api/ref", "", false);
 
-// get the parameters
-$src_id = $_GET[api::URL_VAR_ID] ?? 0;
-$src_name = $_GET[api::URL_VAR_NAME] ?? '';
-$src_code_id = $_GET[api::URL_VAR_CODE_ID] ?? '';
+if ($db_con->is_open()) {
 
-// load the session user parameters
-$msg = '';
-$usr = new user;
-$msg .= $usr->get();
+    // get the parameters
+    $src_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $src_name = $_GET[api::URL_VAR_NAME] ?? '';
+    $src_code_id = $_GET[api::URL_VAR_CODE_ID] ?? '';
 
-$ctrl = new controller();
-$result = ''; // reset the json message string
+    // load the session user parameters
+    $msg = '';
+    $usr = new user;
+    $msg .= $usr->get();
+
+    $ctrl = new controller();
+    $result = ''; // reset the json message string
 
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
 
-    // load the source from the database for GET, UPDATE and DELETE
-    $src = new source($usr);
-    if ($src_id > 0) {
-        $src->load_by_id($src_id);
-        $result = $src->api_json([api_type::HEADER], $usr);
-    } elseif ($src_name != '') {
-        $src->load_by_name($src_name);
-        $result = $src->api_json([api_type::HEADER], $usr);
-    } elseif ($src_code_id != '') {
-        $src->load_by_code_id($src_code_id);
-        $result = $src->api_json([api_type::HEADER], $usr);
+        // load the source from the database for GET, UPDATE and DELETE
+        $src = new source($usr);
+        if ($src_id > 0) {
+            $src->load_by_id($src_id);
+            $result = $src->api_json([api_type::HEADER], $usr);
+        } elseif ($src_name != '') {
+            $src->load_by_name($src_name);
+            $result = $src->api_json([api_type::HEADER], $usr);
+        } elseif ($src_code_id != '') {
+            $src->load_by_code_id($src_code_id);
+            $result = $src->api_json([api_type::HEADER], $usr);
+        } else {
+            $msg = 'Cannot load source because id, name and code id is missing';
+        }
+
+        // add, update or delete the source
+        $ctrl->get_json($result, $msg);
+
     } else {
-        $msg = 'Cannot load source because id, name and code id is missing';
+        $ctrl->not_permitted($msg);
     }
 
-    // add, update or delete the source
-    $ctrl->get_json($result, $msg);
-
-} else {
-    $ctrl->not_permitted($msg);
+    prg_end_api($db_con);
 }
-
-prg_end_api($db_con);

@@ -58,35 +58,39 @@ global $db_con;
 // open database and display header
 $db_con = prg_start("unit tests", '', false);
 
-// load the session user parameters
-$start_usr = new user;
-$result = $start_usr->get();
+if ($db_con->is_open()) {
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($start_usr->id() > 0) {
-    if ($start_usr->is_admin()) {
+    // load the session user parameters
+    $start_usr = new user;
+    $result = $start_usr->get();
 
-        global $errors;
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($start_usr->id() > 0) {
+        if ($start_usr->is_admin()) {
 
-        // init tests
-        $errors = 0;
-        $t = new all_tests();
-        $t->header('Start zukunft.com unit tests');
+            global $errors;
 
-        // run a list of selected tests
-        $t->run_unit();
+            // init tests
+            $errors = 0;
+            $t = new all_tests();
+            $t->header('Start zukunft.com unit tests');
 
-        // display the test results
-        if ($t->format == format::HTML) {
-            $t->dsp_result_html();
+            // run a list of selected tests
+            $t->run_unit();
+
+            // display the test results
+            if ($t->format == format::HTML) {
+                $t->dsp_result_html();
+            } else {
+                $t->dsp_result();
+            }
+
         } else {
-            $t->dsp_result();
+            echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.' . "\n";
         }
-
-    } else {
-        echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.' . "\n";
     }
-}
 
-// Closing connection
-prg_end($db_con, false);
+    // Closing connection
+    prg_end($db_con, false);
+
+}

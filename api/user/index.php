@@ -54,38 +54,41 @@ use shared\api;
 // open database
 $db_con = prg_start("api/user", "", false);
 
-// get the parameters
-$usr_id = $_GET[api::URL_VAR_ID] ?? 0;
-$usr_name = $_GET[api::URL_VAR_NAME] ?? '';
-$usr_email = $_GET[api::URL_VAR_EMAIL] ?? '';
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // get the parameters
+    $usr_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $usr_name = $_GET[api::URL_VAR_NAME] ?? '';
+    $usr_email = $_GET[api::URL_VAR_EMAIL] ?? '';
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    $db_usr = new user();
-    if ($usr_id != 0) {
-        $db_usr->load_by_id($usr_id);
-        $result = $db_usr->api_json();
-    } elseif ($usr_name != '') {
-        $db_usr->load_by_name($usr_name);
-        $result = $db_usr->api_json();
-    } elseif ($usr_email != '') {
-        $db_usr->load_by_email($usr_email);
-        $result = $db_usr->api_json();
-    } else {
-        $msg = 'user id or name missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        $db_usr = new user();
+        if ($usr_id != 0) {
+            $db_usr->load_by_id($usr_id);
+            $result = $db_usr->api_json();
+        } elseif ($usr_name != '') {
+            $db_usr->load_by_name($usr_name);
+            $result = $db_usr->api_json();
+        } elseif ($usr_email != '') {
+            $db_usr->load_by_email($usr_email);
+            $result = $db_usr->api_json();
+        } else {
+            $msg = 'user id or name missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

@@ -54,30 +54,33 @@ use shared\api;
 // open database
 $db_con = prg_start("api/language", "", false);
 
-// get the parameters
-$lan_typ_id = $_GET[api::URL_VAR_ID] ?? 0;
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the html code var
+    // get the parameters
+    $lan_typ_id = $_GET[api::URL_VAR_ID] ?? 0;
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the html code var
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if ($lan_typ_id != '') {
-        $lan_typ = new language(language::DEFAULT);
-        $lan_typ->load_by_id($lan_typ_id);
-        $result = $lan_typ->api_json();
-    } else {
-        $msg = 'language id is missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        if ($lan_typ_id != '') {
+            $lan_typ = new language(language::DEFAULT);
+            $lan_typ->load_by_id($lan_typ_id);
+            $result = $lan_typ->api_json();
+        } else {
+            $msg = 'language id is missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

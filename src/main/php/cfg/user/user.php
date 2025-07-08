@@ -1039,9 +1039,6 @@ class user extends db_id_object_non_sandbox
                 }
             } else {
                 // else use the IP address (for testing don't overwrite any testing ip)
-                global $usr_pro_cac;
-                global $db_con;
-
                 $this->load_by_ip($this->get_ip());
                 if ($this->id() <= 0) {
                     // use the ip address as the username and add the user
@@ -2511,12 +2508,16 @@ class user extends db_id_object_non_sandbox
                 );
             }
             global $usr_pro_cac;
-            $lst->add_type_field(
-                user_db::FLD_PROFILE,
-                type_object::FLD_NAME,
-                $this->profile_id(),
-                $db_usr->profile_id(),
-                $usr_pro_cac);
+            if ($usr_pro_cac == null) {
+                log_fatal('no user profile found', 'user->db_fields_changed');
+            } else {
+                $lst->add_type_field(
+                    user_db::FLD_PROFILE,
+                    type_object::FLD_NAME,
+                    $this->profile_id(),
+                    $db_usr->profile_id(),
+                    $usr_pro_cac);
+            }
         }
 
         /* TODO the confirmation levels should created and be added

@@ -38,7 +38,21 @@ const MYSQL = "MySQL";
 const SQL_DB_NAME_DEFAULT = 'zukunft';
 const SQL_DB_HOST_DEFAULT = '127.0.0.1';
 const SQL_DB_USER_DEFAULT = 'zukunft';
-const SQL_DB_PASSWD_FALLBACK = 'zukunft';
+const SQL_DB_PASSWD_FALLBACK = 'change_me';
+const SYSTEM_ADMIN_IP_FALLBACK = 'localhost';
+
+// temp solution to force reading the .env file
+$env = parse_ini_file(ROOT_PATH . '.env');
+foreach ($env as $key => $var) {
+    $line = $key . '=' .$var;
+    if ($line != '') {
+        putenv($line);
+    }
+}
+
+// SYSTEM configuration from environment variables or the default fallback value
+// fixed IP of the main system admin as a second line of defence to prevent remote manipulation
+define('SYSTEM_ADMIN_IP', getenv('IP_ADMIN') ?: SYSTEM_ADMIN_IP_FALLBACK);
 
 // Database configuration from environment variables or the default fallback value
 define('SQL_DB_TYPE', getenv('DB') ?: POSTGRES);

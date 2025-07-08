@@ -53,37 +53,40 @@ use shared\api;
 // open database
 $db_con = prg_start("api/figure", "", false);
 
-// get the parameters
-$fig_id = $_GET[api::URL_VAR_ID] ?? 0;
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // get the parameters
+    $fig_id = $_GET[api::URL_VAR_ID] ?? 0;
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if ($fig_id > 0) {
-        $val = new value($usr);
-        $val->load_by_id($fig_id);
-        $val->load_objects();
-        $fig = $val->figure();
-        $result = $fig->api_json();
-    } elseif ($fig_id < 0) {
-        $res = new result($usr);
-        $res->load_by_id($fig_id);
-        $fig = $res->figure();
-        $result = $fig->api_json();
-    } else {
-        $msg = 'figure id is missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        if ($fig_id > 0) {
+            $val = new value($usr);
+            $val->load_by_id($fig_id);
+            $val->load_objects();
+            $fig = $val->figure();
+            $result = $fig->api_json();
+        } elseif ($fig_id < 0) {
+            $res = new result($usr);
+            $res->load_by_id($fig_id);
+            $fig = $res->figure();
+            $result = $fig->api_json();
+        } else {
+            $msg = 'figure id is missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

@@ -63,46 +63,49 @@ use shared\types\api_type;
 // open database
 $db_con = prg_start("api/config", "", false);
 
-// get the parameter which config part is requested
-$part = $_GET[api::URL_VAR_CONFIG_PART] ?? '';
-$with_phr = $_GET[api::URL_VAR_WITH_PHRASES] ?? '';
+if ($db_con->is_open()) {
 
-$usr_msg = new user_message();
-$result = ''; // reset the html code var
+    // get the parameter which config part is requested
+    $part = $_GET[api::URL_VAR_CONFIG_PART] ?? '';
+    $with_phr = $_GET[api::URL_VAR_WITH_PHRASES] ?? '';
 
-// load the session user parameters
-$usr = new user;
-$usr_msg->add_message_text($usr->get());
-
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
-    $cfg_lst = new config_numbers($usr);
     $usr_msg = new user_message();
-    if ($part == api::CONFIG_ALL or $part == '') {
-        $usr_msg = $cfg_lst->load_cfg($usr);
-    } elseif ($part == api::CONFIG_FRONTEND) {
-        $usr_msg = $cfg_lst->load_frontend_cfg($usr);
-    } elseif ($part == api::CONFIG_USER) {
-        $usr_msg = $cfg_lst->load_usr_cfg($usr);
-    } else {
-        $usr_msg->add_id_with_vars(msg_id::CONFIG_PART, [msg_id::VAR_PART => $part]);
-    }
-    if (!$usr_msg->is_ok()) {
-        $usr_msg->add_id(msg_id::CONFIG_NOT_LOADED);
-    } else {
-        if ($cfg_lst->is_empty()) {
-            $usr_msg->add_id(msg_id::CONFIG_EMPTY);
+    $result = ''; // reset the html code var
+
+    // load the session user parameters
+    $usr = new user;
+    $usr_msg->add_message_text($usr->get());
+
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+        $cfg_lst = new config_numbers($usr);
+        $usr_msg = new user_message();
+        if ($part == api::CONFIG_ALL or $part == '') {
+            $usr_msg = $cfg_lst->load_cfg($usr);
+        } elseif ($part == api::CONFIG_FRONTEND) {
+            $usr_msg = $cfg_lst->load_frontend_cfg($usr);
+        } elseif ($part == api::CONFIG_USER) {
+            $usr_msg = $cfg_lst->load_usr_cfg($usr);
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::CONFIG_PART, [msg_id::VAR_PART => $part]);
+        }
+        if (!$usr_msg->is_ok()) {
+            $usr_msg->add_id(msg_id::CONFIG_NOT_LOADED);
+        } else {
+            if ($cfg_lst->is_empty()) {
+                $usr_msg->add_id(msg_id::CONFIG_EMPTY);
+            }
+        }
+        if ($with_phr == api::URL_VAR_TRUE) {
+            $result = $cfg_lst->api_json([api_type::INCL_PHRASES]);
+        } else {
+            $result = $cfg_lst->api_json([api_type::NO_KEY_FILL]);
         }
     }
-    if ($with_phr == api::URL_VAR_TRUE) {
-        $result = $cfg_lst->api_json([api_type::INCL_PHRASES]);
-    } else {
-        $result = $cfg_lst->api_json([api_type::NO_KEY_FILL]);
-    }
+
+    $ctrl = new controller();
+
+    $ctrl->get_json($result, $usr_msg->get_last_message());
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-
-$ctrl->get_json($result, $usr_msg->get_last_message());
-
-prg_end_api($db_con);

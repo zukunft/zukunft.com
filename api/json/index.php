@@ -54,30 +54,33 @@ use shared\api;
 // open database
 $db_con = prg_start("api/json", "", false);
 
-// get the parameters
-$wrd_id = $_GET[api::URL_VAR_WORD_ID] ?? 0;
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json string
+    // get the parameters
+    $wrd_id = $_GET[api::URL_VAR_WORD_ID] ?? 0;
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if ($wrd_id != 0) {
-        $wrd = new word($usr);
-        $wrd->load_by_id($wrd_id);
-        $result = json_encode($wrd->export_json());
-    } else {
-        $msg = 'word id missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        if ($wrd_id != 0) {
+            $wrd = new word($usr);
+            $wrd->load_by_id($wrd_id);
+            $result = json_encode($wrd->export_json());
+        } else {
+            $msg = 'word id missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_export_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_export_json($result, $msg);
-
-
-prg_end_api($db_con);

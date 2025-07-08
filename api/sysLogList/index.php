@@ -52,27 +52,29 @@ use shared\types\api_type;
 // open database
 $db_con = prg_start("api/log", "", false);
 
+if ($db_con->is_open()) {
 
-// load the session user parameters
-$usr = new user;
-$msg = $usr->get();
+    // load the session user parameters
+    $usr = new user;
+    $msg = $usr->get();
 
-$result = ''; // reset the json message string
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
 
-    $lst = new sys_log_list();
-    $lst->set_user($usr);
-    $lst->dsp_type = sys_log_list::DSP_ALL;
-    $lst->page = 0;
-    $lst->size = 20;
-    $lst->load_all();
-    $result = $lst->api_json([api_type::HEADER], $usr);
+        $lst = new sys_log_list();
+        $lst->set_user($usr);
+        $lst->dsp_type = sys_log_list::DSP_ALL;
+        $lst->page = 0;
+        $lst->size = 20;
+        $lst->load_all();
+        $result = $lst->api_json([api_type::HEADER], $usr);
+    }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

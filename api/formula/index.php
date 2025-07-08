@@ -51,34 +51,37 @@ use shared\api;
 // open database
 $db_con = prg_start("api/formula", "", false);
 
-// get the parameters
-$frm_id = $_GET[api::URL_VAR_ID] ?? 0;
-$frm_name = $_GET[api::URL_VAR_NAME] ?? '';
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // get the parameters
+    $frm_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $frm_name = $_GET[api::URL_VAR_NAME] ?? '';
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    $frm = new formula($usr);
-    if ($frm_id > 0) {
-        $frm->load_by_id($frm_id);
-        $result = $frm->api_json();
-    } elseif ($frm_name != '') {
-        $frm->load_by_name($frm_name);
-        $result = $frm->api_json();
-    } else {
-        $msg = 'formula id or name is missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        $frm = new formula($usr);
+        if ($frm_id > 0) {
+            $frm->load_by_id($frm_id);
+            $result = $frm->api_json();
+        } elseif ($frm_name != '') {
+            $frm->load_by_name($frm_name);
+            $result = $frm->api_json();
+        } else {
+            $msg = 'formula id or name is missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

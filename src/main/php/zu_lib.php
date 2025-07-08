@@ -654,6 +654,7 @@ use cfg\component\component_link_type;
 use cfg\component\component_type;
 use cfg\component\position_type;
 use cfg\component\view_style;
+use cfg\const\files;
 use cfg\db\db_check;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -1549,7 +1550,7 @@ function log_fatal(string $msg_text,
                    ?user  $calling_usr = null): string
 {
     $time = (new DateTime())->format('c');
-    echo $time . ': FATAL ERROR! ' . $msg_text;
+    echo $time . ': FATAL ERROR! ' . $msg_text . "\n";
     $STDERR = fopen('error.log', 'a');
     fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text . "\n");
     $write_with_more_info = false;
@@ -1612,6 +1613,21 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
     // resume session (based on cookies)
     session_start();
 
+    /*
+    require __DIR__ . '/vendor/autoload.php';
+    // Looking for .env at the root directory
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+    */
+
+    // check if environment is loaded
+    $env = getenv('ENV');
+    if (!$env) {
+        log_warning('no environment found using fallback values');
+    } else {
+        log_info('environment ' . getenv('ENV'));
+    }
+
     $sys_time_start = time();
     $sys_times = new system_time_list();
     $sys_times->switch(system_time_type::DEFAULT);
@@ -1649,10 +1665,11 @@ function prg_restart(string $code_name): sql_db
     $db_con->open();
     if (!$db_con->is_open()) {
         log_debug($code_name . ': start db setup');
-        $db_con->setup();
-        $db_con->open();
-        if (!$db_con->is_open()) {
-            log_fatal('Cannot connect to database', 'prg_restart');
+        if ($db_con->setup()) {
+            $db_con->open();
+            if (!$db_con->is_open()) {
+                log_fatal('Cannot connect to database', 'prg_restart');
+            }
         }
     } else {
         log_debug($code_name . ': db open');
