@@ -1077,6 +1077,16 @@ class user extends db_id_object_non_sandbox
 
         $usr_msg = new user_message();
         if ($db_con->count(user::class) <= 0) {
+            // reload user profiles if needed
+            global $usr_pro_cac;
+            if ($usr_pro_cac == null) {
+                log_warning('unexpected reload of user profiles');
+                $usr_pro_cac = new user_profile_list();
+                if (!$usr_pro_cac->load($db_con)) {
+                    $usr_pro_cac->load_dummy();
+                };
+            }
+
             // add the system user to use it for the import
             $sys_usr = new user();
             $sys_usr->set_name(users::SYSTEM_NAME);
