@@ -724,7 +724,6 @@ const SRC_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
 const MAIN_PATH = SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
 const PHP_PATH_LIB = MAIN_PATH . 'php' . DIRECTORY_SEPARATOR; // recreation of the PHP_PATH for library use only
 const MODEL_PATH = PHP_PATH_LIB . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
-const DB_LINK_PATH = ROOT_PATH . 'db_link' . DIRECTORY_SEPARATOR;
 const DB_PATH = MODEL_PATH . 'db' . DIRECTORY_SEPARATOR;
 const UTIL_PATH = PHP_PATH_LIB . 'utils' . DIRECTORY_SEPARATOR;
 const SERVICE_PATH = PHP_PATH_LIB . 'service' . DIRECTORY_SEPARATOR;
@@ -801,6 +800,9 @@ const WEB_FORM_PATH = WEB_COMPONENT_PATH . 'form' . DIRECTORY_SEPARATOR;
 const WEB_SHEET_PATH = WEB_COMPONENT_PATH . 'sheet' . DIRECTORY_SEPARATOR;
 const WEB_REF_PATH = WEB_PATH . 'ref' . DIRECTORY_SEPARATOR;
 
+// use path that does not need to be included
+const PATH_NO_INCLUDE = ['PgSql\Connection'];
+
 // resource paths
 const RES_PATH = MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
 const IMAGE_RES_PATH = RES_PATH . 'images' . DIRECTORY_SEPARATOR;
@@ -822,10 +824,8 @@ const TEST_PHP_PATH = TEST_PATH . 'php' . DIRECTORY_SEPARATOR;
 const TEST_CONST_PATH = TEST_PHP_PATH . 'const' . DIRECTORY_SEPARATOR;
 
 
-const DB_SETUP_SQL_FILE = 'zukunft_structure.sql';
-
 // the main global vars to shorten the code by avoiding them in many function calls as parameter
-global $db_com; // the database connection
+global $db_con; // the database connection
 global $usr;    // the session user
 global $debug;  // the debug level
 
@@ -859,7 +859,7 @@ include_once DB_PATH . 'db_check.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 
 // include all other libraries that are usually needed
-include_once DB_LINK_PATH . 'zu_lib_sql_link.php';
+include_once DB_PATH . 'db_env.php';
 include_once SERVICE_PATH . 'db_code_link.php';
 include_once SERVICE_PATH . 'config.php';
 
@@ -952,13 +952,6 @@ const UI_CAN_CHANGE_VERB_NAME = TRUE; // dito for verbs
 const UI_CAN_CHANGE_SOURCE_NAME = TRUE; // dito for sources
 
 // data retrieval settings
-
-// the possible SQL DB names (must be the same as in sql_db)
-const POSTGRES = "Postgres";
-const MYSQL = "MySQL";
-const SQL_DB_TYPE = POSTGRES;
-// const SQL_DB_TYPE = sql_db::MYSQL;
-
 const MAX_LOOP = 10000; // maximal number of loops to avoid hanging while loops; used for example for the number of formula elements
 
 // max number of recursive call to avoid endless looping in case of a program error
@@ -1654,11 +1647,11 @@ function prg_restart(string $code_name): sql_db
     $sc = new sql_creator();
     $sc->set_db_type($db_con->db_type);
     $db_con->open();
-    if ($db_con->postgres_link === false) {
+    if (!$db_con->is_open()) {
         log_debug($code_name . ': start db setup');
         $db_con->setup();
         $db_con->open();
-        if ($db_con->postgres_link === false) {
+        if (!$db_con->is_open()) {
             log_fatal('Cannot connect to database', 'prg_restart');
         }
     } else {

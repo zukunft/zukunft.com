@@ -42,6 +42,7 @@ class files
     CONST JSON = '.json';
     CONST YAML = '.yaml';
     const CODE_LINK_TYPE = '.csv';
+    CONST SQL = '.sql';
 
 
     /*
@@ -53,6 +54,9 @@ class files
     const DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
     const DB_UPGRADE_PATH = self::DB_PATH . 'upgrade' . DIRECTORY_SEPARATOR;
     const DB_UPGRADE_V003_PATH = self::DB_UPGRADE_PATH . 'v0.0.3' . DIRECTORY_SEPARATOR;
+    const DB_SETUP_PATH = self::DB_PATH . 'setup' . DIRECTORY_SEPARATOR;
+    const DB_SETUP_PG_PATH = self::DB_SETUP_PATH . 'postgres' . DIRECTORY_SEPARATOR;
+    const DB_SETUP_MYSQL_PATH = self::DB_SETUP_PATH . 'mysql' . DIRECTORY_SEPARATOR;
 
     // TODO make the csv file list based on the class name
     const CODE_LINK_PATH = self::RESOURCE_PATH . 'db_code_links' . DIRECTORY_SEPARATOR;
@@ -75,6 +79,15 @@ class files
 
     // initial configuration of some views that the user can change
     const BASE_VIEWS_FILE = 'base_views' . self::JSON;
+
+
+    /*
+     * db config
+     */
+
+    const DB_ROLE_FILE = 'db_create_user' . self::SQL;
+    const DB_CREATE_FILE = 'db_create_database' . self::SQL;
+    const DB_STRUCTURE_FILE = 'zukunft_structure' . self::SQL;
 
 
     /*
