@@ -53,37 +53,40 @@ use shared\types\api_type;
 // open database
 $db_con = prg_start("api/phrase", "", false);
 
-// get the parameters
-$phr_id = $_GET[api::URL_VAR_ID] ?? 0;
-$phr_name = $_GET[api::URL_VAR_NAME] ?? '';
+if ($db_con->is_open()) {
 
-// load the session user parameters
-$msg = '';
-$usr = new user;
-$msg .= $usr->get();
+    // get the parameters
+    $phr_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $phr_name = $_GET[api::URL_VAR_NAME] ?? '';
 
-$ctrl = new controller();
-$result = ''; // reset the json message string
+    // load the session user parameters
+    $msg = '';
+    $usr = new user;
+    $msg .= $usr->get();
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    $ctrl = new controller();
+    $result = ''; // reset the json message string
 
-    $phr = new phrase($usr);
-    if ($phr_id > 0) {
-        $phr->load_by_id($phr_id);
-        $result = $phr->api_json([api_type::HEADER], $usr);
-    } elseif ($phr_name != '') {
-        $phr->load_by_name($phr_name);
-        $result = $phr->api_json([api_type::HEADER], $usr);
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        $phr = new phrase($usr);
+        if ($phr_id > 0) {
+            $phr->load_by_id($phr_id);
+            $result = $phr->api_json([api_type::HEADER], $usr);
+        } elseif ($phr_name != '') {
+            $phr->load_by_name($phr_name);
+            $result = $phr->api_json([api_type::HEADER], $usr);
+        } else {
+            $msg = 'phrase id or name is missing';
+        }
+
+        // add, update or delete the phrase
+        $ctrl->get_json($result, $msg);
+
     } else {
-        $msg = 'phrase id or name is missing';
+        $ctrl->not_permitted($msg);
     }
 
-    // add, update or delete the phrase
-    $ctrl->get_json($result, $msg);
-
-} else {
-    $ctrl->not_permitted($msg);
+    prg_end_api($db_con);
 }
-
-prg_end_api($db_con);

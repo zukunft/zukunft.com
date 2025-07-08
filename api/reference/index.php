@@ -51,30 +51,33 @@ use shared\api;
 // open database
 $db_con = prg_start("api/ref", "", false);
 
-// get the parameters
-$ref_id = $_GET[api::URL_VAR_ID] ?? 0;
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // get the parameters
+    $ref_id = $_GET[api::URL_VAR_ID] ?? 0;
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if ($ref_id > 0) {
-        $ref = new ref($usr);
-        $ref->load_by_id($ref_id);
-        $result = $ref->api_json();
-    } else {
-        $msg = 'Cannot load ref because id is missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        if ($ref_id > 0) {
+            $ref = new ref($usr);
+            $ref->load_by_id($ref_id);
+            $result = $ref->api_json();
+        } else {
+            $msg = 'Cannot load ref because id is missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

@@ -53,38 +53,41 @@ use shared\types\api_type;
 // open database
 $db_con = prg_start("api/word", "", false);
 
-// get the parameters
-$wrd_id = $_GET[api::URL_VAR_ID] ?? 0;
-$wrd_name = $_GET[api::URL_VAR_NAME] ?? '';
+if ($db_con->is_open()) {
 
-// load the session user parameters
-$msg = '';
-$usr = new user;
-$msg .= $usr->get();
+    // get the parameters
+    $wrd_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $wrd_name = $_GET[api::URL_VAR_NAME] ?? '';
 
-$ctrl = new controller();
-$result = ''; // reset the json message string
+    // load the session user parameters
+    $msg = '';
+    $usr = new user;
+    $msg .= $usr->get();
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    $ctrl = new controller();
+    $result = ''; // reset the json message string
 
-    $wrd = new word($usr);
-    if ($wrd_id > 0) {
-        $wrd->load_by_id($wrd_id);
-        $result = $wrd->api_json([api_type::HEADER], $usr);
-    } elseif ($wrd_name != '') {
-        $wrd->load_by_name($wrd_name);
-        $result = $wrd->api_json([api_type::HEADER], $usr);
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        $wrd = new word($usr);
+        if ($wrd_id > 0) {
+            $wrd->load_by_id($wrd_id);
+            $result = $wrd->api_json([api_type::HEADER], $usr);
+        } elseif ($wrd_name != '') {
+            $wrd->load_by_name($wrd_name);
+            $result = $wrd->api_json([api_type::HEADER], $usr);
+        } else {
+            $msg = 'word id or name is missing';
+        }
+
+        // add, update or delete the word
+        $ctrl = new controller();
+        $ctrl->get_json($result, $msg);
+
     } else {
-        $msg = 'word id or name is missing';
+        $ctrl->not_permitted($msg);
     }
 
-    // add, update or delete the word
-    $ctrl = new controller();
-    $ctrl->get_json($result, $msg);
-
-} else {
-    $ctrl->not_permitted($msg);
+    prg_end_api($db_con);
 }
-
-prg_end_api($db_con);

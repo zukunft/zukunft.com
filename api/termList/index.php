@@ -53,35 +53,38 @@ use shared\api;
 // open database
 $db_con = prg_start("api/termList", "", false);
 
-// get the parameters
-$trm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
-$pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // get the parameters
+    $trm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+    $pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if ($trm_ids != '') {
-        $lst = new term_list($usr);
-        $lst->load_by_ids((new trm_ids(explode(",", $trm_ids))));
-        $result = $lst->api_json();
-    } elseif ($pattern != '') {
-        $lst = new term_list($usr);
-        $lst->load_like($pattern);
-        $result = $lst->api_json();
-    } else {
-        $msg = 'term ids and pattern missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        if ($trm_ids != '') {
+            $lst = new term_list($usr);
+            $lst->load_by_ids((new trm_ids(explode(",", $trm_ids))));
+            $result = $lst->api_json();
+        } elseif ($pattern != '') {
+            $lst = new term_list($usr);
+            $lst->load_like($pattern);
+            $result = $lst->api_json();
+        } else {
+            $msg = 'term ids and pattern missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

@@ -55,50 +55,53 @@ use shared\library;
 // open database
 $db_con = prg_start("api/log", "", false);
 
-// get the parameters
-$class = $_GET[api::URL_VAR_CLASS] ?? '';
-$id = $_GET[api::URL_VAR_ID] ?? 0;
-$fld = $_GET[api::URL_VAR_FIELD] ?? '';
+if ($db_con->is_open()) {
 
-// TODO deprecate
-$wrd_id = $_GET[api::URL_VAR_WORD_ID] ?? 0;
-$wrd_fld = $_GET[api::URL_VAR_WORD_FLD] ?? '';
+    // get the parameters
+    $class = $_GET[api::URL_VAR_CLASS] ?? '';
+    $id = $_GET[api::URL_VAR_ID] ?? 0;
+    $fld = $_GET[api::URL_VAR_FIELD] ?? '';
 
-$msg = '';
-$result = ''; // reset the json message string
+    // TODO deprecate
+    $wrd_id = $_GET[api::URL_VAR_WORD_ID] ?? 0;
+    $wrd_fld = $_GET[api::URL_VAR_WORD_FLD] ?? '';
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if ($class != '') {
-        $lib = new library();
-        $class = $lib->api_name_to_class($class);
-        $lst = new change_log_list();
-        if (is_numeric($id)) {
-            $id = (int)$id;
-        }
-        $lst->load_by_obj_fld($class, $id, $usr, $fld);
-        $result = $lst->api_json();
-    } else {
-        // TODO deprecate
-        if ($wrd_id != 0) {
-            $wrd = new word($usr);
-            $wrd->load_by_id($wrd_id);
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        if ($class != '') {
+            $lib = new library();
+            $class = $lib->api_name_to_class($class);
             $lst = new change_log_list();
-            $lst->load_by_fld_of_wrd($wrd, $usr, $wrd_fld);
+            if (is_numeric($id)) {
+                $id = (int)$id;
+            }
+            $lst->load_by_obj_fld($class, $id, $usr, $fld);
             $result = $lst->api_json();
         } else {
-            $msg = 'word id missing';
+            // TODO deprecate
+            if ($wrd_id != 0) {
+                $wrd = new word($usr);
+                $wrd->load_by_id($wrd_id);
+                $lst = new change_log_list();
+                $lst->load_by_fld_of_wrd($wrd, $usr, $wrd_fld);
+                $result = $lst->api_json();
+            } else {
+                $msg = 'word id missing';
+            }
         }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

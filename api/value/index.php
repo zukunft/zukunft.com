@@ -52,40 +52,43 @@ use shared\types\api_type;
 // open database
 $db_con = prg_start("api/value", "", false);
 
-// get the parameters
-$val_id = $_GET[api::URL_VAR_ID] ?? 0;
-$with_phr = $_GET[api::URL_VAR_WITH_PHRASES] ?? '';
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the api message
+    // get the parameters
+    $val_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $with_phr = $_GET[api::URL_VAR_WITH_PHRASES] ?? '';
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the api message
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if (is_numeric($val_id)) {
-        $val_id = (int)$val_id;
-    }
-    if ($val_id != 0 and $val_id != '') {
-        $val = new value($usr);
-        $val->load_by_id($val_id);
-        $val->load_objects();
-        if ($with_phr == api::URL_VAR_TRUE) {
-            $result = $val->api_json([api_type::INCL_PHRASES]);
-        } else {
-            $result = $val->api_json();
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
 
+        if (is_numeric($val_id)) {
+            $val_id = (int)$val_id;
         }
-    } else {
-        $msg = 'value id is missing';
+        if ($val_id != 0 and $val_id != '') {
+            $val = new value($usr);
+            $val->load_by_id($val_id);
+            $val->load_objects();
+            if ($with_phr == api::URL_VAR_TRUE) {
+                $result = $val->api_json([api_type::INCL_PHRASES]);
+            } else {
+                $result = $val->api_json();
+
+            }
+        } else {
+            $msg = 'value id is missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

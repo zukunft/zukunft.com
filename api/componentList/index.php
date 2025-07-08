@@ -51,35 +51,38 @@ use shared\api;
 // open database
 $db_con = prg_start("api/componentList", "", false);
 
-// get the parameters
-$msk_id = $_GET[api::URL_VAR_VIEW_ID] ?? '';
-$pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // get the parameters
+    $msk_id = $_GET[api::URL_VAR_VIEW_ID] ?? '';
+    $pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if ($msk_id != '') {
-        $lst = new component_list($usr);
-        $lst->load_by_view_id($msk_id);
-        $result = $lst->api_json();
-    } elseif ($pattern != '') {
-        $lst = new component_list($usr);
-        $lst->load_names(($pattern));
-        $result = $lst->api_json();
-    } else {
-        $msg = 'view id and pattern missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        if ($msk_id != '') {
+            $lst = new component_list($usr);
+            $lst->load_by_view_id($msk_id);
+            $result = $lst->api_json();
+        } elseif ($pattern != '') {
+            $lst = new component_list($usr);
+            $lst->load_names(($pattern));
+            $result = $lst->api_json();
+        } else {
+            $msg = 'view id and pattern missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

@@ -36,6 +36,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
+use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\user\user;
 
@@ -44,27 +45,30 @@ echo 'logging off ...'; // reset the html code var
 // open database 
 $db_con = prg_start("logoff", "center_form");
 
-// load the session user parameters
-$usr = new user;
-$result = $usr->get(); // to check from which ip the user has logged in
+if ($db_con->is_open()) {
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
-    $db_con->set_class(user::class);
-    $db_con->set_usr($usr->id());
-    if (!$db_con->update_old($usr->id(), "last_logoff", sql::NOW)) {
-        log_err('Logout time update failed for ' . $usr->id());
+    // load the session user parameters
+    $usr = new user;
+    $result = $usr->get(); // to check from which ip the user has logged in
+
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+        $db_con->set_class(user::class);
+        $db_con->set_usr($usr->id());
+        if (!$db_con->update_old($usr->id(), "last_logoff", sql::NOW)) {
+            log_err('Logout time update failed for ' . $usr->id());
+        }
     }
+
+    // end the session
+    session_unset();
+
+    // close the database
+    prg_end($db_con);
+
+    echo 'logoff done.'; // reset the html code var
+
+    // show the main page without user being logged in
+    header("Location: view.php");
+    exit;
 }
-
-// end the session
-session_unset();
-
-// close the database  
-prg_end($db_con);
-
-echo 'logoff done.'; // reset the html code var
-
-// show the main page without user being logged in
-header("Location: view.php");
-exit;

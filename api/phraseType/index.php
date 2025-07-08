@@ -56,30 +56,33 @@ use shared\api;
 // open database
 $db_con = prg_start("api/phraseType", "", false);
 
-// get the parameters
-$phr_typ_id = $_GET[api::URL_VAR_ID] ?? 0;
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // get the parameters
+    $phr_typ_id = $_GET[api::URL_VAR_ID] ?? 0;
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if ($phr_typ_id != 0) {
-        $phr_typ = new phrase_type(phrase_type_shared::NORMAL);
-        $phr_typ->load_by_id($phr_typ_id);
-        $result = $phr_typ->api_json();
-    } else {
-        $msg = 'phrase type id is missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        if ($phr_typ_id != 0) {
+            $phr_typ = new phrase_type(phrase_type_shared::NORMAL);
+            $phr_typ->load_by_id($phr_typ_id);
+            $result = $phr_typ->api_json();
+        } else {
+            $msg = 'phrase type id is missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

@@ -51,24 +51,27 @@ use shared\types\api_type;
 // open database
 $db_con = prg_start("api/typeLists", "", false);
 
-// no parameters needed
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // no parameters needed
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
-    $sys_typ_lst = new type_lists();
-    $sys_typ_lst->load($db_con, $usr);
-    $result = $sys_typ_lst->api_json([api_type::HEADER], $usr);
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
+
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+        $sys_typ_lst = new type_lists();
+        $sys_typ_lst->load($db_con, $usr);
+        $result = $sys_typ_lst->api_json([api_type::HEADER], $usr);
+    }
+
+    $ctrl = new controller();
+
+    $ctrl->get_json($result, $msg);
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-
-$ctrl->get_json($result, $msg);
-
-prg_end_api($db_con);

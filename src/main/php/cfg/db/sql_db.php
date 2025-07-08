@@ -873,17 +873,25 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             try {
                 $this->postgres_link = pg_connect($this->pg_conn_str_admin());
-                $result = true;
+                if ($this->postgres_link !== false) {
+                    $result = true;
+                } else {
+                    log_fatal('Cannot connect ' . $this->pg_conn_desc_admin(), 'sql_db->open');
+                }
             } catch (Exception $e) {
-                log_fatal('Cannot connect ' . $this->pg_conn_desc() .
+                log_fatal('Cannot connect ' . $this->pg_conn_desc_admin() .
                     ' due to ' . $e->getMessage(), 'sql_db open');
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
             $this->mysql = mysqli_connect(SQL_DB_HOST,
-                SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, SQL_DB_NAME_MYSQL)
-            or die('Could not connect ' . $this->mysql_conn_desc() .
+                SQL_DB_ADMIN_USER_MYSQL, SQL_DB_ADMIN_PASSWD_MYSQL, SQL_DB_ADMIN_DB_MYSQL)
+            or die('Could not connect ' . $this->mysql_conn_desc_admin() .
                 ' ' . mysqli_error($this->mysql));
-            $result = true;
+            if ($this->mysql !== false) {
+                $result = true;
+            } else {
+                log_fatal('Cannot connect ' . $this->mysql_conn_desc_admin(), 'sql_db->open');
+            }
         } else {
             log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
         }
@@ -931,7 +939,7 @@ class sql_db
     {
         return
             'user ' . SQL_DB_USER .
-            ' (' . substr(SQL_DB_PASSWD, 0, 3) . ') ' .
+            ' (' . substr(SQL_DB_PASSWD, 0, 1) . '...)' .
             ' to database ' . $db_name .
             '@' . SQL_DB_HOST;
     }
@@ -944,7 +952,7 @@ class sql_db
     {
         return
             'user ' . SQL_DB_ADMIN_USER .
-            ' (' . substr(SQL_DB_ADMIN_PASSWD, 0, 3) . ') ' .
+            ' (' . substr(SQL_DB_ADMIN_PASSWD, 0, 1) . '...) ' .
             ' to database ' . SQL_DB_ADMIN_DB .
             '@' . SQL_DB_HOST;
     }
@@ -957,8 +965,21 @@ class sql_db
     {
         return
             'user ' . SQL_DB_USER_MYSQL .
-            ' (' . substr(SQL_DB_PASSWD_MYSQL, 0, 3) . ') ' .
+            ' (' . substr(SQL_DB_PASSWD_MYSQL, 0, 1) . '...) ' .
             ' to database ' . SQL_DB_NAME_MYSQL .
+            '@' . SQL_DB_HOST;
+    }
+
+    /**
+     * @return string the MySQL connection description for the technical zukunft user
+     *                without the full password for logging
+     */
+    private function mysql_conn_desc_admin(): string
+    {
+        return
+            'user ' . SQL_DB_ADMIN_USER_MYSQL .
+            ' (' . substr(SQL_DB_ADMIN_PASSWD_MYSQL, 0, 1) . '...) ' .
+            ' to database ' . SQL_DB_ADMIN_DB_MYSQL .
             '@' . SQL_DB_HOST;
     }
 
@@ -1036,17 +1057,14 @@ class sql_db
         $result = false;
         $sys_times->switch(system_time_type::DB_WRITE);
 
-        // try to connect again with the zukunft user
+        // try to connect with the db admin user to recreate the zukunft user
         // that should have been created by the installation script
-        if (!$this->open()) {
-            // create the zukunft database user
-            if ($this->setup_db_zukunft_user_via_db_admin()) {
-                // retry to connect with zukunft user but with the standard database
-                if ($this->open($this->database_name_of_the_db_admin_user())) {
-                    log_warning('database user has unexpected been recreated');
-                } else {
-                    log_fatal('database user cannot be created', 'sql_db->setup');
-                }
+        if ($this->setup_db_zukunft_user_via_db_admin()) {
+            // retry to connect with zukunft user but with the standard database
+            if ($this->open($this->database_name_of_the_db_admin_user())) {
+                log_warning('database user has unexpected been recreated');
+            } else {
+                log_fatal('database user cannot be created', 'sql_db->setup');
             }
         }
 

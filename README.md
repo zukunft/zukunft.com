@@ -51,7 +51,7 @@ To install this version 0.0.3 on a debian system (https://wiki.debian.org/) do:
 Fix development installation:
 -----------------------------
 
-If you get errors or the message "Only admin users are allowed to reset the database" and the database does not you contain any relevent data the best is probably to recreate the database:
+If you get errors or the message "Only admin users are allowed to reset the database" and the database does not you contain any relevant data the best is probably to recreate the database:
 
    ```bash
    sudo -u postgres psql -d postgres -U postgres -c "DROP DATABASE zukunft;"
