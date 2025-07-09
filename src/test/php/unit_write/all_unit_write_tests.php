@@ -176,7 +176,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
     /**
      * recreate the database to test the database setup script
-     * TODO make shure that this can never be called in PROD
+     * TODO make sure that this can never be called in PROD
      *
      * @return void
      */

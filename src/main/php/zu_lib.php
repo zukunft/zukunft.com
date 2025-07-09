@@ -860,7 +860,7 @@ include_once DB_PATH . 'db_check.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 
 // include all other libraries that are usually needed
-include_once DB_PATH . 'db_env.php';
+include_once MODEL_CONST_PATH . 'env.php';
 include_once SERVICE_PATH . 'db_code_link.php';
 include_once SERVICE_PATH . 'config.php';
 
