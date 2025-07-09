@@ -37,7 +37,6 @@ main() {
         installAndConfigureApache
         installAndConfigurePhp
         downloadZukunft
-        downloadAndInstallExternalLibraries
         installZukunft
         testZukunft
         #testInstallation
@@ -242,17 +241,6 @@ downloadZukunft() {
 
 }
 
-downloadAndInstallExternalLibraries() {
-    echo -e "\n${GREEN}Installing external libraries ...${NC}"
-
-    echo -e "\n${GREEN}Installing bootstrap ...${NC}"
-    git clone https://github.com/twbs/bootstrap.git "$WWW_ROOT/lib_external/bootstrap/4.1.3/"
-
-    echo -e "\n${GREEN}Installing fontawesome ...${NC}"
-    git clone https://github.com/gabrielelana/awesome-terminal-fonts "$WWW_ROOT/lib_external/fontawesome/"
-    sleep 3
-}
-
 installZukunft() {
     echo -e "\n${GREEN}Installing zukunft.com ...${NC}"
 
@@ -260,6 +248,7 @@ installZukunft() {
     systemctl restart apache2
 
     # create the zukunft.com database tables
+    # TODO remove or deactivate the reset_db.php script in prod after successful install
     php "$WWW_ROOT/test/reset_db.php"
 
     # TODO check result and create warning if it does not end with
@@ -282,6 +271,9 @@ testZukunft() {
     echo -e "\n${GREEN}Test zukunft.com ...${NC}"
 
     # test the zukunft.com
+    php "$WWW_ROOT/test/test.php"
+
+    # TODO remove the test again the zukunft.com by fixing the errors in the first run
     php "$WWW_ROOT/test/test.php"
 
     # TODO check result and create warning if it does not end with
