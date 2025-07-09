@@ -20,6 +20,8 @@ main() {
     # Set current directory
     CURRENT_DIR=$(pwd)
 
+    cd zukunft.com || exit
+
     displayIntro
     parseArguments "$@"
     initEnvironment
@@ -247,7 +249,7 @@ downloadAndInstallZukunft() {
     # switch later to something like git://git.zukunft.com/zukunft.git
     git clone -b "$BRANCH" https://github.com/zukunft/zukunft.com
     # copy the .env file to the webserver
-    cp "$(pwd)/zukunft.com/.env" "$WWW_ROOT/"
+    cp "$CURRENT_DIR/zukunft.com/.env" "$WWW_ROOT/"
 
     # force to reread to www root ?
     systemctl restart apache2
@@ -276,6 +278,7 @@ downloadAndInstallZukunft() {
     #      this maybe depending on the update and upgrade process
     #      e.g. if this is done via git clone to the webserver folder
     #      and how the .env file can be kept
+    rm -rf zukunft.com
 
     sleep 3
 }
