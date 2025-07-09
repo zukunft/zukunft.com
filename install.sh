@@ -234,12 +234,10 @@ downloadAndInstallExternalLibraries() {
     echo -e "\n${GREEN}Installing external libraries ...${NC}"
 
     echo -e "\n${GREEN}Installing bootstrap ...${NC}"
-    git clone https://github.com/twbs/bootstrap.git
-    rsync -av --delete bootstrap/ "$WWW_ROOT/lib_external/bootstrap/4.1.3/"
+    git clone https://github.com/twbs/bootstrap.git "$WWW_ROOT/lib_external/bootstrap/4.1.3/"
 
     echo -e "\n${GREEN}Installing fontawesome ...${NC}"
-    git clone https://github.com/gabrielelana/awesome-terminal-fonts
-    rsync -av --delete awesome-terminal-fonts/ "$WWW_ROOT/lib_external/fontawesome/"
+    git clone https://github.com/gabrielelana/awesome-terminal-fonts "$WWW_ROOT/lib_external/fontawesome/"
     sleep 3
 }
 
@@ -247,7 +245,7 @@ downloadAndInstallZukunft() {
     echo -e "\n${GREEN}Installing zukunft.com ...${NC}"
 
     # switch later to something like git://git.zukunft.com/zukunft.git
-    git clone -b "$BRANCH" https://github.com/zukunft/zukunft.com
+    git clone -b "$BRANCH" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
     # copy the .env file to the webserver
     cp "$CURRENT_DIR/zukunft.com/.env" "$WWW_ROOT/"
 
