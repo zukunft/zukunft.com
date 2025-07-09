@@ -245,7 +245,9 @@ downloadAndInstallZukunft() {
     echo -e "\n${GREEN}Installing zukunft.com ...${NC}"
 
     # switch later to something like git://git.zukunft.com/zukunft.git
-    git clone -b "$BRANCH" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
+    git clone -b "$BRANCH" https://github.com/zukunft/zukunft.com
+    # copy the .env file to the webserver
+    cp "$(pwd)/zukunft.com/.env" "$WWW_ROOT/"
 
     # force to reread to www root ?
     systemctl restart apache2
@@ -261,9 +263,6 @@ downloadAndInstallZukunft() {
     # test the zukunft.com
     php "$WWW_ROOT/test/test.php"
 
-    # TODO fix the errors on the second run that are caused e.g. by the missing api
-    php "$WWW_ROOT/test/test.php"
-
     # TODO check result and create warning if it does not end with
     #      0 test errors
     #      0 internal errors
@@ -272,6 +271,12 @@ downloadAndInstallZukunft() {
     # TODO if ENV is release add und use a script to clone the database from prod
 
     cd "$CURRENT_DIR" || exit
+
+    # TODO maybe remove to git clone in the local folder to avoid confusion
+    #      this maybe depending on the update and upgrade process
+    #      e.g. if this is done via git clone to the webserver folder
+    #      and how the .env file can be kept
+
     sleep 3
 }
 
