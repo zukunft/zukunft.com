@@ -119,32 +119,44 @@ const SQL_DB_PASSWD_FALLBACK = 'change_me';
 const SYSTEM_ADMIN_IP_FALLBACK = 'localhost';
 
 // temp solution to force reading the .env file
-$env = parse_ini_file(ROOT_PATH . ENV_FILE);
-foreach ($env as $key => $var) {
-    $line = $key . '=' . $var;
-    if (!str_starts_with($key, '#')) {
-        if (in_array($key, ENV_VARS)) {
-            if ($key == ENV_OS) {
-                if (!in_array($var, ENV_OS_LIST)) {
-                    log_err($key . ' not expected to be ' . $var . ' (only ' . implode(',', ENV_OS_LIST) . ' allowed)');
+$env = file(ROOT_PATH . ENV_FILE);
+foreach ($env as $line) {
+    if (!str_starts_with($line, '#') and trim($line) != '') {
+        if (str_contains($line, '#')) {
+            $line = substr($line, 0, strpos($line, '#'));
+        }
+        if (str_contains($line, "\n")) {
+            $line = substr($line, 0, strpos($line, "\n"));
+        }
+        $parts = explode('=', $line);
+        if (count($parts) != 2) {
+            log_err('unexpected line format in ' . $line);
+        } else {
+            $key = $parts[0];
+            $var = $parts[1];
+            if (in_array($key, ENV_VARS)) {
+                if ($key == ENV_OS) {
+                    if (!in_array($var, ENV_OS_LIST)) {
+                        log_err($key . ' not expected to be ' . $var . ' (only ' . implode(',', ENV_OS_LIST) . ' allowed)');
+                    }
                 }
-            }
-            if ($key == ENVIRONMENT) {
-                if (!in_array($var, ENV_LEVELS)) {
-                    log_err($key . ' not expected to be ' . $var . ' (only ' . implode(',', ENV_LEVELS) . ' allowed)');
+                if ($key == ENVIRONMENT) {
+                    if (!in_array($var, ENV_LEVELS)) {
+                        log_err($key . ' not expected to be ' . $var . ' (only ' . implode(',', ENV_LEVELS) . ' allowed)');
+                    }
                 }
-            }
-            if ($key == ENV_DB) {
-                if (!in_array($var, ENV_DB_LIST)) {
-                    log_err($key . ' not expected to be ' . $var . ' (only ' . implode(',', ENV_DB_LIST) . ' allowed)');
+                if ($key == ENV_DB) {
+                    if (!in_array($var, ENV_DB_LIST)) {
+                        log_err($key . ' not expected to be ' . $var . ' (only ' . implode(',', ENV_DB_LIST) . ' allowed)');
+                    }
                 }
-            }
-            if ($line != '') {
-                putenv($line);
+                if ($line != '') {
+                    putenv($line);
+                }
+            } else {
+                log_err('name ' . $key . ' not expected in environment file ' . ROOT_PATH . ENV_FILE);
             }
         }
-    } else {
-        log_err('name ' . $key . ' not expected in environment file ' . ROOT_PATH . ENV_FILE);
     }
 }
 
