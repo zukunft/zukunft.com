@@ -23,13 +23,14 @@ To install this version 0.0.3 on a debian system (https://wiki.debian.org/) do:
    git clone -b develop https://github.com/zukunft/zukunft.com.git
    ```
    ```bash
-   cd zukunft.com
-   ```
-   ```bash
-   chmod 777 install.sh
+   chmod 777 zukunft.com/install.sh
    ```
 
 2. (Optional) Adjust the `.env.sample` file e.g. for customize database credentials:
+   ```bash
+   nano zukunft.com/.env.sample
+   ```
+
    ```env
    OS=debian (or "docker")
    ENV=dev (or "test", "prod")
@@ -42,11 +43,12 @@ To install this version 0.0.3 on a debian system (https://wiki.debian.org/) do:
    PGSQL_ADMIN_PASSWORD=admin_password_here
    PGSQL_HOST=localhost (or "db")
    ```
-
+   
 3. Start the application:
    ```bash
-   sudo ./install.sh
+   sudo ./zukunft.com/install.sh
    ```
+
 
 Fix development installation:
 -----------------------------
