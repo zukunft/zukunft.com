@@ -36,8 +36,10 @@ main() {
         installAndConfigurePostgresql
         installAndConfigureApache
         installAndConfigurePhp
+        downloadZukunft
         downloadAndInstallExternalLibraries
-        downloadAndInstallZukunft
+        installZukunft
+        testZukunft
         #testInstallation
     else
         if [[ "$OS" == "docker" ]]; then
@@ -230,6 +232,16 @@ installAndConfigurePhp() {
     sleep 3
 }
 
+downloadZukunft() {
+    echo -e "\n${GREEN}Download selected zukunft.com branch ...${NC}"
+
+    # switch later to something like git://git.zukunft.com/zukunft.git
+    git clone -b "$BRANCH" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
+    # copy the .env file to the webserver
+    cp "$CURRENT_DIR/zukunft.com/.env" "$WWW_ROOT/"
+
+}
+
 downloadAndInstallExternalLibraries() {
     echo -e "\n${GREEN}Installing external libraries ...${NC}"
 
@@ -241,13 +253,8 @@ downloadAndInstallExternalLibraries() {
     sleep 3
 }
 
-downloadAndInstallZukunft() {
+installZukunft() {
     echo -e "\n${GREEN}Installing zukunft.com ...${NC}"
-
-    # switch later to something like git://git.zukunft.com/zukunft.git
-    git clone -b "$BRANCH" https://github.com/zukunft/zukunft.com "$WWW_ROOT/"
-    # copy the .env file to the webserver
-    cp "$CURRENT_DIR/zukunft.com/.env" "$WWW_ROOT/"
 
     # force to reread to www root ?
     systemctl restart apache2
@@ -260,6 +267,20 @@ downloadAndInstallZukunft() {
     #      0 test errors
     #      0 internal errors
 
+    cd "$CURRENT_DIR" || exit
+
+    # TODO maybe remove to git clone in the local folder to avoid confusion
+    #      this maybe depending on the update and upgrade process
+    #      e.g. if this is done via git clone to the webserver folder
+    #      and how the .env file can be kept
+    rm -rf zukunft.com
+
+    sleep 3
+}
+
+testZukunft() {
+    echo -e "\n${GREEN}Test zukunft.com ...${NC}"
+
     # test the zukunft.com
     php "$WWW_ROOT/test/test.php"
 
@@ -269,14 +290,6 @@ downloadAndInstallZukunft() {
 
     # TODO if ENV is prod, remove the test script to avoid database reset by mistake
     # TODO if ENV is release add und use a script to clone the database from prod
-
-    cd "$CURRENT_DIR" || exit
-
-    # TODO maybe remove to git clone in the local folder to avoid confusion
-    #      this maybe depending on the update and upgrade process
-    #      e.g. if this is done via git clone to the webserver folder
-    #      and how the .env file can be kept
-    rm -rf zukunft.com
 
     sleep 3
 }
