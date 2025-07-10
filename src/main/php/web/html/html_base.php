@@ -113,7 +113,8 @@ class html_base
         }
 
         // set vars to shorten the lines
-        $url_ext_lib = $server_url . api::EXT_LIB_PATH;
+        //$url_ext_lib = $server_url . api::EXT_LIB_PATH;
+        $url_ext_lib = '/' . api::EXT_LIB_PATH;
 
         $result = '<!DOCTYPE html>';
         $result .= '<html lang="en">'; // TODO: to be adjusted depending on the display language
@@ -126,23 +127,6 @@ class html_base
         if (self::UI_USE_BOOTSTRAP) {
             // include the bootstrap stylesheets
             $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS . '">' . "\n";
-            // include the jQuery UI stylesheets
-            $result .= '  <link rel="stylesheet" href="' . $server_url . 'lib_external/jQueryUI/1.12.1/jquery-ui.css">' . "\n";
-            // include the jQuery library
-            $result .= '  <script src="' . $url_ext_lib . 'jQuery/jquery-3.3.1.js"></script>' . "\n";
-            // include the jQuery UI library
-            $result .= '  <script src="' . $url_ext_lib . 'jQueryUI/1.12.1/jquery-ui.js"></script>' . "\n";
-            // include the popper.js library
-            $result .= '  <script src="' . $url_ext_lib . 'popper.js/1.14.5/popper.min.js"></script>' . "\n";
-            // include the tether library
-            //$result .= '  <script src="' . $url_ext_lib . 'tether/dist/js/tether.min.js"></script>';
-            // include the typeahead and Bloodhound JavaScript plugins
-            //$result .= '  <script src="' . $url_ext_lib . 'typeahead/bootstrap3-typeahead.js"></script>';
-            //$result .= '  <script src="' . $url_ext_lib . 'typeahead/typeahead.bundle.js"></script>';
-            // include the bootstrap Tokenfield JavaScript plugins
-            // $result .= '  <script src="' . $url_ext_lib . 'bootstrap-tokenfield/dist/bootstrap-tokenfield.js"></script>';
-            // include the bootstrap Tokenfield stylesheets
-            //$result .= '  <script src="' . $url_ext_lib . 'bootstrap-tokenfield/dist/css/bootstrap-tokenfield.css"></script>';
             // include the bootstrap JavaScript plugins
             $result .= '  <script src="' . $url_ext_lib . $bs_path . api::BS_JS . '"></script>' . "\n";
             // adjust the styles where needed

@@ -41,6 +41,11 @@ if [[ "$CURRENT_DIR" == */zukunft.com ]]; then
     # copy the relevant parts of the bootstrap
     rsync -av --delete "$LIB_LINK_DIR/fontawesome/css" "$ZUKUNFT_LIB_DIR/fontawesome/"
     rsync -av --delete "$LIB_LINK_DIR/fontawesome/js" "$ZUKUNFT_LIB_DIR/fontawesome/"
+    rsync -av --delete "$LIB_LINK_DIR/fontawesome/webfonts" "$ZUKUNFT_LIB_DIR/fontawesome/"
+
+    # include the external libraries into this git repository
+    cd "$ZUKUNFT_LIB_DIR" || exit
+    git add --all
 
 else
     echo "must be in zukunft.com/ to link / clone the external libraries"
