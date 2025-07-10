@@ -54,7 +54,7 @@ class api
     const BS_CSS_PATH_UAT = 'bootstrap/';
     const BS_CSS_PATH_PROD = 'bootstrap/';
     const BS_CSS = 'css' . DIRECTORY_SEPARATOR . 'bootstrap.css';
-    const EXT_LIB_PATH = 'lib_external' . DIRECTORY_SEPARATOR;
+    const EXT_LIB_PATH = 'external_lib' . DIRECTORY_SEPARATOR;
     const HOST_SYS_LOG = '';
 
     // the url name of the main script that is used in combination with the host url

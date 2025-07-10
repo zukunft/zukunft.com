@@ -1,20 +1,20 @@
 #!/bin/bash
 
 # must be in current project lib external directory
-# e.g. /home/user/PhpProjects/zukunft.com/lib_external/
+# e.g. /home/user/PhpProjects/zukunft.com/external_lib/
 # prepare once with: chmod 777 link_external.sh
 CURRENT_DIR=$(pwd)
 
 if [[ "$CURRENT_DIR" == */zukunft.com ]]; then
 
     # remove to existing folder to clear all existing files
-    rm -rf lib_external
+    rm -rf external_lib
 
     # recreate the external library folder
-    mkdir lib_external
+    mkdir external_lib
 
     # remember the lib folder
-    cd lib_external || exit
+    cd external_lib || exit
     ZUKUNFT_LIB_DIR=$(pwd)
 
     # create a git folder for the external libraries
