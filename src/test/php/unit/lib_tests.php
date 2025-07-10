@@ -446,7 +446,7 @@ class lib_tests
         $test_result = $t->file('/web/system/result.html');
         $test_target = $t->file('/web/system/target.html');
         $result = $lib->diff_msg($test_result, $test_target);
-        $target = '432//- href="Test" title=""////+ href="/http/word_add.php" title="add new word"//';
+        $target = '427//- href="Test" title=""////+ href="/http/word_add.php" title="add new word"//';
         $t->assert($test_name, $result, $target);
 
         $test_name = $tb . 'json in short json files';
