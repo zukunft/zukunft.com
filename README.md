@@ -91,8 +91,8 @@ Production installation (to be reviewed):
 
 To install this version 0.0.3 use a LAPP or (LAMP for MySQL) server (https://wiki.debian.org/LaMp) and
 1) copy all files to the www root path (e.g. /var/www/html/)
-2) copy all files of bootstrap 4.1.3 or higher to /var/www/html/lib_external/bootstrap/4.1.3/
-3) copy all files of fontawesome to /var/www/html/lib_external/fontawesome/
+2) copy all files of bootstrap 4.1.3 or higher to /var/www/html/external_lib/bootstrap/4.1.3/
+3) copy all files of fontawesome to /var/www/html/external_lib/fontawesome/
 4) create a user "zukunft_db_root" in Postgres (or MySQL) and remember the password
 5) change the password "xxx" in .env with the password used in 2)
 6) run the script "src/test/reset_db.php" local on the server and if the result is 0 test errors 0 internal errors delete the script

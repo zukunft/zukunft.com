@@ -9,7 +9,7 @@ CURRENT_DIR=$(pwd)
 if [[ "$CURRENT_DIR" == */zukunft.com ]]; then
 
     # remember the lib folder
-    cd lib_external || exit
+    cd external_lib || exit
     ZUKUNFT_LIB_DIR=$(pwd)
 
     # go to the external library git directory
@@ -22,7 +22,7 @@ if [[ "$CURRENT_DIR" == */zukunft.com ]]; then
     cd bootstrap || exit
     git pull
 
-    # go back to lib_external
+    # go back to external_lib
     cd "$LIB_LINK_DIR" || exit
 
     echo -e "\n${GREEN}Updating fontawesome ...${NC}"
@@ -39,7 +39,7 @@ if [[ "$CURRENT_DIR" == */zukunft.com ]]; then
     rsync -av --delete "$LIB_LINK_DIR/fontawesome/webfonts" "$ZUKUNFT_LIB_DIR/fontawesome/"
 
 else
-    echo "folder zukunft.com/lib_external/ not found in current directory"
+    echo "folder zukunft.com/external_lib/ not found in current directory"
 fi
 
 # go back to original dir
