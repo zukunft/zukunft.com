@@ -145,8 +145,8 @@ class verb_list extends type_list
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
             $db_con->set_usr_num_fields(array(sandbox::FLD_EXCLUDED));
-            $db_con->set_join_fields(array_merge(verb::FLD_NAMES, array(verb::FLD_NAME)), verb::class);
-            $db_con->set_fields(array(verb::FLD_ID));
+            $db_con->set_join_fields(array_merge(verb_db::FLD_NAMES, array(verb_db::FLD_NAME)), verb::class);
+            $db_con->set_fields(array(verb_db::FLD_ID));
             // set the where clause depending on the values given
             // definition of up: if "Zurich" is a City, then "Zurich" is "from" and "City" is "to", so staring from "Zurich" and "up", the result should include "is a"
             $db_con->add_par(sql_par_type::INT, $phr->id());
@@ -188,7 +188,7 @@ class verb_list extends type_list
                 $db_vrb_lst = $db_con->get($qp);
                 if ($db_vrb_lst != null) {
                     foreach ($db_vrb_lst as $db_vrb) {
-                        if (!in_array($db_vrb[verb::FLD_ID], $vrb_id_lst)) {
+                        if (!in_array($db_vrb[verb_db::FLD_ID], $vrb_id_lst)) {
                             $vrb = new verb;
                             $vrb->row_mapper_verb($db_vrb);
                             $vrb->set_user($this->usr);

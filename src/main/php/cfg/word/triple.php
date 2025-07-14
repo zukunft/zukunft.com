@@ -87,6 +87,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_VERB_PATH . 'verb_db.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_VIEW_PATH . 'view_db.php';
 //include_once MODEL_WORD_PATH . 'word.php';
@@ -117,11 +118,9 @@ use cfg\db\sql_type_list;
 use cfg\helper\combine_named;
 use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
-use cfg\language\language;
 use cfg\log\change;
 use cfg\log\change_link;
 use cfg\phrase\phrase;
-use cfg\phrase\phrase_type;
 use cfg\phrase\term;
 use cfg\ref\ref;
 use cfg\sandbox\sandbox;
@@ -132,6 +131,7 @@ use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value_list;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\view\view;
 use cfg\view\view_db;
 use shared\const\triples;
@@ -274,9 +274,9 @@ class triple extends sandbox_link_named
                     $this->to()->set_obj_from_id($phr_id);
                 }
             }
-            if (array_key_exists(verb::FLD_ID, $db_row)) {
-                if ($db_row[verb::FLD_ID] != null) {
-                    $this->set_verb_id($db_row[verb::FLD_ID]);
+            if (array_key_exists(verb_db::FLD_ID, $db_row)) {
+                if ($db_row[verb_db::FLD_ID] != null) {
+                    $this->set_verb_id($db_row[verb_db::FLD_ID]);
                 }
             }
             // TODO use json_fields object
@@ -1222,12 +1222,12 @@ class triple extends sandbox_link_named
 
     function type_field(): string
     {
-        return verb::FLD_ID;
+        return verb_db::FLD_ID;
     }
 
     function type_name_field(): string
     {
-        return verb::FLD_NAME;
+        return verb_db::FLD_NAME;
     }
 
     function to_field(): string
@@ -1449,7 +1449,7 @@ class triple extends sandbox_link_named
         $qp = $this->load_sql($sc, 'link_ids', $class);
         $sc->add_where(triple_db::FLD_FROM, $from);
         $sc->add_where(triple_db::FLD_TO, $to);
-        $sc->add_where(verb::FLD_ID, $predicate_id);
+        $sc->add_where(verb_db::FLD_ID, $predicate_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -1648,7 +1648,7 @@ class triple extends sandbox_link_named
         } elseif ($this->has_objects()) {
             $sc->add_where(triple_db::FLD_FROM, $this->from_id());
             $sc->add_where(triple_db::FLD_TO, $this->to_id());
-            $sc->add_where(verb::FLD_ID, $this->verb_id());
+            $sc->add_where(verb_db::FLD_ID, $this->verb_id());
         } elseif ($this->name_generated() != '') {
             $sc->add_where(triple_db::FLD_NAME_AUTO, $this->name_generated());
         } elseif ($this->name_given() != '') {
@@ -2215,7 +2215,7 @@ class triple extends sandbox_link_named
             if ($log->add()) {
                 $db_con->set_class(triple::class);
                 if (!$db_con->update_old($this->id(),
-                    array(triple_db::FLD_FROM, verb::FLD_ID, triple_db::FLD_TO),
+                    array(triple_db::FLD_FROM, verb_db::FLD_ID, triple_db::FLD_TO),
                     array($this->from_id(), $this->verb_id(), $this->to_id()))) {
                     $result = msg_id::FAILED_UPDATE_WORK_LINK_NAME;
                 }
@@ -2341,7 +2341,7 @@ class triple extends sandbox_link_named
                     }
                 } else {
                     $db_con->set_class(triple::class);
-                    $this->set_id($db_con->insert_old(array(triple_db::FLD_FROM, verb::FLD_ID, triple_db::FLD_TO, user::FLD_ID),
+                    $this->set_id($db_con->insert_old(array(triple_db::FLD_FROM, verb_db::FLD_ID, triple_db::FLD_TO, user::FLD_ID),
                         array($this->from_id(), $this->verb_id(), $this->to_id(), $this->user()->id())));
                 }
                 // TODO make sure on all add functions that the database object is always set
@@ -2585,7 +2585,7 @@ class triple extends sandbox_link_named
             parent::db_fields_all($sc_par_lst),
             [
                 phrase::FLD_TYPE,
-                verb::FLD_ID,
+                verb_db::FLD_ID,
                 triple_db::FLD_NAME_GIVEN,
                 triple_db::FLD_NAME_AUTO,
                 triple_db::FLD_VALUES,
@@ -2642,15 +2642,15 @@ class triple extends sandbox_link_named
             if ($sbx->verb_id() <> $this->verb_id()) {
                 if ($do_log) {
                     $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                        $cng_fld_cac->id($table_id . verb::FLD_ID),
+                        sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_ID,
+                        $cng_fld_cac->id($table_id . verb_db::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 global $vrb_cac;
                 $lst->add_type_field(
-                    verb::FLD_ID,
-                    verb::FLD_NAME,
+                    verb_db::FLD_ID,
+                    verb_db::FLD_NAME,
                     $this->verb_id(),
                     $sbx->verb_id(),
                     $vrb_cac
@@ -2665,15 +2665,15 @@ class triple extends sandbox_link_named
                     // the verb field is added for triple exclude insert statements
                     if ($do_log) {
                         $lst->add_field(
-                            sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                            $cng_fld_cac->id($table_id . verb::FLD_ID),
+                            sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_ID,
+                            $cng_fld_cac->id($table_id . verb_db::FLD_ID),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     global $vrb_cac;
                     $lst->add_type_field(
-                        verb::FLD_ID,
-                        verb::FLD_NAME,
+                        verb_db::FLD_ID,
+                        verb_db::FLD_NAME,
                         null,
                         $sbx->verb_id(),
                         $vrb_cac
@@ -2694,15 +2694,15 @@ class triple extends sandbox_link_named
                 } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
                     if ($do_log) {
                         $lst->add_field(
-                            sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                            $cng_fld_cac->id($table_id . verb::FLD_ID),
+                            sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_ID,
+                            $cng_fld_cac->id($table_id . verb_db::FLD_ID),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     global $vrb_cac;
                     $lst->add_type_field(
-                        verb::FLD_ID,
-                        verb::FLD_NAME,
+                        verb_db::FLD_ID,
+                        verb_db::FLD_NAME,
                         $this->verb_id(),
                         null,
                         $vrb_cac

@@ -44,6 +44,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
+//include_once MODEL_VERB_PATH . 'verb_db.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 
 use cfg\db\sql;
@@ -55,6 +56,7 @@ use cfg\phrase\phrase_type;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\view\view;
 
 class triple_db
@@ -86,7 +88,6 @@ class triple_db
     const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
     const FLD_VIEW_COM = 'the default mask for this triple';
     const FLD_VIEW = 'view_id';
-    const FLD_VIEW_SQL_TYP = sql_field_type::INT;
     const FLD_VALUES_COM = 'number of values linked to the word, which gives an indication of the importance';
     const FLD_VALUES = 'values';
     const FLD_VALUES_SQL_TYP = sql_field_type::INT;
@@ -95,12 +96,11 @@ class triple_db
     const FLD_CODE_ID_COM = 'to link coded functionality to a specific triple e.g. to get the values of the system configuration';
     const FLD_COND_ID_COM = 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
     const FLD_COND_ID = 'triple_condition_id';
-    const FLD_REFS = 'refs';
 
     // list of fields that MUST be set by one user
     const FLD_LST_LINK = array(
         [self::FLD_FROM, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_FROM_COM],
-        [verb::FLD_ID, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, verb::class, self::FLD_VERB_COM],
+        [verb_db::FLD_ID, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, verb::class, self::FLD_VERB_COM],
         [self::FLD_TO, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TO_COM],
     );
     // list of must fields that CAN be changed by the user
@@ -133,7 +133,7 @@ class triple_db
     // TODO use this name for all links
     const FLD_NAMES_LINK = array(
         self::FLD_FROM,
-        verb::FLD_ID,
+        verb_db::FLD_ID,
         self::FLD_TO
     );
     // list of the user specific database field names

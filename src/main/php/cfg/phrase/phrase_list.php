@@ -76,6 +76,7 @@ include_once MODEL_VALUE_PATH . 'value.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_VERB_PATH . 'verb_db.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
 include_once MODEL_WORD_PATH . 'triple.php';
@@ -104,13 +105,13 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_list;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\word\triple_db;
 use cfg\word\word;
 use cfg\word\word_list;
 use cfg\word\triple;
 use cfg\word\triple_list;
 use shared\enum\foaf_direction;
-use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\types\phrase_type as phrase_type_shared;
@@ -408,7 +409,7 @@ class phrase_list extends sandbox_list_named
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
-                    $sc->add_where(verb::FLD_ID, $vrb->id());
+                    $sc->add_where(verb_db::FLD_ID, $vrb->id());
                     $qp->name .= '_and_vrb';
                 }
             }
@@ -820,7 +821,7 @@ class phrase_list extends sandbox_list_named
                             $new_phrase = new phrase($this->user());
                             $new_phrase->row_mapper_sandbox($db_phr);
                             $additional_added->add($new_phrase);
-                            log_debug('added "' . $new_phrase->dsp_id() . '" for verb (' . $db_phr[verb::FLD_ID] . ')');
+                            log_debug('added "' . $new_phrase->dsp_id() . '" for verb (' . $db_phr[verb_db::FLD_ID] . ')');
                         }
                     }
                 }
@@ -2458,11 +2459,11 @@ class phrase_list extends sandbox_list_named
             }
             // verbs can have a negative id for the reverse selection
             if ($vrb != null) {
-                $sc->add_where(verb::FLD_ID, $vrb->id(), null, sql_db::LNK_TBL);
+                $sc->add_where(verb_db::FLD_ID, $vrb->id(), null, sql_db::LNK_TBL);
                 $qp->name .= '_verb_select';
             }
             $sc->set_join_fields(
-                array(verb::FLD_ID),
+                array(verb_db::FLD_ID),
                 triple::class,
                 phrase::FLD_ID,
                 $join_field);

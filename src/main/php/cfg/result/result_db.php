@@ -79,7 +79,8 @@ class result_db
     const FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
     const FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
     const FLD_RESULT_TS_ID = 'result_time_series_id';
-    const FLD_DIRTY = 'dirty';
+    // TODO maybe use the dirty flag for faster dirty selection
+    //const FLD_DIRTY = 'dirty';
     const FLD_ALL_TIME_SERIES = array(
         [self::FLD_RESULT_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM],
     );

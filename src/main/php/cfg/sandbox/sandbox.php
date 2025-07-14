@@ -108,6 +108,7 @@ include_once MODEL_USER_PATH . 'user_db.php';
 include_once MODEL_USER_PATH . 'user_list.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
+//include_once MODEL_VERB_PATH . 'verb_db.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_VIEW_PATH . 'term_view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
@@ -158,13 +159,13 @@ use cfg\user\user_db;
 use cfg\user\user_list;
 use cfg\user\user_message;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\view\view;
 use cfg\view\term_view;
 use cfg\word\triple;
 use cfg\word\word;
 use Exception;
 use shared\enum\change_actions;
-use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\json_fields;
@@ -858,7 +859,7 @@ class sandbox extends db_object_seq_id_user
     function type_name_field(): string
     {
         log_err('type_name_field is not overwritten for the ' . $this::class . ' object');
-        return verb::FLD_NAME;
+        return verb_db::FLD_NAME;
     }
 
 
@@ -3580,7 +3581,7 @@ class sandbox extends db_object_seq_id_user
             if ($this->is_link_obj()) {
                 if ($sc_par_lst->is_usr_tbl()) {
                     $fvt_lst->del($this->from_field());
-                    $fvt_lst->del(verb::FLD_ID);
+                    $fvt_lst->del(verb_db::FLD_ID);
                     $fvt_lst->del($this->to_field());
                 }
             }
@@ -3697,7 +3698,7 @@ class sandbox extends db_object_seq_id_user
                 $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->type_field()]);
                 // TODO remove this exception e.g. by adding the $sc_par_lst to the call
                 if ($this::class == triple::class) {
-                    $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb::FLD_ID, $this->to_field()]);
+                    $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb_db::FLD_ID, $this->to_field()]);
                 } elseif ($this->is_link_obj()) {
                     $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), $this->to_field()]);
                 }
@@ -3724,7 +3725,7 @@ class sandbox extends db_object_seq_id_user
                 $fld_lst_ex_log_and_key = array_merge([$this->id_field(), user::FLD_ID], $fld_lst_ex_log);
                 // TODO remove this exception e.g. by adding the $sc_par_lst to the call
                 if ($this::class == triple::class) {
-                    $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb::FLD_ID, $this->to_field()]);
+                    $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb_db::FLD_ID, $this->to_field()]);
                 } elseif ($this->is_link_obj()) {
                     $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), $this->to_field()]);
                 }

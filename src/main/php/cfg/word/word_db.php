@@ -84,8 +84,6 @@ class word_db
     const FLD_INACTIVE_COM = 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
     const FLD_INACTIVE = 'inactive';
     const FLD_INACTIVE_SQL_TYP = sql_field_type::INT_SMALL;
-    // the field names used for the im- and export in the json or yaml format
-    const FLD_REFS = 'refs';
 
     // list of fields that MUST be set by one user
     const FLD_LST_MUST_BE_IN_STD = array(

@@ -39,6 +39,7 @@ include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_REF_PATH . 'source.php';
 include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_VALUE_PATH . 'value.php';
+include_once MODEL_VERB_PATH . 'verb_db.php';
 include_once MODEL_VIEW_PATH . 'view_db.php';
 include_once MODEL_WORD_PATH . 'triple_db.php';
 include_once SHARED_CONST_PATH . 'words.php';
@@ -64,6 +65,7 @@ use cfg\ref\source_db;
 use cfg\user\user;
 use cfg\value\value;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\view\view;
 use cfg\view\view_db;
 use cfg\word\triple;
@@ -642,7 +644,7 @@ class sandbox_tests
 
         // ... same for a link table
         $db_con->set_class(triple::class);
-        $db_con->set_fields(array(triple_db::FLD_FROM, triple_db::FLD_TO, verb::FLD_ID, 'phrase_type_id'));
+        $db_con->set_fields(array(triple_db::FLD_FROM, triple_db::FLD_TO, verb_db::FLD_ID, 'phrase_type_id'));
         $db_con->set_usr_fields(array(triple_db::FLD_NAME_GIVEN, sandbox_named::FLD_DESCRIPTION, sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('s.triple_id = 1');
         $created_sql = $db_con->select_by_set_id();
@@ -830,7 +832,7 @@ class sandbox_tests
 
         // test the triple load_standard SQL creation
         $db_con->set_class(triple::class);
-        $db_con->set_link_fields(triple_db::FLD_FROM, triple_db::FLD_TO, verb::FLD_ID);
+        $db_con->set_link_fields(triple_db::FLD_FROM, triple_db::FLD_TO, verb_db::FLD_ID);
         $db_con->set_fields(array(triple_db::FLD_NAME_GIVEN, sandbox_named::FLD_DESCRIPTION, sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('triple_id = 1');
         $created_sql = $db_con->select_by_set_id();
@@ -847,7 +849,7 @@ class sandbox_tests
 
         // test the triple load SQL creation
         $db_con->set_class(triple::class);
-        $db_con->set_link_fields(triple_db::FLD_FROM, triple_db::FLD_TO, verb::FLD_ID);
+        $db_con->set_link_fields(triple_db::FLD_FROM, triple_db::FLD_TO, verb_db::FLD_ID);
         $db_con->set_fields(array('phrase_type_id'));
         $db_con->set_usr_fields(array(triple_db::FLD_NAME_GIVEN, sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array(sandbox::FLD_EXCLUDED));
@@ -877,7 +879,7 @@ class sandbox_tests
         $db_con->set_join_fields(
             array(sql::FLD_CODE_ID, 'verb_name', 'name_plural', 'name_reverse', 'name_plural_reverse', 'formula_name', sandbox_named::FLD_DESCRIPTION),
             verb::class);
-        $db_con->set_fields(array(verb::FLD_ID));
+        $db_con->set_fields(array(verb_db::FLD_ID));
         $db_con->set_where_text('s.to_phrase_id = 2');
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT 
@@ -1057,7 +1059,7 @@ class sandbox_tests
 
         // ... same for a link table
         $db_con->set_class(triple::class);
-        $db_con->set_fields(array(triple_db::FLD_FROM, triple_db::FLD_TO, verb::FLD_ID, 'phrase_type_id'));
+        $db_con->set_fields(array(triple_db::FLD_FROM, triple_db::FLD_TO, verb_db::FLD_ID, 'phrase_type_id'));
         $db_con->set_usr_fields(array(triple_db::FLD_NAME_GIVEN, sandbox_named::FLD_DESCRIPTION, sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('s.triple_id = 1');
         $created_sql = $db_con->select_by_set_id();
@@ -1197,7 +1199,7 @@ class sandbox_tests
 
         // test the triple load_standard SQL creation
         $db_con->set_class(triple::class);
-        $db_con->set_link_fields(triple_db::FLD_FROM, triple_db::FLD_TO, verb::FLD_ID);
+        $db_con->set_link_fields(triple_db::FLD_FROM, triple_db::FLD_TO, verb_db::FLD_ID);
         $db_con->set_fields(array(triple_db::FLD_NAME_GIVEN, sandbox_named::FLD_DESCRIPTION, 'phrase_type_id', sandbox::FLD_EXCLUDED));
         $db_con->set_where_text('triple_id = 1');
         $created_sql = $db_con->select_by_set_id();
@@ -1216,7 +1218,7 @@ class sandbox_tests
 
         // test the triple load SQL creation
         $db_con->set_class(triple::class);
-        $db_con->set_link_fields(triple_db::FLD_FROM, triple_db::FLD_TO, verb::FLD_ID);
+        $db_con->set_link_fields(triple_db::FLD_FROM, triple_db::FLD_TO, verb_db::FLD_ID);
         $db_con->set_usr_fields(array(triple_db::FLD_NAME_GIVEN, sandbox_named::FLD_DESCRIPTION));
         $db_con->set_fields(array('phrase_type_id'));
         $db_con->set_usr_num_fields(array(sandbox::FLD_EXCLUDED));

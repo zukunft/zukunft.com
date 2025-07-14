@@ -108,7 +108,6 @@ class component_db
     const FLD_LINK_TYPE_COM = 'e.g. for type 4 to select possible terms';
     const FLD_LINK_TYPE = 'link_type_id';
     const FLD_LINK_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
-    const FLD_POSITION = 'position'; // TODO move to component_link
 
     // list of fields that MUST be set by one user
     const FLD_LST_MUST_BE_IN_STD = array(

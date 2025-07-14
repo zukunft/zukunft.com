@@ -73,9 +73,6 @@ class ref_db
     const FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
     const FLD_SOURCE = 'source_id';
     const FLD_PHRASE_COM = 'the phrase for which the external data should be synchronised';
-    // char used to create one unique key string for the reference
-    private const SEP = '|';
-    private const ESC_CHR = '|';
 
     // field names that cannot be user specific
     const FLD_NAMES = array(

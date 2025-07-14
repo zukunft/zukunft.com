@@ -84,6 +84,7 @@ include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
 include_once MODEL_USER_PATH . 'user_profile.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
 include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_VERB_PATH . 'verb_db.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_link_type.php';
@@ -149,6 +150,7 @@ use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\user\user_profile_list;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\verb\verb_list;
 use cfg\view\view;
 use cfg\view\view_link_type;
@@ -302,7 +304,7 @@ class type_list
         $qp->name = $db_type . sql::NAME_SEP . $query_name;
         $sc->set_name($qp->name);
         if ($class == verb::class) {
-            $sc->set_fields(verb::FLD_NAMES);
+            $sc->set_fields(verb_db::FLD_NAMES);
         } elseif ($class == ref_type::class) {
             $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql::FLD_CODE_ID, ref_type_list::FLD_URL));
         } else {

@@ -74,6 +74,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_base.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
 include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_VERB_PATH . 'verb_db.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
@@ -107,9 +108,9 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_list;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use shared\const\triples;
 use shared\const\words;
-use shared\enum\messages;
 use shared\helper\CombineObject;
 use shared\helper\IdObject;
 use shared\helper\TextIdObject;
@@ -386,14 +387,14 @@ class word_list extends sandbox_list_named
                 log_err('Unknown direction ' . $direction->value);
             }
             $sc->set_join_fields(
-                array(verb::FLD_ID),
+                array(verb_db::FLD_ID),
                 triple::class,
                 word_db::FLD_ID,
                 $join_field);
             // verbs can have a negative id for the reverse selection
             if ($vrb != null) {
                 $qp->name .= '_verb_select';
-                $sc->add_where(verb::FLD_ID, $vrb->id(), null, sql_db::LNK_TBL);
+                $sc->add_where(verb_db::FLD_ID, $vrb->id(), null, sql_db::LNK_TBL);
             }
             $sc->set_name($qp->name);
             $qp->sql = $sc->sql();
@@ -480,7 +481,7 @@ class word_list extends sandbox_list_named
                             $new_word = new word($this->user());
                             $new_word->row_mapper_sandbox($db_wrd);
                             $additional_added->add($new_word);
-                            log_debug('added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb::FLD_ID] . ')');
+                            log_debug('added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb_db::FLD_ID] . ')');
                         }
                     }
                 }

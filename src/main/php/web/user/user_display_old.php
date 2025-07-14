@@ -208,7 +208,7 @@ class user_dsp_old extends user
                     $trp_usr->load_by_id($id);
                 } else {
                     $from_id = $sbx_row[triple_db::FLD_FROM];
-                    $vrb_id = $sbx_row[verb::FLD_ID];
+                    $vrb_id = $sbx_row[verb_db::FLD_ID];
                     $to_id = $sbx_row[triple_db::FLD_TO];
                     $trp_usr->load_by_link_id($from_id, $vrb_id, $to_id);
                 }

@@ -73,8 +73,6 @@ class view_db
     const FLD_STYLE_COM = 'the default display style for this view';
     const FLD_STYLE = 'view_style_id';
     const FLD_CODE_ID_COM = 'to link coded functionality to a specific view e.g. define the internal system views';
-    // the JSON object field names
-    const FLD_COMPONENT = 'components';
 
     // list of fields that MUST be set by one user
     const FLD_LST_MUST_BE_IN_STD = array(

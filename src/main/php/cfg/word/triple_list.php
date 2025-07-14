@@ -68,6 +68,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_VERB_PATH . 'verb_db.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'word_list.php';
@@ -93,11 +94,11 @@ use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use shared\const\triples;
 use shared\const\words;
 use shared\enum\foaf_direction;
 use shared\enum\messages as msg_id;
-use shared\json_fields;
 use shared\types\verbs;
 
 class triple_list extends sandbox_list_named
@@ -238,7 +239,7 @@ class triple_list extends sandbox_list_named
                         $this->add_obj($trp);
                         $result = true;
                         // fill verb
-                        $trp->set_verb_id($db_row[verb::FLD_ID]);
+                        $trp->set_verb_id($db_row[verb_db::FLD_ID]);
                         // fill from
                         $trp->set_fob(new phrase($this->user()));
                         $trp->fob()->row_mapper_sandbox($db_row, triple_db::FLD_FROM, '1');
@@ -361,7 +362,7 @@ class triple_list extends sandbox_list_named
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
-                    $sc->add_where(verb::FLD_ID, $vrb->id());
+                    $sc->add_where(verb_db::FLD_ID, $vrb->id());
                     $qp->name .= '_and_vrb';
                 }
             }
@@ -409,7 +410,7 @@ class triple_list extends sandbox_list_named
             }
             if ($vrb != null) {
                 if ($vrb->id() > 0) {
-                    $sc->add_where(verb::FLD_ID, $vrb->id());
+                    $sc->add_where(verb_db::FLD_ID, $vrb->id());
                     $qp->name .= '_and_vrb';
                 }
             }
@@ -480,7 +481,7 @@ class triple_list extends sandbox_list_named
             phrase::FLD_ID,
             true
         );
-        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(verb::FLD_ID) . ', ' . triple_db::FLD_NAME_GIVEN);
+        $sc->set_order_text(sql_db::STD_TBL . '.' . $sc->name_sql_esc(verb_db::FLD_ID) . ', ' . triple_db::FLD_NAME_GIVEN);
         return $qp;
     }
 

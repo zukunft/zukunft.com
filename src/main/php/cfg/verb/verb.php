@@ -100,44 +100,12 @@ class verb extends type_object
 
     // object specific database and JSON object field names and comments
     const TBL_COMMENT = 'for verbs / triple predicates to use predefined behavior';
-    const FLD_ID = 'verb_id';
-    const FLD_NAME = 'verb_name';
-    const FLD_CODE_ID_COM = 'id text to link coded functionality to a specific verb';
-    const FLD_CONDITION = 'condition_type';
-    const FLD_FORMULA_COM = 'naming used in formulas';
-    const FLD_FORMULA = 'formula_name';
-    const FLD_PLURAL = 'name_plural';
-    const FLD_REVERSE = 'name_reverse';
-    const FLD_PLURAL_REVERSE_COM = 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
-    const FLD_PLURAL_REVERSE = 'name_plural_reverse';
-    const FLD_WORDS_COM = 'used for how many phrases or formulas';
-    const FLD_WORDS = 'words';
 
-    // all database field names excluding the id used to identify if there are some user specific changes
-    const FLD_NAMES = array(
-        sql::FLD_CODE_ID,
-        sandbox_named::FLD_DESCRIPTION,
-        self::FLD_PLURAL,
-        self::FLD_REVERSE,
-        self::FLD_PLURAL_REVERSE,
-        self::FLD_FORMULA,
-        self::FLD_WORDS
-    );
-
-    // field lists for the table creation
-    const FLD_LST_NAME = array(
-        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
-    );
-    const FLD_LST_ALL = array(
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_CONDITION, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
-        [self::FLD_FORMULA, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_FORMULA_COM],
-        [self::FLD_PLURAL_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PLURAL_REVERSE_COM],
-        [self::FLD_PLURAL, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
-        [self::FLD_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
-        [self::FLD_WORDS, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_WORDS_COM],
-    );
+    // forward the const to enable usage of $this::CONST_NAME
+    const FLD_ID = verb_db::FLD_ID;
+    const FLD_NAMES = verb_db::FLD_NAMES;
+    const FLD_LST_NAME = verb_db::FLD_LST_NAME;
+    const FLD_LST_ALL = verb_db::FLD_LST_ALL;
 
 
     /*
@@ -204,8 +172,8 @@ class verb extends type_object
      */
     function row_mapper_verb(
         ?array $db_row,
-        string $id_fld = self::FLD_ID,
-        string $name_fld = self::FLD_NAME): bool
+        string $id_fld = verb_db::FLD_ID,
+        string $name_fld = verb_db::FLD_NAME): bool
     {
         $result = parent::row_mapper($db_row, $id_fld);
         if ($result) {
@@ -215,26 +183,26 @@ class verb extends type_object
                 }
             }
             $this->set_name($db_row[$name_fld]);
-            if (array_key_exists(self::FLD_PLURAL, $db_row)) {
-                $this->plural = $db_row[self::FLD_PLURAL];
+            if (array_key_exists(verb_db::FLD_PLURAL, $db_row)) {
+                $this->plural = $db_row[verb_db::FLD_PLURAL];
             }
-            if (array_key_exists(self::FLD_REVERSE, $db_row)) {
-                $this->reverse = $db_row[self::FLD_REVERSE];
+            if (array_key_exists(verb_db::FLD_REVERSE, $db_row)) {
+                $this->reverse = $db_row[verb_db::FLD_REVERSE];
             }
-            if (array_key_exists(self::FLD_PLURAL_REVERSE, $db_row)) {
-                $this->rev_plural = $db_row[self::FLD_PLURAL_REVERSE];
+            if (array_key_exists(verb_db::FLD_PLURAL_REVERSE, $db_row)) {
+                $this->rev_plural = $db_row[verb_db::FLD_PLURAL_REVERSE];
             }
-            if (array_key_exists(self::FLD_FORMULA, $db_row)) {
-                $this->frm_name = $db_row[self::FLD_FORMULA];
+            if (array_key_exists(verb_db::FLD_FORMULA, $db_row)) {
+                $this->frm_name = $db_row[verb_db::FLD_FORMULA];
             }
             if (array_key_exists(sandbox_named::FLD_DESCRIPTION, $db_row)) {
                 $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
             }
-            if (array_key_exists(self::FLD_WORDS, $db_row)) {
-                if ($db_row[self::FLD_WORDS] == null) {
+            if (array_key_exists(verb_db::FLD_WORDS, $db_row)) {
+                if ($db_row[verb_db::FLD_WORDS] == null) {
                     $this->usage = 0;
                 } else {
-                    $this->usage = $db_row[self::FLD_WORDS];
+                    $this->usage = $db_row[verb_db::FLD_WORDS];
                 }
             }
         }
@@ -346,7 +314,7 @@ class verb extends type_object
 
         $sc->set_class(self::class);
         $sc->set_name($qp->name);
-        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_fields(verb_db::FLD_NAMES);
 
         return $qp;
     }
@@ -376,8 +344,8 @@ class verb extends type_object
     function load_sql_by_name(sql_creator $sc, string $name, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, sql_db::FLD_NAME, $class);
-        $sc->add_where(self::FLD_NAME, $name, sql_par_type::TEXT_OR);
-        $sc->add_where(self::FLD_FORMULA, $name, sql_par_type::TEXT_OR);
+        $sc->add_where(verb_db::FLD_NAME, $name, sql_par_type::TEXT_OR);
+        $sc->add_where(verb_db::FLD_FORMULA, $name, sql_par_type::TEXT_OR);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -517,16 +485,16 @@ class verb extends type_object
             if ($key == json_fields::DESCRIPTION) {
                 $this->description = $value;
             }
-            if ($key == self::FLD_REVERSE) {
+            if ($key == verb_db::FLD_REVERSE) {
                 $this->reverse = $value;
             }
-            if ($key == self::FLD_PLURAL) {
+            if ($key == verb_db::FLD_PLURAL) {
                 $this->plural = $value;
             }
-            if ($key == self::FLD_FORMULA) {
+            if ($key == verb_db::FLD_FORMULA) {
                 $this->frm_name = $value;
             }
-            if ($key == self::FLD_PLURAL_REVERSE) {
+            if ($key == verb_db::FLD_PLURAL_REVERSE) {
                 $this->rev_plural = $value;
             }
         }
@@ -639,7 +607,7 @@ class verb extends type_object
         $db_con->set_class(word::class);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(self::FLD_NAMES);
+        $db_con->set_fields(verb_db::FLD_NAMES);
         $db_con->set_where_std($this->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -660,7 +628,7 @@ class verb extends type_object
         // to review: additional check the database foreign keys
         $qp = $this->not_used_sql($db_con);
         $db_row = $db_con->get1($qp);
-        $used_by_words = $db_row[self::FLD_WORDS];
+        $used_by_words = $db_row[verb_db::FLD_WORDS];
         if ($used_by_words > 0) {
             $result = false;
         }
@@ -715,7 +683,7 @@ class verb extends type_object
         $log = new change($this->usr);
         $log->set_action(change_actions::ADD);
         $log->set_table(change_tables::VERB);
-        $log->set_field(self::FLD_NAME);
+        $log->set_field(verb_db::FLD_NAME);
         $log->old_value = null;
         $log->new_value = $this->name;
         $log->row_id = 0;
@@ -742,7 +710,7 @@ class verb extends type_object
         $log = new change($this->usr);
         $log->set_action(change_actions::DELETE);
         $log->set_table(change_tables::VERB);
-        $log->set_field(self::FLD_NAME);
+        $log->set_field(verb_db::FLD_NAME);
         $log->old_value = $this->name;
         $log->new_value = null;
         $log->row_id = $this->id();
@@ -808,7 +776,7 @@ class verb extends type_object
             $log->new_value = $this->name;
             $log->std_value = $db_rec->name;
             $log->row_id = $this->id();
-            $log->set_field(self::FLD_NAME);
+            $log->set_field(verb_db::FLD_NAME);
             $usr_msg = $this->save_field_do($db_con, $log);
         }
         return $usr_msg;
@@ -824,7 +792,7 @@ class verb extends type_object
             $log->new_value = $this->plural;
             $log->std_value = $db_rec->plural;
             $log->row_id = $this->id();
-            $log->set_field(self::FLD_PLURAL);
+            $log->set_field(verb_db::FLD_PLURAL);
             $usr_msg = $this->save_field_do($db_con, $log);
         }
         return $usr_msg;
@@ -840,7 +808,7 @@ class verb extends type_object
             $log->new_value = $this->reverse;
             $log->std_value = $db_rec->reverse;
             $log->row_id = $this->id();
-            $log->set_field(self::FLD_REVERSE);
+            $log->set_field(verb_db::FLD_REVERSE);
             $usr_msg = $this->save_field_do($db_con, $log);
         }
         return $usr_msg;
@@ -856,7 +824,7 @@ class verb extends type_object
             $log->new_value = $this->rev_plural;
             $log->std_value = $db_rec->rev_plural;
             $log->row_id = $this->id();
-            $log->set_field(self::FLD_PLURAL_REVERSE);
+            $log->set_field(verb_db::FLD_PLURAL_REVERSE);
             $usr_msg = $this->save_field_do($db_con, $log);
         }
         return $usr_msg;
@@ -888,7 +856,7 @@ class verb extends type_object
             $log->new_value = $this->frm_name;
             $log->std_value = $db_rec->frm_name;
             $log->row_id = $this->id();
-            $log->set_field(self::FLD_FORMULA);
+            $log->set_field(verb_db::FLD_FORMULA);
             $usr_msg = $this->save_field_do($db_con, $log);
         }
         return $usr_msg;
@@ -976,7 +944,7 @@ class verb extends type_object
         if ($log->id() > 0) {
             // insert the new verb
             $db_con->set_class(verb::class);
-            $this->set_id($db_con->insert_old(self::FLD_NAME, $this->name));
+            $this->set_id($db_con->insert_old(verb_db::FLD_NAME, $this->name));
             if ($this->id() > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id())) {
@@ -1140,7 +1108,7 @@ class verb extends type_object
                 if ($log->id() > 0) {
                     $db_con->usr_id = $this->user()->id();
                     $db_con->set_class(verb::class);
-                    $result = $db_con->delete_old(self::FLD_ID, $this->id());
+                    $result = $db_con->delete_old(verb_db::FLD_ID, $this->id());
                 }
             } else {
                 // TODO: create a new verb and request to delete the old

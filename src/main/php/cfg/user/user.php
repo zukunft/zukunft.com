@@ -1699,7 +1699,7 @@ class user extends db_id_object_non_sandbox
         //$db_con = new mysql;
         $db_con->usr_id = $this->id();
         $result = $db_con->set_class(user::class);
-        //$result = $db_con->update($this->id(), verb::FLD_ID, $vrb_id);
+        //$result = $db_con->update($this->id(), verb_db::FLD_ID, $vrb_id);
         return $result;
     }
 

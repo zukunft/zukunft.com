@@ -33,6 +33,7 @@
 namespace unit_read;
 
 include_once MODEL_FORMULA_PATH . 'formula_db.php';
+include_once MODEL_VERB_PATH . 'verb_db.php';
 include_once MODEL_WORD_PATH . 'triple_db.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
@@ -43,6 +44,7 @@ use cfg\formula\formula_db;
 use cfg\phrase\phrase;
 use cfg\phrase\term;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\word\triple;
 use cfg\word\triple_db;
 use cfg\word\word;
@@ -115,7 +117,7 @@ class term_read_tests
         $trm->set_obj_from_class(verb::class);
         $trm->set_obj_id(1);
         $db_row[term::FLD_ID]  = $trm->id(); // simulate the term db row by setting the id
-        $trm->row_mapper_sandbox($db_row, verb::FLD_ID, verb::FLD_NAME);
+        $trm->row_mapper_sandbox($db_row, verb_db::FLD_ID, verb_db::FLD_NAME);
         $t->assert($t->name . ' verb row mapper', $trm->name(), verbs::NOT_SET_NAME);
         $trm_by_obj_id = new term($t->usr1);
         $trm_by_obj_id->load_by_obj_id($trm->id_obj(), verb::class);

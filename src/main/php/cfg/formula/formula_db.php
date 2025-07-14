@@ -88,9 +88,6 @@ class formula_db
     const FLD_USAGE = 'usage'; // TODO convert to a percent value of relative importance e.g. is 100% if all results, words and triples use this formula; should be possible to adjust the weight of e.g. values and views with the user specific system settings
     const FLD_USAGE_SQL_TYP = sql_field_type::INT;
 
-    // the field names used for the im- and export in the json or yaml format
-    const FLD_ASSIGN = 'assigned_word';
-
     // list of fields that MUST be set by one user
     // TODO add foreign key for share and protection type?
     const FLD_LST_MUST_BE_IN_STD = array(

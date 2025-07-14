@@ -93,7 +93,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
-include_once MODEL_VERB_PATH . 'verb.php';
+include_once MODEL_VERB_PATH . 'verb_db.php';
 include_once MODEL_VERB_PATH . 'verb_list.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_db.php';
@@ -134,7 +134,7 @@ use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value_list;
-use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\verb\verb_list;
 use cfg\view\view;
 use cfg\view\view_db;
@@ -1235,7 +1235,7 @@ class word extends sandbox_typed
         $link_id = $vrb_cac->id(verbs::FOLLOW);
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple_db::FLD_FROM, triple_db::FLD_TO, $this->id(), verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple_db::FLD_FROM, triple_db::FLD_TO, $this->id(), verb_db::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1261,7 +1261,7 @@ class word extends sandbox_typed
         $link_id = $vrb_cac->id(verbs::FOLLOW);
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple_db::FLD_TO, triple_db::FLD_FROM, $this->id(), verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple_db::FLD_TO, triple_db::FLD_FROM, $this->id(), verb_db::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {

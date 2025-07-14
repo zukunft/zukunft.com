@@ -100,6 +100,7 @@ include_once MODEL_REF_PATH . 'ref_db.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VALUE_PATH . 'value_db.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
+//include_once MODEL_VERB_PATH . 'verb_db.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_VIEW_PATH . 'term_view.php';
 //include_once MODEL_WORD_PATH . 'word.php';
@@ -140,9 +141,9 @@ use cfg\user\user_db;
 use cfg\value\value;
 use cfg\value\value_db;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\word\triple;
 use cfg\user\user;
-use cfg\value\value_base;
 use cfg\view\view;
 use cfg\view\term_view;
 use cfg\word\triple_db;
@@ -547,7 +548,7 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::VERB) {
                 $db_con->set_class(verb::class);
-                foreach (verb::FLD_NAMES as $field_name) {
+                foreach (verb_db::FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::TRIPLE) {
