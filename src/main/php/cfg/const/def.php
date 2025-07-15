@@ -64,6 +64,7 @@ namespace cfg\const;
 //include_once MODEL_USER_PATH . 'user_type.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VERB_PATH . 'verb.php';
+//include_once MODEL_VERB_PATH . 'verb_list.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 //include_once MODEL_VIEW_PATH . 'view_list.php';
 //include_once MODEL_VIEW_PATH . 'view_type.php';
@@ -107,6 +108,7 @@ use cfg\user\user_type;
 use cfg\user\user_official_type;
 use cfg\value\value;
 use cfg\verb\verb;
+use cfg\verb\verb_list;
 use cfg\view\view;
 use cfg\view\view_link_type;
 use cfg\view\view_list;
@@ -131,7 +133,7 @@ class def
     // can be im- and exported
     const MAIN_CLASSES = [
         word::class,
-        //verb::class,
+        verb::class,
         triple::class,
         source::class,
         ref::class,
@@ -150,6 +152,8 @@ class def
     const CODE_ID_CLASSES = [
         word::class,
         word_list::class,
+        verb::class,
+        verb_list::class,
         triple::class,
         triple_list::class,
         user::class,
@@ -163,6 +167,11 @@ class def
     // classes that have a user interface message code id
     const UI_MSG_CODE_ID_CLASSES = [
         component::class,
+    ];
+
+    // classes that does not need a foreign db key
+    const NO_FOREIGN_DB_KEY_CLASSES = [
+        verb::class,
     ];
 
     // type classes that have a csv file for the initial load
@@ -225,7 +234,6 @@ class def
     // list of classes that use the user sandbox
     const SANDBOX_CLASSES = [
         word::class,
-        verb::class,
         triple::class,
         source::class,
         ref::class,

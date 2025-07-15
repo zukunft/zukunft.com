@@ -449,7 +449,7 @@ class create_test_objects extends test_base
                         $typ_obj->set_id($data[$id_col]);
                         $typ_obj->set_name($data[$name_col]);
                         if ($code_id_col > 0) {
-                            $typ_obj->set_code_id($data[$code_id_col]);
+                            $typ_obj->set_code_id_db($data[$code_id_col]);
                         }
                         if (array_key_exists($desc_col, $data)) {
                             $typ_obj->set_description($data[$desc_col]);
@@ -532,9 +532,9 @@ class create_test_objects extends test_base
     /**
      * get the base test object related to the given class
      * @param string $class the given main class name
-     * @return sandbox|sandbox_value|db_id_object_non_sandbox wit only a few vars filled
+     * @return sandbox|sandbox_value|type_object|db_id_object_non_sandbox wit only a few vars filled
      */
-    function class_to_base_object(string $class): sandbox|sandbox_value|db_id_object_non_sandbox
+    function class_to_base_object(string $class): sandbox|sandbox_value|type_object|db_id_object_non_sandbox
     {
         $obj = null;
         switch ($class) {
@@ -580,9 +580,9 @@ class create_test_objects extends test_base
     /**
      * get the filled test object related to the given class
      * @param string $class the given main class name
-     * @return triple|ref|value|result|sandbox|sandbox_value|db_id_object_non_sandbox wit only a few vars filled
+     * @return triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox wit only a few vars filled
      */
-    function class_to_filled_object(string $class): triple|ref|value|result|sandbox|sandbox_value|db_id_object_non_sandbox
+    function class_to_filled_object(string $class): triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox
     {
         $obj = null;
         switch ($class) {

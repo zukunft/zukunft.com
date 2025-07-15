@@ -112,22 +112,28 @@ class verb extends type_object
      * object vars
      */
 
-    private ?user $usr = null;          // used only to allow adding the code id on import
-    //                                     but there should not be any user specific verbs
-    //                                     otherwise if id is 0 (not NULL) the standard word link type,
-    //                                     otherwise the user specific verb
-    public ?string $plural = null;      // name used if more than one word is shown
-    //                                     e.g. instead of "ABB" "is a" "company"
-    //                                          use "ABB", Nestlé" "are" "companies"
-    public ?string $reverse = null;     // name used if displayed the other way round
-    //                                     e.g. for "Country" "has a" "Human Development Index"
-    //                                          the reverse would be "Human Development Index" "is used for" "Country"
-    public ?string $rev_plural = null;  // the reverse name for many words
-    public ?string $frm_name = null;    // short name of the verb for the use in formulas
-    //                                     because there both sides are combined
-    public ?string $description = null; // for the mouse over explain
-    public int $usage = 0;              // how often this current used has used the verb
-    //                                     (until now just the usage of all users)
+    // the user is used only to allow adding the code id on import
+    // but there should not be any user specific verbs
+    // otherwise if id is 0 (not NULL) the standard word link type,
+    // otherwise the user specific verb
+    private ?user $usr = null;
+    // name used if more than one word is shown
+    // e.g. instead of "ABB" "is a" "company"
+    // use "ABB", Nestlé" "are" "companies"
+    // TODO move to language forms
+    public ?string $plural = null;
+    // name used if displayed the other way round
+    // e.g. for "Country" "has a" "Human Development Index"
+    // the reverse would be "Human Development Index" "is used for" "Country"
+    public ?string $reverse = null;
+    // the reverse name for many words
+    public ?string $rev_plural = null;
+    // short name of the verb for the use in formulas
+    // because there both sides are combined
+    public ?string $frm_name = null;
+    // how often this current used has used the verb
+    // (until now just the usage of all users)
+    public int $usage = 0;
 
 
     /*
@@ -150,15 +156,12 @@ class verb extends type_object
 
     function reset(): void
     {
-        $this->set_id(0);
+        parent::reset();
         $this->set_user(null);
-        $this->code_id = null;
-        $this->name = '';
         $this->plural = null;
         $this->reverse = null;
         $this->rev_plural = null;
         $this->frm_name = null;
-        $this->description = null;
         $this->usage = 0;
     }
 
@@ -179,7 +182,7 @@ class verb extends type_object
         if ($result) {
             if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
                 if ($db_row[sql::FLD_CODE_ID] != null) {
-                    $this->set_code_id($db_row[sql::FLD_CODE_ID]);
+                    $this->set_code_id_db($db_row[sql::FLD_CODE_ID]);
                 }
             }
             $this->set_name($db_row[$name_fld]);
@@ -207,6 +210,75 @@ class verb extends type_object
             }
         }
         return $result;
+    }
+
+    /**
+     * map a verb api json to this model verb object
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = parent::api_mapper($api_json);
+
+        // TODO add user to request new verbs via api
+
+        // TODO move plural to language forms
+        if (array_key_exists(json_fields::PLURAL, $api_json)) {
+            if ($api_json[json_fields::PLURAL] <> '') {
+                $this->plural = $api_json[json_fields::PLURAL];
+            }
+        }
+        if (array_key_exists(json_fields::REVERSE, $api_json)) {
+            if ($api_json[json_fields::REVERSE] <> '') {
+                $this->reverse = $api_json[json_fields::REVERSE];
+            }
+        }
+        if (array_key_exists(json_fields::REV_PLURAL, $api_json)) {
+            if ($api_json[json_fields::REV_PLURAL] <> '') {
+                $this->rev_plural = $api_json[json_fields::REV_PLURAL];
+            }
+        }
+
+        // the usage var is not expected to be changed via api
+
+        return $usr_msg;
+    }
+
+    /**
+     * function to import the core user sandbox object values from a json string
+     * e.g. the share and protection settings
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper_user(
+        array       $in_ex_json,
+        user        $usr_req,
+        data_object $dto = null,
+        object      $test_obj = null
+    ): user_message
+    {
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+
+        if (key_exists(json_fields::NAME, $in_ex_json)) {
+            $this->set_name($in_ex_json[json_fields::NAME]);
+        }
+        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            if ($in_ex_json[json_fields::DESCRIPTION] <> '') {
+                $this->description = $in_ex_json[json_fields::DESCRIPTION];
+            }
+        }
+        if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
+            if ($in_ex_json[json_fields::CODE_ID] <> '') {
+                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
+            }
+        }
+
+        return $usr_msg;
     }
 
 
@@ -456,10 +528,10 @@ class verb extends type_object
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(
-        array $json_obj,
+        array        $json_obj,
         user         $usr_req,
         ?data_object $dto = null,
-        object $test_obj = null
+        object       $test_obj = null
     ): user_message
     {
         global $vrb_cac;

@@ -110,6 +110,7 @@ use cfg\helper\combine_object;
 use cfg\helper\data_object;
 use cfg\helper\db_id_object_non_sandbox;
 use cfg\helper\db_object_seq_id;
+use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_link;
 use cfg\phrase\phr_ids;
@@ -635,7 +636,7 @@ class test_base
         if ($err_message == '') {
             return true;
         } else {
-            return $this->assert_dsp($msg . $err_message, false, $target_str, $result_str, $err_message);
+            return $this->assert_dsp($msg . ' ' . $err_message, false, $target_str, $result_str, $err_message);
         }
     }
 
@@ -2169,11 +2170,11 @@ class test_base
     /**
      * check the object loading by id and name
      *
-     * @param sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
+     * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $usr_obj the user sandbox object e.g. a word
      * @param int|string $id the id of the object if not 1
      * @return bool the load object to use it for more tests
      */
-    function assert_load_by_id(sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
+    function assert_load_by_id(sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $usr_obj, int|string $id = 1): bool
     {
         // check the loading via id and check if the id has been mapped
         $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
@@ -3533,13 +3534,13 @@ class test_base
 
     /**
      * check if the filling up an almost empty object matches the filled object
-     * @param sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $empty the object with almost all vars null
-     * @param sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $filled the object filled with all vars
+     * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $empty the object with almost all vars null
+     * @param sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $filled the object filled with all vars
      * @return bool true if the api message matches
      */
     function assert_fill(
-        sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $empty,
-        sandbox_named|sandbox_link|sandbox_value|db_id_object_non_sandbox $filled
+        sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $empty,
+        sandbox_named|sandbox_link|sandbox_value|type_object|db_id_object_non_sandbox $filled
     ): bool
     {
 

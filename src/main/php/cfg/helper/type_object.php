@@ -60,8 +60,11 @@ include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 //include_once MODEL_SYSTEM_PATH . 'pod.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -79,7 +82,10 @@ use cfg\log\change_table_field;
 use cfg\sandbox\sandbox_named;
 use cfg\system\pod;
 use cfg\user\user;
+use cfg\user\user_message;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
+use shared\library;
 use shared\types\api_type_list;
 
 class type_object extends db_object_seq_id
@@ -123,9 +129,13 @@ class type_object extends db_object_seq_id
      */
 
     // the standard fields of a type
-    public string $name; // the unique type name as shown to the user
-    public ?string $code_id; // this id text is unique for all code links and is used for system im- and export
-    public ?string $description = '';  // to explain the type to the user as a tooltip
+
+    // the unique type name as shown to the user
+    public string $name;
+    // this id text is unique for all code links and is used for system im- and export
+    public ?string $code_id;
+    // to explain the type to the user as a tooltip
+    public ?string $description = null;
 
 
     /*
@@ -137,10 +147,8 @@ class type_object extends db_object_seq_id
         parent::__construct();
         $this->set_id($id);
         $this->set_name($name);
-        $this->set_code_id($code_id);
-        if ($description != '') {
-            $this->set_description($description);
-        }
+        $this->set_code_id_db($code_id);
+        $this->set_description($description);
     }
 
     function reset(): void
@@ -161,7 +169,7 @@ class type_object extends db_object_seq_id
     {
         $result = parent::row_mapper($db_row, $this->id_field_typ($class));
         // set the id upfront to allow row mapping
-        if ($class == language::class AND array_key_exists(language::FLD_ID, $db_row)) {
+        if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
             $this->set_id(($db_row[language::FLD_ID]));
         }
         if ($this->id() > 0) {
@@ -187,17 +195,93 @@ class type_object extends db_object_seq_id
         return $result;
     }
 
+    /**
+     * fill the vars with this sandbox object based on the given api json array
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        if (array_key_exists(json_fields::ID, $api_json)) {
+            $this->set_id($api_json[json_fields::ID]);
+        }
+        if (array_key_exists(json_fields::NAME, $api_json)) {
+            $this->set_name($api_json[json_fields::NAME]);
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            if ($api_json[json_fields::DESCRIPTION] <> '') {
+                $this->description = $api_json[json_fields::DESCRIPTION];
+            }
+        }
+
+
+        return $usr_msg;
+    }
+
+    /**
+     * general part to import a database object from a JSON array object
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        return new user_message();
+    }
+
 
     /*
      * set and get
      */
+
+    /**
+     * set the vars of this type object based on json string from the frontend object
+     * @param string $api_json with the api message created by the frontend
+     * @return user_message with problems and suggested solutions for the user
+     */
+    function set_from_api(string $api_json): user_message
+    {
+        return $this->api_mapper(json_decode($api_json, true));
+    }
 
     function set_name(string $name): void
     {
         $this->name = $name;
     }
 
-    function set_code_id(?string $code_id): void
+    /**
+     * set the unique id to select a single verb by the program
+     *r
+     * @param string|null $code_id the unique key to select a word used by the system e.g. for the system or configuration
+     * @param user $usr the user who has requested the change
+     * @return user_message warning message for the user if the permissions are missing
+     */
+    function set_code_id(?string $code_id, user $usr): user_message
+    {
+        $usr_msg = new user_message();
+        if ($usr->can_set_code_id()) {
+            $this->code_id = $code_id;
+        } else {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $usr->name(),
+                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_NAME => sql::FLD_CODE_ID,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the code id without check
+     * should only be called by the database mapper function
+     */
+    function set_code_id_db(?string $code_id): void
     {
         $this->code_id = $code_id;
     }
@@ -217,7 +301,7 @@ class type_object extends db_object_seq_id
         return $this->code_id;
     }
 
-    function description(): string
+    function description(): ?string
     {
         return $this->description;
     }

@@ -100,7 +100,9 @@ class horizontal_tests
             $obj_changed->reset();
             $t->assert_sql_table_create($obj);
             $t->assert_sql_index_create($obj);
-            $t->assert_sql_foreign_key_create($obj);
+            if (!in_array($class, def::NO_FOREIGN_DB_KEY_CLASSES)) {
+                $t->assert_sql_foreign_key_create($obj);
+            }
             // TODO maybe move here from the single class tests
             //$t->assert_sql_insert($sc, $obj, [sql_type::LOG]);
             //$t->assert_sql_update($sc, $obj_changed, $obj, [sql_type::LOG]);

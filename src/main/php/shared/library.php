@@ -2271,8 +2271,8 @@ class library
      */
     function class_to_empty_json(string $class): string
     {
-        $json = null;
         switch ($class) {
+            case verb::class:
             case triple::class:
             case ref::class;
                 $json = test_api::JSON_ARRAY_ONLY;

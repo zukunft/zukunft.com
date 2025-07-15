@@ -605,7 +605,7 @@ class type_list
                         $typ_obj->set_id($data[$id_col]);
                         $typ_obj->set_name($data[$name_col]);
                         if ($code_id_col > 0) {
-                            $typ_obj->set_code_id($data[$code_id_col]);
+                            $typ_obj->set_code_id_db($data[$code_id_col]);
                         }
                         if (array_key_exists($desc_col, $data)) {
                             $typ_obj->set_description($data[$desc_col]);

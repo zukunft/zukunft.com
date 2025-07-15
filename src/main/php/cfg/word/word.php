@@ -244,16 +244,10 @@ class word extends sandbox_typed
         string $name_fld = word_db::FLD_NAME,
         string $type_fld = phrase::FLD_TYPE): bool
     {
-        // create a virtual one-time system user e.g. to set the code id
-        $usr_sys = new user();
-        $usr_sys->set_id(users::SYSTEM_ID);
-        $usr_sys->name = users::SYSTEM_NAME;
-        $usr_sys->set_profile(user_profiles::SYSTEM);
-
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
             if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
-                $this->set_code_id($db_row[sql::FLD_CODE_ID], $usr_sys);
+                $this->set_code_id_db($db_row[sql::FLD_CODE_ID]);
             }
             if (array_key_exists(word_db::FLD_PLURAL, $db_row)) {
                 $this->plural = $db_row[word_db::FLD_PLURAL];
@@ -333,10 +327,8 @@ class word extends sandbox_typed
             $this->type_id = $phr_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
         }
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            if ($this->user()->is_admin()) {
-                if ($in_ex_json[json_fields::CODE_ID] <> '') {
-                    $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
-                }
+            if ($in_ex_json[json_fields::CODE_ID] <> '') {
+                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
             }
         }
         if (key_exists(json_fields::PLURAL, $in_ex_json)) {
@@ -480,6 +472,7 @@ class word extends sandbox_typed
 
     /**
      * set the unique id to select a single word by the program
+     * TODO check that all set_code_id function are using the can_set_code_id function
      *r
      * @param string|null $code_id the unique key to select a word used by the system e.g. for the system or configuration
      * @param user $usr the user who has requested the change
@@ -500,6 +493,15 @@ class word extends sandbox_typed
             ]);
         }
         return $usr_msg;
+    }
+
+    /**
+     * set the code id without check
+     * should only be called by the database mapper function
+     */
+    function set_code_id_db(?string $code_id): void
+    {
+        $this->code_id = $code_id;
     }
 
     /**
