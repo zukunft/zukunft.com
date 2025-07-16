@@ -39,8 +39,6 @@ include_once SHARED_ENUM_PATH . 'messages.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
@@ -66,8 +64,6 @@ include_once SHARED_PATH . 'library.php';
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\helper\data_object;
@@ -81,7 +77,6 @@ use cfg\user\user_message;
 use cfg\word\word;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
-use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
@@ -121,19 +116,19 @@ class verb extends type_object
     // e.g. instead of "ABB" "is a" "company"
     // use "ABB", Nestlé" "are" "companies"
     // TODO move to language forms
-    public ?string $plural = null;
+    private ?string $plural = null;
     // name used if displayed the other way round
     // e.g. for "Country" "has a" "Human Development Index"
     // the reverse would be "Human Development Index" "is used for" "Country"
-    public ?string $reverse = null;
+    private ?string $reverse = null;
     // the reverse name for many words
-    public ?string $rev_plural = null;
+    private ?string $rev_plural = null;
     // short name of the verb for the use in formulas
     // because there both sides are combined
-    public ?string $frm_name = null;
+    private ?string $frm_name = null;
     // how often this current used has used the verb
     // (until now just the usage of all users)
-    public int $usage = 0;
+    private int $usage = 0;
 
 
     /*
@@ -187,16 +182,16 @@ class verb extends type_object
             }
             $this->set_name($db_row[$name_fld]);
             if (array_key_exists(verb_db::FLD_PLURAL, $db_row)) {
-                $this->plural = $db_row[verb_db::FLD_PLURAL];
+                $this->set_plural($db_row[verb_db::FLD_PLURAL]);
             }
             if (array_key_exists(verb_db::FLD_REVERSE, $db_row)) {
-                $this->reverse = $db_row[verb_db::FLD_REVERSE];
+                $this->set_reverse($db_row[verb_db::FLD_REVERSE]);
             }
             if (array_key_exists(verb_db::FLD_PLURAL_REVERSE, $db_row)) {
-                $this->rev_plural = $db_row[verb_db::FLD_PLURAL_REVERSE];
+                $this->set_reverse_plural($db_row[verb_db::FLD_PLURAL_REVERSE]);
             }
             if (array_key_exists(verb_db::FLD_FORMULA, $db_row)) {
-                $this->frm_name = $db_row[verb_db::FLD_FORMULA];
+                $this->set_formula_name($db_row[verb_db::FLD_FORMULA]);
             }
             if (array_key_exists(sandbox_named::FLD_DESCRIPTION, $db_row)) {
                 $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
@@ -226,17 +221,17 @@ class verb extends type_object
         // TODO move plural to language forms
         if (array_key_exists(json_fields::PLURAL, $api_json)) {
             if ($api_json[json_fields::PLURAL] <> '') {
-                $this->plural = $api_json[json_fields::PLURAL];
+                $this->set_plural($api_json[json_fields::PLURAL]);
             }
         }
         if (array_key_exists(json_fields::REVERSE, $api_json)) {
             if ($api_json[json_fields::REVERSE] <> '') {
-                $this->reverse = $api_json[json_fields::REVERSE];
+                $this->set_reverse($api_json[json_fields::REVERSE]);
             }
         }
         if (array_key_exists(json_fields::REV_PLURAL, $api_json)) {
             if ($api_json[json_fields::REV_PLURAL] <> '') {
-                $this->rev_plural = $api_json[json_fields::REV_PLURAL];
+                $this->set_reverse_plural($api_json[json_fields::REV_PLURAL]);
             }
         }
 
@@ -325,6 +320,46 @@ class verb extends type_object
     function set_usage(int $usage): void
     {
         //$this->values = $usage;
+    }
+
+    function set_plural(?string $plural): void
+    {
+        $this->plural = $plural;
+    }
+
+    function plural(): ?string
+    {
+        return $this->plural;
+    }
+
+    function set_reverse(?string $reverse): void
+    {
+        $this->reverse = $reverse;
+    }
+
+    function reverse(): ?string
+    {
+        return $this->reverse;
+    }
+
+    function set_reverse_plural(?string $reverse_plural): void
+    {
+        $this->rev_plural = $reverse_plural;
+    }
+
+    function reverse_plural(): ?string
+    {
+        return $this->rev_plural;
+    }
+
+    function set_formula_name(?string $formula_name): void
+    {
+        $this->frm_name = $formula_name;
+    }
+
+    function formula_name(): ?string
+    {
+        return $this->frm_name;
     }
 
     /**
@@ -502,10 +537,10 @@ class verb extends type_object
         $vars[json_fields::NAME] = $this->name();
         $vars[json_fields::CODE_ID] = $this->code_id();
         $vars[json_fields::DESCRIPTION] = $this->description();
-        $vars[json_fields::PLURAL] = $this->plural;
-        $vars[json_fields::REVERSE] = $this->reverse;
-        $vars[json_fields::REV_PLURAL] = $this->rev_plural;
-        $vars[json_fields::FRM_NAME] = $this->frm_name;
+        $vars[json_fields::PLURAL] = $this->plural();
+        $vars[json_fields::REVERSE] = $this->reverse();
+        $vars[json_fields::REV_PLURAL] = $this->reverse_plural();
+        $vars[json_fields::FRM_NAME] = $this->formula_name();
         $vars[json_fields::USAGE] = $this->usage();
         $vars[json_fields::ID] = $this->id();
 
@@ -558,16 +593,16 @@ class verb extends type_object
                 $this->description = $value;
             }
             if ($key == verb_db::FLD_REVERSE) {
-                $this->reverse = $value;
+                $this->set_reverse($value);
             }
             if ($key == verb_db::FLD_PLURAL) {
-                $this->plural = $value;
+                $this->set_plural($value);
             }
             if ($key == verb_db::FLD_FORMULA) {
-                $this->frm_name = $value;
+                $this->set_formula_name($value);
             }
             if ($key == verb_db::FLD_PLURAL_REVERSE) {
-                $this->rev_plural = $value;
+                $this->set_reverse_plural($value);
             }
         }
 
@@ -593,14 +628,14 @@ class verb extends type_object
         if ($this->description <> '') {
             $vars[json_fields::DESCRIPTION] = $this->description;
         }
-        if ($this->plural <> '') {
-            $vars[json_fields::NAME_PLURAL] = $this->plural;
+        if ($this->plural() <> '') {
+            $vars[json_fields::NAME_PLURAL] = $this->plural();
         }
-        if ($this->reverse <> '') {
-            $vars[json_fields::NAME_REVERSE] = $this->reverse;
+        if ($this->reverse() <> '') {
+            $vars[json_fields::NAME_REVERSE] = $this->reverse();
         }
-        if ($this->rev_plural <> '') {
-            $vars[json_fields::NAME_PLURAL_REVERSE] = $this->rev_plural;
+        if ($this->reverse_plural() <> '') {
+            $vars[json_fields::NAME_PLURAL_REVERSE] = $this->reverse_plural();
         }
 
         // TODO add the protection type
@@ -858,11 +893,11 @@ class verb extends type_object
     private function save_field_plural(sql_db $db_con, $db_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->plural <> $this->plural) {
+        if ($db_rec->plural() <> $this->plural()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->plural;
-            $log->new_value = $this->plural;
-            $log->std_value = $db_rec->plural;
+            $log->old_value = $db_rec->plural();
+            $log->new_value = $this->plural();
+            $log->std_value = $db_rec->plural();
             $log->row_id = $this->id();
             $log->set_field(verb_db::FLD_PLURAL);
             $usr_msg = $this->save_field_do($db_con, $log);
@@ -874,11 +909,11 @@ class verb extends type_object
     private function save_field_reverse(sql_db $db_con, $db_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->reverse <> $this->reverse) {
+        if ($db_rec->reverse() <> $this->reverse()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->reverse;
-            $log->new_value = $this->reverse;
-            $log->std_value = $db_rec->reverse;
+            $log->old_value = $db_rec->reverse();
+            $log->new_value = $this->reverse();
+            $log->std_value = $db_rec->reverse();
             $log->row_id = $this->id();
             $log->set_field(verb_db::FLD_REVERSE);
             $usr_msg = $this->save_field_do($db_con, $log);
@@ -890,11 +925,11 @@ class verb extends type_object
     private function save_field_rev_plural(sql_db $db_con, $db_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->rev_plural <> $this->rev_plural) {
+        if ($db_rec->reverse_plural() <> $this->reverse_plural()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->rev_plural;
-            $log->new_value = $this->rev_plural;
-            $log->std_value = $db_rec->rev_plural;
+            $log->old_value = $db_rec->reverse_plural();
+            $log->new_value = $this->reverse_plural();
+            $log->std_value = $db_rec->reverse_plural();
             $log->row_id = $this->id();
             $log->set_field(verb_db::FLD_PLURAL_REVERSE);
             $usr_msg = $this->save_field_do($db_con, $log);
@@ -922,11 +957,11 @@ class verb extends type_object
     private function save_field_formula_name(sql_db $db_con, $db_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->frm_name <> $this->frm_name) {
+        if ($db_rec->formula_name() <> $this->formula_name()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->frm_name;
-            $log->new_value = $this->frm_name;
-            $log->std_value = $db_rec->frm_name;
+            $log->old_value = $db_rec->formula_name();
+            $log->new_value = $this->formula_name();
+            $log->std_value = $db_rec->formula_name();
             $log->row_id = $this->id();
             $log->set_field(verb_db::FLD_FORMULA);
             $usr_msg = $this->save_field_do($db_con, $log);

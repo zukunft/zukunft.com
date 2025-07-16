@@ -79,8 +79,8 @@ if ($usr->id() > 0) {
         if (isset($_GET[api::URL_VAR_NAME])) {
             $wrd->set_name($_GET[api::URL_VAR_NAME]);
         } //
-        if (isset($_GET['plural'])) {
-            $wrd->plural = $_GET['plural'];
+        if (isset($_GET[api::URL_VAR_PLURAL])) {
+            $wrd->set_plural($_GET[api::URL_VAR_PLURAL]);
         } //
         if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
             $wrd->description = $_GET[api::URL_VAR_DESCRIPTION];

@@ -76,7 +76,6 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_code_id.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
-include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
 include_once SHARED_CONST_PATH . 'sources.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
@@ -127,7 +126,8 @@ class source extends sandbox_code_id
      */
 
     // database fields additional to the user sandbox fields
-    public ?string $url = null;          // the internet link to the source
+    // the internet link to the source
+    private ?string $url = null;
 
 
     /*
@@ -168,7 +168,7 @@ class source extends sandbox_code_id
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
-            $this->url = $db_row[source_db::FLD_URL];
+            $this->set_url($db_row[source_db::FLD_URL]);
             $this->type_id = $db_row[source_db::FLD_TYPE];
         }
         return $result;
@@ -185,7 +185,7 @@ class source extends sandbox_code_id
         $msg = parent::api_mapper($api_json);
 
         if (array_key_exists(json_fields::URL, $api_json)) {
-            $this->url = $api_json[json_fields::URL];
+            $this->set_url($api_json[json_fields::URL]);
         }
 
         return $msg;
@@ -212,7 +212,7 @@ class source extends sandbox_code_id
         $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
 
         if (key_exists(json_fields::URL, $in_ex_json)) {
-            $this->url = $in_ex_json[json_fields::URL];
+            $this->set_url($in_ex_json[json_fields::URL]);
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $this->type_id = $src_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
@@ -236,7 +236,7 @@ class source extends sandbox_code_id
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = parent::api_json_array($typ_lst, $usr);
-        $vars[json_fields::URL] = $this->url;
+        $vars[json_fields::URL] = $this->url();
         return $vars;
     }
 
@@ -255,7 +255,7 @@ class source extends sandbox_code_id
             $this->name = $api_json[json_fields::NAME];
         }
         if (array_key_exists(json_fields::URL, $api_json)) {
-            $this->url = $api_json[json_fields::URL];
+            $this->set_url($api_json[json_fields::URL]);
         }
         if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
             $this->description = $api_json[json_fields::DESCRIPTION];
@@ -285,8 +285,8 @@ class source extends sandbox_code_id
     {
         $vars = parent::export_json($do_load);
 
-        if ($this->url <> '') {
-            $vars[json_fields::URL] = $this->url;
+        if ($this->url() <> '') {
+            $vars[json_fields::URL] = $this->url();
         }
 
         return $vars;
@@ -309,6 +309,16 @@ class source extends sandbox_code_id
         global $src_typ_cac;
         return parent::set_type_by_code_id(
             $code_id, $src_typ_cac, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
+    }
+
+    function set_url(?string $url): void
+    {
+        $this->url = $url;
+    }
+
+    function url(): ?string
+    {
+        return $this->url;
     }
 
 
@@ -495,11 +505,11 @@ class source extends sandbox_code_id
     private function save_field_url(sql_db $db_con, source $db_rec, source $std_rec): user_message
     {
         $usr_msg = new user_message;
-        if ($db_rec->url <> $this->url) {
+        if ($db_rec->url() <> $this->url()) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->url;
-            $log->new_value = $this->url;
-            $log->std_value = $std_rec->url;
+            $log->old_value = $db_rec->url();
+            $log->new_value = $this->url();
+            $log->std_value = $std_rec->url();
             $log->row_id = $this->id();
             $log->set_field(source_db::FLD_URL);
             $usr_msg->add($this->save_field_user($db_con, $log));
@@ -602,7 +612,7 @@ class source extends sandbox_code_id
                 $sbx->type_id()
             );
         }
-        if ($sbx->url <> $this->url) {
+        if ($sbx->url() <> $this->url()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_URL,
@@ -612,9 +622,9 @@ class source extends sandbox_code_id
             }
             $lst->add_field(
                 source_db::FLD_URL,
-                $this->url,
+                $this->url(),
                 source_db::FLD_URL_SQL_TYP,
-                $sbx->url
+                $sbx->url()
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));

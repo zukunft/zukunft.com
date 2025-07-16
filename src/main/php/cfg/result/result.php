@@ -59,7 +59,6 @@ include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_ELEMENT_PATH . 'element_list.php';
 include_once EXPORT_PATH . 'export.php';
-include_once SERVICE_EXPORT_PATH . 'result_exp.php';
 include_once MODEL_FORMULA_PATH . 'expression.php';
 include_once MODEL_FORMULA_PATH . 'figure.php';
 include_once MODEL_FORMULA_PATH . 'formula.php';

@@ -175,7 +175,7 @@ class word extends sandbox_code_id
      */
 
     // database fields additional to the user sandbox fields
-    public ?string $plural;    // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
+    private ?string $plural;    // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
     private ?int $values;       // the total number of values linked to this word as an indication how common the word is and to sort the words
 
     // in memory only fields
@@ -243,7 +243,7 @@ class word extends sandbox_code_id
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
             if (array_key_exists(word_db::FLD_PLURAL, $db_row)) {
-                $this->plural = $db_row[word_db::FLD_PLURAL];
+                $this->set_plural($db_row[word_db::FLD_PLURAL]);
             }
             if (array_key_exists($type_fld, $db_row)) {
                 $this->type_id = $db_row[$type_fld];
@@ -274,7 +274,7 @@ class word extends sandbox_code_id
         // TODO move plural to language forms
         if (array_key_exists(json_fields::PLURAL, $api_json)) {
             if ($api_json[json_fields::PLURAL] <> '') {
-                $this->plural = $api_json[json_fields::PLURAL];
+                $this->set_plural($api_json[json_fields::PLURAL]);
             }
         }
 
@@ -321,7 +321,7 @@ class word extends sandbox_code_id
         }
         if (key_exists(json_fields::PLURAL, $in_ex_json)) {
             if ($in_ex_json[json_fields::PLURAL] <> '') {
-                $this->plural = $in_ex_json[json_fields::PLURAL];
+                $this->set_plural($in_ex_json[json_fields::PLURAL]);
             }
         }
 
@@ -387,7 +387,7 @@ class word extends sandbox_code_id
             $vars[json_fields::EXCLUDED] = true;
         } else {
             $vars = parent::api_json_array($typ_lst, $usr);
-            $vars[json_fields::PLURAL] = $this->plural;
+            $vars[json_fields::PLURAL] = $this->plural();
         }
 
         return $vars;
@@ -409,8 +409,8 @@ class word extends sandbox_code_id
 
         $vars = parent::export_json($do_load);
 
-        if ($this->plural <> '') {
-            $vars[json_fields::PLURAL] = $this->plural;
+        if ($this->plural() <> '') {
+            $vars[json_fields::PLURAL] = $this->plural();
         }
         if ($this->type_id > 0) {
             if ($this->type_id == $phr_typ_cac->default_id()) {
@@ -458,9 +458,19 @@ class word extends sandbox_code_id
             $code_id, $phr_typ_cac, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
     }
 
+    function set_plural(?string $plural): void
+    {
+        $this->plural = $plural;
+    }
+
+    function plural(): ?string
+    {
+        return $this->plural;
+    }
+
     /**
      * set the value to rank the words by usage
-     *r
+     *
      * @param int|null $usage a higher value moves the word to the top of the selection list
      * @return void
      */
@@ -513,11 +523,6 @@ class word extends sandbox_code_id
     function type_id(): ?int
     {
         return $this->type_id;
-    }
-
-    function set_plural(?string $plural): void
-    {
-        $this->plural = $plural;
     }
 
 
@@ -919,8 +924,8 @@ class word extends sandbox_code_id
     function needs_db_update(word|sandbox $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
-        if ($this->plural != null) {
-            if ($this->plural != $db_obj->plural) {
+        if ($this->plural() != null) {
+            if ($this->plural() != $db_obj->plural()) {
                 $result = true;
             }
         }
@@ -953,8 +958,8 @@ class word extends sandbox_code_id
         if ($obj->code_id() != null) {
             $this->set_code_id($obj->code_id(), $usr_req);
         }
-        if ($obj->plural != null) {
-            $this->plural = $obj->plural;
+        if ($obj->plural() != null) {
+            $this->set_plural($obj->plural());
         }
         if ($obj->values != null) {
             $this->values = $obj->values;
@@ -1401,8 +1406,8 @@ class word extends sandbox_code_id
         global $phr_typ_cac;
 
         $has_cfg = false;
-        if (isset($this->plural)) {
-            if ($this->plural <> '') {
+        if ($this->plural() != null) {
+            if ($this->plural() <> '') {
                 $has_cfg = true;
             }
         }
@@ -1621,12 +1626,12 @@ class word extends sandbox_code_id
     {
         $usr_msg = new user_message();
         // if the plural is not set, don't overwrite any db entry
-        if ($this->plural <> Null) {
-            if ($this->plural <> $db_rec->plural) {
+        if ($this->plural() <> Null) {
+            if ($this->plural() <> $db_rec->plural()) {
                 $log = $this->log_upd();
-                $log->old_value = $db_rec->plural;
-                $log->new_value = $this->plural;
-                $log->std_value = $std_rec->plural;
+                $log->old_value = $db_rec->plural();
+                $log->new_value = $this->plural();
+                $log->std_value = $std_rec->plural();
                 $log->row_id = $this->id();
                 $log->set_field(word_db::FLD_PLURAL);
                 $usr_msg->add($this->save_field_user($db_con, $log));
@@ -1813,7 +1818,7 @@ class word extends sandbox_code_id
             );
         }
         // TODO move to language forms
-        if ($sbx->plural <> $this->plural) {
+        if ($sbx->plural() <> $this->plural()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_PLURAL,
@@ -1823,9 +1828,9 @@ class word extends sandbox_code_id
             }
             $lst->add_field(
                 word_db::FLD_PLURAL,
-                $this->plural,
+                $this->plural(),
                 word_db::FLD_PLURAL_SQL_TYP,
-                $sbx->plural
+                $sbx->plural()
             );
         }
         // TODO rename to usage

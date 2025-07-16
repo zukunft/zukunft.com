@@ -15,15 +15,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
     but first this needs to be prioritized:
 
-    TODO review import code id
-    TODO clean up import_mapper and move all mapping from import_obj to the mapper
-    TODO clean up import_mapper by replacing foreach with array_has_key
-    TODO move db const to e.g. formula_db.php
-    TODO activate the class section test
-    TODO save the config for backend, frontend and user as a cache json file and use to trigger for recreation
-
     TODO Release 0.0.3
-    TODO Release 0.0.4
+    TODO make main backend object vars private (pending: ref, value, formula, result, view, component, user)
+    TODO clean up import_mapper and move all mapping from import_obj to the mapper
+
 
     TODO Substeps: create insert, update and delete sql create tests for the main objects (TODO activate db write)
                    include the log in the prepared sql write statement
@@ -56,6 +51,10 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO Step 16: deprecate the get_old in ???
     TODO review the remaining db write tests
     TODO activate the tests and create a unit and read test if possible
+
+    TODO Release 0.0.4
+    TODO save the config for backend, frontend and user as a cache json file and use to trigger for recreation
+    TODO activate the class section test
 
     TODO set the vars of the backend objects to private e.g. to make sure that missing db updates can be detected
     TODO set vars in the frontend object to public and reduce the set and get function because frontend objects never save directly to the database

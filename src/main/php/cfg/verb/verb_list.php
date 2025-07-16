@@ -479,18 +479,18 @@ class verb_list extends type_list
                     $select_row = array();
                     $select_name = $vrb->name();
                     /* has been an idea, but has actually caused more confusion
-                    if ($vrb->reverse != '' and $select_name != '') {
-                        $select_name .= ' (' . $vrb->reverse . ')';
+                    if ($vrb->reverse() != '' and $select_name != '') {
+                        $select_name .= ' (' . $vrb->reverse() . ')';
                     }
                     */
                     $id = $vrb->id();
                     $select_row[] = $id;
                     $select_row[] = $select_name;
-                    $select_row[] = $vrb->usage;
+                    $select_row[] = $vrb->usage();
                     $combined_list[$id] = $select_row;
 
                     $select_row = array();
-                    $select_name = $vrb->reverse;
+                    $select_name = $vrb->reverse();
                     /* like above ...
                     if ($vrb->name() != '' and $select_name != '') {
                         $select_name .= ' (' . $vrb->name() . ')';
@@ -500,7 +500,7 @@ class verb_list extends type_list
                         $id = $vrb->id() * -1;
                         $select_row[] = $id;
                         $select_row[] = $select_name;
-                        $select_row[] = $vrb->usage; // TODO separate the backward usage or separate the reverse form
+                        $select_row[] = $vrb->usage(); // TODO separate the backward usage or separate the reverse form
                         $combined_list[$id] = $select_row;
                     }
                 }

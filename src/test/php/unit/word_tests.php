@@ -120,7 +120,7 @@ class word_tests
         $wrd->description = words::MATH_COM;
         $wrd_updated = $t->word();
         $wrd_updated->set_user($usr_sys);
-        $wrd_updated->plural = words::TEST_RENAMED;
+        $wrd_updated->set_plural(words::TEST_RENAMED);
         $wrd_updated->description = words::TEST_RENAMED;
         $wrd_updated->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $t->assert_sql_update($sc, $wrd_updated, $wrd, [sql_type::LOG, sql_type::USER]);

@@ -77,7 +77,7 @@ class source_type_list extends type_list
                 $type_comment = strval($db_entry[sandbox_named::FLD_DESCRIPTION]);
                 $type_obj = new source_type($type_code_id, $type_name, $type_comment);
                 $type_obj->set_id($db_entry[self::FLD_ID]);
-                //$type_obj->url = $db_entry[self::FLD_URL];
+                //$type_obj->set_url($db_entry[self::FLD_URL]);
                 $this->add($type_obj);
             }
         }

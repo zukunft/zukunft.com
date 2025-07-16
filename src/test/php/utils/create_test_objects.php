@@ -688,7 +688,7 @@ class create_test_objects extends test_base
         $wrd->description = words::MATH_COM;
         $wrd->set_type(phrase_type_shared::SCALING, $this->usr1);
         $wrd->set_code_id(words::MATH, $this->usr_system);
-        $wrd->plural = words::MATH_PLURAL;
+        $wrd->set_plural(words::MATH_PLURAL);
         $wrd->set_view_id(views::START_ID);
         $wrd->set_usage(2);
         $wrd->exclude();
@@ -1038,7 +1038,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::INHABITANT_ID, words::INHABITANTS);
-        $wrd->plural = words::INHABITANTS;
+        $wrd->set_plural(words::INHABITANTS);
         return $wrd;
     }
 
@@ -2968,7 +2968,7 @@ class create_test_objects extends test_base
         $src->set(sources::SIB_ID, sources::SIB);
         $src->set_type(source_types::PDF, $this->usr1);
         $src->description = sources::SIB_COM;
-        $src->url = sources::SIB_URL;
+        $src->set_url(sources::SIB_URL);
         return $src;
     }
 
@@ -3071,8 +3071,8 @@ class create_test_objects extends test_base
     function reference_plus(): ref
     {
         $ref = $this->reference();
-        $ref->source = $this->source_ref();
-        $ref->url = refs::PI_URL;
+        $ref->set_source($this->source_ref());
+        $ref->set_url(refs::PI_URL);
         return $ref;
     }
 
@@ -3108,8 +3108,8 @@ class create_test_objects extends test_base
         global $shr_typ_cac;
         global $ptc_typ_cac;
         $ref = $this->reference();
-        $ref->source = $this->source();
-        $ref->url = refs::PI_URL;
+        $ref->set_source($this->source());
+        $ref->set_url(refs::PI_URL);
         $ref->include();
         $ref->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $ref->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
@@ -3124,9 +3124,9 @@ class create_test_objects extends test_base
         global $shr_typ_cac;
         global $ptc_typ_cac;
         $ref = $this->reference_user();
-        $ref->external_key = refs::PI_KEY;
-        $ref->url = refs::PI_URL;
-        $ref->source = $this->source();
+        $ref->set_external_key(refs::PI_KEY);
+        $ref->set_url(refs::PI_URL);
+        $ref->set_source($this->source());
         $ref->description = refs::PI_COM;
         $ref->exclude();
         $ref->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
@@ -4732,7 +4732,7 @@ class create_test_objects extends test_base
             $ref->set_phrase($phr);
             // TODO check if type name is the code id or really the name
             $ref->set_predicate_id($ref_typ_cac->id($type_name));
-            $ref->external_key = $external_key;
+            $ref->set_external_key($external_key);
             $result = $ref->save()->get_last_message();
             if ($result != '') {
                 log_err('add ref failed due to: ' . $result);
@@ -4745,7 +4745,7 @@ class create_test_objects extends test_base
     {
         $ref = $this->add_ref($wrd_name, $external_key, $type_name);
         $target = $external_key;
-        $this->display('ref', $target, $ref->external_key);
+        $this->display('ref', $target, $ref->external_key());
         return $ref;
     }
 
@@ -5052,7 +5052,7 @@ class create_test_objects extends test_base
         $src = new source($this->usr1);
         $src->set_name(sources::SYSTEM_TEST_ADD_API);
         $src->description = sources::SYSTEM_TEST_ADD_API_COM;
-        $src->url = sources::SYSTEM_TEST_ADD_API_URL;
+        $src->set_url(sources::SYSTEM_TEST_ADD_API_URL);
         $src->type_id = $src_typ_cac->id(source_types::PDF);
         $body_array = $src->api_json_array(new api_type_list([]));
         return $msg->api_header_array($db_con, source::class, $this->usr1, $body_array);
@@ -5082,9 +5082,9 @@ class create_test_objects extends test_base
         $msg = new api_message();
         $ref = new ref($this->usr1);
         $ref->set_phrase($this->word()->phrase());
-        $ref->external_key = refs::SYSTEM_TEST_API_ADD_KEY;
+        $ref->set_external_key(refs::SYSTEM_TEST_API_ADD_KEY);
         $ref->description = refs::SYSTEM_TEST_API_ADD_COM;
-        $ref->url = refs::SYSTEM_TEST_API_ADD_URL;
+        $ref->set_url(refs::SYSTEM_TEST_API_ADD_URL);
         $ref->predicate_id = $reference_types->id(source_types::PDF);
         $body_array = $ref->api_json_array(new api_type_list([]));
         return $msg->api_header_array($db_con, ref::class, $this->usr1, $body_array);

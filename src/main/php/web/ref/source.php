@@ -188,7 +188,7 @@ class source extends sandbox_code_id
         $result .= $html->dsp_form_hidden("confirm", 1);
         $result .= $html->dsp_form_fld("name", $this->name, "Source name:");
         $result .= '<tr><td>type   </td><td>' . $this->dsp_select_type($script, $back) . '</td></tr>';
-        $result .= $html->dsp_form_fld("url", $this->url, "URL:");
+        $result .= $html->dsp_form_fld("url", $this->url(), "URL:");
         $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
         //$result .= dsp_tbl_end ();
         $result .= $html->dsp_form_end('', $back);

@@ -170,12 +170,12 @@ class ref extends sandbox_link
      */
 
     // database fields
-    public ?string $external_key = null;  // the unique key in the external system
-    public ?source $source = null;        // if the reference does not allow a full automatic bidirectional update
+    private ?string $external_key = null;  // the unique key in the external system
+    private ?source $source = null;        // if the reference does not allow a full automatic bidirectional update
     //                                       use the source to define an as good as possible import
     //                                       or at least a check if the reference is still valid
-    public ?string $url;
-    public ?string $code_id = null;
+    private ?string $url;
+    private ?string $code_id = null;
     public ?string $description = null;
 
     // TODO deprecate
@@ -229,9 +229,9 @@ class ref extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_phrase_by_id($db_row[phrase::FLD_ID]);
-            $this->external_key = $db_row[ref_db::FLD_EX_KEY];
+            $this->set_external_key($db_row[ref_db::FLD_EX_KEY]);
             $this->set_predicate_id($db_row[ref_db::FLD_TYPE]);
-            $this->url = $db_row[ref_db::FLD_URL];
+            $this->set_url($db_row[ref_db::FLD_URL]);
             $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
             $this->set_source_by_id($db_row[source_db::FLD_ID]);
             if ($this->load_objects()) {
@@ -261,12 +261,12 @@ class ref extends sandbox_link
         }
         if (array_key_exists(json_fields::EXTERNAL_KEY, $api_json)) {
             if ($api_json[json_fields::EXTERNAL_KEY] != '') {
-                $this->external_key = $api_json[json_fields::EXTERNAL_KEY];
+                $this->set_external_key($api_json[json_fields::EXTERNAL_KEY]);
             }
         }
         if (array_key_exists(json_fields::URL, $api_json)) {
             if ($api_json[json_fields::URL] != '') {
-                $this->url = $api_json[json_fields::URL];
+                $this->set_url($api_json[json_fields::URL]);
             }
         }
         if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
@@ -314,7 +314,7 @@ class ref extends sandbox_link
                     $src->set_name($src_name);
                 }
             }
-            $this->source = $src;
+            $this->set_source($src);
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $this->set_predicate_id($ref_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]));
@@ -327,13 +327,13 @@ class ref extends sandbox_link
             }
         }
         if (key_exists(json_fields::NAME, $in_ex_json)) {
-            $this->external_key = $in_ex_json[json_fields::NAME];
+            $this->set_external_key($in_ex_json[json_fields::NAME]);
         }
         if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
             $this->description = $in_ex_json[json_fields::DESCRIPTION];
         }
         if (key_exists(json_fields::URL, $in_ex_json)) {
-            $this->url = $in_ex_json[json_fields::URL];
+            $this->set_url($in_ex_json[json_fields::URL]);
         }
         if (key_exists(json_fields::FROM_PHRASE, $in_ex_json)) {
             $phr_name = $in_ex_json[json_fields::FROM_PHRASE];
@@ -377,12 +377,12 @@ class ref extends sandbox_link
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = parent::api_json_array($typ_lst, $usr);
-        $vars[json_fields::URL] = $this->url;
-        $vars[json_fields::EXTERNAL_KEY] = $this->external_key;
+        $vars[json_fields::URL] = $this->url();
+        $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
         if ($this->phrase()->id() != 0) {
             $vars[json_fields::PHRASE] = $this->phrase()->id();
         }
-        $vars[json_fields::SOURCE] = $this->source?->id();
+        $vars[json_fields::SOURCE] = $this->source()?->id();
         if ($this->predicate_id() != 0) {
             $vars[json_fields::PREDICATE] = $this->predicate_id();
         }
@@ -404,20 +404,20 @@ class ref extends sandbox_link
     {
         $vars = [];
 
-        if ($this->source != null) {
-            $vars[json_fields::SOURCE_NAME] = $this->source->name();
+        if ($this->source() != null) {
+            $vars[json_fields::SOURCE_NAME] = $this->source()->name();
         }
         if ($this->predicate_id > 0) {
             $vars[json_fields::TYPE_NAME] = $this->predicate_code_id();
         }
-        if ($this->external_key <> '') {
-            $vars[json_fields::NAME] = $this->external_key;
+        if ($this->external_key() <> '') {
+            $vars[json_fields::NAME] = $this->external_key();
         }
         if ($this->description <> '') {
             $vars[json_fields::DESCRIPTION] = $this->description;
         }
-        if ($this->url <> '') {
-            $vars[json_fields::URL] = $this->url;
+        if ($this->url() <> '') {
+            $vars[json_fields::URL] = $this->url();
         }
         // TODO on export check always by the name not the id
         if ($this->phrase_name() != '' and $this->phrase_name() != null) {
@@ -536,7 +536,7 @@ class ref extends sandbox_link
      */
     function to_id(): int|string
     {
-        return $this->external_key;
+        return $this->external_key();
     }
 
     /**
@@ -544,7 +544,7 @@ class ref extends sandbox_link
      */
     function to_name(): string
     {
-        return $this->external_key;
+        return $this->external_key();
     }
 
     /**
@@ -574,6 +574,67 @@ class ref extends sandbox_link
         }
     }
 
+    function set_external_key(?string $external_key): void
+    {
+        $this->external_key = $external_key;
+    }
+
+    function external_key(): ?string
+    {
+        return $this->external_key;
+    }
+
+    function set_source(?source $source): void
+    {
+        $this->source = $source;
+    }
+
+    function source(): ?source
+    {
+        return $this->source;
+    }
+
+    function set_code_id(?string $code_id, user $usr): user_message
+    {
+        $usr_msg = new user_message();
+        if ($usr->can_set_code_id()) {
+            $this->code_id = $code_id;
+        } else {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $usr->name(),
+                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_NAME => sql::FLD_CODE_ID,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the code id without check
+     * should only be called by the database mapper function
+     */
+    function set_code_id_db(?string $code_id): void
+    {
+        $this->code_id = $code_id;
+    }
+
+    function code_id(): ?string
+    {
+        return $this->code_id;
+    }
+
+    function set_url(?string $url): void
+    {
+        $this->url = $url;
+    }
+
+    function url(): ?string
+    {
+        return $this->url;
+    }
+
     /**
      * TODO use always a function like this to set an object
      * TODO use a cache to reduce database access because an id will never change and due to that no database refresh is needed
@@ -586,7 +647,7 @@ class ref extends sandbox_link
             if ($id != 0) {
                 $src = new source($this->user());
                 $src->load_by_id($id);
-                $this->source = $src;
+                $this->set_source($src);
             }
         }
     }
@@ -597,8 +658,8 @@ class ref extends sandbox_link
     function source_id(): int
     {
         $result = 0;
-        if ($this->source != null) {
-            $result = $this->source->id();
+        if ($this->source() != null) {
+            $result = $this->source()->id();
         }
         return $result;
     }
@@ -609,8 +670,8 @@ class ref extends sandbox_link
     function source_name(): string
     {
         $result = '';
-        if ($this->source != null) {
-            $result = $this->source->name();
+        if ($this->source() != null) {
+            $result = $this->source()->name();
         }
         return $result;
     }
@@ -626,7 +687,7 @@ class ref extends sandbox_link
 
         $obj_cpy = parent::cloned();
         $obj_cpy->set_predicate_id($this->predicate_id());
-        $obj_cpy->external_key = $external_key;
+        $obj_cpy->set_external_key($external_key);
         return $obj_cpy;
     }
 
@@ -638,7 +699,7 @@ class ref extends sandbox_link
         return
             $this->escape_key_part($this->phrase_name()) .
             $this->escape_key_part($this->type_name()) .
-            $this->escape_key_part($this->external_key);
+            $this->escape_key_part($this->external_key());
     }
 
     /**
@@ -869,7 +930,7 @@ class ref extends sandbox_link
 
     function to_value(): string
     {
-        return $this->external_key;
+        return $this->external_key();
     }
 
     function type_field(): string
@@ -974,19 +1035,19 @@ class ref extends sandbox_link
     function fill(ref|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->url != null) {
-            $this->url = $obj->url;
+        if ($obj->url() != null) {
+            $this->set_url($obj->url());
         }
-        if ($obj->external_key != null) {
-            $this->external_key = $obj->external_key;
+        if ($obj->external_key() != null) {
+            $this->set_external_key($obj->external_key());
         }
         if ($obj->phrase() != null) {
             if ($obj->phrase()->id() != 0) {
                 $this->set_phrase($obj->phrase());
             }
         }
-        if ($obj->source != null) {
-            $this->source = $obj->source;
+        if ($obj->source() != null) {
+            $this->set_source($obj->source());
         }
         if ($obj->predicate_id() != 0) {
             $this->set_predicate_id($obj->predicate_id());
@@ -1038,12 +1099,12 @@ class ref extends sandbox_link
     {
         $usr_msg = new user_message();
         // if the plural is not set, don't overwrite any db entry
-        if ($this->url <> Null) {
-            if ($this->url <> $db_rec->url) {
+        if ($this->url() <> Null) {
+            if ($this->url() <> $db_rec->url()) {
                 $log = $this->log_upd_field();
-                $log->old_value = $db_rec->url;
-                $log->new_value = $this->url;
-                $log->std_value = $std_rec->url;
+                $log->old_value = $db_rec->url();
+                $log->new_value = $this->url();
+                $log->std_value = $std_rec->url();
                 $log->row_id = $this->id();
                 $log->set_field(ref_db::FLD_URL);
                 $usr_msg->add($this->save_field_user($db_con, $log));
@@ -1124,7 +1185,7 @@ class ref extends sandbox_link
 
                 $this->set_id($db_con->insert_old(
                     array(phrase::FLD_ID, ref_db::FLD_EX_KEY, ref_db::FLD_TYPE),
-                    array($this->phrase_id(), $this->external_key, $this->predicate_id)));
+                    array($this->phrase_id(), $this->external_key(), $this->predicate_id)));
                 if ($this->id() > 0) {
                     // update the id in the log for the correct reference
                     if (!$log->add_ref($this->id())) {
@@ -1229,11 +1290,11 @@ class ref extends sandbox_link
             log_debug("standard reference settings loaded (" . $std_rec->id() . ")");
 
             // if needed log the change and update the database
-            if ($this->external_key <> $db_rec->external_key) {
+            if ($this->external_key() <> $db_rec->external_key()) {
                 $log = $this->log_link_upd($db_rec);
                 if ($log->id() > 0) {
                     $db_con->set_class(ref::class);
-                    if ($db_con->update_old($this->id(), ref_db::FLD_EX_KEY, $this->external_key)) {
+                    if ($db_con->update_old($this->id(), ref_db::FLD_EX_KEY, $this->external_key())) {
                         log_debug('ref->save update ... done.');
                     }
                 }
@@ -1341,7 +1402,7 @@ class ref extends sandbox_link
                 );
             }
         }
-        if ($sbx->external_key <> $this->external_key) {
+        if ($sbx->external_key() <> $this->external_key()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_EX_KEY,
@@ -1349,18 +1410,18 @@ class ref extends sandbox_link
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            $old_key = $sbx->external_key;
+            $old_key = $sbx->external_key();
             if ($sc_par_lst->is_insert() and $old_key == '') {
                 $old_key = null;
             }
             $lst->add_field(
                 ref_db::FLD_EX_KEY,
-                $this->external_key,
+                $this->external_key(),
                 ref_db::FLD_EX_KEY_SQL_TYP,
                 $old_key
             );
         }
-        if ($sbx->url <> $this->url) {
+        if ($sbx->url() <> $this->url()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_URL,
@@ -1370,12 +1431,12 @@ class ref extends sandbox_link
             }
             $lst->add_field(
                 ref_db::FLD_URL,
-                $this->url,
+                $this->url(),
                 ref_db::FLD_URL_SQL_TYP,
-                $sbx->url
+                $sbx->url()
             );
         }
-        if ($sbx->source?->id() <> $this->source?->id()) {
+        if ($sbx->source()?->id() <> $this->source()?->id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
@@ -1386,8 +1447,8 @@ class ref extends sandbox_link
             $lst->add_link_field(
                 source_db::FLD_ID,
                 source_db::FLD_NAME,
-                $this->source,
-                $sbx->source
+                $this->source(),
+                $sbx->source()
             );
         }
         if ($sbx->description <> $this->description) {

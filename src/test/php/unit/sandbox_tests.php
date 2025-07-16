@@ -571,7 +571,7 @@ class sandbox_tests
 
         // ... same for all users by id
         $db_con->set_class(source::class);
-        $db_con->set_fields(array(sql::FLD_CODE_ID, 'url', sandbox_named::FLD_DESCRIPTION, 'source_type_id'));
+        $db_con->set_fields(array(sql::FLD_CODE_ID, source_db::FLD_URL, sandbox_named::FLD_DESCRIPTION, 'source_type_id'));
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT
@@ -912,7 +912,7 @@ class sandbox_tests
         $db_con->db_type = sql_db::MYSQL;
         $db_con->set_class(source::class);
         $db_con->set_fields(array(sql::FLD_CODE_ID));
-        $db_con->set_usr_fields(array('url', sandbox_named::FLD_DESCRIPTION));
+        $db_con->set_usr_fields(array(source_db::FLD_URL, sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();
@@ -935,7 +935,7 @@ class sandbox_tests
         // ... same for search by name
         $db_con->set_class(source::class);
         $db_con->set_fields(array(sql::FLD_CODE_ID));
-        $db_con->set_usr_fields(array('url', sandbox_named::FLD_DESCRIPTION));
+        $db_con->set_usr_fields(array(source_db::FLD_URL, sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
         $db_con->set_where_std(0, 'wikidata');
         $created_sql = $db_con->select_by_set_id();
@@ -959,7 +959,7 @@ class sandbox_tests
         // ... same for search by code_id
         $db_con->set_class(source::class);
         $db_con->set_fields(array(sql::FLD_CODE_ID));
-        $db_con->set_usr_fields(array('url', sandbox_named::FLD_DESCRIPTION));
+        $db_con->set_usr_fields(array(source_db::FLD_URL, sandbox_named::FLD_DESCRIPTION));
         $db_con->set_usr_num_fields(array('source_type_id'));
         $db_con->set_where_std(0, '', 'wikidata');
         $created_sql = $db_con->select_by_set_id();
@@ -981,7 +981,7 @@ class sandbox_tests
 
         // ... same for all users by id
         $db_con->set_class(source::class);
-        $db_con->set_fields(array(sql::FLD_CODE_ID, 'url', sandbox_named::FLD_DESCRIPTION, 'source_type_id'));
+        $db_con->set_fields(array(sql::FLD_CODE_ID, source_db::FLD_URL, sandbox_named::FLD_DESCRIPTION, 'source_type_id'));
         $db_con->set_where_std(1, '');
         $created_sql = $db_con->select_by_set_id();
         $expected_sql = "SELECT

@@ -62,7 +62,7 @@ class source_write_tests
         // check if undo all specific changes removes the user source
         $src_usr2 = new source($t->usr2);
         $src_usr2->load_by_name(sources::TN_RENAMED, source::class);
-        $src_usr2->url = sources::TU_ADD;
+        $src_usr2->set_url(sources::TU_ADD);
         $src_usr2->description = sources::TD_ADD;
         $result = $src_usr2->save()->get_last_message();
         $target = '';
@@ -71,7 +71,7 @@ class source_write_tests
         // check if a user specific source changes have been saved
         $src_usr2_reloaded = new source($t->usr2);
         $src_usr2_reloaded->load_by_name(sources::TN_RENAMED, source::class);
-        $result = $src_usr2_reloaded->url;
+        $result = $src_usr2_reloaded->url();
         $target = sources::TU_ADD;
         $t->display('source->load url for "' . sources::TN_RENAMED . '" unchanged now also for user 2', $target, $result);
         $result = $src_usr2_reloaded->description;

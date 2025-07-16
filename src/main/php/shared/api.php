@@ -136,6 +136,9 @@ class api
     const URL_VAR_FORMULA_TYPE = 'formula_type';
     const URL_VAR_USER_PROFILE = 'user_profile';
     const URL_VAR_PLURAL = 'plural';
+    const URL_VAR_REVERSE = 'reverse';
+    const URL_VAR_REVERSE_PLURAL = 'plural_reverse';
+    const URL_VAR_URL = 'url';
 
     // used for the change log
     // the short name of the object class name e.g. word instead of cfg/word

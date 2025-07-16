@@ -176,17 +176,17 @@ class triple_list extends list_dsp
                     // display the link type
                     if ($lnk->verb()->id() == $next_lnk->verb()->id()) {
                         if ($this->wrd != null) {
-                            $result .= $this->wrd->plural;
+                            $result .= $this->wrd->plural();
                         }
                         if ($this->direction == foaf_direction::DOWN) {
                             $result .= " " . $lnk->verb()->rev_plural;
                         } else {
-                            $result .= " " . $lnk->verb()->plural;
+                            $result .= " " . $lnk->verb()->plural();
                         }
                     } else {
                         $result .= $this->wrd->name();
                         if ($this->direction == foaf_direction::DOWN) {
-                            $result .= " " . $lnk->verb()->reverse;
+                            $result .= " " . $lnk->verb()->reverse();
                         } else {
                             $result .= " " . $lnk->verb()->name;
                         }

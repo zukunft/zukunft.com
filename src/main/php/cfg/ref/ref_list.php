@@ -190,7 +190,7 @@ class ref_list extends type_list
         $type = new ref($usr);
         $type->set_id(1);
         $type->set_name(refs::WIKIDATA_TYPE);
-        $type->code_id = refs::WIKIDATA_TYPE;
+        $type->set_code_id_db(refs::WIKIDATA_TYPE);
         $this->add($type);
     }
 

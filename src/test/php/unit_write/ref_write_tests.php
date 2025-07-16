@@ -60,7 +60,7 @@ class ref_write_tests
         $ref->set_phrase($wrd->phrase());
         $ref->set_predicate_id($ref_typ_cac->id(ref_type::WIKIDATA));
         $ref->load_by_link_ids($wrd->phrase()->id(), $ref->predicate_id());
-        $result = $ref->external_key;
+        $result = $ref->external_key();
         $target = ref::TEST_REF_NAME;
         $t->display('ref->load "' . words::TEST_ADD . '" in ' . ref_type::WIKIDATA, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
 

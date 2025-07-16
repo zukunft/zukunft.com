@@ -79,17 +79,17 @@ if ($usr->id() > 0) {
         $vrb->set_user($usr);
 
         // load the parameters to the verb object to display it again in case of an error
-        if (isset($_GET[api::URL_VAR_NAME])) {
+        if ($_GET[api::URL_VAR_NAME] != null) {
             $vrb->set_name($_GET[api::URL_VAR_NAME]);
         }
-        if (isset($_GET['plural'])) {
-            $vrb->plural = $_GET['plural'];
+        if ($_GET[api::URL_VAR_PLURAL] != null) {
+            $vrb->set_plural($_GET[api::URL_VAR_PLURAL]);
         }
-        if (isset($_GET['reverse'])) {
-            $vrb->reverse = $_GET['reverse'];
+        if (isset($_GET[api::URL_VAR_REVERSE])) {
+            $vrb->set_reverse($_GET[api::URL_VAR_REVERSE]);
         }
-        if (isset($_GET['plural_reverse'])) {
-            $vrb->rev_plural = $_GET['plural_reverse'];
+        if (isset($_GET[api::URL_VAR_REVERSE_PLURAL])) {
+            $vrb->set_reverse_plural($_GET[api::URL_VAR_REVERSE_PLURAL]);
         }
 
         if ($_GET['confirm'] > 0) {

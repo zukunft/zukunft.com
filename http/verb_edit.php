@@ -84,14 +84,14 @@ if ($usr->id() > 0) {
             if (isset($_GET[api::URL_VAR_NAME])) {
                 $vrb->set_name($_GET[api::URL_VAR_NAME]);
             }
-            if (isset($_GET['plural'])) {
-                $vrb->plural = $_GET['plural'];
+            if (isset($_GET[api::URL_VAR_PLURAL])) {
+                $vrb->set_plural($_GET[api::URL_VAR_PLURAL]);
             }
-            if (isset($_GET['reverse'])) {
-                $vrb->reverse = $_GET['reverse'];
+            if (isset($_GET[api::URL_VAR_REVERSE])) {
+                $vrb->set_reverse($_GET[api::URL_VAR_REVERSE]);
             }
-            if (isset($_GET['plural_reverse'])) {
-                $vrb->rev_plural = $_GET['plural_reverse'];
+            if (isset($_GET[api::URL_VAR_REVERSE_PLURAL])) {
+                $vrb->set_reverse_plural($_GET[api::URL_VAR_REVERSE_PLURAL]);
             }
 
             // save the changes

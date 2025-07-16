@@ -241,7 +241,7 @@ class ref extends db_object_dsp
      */
     function name_tip(): string
     {
-        return $this->type_name() . ' ' . $this->external_key;
+        return $this->type_name() . ' ' . $this->external_key();
     }
 
     /**
@@ -249,7 +249,7 @@ class ref extends db_object_dsp
      */
     function name_link(): string
     {
-        return $this->type_name() . ' ' . $this->external_key;
+        return $this->type_name() . ' ' . $this->external_key();
     }
 
 

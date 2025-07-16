@@ -56,7 +56,6 @@ namespace cfg\formula;
 
 include_once SHARED_TYPES_PATH . 'protection_type.php';
 include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once SERVICE_EXPORT_PATH . 'formula_exp.php';
 include_once MODEL_RESULT_PATH . 'result_list.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_db.php';

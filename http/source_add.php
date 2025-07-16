@@ -79,8 +79,8 @@ if ($usr->id() > 0) {
     if (isset($_GET[api::URL_VAR_NAME])) {
         $src->set_name($_GET[api::URL_VAR_NAME]);
     }    // name of the new source to add
-    if (isset($_GET['url'])) {
-        $src->url = $_GET['url'];
+    if (isset($_GET[api::URL_VAR_URL])) {
+        $src->set_url($_GET[api::URL_VAR_URL]);
     }     // url of the new source to add
     if (isset($_GET[api::URL_VAR_COMMENT])) {
         $src->description = $_GET[api::URL_VAR_COMMENT];

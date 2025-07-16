@@ -65,6 +65,8 @@ class verb extends sandbox_named
     // this id text is unique for all code links and is used for system im- and export
     public string $code_id;
     public int $usage = 0;
+    public ?string $reverse = null;
+    public ?string $rev_plural = null;
 
 
     /*
@@ -191,7 +193,7 @@ class verb extends sandbox_named
         $result .= '      verb plural:';
         $result .= '    </td>';
         $result .= '    <td>';
-        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural" value="' . $this->plural . '">';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural" value="' . $this->plural() . '">';
         $result .= '    </td>';
         $result .= '  </tr>';
         $result .= '  <tr>';

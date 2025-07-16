@@ -521,7 +521,7 @@ class change_link extends change_log
                 if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name();
                     $this->new_text_link = $this->new_link->name();
-                    $this->new_text_to = $this->new_to->external_key;
+                    $this->new_text_to = $this->new_to->external_key();
                     $this->new_from_id = $this->new_from->id();
                     $this->new_link_id = $this->new_link->id();
                     $this->new_to_id = $this->new_to->id();
@@ -533,7 +533,7 @@ class change_link extends change_log
                 if ($this->old_from != null and $this->old_link != null and $this->old_to != null) {
                     $this->old_text_from = $this->old_from->name();
                     $this->old_text_link = $this->old_link->name();
-                    $this->old_text_to = $this->old_to->external_key;
+                    $this->old_text_to = $this->old_to->external_key();
                     $this->old_from_id = $this->old_from->id();
                     $this->old_link_id = $this->old_link->id();
                     $this->old_to_id = $this->old_to->id();

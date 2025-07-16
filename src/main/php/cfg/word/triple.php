@@ -183,7 +183,7 @@ class triple extends sandbox_link_named
 
     // to cache the query results
     // the total number of values linked to this triple as an indication how common the triple is and to sort the triples
-    public ?int $values;
+    private ?int $values;
 
     // only used for the export object
     // name of the default view for this word
@@ -322,7 +322,7 @@ class triple extends sandbox_link_named
         /*
         if (array_key_exists(json_fields::PLURAL, $api_json)) {
             if ($api_json[json_fields::PLURAL] <> '') {
-                $this->plural = $api_json[json_fields::PLURAL];
+                $this->set_plural($api_json[json_fields::PLURAL]);
             }
         }
         */
@@ -1514,7 +1514,7 @@ class triple extends sandbox_link_named
             /*
              * TODO remove
             if ($this->has_verb()) {
-                $this->verb->set_name($this->verb->reverse);
+                $this->verb->set_name($this->verb->reverse());
             }
             */
             $this->set_from($to);

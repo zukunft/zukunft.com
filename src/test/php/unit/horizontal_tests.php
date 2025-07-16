@@ -145,9 +145,9 @@ class horizontal_tests
                 $dto->add_phrase($filled_obj->to());
             } elseif ($class == ref::class) {
                 $dto->add_phrase($filled_obj->phrase());
-                $dto->add_source($filled_obj->source);
+                $dto->add_source($filled_obj->source());
             } elseif ($class == value::class) {
-                $dto->add_source($filled_obj->source);
+                $dto->add_source($filled_obj->source());
             } elseif ($class == result::class) {
                 $dto->add_formula($filled_obj->frm);
             }
