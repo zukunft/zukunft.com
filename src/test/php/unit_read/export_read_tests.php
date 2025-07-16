@@ -33,7 +33,7 @@
 namespace unit_read;
 
 use cfg\export\xml;
-use im_export\json_io;
+use cfg\export\json_io;
 use test\test_cleanup;
 
 class export_read_tests
