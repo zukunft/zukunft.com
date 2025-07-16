@@ -56,8 +56,6 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_par_type.php';
@@ -71,25 +69,23 @@ include_once MODEL_COMPONENT_PATH . 'position_type.php';
 include_once MODEL_COMPONENT_PATH . 'view_style.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once MODEL_LANGUAGE_PATH . 'language.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_code_id.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'term_view.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
+include_once SHARED_CONST_PATH . 'views.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -101,8 +97,6 @@ use cfg\component\view_style;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
@@ -110,18 +104,15 @@ use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
-use cfg\helper\type_list;
 use cfg\helper\type_object;
-use cfg\language\language;
 use cfg\log\change;
 use cfg\phrase\phrase;
 use cfg\phrase\term;
 use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
+use cfg\sandbox\sandbox_code_id;
 use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
 use cfg\user\user_message;
-use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\json_fields;
@@ -130,7 +121,7 @@ use shared\const\views;
 use shared\types\api_type_list;
 use shared\types\position_types;
 
-class view extends sandbox_typed
+class view extends sandbox_code_id
 {
 
     /*
@@ -157,8 +148,7 @@ class view extends sandbox_typed
      */
 
     // database fields additional to the user sandbox fields for the view component
-    // to select internal predefined views
-    public ?string $code_id = null;
+    // the parent code_id var is used to select internal predefined views
 
     // in memory only fields
     // all links to the component objects in correct order
@@ -181,8 +171,8 @@ class view extends sandbox_typed
     function __construct(user $usr)
     {
         $this->reset();
-
         parent::__construct($usr);
+
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_NAME;
     }
 
@@ -192,7 +182,6 @@ class view extends sandbox_typed
 
         $this->type_id = null;
         $this->style = null;
-        $this->code_id = null;
 
         $this->cmp_lnk_lst = null;
         $this->trm_msk_lst = null;
@@ -225,9 +214,6 @@ class view extends sandbox_typed
             }
             if (array_key_exists(view_db::FLD_STYLE, $db_row)) {
                 $this->set_style_by_id($db_row[view_db::FLD_STYLE]);
-            }
-            if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
-                $this->code_id = $db_row[sql::FLD_CODE_ID];
             }
         }
         return $result;
@@ -278,7 +264,7 @@ class view extends sandbox_typed
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
 
         // first save the parameters of the view itself
         // TODO aline all type_list mappings with this set_style call
@@ -287,15 +273,6 @@ class view extends sandbox_typed
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $usr_msg->add($this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_req));
-        }
-        // TODO add the permission to change the code id to all import code id imports
-        if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            if ($in_ex_json[json_fields::CODE_ID] != '') {
-                $this->code_id = $in_ex_json[json_fields::CODE_ID];
-                // TODO if a code id is set the object can be renamed but not be deleted any more
-                // if ($this->user()->is_admin() or $this->user()->is_system()) {
-                // }
-            }
         }
 
         // TODO get component from the dto object
@@ -355,10 +332,6 @@ class view extends sandbox_typed
             $vars[json_fields::EXCLUDED] = true;
         } else {
             $vars = parent::api_json_array($typ_lst, $usr);
-
-            // the code id is included in the api message towards the frontend
-            // but not overwritten via api message
-            $vars[json_fields::CODE_ID] = $this->code_id;
 
             $vars[json_fields::STYLE] = $this->style_id();
             if ($this->cmp_lnk_lst != null) {
@@ -460,12 +433,6 @@ class view extends sandbox_typed
             }
         }
 
-        // TODO include the code id in the api message so that the frontend can execute some behavior
-        //      include the code id also in the im- and export, but restrict the code id object changes to develop and system users
-        if ($this->code_id != null) {
-            $vars[json_fields::CODE_ID] = $this->code_id;
-        }
-
         if ($this->style_id() != null) {
             if ($this->style_id() <> $msk_sty_cac->default_id()) {
                 $vars[json_fields::STYLE] = $msk_sty_cac->code_id($this->style_id());
@@ -559,18 +526,6 @@ class view extends sandbox_typed
     }
 
     /**
-     * @return string a unique name for the view that is also used in the code
-     */
-    function code_id(): string
-    {
-        if ($this->code_id == null) {
-            return '';
-        } else {
-            return $this->code_id;
-        }
-    }
-
-    /**
      * @return string the description of the view
      */
     function comment(): string
@@ -655,21 +610,6 @@ class view extends sandbox_typed
      */
 
     /**
-     * load a view by code id
-     * @param string $code_id the code id of the view
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_code_id(string $code_id): int
-    {
-        global $db_con;
-
-        log_debug($code_id);
-        $sc = $db_con->sql_creator();
-        $qp = $this->load_sql_by_code_id($sc, $code_id);
-        return parent::load($qp);
-    }
-
-    /**
      * load the suggested view for a phrase
      * @param phrase $phr the phrase for which the most often used view should be loaded
      * @return bool true if at least one view is found
@@ -715,23 +655,6 @@ class view extends sandbox_typed
             $result = $this->load_owner();
         }
         return $result;
-    }
-
-    /**
-     * create an SQL statement to retrieve a view by code id from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $code_id the code id of the view
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
-    {
-        $qp = $this->load_sql($sc, 'code_id');
-        $sc->add_where(sql::FLD_CODE_ID, $code_id);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
     }
 
     /**
@@ -840,7 +763,7 @@ class view extends sandbox_typed
         } elseif ($this->name != '') {
             $qp->name .= sql_db::FLD_NAME;
         } else {
-            log_err("Either the database ID (" . $this->id() . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id . ")  must be set to load the components of a view.", "view->load_components_sql");
+            log_err("Either the database ID (" . $this->id() . "), the view name (" . $this->name . ") or the code_id (" . $this->code_id() . ")  must be set to load the components of a view.", "view->load_components_sql");
         }
 
         $db_con->set_class(component_link::class);
@@ -1184,31 +1107,6 @@ class view extends sandbox_typed
     }
 
     /**
-     * set the update parameters for the view code_id (only allowed for admin)
-     * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
-     * @param view $db_rec the database record before the saving
-     * @param view $std_rec the database record defined as standard because it is used by most users
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_field_code_id(sql_db $db_con, view $db_rec, view $std_rec): user_message
-    {
-        $usr_msg = new user_message;
-        // special case: do not remove a code id
-        if ($this->code_id != '') {
-            if ($db_rec->code_id <> $this->code_id) {
-                $log = $this->log_upd();
-                $log->old_value = $db_rec->code_id;
-                $log->new_value = $this->code_id;
-                $log->std_value = $std_rec->code_id;
-                $log->row_id = $this->id();
-                $log->set_field(sql::FLD_CODE_ID);
-                $usr_msg->add($this->save_field_user($db_con, $log));
-            }
-        }
-        return $usr_msg;
-    }
-
-    /**
      * save all updated view fields excluding the name, because already done when adding a view
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param view|sandbox $db_obj the database record before the saving
@@ -1218,7 +1116,7 @@ class view extends sandbox_typed
     function save_all_fields(sql_db $db_con, view|sandbox $db_obj, view|sandbox $norm_obj): user_message
     {
         $usr_msg = parent::save_fields_typed($db_con, $db_obj, $norm_obj);
-        $usr_msg->add($this->save_field_code_id($db_con, $db_obj, $norm_obj));
+        //$usr_msg->add($this->save_field_code_id($db_con, $db_obj, $norm_obj));
         log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
         return $usr_msg;
     }
@@ -1285,7 +1183,6 @@ class view extends sandbox_typed
             [
                 view_db::FLD_TYPE,
                 view_db::FLD_STYLE,
-                sql::FLD_CODE_ID
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1346,21 +1243,6 @@ class view extends sandbox_typed
                 $this->style_id(),
                 $sbx->style_id(),
                 $msk_sty_cac
-            );
-        }
-        if ($sbx->code_id <> $this->code_id) {
-            if ($do_log) {
-                $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                    $cng_fld_cac->id($table_id . sql::FLD_CODE_ID),
-                    change::FLD_FIELD_ID_SQL_TYP
-                );
-            }
-            $lst->add_field(
-                sql::FLD_CODE_ID,
-                $this->code_id,
-                sql::FLD_CODE_ID_SQL_TYP,
-                $sbx->code_id
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));

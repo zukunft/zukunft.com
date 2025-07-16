@@ -16,7 +16,7 @@ This program should
 Development installation
 ------------------------
 
-To install this version 0.0.3 on a debian system (https://wiki.debian.org/) do:
+To install this version 0.0.3 on a debian system (https://wiki.debian.org/) do as root e.g. in /home/your_user/:
 
 1. Clone the repository:
    ```bash
@@ -49,6 +49,7 @@ To install this version 0.0.3 on a debian system (https://wiki.debian.org/) do:
    sudo ./zukunft.com/install.sh
    ```
 
+The  
 
 Fix development installation:
 -----------------------------

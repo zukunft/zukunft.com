@@ -575,12 +575,12 @@ class sandbox_link extends sandbox
     /**
      * check if the named object in the database needs to be updated
      *
-     * @param sandbox_link $db_obj the word as saved in the database
+     * @param sandbox_link|sandbox $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update_linked(sandbox_link $db_obj): bool
+    function needs_db_update(sandbox_link|sandbox $db_obj): bool
     {
-        $result = parent::needs_db_update_sandbox($db_obj);
+        $result = parent::needs_db_update($db_obj);
         if ($this->fob->id() != 0) {
             if ($this->fob->id() != $db_obj->fob->id()) {
                 $result = true;

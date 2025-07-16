@@ -95,7 +95,7 @@ class component_tests
         $t->assert_sql_insert($sc, $cmp, [sql_type::LOG, sql_type::USER]);
         $cmp = $t->component_word_add_title(); // a component with a code_id as it might be imported
         $t->assert_sql_insert($sc, $cmp, [sql_type::LOG]);
-        $cmp = $t->component_filled();
+        $cmp = $t->component_filled_all();
         $t->assert_sql_insert($sc, $cmp, [sql_type::LOG]);
 
         $t->subheader($ts . 'component sql write update');

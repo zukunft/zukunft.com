@@ -72,16 +72,14 @@ include_once MODEL_LOG_PATH . 'change_action.php';
 include_once MODEL_LOG_PATH . 'change_link.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_code_id.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once SHARED_CONST_PATH . 'components.php';
-include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'position_types.php';
@@ -104,13 +102,11 @@ use cfg\log\change;
 use cfg\log\change_link;
 use cfg\phrase\phrase;
 use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_typed;
+use cfg\sandbox\sandbox_code_id;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\word;
-use shared\const\users;
 use shared\enum\change_actions;
-use shared\enum\user_profiles;
 use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\const\components;
@@ -119,7 +115,7 @@ use shared\library;
 use shared\types\api_type_list;
 use shared\types\position_types;
 
-class component extends sandbox_typed
+class component extends sandbox_code_id
 {
 
     /*
@@ -148,10 +144,9 @@ class component extends sandbox_typed
 
     // database fields additional to the user sandbox fields for the view component
 
-    // to select a specific system component by the program code
+    // the parent code_id var is used to select a specific system component by the program code
     // the code id cannot be changed by the user
     // so this field is not part of the table user_components
-    private ?string $code_id = null;
 
     // to select a user interface language specific message
     // e.g. "add word" or "Wort zufügen"
@@ -165,9 +160,6 @@ class component extends sandbox_typed
 
     // the word link type used to build the word tree started with the $start_word_id
     public ?int $link_type_id = null;
-
-    // to select a formula (no used case at the moment)
-    public ?int $formula_id = null;
 
     // for a table to defined second columns layer or the second axis in case of a chart
     // e.g. for a "company cash flow statement" the "col word" could be "Year"
@@ -194,8 +186,8 @@ class component extends sandbox_typed
     // the word object for $word_id_col2
     public ?phrase $col_sub_phrase = null;
 
-    // the formula object for $formula_id
-    public ?formula $frm = null;
+    // the formula object for the main dynamic adjustment of the component
+    private ?formula $frm = null;
 
     // the default display style for this component which can be overwritten by the link
     private ?type_object $style = null;
@@ -211,6 +203,7 @@ class component extends sandbox_typed
      */
     function __construct(user $usr)
     {
+        $this->reset();
         parent::__construct($usr);
 
         $this->rename_can_switch = UI_CAN_CHANGE_VIEW_COMPONENT_NAME;
@@ -228,13 +221,11 @@ class component extends sandbox_typed
         $this->type_id = null;
         $this->style = null;
         $this->link_type_id = null;
-        $this->formula_id = null;
+        $this->frm = null;
         $this->word_id_col2 = null;
         $this->row_phrase = null;
         $this->col_phrase = null;
         $this->col_sub_phrase = null;
-        $this->frm = null;
-        $this->code_id = null;
         $this->ui_msg_code_id = null;
     }
 
@@ -258,17 +249,8 @@ class component extends sandbox_typed
     {
         global $mtr;
 
-        // create a virtual one-time system user e.g. to set the code id
-        $usr_sys = new user();
-        $usr_sys->set_id(users::SYSTEM_ID);
-        $usr_sys->name = users::SYSTEM_NAME;
-        $usr_sys->set_profile(user_profiles::SYSTEM);
-
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
-            if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
-                $this->set_code_id($db_row[sql::FLD_CODE_ID], $usr_sys);
-            }
             if (array_key_exists(component_db::FLD_UI_MSG_ID, $db_row)) {
                 $msg_id_txt = $db_row[component_db::FLD_UI_MSG_ID];
                 if ($msg_id_txt == null) {
@@ -291,7 +273,7 @@ class component extends sandbox_typed
                 $this->link_type_id = $db_row[component_db::FLD_LINK_TYPE];
             }
             if (array_key_exists(formula_db::FLD_ID, $db_row)) {
-                $this->formula_id = $db_row[formula_db::FLD_ID];
+                $this->set_formula_by_id($db_row[formula_db::FLD_ID]);
             }
             if (array_key_exists(component_db::FLD_COL_PHRASE, $db_row)) {
                 $this->load_col_phrase($db_row[component_db::FLD_COL_PHRASE]);
@@ -313,12 +295,13 @@ class component extends sandbox_typed
         $msg = parent::api_mapper($api_json);
 
         // it is expected that the code id is set via import by an admin not via api
-        if (array_key_exists(json_fields::CODE_ID, $api_json)) {
-            $this->code_id = $api_json[json_fields::CODE_ID];
-        }
         if (array_key_exists(json_fields::UI_MSG_CODE_ID, $api_json)) {
             global $mtr;
             $this->ui_msg_code_id = $mtr->get($api_json[json_fields::UI_MSG_CODE_ID]);
+        }
+        if (array_key_exists(json_fields::FORMULA_ID, $api_json)) {
+            $frm = $this->formula_from_api_json($api_json[json_fields::FORMULA_ID]);
+            $this->set_formula($frm);
         }
         // TODO map e.g. the $row_phrase
 
@@ -340,8 +323,12 @@ class component extends sandbox_typed
         object      $test_obj = null
     ): user_message
     {
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
 
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID, $in_ex_json)) {
+            global $mtr;
+            $this->ui_msg_code_id = $mtr->get($in_ex_json[json_fields::UI_MSG_CODE_ID]);
+        }
         if (key_exists(json_fields::POSITION, $in_ex_json)) {
             $this->order_nbr = $in_ex_json[json_fields::POSITION];
         }
@@ -355,19 +342,6 @@ class component extends sandbox_typed
             $type_name = $in_ex_json[json_fields::TYPE_NAME];
             if ($type_name != '') {
                 $this->set_type_id($this->type_id_by_code_id($type_name), $usr_req);
-            }
-        }
-        if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-            $code_id = $in_ex_json[json_fields::CODE_ID];
-            if ($code_id != '') {
-                $this->set_code_id($code_id, $usr_req);
-            }
-        }
-        if (key_exists(json_fields::UI_MSG_CODE_ID, $in_ex_json)) {
-            global $mtr;
-            $msg_id = $in_ex_json[json_fields::UI_MSG_CODE_ID];
-            if ($msg_id != '') {
-                $this->set_ui_msg_code_id($mtr->get($msg_id), $usr_req);
             }
         }
 
@@ -394,15 +368,36 @@ class component extends sandbox_typed
             $vars[json_fields::EXCLUDED] = true;
         } else {
             $vars = parent::api_json_array($typ_lst, $usr);
-            if ($this->code_id != null) {
-                $vars[json_fields::CODE_ID] = $this->code_id;
-            }
             if ($this->ui_msg_code_id != null) {
                 $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
+            }
+            if ($this->frm != null) {
+                $vars[json_fields::FORMULA_ID] = $this->formula_id();
             }
         }
 
         return $vars;
+    }
+
+    /**
+     * get a formula either with the id set or with all fields set based on an api json
+     * @param int|array $value either the id itself or an array with the id
+     * @return formula with at least the id set
+     */
+    private function formula_from_api_json(int|array $value): formula
+    {
+        $frm = new formula($this->user());
+        if (is_array($value)) {
+            $frm->api_mapper($value);
+        } elseif (is_int($value)) {
+            if ($value != 0) {
+                // TODO use formula cache
+                $frm->set_id($value);
+            }
+        } else {
+            log_err('unexpected format of api message');
+        }
+        return $frm;
     }
 
 
@@ -421,9 +416,6 @@ class component extends sandbox_typed
 
         if ($this->order_nbr >= 0) {
             $vars[json_fields::POSITION] = $this->order_nbr;
-        }
-        if ($this->code_id != null) {
-            $vars[json_fields::CODE_ID] = $this->code_id;
         }
         if ($this->ui_msg_code_id != null) {
             $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id->value;
@@ -638,36 +630,31 @@ class component extends sandbox_typed
     }
 
     /**
-     * set the code id of this object to write the change to the db
-     * but only if the requesting user hat the permission to do so
-     *
-     * @param string|null $code_id the updated code id
-     * @param user $usr the user who has requested the change
-     * @return user_message warning message for the user if the permissions are missing
+     * set the formula of the component by the id
+     * TODO use cache to reduce the db loads
+     * TODO use this as a sample for all row_mappers
+     * @param int|null $id the id for the formula
+     * @return user_message message for the user if the id is strange
      */
-    function set_code_id(?string $code_id, user $usr): user_message
+    function set_formula_by_id(?int $id): user_message
     {
         $usr_msg = new user_message();
-        if ($usr->can_set_code_id()) {
-            $this->code_id = $code_id;
-        } else {
-            $lib = new library();
-            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
-                msg_id::VAR_USER_NAME => $usr->name(),
-                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => sql::FLD_CODE_ID,
-                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
-            ]);
+        $frm = null;
+        if ($id != null) {
+            if ($id > 0) {
+                $frm = new formula($this->user());
+                $frm->set_id($id);
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::LOAD_FORMULA_ID, [
+                    msg_id::VAR_FORMULA => $id,
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_SANDBOX_NAME => $this->name(),
+                ]);
+            }
         }
+        $this->frm = $frm;
         return $usr_msg;
-    }
-
-    /**
-     * @return string|null the unique key or null if the component is not used by the system
-     */
-    function code_id(): ?string
-    {
-        return $this->code_id;
     }
 
     /**
@@ -678,14 +665,18 @@ class component extends sandbox_typed
     function set_formula(formula $frm): user_message
     {
         $this->frm = $frm;
-        $this->formula_id = $frm->id();
         return new user_message();
+    }
+
+    function formula(): ?formula
+    {
+        return $this->frm;
     }
 
     function formula_id(): int
     {
-        if ($this->formula_id != null) {
-            return $this->formula_id;
+        if ($this->frm != null) {
+            return $this->frm->id();
         } else {
             return 0;
         }
@@ -972,9 +963,9 @@ class component extends sandbox_typed
     function load_formula(): string
     {
         $result = '';
-        if ($this->formula_id > 0) {
+        if ($this->formula_id() > 0) {
             $frm = new formula($this->user());
-            $frm->load_by_id($this->formula_id);
+            $frm->load_by_id($this->formula_id());
             $this->frm = $frm;
             $result = $frm->name();
         }
@@ -999,11 +990,11 @@ class component extends sandbox_typed
     function fill(component|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = parent::fill($obj, $usr_req);
-        if ($obj->code_id != null) {
-            $usr_msg->add($this->set_code_id($obj->code_id, $usr_req));
-        }
         if ($obj->ui_msg_code_id != null) {
             $usr_msg->add($this->set_ui_msg_code_id($obj->ui_msg_code_id, $usr_req));
+        }
+        if ($obj->formula_id() != null) {
+            $this->set_formula($obj->formula());
         }
         return $usr_msg;
     }
@@ -1012,6 +1003,44 @@ class component extends sandbox_typed
     /*
      * information
      */
+
+    /**
+     * create human-readable messages of the differences between the objects
+     * @param component|sandbox|CombineObject|db_object_seq_id $obj which might be different to this sandbox object
+     * @return user_message the human-readable messages of the differences between the sandbox objects
+     */
+    function diff_msg(component|sandbox|CombineObject|db_object_seq_id $obj): user_message
+    {
+        $usr_msg = parent::diff_msg($obj);
+        // TODO add the missing fields and review the unit test
+        if ($this->formula_id() != $obj->formula_id()) {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::DIFF_FORMULA, [
+                msg_id::VAR_FORMULA => $obj->formula_id(),
+                msg_id::VAR_FORMULA_CHK => $this->formula_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_SANDBOX_NAME => $this->name(),
+            ]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * check if the named object in the database needs to be updated
+     *
+     * @param component|sandbox $db_obj the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the database
+     */
+    function needs_db_update(component|sandbox $db_obj): bool
+    {
+        $result = parent::needs_db_update($db_obj);
+        if ($this->formula_id() != null) {
+            if ($this->formula_id() != $db_obj->formula_id()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
 
     /**
      * returns the next free order number for a new view component
@@ -1126,27 +1155,6 @@ class component extends sandbox_typed
      */
 
     /**
-     * set the update parameters for the component code id
-     *
-     * @param sql_db $db_con the db connection object as a function parameter for unit testing
-     * @param component $db_rec the view component as saved in the database before the update
-     * @return user_message the message that should be shown to the user in case something went wrong
-     */
-    function save_field_code_id(sql_db $db_con, component $db_rec): user_message
-    {
-        $usr_msg = new user_message();
-        if ($this->code_id <> $db_rec->code_id) {
-            $log = $this->log_upd();
-            $log->old_value = $db_rec->code_id;
-            $log->new_value = $this->code_id;
-            $log->row_id = $this->id();
-            $log->set_field(sql::FLD_CODE_ID);
-            $usr_msg = $this->save_field($db_con, $log);
-        }
-        return $usr_msg;
-    }
-
-    /**
      * set the update parameters for the component user interface message id
      *
      * @param sql_db $db_con the db connection object as a function parameter for unit testing
@@ -1256,14 +1264,14 @@ class component extends sandbox_typed
     function save_field_formula(sql_db $db_con, component $db_rec, component $std_rec): user_message
     {
         $usr_msg = new user_message();
-        if ($db_rec->formula_id <> $this->formula_id) {
+        if ($db_rec->formula_id() <> $this->formula_id()) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->load_formula();
-            $log->old_id = $db_rec->formula_id;
+            $log->old_id = $db_rec->formula_id();
             $log->new_value = $this->load_formula();
-            $log->new_id = $this->formula_id;
+            $log->new_id = $this->formula_id();
             $log->std_value = $std_rec->load_formula();
-            $log->std_id = $std_rec->formula_id;
+            $log->std_id = $std_rec->formula_id();
             $log->row_id = $this->id();
             $log->set_field(formula_db::FLD_ID);
             $usr_msg = $this->save_field_user($db_con, $log);
@@ -1282,7 +1290,7 @@ class component extends sandbox_typed
     function save_all_fields(sql_db $db_con, component|sandbox $db_obj, component|sandbox $norm_obj): user_message
     {
         $result = parent::save_fields_typed($db_con, $db_obj, $norm_obj);
-        $result->add($this->save_field_code_id($db_con, $db_obj));
+        //  $result->add($this->save_field_code_id($db_con, $db_obj));
         $result->add($this->save_field_ui_msg_id($db_con, $db_obj));
         $result->add($this->save_field_wrd_row($db_con, $db_obj, $norm_obj));
         $result->add($this->save_field_wrd_col($db_con, $db_obj, $norm_obj));
@@ -1359,7 +1367,6 @@ class component extends sandbox_typed
             [
                 component_db::FLD_TYPE,
                 component_db::FLD_STYLE,
-                sql::FLD_CODE_ID,
                 component_db::FLD_UI_MSG_ID,
                 component_db::FLD_ROW_PHRASE,
                 component_db::FLD_COL_PHRASE,
@@ -1431,21 +1438,6 @@ class component extends sandbox_typed
                 $this->style_id(),
                 $sbx->style_id(),
                 $msk_sty_cac
-            );
-        }
-        if ($sbx->code_id <> $this->code_id) {
-            if ($do_log) {
-                $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                    $cng_fld_cac->id($table_id . sql::FLD_CODE_ID),
-                    change::FLD_FIELD_ID_SQL_TYP
-                );
-            }
-            $lst->add_field(
-                sql::FLD_CODE_ID,
-                $this->code_id,
-                sql::FLD_CODE_ID_SQL_TYP,
-                $sbx->code_id
             );
         }
         if ($sbx->ui_msg_code_id <> $this->ui_msg_code_id) {
@@ -1529,7 +1521,7 @@ class component extends sandbox_typed
                 );
             }
             $old_val = $sbx->formula_id();
-            if ($sbx->formula_id == null) {
+            if ($sbx->formula_id() == null) {
                 $old_val = null;
             }
             $lst->add_field(

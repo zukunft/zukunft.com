@@ -63,7 +63,7 @@ class triple_list_read_tests
         // test load by triple list by ids
         $test_name = 'load triples by ids';
         $trp_lst = new triple_list($t->usr1);
-        $trp_lst->load_by_ids(array(1,2));
+        $trp_lst->load_by_ids(array(triples::MATH_CONST_ID,triples::PI_SYMBOL_ID));
         $target = array(triples::MATH_CONST, triples::PI_SYMBOL_NAME); // order adjusted based on the number of usage
         $t->assert_contains($test_name, $trp_lst->names(), $target);
         /* TODO activate

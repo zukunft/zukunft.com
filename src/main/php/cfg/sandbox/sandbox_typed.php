@@ -280,10 +280,12 @@ class sandbox_typed extends sandbox_named
     {
         $usr_msg = parent::diff_msg($obj);
         if ($this->type_id() != $obj->type_id()) {
+            $lib = new library();
             $usr_msg->add_id_with_vars(msg_id::DIFF_TYPE, [
                 msg_id::VAR_TYPE => $obj->type_name(),
                 msg_id::VAR_TYPE_CHK => $this->type_name(),
-                msg_id::VAR_NAME => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
             ]);
         }
         return $usr_msg;

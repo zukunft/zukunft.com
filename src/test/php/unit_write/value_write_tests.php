@@ -46,6 +46,7 @@ use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
 use shared\const\users;
 use shared\enum\change_fields;
+use shared\helper\Config as shared_config;
 use shared\library;
 use shared\const\triples;
 use shared\const\values;
@@ -198,7 +199,7 @@ class value_write_tests
 
         // test the HTML code creation
         $result = $mio_val_dsp->value();
-        $target = number_format(values::CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, DEFAULT_DEC_POINT, DEFAULT_THOUSAND_SEP);
+        $target = number_format(values::CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, shared_config::DEFAULT_DEC_POINT, shared_config::DEFAULT_THOUSAND_SEP);
         $t->display(', value->display', $result, $target);
 
         // test the HTML code creation including the hyperlink

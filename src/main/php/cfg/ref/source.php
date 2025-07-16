@@ -63,7 +63,6 @@ include_once DB_PATH . 'sql.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_type.php';
@@ -74,7 +73,7 @@ include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_REF_PATH . 'source_db.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_code_id.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SERVICE_EXPORT_PATH . 'sandbox_exp.php';
@@ -86,7 +85,6 @@ include_once SHARED_PATH . 'json_fields.php';
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
@@ -95,7 +93,7 @@ use cfg\helper\data_object;
 use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_typed;
+use cfg\sandbox\sandbox_code_id;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\const\sources;
@@ -103,7 +101,7 @@ use shared\enum\messages as msg_id;
 use shared\types\api_type_list;
 use shared\json_fields;
 
-class source extends sandbox_typed
+class source extends sandbox_code_id
 {
 
     /*
@@ -130,7 +128,6 @@ class source extends sandbox_typed
 
     // database fields additional to the user sandbox fields
     public ?string $url = null;          // the internet link to the source
-    public ?string $code_id = null;      // to select internal predefined sources
 
 
     /*
@@ -140,6 +137,7 @@ class source extends sandbox_typed
     // define the settings for this source object
     function __construct(user $usr)
     {
+        $this->reset();
         parent::__construct($usr);
 
         $this->rename_can_switch = UI_CAN_CHANGE_SOURCE_NAME;
@@ -148,9 +146,7 @@ class source extends sandbox_typed
     function reset(): void
     {
         parent::reset();
-
         $this->url = null;
-        $this->code_id = null;
     }
 
     /**
@@ -174,7 +170,6 @@ class source extends sandbox_typed
         if ($result) {
             $this->url = $db_row[source_db::FLD_URL];
             $this->type_id = $db_row[source_db::FLD_TYPE];
-            $this->code_id = $db_row[sql::FLD_CODE_ID];
         }
         return $result;
     }
@@ -200,23 +195,24 @@ class source extends sandbox_typed
      * set the object vars of this source object based on the import json array
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper_user(
+        array       $in_ex_json,
+        user        $usr_req,
+        data_object $dto = null,
+        object      $test_obj = null
+    ): user_message
     {
         global $src_typ_cac;
 
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
 
         if (key_exists(json_fields::URL, $in_ex_json)) {
             $this->url = $in_ex_json[json_fields::URL];
-        }
-        if ($this->user()->is_system() or $this->user()->is_admin()) {
-            if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
-                $this->code_id = $in_ex_json[json_fields::CODE_ID];
-            }
         }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $this->type_id = $src_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
@@ -240,9 +236,6 @@ class source extends sandbox_typed
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = parent::api_json_array($typ_lst, $usr);
-        if ($this->code_id != null) {
-            $vars[json_fields::CODE_ID] = $this->code_id;
-        }
         $vars[json_fields::URL] = $this->url;
         return $vars;
     }
@@ -294,9 +287,6 @@ class source extends sandbox_typed
 
         if ($this->url <> '') {
             $vars[json_fields::URL] = $this->url;
-        }
-        if ($this->code_id <> '') {
-            $vars[json_fields::CODE_ID] = $this->code_id;
         }
 
         return $vars;
@@ -356,20 +346,6 @@ class source extends sandbox_typed
      */
 
     /**
-     * load a source by code id
-     * @param string $code_id the code id of the source
-     * @return int the id of the object found and zero if nothing is found
-     */
-    function load_by_code_id(string $code_id): int
-    {
-        global $db_con;
-
-        log_debug($code_id);
-        $qp = $this->load_sql_by_code_id($db_con->sql_creator(), $code_id);
-        return parent::load($qp);
-    }
-
-    /**
      * load the source parameters for all users
      * @param sql_par|null $qp placeholder to align the function parameters with the parent
      * @return bool true if the standard source has been loaded
@@ -384,23 +360,6 @@ class source extends sandbox_typed
             $result = $this->load_owner();
         }
         return $result;
-    }
-
-    /**
-     * create an SQL statement to retrieve a source by code id from the database
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $code_id the code id of the source
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
-    {
-        $qp = $this->load_sql($sc, 'code_id');
-        $sc->add_where(sql::FLD_CODE_ID, $code_id);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
     }
 
     /**
@@ -604,7 +563,6 @@ class source extends sandbox_typed
             [
                 source_db::FLD_TYPE,
                 source_db::FLD_URL,
-                sql::FLD_CODE_ID
             ],
             parent::db_fields_all_sandbox()
         );
@@ -657,21 +615,6 @@ class source extends sandbox_typed
                 $this->url,
                 source_db::FLD_URL_SQL_TYP,
                 $sbx->url
-            );
-        }
-        if ($sbx->code_id <> $this->code_id) {
-            if ($do_log) {
-                $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                    $cng_fld_cac->id($table_id . sql::FLD_CODE_ID),
-                    change::FLD_FIELD_ID_SQL_TYP
-                );
-            }
-            $lst->add_field(
-                sql::FLD_CODE_ID,
-                $this->code_id,
-                sql_field_type::CODE_ID,
-                $sbx->code_id
             );
         }
         return $lst->merge($this->db_changed_sandbox_list($sbx, $sc_par_lst));

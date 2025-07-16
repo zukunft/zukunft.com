@@ -733,32 +733,37 @@ class sandbox extends db_object_seq_id_user
     function diff_msg(CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $obj): user_message
     {
         $usr_msg = parent::diff_msg($obj);
+        $lib = new library();
         if ($this->owner_id() != $obj->owner_id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_OWNER, [
                 msg_id::VAR_USER => $obj->owner()->dsp_id(),
                 msg_id::VAR_USER_CHK => $this->owner()->dsp_id(),
-                msg_id::VAR_NAME => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
             ]);
         }
         if ($this->share_id() != $obj->share_id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
                 msg_id::VAR_SHARE => $obj->share_type_name(),
                 msg_id::VAR_SHARE_CHK => $this->share_type_name(),
-                msg_id::VAR_NAME => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
             ]);
         }
         if ($this->protection_id() != $obj->protection_id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
                 msg_id::VAR_PROTECT => $obj->protection_type_name(),
                 msg_id::VAR_PROTECT_CHK => $this->protection_type_name(),
-                msg_id::VAR_NAME => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
             ]);
         }
         if ($this->is_excluded() != $obj->is_excluded()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_EXCLUSION, [
                 msg_id::VAR_EXCLUDE => $obj->is_excluded(),
                 msg_id::VAR_EXCLUDE_CHK => $this->is_excluded(),
-                msg_id::VAR_NAME => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
             ]);
         }
         return $usr_msg;
@@ -1145,7 +1150,7 @@ class sandbox extends db_object_seq_id_user
      * @param sandbox $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update_sandbox(sandbox $db_obj): bool
+    function needs_db_update(sandbox $db_obj): bool
     {
         $result = false;
         if ($this->owner_id() != null) {

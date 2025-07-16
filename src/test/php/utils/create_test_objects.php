@@ -194,6 +194,7 @@ use shared\enum\change_tables;
 use shared\enum\source_types;
 use shared\enum\sys_log_statuus;
 use shared\enum\user_profiles;
+use shared\helper\Config as shared_config;
 use shared\json_fields;
 use shared\library;
 use shared\const\components;
@@ -3014,7 +3015,7 @@ class create_test_objects extends test_base
     function source_admin(): source
     {
         $src = $this->source();
-        $src->code_id = sources::SIB_CODE;
+        $src->set_code_id_db(sources::SIB_CODE);
         return $src;
     }
 
@@ -3147,7 +3148,7 @@ class create_test_objects extends test_base
         $msk = new view($this->usr1);
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
-        $msk->code_id = views::START_CODE;
+        $msk->set_code_id_db(views::START_CODE);
         return $msk;
     }
 
@@ -3157,7 +3158,7 @@ class create_test_objects extends test_base
         $msk = new view($this->usr1);
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
-        $msk->code_id = views::START_CODE;
+        $msk->set_code_id_db(views::START_CODE);
         $msk->set_type(view_type::ENTRY, $this->usr1);
         $msk->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $msk;
@@ -3261,7 +3262,7 @@ class create_test_objects extends test_base
         $msk = new view($this->usr1);
         $msk->set(views::START_ID, views::START_NAME);
         $msk->description = views::START_COM;
-        $msk->code_id = views::START_CODE;
+        $msk->set_code_id_db(views::START_CODE);
         $msk->set_type(view_type::ENTRY, $this->usr1);
         $msk->set_style(view_styles::COL_SM_4);
         $msk->exclude();
@@ -3278,7 +3279,7 @@ class create_test_objects extends test_base
         $msk = $this->view_filled();
         $msk->include();
         $msk->set_id(0);
-        $msk->code_id = views::TEST_ADD;
+        $msk->set_code_id_db(views::TEST_ADD);
         $msk->set_name(views::TEST_ADD_NAME);
         return $msk;
     }
@@ -3315,7 +3316,7 @@ class create_test_objects extends test_base
         $msk = new view($this->usr1);
         $msk->set(views::TEST_FORM_ID, views::TEST_FORM_NAME);
         $msk->description = views::TEST_FORM_COM;
-        $msk->code_id = views::TEST_FORM;
+        $msk->set_code_id_db(views::TEST_FORM);
         $msk->cmp_lnk_lst = $this->components_word_add($msk);
         return $msk;
     }
@@ -3436,11 +3437,22 @@ class create_test_objects extends test_base
         $cmp->set_row_phrase($this->year());
         $cmp->set_col_phrase($this->canton());
         $cmp->set_col_sub_phrase($this->city());
-        $cmp->set_formula($this->formula());
+        // TODO activate
+        //$cmp->set_formula($this->formula());
         $cmp->set_link_type(component_link_type::EXPRESSION);
         $cmp->exclude();
         $cmp->set_share_id($shr_typ_cac->id(share_type_shared::GROUP));
         $cmp->set_protection_id($ptc_typ_cac->id(protect_type_shared::USER));
+        return $cmp;
+    }
+
+    /**
+     * @return component with all fields set to check if the save and load process is complete
+     */
+    function component_filled_all(): component
+    {
+        $cmp = $this->component_filled();
+        $cmp->set_formula($this->formula());
         return $cmp;
     }
 
@@ -4135,12 +4147,12 @@ class create_test_objects extends test_base
     {
         $sys_usr = new user;
         $sys_usr->set_id(users::SYSTEM_ID);
-        $sys_usr->name = "zukunft.com system";
-        $sys_usr->code_id = 'system';
-        $sys_usr->dec_point = ".";
-        $sys_usr->thousand_sep = "'";
-        $sys_usr->percent_decimals = 2;
-        $sys_usr->profile_id = 5;
+        $sys_usr->name = users::SYSTEM_NAME;
+        $sys_usr->code_id = users::SYSTEM_CODE_ID;
+        $sys_usr->dec_point = shared_config::DEFAULT_DEC_POINT;
+        $sys_usr->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
+        $sys_usr->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
+        $sys_usr->profile_id = user_profiles::SYSTEM_ID;
         return $sys_usr;
     }
 
@@ -4471,7 +4483,7 @@ class create_test_objects extends test_base
                         $trp->set_name($name_given);
                         $result = $trp->save()->get_last_message();
                         if ($result != '') {
-                            log_err('save tripple failed due to: ' . $result);
+                            log_err('save triple failed due to: ' . $result);
                         }
                         $trp->load_by_id($trp->id());
                     }
@@ -4495,7 +4507,7 @@ class create_test_objects extends test_base
                         }
                         $save_result = $trp->save()->get_last_message();
                         if ($save_result != '') {
-                            log_err('save tripple failed due to: ' . $save_result);
+                            log_err('save triple failed due to: ' . $save_result);
                         }
                         $trp->load_by_id($trp->id());
                     }

@@ -1052,10 +1052,12 @@ class value_base extends sandbox_value
         if ($this->source_id() != $obj->source_id()
             and $obj->source() != null
             and $this->source() != null) {
+            $lib = new library();
             $usr_msg->add_id_with_vars(msg_id::DIFF_SOURCE, [
                 msg_id::VAR_SOURCE => $obj->source()?->dsp_id(),
                 msg_id::VAR_SOURCE_CHK => $this->source()?->dsp_id(),
-                msg_id::VAR_VAL_ID => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_VAL_ID => $this->name(),
             ]);
         }
         return $usr_msg;

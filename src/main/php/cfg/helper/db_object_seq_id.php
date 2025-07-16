@@ -64,6 +64,7 @@ include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -79,6 +80,7 @@ use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\types\api_type_list;
 use shared\json_fields;
+use shared\library;
 
 class db_object_seq_id extends db_object
 {
@@ -342,9 +344,11 @@ class db_object_seq_id extends db_object
     {
         $usr_msg = new user_message();
         if ($this->id() != $obj->id()) {
+            $lib = new library();
             $usr_msg->add_id_with_vars(msg_id::DIFF_ID, [
                 msg_id::VAR_ID => $obj->id(),
                 msg_id::VAR_ID_CHK => $this->id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }

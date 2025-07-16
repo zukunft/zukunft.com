@@ -47,7 +47,7 @@ include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_HELPER_PATH . 'data_object.php';
 include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_code_id.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_VIEW_PATH . 'view_list.php';
 include_once WEB_TYPES_PATH . 'view_style_list.php';
@@ -66,7 +66,7 @@ use html\log\user_log_display;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
-use html\sandbox\sandbox_typed;
+use html\sandbox\sandbox_code_id;
 use html\system\back_trace;
 use html\user\user_message;
 use html\view\view_list;
@@ -78,14 +78,13 @@ use shared\types\component_type;
 use shared\types\position_types;
 use shared\types\view_styles;
 
-class component extends sandbox_typed
+class component extends sandbox_code_id
 {
 
     /*
      * object vars
      */
 
-    public ?string $code_id = null;         // the entry type code id
     public ?int $position = 0;              // for the frontend the position of the link is included in the component object
     public ?int $link_id = 0;               // ??
 
@@ -117,11 +116,6 @@ class component extends sandbox_typed
     function api_mapper(array $json_array): user_message
     {
         $usr_msg = parent::api_mapper($json_array);
-        if (array_key_exists(json_fields::CODE_ID, $json_array)) {
-            $this->code_id = $json_array[json_fields::CODE_ID];
-        } else {
-            $this->code_id = null;
-        }
         if (array_key_exists(json_fields::UI_MSG_CODE_ID, $json_array)) {
             global $mtr;
             $this->ui_msg_code_id = $mtr->get($json_array[json_fields::UI_MSG_CODE_ID]);
@@ -161,7 +155,6 @@ class component extends sandbox_typed
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[json_fields::CODE_ID] = $this->code_id;
         $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id?->value;
         if ($this->position != 0 or $this->link_id != 0) {
             $vars[json_fields::POSITION] = $this->position;

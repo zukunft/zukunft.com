@@ -55,6 +55,7 @@ namespace cfg\const;
 //include_once MODEL_REF_PATH . 'ref.php';
 //include_once MODEL_REF_PATH . 'ref_type.php';
 //include_once MODEL_REF_PATH . 'source.php';
+//include_once MODEL_REF_PATH . 'source_list.php';
 //include_once MODEL_REF_PATH . 'source_type.php';
 //include_once MODEL_USER_PATH . 'user_official_type.php';
 //include_once MODEL_RESULT_PATH . 'result.php';
@@ -89,6 +90,7 @@ use cfg\formula\formula_type;
 use cfg\ref\ref;
 use cfg\ref\ref_type;
 use cfg\ref\source;
+use cfg\ref\source_list;
 use cfg\ref\source_type;
 use cfg\result\result;
 use cfg\language\language;
@@ -156,6 +158,8 @@ class def
         verb_list::class,
         triple::class,
         triple_list::class,
+        source::class,
+        source_list::class,
         user::class,
         user_list::class,
         view::class,

@@ -52,8 +52,6 @@ use cfg\helper\type_list;
 use cfg\user\user;
 use shared\const\views as view_shared;
 
-global $sys_msk_cac;
-
 class view_sys_list extends type_list
 {
 
@@ -161,7 +159,7 @@ class view_sys_list extends type_list
         $msk = new view($this->usr);
         $msk->set_id(2);
         $msk->set_name(view_shared::WORD);
-        $msk->code_id = view_shared::WORD;
+        $msk->set_code_id_db(view_shared::WORD_CODE_ID);
         $this->add($msk);
     }
 

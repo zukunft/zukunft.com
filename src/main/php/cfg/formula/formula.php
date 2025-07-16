@@ -65,7 +65,6 @@ include_once DB_PATH . 'sql_type_list.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
 include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once MODEL_ELEMENT_PATH . 'element.php';
@@ -80,8 +79,7 @@ include_once MODEL_PHRASE_PATH . 'phrase_type.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_PHRASE_PATH . 'term_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_code_id.php';
 include_once MODEL_SANDBOX_PATH . 'protection_type.php';
 include_once MODEL_SANDBOX_PATH . 'share_type.php';
 include_once MODEL_USER_PATH . 'user.php';
@@ -112,7 +110,6 @@ include_once SHARED_PATH . 'library.php';
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
@@ -132,7 +129,7 @@ use cfg\phrase\term_list;
 use cfg\result\result;
 use cfg\result\result_list;
 use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_typed;
+use cfg\sandbox\sandbox_code_id;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
@@ -153,7 +150,7 @@ use shared\library;
 use shared\types\api_type_list;
 use shared\types\phrase_type as phrase_type_shared;
 
-class formula extends sandbox_typed
+class formula extends sandbox_code_id
 {
 
     /*
@@ -209,8 +206,8 @@ class formula extends sandbox_typed
      */
     function __construct(user $usr)
     {
-        parent::__construct($usr);
         $this->reset();
+        parent::__construct($usr);
 
         $this->rename_can_switch = UI_CAN_CHANGE_FORMULA_NAME;
     }
@@ -346,7 +343,7 @@ class formula extends sandbox_typed
         object      $test_obj = null
     ): user_message
     {
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
 
         if (key_exists(json_fields::USR_TEXT, $in_ex_json)) {
             if ($in_ex_json[json_fields::USR_TEXT] <> '') {

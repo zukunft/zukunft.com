@@ -519,11 +519,12 @@ use html\phrase\phrase_group as phrase_group_dsp;
                 sandbox - a user sandbox object
                     sandbox_named - user sandbox objects that have a given name
                         sandbox_typed - named sandbox object that have a type and a predefined behavior
-                            word - the base object to find values
-                            source - a non automatic source for a value
-                            formula - a calculation rule
-                            view - to show an object to the user
-                            component - an formatting element for the user view e.g. to show a word or number
+                            sandbox_code_id - named sandbox object that have a type, a predefined behavior and a code id
+                                word - the base object to find values
+                                source - a non automatic source for a value
+                                formula - a calculation rule
+                                view - to show an object to the user
+                                component - an formatting element for the user view e.g. to show a word or number
                     sandbox_Link - user sandbox objects that link two objects
                         sandbox_link_named - user sandbox objects that link two objects
                             triple - link two words with a predicate / verb
@@ -958,13 +959,6 @@ const MAX_LOOP = 10000; // maximal number of loops to avoid hanging while loops;
 
 // max number of recursive call to avoid endless looping in case of a program error
 const MAX_RECURSIVE = 10;
-
-// the standard word displayed to the user if she/he as not yet viewed any other word
-const DEFAULT_WORD_ID = 1;
-const DEFAULT_WORD_TYPE_ID = 1;
-const DEFAULT_DEC_POINT = ".";
-const DEFAULT_THOUSAND_SEP = "'";
-const DEFAULT_PERCENT_DECIMALS = 2;
 
 const ZUC_MAX_CALC_LAYERS = '10000';    // max number of calculation layers
 

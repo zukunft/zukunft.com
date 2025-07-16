@@ -47,11 +47,13 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_HELPER_PATH . 'CombineObject.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
+use shared\library;
 
 class db_object_seq_id_user extends db_object_seq_id
 {
@@ -122,9 +124,11 @@ class db_object_seq_id_user extends db_object_seq_id
     {
         $usr_msg = parent::diff_msg($obj);
         if ($this->user_id() != $obj->user_id()) {
+            $lib = new library();
             $usr_msg->add_id_with_vars(msg_id::DIFF_USER, [
                 msg_id::VAR_USER => $obj->user()->dsp_id(),
                 msg_id::VAR_USER_CHK => $this->user()->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }

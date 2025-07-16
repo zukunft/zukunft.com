@@ -138,6 +138,7 @@ class views
     // TODO easy add missing default views e.g. for formula
     const WORD = 'word';
     const WORD_ID = 44;
+    const WORD_CODE_ID = 'word';
     const VERB = 'verb';
     const VERB_ID = 45;
     const TRIPLE = 'triple';

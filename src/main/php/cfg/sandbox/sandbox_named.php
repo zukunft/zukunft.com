@@ -564,9 +564,11 @@ class sandbox_named extends sandbox
     {
         $usr_msg = parent::diff_msg($obj);
         if ($this->name() != $obj->name()) {
+            $lib = new library();
             $usr_msg->add_id_with_vars(msg_id::DIFF_NAME, [
                 msg_id::VAR_NAME => $obj->name(),
                 msg_id::VAR_NAME_CHK => $this->name(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
             ]);
         }
@@ -581,7 +583,7 @@ class sandbox_named extends sandbox
      */
     function needs_db_update_named(sandbox_named $db_obj): bool
     {
-        $result = parent::needs_db_update_sandbox($db_obj);
+        $result = parent::needs_db_update($db_obj);
         if ($this->name != null) {
             if ($this->name != $db_obj->name) {
                 $result = true;

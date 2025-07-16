@@ -253,11 +253,11 @@ class type_list
     {
         if ($item->id() <= 0) {
             log_err('Type id ' . $item->id() . ' not expected');
-        } elseif ($item->code_id == '' and !$this->usr_can_add) {
+        } elseif ($item->code_id() == '' and !$this->usr_can_add) {
             log_err('Type code id for ' . $item->id() . ' cannot be empty');
         } else {
             $this->lst[$item->id()] = $item;
-            $this->hash[$item->code_id] = $item->id();
+            $this->hash[$item->code_id()] = $item->id();
         }
         if ($this->usr_can_add) {
             $this->name_hash[$item->name] = $item->id();
@@ -437,7 +437,7 @@ class type_list
         $this->hash = [];
         if ($type_list != null) {
             foreach ($type_list as $key => $type) {
-                $this->hash[$type->code_id] = $key;
+                $this->hash[$type->code_id()] = $key;
             }
         }
         return $this->hash;

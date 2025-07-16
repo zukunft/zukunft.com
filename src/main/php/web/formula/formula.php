@@ -61,7 +61,7 @@ include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 include_once WEB_PHRASE_PATH . 'term.php';
 include_once WEB_RESULT_PATH . 'result.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_code_id.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_WORD_PATH . 'word.php';
@@ -83,7 +83,7 @@ use html\html_selector;
 use html\log\user_log_display;
 use html\phrase\term;
 use html\rest_ctrl as api_dsp;
-use html\sandbox\sandbox_typed;
+use html\sandbox\sandbox_code_id;
 use html\system\back_trace;
 use html\user\user_message;
 use shared\api;
@@ -92,7 +92,7 @@ use shared\json_fields;
 use shared\types\view_styles;
 use shared\enum\messages as msg_id;
 
-class formula extends sandbox_typed
+class formula extends sandbox_code_id
 {
 
     /*

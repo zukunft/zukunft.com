@@ -42,7 +42,7 @@
 
 namespace html\word;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_code_id.php';
 include_once WEB_HTML_PATH . 'button.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'html_names.php';
@@ -51,7 +51,6 @@ include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 //include_once WEB_PHRASE_PATH . 'term.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
 include_once WEB_USER_PATH . 'user_message.php';
 //include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_WORD_PATH . 'triple.php';
@@ -68,11 +67,11 @@ use html\phrase\phrase_list;
 use html\html_base;
 use html\html_selector;
 use html\phrase\phrase_list as phrase_list_dsp;
+use html\sandbox\sandbox_code_id;
 use html\user\user_message;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
-use html\sandbox\sandbox_typed;
 use html\phrase\term as term_dsp;
 use html\verb\verb as verb_dsp;
 use shared\const\views;
@@ -82,7 +81,7 @@ use shared\types\phrase_type;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\view_styles;
 
-class triple extends sandbox_typed
+class triple extends sandbox_code_id
 {
 
     /*

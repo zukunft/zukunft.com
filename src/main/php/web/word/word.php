@@ -63,7 +63,7 @@ include_once WEB_LOG_PATH . 'change_log_named.php';
 include_once WEB_PHRASE_PATH . 'phrase.php';
 include_once WEB_PHRASE_PATH . 'phrase_list.php';
 //include_once WEB_PHRASE_PATH . 'term.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_code_id.php';
 include_once WEB_SYSTEM_PATH . 'back_trace.php';
 include_once WEB_USER_PATH . 'user_message.php';
 include_once WEB_VERB_PATH . 'verb_list.php';
@@ -89,7 +89,7 @@ use html\phrase\phrase;
 use html\phrase\phrase_list;
 use html\phrase\term;
 use html\rest_ctrl;
-use html\sandbox\sandbox_typed;
+use html\sandbox\sandbox_code_id;
 use html\styles;
 use html\system\back_trace;
 use html\user\user_message;
@@ -104,7 +104,7 @@ use shared\enum\messages as msg_id;
 use shared\types\phrase_type;
 use shared\types\view_styles;
 
-class word extends sandbox_typed
+class word extends sandbox_code_id
 {
 
     /*
@@ -162,6 +162,11 @@ class word extends sandbox_typed
         $json_array = $api_msg->validate($json_array);
 
         $usr_msg = parent::api_mapper($json_array);
+        if (array_key_exists(json_fields::PLURAL, $json_array)) {
+            $this->set_plural($json_array[json_fields::PLURAL]);
+        } else {
+            $this->set_plural(null);
+        }
         if (array_key_exists(json_fields::PLURAL, $json_array)) {
             $this->set_plural($json_array[json_fields::PLURAL]);
         } else {

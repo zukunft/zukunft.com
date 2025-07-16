@@ -319,9 +319,9 @@ class user extends db_id_object_non_sandbox
                 }
             }
             $this->profile_id = $db_row[user_db::FLD_PROFILE];
-            $this->dec_point = DEFAULT_DEC_POINT;
-            $this->thousand_sep = DEFAULT_THOUSAND_SEP;
-            $this->percent_decimals = DEFAULT_PERCENT_DECIMALS;
+            $this->dec_point = shared_config::DEFAULT_DEC_POINT;
+            $this->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
+            $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
             if (array_key_exists(user_db::FLD_ACTIVATION_KEY, $db_row)) {
                 $this->activation_key = $db_row[user_db::FLD_ACTIVATION_KEY];
             }
@@ -381,7 +381,7 @@ class user extends db_id_object_non_sandbox
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             // only system and admin users are allowed to change the code od
             if ($usr_req->is_admin() or $usr_req->is_system()) {
-                $this->code_id = $in_ex_json[json_fields::CODE_ID];
+                $this->set_code_id($in_ex_json[json_fields::CODE_ID], $usr_req);
             }
         }
 
@@ -533,6 +533,30 @@ class user extends db_id_object_non_sandbox
     function set_email(?string $email): void
     {
         $this->email = $email;
+    }
+
+    /**
+     * set the unique id to select a single user by the program
+     *r
+     * @param string|null $code_id the unique key to select a word used by the system e.g. for the system or configuration
+     * @param user $usr the user who has requested the change
+     * @return user_message warning message for the user if the permissions are missing
+     */
+    function set_code_id(?string $code_id, user $usr): user_message
+    {
+        $usr_msg = new user_message();
+        if ($usr->can_set_code_id()) {
+            $this->code_id = $code_id;
+        } else {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $usr->name(),
+                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_NAME => sql::FLD_CODE_ID,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $usr_msg;
     }
 
     /**

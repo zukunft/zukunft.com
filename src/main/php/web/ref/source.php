@@ -39,7 +39,7 @@
 
 namespace html\ref;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
+include_once WEB_SANDBOX_PATH . 'sandbox_code_id.php';
 include_once WEB_HTML_PATH . 'html_base.php';
 include_once WEB_HTML_PATH . 'rest_ctrl.php';
 include_once WEB_USER_PATH . 'user_message.php';
@@ -48,13 +48,13 @@ include_once SHARED_TYPES_PATH . 'view_styles.php';
 include_once SHARED_PATH . 'json_fields.php';
 
 use html\html_base;
-use html\sandbox\sandbox_typed;
+use html\sandbox\sandbox_code_id;
 use html\user\user_message;
 use shared\const\views;
 use shared\json_fields;
 use shared\types\view_styles;
 
-class source extends sandbox_typed
+class source extends sandbox_code_id
 {
 
     /*

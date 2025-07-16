@@ -103,6 +103,7 @@ enum messages: string
     const VAR_SOURCE = 'VarSource';
     // the source of a compare value
     const VAR_SOURCE_CHK = 'VarSourceCheck';
+    const VAR_FORMULA_CHK = 'VarFormulaCheck';
     // the name of a class
     const VAR_CLASS_NAME = 'VarClassName';
     // the share permission of a sandbox object
@@ -159,56 +160,72 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '" instead of "'
         . self::VAR_START . self::VAR_ID_CHK . self::VAR_END
-        . '" for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
     case DIFF_NAME = 'name is "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" instead of "'
         . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END
-        . '" for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
         . '"';
     case DIFF_USER = 'user is "'
         . self::VAR_START . self::VAR_USER . self::VAR_END
         . '" instead of "'
         . self::VAR_START . self::VAR_USER_CHK . self::VAR_END
-        . '" for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
     case DIFF_OWNER = 'owner is "'
         . self::VAR_START . self::VAR_USER . self::VAR_END
         . '" instead of "'
         . self::VAR_START . self::VAR_USER_CHK . self::VAR_END
-        . '" for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
     case DIFF_TYPE = 'type is "'
         . self::VAR_START . self::VAR_TYPE . self::VAR_END
         . '" instead of "'
         . self::VAR_START . self::VAR_TYPE_CHK . self::VAR_END
-        . '" for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
     case DIFF_SHARE = 'share permission is "'
         . self::VAR_START . self::VAR_SHARE . self::VAR_END
         . '" instead of "'
         . self::VAR_START . self::VAR_SHARE_CHK . self::VAR_END
-        . '" for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
     case DIFF_PROTECTION = 'modify protect is "'
         . self::VAR_START . self::VAR_PROTECT . self::VAR_END
         . '" instead of "'
         . self::VAR_START . self::VAR_PROTECT_CHK . self::VAR_END
-        . '" for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
     case DIFF_EXCLUSION = 'exclusion is "'
         . self::VAR_START . self::VAR_EXCLUDE . self::VAR_END
         . '" instead of "'
         . self::VAR_START . self::VAR_EXCLUDE_CHK . self::VAR_END
-        . '" for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
     case DIFF_VALUE = 'value is "'
@@ -236,9 +253,38 @@ enum messages: string
         . self::VAR_START . self::VAR_SOURCE . self::VAR_END
         . '" instead of "'
         . self::VAR_START . self::VAR_SOURCE_CHK . self::VAR_END
-        . '" for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
         . '"';
+    case DIFF_FORMULA = 'formula is "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" instead of "'
+        . self::VAR_START . self::VAR_FORMULA_CHK . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '"';
+    case DIFF_CODE_ID = 'code_id is "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" instead of "'
+        . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '"';
+
+    case LOAD_FORMULA_ID = 'unexpected formula id '
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . ' in database for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '"';
+
     case TRIM_NAME = 'trim "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';

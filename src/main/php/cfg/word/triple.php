@@ -1828,24 +1828,24 @@ class triple extends sandbox_link_named
      * check if the word in the database needs to be updated
      * e.g. for import  if this word has only the name set, the protection should not be updated in the database
      *
-     * @param triple $db_trp the word as saved in the database
+     * @param triple|sandbox $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(triple $db_trp): bool
+    function needs_db_update(triple|sandbox $db_obj): bool
     {
-        $result = parent::needs_db_update_named($db_trp);
+        $result = parent::needs_db_update($db_obj);
         if ($this->verb_id() > 0) {
-            if ($this->verb_id() != $db_trp->verb_id()) {
+            if ($this->verb_id() != $db_obj->verb_id()) {
                 $result = true;
             }
         }
         if ($this->name_given != null) {
-            if ($this->name_given != $db_trp->name_given) {
+            if ($this->name_given != $db_obj->name_given) {
                 $result = true;
             }
         }
         if ($this->values != null) {
-            if ($this->values != $db_trp->values) {
+            if ($this->values != $db_obj->values) {
                 $result = true;
             }
         }

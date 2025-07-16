@@ -1160,7 +1160,7 @@ class import
         $i = 0;
         foreach ($json_array as $src_json) {
             $src = new source($usr_trigger);
-            $usr_msg->add($src->import_mapper($src_json, $dto));
+            $usr_msg->add($src->import_mapper_user($src_json, $usr_trigger, $dto));
             $dto->add_source($src);
             $i++;
             $this->display_progress($i, $per_sec, $src->dsp_id());

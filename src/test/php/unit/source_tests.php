@@ -120,7 +120,7 @@ class source_tests
         $src = $t->source();
         $t->assert_api_json($src);
         $db_con = new sql_db();
-        $src->code_id = sources::SIB_CODE;
+        $src->set_code_id_db(sources::SIB_CODE);
         $t->assert_api_msg($db_con, $src);
 
         $t->subheader($ts . 'frontend');
