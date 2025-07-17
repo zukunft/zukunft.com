@@ -1138,6 +1138,7 @@ class import
         foreach ($json_array as $vrb_json) {
             $vrb = new verb();
             $usr_msg->add($vrb->import_mapper_user($vrb_json, $usr_trigger, $dto));
+            $vrb->set_user($usr_trigger);
             $dto->add_verb($vrb);
             $i++;
             $this->display_progress($i, $per_sec, $vrb->dsp_id());

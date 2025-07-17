@@ -102,6 +102,9 @@ class files
      */
 
     const IMPORT_WORDS = self::IMPORT_UNIT_PATH . 'words' . self::JSON;
+    const IMPORT_VERBS = self::IMPORT_UNIT_PATH . 'verbs' . self::JSON;
+    const IMPORT_VERBS_UPDATE = self::IMPORT_UNIT_PATH . 'verbs_update' . self::JSON;
+    const IMPORT_VERBS_UNDO = self::IMPORT_UNIT_PATH . 'verbs_undo' . self::JSON;
     const IMPORT_TRIPLES = self::IMPORT_UNIT_PATH . 'triples' . self::JSON;
     const IMPORT_SOURCES = self::IMPORT_UNIT_PATH . 'sources' . self::JSON;
     const IMPORT_VALUES = self::IMPORT_UNIT_PATH . 'values' . self::JSON;

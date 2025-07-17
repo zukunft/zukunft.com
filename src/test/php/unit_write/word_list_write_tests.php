@@ -54,7 +54,9 @@ class word_list_write_tests
         global $usr;
         global $vrb_cac;
 
-        $t->header('word list database write tests');
+        // start the test section (ts)
+        $ts = 'db write word list ';
+        $t->header($ts);
 
         /*
          * prepare

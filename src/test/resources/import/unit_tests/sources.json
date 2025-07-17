@@ -3,7 +3,7 @@
   "time": "2023-04-29 09:51:30",
   "user": "zukunft.com system batch job",
   "selection": [
-    "base sources"
+    "unit test message for data_object based import by counting the sources"
   ],
   "sources": [
     {

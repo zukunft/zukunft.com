@@ -60,8 +60,9 @@ class view_write_tests
         // init
         $t->name = 'view db write->';
 
-
-        $t->header('view db write tests');
+        // start the test section (ts)
+        $ts = 'db write view ';
+        $t->header($ts);
 
         $t->subheader('view prepared write');
         $test_name = 'add view ' . views::TEST_ADD_VIA_SQL_NAME . ' via sql insert';

@@ -121,6 +121,7 @@ use unit\import_tests as import_tests;
 use unit_ui\all_ui_tests;
 use unit_ui\base_ui_tests;
 use const\files as test_files;
+use unit_write\import_write_tests;
 use unit_write\user_write_tests;
 use unit_write\word_write_tests;
 
@@ -201,6 +202,7 @@ class all_unit_tests extends test_cleanup
              */
 
             // run the selected db import tests
+            (new import_write_tests())->run($t);
             /*
             $test_name = 'validate config import';
             $imf = new import_file();
@@ -246,7 +248,7 @@ class all_unit_tests extends test_cleanup
              */
 
             // run the selected db write tests
-            (new user_write_tests)->run($this);
+            //(new user_write_tests)->run($this);
             //(new word_write_tests)->run($this);
             //(new word_list_write_tests)->run($this);
             //(new triple_write_tests)->run($this);

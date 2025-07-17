@@ -321,6 +321,7 @@ include_once TEST_UNIT_WRITE_PATH . 'view_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'view_link_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'component_write_tests.php';
 include_once TEST_UNIT_WRITE_PATH . 'component_link_write_tests.php';
+include_once TEST_UNIT_WRITE_PATH . 'import_write_tests.php';
 
 include_once TEST_UNIT_WRITE_PATH . 'test_word_display.php';
 include_once TEST_UNIT_WRITE_PATH . 'test_math.php';
@@ -3579,18 +3580,25 @@ class test_base
      */
 
     /**
-     * test if a integer is greater zero
+     * test if an integer is greater zero e.g. a valid database id
      *
+     * @param string $name (unique) description of the test
      * @param int $received an integer value that is expected to be greater zero
+     * @param float $exe_max_time the expected max time to create the result
      * @return bool true if the value is actually greater zero
      */
-    function assert_greater_zero(string $name, int $received): bool
+    function assert_greater_zero(
+        string $name,
+        int $received,
+        float  $exe_max_time = self::TIMEOUT_LIMIT
+    ): bool
     {
-        $expected = 0;
         if ($received > 0) {
             $expected = $received;
+        } else {
+            $expected = 1;
         }
-        return $this->assert($name, $received, $expected);
+        return $this->assert($name, $received, $expected, $exe_max_time);
     }
 
     /**

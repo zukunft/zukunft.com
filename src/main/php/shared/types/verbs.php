@@ -103,7 +103,10 @@ class verbs
     const FOLLOWED_BY = "is followed by";
     const FOLLOWER_OF = "is follower of";
     const TIME_STEP = "time jump";
+
+    // persevered  verb names for unit and integration tests based on the database
     const TEST_ADD_NAME = "System Test Verb";
+    const TEST_ADD_COM = "test description if it can be added to the verb via import";
 
     // search directions to get related words (phrases)
     const DIRECTION_NO = '';

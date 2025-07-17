@@ -74,6 +74,12 @@ class import_tests
         $dto = $imp->get_data_object($json_array, $usr);
         $t->assert($test_name, $dto->word_list()->count(), 3);
 
+        $test_name = 'JSON import verbs count';
+        $json_str = file_get_contents(test_files::IMPORT_VERBS);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array, $usr);
+        $t->assert($test_name, $dto->verb_list()->count(), 1);
+
         $test_name = 'JSON import triple count';
         $json_str = file_get_contents(test_files::IMPORT_TRIPLES);
         $json_array = json_decode($json_str, true);

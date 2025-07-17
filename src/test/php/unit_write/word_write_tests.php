@@ -72,8 +72,9 @@ class word_write_tests
         $lib = new library();
         $t->name = 'word db write->';
 
-
-        $t->header('word db write tests');
+        // start the test section (ts)
+        $ts = 'db write word ';
+        $t->header($ts);
 
         $t->subheader('word prepared write');
         $test_name = 'add word ' . words::TEST_ADD_VIA_SQL . ' via sql insert';
