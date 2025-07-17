@@ -42,6 +42,7 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_WORD_PATH . 'word.php';
 include_once MODEL_WORD_PATH . 'triple.php';
 include_once MODEL_WORD_PATH . 'triple_db.php';
@@ -57,6 +58,7 @@ use cfg\phrase\term_list;
 use cfg\sandbox\sandbox;
 use cfg\system\system_time_type;
 use cfg\user\user;
+use cfg\user\user_message;
 use cfg\word\triple;
 use cfg\word\triple_db;
 use cfg\word\word;
@@ -541,6 +543,31 @@ class verb_list extends type_list
 
         }
         return $result;
+    }
+
+    /*
+     * save
+     */
+
+    /**
+     * simple loop to save all verbs of the list
+     * because there are hopefully never many verbs to save
+     *
+     * @return user_message in case of an issue the problem description what has failed and a suggested solution
+     */
+    function save(): user_message
+    {
+        $usr_msg = new user_message();
+
+        if ($this->is_empty()) {
+            $usr_msg->add_info_text('no verbs to save');
+        } else {
+            foreach ($this->lst() as $vrb) {
+                $usr_msg->add($vrb->save());
+            }
+        }
+
+        return $usr_msg;
     }
 
 }

@@ -698,20 +698,63 @@ class sandbox_list_named extends sandbox_list
      */
 
     /**
+     * store all named sandbox objects from this list in the database using grouped calls of predefined sql functions
+     *
+     * @param import $imp the import object with the estimate of the total save time
+     * @param string $cfg_wrd the word related to the class to select the config values
+     * @param string $class the class name of the list entries that should be saved e.g. word or formula
+     * @return user_message the problem description what has failed and a suggested solution
+     */
+    function save_block_wise(
+        import             $imp,
+        string             $cfg_wrd,
+        string             $class,
+        sandbox_list_named $db_lst
+    ): user_message
+    {
+        global $cfg;
+
+        $usr_msg = new user_message();
+
+        $load_per_sec = $cfg->get_by([$cfg_wrd, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $upd_per_sec = $cfg->get_by([$cfg_wrd, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+
+        if ($this->is_empty()) {
+            $usr_msg->add_info_text('no ' . $cfg_wrd . ' to save');
+        } else {
+            // load the words that are already in the database
+            $step_time = $this->count() / $load_per_sec;
+            $imp->step_start(msg_id::LOAD, $class, $this->count(), $step_time);
+            $db_lst->load_by_names($this->names());
+            $imp->step_end($db_lst->count(), $load_per_sec);
+
+            // create any missing sql functions and insert the missing words
+            $usr_msg->add($this->insert($db_lst, true, $imp, $class));
+
+            // create any missing sql update functions and update the words
+            // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
+            // TODO create blocks of update function calls
+            $usr_msg->add($this->update($db_lst, true, $imp, $class, $upd_per_sec));
+        }
+
+        return $usr_msg;
+    }
+
+    /**
      * create any missing sql functions and queries to save the list objects
      * TODO create blocks of insert function calls
      * *
-     * @param word_list|triple_list|phrase_list|source_list $db_lst filled with the words or triples that are already in the db so a kind of cache
+     * @param word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst filled with the words or triples that are already in the db so a kind of cache
      * @param bool $use_func true if sql function should be used to insert the named user sandbox objects
      * @param import|null $imp the import object e.g. with the ETA
      * @param string $class the object class that should be stored in the database
-     * @return user_message
+     * @return user_message in case of an issue the problem description what has failed and a suggested solution
      */
     function insert(
-        word_list|triple_list|phrase_list|source_list $db_lst,
-        bool                                          $use_func = true,
-        import                                        $imp = null,
-        string                                        $class = ''
+        word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst,
+        bool                                                             $use_func = true,
+        import                                                           $imp = null,
+        string                                                           $class = ''
     ): user_message
     {
         global $db_con;
@@ -781,7 +824,7 @@ class sandbox_list_named extends sandbox_list
      * create any missing sql functions and queries to update the list objects
      * TODO create blocks of update function calls
      *
-     * @param word_list|triple_list|phrase_list|source_list $db_lst filled with the objects that are already in the db
+     * @param word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst filled with the objects that are already in the db
      * @param bool $use_func true if sql function should be used to insert the named user sandbox objects
      * @param import|null $imp the import object e.g. with the ETA
      * @param string $class the object class that should be stored in the database
@@ -789,11 +832,11 @@ class sandbox_list_named extends sandbox_list
      * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
     function update(
-        word_list|triple_list|phrase_list|source_list $db_lst,
-        bool                                          $use_func = true,
-        import                                        $imp = null,
-        string                                        $class = '',
-        float                                         $upd_per_sec = 0.1
+        word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst,
+        bool                                                             $use_func = true,
+        import                                                           $imp = null,
+        string                                                           $class = '',
+        float                                                            $upd_per_sec = 0.1
     ): user_message
     {
         global $db_con;

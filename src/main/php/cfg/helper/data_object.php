@@ -70,6 +70,7 @@ include_once API_OBJECT_PATH . 'api_message.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_HELPER_PATH . 'IdObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -108,6 +109,7 @@ use controller\api_message;
 use shared\const\triples;
 use shared\const\words;
 use shared\enum\messages as msg_id;
+use shared\helper\IdObject;
 use shared\json_fields;
 use shared\types\api_type_list;
 
@@ -404,9 +406,9 @@ class data_object
     /**
      * get a source by the name from this cache object
      * @param string $name the name of the source
-     * @return source|null
+     * @return source|IdObject|null
      */
-    function get_source_by_name(string $name): ?source
+    function get_source_by_name(string $name): source|IdObject|null
     {
         return $this->source_list()->get_by_name($name);
     }
@@ -567,7 +569,7 @@ class data_object
         $this->usr_msg->add_id($msg);
     }
 
-    function get_component_by_name(string $name): ?component
+    function get_component_by_name(string $name): component|IdObject|null
     {
         return $this->component_list()->get_by_name($name);
     }
@@ -634,6 +636,7 @@ class data_object
         $usr_msg = new user_message();
 
         // get the relevant config values
+        $vrb_per_sec = $cfg->get_by([words::VERBS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $trp_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $src_per_sec = $cfg->get_by([words::SOURCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $ref_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -654,6 +657,9 @@ class data_object
         // clone the list as cache to filter the phrases already fine
         // without removing the fine words or triples from the original lists
         $phr_lst = clone $this->word_list()->phrase_list();
+
+        // import the verbs before the triples
+        $usr_msg->add($this->save_verbs($imp));
 
         // import the triples
         $trp_lst = $this->triple_list();
@@ -746,7 +752,7 @@ class data_object
             $src_lst = $this->source_list();
             $src_est = $src_lst->count() / $src_per_sec;
             $imp->step_start(msg_id::SAVE, source::class, $src_lst->count(), $src_est);
-            $usr_msg->add($src_lst->save($imp, $src_per_sec));
+            $usr_msg->add($src_lst->save($imp));
             $imp->step_end($src_lst->count(), $src_per_sec);
         } else {
             log_debug('sources not imported because ' . $usr_msg->all_message_text());
@@ -926,6 +932,28 @@ class data_object
             $imp->step_start(msg_id::SAVE, word::class, $wrd_lst->count(), $wrd_est);
             $usr_msg->add($wrd_lst->save($imp));
             $imp->step_end($wrd_lst->count(), $wrd_per_sec);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add or update all verbs to the database
+     * @param import $imp the import object that includes the start time of the import
+     * @return user_message ok or the error message for the user with the suggested solution
+     */
+    private function save_verbs(import $imp): user_message
+    {
+        global $cfg;
+        $usr_msg = new user_message();
+
+        $vrb_per_sec = $cfg->get_by([words::VERBS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+
+        $vrb_lst = $this->verb_list();
+        if (!$vrb_lst->is_empty()) {
+            $vrb_est = $vrb_lst->count() / $vrb_per_sec;
+            $imp->step_start(msg_id::SAVE, verb::class, $vrb_lst->count(), $vrb_est);
+            $usr_msg->add($vrb_lst->save());
+            $imp->step_end($vrb_lst->count(), $vrb_per_sec);
         }
         return $usr_msg;
     }

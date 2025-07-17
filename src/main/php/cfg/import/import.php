@@ -804,6 +804,7 @@ class import
 
         // get the relevant config values
         $wrd_per_sec = $cfg->get_by([words::WORDS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $vrb_per_sec = $cfg->get_by([words::VERBS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $trp_per_sec = $cfg->get_by([words::TRIPLES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $src_per_sec = $cfg->get_by([words::SOURCES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $val_per_sec = $cfg->get_by([words::VALUES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -829,7 +830,12 @@ class import
                 $this->step_end($dto->ip_range_list()->count(), $ip_per_sec);
             }
             // TODO add json_fields::USERS
-            // TODO add json_fields::LIST_VERBS
+            if (key_exists(json_fields::LIST_VERBS, $json_array)) {
+                $vrb_lst_array = $json_array[json_fields::LIST_VERBS];
+                $this->step_start(msg_id::COUNT, verb::class, count($vrb_lst_array), $step_time);
+                $usr_msg->add($this->dto_get_verbs($vrb_lst_array, $usr_trigger, $dto, $vrb_per_sec));
+                $this->step_end($dto->verb_list()->count(), $vrb_per_sec);
+            }
             if (key_exists(json_fields::WORDS, $json_array)) {
                 $wrd_array = $json_array[json_fields::WORDS];
                 $this->step_start(msg_id::COUNT, word::class, count($wrd_array), $step_time);
@@ -873,7 +879,6 @@ class import
                 $usr_msg->add($this->dto_get_components($cmp_array, $usr_trigger, $dto, $cmp_per_sec));
                 $this->step_end($dto->component_list()->count(), $cmp_per_sec);
             }
-            // TODO add json_fields::VIEWS
             if (key_exists(json_fields::VIEWS, $json_array)) {
                 $msk_array = $json_array[json_fields::VIEWS];
                 $this->step_start(msg_id::COUNT, view::class, count($msk_array), $step_time);
@@ -1108,6 +1113,34 @@ class import
             $dto->add_word($wrd);
             $i++;
             $this->display_progress($i, $per_sec, $wrd->dsp_id());
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add the verbs from the json array to the data object
+     * @param array $json_array the verb part of the import json
+     * @param user $usr_trigger the user who has started the import
+     * @param data_object $dto the data object that should be filled
+     * @param float $per_sec the expected number of verbs that can be analysed per second
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function dto_get_verbs(
+        array       $json_array,
+        user        $usr_trigger,
+        data_object $dto,
+        float       $per_sec = 0
+    ): user_message
+    {
+        $usr_msg = new user_message();
+
+        $i = 0;
+        foreach ($json_array as $vrb_json) {
+            $vrb = new verb();
+            $usr_msg->add($vrb->import_mapper_user($vrb_json, $usr_trigger, $dto));
+            $dto->add_verb($vrb);
+            $i++;
+            $this->display_progress($i, $per_sec, $vrb->dsp_id());
         }
         return $usr_msg;
     }

@@ -232,44 +232,12 @@ class source_list extends sandbox_list_named
      * store all sources from this list in the database using grouped calls of predefined sql functions
      *
      * @param import $imp the import object with the estimate of the total save time
-     * @param float $est_per_sec the expected number of sources that can be updated in the database per second
-     * @return user_message
+     * @return user_message in case of an issue the problem description what has failed and a suggested solution
      */
-    function save(import $imp, float $est_per_sec = 0.0): user_message
+    function save(import $imp): user_message
     {
-        global $cfg;
-
-        $usr_msg = new user_message();
-
-        $load_per_sec = $cfg->get_by([words::SOURCES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $save_per_sec = $cfg->get_by([words::SOURCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-
-        if ($this->is_empty()) {
-            $usr_msg->add_info_text('no sources to save');
-        } else {
-            // load the words that are already in the database
-            $step_time = $this->count() / $load_per_sec;
-            $imp->step_start(msg_id::LOAD, source::class, $this->count(), $step_time);
-            $db_lst = new source_list($this->user());
-            $db_lst->load_by_names($this->names());
-            $imp->step_end($this->count(), $load_per_sec);
-
-            // TODO add only the sources that needs to be added
-
-            // create any missing sql functions and insert the missing words
-            $step_time = $this->count() / $save_per_sec;
-            $imp->step_start(msg_id::SAVE, source::class, $this->count(), $step_time);
-            $usr_msg->add($this->insert($db_lst, true, $imp, source::class));
-            $imp->step_end($this->count(), $save_per_sec);
-
-            // update the existing sources
-            // TODO create a test that fields not included in the import message are not updated, but e.g. an empty descrption is updated
-            // loop over the sources and check if all needed functions exist
-            // create the missing functions
-            // create blocks of update function calls
-        }
-
-        return $usr_msg;
+        // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
+        return parent::save_block_wise($imp, words::SOURCES, source::class, new source_list($this->user()));
     }
 
 }

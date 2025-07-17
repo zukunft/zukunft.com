@@ -79,9 +79,6 @@ include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'library.php';
@@ -111,9 +108,6 @@ use cfg\verb\verb;
 use cfg\verb\verb_db;
 use shared\const\triples;
 use shared\const\words;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\enum\foaf_direction;
 use shared\enum\messages as msg_id;
@@ -1618,37 +1612,11 @@ class word_list extends sandbox_list_named
      * store all words from this list in the database using grouped calls of predefined sql functions
      *
      * @param import $imp the import object with the estimate of the total save time
-     * @return user_message
+     * @return user_message in case of an issue the problem description what has failed and a suggested solution
      */
     function save(import $imp): user_message
     {
-        global $cfg;
-
-        $usr_msg = new user_message();
-
-        $load_per_sec = $cfg->get_by([words::WORDS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $upd_per_sec = $cfg->get_by([words::WORDS, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-
-        if ($this->is_empty()) {
-            $usr_msg->add_info_text('no words to save');
-        } else {
-            // load the words that are already in the database
-            $step_time = $this->count() / $load_per_sec;
-            $imp->step_start(msg_id::LOAD, word::class, $this->count(), $step_time);
-            $db_lst = new word_list($this->user());
-            $db_lst->load_by_names($this->names());
-            $imp->step_end($db_lst->count(), $load_per_sec);
-
-            // create any missing sql functions and insert the missing words
-            $usr_msg->add($this->insert($db_lst, true, $imp, word::class));
-
-            // create any missing sql update functions and update the words
-            // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
-            // TODO create blocks of update function calls
-            $usr_msg->add($this->update($db_lst, true, $imp, word::class, $upd_per_sec));
-        }
-
-        return $usr_msg;
+        return parent::save_block_wise($imp, words::WORDS, word::class, new word_list($this->user()));
     }
 
 }

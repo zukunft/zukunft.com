@@ -96,6 +96,7 @@ class words
     const SOURCE = 'source';
     const FORMULA = 'formula';
     const WORDS = 'words';
+    const VERBS = 'verbs';
     const TRIPLES = 'triples';
     const SOURCES = 'sources';
     const REFERENCES = 'references';

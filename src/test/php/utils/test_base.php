@@ -74,6 +74,7 @@ include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once MODEL_REF_PATH . 'ref_type.php';
 include_once MODEL_REF_PATH . 'source_type.php';
 include_once MODEL_USER_PATH . 'user.php';
+include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_USER_PATH . 'user_official_type.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
 include_once MODEL_VIEW_PATH . 'view_link_type.php';
