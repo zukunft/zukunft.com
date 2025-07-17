@@ -64,7 +64,7 @@ class user_profile extends type_object
 
 
     /*
-     * information
+     * info
      */
 
     function is_system(): bool

@@ -15,7 +15,7 @@
     - set and get:       to capsule the vars from unexpected changes
     - load:              database access object (DAO) functions
     - load sql:          create the sql statements for loading from the db
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - sql write fields:  field list for writing to the database
 
 
@@ -336,7 +336,7 @@ class sandbox_code_id extends sandbox_typed
 
 
     /*
-     * information
+     * info
      */
 
     /**

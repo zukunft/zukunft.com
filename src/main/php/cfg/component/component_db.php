@@ -16,7 +16,7 @@
     - retrieval:         get related objects assigned to this component
     - cast:              create an api object and set the vars from an api json
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - log:               write the changes to the log
     - link:              link and release the component to and from a view
     - save:              manage to update the database

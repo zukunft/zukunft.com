@@ -168,7 +168,7 @@ class combine_object extends CombineObject
 
 
     /*
-     * information
+     * info
      */
 
     /**

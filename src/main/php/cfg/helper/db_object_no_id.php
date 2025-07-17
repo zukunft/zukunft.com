@@ -332,7 +332,7 @@ class db_object_no_id
 
 
     /*
-     * information
+     * info
      */
 
     /**

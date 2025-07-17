@@ -52,6 +52,7 @@ include_once MODEL_REF_PATH . 'ref_list.php';
 //include_once MODEL_PHRASE_PATH . 'term_list.php';
 //include_once MODEL_SYSTEM_PATH . 'ip_range.php';
 //include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
+//include_once MODEL_USER_PATH . 'user_list.php';
 //include_once MODEL_VALUE_PATH . 'value.php';
 //include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value_list.php';
@@ -91,6 +92,7 @@ use cfg\ref\source_list;
 use cfg\system\ip_range;
 use cfg\system\ip_range_list;
 use cfg\user\user;
+use cfg\user\user_list;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_base;
@@ -137,6 +139,7 @@ class data_object
     private component_list $cmp_lst;
     private term_view_list $trm_msk_lst;
     // for system configuration exchange
+    private user_list $usr_lst;
     private ip_range_list $ip_lst;
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
@@ -169,6 +172,7 @@ class data_object
         $this->msk_lst = new view_list($usr);
         $this->cmp_lst = new component_list($usr);
         $this->trm_msk_lst = new term_view_list($usr);
+        $this->usr_lst = new user_list($usr);
         $this->ip_lst = new ip_range_list();
         $this->usr_msg = new user_message();
     }
@@ -222,6 +226,7 @@ class data_object
         $vars[json_fields::FORMULAS] = $this->frm_lst->api_json_array($typ_lst);
         $vars[json_fields::VIEWS] = $this->msk_lst->api_json_array($typ_lst);
         $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_json_array($typ_lst);
+        $vars[json_fields::USERS] = $this->usr_lst->api_json_array($typ_lst);
         $vars[json_fields::IP_BLACKLIST] = $this->ip_lst->api_json_array($typ_lst);
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -368,6 +373,14 @@ class data_object
     function term_view_list(): term_view_list
     {
         return $this->trm_msk_lst;
+    }
+
+    /**
+     * @return user_list with the user of this data object
+     */
+    function user_list(): user_list
+    {
+        return $this->usr_lst;
     }
 
     /**
@@ -545,6 +558,16 @@ class data_object
     }
 
     /**
+     * add a user without db id to the list
+     * @param user $usr with the range set
+     * @return void
+     */
+    function add_user(user $usr): void
+    {
+        $this->usr_lst->add($usr);
+    }
+
+    /**
      * add an ip range without db id to the list
      * @param ip_range $ip with the range set
      * @return void
@@ -636,7 +659,6 @@ class data_object
         $usr_msg = new user_message();
 
         // get the relevant config values
-        $vrb_per_sec = $cfg->get_by([words::VERBS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $trp_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $src_per_sec = $cfg->get_by([words::SOURCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $ref_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -649,6 +671,7 @@ class data_object
         // save the data lists in order of the dependencies
 
         // start with the system configuration
+        $usr_msg->add($this->save_users($imp));
         $usr_msg->add($this->save_ip_ranges($imp));
 
         // import first the words
@@ -954,6 +977,29 @@ class data_object
             $imp->step_start(msg_id::SAVE, verb::class, $vrb_lst->count(), $vrb_est);
             $usr_msg->add($vrb_lst->save());
             $imp->step_end($vrb_lst->count(), $vrb_per_sec);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add or update all users to the database
+     * TODO add the requesting user to prevent access right gains
+     * @param import $imp the import object that includes the start time of the import
+     * @return user_message ok or the error message for the user with the suggested solution
+     */
+    private function save_users(import $imp): user_message
+    {
+        global $cfg;
+        $usr_msg = new user_message();
+
+        $usr_per_sec = $cfg->get_by([words::USERS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+
+        $usr_lst = $this->user_list();
+        if (!$usr_lst->is_empty()) {
+            $usr_est = $usr_lst->count() / $usr_per_sec;
+            $imp->step_start(msg_id::SAVE, user::class, $usr_lst->count(), $usr_est);
+            $usr_msg->add($usr_lst->save());
+            $imp->step_end($usr_lst->count(), $usr_per_sec);
         }
         return $usr_msg;
     }

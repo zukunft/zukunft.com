@@ -123,7 +123,7 @@ class db_object_multi_user extends db_object_multi
 
 
     /*
-     * information
+     * info
      */
 
     /**

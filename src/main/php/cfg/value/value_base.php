@@ -46,7 +46,7 @@
     - load:              database access object (DAO) functions
     - sql:               to create sql statements e.g. for load
     - sql fields:        field names for sql
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - check:             functions to check the consistency
     - im- and export:    create an export object and set the vars from an import object
     - save:              manage to update the database
@@ -961,7 +961,7 @@ class value_base extends sandbox_value
 
 
     /*
-     * information
+     * info
      */
 
     /**

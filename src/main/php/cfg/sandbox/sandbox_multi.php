@@ -990,7 +990,7 @@ class sandbox_multi extends db_object_multi_user
 
 
     /*
-     * information
+     * info
      */
 
     /**

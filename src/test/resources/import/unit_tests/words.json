@@ -38,6 +38,9 @@
           "type": "wikidata"
         }
       ]
+    },
+    {
+      "name": "System Test Word"
     }
   ]
 }

@@ -816,6 +816,45 @@ class formula extends sandbox_code_id
     }
 
     /**
+     * check if the formula in the database needs to be updated
+     * e.g. for import  if this formula has only the name set, the protection should not be updated in the database
+     *
+     * @param formula|sandbox $db_obj the formula as saved in the database
+     * @return bool true if this formula has infos that should be saved in the database
+     */
+    function needs_db_update(formula|sandbox $db_obj): bool
+    {
+        $result = parent::needs_db_update($db_obj);
+        if ($this->ref_text() != null) {
+            if ($this->ref_text() != $db_obj->ref_text()) {
+                $result = true;
+            }
+        }
+        if ($this->usr_text() != null) {
+            if ($this->usr_text() != $db_obj->usr_text()) {
+                $result = true;
+            }
+        }
+        if ($this->type_id() != null) {
+            if ($this->type_id() != $db_obj->type_id()) {
+                $result = true;
+            }
+        }
+        if ($this->need_all_val != $db_obj->need_all_val) {
+            $result = true;
+        }
+        if ($this->view_id() != null) {
+            if ($this->view_id() != $db_obj->view_id()) {
+                $result = true;
+            }
+        }
+        if ($this->usage() != $db_obj->usage()) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
      * return the result of a special formula
      * e.g. "this" or "next" where the value of this or the following time word is returned
      */

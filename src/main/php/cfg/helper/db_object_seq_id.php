@@ -16,9 +16,9 @@
     - load:              database access object (DAO) functions
     - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - modify:            change potentially all variables of this word object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - to overwrite:      functions that should always be overwritten by the child objects
     - debug:             internal support functions for debugging
 
@@ -332,7 +332,7 @@ class db_object_seq_id extends db_object
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -385,7 +385,7 @@ class db_object_seq_id extends db_object
 
 
     /*
-     * information
+     * info
      */
 
     /**

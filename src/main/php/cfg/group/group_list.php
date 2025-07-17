@@ -608,7 +608,7 @@ class group_list extends sandbox_list
 
 
     /*
-     * information
+     * info
      */
 
     /**

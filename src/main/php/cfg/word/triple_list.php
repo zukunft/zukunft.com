@@ -21,7 +21,7 @@
     - load:              database access object (DAO) functions
     - sql:               to create sql statements e.g. for load word from the sql database
     - im- and export:    create an export object and set the vars from an import object
-    - information:       to make the code more readable
+    - info:              functions to make code easier to read
     - convert:           more complex cast
     - parts:             get a list of the triple parts
     - save:              block wise insert or update of all triples in the database

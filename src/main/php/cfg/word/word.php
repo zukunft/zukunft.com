@@ -31,7 +31,7 @@
     - sql fields:        field names for sql
     - retrieval:         get related objects assigned to this word
     - modify:            change potentially all variables of this word object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - foaf:              get related words and triples based on the friend of a friend (foaf) concept
     - ui sort:           user interface optimization e.g. show the user to most relevant words
     - related:           functions that create and fill related objects
@@ -830,7 +830,7 @@ class word extends sandbox_code_id
 
 
     /*
-     * information
+     * info
      */
 
     /**

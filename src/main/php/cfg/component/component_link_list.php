@@ -14,7 +14,7 @@
     - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
     - modify:            change potentially all variables of this list object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - internal:          private functions to make code easier to read
 
 
@@ -279,7 +279,7 @@ class component_link_list extends sandbox_link_list
 
 
     /*
-     * information
+     * info
      */
 
     /**

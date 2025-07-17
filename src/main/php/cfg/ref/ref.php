@@ -940,6 +940,52 @@ class ref extends sandbox_link
 
 
     /*
+     * info
+     */
+
+    /**
+     * check if the reference in the database needs to be updated
+     * e.g. for import  if this reference has only the name set, the protection should not be updated in the database
+     *
+     * @param ref|sandbox $db_obj the reference as saved in the database
+     * @return bool true if this reference has infos that should be saved in the database
+     */
+    function needs_db_update(ref|sandbox $db_obj): bool
+    {
+        $result = parent::needs_db_update($db_obj);
+        if ($this->external_key() != null) {
+            if ($this->external_key() != $db_obj->external_key()) {
+                $result = true;
+            }
+        }
+        if ($this->source() != null) {
+            if ($this->source_id() != $db_obj->source_id()) {
+                $result = true;
+            }
+            if ($this->source_name() != $db_obj->source_name()) {
+                $result = true;
+            }
+        }
+        if ($this->url() != null) {
+            if ($this->url() != $db_obj->url()) {
+                $result = true;
+            }
+        }
+        if ($this->code_id() != null) {
+            if ($this->code_id() != $db_obj->code_id()) {
+                $result = true;
+            }
+        }
+        if ($this->description != null) {
+            if ($this->description != $db_obj->description) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+
+    /*
      * log
      */
 

@@ -355,7 +355,7 @@ class sandbox_link_named extends sandbox_link
 
 
     /*
-     * information
+     * info
      */
 
     /**

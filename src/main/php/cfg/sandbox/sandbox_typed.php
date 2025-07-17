@@ -13,7 +13,7 @@
     - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the variables from unexpected changes
     - preloaded:         get preloaded information such as the type code id
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - modify:            change potentially all variables of this sandbox object
     - cast:              create an api object and set the vars from an api json
     - save:              manage to update the database
@@ -268,7 +268,7 @@ class sandbox_typed extends sandbox_named
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -294,12 +294,12 @@ class sandbox_typed extends sandbox_named
     /**
      * check if the typed object in the database needs to be updated
      *
-     * @param sandbox_typed $db_obj the word as saved in the database
+     * @param sandbox_typed|sandbox $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update_typed(sandbox_typed $db_obj): bool
+    function needs_db_update(sandbox_typed|sandbox $db_obj): bool
     {
-        $result = parent::needs_db_update_named($db_obj);
+        $result = parent::needs_db_update($db_obj);
         if ($this->type_id != null) {
             if ($this->type_id != $db_obj->type_id) {
                 $result = true;

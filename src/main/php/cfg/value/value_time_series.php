@@ -351,7 +351,7 @@ class value_time_series extends sandbox_value
     }
 
     /*
-     * information
+     * info
      */
 
     /**

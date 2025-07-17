@@ -104,7 +104,7 @@ class verbs
     const FOLLOWER_OF = "is follower of";
     const TIME_STEP = "time jump";
 
-    // persevered  verb names for unit and integration tests based on the database
+    // persevered verb names for unit and integration tests based on the database
     const TEST_ADD_NAME = "System Test Verb";
     const TEST_ADD_COM = "test description if it can be added to the verb via import";
 

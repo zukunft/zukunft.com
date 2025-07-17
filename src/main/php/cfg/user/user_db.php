@@ -30,7 +30,7 @@
     - load:              database access object (DAO) functions
     - load sql:          create the sql statements for loading from the db
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - save:              manage to update the database
     - debug:             internal support functions for debugging
 

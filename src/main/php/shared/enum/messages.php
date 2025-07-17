@@ -363,6 +363,11 @@ enum messages: string
         . ' to list of user '
         . self::VAR_START . self::VAR_USER_LIST_NAME . self::VAR_END
         . ' list';
+    case LIST_USER_INVALID = 'trying to add an invalid user '
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . ' to list of user '
+        . self::VAR_START . self::VAR_USER_LIST_NAME . self::VAR_END
+        . ' list';
     case FILL_WORD_WITH_OTHER = 'word "'
         . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
         . '" cannot be filled with '

@@ -306,7 +306,7 @@ class verb_list extends type_list
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -544,6 +544,7 @@ class verb_list extends type_list
         }
         return $result;
     }
+
 
     /*
      * save

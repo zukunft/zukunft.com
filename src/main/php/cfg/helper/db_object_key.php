@@ -335,7 +335,7 @@ class db_object_key extends TextIdObject
 
 
     /*
-     * information
+     * info
      */
 
     /**

@@ -382,7 +382,7 @@ most objects have these sections in this order
 - modify - change potentially all variables of this object
 - save - manage to update the database
 - sql write fields - field list for writing to the database
-- information - functions to make code easier to read
+- info - functions to make code easier to read
 - internal - private functions to make code easier to read
 - debug - internal support functions for debugging that must include dsp_id()
 

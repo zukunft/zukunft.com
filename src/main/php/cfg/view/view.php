@@ -19,7 +19,7 @@
     - load helper:       the field names of this object as overwrite functions
     - components:        modify interface functions
     - assign:            interface functions to assign the view to word, triples, verbs or formulas
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - save:              manage to update the database
     - save helper:       helpers for updating the database
     - sql write fields:  field list for writing to the database
@@ -333,7 +333,9 @@ class view extends sandbox_code_id
         } else {
             $vars = parent::api_json_array($typ_lst, $usr);
 
-            $vars[json_fields::STYLE] = $this->style_id();
+            if ($this->style_id() != null) {
+                $vars[json_fields::STYLE] = $this->style_id();
+            }
             if ($this->cmp_lnk_lst != null) {
                 $vars[json_fields::COMPONENTS] = $this->cmp_lnk_lst->api_json_array($typ_lst);
             }
@@ -1023,7 +1025,7 @@ class view extends sandbox_code_id
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -1054,6 +1056,24 @@ class view extends sandbox_code_id
             return false;
         }
 
+    }
+
+    /**
+     * check if the view in the database needs to be updated
+     * e.g. for import if this view has only the name set, the protection should not be updated in the database
+     *
+     * @param view|sandbox $db_obj the word as saved in the database
+     * @return bool true if this word has infos that should be saved in the database
+     */
+    function needs_db_update(view|sandbox $db_obj): bool
+    {
+        $result = parent::needs_db_update($db_obj);
+        if ($this->style() != null) {
+            if ($this->style_id() != $db_obj->style_id()) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
 

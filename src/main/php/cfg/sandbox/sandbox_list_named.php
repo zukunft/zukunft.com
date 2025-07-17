@@ -280,7 +280,7 @@ class sandbox_list_named extends sandbox_list
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -682,9 +682,9 @@ class sandbox_list_named extends sandbox_list
         $upd_lst->reset();
         foreach ($this->lst() as $sbx) {
             // TODO test if get_by_obj_id is faster
-            $db_trp = $db_lst->get_by_name($sbx->name());
-            if ($db_trp != null) {
-                if ($sbx->needs_db_update($db_trp)) {
+            $db_sbx = $db_lst->get_by_name($sbx->name());
+            if ($db_sbx != null) {
+                if ($sbx->needs_db_update($db_sbx)) {
                     $upd_lst->add($sbx);
                 }
             }

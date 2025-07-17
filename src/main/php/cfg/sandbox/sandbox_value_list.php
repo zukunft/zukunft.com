@@ -95,8 +95,6 @@ class sandbox_value_list extends sandbox_list
      */
 
     // speed versus memory var for fast getting a value of the list
-    private array $id_hash = [];
-    private bool $id_hash_dirty = true;
     private array $name_hash = [];
     private bool $name_hash_dirty = true;
 
@@ -109,9 +107,6 @@ class sandbox_value_list extends sandbox_list
     function __construct(user $usr, array $lst = [])
     {
         parent::__construct($usr, $lst);
-        if (count($lst) > 0) {
-            $this->id_hash_dirty = true;
-        }
     }
 
 
@@ -148,7 +143,6 @@ class sandbox_value_list extends sandbox_list
      */
     protected function set_lst_dirty(): void
     {
-        $this->id_hash_dirty = true;
         $this->name_hash_dirty = true;
         parent::set_lst_dirty();
     }
@@ -551,7 +545,7 @@ class sandbox_value_list extends sandbox_list
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -593,21 +587,7 @@ class sandbox_value_list extends sandbox_list
      */
     function id_lst(): array
     {
-        $lst = array();
-        if ($this->name_hash_dirty) {
-            if ($this->count() > 0) {
-                foreach ($this->lst() as $val) {
-                    // use only valid ids
-                    if ($val->id() <> 0) {
-                        $lst[] = $val->id();
-                    }
-                }
-            }
-            asort($lst);
-            $this->id_hash = $lst;
-            $this->id_hash_dirty = false;
-        }
-        return $this->id_hash;
+        return $this->id_pos_lst();
     }
 
 
@@ -643,17 +623,6 @@ class sandbox_value_list extends sandbox_list
         return $result;
     }
 
-    private function add_hash_id(int|string $id): void
-    {
-        if ($this->count() != count($this->id_hash)) {
-            $this->id_lst();
-        } else {
-            $this->id_hash[] = $id;
-            // assuming that in most cases either the id or the names has is needed for building up the list but not both
-            $this->name_hash_dirty = true;
-        }
-    }
-
     private function add_hash_name(string $name): void
     {
         if ($this->count() != count($this->name_hash)) {
@@ -684,12 +653,10 @@ class sandbox_value_list extends sandbox_list
                     if (count($this->id_lst()) > 0) {
                         if (!in_array($id, $this->id_lst())) {
                             parent::add_obj($val_to_add);
-                            $this->add_hash_id($id);
                             $result = true;
                         }
                     } else {
                         parent::add_obj($val_to_add);
-                        $this->add_hash_id($id);
                         $result = true;
                     }
                 }

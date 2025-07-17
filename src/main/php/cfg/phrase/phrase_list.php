@@ -25,7 +25,7 @@
     - sql:               to create sql statements e.g. for load
     - tree building      create foaf trees
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - check:             validate the list
     - modify:            change potentially all object and all variables of this list with one function call
     - save:              manage to update the database
@@ -1005,7 +1005,7 @@ class phrase_list extends sandbox_list_named
 
 
     /*
-     * information
+     * info
      */
 
     /**

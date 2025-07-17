@@ -649,7 +649,7 @@ class formula_list extends sandbox_list_named
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -697,7 +697,10 @@ class formula_list extends sandbox_list_named
             foreach ($this->lst() as $frm) {
                 $frm->set_ref_text();
             }
-            $msg = $this->save()->get_last_message();
+            // TODO Prio 2 review
+            $cache = new term_list($this->user());
+            $imp = new import();
+            $msg = $this->save($cache, $imp)->get_last_message();
             if ($msg != '') {
                 $result = false;
             }

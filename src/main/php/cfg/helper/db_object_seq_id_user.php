@@ -12,7 +12,7 @@
     - object vars:       the variables of this seq id object
     - construct and map: including the mapping of the db row to this seq id object
     - set and get:       to capsule the single variables from unexpected changes
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - modify:            change potentially all variables of this seq id object with one function
 
 
@@ -112,7 +112,7 @@ class db_object_seq_id_user extends db_object_seq_id
 
 
     /*
-     * information
+     * info
      */
 
     /**

@@ -1044,7 +1044,7 @@ class term extends combine_named
     }
 
     /*
-     * information functions
+     * info functions
      */
 
     function is_time(): bool
@@ -1063,6 +1063,36 @@ class term extends combine_named
     /*
      * info
      */
+
+    /**
+     * check if the word, verb, triple or formula in the database needs to be updated
+     * e.g. for import if this word has only the name set, the protection should not be updated in the database
+     *
+     * @param term $db_trm the word, verb, triple or formula as saved in the database
+     * @return bool true if this word has infos that should be saved in the database
+     */
+    function needs_db_update(term $db_trm): bool
+    {
+        if ($this->is_word() and $db_trm->is_word()) {
+            $wrd = $this->obj();
+            $db_wrd = $db_trm->obj();
+            return $wrd->needs_db_update($db_wrd);
+        } elseif ($this->is_verb() and $db_trm->is_verb()) {
+            $vrb = $this->obj();
+            $db_vrb = $db_trm->obj();
+            return $vrb->needs_db_update($db_vrb);
+        } elseif ($this->is_triple() and $db_trm->is_triple()) {
+            $trp = $this->obj();
+            $db_trp = $db_trm->obj();
+            return $trp->needs_db_update($db_trp);
+        } elseif ($this->is_formula() and $db_trm->is_formula()) {
+            $frm = $this->obj();
+            $db_frm = $db_trm->obj();
+            return $frm->needs_db_update($db_frm);
+        } else {
+            return true;
+        }
+    }
 
     /**
      * @return user_message ok message if this word or triple might be read to be added to the database

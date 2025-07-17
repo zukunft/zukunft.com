@@ -1120,7 +1120,7 @@ class sandbox_value extends sandbox_multi
 
 
     /*
-     * information
+     * info
      */
 
     /**

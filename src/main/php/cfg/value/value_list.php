@@ -14,7 +14,7 @@
     to select the tables where the value might be stored
 
     The main sections of this object are
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
 
 
     This file is part of zukunft.com - calc with words

@@ -19,6 +19,9 @@
       "type": "api",
       "code_id": "wikidata",
       "url": "https://www.wikidata.org/wiki/"
+    },
+    {
+      "name": "System Test Source"
     }
   ]
 }

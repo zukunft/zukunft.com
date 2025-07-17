@@ -109,6 +109,7 @@ class words
     const DECIMAL = 'decimal';
 
     // to exchange system configurations
+    const USERS = 'users';
     const IP_RANGES = 'ip-ranges';
 
     // e.g. the geolocation of the development of zukunft.com
@@ -345,6 +346,7 @@ class words
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)
     const TEST_ADD = 'System Test Word';
+    const TEST_ADD_COM = 'test description added to the word via import';
     const TEST_ADD_TO = 'System Test Word To';
     const TEST_ADD_VIA_FUNC = 'System Test Word added via sql function';
     const TEST_ADD_VIA_SQL = 'System Test Word added via sql insert';

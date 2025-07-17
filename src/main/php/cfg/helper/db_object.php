@@ -332,7 +332,7 @@ class db_object extends IdObject
 
 
     /*
-     * information
+     * info
      */
 
     /**

@@ -1,0 +1,15 @@
+{
+  "version": "0.0.3",
+  "time": "2025-07-17 14:07:38",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message to remove the added test verb via data_object based import"
+  ],
+  "words": [
+    {
+      "name": "System Test Word",
+      "exclude": true
+    }
+  ]
+}
+

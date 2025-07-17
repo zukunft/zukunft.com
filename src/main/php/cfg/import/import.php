@@ -807,10 +807,12 @@ class import
         $vrb_per_sec = $cfg->get_by([words::VERBS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $trp_per_sec = $cfg->get_by([words::TRIPLES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $src_per_sec = $cfg->get_by([words::SOURCES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $ref_per_sec = $cfg->get_by([words::REFERENCES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $val_per_sec = $cfg->get_by([words::VALUES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $frm_per_sec = $cfg->get_by([words::FORMULAS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $msk_per_sec = $cfg->get_by([words::VIEWS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $cmp_per_sec = $cfg->get_by([words::COMPONENTS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $usr_per_sec = $cfg->get_by([words::USERS, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $ip_per_sec = $cfg->get_by([words::IP_RANGES, words::CREATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         // estimate the time for each object type
@@ -829,18 +831,23 @@ class import
                 $usr_msg->add($this->dto_get_ip_ranges($ip_array, $usr_trigger, $dto, $ip_per_sec));
                 $this->step_end($dto->ip_range_list()->count(), $ip_per_sec);
             }
-            // TODO add json_fields::USERS
-            if (key_exists(json_fields::LIST_VERBS, $json_array)) {
-                $vrb_lst_array = $json_array[json_fields::LIST_VERBS];
-                $this->step_start(msg_id::COUNT, verb::class, count($vrb_lst_array), $step_time);
-                $usr_msg->add($this->dto_get_verbs($vrb_lst_array, $usr_trigger, $dto, $vrb_per_sec));
-                $this->step_end($dto->verb_list()->count(), $vrb_per_sec);
+            if (key_exists(json_fields::USERS, $json_array)) {
+                $usr_array = $json_array[json_fields::USERS];
+                $this->step_start(msg_id::COUNT, user::class, count($usr_array), $step_time);
+                $usr_msg->add($this->dto_get_users($usr_array, $usr_trigger, $dto, $usr_per_sec));
+                $this->step_end($dto->word_list()->count(), $usr_per_sec);
             }
             if (key_exists(json_fields::WORDS, $json_array)) {
                 $wrd_array = $json_array[json_fields::WORDS];
                 $this->step_start(msg_id::COUNT, word::class, count($wrd_array), $step_time);
                 $usr_msg->add($this->dto_get_words($wrd_array, $usr_trigger, $dto, $wrd_per_sec));
                 $this->step_end($dto->word_list()->count(), $wrd_per_sec);
+            }
+            if (key_exists(json_fields::LIST_VERBS, $json_array)) {
+                $vrb_lst_array = $json_array[json_fields::LIST_VERBS];
+                $this->step_start(msg_id::COUNT, verb::class, count($vrb_lst_array), $step_time);
+                $usr_msg->add($this->dto_get_verbs($vrb_lst_array, $usr_trigger, $dto, $vrb_per_sec));
+                $this->step_end($dto->verb_list()->count(), $vrb_per_sec);
             }
             // TODO add json_fields::WORD_LIST
             if (key_exists(json_fields::TRIPLES, $json_array)) {
@@ -855,7 +862,12 @@ class import
                 $usr_msg->add($this->dto_get_sources($src_array, $usr_trigger, $dto, $src_per_sec));
                 $this->step_end($dto->source_list()->count(), $src_per_sec);
             }
-            // TODO add json_fields::REFS
+            if (key_exists(json_fields::REFERENCES, $json_array)) {
+                $ref_array = $json_array[json_fields::SOURCES];
+                $this->step_start(msg_id::COUNT, ref::class, count($ref_array), $step_time);
+                $usr_msg->add($this->dto_get_references($ref_array, $usr_trigger, $dto, $ref_per_sec));
+                $this->step_end($dto->source_list()->count(), $ref_per_sec);
+            }
             // TODO add json_fields::PHRASE_VALUES
             if (key_exists(json_fields::VALUES, $json_array)) {
                 $val_array = $json_array[json_fields::VALUES];
@@ -872,7 +884,6 @@ class import
             }
             // TODO add json_fields::RESULTS
             // TODO add json_fields::CALC_VALIDATION
-            // TODO add json_fields::COMPONENTS
             if (key_exists(json_fields::COMPONENTS, $json_array)) {
                 $cmp_array = $json_array[json_fields::COMPONENTS];
                 $this->step_start(msg_id::COUNT, component::class, count($cmp_array), $step_time);
@@ -1203,6 +1214,34 @@ class import
     }
 
     /**
+     * add the references from the json array to the data object
+     * @param array $json_array the source part of the import json
+     * @param user $usr_trigger the user who has started the import
+     * @param data_object $dto the data object that should be filled
+     * @param float $per_sec the expected number of references that can be analysed per second
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function dto_get_references(
+        array       $json_array,
+        user        $usr_trigger,
+        data_object $dto,
+        float       $per_sec = 0
+    ): user_message
+    {
+        $usr_msg = new user_message();
+
+        $i = 0;
+        foreach ($json_array as $ref_json) {
+            $ref = new ref($usr_trigger);
+            $usr_msg->add($ref->import_mapper_user($ref_json, $usr_trigger, $dto));
+            $dto->add_reference($ref);
+            $i++;
+            $this->display_progress($i, $per_sec, $ref->dsp_id());
+        }
+        return $usr_msg;
+    }
+
+    /**
      * add the values from the json array to the data object
      * @param array $json_array the value part of the import json
      * @param user $usr_trigger the user who has started the import
@@ -1310,6 +1349,33 @@ class import
             $dto->add_component($cmp);
             $i++;
             $this->display_progress($i, $per_sec, $cmp->dsp_id());
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add users from the json array to the data object
+     * @param array $json_array the user part of the import json
+     * @param data_object $dto the data object that should be filled
+     * @param float $per_sec the expected number of ip ranges that can be analysed per second
+     * @return user_message the messages to the user if something has not been fine
+     */
+    private function dto_get_users(
+        array       $json_array,
+        user        $usr_trigger,
+        data_object $dto,
+        float       $per_sec = 0
+    ): user_message
+    {
+        $usr_msg = new user_message();
+
+        $i = 0;
+        foreach ($json_array as $usr_json) {
+            $usr = new user();
+            $usr_msg->add($usr->import_mapper_user($usr_json, $usr_trigger, $dto));
+            $dto->add_user($usr);
+            $i++;
+            $this->display_progress($i, $per_sec, $usr->dsp_id());
         }
         return $usr_msg;
     }

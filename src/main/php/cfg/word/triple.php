@@ -21,7 +21,7 @@
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - internal:          e.g. to generate the name based on the link
     - save:              manage to update the database
     - sql write:         sql statement creation to write to the database
@@ -1763,7 +1763,7 @@ class triple extends sandbox_link_named
 
 
     /*
-     * information
+     * info
      */
 
     /**

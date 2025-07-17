@@ -101,12 +101,21 @@ class files
      * import test files
      */
 
+    const IMPORT_USERS = self::IMPORT_UNIT_PATH . 'users' . self::JSON;
+    const IMPORT_USERS_UPDATE = self::IMPORT_UNIT_PATH . 'users_update' . self::JSON;
+    const IMPORT_USERS_UNDO = self::IMPORT_UNIT_PATH . 'users_undo' . self::JSON;
     const IMPORT_WORDS = self::IMPORT_UNIT_PATH . 'words' . self::JSON;
+    const IMPORT_WORDS_UPDATE = self::IMPORT_UNIT_PATH . 'words_update' . self::JSON;
+    const IMPORT_WORDS_UNDO = self::IMPORT_UNIT_PATH . 'words_undo' . self::JSON;
     const IMPORT_VERBS = self::IMPORT_UNIT_PATH . 'verbs' . self::JSON;
     const IMPORT_VERBS_UPDATE = self::IMPORT_UNIT_PATH . 'verbs_update' . self::JSON;
     const IMPORT_VERBS_UNDO = self::IMPORT_UNIT_PATH . 'verbs_undo' . self::JSON;
     const IMPORT_TRIPLES = self::IMPORT_UNIT_PATH . 'triples' . self::JSON;
+    const IMPORT_TRIPLES_UPDATE = self::IMPORT_UNIT_PATH . 'triples_update' . self::JSON;
+    const IMPORT_TRIPLES_UNDO = self::IMPORT_UNIT_PATH . 'triples_undo' . self::JSON;
     const IMPORT_SOURCES = self::IMPORT_UNIT_PATH . 'sources' . self::JSON;
+    const IMPORT_SOURCES_UPDATE = self::IMPORT_UNIT_PATH . 'sources_update' . self::JSON;
+    const IMPORT_SOURCES_UNDO = self::IMPORT_UNIT_PATH . 'sources_undo' . self::JSON;
     const IMPORT_VALUES = self::IMPORT_UNIT_PATH . 'values' . self::JSON;
     const IMPORT_FORMULAS = self::IMPORT_UNIT_PATH . 'formulas' . self::JSON;
 

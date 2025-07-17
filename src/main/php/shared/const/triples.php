@@ -80,6 +80,7 @@ class triples
     const E_ID = 3;
     const E_COM = 'Is the limit of (1 + 1/n)^n as n approaches infinity';
     const SYSTEM_TEST_ADD = 'System Test Triple';
+    const SYSTEM_TEST_ADD_COM = 'System Test Triple Description';
     const SYSTEM_TEST_ADD_AUTO = 'System Test Triple';
     const SYSTEM_TEST_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
     const SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Triple added via sql function';

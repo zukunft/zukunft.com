@@ -335,7 +335,7 @@ class type_object extends db_object_seq_id
 
 
     /*
-     * information
+     * info
      */
 
     function is_type(string $type_to_check): bool

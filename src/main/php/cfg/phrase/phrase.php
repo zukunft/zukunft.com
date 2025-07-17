@@ -36,7 +36,7 @@
     - load related:      load related objects from the database
     - data retrieval:    load related lists from the database
     - classification:    information what
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - save:              manage to update the database
 
 
@@ -1105,25 +1105,25 @@ class phrase extends combine_named
 
 
     /*
-     * information
+     * info
      */
 
     /**
-     * check if the word in the database needs to be updated
+     * check if the word or triple in the database needs to be updated
      * e.g. for import if this word has only the name set, the protection should not be updated in the database
      *
-     * @param phrase $db_phr the word as saved in the database
+     * @param phrase $db_phr the word or triple as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
     function needs_db_update(phrase $db_phr): bool
     {
         if ($this->is_word() and $db_phr->is_word()) {
             $wrd = $this->obj();
-            $db_wrd = $this->obj();
+            $db_wrd = $db_phr->obj();
             return $wrd->needs_db_update($db_wrd);
         } elseif ($this->is_triple() and $db_phr->is_triple()) {
             $trp = $this->obj();
-            $db_trp = $this->obj();
+            $db_trp = $db_phr->obj();
             return $trp->needs_db_update($db_trp);
         } else {
             return true;

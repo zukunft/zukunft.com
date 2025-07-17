@@ -693,7 +693,7 @@ class result_list extends sandbox_value_list
 
 
     /*
-     * information
+     * info
      */
 
     /**

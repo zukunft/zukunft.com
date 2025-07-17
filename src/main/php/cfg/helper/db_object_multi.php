@@ -268,7 +268,7 @@ class db_object_multi extends db_object_key
 
 
     /*
-     * information
+     * info
      */
 
     /**

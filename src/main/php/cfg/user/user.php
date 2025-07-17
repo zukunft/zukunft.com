@@ -30,7 +30,7 @@
     - load:              database access object (DAO) functions
     - load sql:          create the sql statements for loading from the db
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - save:              manage to insert or update the database
     - similar:           get similar objects or compare
     - add:               insert database wrapper
@@ -1352,10 +1352,10 @@ class user extends db_id_object_non_sandbox
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(
-        array $json_obj,
-        user $usr_req,
+        array        $json_obj,
+        user         $usr_req,
         ?data_object $dto = null,
-        object $test_obj = null
+        object       $test_obj = null
     ): user_message
     {
         global $usr_pro_cac;
@@ -1502,7 +1502,7 @@ class user extends db_id_object_non_sandbox
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -1848,6 +1848,16 @@ class user extends db_id_object_non_sandbox
         return $usr_msg;
     }
 
+    function is_same(user $usr): bool
+    {
+        $result = false;
+        $fvt_lst = $this->db_fields_changed($usr);
+        if ($fvt_lst->is_empty()) {
+            $result = true;
+        }
+        return $result;
+    }
+
 
     /*
      * save
@@ -1898,6 +1908,7 @@ class user extends db_id_object_non_sandbox
                     } else {
                         // if similar is found set the id to trigger the updating instead of adding
                         $similar->load_by_id($similar->id()); // e.g. to get the type_id
+                        $this->set_id($similar->id());
                     }
                 } else {
                     log_debug('no similar to ' . $this->dsp_id() . ' found');
@@ -1926,7 +1937,9 @@ class user extends db_id_object_non_sandbox
                         msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
                     ]);
                 } else {
-                    $usr_msg->add($this->db_update($db_con, $db_rec, $usr_req));
+                    if (!$this->is_same($db_rec)) {
+                        $usr_msg->add($this->db_update($db_con, $db_rec, $usr_req));
+                    }
                 }
             }
         }
@@ -1992,7 +2005,13 @@ class user extends db_id_object_non_sandbox
     function get_similar(): user
     {
         $result = new user();
-        $result->load_by_name_or_email($this->name(), $this->email());
+        if ($this->name() != '' and $this->name() != null and $this->email() != '' and $this->email() != null) {
+            $result->load_by_name_or_email($this->name(), $this->email());
+        } elseif ($this->name() != '' and $this->name() != null) {
+            $result->load_by_name($this->name());
+        } elseif ($this->email() != '' and $this->email() != null) {
+            $result->load_by_email($this->email());
+        }
         return $result;
     }
 

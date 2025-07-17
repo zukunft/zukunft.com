@@ -566,7 +566,7 @@ class group extends sandbox_multi
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -1361,7 +1361,7 @@ class group extends sandbox_multi
 
 
     /*
-     * information
+     * info
      */
 
     /**

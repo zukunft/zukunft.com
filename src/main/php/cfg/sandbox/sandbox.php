@@ -23,7 +23,7 @@
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - modify:            change potentially all variables of this seq id object with one function
     - owner and access:  functions to make code easier to read
     - sandbox:           manage the user sandbox
@@ -722,7 +722,7 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -1141,7 +1141,7 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
-     * information
+     * info
      */
 
     /**

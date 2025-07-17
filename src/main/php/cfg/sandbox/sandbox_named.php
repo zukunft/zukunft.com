@@ -18,7 +18,7 @@
     - load:              database access object (DAO) functions
     - load sql:          create the sql statements for loading from the db
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - log read:          read related log messages
     - log write:         write changes to the log table
     - add:               insert a new row the database
@@ -552,7 +552,7 @@ class sandbox_named extends sandbox
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -578,10 +578,10 @@ class sandbox_named extends sandbox
     /**
      * check if the named object in the database needs to be updated
      *
-     * @param sandbox_named $db_obj the word as saved in the database
+     * @param sandbox_named|sandbox $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update_named(sandbox_named $db_obj): bool
+    function needs_db_update(sandbox_named|sandbox $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->name != null) {

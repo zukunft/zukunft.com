@@ -411,6 +411,29 @@ class source extends sandbox_code_id
 
 
     /*
+     * info
+     */
+
+    /**
+     * check if the source in the database needs to be updated
+     * e.g. for import  if this source has only the name set, the protection should not be updated in the database
+     *
+     * @param source|sandbox $db_obj the source as saved in the database
+     * @return bool true if this source has infos that should be saved in the database
+     */
+    function needs_db_update(source|sandbox $db_obj): bool
+    {
+        $result = parent::needs_db_update($db_obj);
+        if ($this->url() != null) {
+            if ($this->url() != $db_obj->url()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+
+    /*
      * sql fields
      */
 
