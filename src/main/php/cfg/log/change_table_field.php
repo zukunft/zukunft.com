@@ -68,7 +68,7 @@ class change_table_field
             [change_field::FLD_ID, 'f', self::FLD_ID_AS],
             [[[change_table::FLD_ID, 't'], [change_field::FLD_NAME, 'f']], '', self::FLD_NAME_AS],
             [sql_db::FLD_DESCRIPTION, 'f'],
-            [[sql::FLD_CODE_ID, 'f', [[change_table::FLD_ID, 't'], [change_field::FLD_NAME, 'f']]], '', self::FLD_CODE_ID_AS]
+            [[sql_db::FLD_CODE_ID, 'f', [[change_table::FLD_ID, 't'], [change_field::FLD_NAME, 'f']]], '', self::FLD_CODE_ID_AS]
         ],
         [[change_table::FLD_ID, 't'], [change_field::FLD_TABLE, 'f']]
     ];

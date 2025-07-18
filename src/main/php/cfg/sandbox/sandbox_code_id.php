@@ -48,6 +48,7 @@ namespace cfg\sandbox;
 include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
 
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_par.php';
@@ -66,6 +67,7 @@ include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
@@ -127,8 +129,8 @@ class sandbox_code_id extends sandbox_typed
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
-            if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
-                $this->set_code_id_db($db_row[sql::FLD_CODE_ID]);
+            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
+                $this->set_code_id_db($db_row[sql_db::FLD_CODE_ID]);
             }
         }
         return $result;
@@ -245,7 +247,7 @@ class sandbox_code_id extends sandbox_typed
             $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => sql::FLD_CODE_ID,
+                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -302,8 +304,8 @@ class sandbox_code_id extends sandbox_typed
      */
     function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
-        $qp = $this->load_sql($sc, sql::FLD_CODE_ID);
-        $sc->add_where(sql::FLD_CODE_ID, $code_id);
+        $qp = $this->load_sql($sc, sql_db::FLD_CODE_ID);
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -392,7 +394,7 @@ class sandbox_code_id extends sandbox_typed
         return array_merge(
             parent::db_fields_all(),
             [
-                sql::FLD_CODE_ID,
+                sql_db::FLD_CODE_ID,
             ]
         );
     }
@@ -419,13 +421,13 @@ class sandbox_code_id extends sandbox_typed
         if ($sbx->code_id <> $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sql::FLD_CODE_ID,
-                    $cng_fld_cac->id($table_id . sql::FLD_CODE_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_CODE_ID,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_CODE_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sql::FLD_CODE_ID,
+                sql_db::FLD_CODE_ID,
                 $this->code_id,
                 sql_field_type::CODE_ID,
                 $sbx->code_id

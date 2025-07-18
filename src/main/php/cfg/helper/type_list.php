@@ -306,9 +306,9 @@ class type_list
         if ($class == verb::class) {
             $sc->set_fields(verb_db::FLD_NAMES);
         } elseif ($class == ref_type::class) {
-            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql::FLD_CODE_ID, ref_type_list::FLD_URL));
+            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, ref_type_list::FLD_URL));
         } else {
-            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql::FLD_CODE_ID));
+            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
         }
         if ($order_field == '') {
             $order_field = $sc->get_id_field_name($class);
@@ -401,7 +401,7 @@ class type_list
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $type_id = $db_row[$db_con->get_id_field_name($class)];
-                $type_code_id = strval($db_row[sql::FLD_CODE_ID]);
+                $type_code_id = strval($db_row[sql_db::FLD_CODE_ID]);
                 // database field name exceptions
                 if ($class == change_action::class) {
                     $type_name = strval($db_row[type_object::FLD_ACTION]);
@@ -417,7 +417,7 @@ class type_list
                     $type_name = strval($db_row[$db_con->get_name_field($class)]);
                 } else {
                     // TODO use a unique type name for each type
-                    $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
+                    $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
                 }
                 $type_comment = strval($db_row[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);

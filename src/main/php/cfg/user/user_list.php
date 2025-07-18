@@ -171,7 +171,7 @@ class user_list
     function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id');
-        $sc->add_where(sql::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -379,7 +379,7 @@ class user_list
                 $usr = new user;
                 $usr->set_id($db_usr[user::FLD_ID]);
                 $usr->name = $db_usr[user_db::FLD_NAME];
-                $usr->code_id = $db_usr[sql::FLD_CODE_ID];
+                $usr->code_id = $db_usr[sql_db::FLD_CODE_ID];
                 $this->lst[] = $usr;
             }
         }

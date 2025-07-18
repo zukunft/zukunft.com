@@ -300,7 +300,7 @@ class user extends db_id_object_non_sandbox
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             }
             $this->email = $db_row[user_db::FLD_EMAIL];
-            $this->code_id = $db_row[sql::FLD_CODE_ID];
+            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
             if (array_key_exists(user_db::FLD_FIRST_NAME, $db_row)) {
                 $this->first_name = $db_row[user_db::FLD_FIRST_NAME];
             }
@@ -555,7 +555,7 @@ class user extends db_id_object_non_sandbox
             $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => sql::FLD_CODE_ID,
+                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }

@@ -175,9 +175,9 @@ class verb extends type_object
     {
         $result = parent::row_mapper($db_row, $id_fld);
         if ($result) {
-            if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
-                if ($db_row[sql::FLD_CODE_ID] != null) {
-                    $this->set_code_id_db($db_row[sql::FLD_CODE_ID]);
+            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
+                if ($db_row[sql_db::FLD_CODE_ID] != null) {
+                    $this->set_code_id_db($db_row[sql_db::FLD_CODE_ID]);
                 }
             }
             $this->set_name($db_row[$name_fld]);
@@ -469,7 +469,7 @@ class verb extends type_object
     function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
-        $sc->add_where(sql::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -866,7 +866,7 @@ class verb extends type_object
             $log->new_value = $this->code_id;
             $log->std_value = $db_rec->code_id;
             $log->row_id = $this->id();
-            $log->set_field(sql::FLD_CODE_ID);
+            $log->set_field(sql_db::FLD_CODE_ID);
             $usr_msg = $this->save_field_do($db_con, $log);
         }
         return $usr_msg;

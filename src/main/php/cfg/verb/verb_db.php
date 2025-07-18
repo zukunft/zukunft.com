@@ -81,7 +81,7 @@ class verb_db
 
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
-        sql::FLD_CODE_ID,
+        sql_db::FLD_CODE_ID,
         sql_db::FLD_DESCRIPTION,
         self::FLD_PLURAL,
         self::FLD_REVERSE,
@@ -95,7 +95,7 @@ class verb_db
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', type_object::FLD_NAME_COM],
     );
     const FLD_LST_ALL = array(
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', type_object::FLD_DESCRIPTION_COM],
         [self::FLD_CONDITION, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
         [self::FLD_FORMULA, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_FORMULA_COM],

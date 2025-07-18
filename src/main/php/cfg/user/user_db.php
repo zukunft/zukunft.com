@@ -158,7 +158,7 @@ class user_db extends db_object_seq_id
         self::FLD_IP_ADDR,
         self::FLD_PASSWORD,
         sql_db::FLD_DESCRIPTION,
-        sql::FLD_CODE_ID,
+        sql_db::FLD_CODE_ID,
         self::FLD_PROFILE,
         // TODO to be added
         //self::FLD_TYPE_ID,
@@ -175,7 +175,7 @@ class user_db extends db_object_seq_id
     );
     // the database field names excluding the id and the fields for logon
     const FLD_NAMES_LIST = array(
-        sql::FLD_CODE_ID,
+        sql_db::FLD_CODE_ID,
         self::FLD_IP_ADDR,
         self::FLD_EMAIL,
         self::FLD_FIRST_NAME,

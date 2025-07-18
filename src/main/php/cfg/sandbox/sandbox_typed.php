@@ -158,7 +158,7 @@ class sandbox_typed extends sandbox_named
             $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr_req->name(),
                 msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
-                msg_id::VAR_NAME => sql::FLD_TYPE_NAME,
+                msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }

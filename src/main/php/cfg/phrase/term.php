@@ -199,14 +199,14 @@ class term extends combine_named
         ], ['', formula_db::FLD_ID]],
         [verb::class, [
             [verb_db::FLD_ID, term::FLD_ID, self::FLD_VERB_ID_TO_TERM_ID],
-            [sql::NULL_VALUE, user::FLD_ID, sql::FLD_CONST],
+            [sql::NULL_VALUE, user::FLD_ID, sql_db::FLD_CONST],
             [verb_db::FLD_NAME, term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
             [verb_db::FLD_WORDS, self::FLD_USAGE],
-            [sql::NULL_VALUE, self::FLD_TYPE, sql::FLD_CONST],
-            [sql::NULL_VALUE, sandbox::FLD_EXCLUDED, sql::FLD_CONST],
-            [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql::FLD_CONST],
-            [protect_type_shared::ADMIN_ID, sandbox::FLD_PROTECT, sql::FLD_CONST],
+            [sql::NULL_VALUE, self::FLD_TYPE, sql_db::FLD_CONST],
+            [sql::NULL_VALUE, sandbox::FLD_EXCLUDED, sql_db::FLD_CONST],
+            [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql_db::FLD_CONST],
+            [protect_type_shared::ADMIN_ID, sandbox::FLD_PROTECT, sql_db::FLD_CONST],
             ['', formula_db::FLD_FORMULA_TEXT],
             ['', formula_db::FLD_FORMULA_USER_TEXT]
         ], ['', verb_db::FLD_ID]]

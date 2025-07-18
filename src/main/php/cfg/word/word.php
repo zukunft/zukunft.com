@@ -1611,7 +1611,7 @@ class word extends sandbox_code_id
                 $log->new_value = $this->code_id();
                 $log->std_value = $std_rec->code_id();
                 $log->row_id = $this->id();
-                $log->set_field(sql::FLD_CODE_ID);
+                $log->set_field(sql_db::FLD_CODE_ID);
                 $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }

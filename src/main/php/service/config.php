@@ -95,8 +95,8 @@ class config extends db_object_seq_id
     // field lists for the table creation
     const FLD_LST_ALL = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
-        [sql::FLD_VALUE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_VALUE_COM],
+        [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
+        [sql_db::FLD_VALUE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_VALUE_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
@@ -147,7 +147,7 @@ class config extends db_object_seq_id
         $qp = new sql_par(self::class);
         $qp->name .= 'get';
         $db_con->set_name($qp->name);
-        $db_con->set_fields(array(sql::FLD_CODE_ID, sql::FLD_VALUE, sql_db::FLD_DESCRIPTION));
+        $db_con->set_fields(array(sql_db::FLD_CODE_ID, sql_db::FLD_VALUE, sql_db::FLD_DESCRIPTION));
         $db_con->add_par(sql_par_type::TEXT, $code_id);
         $qp->sql = $db_con->select_by_code_id();
         $qp->par = $db_con->get_par();
@@ -195,8 +195,8 @@ class config extends db_object_seq_id
                 $db_value = $this->default_value($code_id);
             }
         } else {
-            $db_code_id = $db_row[sql::FLD_CODE_ID];
-            $db_value = $db_row[sql::FLD_VALUE];
+            $db_code_id = $db_row[sql_db::FLD_CODE_ID];
+            $db_value = $db_row[sql_db::FLD_VALUE];
             // if no value exists create it with the default value (a configuration value should never be empty)
             if ($db_code_id == '') {
                 if ($this->create($code_id, $db_con)) {
@@ -229,7 +229,7 @@ class config extends db_object_seq_id
             // automatically add the config entry
             $result = $this->add($code_id, $value, $description, $db_con);
         } else {
-            if ($value != $db_row[sql::FLD_VALUE] or $description != $db_row[sql_db::FLD_DESCRIPTION]) {
+            if ($value != $db_row[sql_db::FLD_VALUE] or $description != $db_row[sql_db::FLD_DESCRIPTION]) {
                 $result = $this->update($code_id, $value, $description, $db_con);
             }
         }
@@ -270,8 +270,8 @@ class config extends db_object_seq_id
         $db_con->set_class(self::class);
         $db_id = $db_con->insert_old(
             array(
-                sql::FLD_CODE_ID,
-                sql::FLD_VALUE,
+                sql_db::FLD_CODE_ID,
+                sql_db::FLD_VALUE,
                 sql_db::FLD_DESCRIPTION),
             array(
                 $code_id,
@@ -297,8 +297,8 @@ class config extends db_object_seq_id
         $db_con->set_class(self::class);
         $db_id = $db_con->insert_old(
             array(
-                sql::FLD_CODE_ID,
-                sql::FLD_VALUE,
+                sql_db::FLD_CODE_ID,
+                sql_db::FLD_VALUE,
                 sql_db::FLD_DESCRIPTION),
             array(
                 $code_id,
@@ -324,12 +324,12 @@ class config extends db_object_seq_id
         $db_id = $db_con->update_old(
             $code_id,
             array(
-                sql::FLD_VALUE,
+                sql_db::FLD_VALUE,
                 sql_db::FLD_DESCRIPTION),
             array(
                 $value,
                 $description),
-            sql::FLD_CODE_ID);
+            sql_db::FLD_CODE_ID);
         if ($db_id > 0) {
             $result = true;
         }

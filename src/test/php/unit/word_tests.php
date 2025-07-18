@@ -204,7 +204,7 @@ class word_tests
         $wrd_db = $t->word();
         $wrd_db->fill($wrd_imp, $usr);
         $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
-        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [sql::FLD_CODE_ID]);
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [sql_db::FLD_CODE_ID]);
 
         $test_name = 'check if database would not be updated if only the name is given in import';
         $in_wrd = $t->word_name_only();

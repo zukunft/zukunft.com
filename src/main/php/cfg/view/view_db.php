@@ -93,12 +93,12 @@ class view_db
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        sql::FLD_CODE_ID
+        sql_db::FLD_CODE_ID
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(

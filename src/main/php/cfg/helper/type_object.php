@@ -117,7 +117,7 @@ class type_object extends db_object_seq_id
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     const FLD_LST_ALL = array(
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
@@ -171,7 +171,7 @@ class type_object extends db_object_seq_id
             $this->set_id(($db_row[language::FLD_ID]));
         }
         if ($this->id() > 0) {
-            $this->code_id = strval($db_row[sql::FLD_CODE_ID]);
+            $this->code_id = strval($db_row[sql_db::FLD_CODE_ID]);
             $type_name = '';
             if ($class == change_action::class) {
                 $type_name = strval($db_row[self::FLD_ACTION]);
@@ -184,7 +184,7 @@ class type_object extends db_object_seq_id
             } elseif ($class == language::class) {
                 $type_name = strval($db_row[language::FLD_NAME]);
             } else {
-                $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
+                $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
             }
             $this->name = $type_name;
             $this->description = strval($db_row[sql_db::FLD_DESCRIPTION]);
@@ -268,7 +268,7 @@ class type_object extends db_object_seq_id
             $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => sql::FLD_CODE_ID,
+                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -448,7 +448,7 @@ class type_object extends db_object_seq_id
     {
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, 'code_id');
-        $sc->add_where(sql::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

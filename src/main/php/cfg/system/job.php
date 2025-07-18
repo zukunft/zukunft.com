@@ -73,6 +73,7 @@ namespace cfg\system;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
@@ -99,6 +100,7 @@ include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
@@ -276,7 +278,7 @@ class job extends db_object_seq_id_user
                 $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
                     msg_id::VAR_USER_NAME => $usr_req->name(),
                     msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
-                    msg_id::VAR_NAME => sql::FLD_TYPE_NAME,
+                    msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
                 ]);
             }

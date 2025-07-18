@@ -1564,7 +1564,7 @@ class component extends sandbox_code_id
           $db_con = new mysql;
           $db_con->usr_id = $this->user()->id();
           $db_type = $db_con->get1($sql);
-          $this->type_name = $db_type[sql::FLD_TYPE_NAME];
+          $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
         return $this->type_name;
       } */
