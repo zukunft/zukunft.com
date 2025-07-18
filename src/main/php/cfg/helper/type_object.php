@@ -106,8 +106,6 @@ class type_object extends db_object_seq_id
     const FLD_NAME = 'type_name';
     const FLD_CODE_ID_COM = 'this id text is unique for all code links, is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
     const FLD_DESCRIPTION_COM = 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
-    const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
     // type name exceptions
     const FLD_ACTION = 'change_action_name';
@@ -120,7 +118,7 @@ class type_object extends db_object_seq_id
     );
     const FLD_LST_ALL = array(
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
 
@@ -189,7 +187,7 @@ class type_object extends db_object_seq_id
                 $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
             }
             $this->name = $type_name;
-            $this->description = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
+            $this->description = strval($db_row[sql_db::FLD_DESCRIPTION]);
             $result = true;
         }
         return $result;

@@ -34,11 +34,13 @@ namespace cfg\log;
 
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\helper\type_object;
@@ -70,7 +72,7 @@ class change_action extends type_object
     );
     const FLD_LST_ALL = array(
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, '', '', ''],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
 
 }

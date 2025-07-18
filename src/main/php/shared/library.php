@@ -2509,7 +2509,7 @@ class library
         foreach ($sql_names as $name) {
             $result[] = match ($name) {
                 word_db::FLD_NAME => 'wrd',
-                sandbox_named::FLD_DESCRIPTION => 'des',
+                sql_db::FLD_DESCRIPTION => 'des',
                 phrase::FLD_TYPE => 'pty',
                 value_db::FLD_ID => 'grp',
                 user::FLD_ID => 'usr',

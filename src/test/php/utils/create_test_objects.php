@@ -516,6 +516,7 @@ class create_test_objects extends test_base
         $usr = new user();
         $usr->set(users::SYSTEM_TEST_ID, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
         $usr->set_profile(user_profiles::TEST);
+        $usr->description = users::SYSTEM_TEST_COM;
         return $usr;
     }
 

@@ -32,6 +32,7 @@
 
 namespace unit_write;
 
+include_once DB_PATH . 'sql_db.php';
 include_once SHARED_CONST_PATH . 'words.php';
 include_once SHARED_CONST_PATH . 'triples.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
@@ -39,18 +40,14 @@ include_once SHARED_ENUM_PATH . 'change_fields.php';
 include_once SHARED_TYPES_PATH . 'phrase_type.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 
+use cfg\db\sql_db;
 use cfg\formula\formula;
-use cfg\log\change;
-use cfg\log\change_field_list;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\word;
 use html\word\word as word_dsp;
 use shared\const\users;
 use shared\enum\change_fields;
-use shared\enum\change_tables;
 use shared\library;
 use shared\const\formulas;
 use shared\const\triples;
@@ -388,7 +385,7 @@ class word_write_tests
         $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_WORD_PLURAL, $wrd_reloaded->id(), true);
         $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . 's"';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '" logged', $target, $result);
-        $result = $t->log_last_by_field($wrd_reloaded, sandbox_named::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
+        $result = $t->log_last_by_field($wrd_reloaded, sql_db::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
         $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . ' description"';
         $t->display('word->load description for "' . words::TEST_RENAMED . '" logged', $target, $result);
         $t->display('word->load ref_2 for "' . words::TEST_RENAMED . '" logged', $target, $result);

@@ -157,16 +157,16 @@ class phrase extends combine_named
     );
     // list of the common user specific database field names of phrases excluding the standard name field
     const FLD_NAMES_USR_EX = array(
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the common user specific database field names of phrases
     const FLD_NAMES_USR = array(
         phrase::FLD_NAME,
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the common user specific database field names of phrases
     const FLD_NAMES_USR_NO_NAME = array(
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the common user specific numeric database field names of phrases
     const FLD_NAMES_NUM_USR = array(
@@ -193,7 +193,7 @@ class phrase extends combine_named
             [word_db::FLD_ID, phrase::FLD_ID],
             [user::FLD_ID],
             [word_db::FLD_NAME, phrase::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
+            [sql_db::FLD_DESCRIPTION],
             [word_db::FLD_VALUES],
             [phrase::FLD_TYPE],
             [sandbox::FLD_EXCLUDED],
@@ -204,7 +204,7 @@ class phrase extends combine_named
             [triple_db::FLD_ID, phrase::FLD_ID, '* -1'],
             [user::FLD_ID],
             [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], phrase::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
+            [sql_db::FLD_DESCRIPTION],
             [triple_db::FLD_VALUES],
             [phrase::FLD_TYPE],
             [sandbox::FLD_EXCLUDED],
@@ -275,8 +275,8 @@ class phrase extends combine_named
                 $wrd = new word($this->user());
                 $wrd->set_id($db_row[$id_fld]);
                 $wrd->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
-                if (array_key_exists(sandbox_named::FLD_DESCRIPTION . $fld_ext, $db_row)) {
-                    $wrd->description = $db_row[sandbox_named::FLD_DESCRIPTION . $fld_ext];
+                if (array_key_exists(sql_db::FLD_DESCRIPTION . $fld_ext, $db_row)) {
+                    $wrd->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 }
                 if (array_key_exists(phrase::FLD_TYPE . $fld_ext, $db_row)) {
                     $wrd->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
@@ -301,8 +301,8 @@ class phrase extends combine_named
                 if ($name != null) {
                     $trp->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
                 }
-                if (array_key_exists(sandbox_named::FLD_DESCRIPTION . $fld_ext, $db_row)) {
-                    $trp->description = $db_row[sandbox_named::FLD_DESCRIPTION . $fld_ext];
+                if (array_key_exists(sql_db::FLD_DESCRIPTION . $fld_ext, $db_row)) {
+                    $trp->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 }
                 if (array_key_exists(phrase::FLD_TYPE . $fld_ext, $db_row)) {
                     $trp->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];

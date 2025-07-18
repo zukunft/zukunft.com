@@ -128,8 +128,8 @@ class sandbox_link_named extends sandbox_link
                     $this->set_name($db_row[$name_fld]);
                 }
             }
-            if (array_key_exists(sandbox_named::FLD_DESCRIPTION, $db_row)) {
-                $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
+            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             }
         }
         return $result;
@@ -438,7 +438,7 @@ class sandbox_link_named extends sandbox_link
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id();
-                $log->set_field(sandbox_named::FLD_DESCRIPTION);
+                $log->set_field(sql_db::FLD_DESCRIPTION);
                 $result = $this->save_field_user($db_con, $log);
             }
         }
@@ -526,7 +526,7 @@ class sandbox_link_named extends sandbox_link
             parent::db_all_fields_link($sc_par_lst),
             [
                 $this->name_field(),
-                sandbox_named::FLD_DESCRIPTION
+                sql_db::FLD_DESCRIPTION
             ]);
     }
 

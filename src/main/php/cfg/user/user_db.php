@@ -63,19 +63,19 @@ namespace cfg\user;
 
 include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 //include_once MODEL_REF_PATH . 'source.php';
 //include_once MODEL_WORD_PATH . 'triple.php';
 //include_once MODEL_WORD_PATH . 'triple_db.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 
+use cfg\db\sql_db;
 use cfg\helper\db_object_seq_id;
 use cfg\db\sql;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
-use cfg\sandbox\sandbox_named;
 use cfg\ref\source;
 use cfg\word\triple;
 use cfg\view\view;
@@ -157,7 +157,7 @@ class user_db extends db_object_seq_id
         self::FLD_NAME,
         self::FLD_IP_ADDR,
         self::FLD_PASSWORD,
-        sandbox_named::FLD_DESCRIPTION,
+        sql_db::FLD_DESCRIPTION,
         sql::FLD_CODE_ID,
         self::FLD_PROFILE,
         // TODO to be added
@@ -192,7 +192,7 @@ class user_db extends db_object_seq_id
         [self::FLD_IP_ADDR, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_IP_ADDR_COM],
         [self::FLD_PASSWORD, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PASSWORD_COM],
         // description and type
-        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
         [self::FLD_PROFILE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_profile::class, self::FLD_PROFILE_COM],
         [self::FLD_TYPE_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_type::class, self::FLD_TYPE_ID_COM],

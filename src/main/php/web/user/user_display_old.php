@@ -814,7 +814,7 @@ class user_dsp_old extends user
                         $dsp_other = clone $dsp_usr;
                         $dsp_other->set_user($usr_other);
                         $dsp_other->set_name($dsp_other_row[view_db::FLD_NAME]);
-                        $dsp_other->description = $dsp_other_row[sandbox_named::FLD_DESCRIPTION];
+                        $dsp_other->description = $dsp_other_row[sql_db::FLD_DESCRIPTION];
                         $dsp_other->set_type_id($dsp_other_row[view_db::FLD_TYPE]);
                         $dsp_other->set_excluded($dsp_other_row[sandbox::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
@@ -979,7 +979,7 @@ class user_dsp_old extends user
                         $cmp_other = clone $dsp_usr;
                         $cmp_other->set_user($usr_other);
                         $cmp_other->set_name($cmp_other_row[component::FLD_NAME]);
-                        $cmp_other->description = $cmp_other_row[sandbox_named::FLD_DESCRIPTION];
+                        $cmp_other->description = $cmp_other_row[sql_db::FLD_DESCRIPTION];
                         $cmp_other->type_id = $cmp_other_row['component_type_id'];
                         $cmp_other->set_excluded($cmp_other_row[sandbox::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
@@ -1326,7 +1326,7 @@ class user_dsp_old extends user
                         $dsp_other->set_user($usr_other);
                         $dsp_other->set_name($dsp_other_row['source_name']);
                         $dsp_other->set_url($dsp_other_row[source_db::FLD_URL]);
-                        $dsp_other->description = $dsp_other_row[sandbox_named::FLD_DESCRIPTION];
+                        $dsp_other->description = $dsp_other_row[sql_db::FLD_DESCRIPTION];
                         $dsp_other->type_id = $dsp_other_row['source_type_id'];
                         $dsp_other->set_excluded($dsp_other_row[sandbox::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {

@@ -32,12 +32,11 @@
 
 namespace unit_write;
 
+include_once DB_PATH . 'sql_db.php';
 include_once MODEL_VIEW_PATH . 'view_db.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 
-use cfg\log\change;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
+use cfg\db\sql_db;
 use cfg\view\view;
 use cfg\view\view_db;
 use cfg\view\view_type;
@@ -46,7 +45,6 @@ use html\view\view as view_dsp;
 use shared\const\users;
 use shared\const\views;
 use shared\const\words;
-use shared\enum\change_tables;
 use test\test_cleanup;
 
 class view_write_tests
@@ -182,7 +180,7 @@ class view_write_tests
         $t->display('view->load type_id for "' . views::TEST_RENAMED_NAME . '"', $target, $result);
 
         // check if the view parameter adding have been logged
-        $result = $t->log_last_by_field($dsp_reloaded, sandbox_named::FLD_DESCRIPTION, $dsp_reloaded->id(), true);
+        $result = $t->log_last_by_field($dsp_reloaded, sql_db::FLD_DESCRIPTION, $dsp_reloaded->id(), true);
         $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "Just added for testing the user sandbox" to "Just changed for testing the user sandbox"';
         // TODO fix it
         if ($result != $target) {

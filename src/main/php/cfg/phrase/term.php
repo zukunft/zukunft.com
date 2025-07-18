@@ -122,7 +122,7 @@ class term extends combine_named
     // this is done because the total number of terms is expected to be less than 10 million
     // which database should be able to handle and only a few hundred are expected to be sent to via api at once
     const FLD_NAMES_USR = array(
-        sandbox_named::FLD_DESCRIPTION,
+        sql_db::FLD_DESCRIPTION,
         formula_db::FLD_FORMULA_TEXT,
         formula_db::FLD_FORMULA_USER_TEXT
     );
@@ -162,7 +162,7 @@ class term extends combine_named
             [word_db::FLD_ID, term::FLD_ID, self::FLD_WORD_ID_TO_TERM_ID],
             [user::FLD_ID],
             [word_db::FLD_NAME, term::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
+            [sql_db::FLD_DESCRIPTION],
             [word_db::FLD_VALUES, self::FLD_USAGE],
             [phrase::FLD_TYPE, self::FLD_TYPE],
             [sandbox::FLD_EXCLUDED],
@@ -175,7 +175,7 @@ class term extends combine_named
             [triple_db::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
             [user::FLD_ID],
             [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], term::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
+            [sql_db::FLD_DESCRIPTION],
             [triple_db::FLD_VALUES, self::FLD_USAGE],
             [phrase::FLD_TYPE, self::FLD_TYPE],
             [sandbox::FLD_EXCLUDED],
@@ -188,7 +188,7 @@ class term extends combine_named
             [formula_db::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
             [user::FLD_ID],
             [formula_db::FLD_NAME, term::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
+            [sql_db::FLD_DESCRIPTION],
             [formula_db::FLD_USAGE, self::FLD_USAGE],
             [formula_db::FLD_TYPE, self::FLD_TYPE],
             [sandbox::FLD_EXCLUDED],
@@ -201,7 +201,7 @@ class term extends combine_named
             [verb_db::FLD_ID, term::FLD_ID, self::FLD_VERB_ID_TO_TERM_ID],
             [sql::NULL_VALUE, user::FLD_ID, sql::FLD_CONST],
             [verb_db::FLD_NAME, term::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
+            [sql_db::FLD_DESCRIPTION],
             [verb_db::FLD_WORDS, self::FLD_USAGE],
             [sql::NULL_VALUE, self::FLD_TYPE, sql::FLD_CONST],
             [sql::NULL_VALUE, sandbox::FLD_EXCLUDED, sql::FLD_CONST],

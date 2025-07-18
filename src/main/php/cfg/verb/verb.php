@@ -193,8 +193,8 @@ class verb extends type_object
             if (array_key_exists(verb_db::FLD_FORMULA, $db_row)) {
                 $this->set_formula_name($db_row[verb_db::FLD_FORMULA]);
             }
-            if (array_key_exists(sandbox_named::FLD_DESCRIPTION, $db_row)) {
-                $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
+            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             }
             if (array_key_exists(verb_db::FLD_WORDS, $db_row)) {
                 if ($db_row[verb_db::FLD_WORDS] == null) {
@@ -947,7 +947,7 @@ class verb extends type_object
             $log->new_value = $this->description;
             $log->std_value = $db_rec->description;
             $log->row_id = $this->id();
-            $log->set_field(sandbox_named::FLD_DESCRIPTION);
+            $log->set_field(sql_db::FLD_DESCRIPTION);
             $usr_msg = $this->save_field_do($db_con, $log);
         }
         return $usr_msg;

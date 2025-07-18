@@ -74,7 +74,7 @@ class source_type_list extends type_list
             foreach ($db_lst as $db_entry) {
                 $type_code_id = strval($db_entry[sql::FLD_CODE_ID]);
                 $type_name = strval($db_entry[sql::FLD_TYPE_NAME]);
-                $type_comment = strval($db_entry[sandbox_named::FLD_DESCRIPTION]);
+                $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new source_type($type_code_id, $type_name, $type_comment);
                 $type_obj->set_id($db_entry[self::FLD_ID]);
                 //$type_obj->set_url($db_entry[self::FLD_URL]);

@@ -2519,15 +2519,15 @@ class user extends db_id_object_non_sandbox
         if ($db_usr->description <> $this->description) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sandbox_named::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
                 $this->description,
-                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $db_usr->description
             );
         }

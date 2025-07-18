@@ -1,9 +1,12 @@
-CREATE OR REPLACE FUNCTION user_update_log_2000042000000
+CREATE OR REPLACE FUNCTION user_update_log_2002042000000
     (_user_id                  bigint,
      _change_action_id         smallint,
      _field_id_user_name       smallint,
      _user_name_old            text,
      _user_name                text,
+     _field_id_description     smallint,
+     _description_old          text,
+     _description              text,
      _field_id_user_profile_id smallint,
      _type_name_old            text,
      _user_profile_id_old      smallint,
@@ -19,6 +22,9 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,    old_value,     new_value, row_id)
          SELECT          _user_id,_change_action_id,_field_id_user_name,_user_name_old,_user_name,_user_id ;
 
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,      old_value,       new_value,   row_id)
+         SELECT          _user_id,_change_action_id,_field_id_description,_description_old,_description,_user_id ;
+
     INSERT INTO changes ( user_id, change_action_id, change_field_id,          old_value,     new_value, old_id,              new_id,          row_id)
          SELECT          _user_id,_change_action_id,_field_id_user_profile_id,_type_name_old,_type_name,_user_profile_id_old,_user_profile_id,_user_id ;
 
@@ -27,6 +33,7 @@ BEGIN
 
          UPDATE users
             SET user_name       = _user_name,
+                description     = _description,
                 user_profile_id = _user_profile_id,
                 email           = _email
           WHERE user_id         = _user_id;
@@ -34,17 +41,20 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE user_update_log_2000042000000_call
-    (bigint, smallint, smallint, text, text, smallint, text, smallint, text, smallint, smallint, text, text) AS
-SELECT user_update_log_2000042000000
-    ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);
+PREPARE user_update_log_2002042000000_call
+    (bigint, smallint, smallint, text, text, smallint, text, text, smallint, text, smallint, text, smallint, smallint, text, text) AS
+SELECT user_update_log_2002042000000
+    ($1,$2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);
 
-SELECT user_update_log_2000042000000
+SELECT user_update_log_2002042000000
         (3::bigint,
          2::smallint,
          211::smallint,
          'zukunft.com system test'::text,
          'zukunft.com system test partner'::text,
+         213::smallint,
+         'the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests'::text,
+         null::text,
          81::smallint,
          'system test'::text,
          16::smallint,

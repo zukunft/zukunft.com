@@ -36,6 +36,7 @@
 namespace cfg\ref;
 
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 //include_once MODEL_PHRASE_PATH . 'phrase.php';
@@ -44,6 +45,7 @@ include_once DB_PATH . 'sql_field_type.php';
 //include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\phrase\phrase;
@@ -83,7 +85,7 @@ class ref_db
     const FLD_NAMES_USR = array(
         self::FLD_EX_KEY,
         self::FLD_URL,
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of user specific numeric field names
     const FLD_NAMES_NUM_USR = array(
@@ -96,7 +98,7 @@ class ref_db
     const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_EX_KEY,
         self::FLD_URL,
-        sandbox_named::FLD_DESCRIPTION,
+        sql_db::FLD_DESCRIPTION,
         sandbox::FLD_EXCLUDED
     );
     // list of fields that must be set
@@ -111,7 +113,7 @@ class ref_db
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
         [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
-        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(

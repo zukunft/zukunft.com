@@ -2154,7 +2154,7 @@ class triple extends sandbox_link_named
             $log->new_value = $this->description;
             $log->std_value = $std_rec->description;
             $log->row_id = $this->id();
-            $log->set_field(sandbox_named::FLD_DESCRIPTION);
+            $log->set_field(sql_db::FLD_DESCRIPTION);
             $usr_msg->add($this->save_field_user($db_con, $log));
         }
         return $usr_msg;

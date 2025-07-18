@@ -356,6 +356,8 @@ class sql_db
 
     // db field names that are used in many classes
     const FLD_DESCRIPTION = 'description';
+    const FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
+    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
     // classes that have a database table in order of suggested table creation so that depending on tables are created later
     const DB_TABLE_CLASSES = [

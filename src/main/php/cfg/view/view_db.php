@@ -37,6 +37,7 @@ namespace cfg\view;
 
 //include_once MODEL_COMPONENT_PATH . 'view_style.php';
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 //include_once MODEL_HELPER_PATH . 'type_object.php';
@@ -46,6 +47,7 @@ include_once DB_PATH . 'sql_field_type.php';
 
 use cfg\component\view_style;
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\helper\type_object;
@@ -85,7 +87,7 @@ class view_db
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_type::class, self::FLD_TYPE_COM],
         [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
     );
@@ -100,7 +102,7 @@ class view_db
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the user specific database field names
     const FLD_NAMES_NUM_USR = array(
@@ -112,7 +114,7 @@ class view_db
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_SANDBOX_FLD_NAMES = array(
-        sandbox_named::FLD_DESCRIPTION,
+        sql_db::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_STYLE,
         sandbox::FLD_EXCLUDED,

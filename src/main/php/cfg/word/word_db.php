@@ -36,6 +36,7 @@
 namespace cfg\word;
 
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once MODEL_LANGUAGE_PATH . 'language.php';
@@ -46,6 +47,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 //include_once MODEL_VIEW_PATH . 'view.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\language\language;
@@ -97,7 +99,7 @@ class word_db
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_PLURAL, self::FLD_PLURAL_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_PLURAL_COM],
-        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [phrase::FLD_TYPE, phrase::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, phrase_type::class, self::FLD_TYPE_COM],
         [self::FLD_VIEW, self::FLD_VIEW_SQL_TYP, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
         [self::FLD_VALUES, self::FLD_VALUES_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_VALUES_COM],
@@ -117,7 +119,7 @@ class word_db
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
         self::FLD_PLURAL,
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
@@ -132,7 +134,7 @@ class word_db
         self::FLD_NAME,
         self::FLD_VALUES,
         self::FLD_PLURAL,
-        sandbox_named::FLD_DESCRIPTION,
+        sql_db::FLD_DESCRIPTION,
         phrase::FLD_TYPE,
         self::FLD_VIEW,
         sandbox::FLD_EXCLUDED,

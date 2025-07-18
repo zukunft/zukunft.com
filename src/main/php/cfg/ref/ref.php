@@ -232,7 +232,7 @@ class ref extends sandbox_link
             $this->set_external_key($db_row[ref_db::FLD_EX_KEY]);
             $this->set_predicate_id($db_row[ref_db::FLD_TYPE]);
             $this->set_url($db_row[ref_db::FLD_URL]);
-            $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->set_source_by_id($db_row[source_db::FLD_ID]);
             if ($this->load_objects()) {
                 $result = true;
@@ -1127,7 +1127,7 @@ class ref extends sandbox_link
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id();
-                $log->set_field(sandbox_named::FLD_DESCRIPTION);
+                $log->set_field(sql_db::FLD_DESCRIPTION);
                 $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
@@ -1383,7 +1383,7 @@ class ref extends sandbox_link
                 ref_db::FLD_EX_KEY,
                 ref_db::FLD_URL,
                 source_db::FLD_ID,
-                sandbox_named::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1500,15 +1500,15 @@ class ref extends sandbox_link
         if ($sbx->description <> $this->description) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sandbox_named::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
                 $this->description,
-                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $sbx->description
             );
         }

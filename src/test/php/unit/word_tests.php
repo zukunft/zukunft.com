@@ -197,7 +197,7 @@ class word_tests
         $wrd_db = $t->word();
         $wrd_db->fill($wrd_imp, $usr_sys);
         $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
-        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [sandbox_named::FLD_DESCRIPTION]);
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [sql_db::FLD_DESCRIPTION]);
         $test_name = 'check if the code id cannot be set by normal user';
         $wrd_imp = $t->word();
         $wrd_imp->set_code_id('test code id', $usr_sys);

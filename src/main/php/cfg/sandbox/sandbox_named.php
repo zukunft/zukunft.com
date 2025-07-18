@@ -128,8 +128,6 @@ class sandbox_named extends sandbox
     // *_SQL_TYP is the sql data type used for the field
     const FLD_NAME = 'name';
     const FLD_NAME_SQL_TYP = sql_field_type::NAME; // in many cases overwritten by NAME_UNIQUE
-    const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
 
     /*
@@ -182,8 +180,8 @@ class sandbox_named extends sandbox
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_name($db_row[$name_fld]);
-            if (array_key_exists(self::FLD_DESCRIPTION, $db_row)) {
-                $this->description = $db_row[self::FLD_DESCRIPTION];
+            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             }
         }
         return $result;
@@ -933,7 +931,7 @@ class sandbox_named extends sandbox
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id();
-                $log->set_field(self::FLD_DESCRIPTION);
+                $log->set_field(sql_db::FLD_DESCRIPTION);
                 $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
@@ -1235,7 +1233,7 @@ class sandbox_named extends sandbox
             $this::FLD_ID,
             user::FLD_ID,
             $this->name_field(),
-            self::FLD_DESCRIPTION
+            sql_db::FLD_DESCRIPTION
         ];
     }
 

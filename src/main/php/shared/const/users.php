@@ -68,6 +68,7 @@ class users
     const SYSTEM_TEST_NAME = 'zukunft.com system test';
     const SYSTEM_TEST_EMAIL = 'test@zukunft.com';
     const SYSTEM_TEST_CODE_ID = 'test';
+    const SYSTEM_TEST_COM = 'the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests';
 
     // the user that acts as a partner for the system tests
     // so that multi-user behaviour can be tested

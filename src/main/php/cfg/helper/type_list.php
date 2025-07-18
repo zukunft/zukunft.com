@@ -306,9 +306,9 @@ class type_list
         if ($class == verb::class) {
             $sc->set_fields(verb_db::FLD_NAMES);
         } elseif ($class == ref_type::class) {
-            $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql::FLD_CODE_ID, ref_type_list::FLD_URL));
+            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql::FLD_CODE_ID, ref_type_list::FLD_URL));
         } else {
-            $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql::FLD_CODE_ID));
+            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql::FLD_CODE_ID));
         }
         if ($order_field == '') {
             $order_field = $sc->get_id_field_name($class);
@@ -419,7 +419,7 @@ class type_list
                     // TODO use a unique type name for each type
                     $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
                 }
-                $type_comment = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
+                $type_comment = strval($db_row[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);
                 $this->add($type_obj);
             }

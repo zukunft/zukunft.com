@@ -32,27 +32,24 @@
 
 namespace unit_write;
 
+include_once DB_PATH . 'sql_db.php';
 include_once MODEL_FORMULA_PATH . 'formula_db.php';
 include_once SHARED_ENUM_PATH . 'change_tables.php';
 include_once SHARED_ENUM_PATH . 'change_fields.php';
 
+use cfg\db\sql_db;
 use cfg\formula\formula;
 use cfg\formula\formula_db;
 use cfg\formula\formula_list;
 use cfg\formula\formula_type;
-use cfg\log\change;
 use cfg\phrase\phrase_list;
 use cfg\result\results;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
 use cfg\word\word;
 use html\formula\formula as formula_dsp;
 use html\phrase\term_list as term_list_dsp;
 use shared\const\formulas;
 use shared\const\users;
 use shared\const\words;
-use shared\enum\change_fields;
-use shared\enum\change_tables;
 use test\test_cleanup;
 
 class formula_write_tests
@@ -424,7 +421,7 @@ class formula_write_tests
         $target = users::SYSTEM_TEST_NAME . ' changed {w' . $wrd_percent->id() . '}=( {f' . $frm_this->id() . '} - {f5} ) / {f5} to ={f3}';
         $target = users::SYSTEM_TEST_NAME . ' changed "{w' . $wrd_percent->id() . '}=1-({f' . $frm_this->id() . '}/{f' . $frm_prior->id() . '})" to "={f' . $frm_this->id() . '}"';
         $t->display('formula->load formula_text for "' . formulas::SYSTEM_TEXT_RENAMED . '" logged', $target, $result);
-        $result = $t->log_last_by_field($frm_reloaded, sandbox_named::FLD_DESCRIPTION, $frm_reloaded->id(), true);
+        $result = $t->log_last_by_field($frm_reloaded, sql_db::FLD_DESCRIPTION, $frm_reloaded->id(), true);
         $target = users::SYSTEM_TEST_NAME . ' added "System Test Formula Renamed description"';
         $t->display('formula->load description for "' . formulas::SYSTEM_TEXT_RENAMED . '" logged', $target, $result);
         $result = $t->log_last_by_field($frm_reloaded, formula_db::FLD_TYPE, $frm_reloaded->id(), true);

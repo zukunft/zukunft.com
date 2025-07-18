@@ -37,6 +37,7 @@ namespace cfg\verb;
 
 //include_once MODEL_COMPONENT_PATH . 'view_style.php';
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 //include_once MODEL_HELPER_PATH . 'type_object.php';
@@ -46,6 +47,7 @@ include_once DB_PATH . 'sql_field_type.php';
 
 use cfg\component\view_style;
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\helper\type_object;
@@ -80,7 +82,7 @@ class verb_db
     // all database field names excluding the id used to identify if there are some user specific changes
     const FLD_NAMES = array(
         sql::FLD_CODE_ID,
-        sandbox_named::FLD_DESCRIPTION,
+        sql_db::FLD_DESCRIPTION,
         self::FLD_PLURAL,
         self::FLD_REVERSE,
         self::FLD_PLURAL_REVERSE,
@@ -94,7 +96,7 @@ class verb_db
     );
     const FLD_LST_ALL = array(
         [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', type_object::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', type_object::FLD_DESCRIPTION_COM],
         [self::FLD_CONDITION, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
         [self::FLD_FORMULA, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_FORMULA_COM],
         [self::FLD_PLURAL_REVERSE, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_PLURAL_REVERSE_COM],

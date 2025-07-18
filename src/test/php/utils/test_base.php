@@ -3274,7 +3274,7 @@ class test_base
         $sbx->description = $description;
         $result = $sbx->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
-            return $this->write_named_log($sbx, sandbox_named::FLD_DESCRIPTION, $description, msg_id::LOG_ADD->text());
+            return $this->write_named_log($sbx, sql_db::FLD_DESCRIPTION, $description, msg_id::LOG_ADD->text());
         } else {
             return false;
         }
@@ -3293,7 +3293,7 @@ class test_base
         $result = $sbx->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_named_log($sbx,
-                sandbox_named::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
+                sql_db::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
         } else {
             return false;
         }
@@ -3376,7 +3376,7 @@ class test_base
         $result = $lnk->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $this->write_link_log_field($lnk,
-                sandbox_named::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
+                sql_db::FLD_DESCRIPTION, $new_description, msg_id::LOG_UPDATE->value, $old_description);
         } else {
             return false;
         }
