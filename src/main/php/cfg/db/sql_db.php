@@ -354,6 +354,9 @@ class sql_db
     const SETUP_INDEX_COM = 'remark: no index needed for preloaded tables such as phrase types';
     const SETUP_FOREIGN_KEY = 'foreign key constraints and auto_increment for tables';
 
+    // db field names that are used in many classes
+    const FLD_DESCRIPTION = 'description';
+
     // classes that have a database table in order of suggested table creation so that depending on tables are created later
     const DB_TABLE_CLASSES = [
         config::class,

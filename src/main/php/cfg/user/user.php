@@ -294,10 +294,13 @@ class user extends db_id_object_non_sandbox
 
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
-            $this->code_id = $db_row[sql::FLD_CODE_ID];
             $this->name = $db_row[user_db::FLD_NAME];
             $this->ip_addr = $db_row[user_db::FLD_IP_ADDR];
+            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            }
             $this->email = $db_row[user_db::FLD_EMAIL];
+            $this->code_id = $db_row[sql::FLD_CODE_ID];
             if (array_key_exists(user_db::FLD_FIRST_NAME, $db_row)) {
                 $this->first_name = $db_row[user_db::FLD_FIRST_NAME];
             }
@@ -2110,8 +2113,13 @@ class user extends db_id_object_non_sandbox
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
 
-            $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([sql_type::LOG]));
-            $upd_msg = $db_con->update($qp, 'update and log ' . $this->dsp_id());
+            if (in_array($this->name(),users::TEST_NO_LOG)) {
+                $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([]));
+                $upd_msg = $db_con->update($qp, 'update ' . $this->dsp_id());
+            } else {
+                $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([sql_type::LOG]));
+                $upd_msg = $db_con->update($qp, 'update and log ' . $this->dsp_id());
+            }
             $usr_msg->add($upd_msg);
 
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');

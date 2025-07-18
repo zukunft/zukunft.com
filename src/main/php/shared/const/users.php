@@ -117,6 +117,11 @@ class users
         self::SYSTEM_NAME
     );
 
+    // list of usernames that are only used for system testing and that does not create log entries
+    const TEST_NO_LOG = [
+        //self::TEST_USER_NAME
+    ];
+
 
     // change right levels to prevent access level gaining
     const RIGHT_LEVEL_USER = 10;

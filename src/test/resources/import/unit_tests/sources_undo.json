@@ -5,7 +5,7 @@
   "selection": [
     "unit test message to remove the added test verb via data_object based import"
   ],
-  "words": [
+  "sources": [
     {
       "name": "System Test Source",
       "exclude": true

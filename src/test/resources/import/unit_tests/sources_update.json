@@ -5,7 +5,7 @@
   "selection": [
     "unit test message for adding a description to a user via data_object based import"
   ],
-  "words": [
+  "sources": [
     {
       "name": "System Test Source",
       "description": "System Test Source Description"

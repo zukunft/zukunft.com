@@ -80,11 +80,10 @@ class import_write_tests
         $test_name = 'add the description to the test user via import';
         $imp_msg = $imf->json_file(test_files::IMPORT_USERS_UPDATE, $usr, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
-        //$test_name = 'test if the description has been added in the database';
+        $test_name = 'test if the description has been added in the database';
         $usr_add = new user();
         $usr_add->load_by_name(users::TEST_USER_NAME);
-        // TODO Prio 1 activate
-        //$t->assert($test_name, $usr_add->description, users::TEST_USER_COM);
+        $t->assert($test_name, $usr_add->description, users::TEST_USER_COM);
 
         $test_name = 'remove the test user via import';
         $imp_msg = $imf->json_file(test_files::IMPORT_USERS_UNDO, $usr, false);
@@ -95,8 +94,8 @@ class import_write_tests
         $usr_add = new user();
         $usr_add->load_by_name(users::TEST_ADD_NAME);
         $t->assert($test_name, $usr_add->id(), 0);
-        */
 
+        // TODO prio 1 activate
         $test_name = 'remove the test user directly as fallback to cleanup the database';
         $usr_add = new user();
         $usr_add->load_by_name(users::TEST_USER_NAME);
@@ -106,6 +105,7 @@ class import_write_tests
         $usr_add = new user();
         $usr_add->load_by_name(users::TEST_USER_NAME);
         $t->assert($test_name, $usr_add->id(), 0);
+        */
 
 
         $t->subheader($ts . 'word');
@@ -257,11 +257,10 @@ class import_write_tests
         $test_name = 'add the description to the test source via import';
         $imp_msg = $imf->json_file(test_files::IMPORT_SOURCES_UPDATE, $usr, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
-        //$test_name = 'test if the description has been added in the database';
+        $test_name = 'test if the description has been added in the database';
         $src = new source($usr);
         $src->load_by_name(sources::SYSTEM_TEST_ADD);
-        // TODO Prio 1 activate
-        //$t->assert($test_name, $src->description(), sources::SYSTEM_TEST_ADD_COM);
+        $t->assert($test_name, $src->description(), sources::SYSTEM_TEST_ADD_COM);
 
         $test_name = 'remove the test source via import';
         $imp_msg = $imf->json_file(test_files::IMPORT_SOURCES_UNDO, $usr, false);

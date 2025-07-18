@@ -210,6 +210,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
                         'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id()
                         . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $usr_req);
                 } else {
+                    // TODO check if there are related log entries and if yes exclude it instead of delete
                     $usr_msg->add($this->del_exe($usr_req));
                 }
             }
