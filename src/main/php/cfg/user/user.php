@@ -2113,7 +2113,7 @@ class user extends db_id_object_non_sandbox
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
 
-            if (in_array($this->name(),users::TEST_NO_LOG)) {
+            if (in_array($this->name(), users::TEST_NO_LOG)) {
                 $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([]));
                 $upd_msg = $db_con->update($qp, 'update ' . $this->dsp_id());
             } else {
@@ -2292,7 +2292,9 @@ class user extends db_id_object_non_sandbox
         // update does not need to return an id
         $sc_par_lst_used->add(sql_type::NO_ID_RETURN);
         // log for users is always on and log functions must always use named parameters
-        $sc_par_lst_used->add(sql_type::NAMED_PAR);
+        if ($sc_par_lst->incl_log()) {
+            $sc_par_lst_used->add(sql_type::NAMED_PAR);
+        }
         // get the field names, values and parameter types that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
@@ -2331,29 +2333,56 @@ class user extends db_id_object_non_sandbox
             // list of parameters actually used in order of the function usage
             $par_lst_out = new sql_par_field_list();
 
-            // init the function body
-            $sql = $sc->sql_func_start('', $sc_par_lst_used);
-
-            // don't use the log parameter for the sub queries
-            $sc_par_lst_sub = $sc_par_lst_used->remove(sql_type::LOG);
-            $sc_par_lst_sub->add(sql_type::LIST);
-            $sc_par_lst_log = clone $sc_par_lst_sub;
-            $sc_par_lst_log->add(sql_type::UPDATE_PART);
-
             // get the fields actually changed
             $fld_lst = $fvt_lst->names();
             $fld_lst_chg = array_intersect($fld_lst, $fld_lst_all);
 
-            // add the row id
-            $fvt_lst->add_field(
-                $sc->id_field_name(),
-                $this->id(),
-                db_object_seq_id::FLD_ID_SQL_TYP);
+            // init the function body
+            if ($sc_par_lst->incl_log()) {
+                $sql = $sc->sql_func_start('', $sc_par_lst_used);
 
-            // create the query parameters for the log entries for the single fields
-            $qp_log = $sc->sql_func_log_update($this::class, $usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id());
-            $sql .= ' ' . $qp_log->sql;
-            $par_lst_out->add_list($qp_log->par_fld_lst);
+                // don't use the log parameter for the sub queries
+                $sc_par_lst_sub = $sc_par_lst_used->remove(sql_type::LOG);
+                $sc_par_lst_sub->add(sql_type::LIST);
+                $sc_par_lst_log = clone $sc_par_lst_sub;
+                $sc_par_lst_log->add(sql_type::UPDATE_PART);
+
+                // add the row id
+                $fvt_lst->add_field(
+                    $sc->id_field_name(),
+                    $this->id(),
+                    db_object_seq_id::FLD_ID_SQL_TYP);
+
+                // create the query parameters for the log entries for the single fields
+                $qp_log = $sc->sql_func_log_update($this::class, $usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id());
+                $sql .= ' ' . $qp_log->sql;
+                $par_lst_out->add_list($qp_log->par_fld_lst);
+            } else {
+                $sql = '';
+
+                // add the parameters with type
+                $par_lst_out = new sql_par_field_list();
+                foreach ($fld_lst_chg as $fld) {
+                    $par_lst_out->add_field(
+                        $fld,
+                        $fvt_lst->get_value($fld),
+                        $fvt_lst->get_type($fld));
+                }
+
+                // add the row id
+                $fvt_lst->add_field(
+                    $sc->id_field_name(),
+                    $this->id(),
+                    db_object_seq_id::FLD_ID_SQL_TYP);
+
+                // add the row id of the standard table for user overwrites
+                $log_id = $fvt_lst->get_value($id_fld);
+                $id_type = $fvt_lst->get_type($id_fld);
+                $par_lst_out->add_field(
+                    $id_fld,
+                    $log_id,
+                    $id_type);
+            }
 
             // update the fields excluding the unique id
             $update_fvt_lst = new sql_par_field_list();
@@ -2361,7 +2390,11 @@ class user extends db_id_object_non_sandbox
                 $update_fvt_lst->add($fvt_lst->get($fld));
             }
             $sc_update = clone $sc;
-            $sc_par_lst_upd = new sql_type_list([sql_type::NAMED_PAR, sql_type::UPDATE, sql_type::UPDATE_PART]);
+            if ($sc_par_lst->incl_log()) {
+                $sc_par_lst_upd = new sql_type_list([sql_type::NAMED_PAR, sql_type::UPDATE, sql_type::UPDATE_PART]);
+            } else {
+                $sc_par_lst_upd = new sql_type_list([sql_type::UPDATE, sql_type::UPDATE_PART]);
+            }
             $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
             $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
             $qp_update->sql = $sc_update->create_sql_update(
@@ -2369,20 +2402,33 @@ class user extends db_id_object_non_sandbox
             // add the insert row to the function body
             $sql .= ' ' . $qp_update->sql . ' ';
 
-            $sql .= $sc->sql_func_end();
+            if ($sc_par_lst->incl_log()) {
+                $sql .= $sc->sql_func_end();
+            }
 
             // create the query parameters for the actual change
             $qp_chg = clone $qp;
-            $qp_chg->sql = $sc->create_sql_update(
-                $id_fld, $id_val, $par_lst_out, [], $sc_par_lst_used);
-            $qp_chg->par = $fvt_lst->values();
+            if ($sc_par_lst->incl_log()) {
+                $qp_chg->sql = $sc->create_sql_update(
+                    $id_fld, $id_val, $par_lst_out, [], $sc_par_lst_used);
+                $qp_chg->par = $fvt_lst->values();
+            }
 
             // merge all together and create the function
-            $qp->sql = $qp_chg->sql . $sql . ';';
+            if ($sc_par_lst->incl_log()) {
+                $qp->sql = $qp_chg->sql . $sql . ';';
+            } else {
+                $sc->set_par_list($par_lst_out->sql_field_list());
+                $qp->sql = $sc->prepare_sql($sql, $qp_chg->name, $par_lst_out->types());
+            }
             $qp->par = $par_lst_out->values();
 
             // create the call sql statement
-            return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
+            if ($sc_par_lst->incl_log()) {
+                return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
+            } else {
+                return $qp;
+            }
         } else {
             return $qp;
         }

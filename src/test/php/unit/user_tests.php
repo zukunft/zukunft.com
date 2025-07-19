@@ -86,8 +86,7 @@ class user_tests
         $t->subheader($ts . 'sql write update');
         $usr_changed = $usr_test->cloned(users::SYSTEM_TEST_PARTNER_NAME);
         $t->assert_sql_update($sc, $usr_changed, $usr_test, [sql_type::LOG]);
-        // TODO Prio 0 activate
-        //$t->assert_sql_update($sc, $usr_changed, $usr_test);
+        $t->assert_sql_update($sc, $usr_changed, $usr_test);
 
         $t->subheader($ts . 'sql write delete');
         $t->assert_sql_delete($sc, $usr_test, [sql_type::LOG]);

@@ -653,6 +653,15 @@ class sql_par_field_list
         }
     }
 
+    function sql_field_list(): sql_field_list
+    {
+        $lst = new sql_field_list();
+        foreach ($this->lst as $par_fld) {
+            $lst->add_par_field($par_fld);
+        }
+        return $lst;
+    }
+
     /**
      * create the sql function call parameter statement
      * @param sql_creator $sc

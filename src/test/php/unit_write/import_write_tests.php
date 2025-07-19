@@ -94,8 +94,8 @@ class import_write_tests
         $usr_add = new user();
         $usr_add->load_by_name(users::TEST_ADD_NAME);
         $t->assert($test_name, $usr_add->id(), 0);
+        */
 
-        // TODO prio 1 activate
         $test_name = 'remove the test user directly as fallback to cleanup the database';
         $usr_add = new user();
         $usr_add->load_by_name(users::TEST_USER_NAME);
@@ -105,7 +105,6 @@ class import_write_tests
         $usr_add = new user();
         $usr_add->load_by_name(users::TEST_USER_NAME);
         $t->assert($test_name, $usr_add->id(), 0);
-        */
 
 
         $t->subheader($ts . 'word');
@@ -284,7 +283,7 @@ class import_write_tests
 
         $t->subheader($ts . 'reference');
 
-        /* TODO PRIO 1 activate
+        /* TODO Prio 1 activate
         $test_name = 'import the test reference';
         $imp_msg = $imf->json_file(test_files::IMPORT_WORDS, $usr, false);
         $t->assert_true($test_name, $imp_msg->is_ok());

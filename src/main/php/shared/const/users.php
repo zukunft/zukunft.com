@@ -120,7 +120,7 @@ class users
 
     // list of usernames that are only used for system testing and that does not create log entries
     const TEST_NO_LOG = [
-        //self::TEST_USER_NAME
+        self::TEST_USER_NAME
     ];
 
 
