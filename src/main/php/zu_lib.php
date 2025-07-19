@@ -16,7 +16,9 @@ use html\phrase\phrase_group as phrase_group_dsp;
     but first this needs to be prioritized:
 
     TODO Release 0.0.3
+    TODO complete the import db write tests (pending: )
     TODO make main backend object vars private (pending: ref, value, formula, result, view, component, user)
+    TODO complete and test the url mapper in the frontend
     TODO clean up import_mapper and move all mapping from import_obj to the mapper
 
 
@@ -55,6 +57,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO Release 0.0.4
     TODO save the config for backend, frontend and user as a cache json file and use to trigger for recreation
     TODO activate the class section test
+    TODO include owner and user in im- and export
 
     TODO set the vars of the backend objects to private e.g. to make sure that missing db updates can be detected
     TODO set vars in the frontend object to public and reduce the set and get function because frontend objects never save directly to the database

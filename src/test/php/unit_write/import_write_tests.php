@@ -125,11 +125,10 @@ class import_write_tests
         $test_name = 'remove the test word via import';
         $imp_msg = $imf->json_file(test_files::IMPORT_WORDS_UNDO, $usr, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
-        //$test_name = 'test if the test word has been deleted from the database';
+        $test_name = 'test if the test word has been deleted from the database';
         $wrd = new word($usr);
         $wrd->load_by_name(words::TEST_ADD);
-        // TODO prio 2 activate but least the removal of the user
-        //$t->assert($test_name, $wrd->id(), 0);
+        $t->assert($test_name, $wrd->id(), 0);
 
         $test_name = 'remove the test word directly as fallback to cleanup the database';
         $wrd = new word($usr);

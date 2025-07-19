@@ -672,9 +672,9 @@ class sandbox_list_named extends sandbox_list
      */
 
     /**
-     * select the triples that needs to be updated in the database
-     * @param sandbox_list_named $db_lst list of triples as loaded from the database
-     * @return triple_list with the triples that needs to be updated
+     * select the sandbox objects that needs to be updated in the database
+     * @param sandbox_list_named $db_lst list of sandbox objects as loaded from the database
+     * @return sandbox_list_named with the sandbox objects that needs to be updated
      */
     function update_list(sandbox_list_named $db_lst): sandbox_list_named
     {
@@ -690,6 +690,29 @@ class sandbox_list_named extends sandbox_list
             }
         }
         return $upd_lst;
+    }
+
+    /**
+     * select the sandbox objects that can be deleted from the database because they are not used
+     * @param sandbox_list_named $db_lst list of sandbox objects as loaded from the database
+     * @return sandbox_list_named with the sandbox objects that can be deleted
+     */
+    function delete_list(sandbox_list_named $db_lst): sandbox_list_named
+    {
+        $del_lst = clone $this;
+        $del_lst->reset();
+        foreach ($this->lst() as $sbx) {
+            // TODO test if get_by_obj_id is faster
+            $db_sbx = $db_lst->get_by_name($sbx->name());
+            if ($db_sbx != null) {
+                // TODO review not_used so that e.g. words are "not_used" that have an owner but are not used for other opbejct like values
+                // if ($sbx->is_excluded() and $sbx->not_used()) {
+                if ($sbx->is_excluded()) {
+                    $del_lst->add($sbx);
+                }
+            }
+        }
+        return $del_lst;
     }
 
 
@@ -718,23 +741,27 @@ class sandbox_list_named extends sandbox_list
 
         $load_per_sec = $cfg->get_by([$cfg_wrd, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $upd_per_sec = $cfg->get_by([$cfg_wrd, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $del_per_sec = $cfg->get_by([$cfg_wrd, words::DELETE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         if ($this->is_empty()) {
             $usr_msg->add_info_text('no ' . $cfg_wrd . ' to save');
         } else {
-            // load the words that are already in the database
+            // load the sandbox objects that are already in the database
             $step_time = $this->count() / $load_per_sec;
             $imp->step_start(msg_id::LOAD, $class, $this->count(), $step_time);
             $db_lst->load_by_names($this->names());
             $imp->step_end($db_lst->count(), $load_per_sec);
 
-            // create any missing sql functions and insert the missing words
+            // create any missing sql functions and insert the missing sandbox objects
             $usr_msg->add($this->insert($db_lst, true, $imp, $class));
 
-            // create any missing sql update functions and update the words
+            // create any missing sql update functions and update the sandbox objects
             // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
             // TODO create blocks of update function calls
             $usr_msg->add($this->update($db_lst, true, $imp, $class, $upd_per_sec));
+
+            // create any missing sql delete functions and delete unused sandbox objects
+            $usr_msg->add($this->delete($db_lst, true, $imp, $class, $del_per_sec));
         }
 
         return $usr_msg;
@@ -885,6 +912,70 @@ class sandbox_list_named extends sandbox_list
     }
 
     /**
+     * create any missing sql functions and queries to exclude or delete the objects of the list
+     * TODO create blocks of delete function calls
+     *
+     * @param word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst filled with the objects that are already in the db
+     * @param bool $use_func true if sql function should be used to insert the named user sandbox objects
+     * @param import|null $imp the import object e.g. with the ETA
+     * @param string $class the object class that should be stored in the database
+     * @param float $del_per_sec the expected deletes per second used for the progress bar calculation
+     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     */
+    function delete(
+        word_list|triple_list|phrase_list|source_list|sandbox_list_named $db_lst,
+        bool                                                             $use_func = true,
+        import                                                           $imp = null,
+        string                                                           $class = '',
+        float                                                            $del_per_sec = 0.1
+    ): user_message
+    {
+        global $db_con;
+
+        // prepare
+        $sc = $db_con->sql_creator();
+        $usr_msg = new user_message();
+
+        // get the objects that need to be added
+        $imp->step_start(msg_id::CHECK, $class, $db_lst->count());
+        $del_lst = $this->delete_list($db_lst);
+        $imp->step_end($db_lst->count());
+
+        if (!$del_lst->is_empty()) {
+
+            // get the sql call to add the missing objects
+            $del_calls = $del_lst->sql_delete($sc, $db_lst, $use_func);
+            $imp->step_start(msg_id::PREPARE, $class, $del_calls->count());
+
+            // get the functions that are already in the database
+            $db_func_lst = $db_con->get_functions();
+
+            // get the sql functions that have not yet been created
+            $func_to_create = $del_calls->sql_functions_missing($db_func_lst);
+
+            // get the first object that have requested the missing function
+            $func_create_obj = clone $del_lst;
+            $func_create_obj_names = $func_to_create->object_names();
+            $func_create_obj = $func_create_obj->select_by_name($func_create_obj_names);
+
+            // create the missing sql functions and add the first missing object
+            $func_to_create = $func_create_obj->sql_delete($sc, $db_lst);
+            $func_to_create->exe_delete($class);
+            $imp->step_end($func_to_create->count());
+
+            // add the remaining missing words or triples
+            $step_time = $db_lst->count() / $del_per_sec;
+            $imp->step_start(msg_id::DEL, $class, $db_lst->count(), $step_time);
+            $del_calls = $del_lst->sql_delete_call_with_par($sc, $db_lst, $use_func);
+            $usr_msg->add($del_calls->exe_delete($class));
+
+            $imp->step_end($db_lst->count(), $del_per_sec);
+        }
+
+        return $usr_msg;
+    }
+
+    /**
      * get a list of all sql functions that are needed to add all triples of this list to the database
      * @return sql_par_list with the sql function names
      */
@@ -921,6 +1012,30 @@ class sandbox_list_named extends sandbox_list
                     $sc_par_lst->add(sql_type::LOG);
                 }
                 $qp = $sbx->sql_update($sc, $db_row, $sc_par_lst);
+                $qp->obj_name = $sbx->name();
+                $sql_list->add_by_name($qp);
+            }
+        }
+        return $sql_list;
+    }
+
+    /**
+     * get a list of all sql functions that are needed to delete all objects of this list to the database
+     * @return sql_par_list with the sql function names
+     */
+    function sql_delete(sql_creator $sc, sandbox_list_named $db_lst, bool $use_func = true): sql_par_list
+    {
+        $sql_list = new sql_par_list();
+        foreach ($this->lst() as $sbx) {
+            $db_row = $db_lst->get_by_name($sbx->name());
+            // another validation check as a second line of defence
+            if ($db_row != null) {
+                // check always user sandbox and normal name, because reading from database for check would take longer
+                $sc_par_lst = new sql_type_list();
+                if ($use_func) {
+                    $sc_par_lst->add(sql_type::LOG);
+                }
+                $qp = $sbx->sql_delete($sc, $sc_par_lst);
                 $qp->obj_name = $sbx->name();
                 $sql_list->add_by_name($qp);
             }
@@ -970,6 +1085,31 @@ class sandbox_list_named extends sandbox_list
                     $sc_par_lst->add(sql_type::LOG);
                 }
                 $qp = $sbx->sql_update($sc, $db_row, $sc_par_lst);
+                $qp->obj_name = $sbx->name();
+                $sql_list->add($qp);
+            }
+        }
+        return $sql_list;
+    }
+
+    /**
+     * get a list of all sql function names that are needed to delete all loaded of this list to the database
+     * @param bool $use_func true if sql function should be used to write the named user sandbox objects to the database
+     * @return sql_par_list with the sql function names
+     */
+    function sql_delete_call_with_par(sql_creator $sc, sandbox_list_named $db_lst, bool $use_func = true): sql_par_list
+    {
+        $sql_list = new sql_par_list();
+        foreach ($this->lst() as $sbx) {
+            $db_row = $db_lst->get_by_name($sbx->name());
+            // another validation check as a second line of defence
+            if ($db_row != null) {
+                // check always user sandbox and normal name, because reading from database for check would take longer
+                $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
+                if ($use_func) {
+                    $sc_par_lst->add(sql_type::LOG);
+                }
+                $qp = $sbx->sql_delete($sc, $sc_par_lst);
                 $qp->obj_name = $sbx->name();
                 $sql_list->add($qp);
             }

@@ -130,9 +130,26 @@ class sql_par_list
         $usr_msg = new user_message();
 
         foreach ($this->lst as $qp) {
-            $ins_msg = $db_con->update($qp, 'update ' . $class . ' from list');
-            $usr_msg->add($ins_msg);
-            $usr_msg->add_list_name_id($ins_msg, $qp->obj_name);
+            $upd_msg = $db_con->update($qp, 'update ' . $class . ' from list');
+            $usr_msg->add($upd_msg);
+            $usr_msg->add_list_name_id($upd_msg, $qp->obj_name);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return user_message with the parameter names formatted for sql
+     */
+    function exe_delete(string $class = ''): user_message
+    {
+        global $db_con;
+
+        $usr_msg = new user_message();
+
+        foreach ($this->lst as $qp) {
+            $del_msg = $db_con->delete($qp, 'delete ' . $class . ' from list');
+            $usr_msg->add($del_msg);
+            $usr_msg->add_list_name_id($del_msg, $qp->obj_name);
         }
         return $usr_msg;
     }
