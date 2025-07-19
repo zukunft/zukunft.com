@@ -650,9 +650,10 @@ class data_object
      * add all words, triples and values to the database
      * or update the database
      * @param import $imp the import object that includes the start time of the import
+     * @param user $usr_req the user who has requested the import
      * @return user_message ok or the error message for the user with the suggested solution
      */
-    function save(import $imp): user_message
+    function save(import $imp, user $usr_req): user_message
     {
         global $cfg;
 
@@ -671,7 +672,7 @@ class data_object
         // save the data lists in order of the dependencies
 
         // start with the system configuration
-        $usr_msg->add($this->save_users($imp));
+        $usr_msg->add($this->save_users($imp, $usr_req));
         $usr_msg->add($this->save_ip_ranges($imp));
 
         // import first the words
@@ -985,9 +986,10 @@ class data_object
      * add or update all users to the database
      * TODO add the requesting user to prevent access right gains
      * @param import $imp the import object that includes the start time of the import
+     * @param user $usr_req the user who has requested the database update of the users
      * @return user_message ok or the error message for the user with the suggested solution
      */
-    private function save_users(import $imp): user_message
+    private function save_users(import $imp, user $usr_req): user_message
     {
         global $cfg;
         $usr_msg = new user_message();
@@ -998,7 +1000,7 @@ class data_object
         if (!$usr_lst->is_empty()) {
             $usr_est = $usr_lst->count() / $usr_per_sec;
             $imp->step_start(msg_id::SAVE, user::class, $usr_lst->count(), $usr_est);
-            $usr_msg->add($usr_lst->save());
+            $usr_msg->add($usr_lst->save($usr_req));
             $imp->step_end($usr_lst->count(), $usr_per_sec);
         }
         return $usr_msg;

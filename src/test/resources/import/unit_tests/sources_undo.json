@@ -8,7 +8,7 @@
   "sources": [
     {
       "name": "System Test Source",
-      "exclude": true
+      "excluded": true
     }
   ]
 }

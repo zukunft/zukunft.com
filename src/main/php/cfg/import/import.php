@@ -327,6 +327,7 @@ class import
 
     /**
      * drop a zukunft.com yaml object to the database
+     * TODO Prio 1 rename $usr_trigger to $usr_req
      *
      * @param string $yaml_str the zukunft.com YAML message to import as a string
      * @param user $usr_trigger the user who has triggered the import
@@ -366,7 +367,7 @@ class import
 
             // write to the database
             $this->step_main_start(msg_id::SAVE, $this->est_time_store);
-            $usr_msg = $dto->save($this);
+            $usr_msg = $dto->save($this, $usr_trigger);
             $usr_msg->set_checksum($dto->value_list()->count());
             $this->step_main_end();
         }
@@ -421,7 +422,7 @@ class import
 
             // write to the database
             $this->step_main_start(msg_id::SAVE, $this->est_time_store);
-            $usr_msg->add($dto->save($this));
+            $usr_msg->add($dto->save($this, $usr_trigger));
             $this->step_main_end();
 
         }

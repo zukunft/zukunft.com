@@ -8,7 +8,7 @@
   "triples": [
     {
       "name": "System Test Triple",
-      "exclude": true
+      "excluded": true
     }
   ]
 }

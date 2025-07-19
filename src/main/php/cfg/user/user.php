@@ -313,17 +313,37 @@ class user extends db_id_object_non_sandbox
         if ($result) {
             $this->name = $db_row[user_db::FLD_NAME];
             $this->ip_addr = $db_row[user_db::FLD_IP_ADDR];
+            $this->email = $db_row[user_db::FLD_EMAIL];
+
             if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             }
-            $this->email = $db_row[user_db::FLD_EMAIL];
-            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
             if (array_key_exists(user_db::FLD_FIRST_NAME, $db_row)) {
                 $this->first_name = $db_row[user_db::FLD_FIRST_NAME];
             }
             if (array_key_exists(user_db::FLD_LAST_NAME, $db_row)) {
                 $this->last_name = $db_row[user_db::FLD_LAST_NAME];
             }
+
+            $this->profile_id = $db_row[user_db::FLD_PROFILE];
+            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
+                $this->excluded = $db_row[sql_db::FLD_EXCLUDED];
+            }
+
+            if (array_key_exists(user_db::FLD_ACTIVATION_KEY, $db_row)) {
+                $this->activation_key = $db_row[user_db::FLD_ACTIVATION_KEY];
+            }
+            if (array_key_exists(user_db::FLD_ACTIVATION_TIMEOUT, $db_row)) {
+                $this->activation_timeout = $db_row[user_db::FLD_ACTIVATION_TIMEOUT];
+            }
+            if (array_key_exists(user_db::FLD_DB_NOW, $db_row)) {
+                $this->db_now = $db_row[user_db::FLD_DB_NOW];
+            }
+
+            $this->dec_point = shared_config::DEFAULT_DEC_POINT;
+            $this->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
+            $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
             if (array_key_exists(user_db::FLD_TERM, $db_row)) {
                 if ($db_row[user_db::FLD_TERM] != null) {
                     $trm = new term($this);
@@ -338,19 +358,7 @@ class user extends db_id_object_non_sandbox
                     $this->source = $src;
                 }
             }
-            $this->profile_id = $db_row[user_db::FLD_PROFILE];
-            $this->dec_point = shared_config::DEFAULT_DEC_POINT;
-            $this->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
-            $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
-            if (array_key_exists(user_db::FLD_ACTIVATION_KEY, $db_row)) {
-                $this->activation_key = $db_row[user_db::FLD_ACTIVATION_KEY];
-            }
-            if (array_key_exists(user_db::FLD_ACTIVATION_TIMEOUT, $db_row)) {
-                $this->activation_timeout = $db_row[user_db::FLD_ACTIVATION_TIMEOUT];
-            }
-            if (array_key_exists(user_db::FLD_DB_NOW, $db_row)) {
-                $this->db_now = $db_row[user_db::FLD_DB_NOW];
-            }
+
             $result = true;
             log_debug($this->name, $debug - 25);
         }
@@ -454,6 +462,10 @@ class user extends db_id_object_non_sandbox
                 ]);
             }
         }
+        if (key_exists(json_fields::EXCLUDED, $json)) {
+            $this->excluded = $json[json_fields::EXCLUDED];
+        }
+        // TODO Prio 2 report unexpected json field names
 
     }
 
@@ -465,6 +477,7 @@ class user extends db_id_object_non_sandbox
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
+     * TODO Prio 1 add the missing fields like ip_addr
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
@@ -1132,9 +1145,10 @@ class user extends db_id_object_non_sandbox
             $sys_usr = new user();
             $sys_usr->set_name(users::SYSTEM_NAME);
             $sys_usr->set_email(users::SYSTEM_EMAIL);
-            $sys_usr->set_profile_id(user_profiles::SYSTEM_ID);
             $sys_usr->description = users::SYSTEM_COM;
+            $sys_usr->set_profile_id(user_profiles::SYSTEM_ID);
             $sys_usr->code_id = users::SYSTEM_CODE_ID;
+            $sys_usr->excluded = false;
             $usr_msg->add($sys_usr->save_direct());
             if (!$usr_msg->is_ok()) {
                 log_fatal('system user cannot be created', 'sql_db->create_system_user');
@@ -1144,11 +1158,12 @@ class user extends db_id_object_non_sandbox
                 // add the local admin user to use it for the import
                 $local_usr = new user();
                 $local_usr->set_name(users::SYSTEM_ADMIN_NAME);
-                $local_usr->set_email(users::SYSTEM_ADMIN_EMAIL);
-                $local_usr->set_profile(user_profiles::ADMIN);
-                $local_usr->description = users::SYSTEM_ADMIN_COM;
-                $local_usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
                 $local_usr->ip_addr = users::SYSTEM_ADMIN_IP;
+                $local_usr->set_email(users::SYSTEM_ADMIN_EMAIL);
+                $local_usr->description = users::SYSTEM_ADMIN_COM;
+                $local_usr->set_profile(user_profiles::ADMIN);
+                $local_usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
+                $local_usr->excluded = false;
                 $usr_msg->add($local_usr->save_direct());
                 if (!$usr_msg->is_ok()) {
                     log_fatal('local admin user cannot be created', 'sql_db->create_system_user');
@@ -1392,6 +1407,7 @@ class user extends db_id_object_non_sandbox
         // reset all parameters of this user object
         $this->reset();
 
+        // TODO Prio 0 move to import_mapper
         foreach ($json_obj as $key => $value) {
             if ($key == json_fields::NAME) {
                 $this->name = $value;
@@ -1713,6 +1729,7 @@ class user extends db_id_object_non_sandbox
     function dummy_all(): void
     {
         $this->set_id(0);
+        // TODO Prio 1 use a const
         $this->code_id = 'all';
         $this->name = 'standard user view for all users';
     }
@@ -2655,6 +2672,22 @@ class user extends db_id_object_non_sandbox
         */
 
         // TODO add user_db::FLD_LEVEL
+
+        if ($db_usr->excluded  <> $this->excluded) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sql_db::FLD_EXCLUDED,
+                $this->excluded,
+                sql_db::FLD_EXCLUDED_SQL_TYP,
+                $db_usr->excluded
+            );
+        }
 
         // the is used as the name if no name is given
         if ($db_usr->email <> $this->email) {

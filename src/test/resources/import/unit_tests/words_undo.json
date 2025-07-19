@@ -8,7 +8,7 @@
   "words": [
     {
       "name": "System Test Word",
-      "exclude": true
+      "excluded": true
     }
   ]
 }

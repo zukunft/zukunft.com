@@ -67,7 +67,7 @@ class import_write_tests
         $t->header($ts);
 
 
-        $t->subheader($ts . 'word');
+        $t->subheader($ts . 'user');
 
         $test_name = 'import the test user';
         $imp_msg = $imf->json_file(test_files::IMPORT_USERS, $usr, false);
@@ -88,13 +88,10 @@ class import_write_tests
         $test_name = 'remove the test user via import';
         $imp_msg = $imf->json_file(test_files::IMPORT_USERS_UNDO, $usr, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
-        // TODO prio 2 activate but least the removal of the user
-        /*
         $test_name = 'test if the test user has been deleted from the database';
         $usr_add = new user();
-        $usr_add->load_by_name(users::TEST_ADD_NAME);
+        $usr_add->load_by_name(users::TEST_USER_NAME);
         $t->assert($test_name, $usr_add->id(), 0);
-        */
 
         $test_name = 'remove the test user directly as fallback to cleanup the database';
         $usr_add = new user();

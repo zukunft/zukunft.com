@@ -345,6 +345,7 @@ CREATE TABLE IF NOT EXISTS users
     code_id            varchar(100) DEFAULT NULL COMMENT 'to select e.g. the system batch user',
     user_profile_id    bigint       DEFAULT NULL COMMENT 'to define the user roles and read and write rights',
     user_type_id       bigint       DEFAULT NULL COMMENT 'to set the confirmation level of a user',
+    excluded           smallint     DEFAULT NULL COMMENT 'true if the user is deactivated but cannot be deleted due to log entries',
     right_level        smallint     DEFAULT NULL COMMENT 'the access right level to prevent not permitted right gaining',
     email              varchar(255) DEFAULT NULL COMMENT 'the primary email for verification',
     email_status       smallint     DEFAULT NULL COMMENT 'if the email has been verified or if a password reset has been send',

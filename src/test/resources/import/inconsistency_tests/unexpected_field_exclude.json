@@ -8,7 +8,7 @@
   "users": [
     {
       "name": "zukunft.com system write test user",
-      "excluded": true
+      "exclude": true
     }
   ]
 }

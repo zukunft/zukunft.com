@@ -109,6 +109,7 @@ class user_db extends db_object_seq_id
     const FLD_PROFILE = 'user_profile_id';
     const FLD_TYPE_ID_COM = 'to set the confirmation level of a user';
     const FLD_TYPE_ID = 'user_type_id';
+    const FLD_EXCLUDED_COM = 'true if the user is deactivated but cannot be deleted due to log entries';
     const FLD_LEVEL_COM = 'the access right level to prevent not permitted right gaining';
     const FLD_LEVEL = 'right_level';
     // online verification
@@ -196,6 +197,7 @@ class user_db extends db_object_seq_id
         [self::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
         [self::FLD_PROFILE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_profile::class, self::FLD_PROFILE_COM],
         [self::FLD_TYPE_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_type::class, self::FLD_TYPE_ID_COM],
+        [sql_db::FLD_EXCLUDED, sql_db::FLD_EXCLUDED_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_EXCLUDED_COM],
         [self::FLD_LEVEL, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_LEVEL_COM],
         // online verification
         [self::FLD_EMAIL, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_EMAIL_COM],

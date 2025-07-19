@@ -498,6 +498,7 @@ class create_test_objects extends test_base
     }
 
     /**
+     * TODO Prio 1 fill up all used vars
      * @return user used for unit testing with all vars set
      */
     function user_filled(): user
@@ -505,6 +506,7 @@ class create_test_objects extends test_base
         $usr = new user();
         $usr->set_name(users::TEST_USER_NAME);
         $usr->ip_addr = users::TEST_USER_IP;
+        $usr->excluded = true;
         return $usr;
     }
 
