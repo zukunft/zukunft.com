@@ -479,6 +479,17 @@ class data_object
     {
         $this->phr_lst_dirty = true;
         $this->trm_lst_dirty = true;
+
+        // for triples that have only the name get the links from the $dto object
+        /* TODO Prio 2 use cache to be able to add a description to a named link without repeating the link objects in the import file
+        if ($trp->has_name() and $trp->link_incomplete()) {
+            $trp_dto = $this->get_trp_by_name($trp->name());
+            if ($trp_dto != null) {
+                $trp->fill($trp_dto);
+            }
+        }
+        */
+
         $this->trp_lst->add_by_name($trp);
     }
 
@@ -721,7 +732,7 @@ class data_object
                     $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
                     $usr_msg->add($trp_lst->save($cache, $imp));
                     $imp->step_end($trp_lst->count(), $trp_per_sec);
-                    if ($trp_lst->count() > 0) {
+                    if ($usr_msg->added_depending()) {
                         $trp_add = true;
                     }
 

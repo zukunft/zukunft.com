@@ -86,6 +86,9 @@ class user_message
     private int|string $db_row_id;
     // list of database names and id used for inserting a list
     private array $db_row_id_lst;
+    // true an object has been added that might have objects depending on this object
+    // e.g. if a triple has been added more word or triples needs to be added
+    private bool $added_depending = false;
     // to trace to progress
     private string $url;
 
@@ -109,6 +112,7 @@ class user_message
         }
         $this->db_row_id = 0;
         $this->db_row_id_lst = [];
+        $this->added_depending = false;
         $this->msg_id_lst = [];
         $this->msg_var_lst = [];
         $this->typ_lst = [];
@@ -194,6 +198,11 @@ class user_message
     function db_row_id_lst(): array
     {
         return $this->db_row_id_lst;
+    }
+
+    function added_depending(): bool
+    {
+        return $this->added_depending;
     }
 
 
@@ -416,6 +425,9 @@ class user_message
 
         $lib = new library();
         $this->db_row_id_lst = $lib->array_merge_by_key($this->db_row_id_lst, $msg_to_add->db_row_id_lst);
+        if ($msg_to_add->added_depending()) {
+            $this->added_depending = true;
+        }
     }
 
     /**
@@ -430,6 +442,11 @@ class user_message
         if ($id != 0 and $name != '') {
             $this->db_row_id_lst[$name] = $id;
         }
+    }
+
+    function set_added_depending(): void
+    {
+        $this->added_depending = true;
     }
 
 

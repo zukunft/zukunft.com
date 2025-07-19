@@ -195,11 +195,10 @@ class import_write_tests
         $test_name = 'add the description to the test triple via import';
         $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLES_UPDATE, $usr, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
-        //$test_name = 'test if the description has been added in the database';
+        $test_name = 'test if the description has been added in the database';
         $trp = new triple($usr);
         $trp->load_by_name(triples::SYSTEM_TEST_ADD);
-        // TODO Prio 1 activate
-        //$t->assert($test_name, $trp->description(), triples::SYSTEM_TEST_ADD_COM);
+        $t->assert($test_name, $trp->description(), triples::SYSTEM_TEST_ADD_COM);
 
         $test_name = 'remove the test triple via import';
         $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLES_UNDO, $usr, false);

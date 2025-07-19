@@ -5,9 +5,20 @@
   "selection": [
     "unit test message for adding a description to a user via data_object based import"
   ],
+  "words": [
+    {
+      "name": "System Test Word"
+    },
+    {
+      "name": "System Test Word To"
+    }
+  ],
   "triples": [
     {
       "name": "System Test Triple",
+      "from": "System Test Word",
+      "verb": "is a",
+      "to": "System Test Word To",
       "description": "System Test Triple Description"
     }
   ]

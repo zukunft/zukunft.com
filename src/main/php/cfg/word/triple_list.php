@@ -713,6 +713,9 @@ class triple_list extends sandbox_list_named
                 $step_time = $add_lst->count() / $save_per_sec;
                 $imp->step_start(msg_id::SAVE, triple::class, $add_lst->count(), $step_time);
                 $usr_msg->add($add_lst->insert($cache, true, $imp, triple::class));
+                if ($add_lst->count() > 0) {
+                    $usr_msg->set_added_depending();
+                }
                 $imp->step_end($add_lst->count(), $save_per_sec);
 
                 // create any missing sql update functions and update the triples
