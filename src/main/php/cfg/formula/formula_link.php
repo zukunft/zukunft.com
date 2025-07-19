@@ -113,7 +113,7 @@ class formula_link extends sandbox_link
         user::FLD_ID,
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -126,7 +126,7 @@ class formula_link extends sandbox_link
     const FLD_NAMES_NUM_USR = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -134,7 +134,7 @@ class formula_link extends sandbox_link
     const ALL_SANDBOX_FLD_NAMES = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );

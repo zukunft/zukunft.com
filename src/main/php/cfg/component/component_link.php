@@ -135,7 +135,7 @@ class component_link extends sandbox_link
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
         self::FLD_STYLE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -144,7 +144,7 @@ class component_link extends sandbox_link
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
         self::FLD_STYLE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );

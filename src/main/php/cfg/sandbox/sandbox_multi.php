@@ -218,14 +218,14 @@ class sandbox_multi extends db_object_multi_user
     const FLD_NAMES_USR = array();
     // combine FLD_NAMES_NUM_USR_SBX and FLD_NAMES_NUM_USR_ONLY_SBX just for shorter code
     const FLD_NAMES_NUM_USR = array(
-        self::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         self::FLD_SHARE,
         self::FLD_PROTECT
     );
     // all database sandbox field names used to identify if there are some user specific changes so excluding the id fields
     const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -338,7 +338,7 @@ class sandbox_multi extends db_object_multi_user
             // e.g. the list of names does not include the field excluded
             // TODO instead the excluded rows are filtered out on SQL level
             if (array_key_exists(sandbox_multi::FLD_EXCLUDED, $db_row)) {
-                $this->set_excluded($db_row[self::FLD_EXCLUDED]);
+                $this->set_excluded($db_row[sql_db::FLD_EXCLUDED]);
             }
             if (!$load_std) {
                 if (array_key_exists(sandbox::FLD_CHANGE_USER, $db_row)) {
@@ -2432,7 +2432,7 @@ class sandbox_multi extends db_object_multi_user
                 }
             }
         }
-        $log->set_field(self::FLD_EXCLUDED);
+        $log->set_field(sql_db::FLD_EXCLUDED);
         return $log;
     }
 
@@ -4244,8 +4244,8 @@ class sandbox_multi extends db_object_multi_user
         if ($sbx->excluded <> $this->excluded) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED,
-                    $cng_fld_cac->id($table_id . self::FLD_EXCLUDED),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -4255,9 +4255,9 @@ class sandbox_multi extends db_object_multi_user
                 $old_val = null;
             }
             $lst->add_field(
-                self::FLD_EXCLUDED,
+                sql_db::FLD_EXCLUDED,
                 $this->excluded,
-                self::FLD_EXCLUDED_SQL_TYP,
+                sql_db::FLD_EXCLUDED_SQL_TYP,
                 $old_val
             );
         }
@@ -4376,7 +4376,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function db_fields_all_sandbox(): array
     {
-        return [self::FLD_EXCLUDED, self::FLD_SHARE, self::FLD_PROTECT];
+        return [sql_db::FLD_EXCLUDED, self::FLD_SHARE, self::FLD_PROTECT];
     }
 
     /**
@@ -4391,9 +4391,9 @@ class sandbox_multi extends db_object_multi_user
         $lst = [];
         if ($sbx->excluded <> $this->excluded) {
             $lst[] = [
-                self::FLD_EXCLUDED,
+                sql_db::FLD_EXCLUDED,
                 $this->excluded,
-                self::FLD_EXCLUDED_SQL_TYP
+                sql_db::FLD_EXCLUDED_SQL_TYP
             ];
         }
         if ($sbx->share_id <> $this->share_id) {

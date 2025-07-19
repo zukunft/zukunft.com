@@ -2428,7 +2428,7 @@ class sql_creator
                 $sql = sql::DELETE . ' ' . $this->table . ' ';
                 $sql .= $sql_where;
                 if ($sc_par_lst->exclude_sql()) {
-                    $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                    $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
                 }
             }
         } else {
@@ -2437,7 +2437,7 @@ class sql_creator
             $sql .= $sql_where;
 
             if ($sc_par_lst->exclude_sql()) {
-                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
         }
 
@@ -2468,7 +2468,7 @@ class sql_creator
             $sql .= ' ' . $this->name_sql_esc($this->table) . ' ';
             $sql .= $this->sql_where_fvt($fvt_lst_id);
             if ($sc_par_lst->exclude_sql()) {
-                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
             $sql .= sql::SEP;
         }
@@ -2524,7 +2524,7 @@ class sql_creator
                 $sql = sql::DELETE . ' ' . $this->table . ' ';
                 $sql .= $sql_where;
                 if ($excluded) {
-                    $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                    $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
                 }
             }
         } else {
@@ -2533,7 +2533,7 @@ class sql_creator
             $sql .= $sql_where;
 
             if ($excluded) {
-                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
         }
 

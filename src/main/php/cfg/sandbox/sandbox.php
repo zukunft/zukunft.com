@@ -190,9 +190,6 @@ class sandbox extends db_object_seq_id_user
     const FLD_ID_COM = 'the owner / creator of the -=class=-';
     const FLD_ID_COM_CHANGER = 'the changer of the -=class=-';
     const FLD_ID = ''; // is always overwritten by the child class just added here to prevent polymorph warning
-    const FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
-    const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
-    const FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
     const FLD_CHANGE_USER = 'change_user_id'; // id of the user who wants something the object to be different from most other users
     const FLD_USER_NAME = 'user_name';
     const FLD_SHARE_COM = 'to restrict the access';
@@ -210,7 +207,7 @@ class sandbox extends db_object_seq_id_user
         [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_ID_COM_CHANGER],
     );
     const FLD_LST_ALL = array(
-        [self::FLD_EXCLUDED, self::FLD_EXCLUDED_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_EXCLUDED_COM],
+        [sql_db::FLD_EXCLUDED, sql_db::FLD_EXCLUDED_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_EXCLUDED_COM],
         [self::FLD_SHARE, self::FLD_SHARE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_SHARE_COM],
         [self::FLD_PROTECT, self::FLD_PROTECT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_PROTECT_COM],
     );
@@ -224,7 +221,7 @@ class sandbox extends db_object_seq_id_user
     const FLD_NAMES_USR_ONLY = array();
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
-        self::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         self::FLD_SHARE,
         self::FLD_PROTECT
     );
@@ -357,8 +354,8 @@ class sandbox extends db_object_seq_id_user
             }
             // e.g. the list of names does not include the field excluded
             // TODO instead the excluded rows are filtered out on SQL level
-            if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
-                $this->set_excluded($db_row[self::FLD_EXCLUDED]);
+            if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
+                $this->set_excluded($db_row[sql_db::FLD_EXCLUDED]);
             }
         }
         return $result;
@@ -1371,7 +1368,7 @@ class sandbox extends db_object_seq_id_user
         if ($this->owner_id() > 0) {
             $sc->add_where(user::FLD_ID, $this->owner_id(), sql_par_type::INT_NOT);
         }
-        $sc->add_where(self::FLD_EXCLUDED, 1, sql_par_type::CONST_OR_NULL);
+        $sc->add_where(sql_db::FLD_EXCLUDED, 1, sql_par_type::CONST_OR_NULL);
         $qp->sql = $sc->sql();
 
         $qp->par = $sc->get_par();
@@ -1427,7 +1424,7 @@ class sandbox extends db_object_seq_id_user
             user::FLD_ID,
             user::FLD_ID);
         $sc->add_where($this->id_field(), $this->id());
-        $sc->add_where(sandbox::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
+        $sc->add_where(sql_db::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -2179,7 +2176,7 @@ class sandbox extends db_object_seq_id_user
                 }
             }
         }
-        $log->set_field(self::FLD_EXCLUDED);
+        $log->set_field(sql_db::FLD_EXCLUDED);
         return $log;
     }
 
@@ -3421,7 +3418,7 @@ class sandbox extends db_object_seq_id_user
     function db_fields_all_sandbox(): array
     {
         return [
-            self::FLD_EXCLUDED,
+            sql_db::FLD_EXCLUDED,
             self::FLD_SHARE,
             self::FLD_PROTECT
         ];
@@ -3447,8 +3444,8 @@ class sandbox extends db_object_seq_id_user
         if ($sbx->excluded <> $this->excluded) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED,
-                    $cng_fld_cac->id($table_id . self::FLD_EXCLUDED),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -3458,9 +3455,9 @@ class sandbox extends db_object_seq_id_user
                 $old_val = null;
             }
             $lst->add_field(
-                self::FLD_EXCLUDED,
+                sql_db::FLD_EXCLUDED,
                 $this->excluded,
-                self::FLD_EXCLUDED_SQL_TYP,
+                sql_db::FLD_EXCLUDED_SQL_TYP,
                 $old_val
             );
         }
@@ -3683,7 +3680,7 @@ class sandbox extends db_object_seq_id_user
         }
 
         // create the log entry for the link
-        if ($this->is_link_obj() and (!$usr_tbl or $fvt_lst->has_name(sandbox::FLD_EXCLUDED))) {
+        if ($this->is_link_obj() and (!$usr_tbl or $fvt_lst->has_name(sql_db::FLD_EXCLUDED))) {
             if ($usr_tbl) {
                 $qp_log_lnk = $sc->sql_func_log_user_link($this, $this->user(), $fvt_lst, $sc_par_lst_log);
             } else {

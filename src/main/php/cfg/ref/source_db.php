@@ -102,7 +102,7 @@ class source_db
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -111,7 +111,7 @@ class source_db
         self::FLD_NAME,
         sql_db::FLD_DESCRIPTION,
         self::FLD_TYPE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         self::FLD_URL
     );
 

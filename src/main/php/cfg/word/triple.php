@@ -2681,15 +2681,15 @@ class triple extends sandbox_link_named
                     // TODO check if the excluded field is not already added by the sandbox function
                     if ($do_log) {
                         $lst->add_field(
-                            sql::FLD_LOG_FIELD_PREFIX . sandbox::FLD_EXCLUDED,
-                            $cng_fld_cac->id($table_id . sandbox::FLD_EXCLUDED),
+                            sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
+                            $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     $lst->add_field(
-                        sandbox::FLD_EXCLUDED,
+                        sql_db::FLD_EXCLUDED,
                         1,
-                        sandbox::FLD_EXCLUDED_SQL_TYP
+                        sql_db::FLD_EXCLUDED_SQL_TYP
                     );
                 } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
                     if ($do_log) {
@@ -2714,8 +2714,8 @@ class triple extends sandbox_link_named
         if ($sbx->is_excluded() <> $this->is_excluded()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sandbox::FLD_EXCLUDED,
-                    $cng_fld_cac->id($table_id . sandbox::FLD_EXCLUDED),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2725,9 +2725,9 @@ class triple extends sandbox_link_named
                 $new_excl = 0;
             }
             $lst->add_field(
-                sandbox::FLD_EXCLUDED,
+                sql_db::FLD_EXCLUDED,
                 $new_excl,
-                sandbox::FLD_EXCLUDED_SQL_TYP
+                sql_db::FLD_EXCLUDED_SQL_TYP
             );
         }
         if ($sbx->name_given() <> $this->name_given()) {

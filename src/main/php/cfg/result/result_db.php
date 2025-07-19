@@ -36,6 +36,7 @@
 namespace cfg\result;
 
 include_once DB_PATH . 'sql.php';
+include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once DB_PATH . 'sql_type.php';
@@ -48,6 +49,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
 include_once MODEL_USER_PATH . 'user.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_type;
@@ -127,7 +129,7 @@ class result_db
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR_EX_STD = array(
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // list of the user specific datetime database field names
@@ -138,7 +140,7 @@ class result_db
     const FLD_NAMES_NUM_USR = array(
         sandbox_multi::FLD_VALUE,
         sandbox_multi::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // list of field names that are only on the user sandbox row

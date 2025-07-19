@@ -125,7 +125,7 @@ class word_db
     const FLD_NAMES_NUM_USR = array(
         phrase::FLD_TYPE,
         self::FLD_VIEW,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -137,7 +137,7 @@ class word_db
         sql_db::FLD_DESCRIPTION,
         phrase::FLD_TYPE,
         self::FLD_VIEW,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );

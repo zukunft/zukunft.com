@@ -171,7 +171,7 @@ class phrase extends combine_named
     // list of the common user specific numeric database field names of phrases
     const FLD_NAMES_NUM_USR = array(
         self::FLD_VALUES,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -196,7 +196,7 @@ class phrase extends combine_named
             [sql_db::FLD_DESCRIPTION],
             [word_db::FLD_VALUES],
             [phrase::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT]
         ], word_db::FLD_ID],
@@ -207,7 +207,7 @@ class phrase extends combine_named
             [sql_db::FLD_DESCRIPTION],
             [triple_db::FLD_VALUES],
             [phrase::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT]
         ], triple_db::FLD_ID]
@@ -281,8 +281,8 @@ class phrase extends combine_named
                 if (array_key_exists(phrase::FLD_TYPE . $fld_ext, $db_row)) {
                     $wrd->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
                 }
-                if (array_key_exists(sandbox::FLD_EXCLUDED . $fld_ext, $db_row)) {
-                    $wrd->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
+                if (array_key_exists(sql_db::FLD_EXCLUDED . $fld_ext, $db_row)) {
+                    $wrd->set_excluded($db_row[sql_db::FLD_EXCLUDED . $fld_ext]);
                 }
                 if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
                     $wrd->set_share_id($db_row[sandbox::FLD_SHARE . $fld_ext]);
@@ -307,8 +307,8 @@ class phrase extends combine_named
                 if (array_key_exists(phrase::FLD_TYPE . $fld_ext, $db_row)) {
                     $trp->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
                 }
-                if (array_key_exists(sandbox::FLD_EXCLUDED . $fld_ext, $db_row)) {
-                    $trp->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
+                if (array_key_exists(sql_db::FLD_EXCLUDED . $fld_ext, $db_row)) {
+                    $trp->set_excluded($db_row[sql_db::FLD_EXCLUDED . $fld_ext]);
                 }
                 if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
                     $trp->set_share_id($db_row[sandbox::FLD_SHARE . $fld_ext]);

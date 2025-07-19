@@ -129,7 +129,7 @@ class term extends combine_named
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_USAGE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -165,7 +165,7 @@ class term extends combine_named
             [sql_db::FLD_DESCRIPTION],
             [word_db::FLD_VALUES, self::FLD_USAGE],
             [phrase::FLD_TYPE, self::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
             ['', formula_db::FLD_FORMULA_TEXT],
@@ -178,7 +178,7 @@ class term extends combine_named
             [sql_db::FLD_DESCRIPTION],
             [triple_db::FLD_VALUES, self::FLD_USAGE],
             [phrase::FLD_TYPE, self::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
             ['', formula_db::FLD_FORMULA_TEXT],
@@ -191,7 +191,7 @@ class term extends combine_named
             [sql_db::FLD_DESCRIPTION],
             [formula_db::FLD_USAGE, self::FLD_USAGE],
             [formula_db::FLD_TYPE, self::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
             [formula_db::FLD_FORMULA_TEXT],
@@ -204,7 +204,7 @@ class term extends combine_named
             [sql_db::FLD_DESCRIPTION],
             [verb_db::FLD_WORDS, self::FLD_USAGE],
             [sql::NULL_VALUE, self::FLD_TYPE, sql_db::FLD_CONST],
-            [sql::NULL_VALUE, sandbox::FLD_EXCLUDED, sql_db::FLD_CONST],
+            [sql::NULL_VALUE, sql_db::FLD_EXCLUDED, sql_db::FLD_CONST],
             [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql_db::FLD_CONST],
             [protect_type_shared::ADMIN_ID, sandbox::FLD_PROTECT, sql_db::FLD_CONST],
             ['', formula_db::FLD_FORMULA_TEXT],

@@ -157,7 +157,7 @@ class component_db
         formula_db::FLD_ID,
         self::FLD_COL_PHRASE,
         self::FLD_COL2_PHRASE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -172,7 +172,7 @@ class component_db
         formula_db::FLD_ID,
         self::FLD_COL_PHRASE,
         self::FLD_COL2_PHRASE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );

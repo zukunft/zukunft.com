@@ -90,7 +90,7 @@ class ref_db
     // list of user specific numeric field names
     const FLD_NAMES_NUM_USR = array(
         source_db::FLD_ID,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -99,7 +99,7 @@ class ref_db
         self::FLD_EX_KEY,
         self::FLD_URL,
         sql_db::FLD_DESCRIPTION,
-        sandbox::FLD_EXCLUDED
+        sql_db::FLD_EXCLUDED
     );
     // list of fields that must be set
     const FLD_LST_MUST_BUT_STD_ONLY = array(

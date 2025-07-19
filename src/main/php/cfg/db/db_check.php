@@ -324,7 +324,7 @@ class db_check
         $result .= $db_con->column_allow_null('change_field', 'code_id');
         $result .= $db_con->column_allow_null('view', sql_db::FLD_DESCRIPTION);
         $result .= $db_con->column_allow_null('component_type', 'description');
-        $result .= $db_con->column_allow_null($lib->class_to_name(value::class), sandbox::FLD_EXCLUDED);
+        $result .= $db_con->column_allow_null($lib->class_to_name(value::class), sql_db::FLD_EXCLUDED);
         $result .= $db_con->column_allow_null($lib->class_to_name(value::class), 'protect_id');
         $result .= $db_con->column_allow_null('formula_link', 'link_type_id');
         $result .= $db_con->column_allow_null('user_' . $lib->class_to_name(value::class), 'protect_id');

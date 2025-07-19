@@ -32,6 +32,7 @@
 namespace cfg\formula;
 
 include_once MODEL_SANDBOX_PATH . 'sandbox_link_list.php';
+include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_creator.php';
 include_once DB_PATH . 'sql_par.php';
 include_once DB_PATH . 'sql_par_type.php';
@@ -42,6 +43,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
@@ -186,7 +188,7 @@ class formula_link_list extends sandbox_link_list
                     $db_con->usr_id = $this->user()->id();
                     // delete first all user configuration that have also been excluded
                     $db_con->set_class(formula_link::class, true);
-                    $result = $db_con->delete_old(array(formula_link::FLD_ID, sandbox::FLD_EXCLUDED), array($frm_lnk->id(), '1'));
+                    $result = $db_con->delete_old(array(formula_link::FLD_ID, sql_db::FLD_EXCLUDED), array($frm_lnk->id(), '1'));
                     if ($result == '') {
                         $db_con->set_class(formula_link::class);
                         $result = $db_con->delete_old(formula_link::FLD_ID, $frm_lnk->id());

@@ -108,7 +108,7 @@ class view_db
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
         self::FLD_STYLE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -117,7 +117,7 @@ class view_db
         sql_db::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_STYLE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );

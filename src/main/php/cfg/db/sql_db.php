@@ -355,6 +355,9 @@ class sql_db
     const SETUP_FOREIGN_KEY = 'foreign key constraints and auto_increment for tables';
 
     // db field names that are used in many classes
+    const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
+    const FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
+    const FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
     const FLD_DESCRIPTION = 'description';
     const FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
     const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;

@@ -174,16 +174,28 @@ class user extends db_id_object_non_sandbox
      */
 
     // database fields
+    // more unique keys
     public ?string $name = null;          // simply the username, which is only empty if the user object is not yet saved to the database
     public ?string $ip_addr = null;       // simply the ip address used if no username is given
+    public ?string $email = null;         // the email used for the signup process
     public ?string $password = null;      // only used for the login and password change process
+
+    // additional info
     public ?string $description = null;   // used for system users to describe the target; can be used by users for a short introduction
-    public ?string $code_id = null;       // the main id to detect system users
-    public ?int $profile_id = null;       // id of the preloaded user profiles to define the base permissions of the user that should be used now
-    public ?int $type_id = null;          // the confirmation level / status of the user e.g. email checked or passport checked which might lead to a different profile id
-    public ?string $email = null;         //
     public ?string $first_name = null;    //
     public ?string $last_name = null;     //
+
+    // for the permission settings
+    public ?int $profile_id = null;       // id of the preloaded user profiles to define the base permissions of the user that should be used now
+    public ?string $code_id = null;       // the main id to detect system users
+    public ?int $type_id = null;          // the confirmation level / status of the user e.g. email checked or passport checked which might lead to a different profile id
+    public ?bool $excluded = null;        // to deactivate users that have already a log entry and cannot be deleted any more
+
+    // var used for the registration and logon process
+    public ?string $activation_key = '';
+    public ?string $activation_timeout = '';
+    public ?string $db_now = '';
+
     // TODO move to user config e.g. by using the key word "pod-user-config"
     public ?string $dec_point = null;     // the decimal point char for this user
     public ?string $thousand_sep = null;  // the thousand separator user for this user
@@ -199,12 +211,6 @@ class user extends db_id_object_non_sandbox
     // TODO add set and get
     // e.g. only admin are allowed to see other user parameters
     public ?user $viewer = null;          // the user who wants to access this user
-
-
-    // var used for the registration and logon process
-    public ?string $activation_key = '';
-    public ?string $activation_timeout = '';
-    public ?string $db_now = '';
 
 
     /*
@@ -231,26 +237,37 @@ class user extends db_id_object_non_sandbox
     function reset(): void
     {
         $this->set_id(0);
+
+        // more unique keys
         $this->name = null;
-        $this->description = null;
         $this->ip_addr = null;
         $this->email = null;
+
+        // additional info
+        $this->description = null;
         $this->first_name = null;
         $this->last_name = null;
+
+        // for the permission settings
+        $this->profile_id = null;
         $this->code_id = null;
+        $this->type_id = null;
+        $this->excluded = null;
+
+        // used only for the signup process
+        $this->activation_key = '';
+        $this->activation_timeout = '';
+        $this->db_now = '';
+
+        // TODO Prio 2 move it to user config base on a value list
         $this->dec_point = null;
         $this->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
         $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
-        $this->profile_id = null;
 
         $this->trm = null;
         $this->source = null;
 
         $this->viewer = null;
-
-        $this->activation_key = '';
-        $this->activation_timeout = '';
-        $this->db_now = '';
 
     }
 
@@ -413,9 +430,18 @@ class user extends db_id_object_non_sandbox
         if (key_exists(json_fields::IP_ADDR, $json)) {
             $this->ip_addr = $json[json_fields::IP_ADDR];
         }
+        if (key_exists(json_fields::EMAIL, $json)) {
+            $this->email = $json[json_fields::EMAIL];
+        }
         // the password is not to be expected to be imported or exported
         if (key_exists(json_fields::DESCRIPTION, $json)) {
             $this->description = $json[json_fields::DESCRIPTION];
+        }
+        if (key_exists(json_fields::FIRST_NAME, $json)) {
+            $this->first_name = $json[json_fields::FIRST_NAME];
+        }
+        if (key_exists(json_fields::LAST_NAME, $json)) {
+            $this->last_name = $json[json_fields::LAST_NAME];
         }
         if (key_exists(json_fields::PROFILE, $json)) {
             $profile_id_to_add = $usr_pro_cac->id($json[json_fields::PROFILE]);
@@ -427,15 +453,6 @@ class user extends db_id_object_non_sandbox
                     msg_id::VAR_USER_PROFILE => $usr_req->name_and_profile()
                 ]);
             }
-        }
-        if (key_exists(json_fields::EMAIL, $json)) {
-            $this->email = $json[json_fields::EMAIL];
-        }
-        if (key_exists(json_fields::FIRST_NAME, $json)) {
-            $this->first_name = $json[json_fields::FIRST_NAME];
-        }
-        if (key_exists(json_fields::LAST_NAME, $json)) {
-            $this->last_name = $json[json_fields::LAST_NAME];
         }
 
     }

@@ -102,7 +102,7 @@ class term_view extends sandbox_link
     const ALL_SANDBOX_FLD_NAMES = array(
         view_link_type::FLD_ID,
         sql_db::FLD_DESCRIPTION,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );

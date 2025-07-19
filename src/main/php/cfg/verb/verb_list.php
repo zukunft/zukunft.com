@@ -146,7 +146,7 @@ class verb_list extends type_list
             $db_con->set_class(triple::class);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
-            $db_con->set_usr_num_fields(array(sandbox::FLD_EXCLUDED));
+            $db_con->set_usr_num_fields(array(sql_db::FLD_EXCLUDED));
             $db_con->set_join_fields(array_merge(verb_db::FLD_NAMES, array(verb_db::FLD_NAME)), verb::class);
             $db_con->set_fields(array(verb_db::FLD_ID));
             // set the where clause depending on the values given

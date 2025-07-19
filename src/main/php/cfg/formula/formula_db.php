@@ -128,7 +128,7 @@ class formula_db
         self::FLD_TYPE,
         self::FLD_ALL_NEEDED,
         self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -141,7 +141,7 @@ class formula_db
         self::FLD_TYPE,
         self::FLD_ALL_NEEDED,
         self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );

@@ -134,8 +134,8 @@ class value_list extends sandbox_value_list
                     log_info('group id missing');
                 }
                 $excluded = null;
-                if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
-                    $excluded = $db_row[sandbox::FLD_EXCLUDED];
+                if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
+                    $excluded = $db_row[sql_db::FLD_EXCLUDED];
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
                     if (array_key_exists(value_db::FLD_VALUE, $db_row)) {

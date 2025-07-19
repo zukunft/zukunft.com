@@ -979,7 +979,7 @@ class sandbox_value extends sandbox_multi
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array(user::FLD_ID));
         $this->load_sql_where_id($qp, $sc, true);
-        $sc->add_where(sandbox::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
+        $sc->add_where(sql_db::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

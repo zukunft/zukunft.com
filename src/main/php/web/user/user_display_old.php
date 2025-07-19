@@ -271,7 +271,7 @@ class user_dsp_old extends user
                         $wrd_lnk_other->set_user($usr_other);
                         $wrd_lnk_other->load_by_id($trp_usr->id());
                         $wrd_lnk_other->set_name($wrd_lnk_other_row['name']);
-                        $wrd_lnk_other->set_excluded($wrd_lnk_other_row[sandbox::FLD_EXCLUDED]);
+                        $wrd_lnk_other->set_excluded($wrd_lnk_other_row[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -479,7 +479,7 @@ class user_dsp_old extends user
                         $frm_lnk_other = clone $frm_usr;
                         $frm_lnk_other->set_user($usr_other);
                         $frm_lnk_other->predicate_id = $frm_lnk_other_row['link_type_id'];
-                        $frm_lnk_other->set_excluded($frm_lnk_other_row[sandbox::FLD_EXCLUDED]);
+                        $frm_lnk_other->set_excluded($frm_lnk_other_row[sql_db::FLD_EXCLUDED]);
                         $frm_lnk_other->load_objects();
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
@@ -649,7 +649,7 @@ class user_dsp_old extends user
                         $val_other->set_user($usr_other);
                         $val_other->set_number($val_other_row['user_value']);
                         $val_other->set_source_id($val_other_row['source_id']);
-                        $val_other->set_excluded($val_other_row[sandbox::FLD_EXCLUDED]);
+                        $val_other->set_excluded($val_other_row[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -816,7 +816,7 @@ class user_dsp_old extends user
                         $dsp_other->set_name($dsp_other_row[view_db::FLD_NAME]);
                         $dsp_other->description = $dsp_other_row[sql_db::FLD_DESCRIPTION];
                         $dsp_other->set_type_id($dsp_other_row[view_db::FLD_TYPE]);
-                        $dsp_other->set_excluded($dsp_other_row[sandbox::FLD_EXCLUDED]);
+                        $dsp_other->set_excluded($dsp_other_row[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -981,7 +981,7 @@ class user_dsp_old extends user
                         $cmp_other->set_name($cmp_other_row[component::FLD_NAME]);
                         $cmp_other->description = $cmp_other_row[sql_db::FLD_DESCRIPTION];
                         $cmp_other->type_id = $cmp_other_row['component_type_id'];
-                        $cmp_other->set_excluded($cmp_other_row[sandbox::FLD_EXCLUDED]);
+                        $cmp_other->set_excluded($cmp_other_row[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -1150,7 +1150,7 @@ class user_dsp_old extends user
                         $dsp_lnk_other->set_user($usr_other);
                         $dsp_lnk_other->order_nbr = $dsp_lnk_other_row['order_nbr'];
                         $dsp_lnk_other->position_type = $dsp_lnk_other_row['position_type'];
-                        $dsp_lnk_other->set_excluded($dsp_lnk_other_row[sandbox::FLD_EXCLUDED]);
+                        $dsp_lnk_other->set_excluded($dsp_lnk_other_row[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }
@@ -1328,7 +1328,7 @@ class user_dsp_old extends user
                         $dsp_other->set_url($dsp_other_row[source_db::FLD_URL]);
                         $dsp_other->description = $dsp_other_row[sql_db::FLD_DESCRIPTION];
                         $dsp_other->type_id = $dsp_other_row['source_type_id'];
-                        $dsp_other->set_excluded($dsp_other_row[sandbox::FLD_EXCLUDED]);
+                        $dsp_other->set_excluded($dsp_other_row[sql_db::FLD_EXCLUDED]);
                         if ($sandbox_other <> '') {
                             $sandbox_other .= ',';
                         }

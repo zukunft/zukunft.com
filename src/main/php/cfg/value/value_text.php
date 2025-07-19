@@ -43,6 +43,7 @@
 namespace cfg\value;
 
 include_once MODEL_VALUE_PATH . 'value_base.php';
+include_once DB_PATH . 'sql_db.php';
 include_once DB_PATH . 'sql_field_default.php';
 include_once DB_PATH . 'sql_field_type.php';
 include_once MODEL_GROUP_PATH . 'group.php';
@@ -57,6 +58,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\group\group;
@@ -104,7 +106,7 @@ class value_text extends value_base
     const FLD_NAMES_NUM_USR = array(
         source_db::FLD_ID,
         sandbox_multi::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
@@ -112,7 +114,7 @@ class value_text extends value_base
         self::FLD_VALUE,
         source_db::FLD_ID,
         sandbox_multi::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
 

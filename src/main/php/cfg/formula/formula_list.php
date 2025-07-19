@@ -108,8 +108,8 @@ class formula_list extends sandbox_list_named
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 $excluded = null;
-                if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
-                    $excluded = $db_row[sandbox::FLD_EXCLUDED];
+                if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
+                    $excluded = $db_row[sql_db::FLD_EXCLUDED];
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
                     $frm_id = $db_row[formula_db::FLD_ID];
