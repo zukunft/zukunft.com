@@ -203,11 +203,10 @@ class import_write_tests
         $test_name = 'remove the test triple via import';
         $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLES_UNDO, $usr, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
-        //$test_name = 'test if the test triple has been deleted from the database';
+        $test_name = 'test if the test triple has been deleted from the database';
         $trp = new triple($usr);
         $trp->load_by_name(triples::SYSTEM_TEST_ADD);
-        // TODO prio 2 activate but least the removal of the user
-        //$t->assert($test_name, $trp->id(), 0);
+        $t->assert($test_name, $trp->id(), 0);
 
         $test_name = 'remove the test triple directly as fallback to cleanup the database';
         $trp = new triple($usr);
@@ -259,11 +258,10 @@ class import_write_tests
         $test_name = 'remove the test source via import';
         $imp_msg = $imf->json_file(test_files::IMPORT_SOURCES_UNDO, $usr, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
-        //$test_name = 'test if the test source has been deleted from the database';
+        $test_name = 'test if the test source has been deleted from the database';
         $src = new source($usr);
         $src->load_by_name(sources::SYSTEM_TEST_ADD);
-        // TODO prio 2 activate but least the removal of the user
-        //$t->assert($test_name, $src->id(), 0);
+        $t->assert($test_name, $src->id(), 0);
 
         $test_name = 'remove the test source directly as fallback to cleanup the database';
         $src = new source($usr);

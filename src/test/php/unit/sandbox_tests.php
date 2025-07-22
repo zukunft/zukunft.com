@@ -96,7 +96,7 @@ class sandbox_tests
         $test_name = 'names match cached names';
         $wrd_lst = $t->word_list();
         // call the names function with a high limit to force the usage of the slow loop
-        $name_list = implode('.', $wrd_lst->names(100));
+        $name_list = implode('.', $wrd_lst->names(false, 100));
         $name_list_cache = implode('.', array_keys($wrd_lst->name_pos_lst()));
         $t->assert($test_name, $name_list_cache, $name_list);
         $test_name = 'names match not cached names including excluded';

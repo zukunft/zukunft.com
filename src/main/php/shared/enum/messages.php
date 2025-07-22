@@ -399,8 +399,7 @@ enum messages: string
     case IMPORT_UNKNOWN_ELEMENT = 'Unknown element "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case IMPORT_SUMMARY = ''
-        . self::VAR_START . self::VAR_SUMMARY . self::VAR_END;
+    case IMPORT_SUMMARY = self::VAR_START . self::VAR_SUMMARY . self::VAR_END;
     case PHRASE_NAME_EMPTY = self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
         . ' contains an empty phrase name';
 
@@ -421,9 +420,28 @@ enum messages: string
         . '" "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '" failed due to logging error';
-    case ID_OR_NAME_MISSING = 'id or name of word "'
-        . self::VAR_START . self::VAR_ID . self::VAR_END
-        . '" missing';
+    case USED_OBJECT_ID_AND_NAME_MISSING =
+        self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
+        . '" missing but it is used "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case FILL_OBJECT_ID_MISSING =
+        self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" has no id but is used in fill_by_id';
+    case ADDED_OBJECT_ID_MISSING =
+        self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" has no id after expected to be added to the database';
+    case ADDED_OBJECT_NOT_FOUND =
+        self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not found any more after expected to be added to the database';
 
     case SOURCE_MISSING_IMPORT = 'source "'
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
@@ -464,8 +482,7 @@ enum messages: string
     case CONFIG_PART = 'configuration part '
         . self::VAR_START . self::VAR_PART . self::VAR_END
         . ' cannot yet be selected';
-    case API_MESSAGE = ''
-        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case API_MESSAGE = self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case MANDATORY_FIELD_NAME_MISSING = 'Mandatory field name missing in API JSON '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case PHRASE_TYPE_NOT_FOUND = 'word/triple type "'

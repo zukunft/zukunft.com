@@ -52,6 +52,7 @@ include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
 include_once MODEL_HELPER_PATH . 'combine_named.php';
 include_once MODEL_HELPER_PATH . 'type_list.php';
+include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
@@ -67,6 +68,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\helper\data_object;
+use cfg\import\import;
 use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_link_named;
@@ -305,9 +307,10 @@ class component_list extends sandbox_list_named
      * save all components of this list
      * TODO create one SQL and commit statement for faster execution
      *
+     * @param import|null $imp the import object with the estimate of the total save time
      * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(): user_message
+    function save(import $imp = null): user_message
     {
         $result = new user_message();
         foreach ($this->lst() as $cmp) {

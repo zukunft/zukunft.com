@@ -715,7 +715,7 @@ class group_list extends sandbox_list
     /**
      * return a list of the word names
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $phr_lst) {

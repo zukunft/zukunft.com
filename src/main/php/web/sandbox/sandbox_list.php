@@ -62,7 +62,7 @@ class sandbox_list extends list_dsp
      */
     function name(int $limit = null): string
     {
-        return '"' . implode('","', $this->names($limit)) . '"';
+        return '"' . implode('","', $this->names(false, $limit)) . '"';
     }
 
     /**

@@ -31,9 +31,9 @@ SELECT value_text_prime_p4_insert_log_11000_user
         1,
         421,
         'zukunft.com',
-        93169617471111297,
+        93169617471111306,
         331,
         326,
         313,
-        -129,
+        -138,
         null);

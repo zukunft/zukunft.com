@@ -88,6 +88,7 @@ include_once TEST_CONST_PATH . 'files.php';
 use cfg\component\component_link_type_list;
 use cfg\component\component_type_list;
 use cfg\component\position_type_list;
+use cfg\const\files;
 use cfg\db\sql_db;
 use cfg\element\element_type_list;
 use cfg\formula\formula_link_type_list;
@@ -195,20 +196,20 @@ class all_unit_tests extends test_cleanup
              * prepare db testing
              */
 
-            $this->create_test_db_entries($t);
+            //$this->create_test_db_entries($t);
 
             /*
              * import
              */
 
             // run the selected db import tests
-            (new import_write_tests())->run($t);
             /*
             $test_name = 'validate config import';
             $imf = new import_file();
             $import_result = $imf->import_config_yaml($sys_usr, true);
             $t->assert($test_name, $import_result->is_ok(), true, $t::TIMEOUT_LIMIT_IMPORT);
             */
+            (new import_write_tests())->run($t);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::SYSTEM_VIEWS_FILE, $usr);

@@ -319,12 +319,12 @@ class component_link_list extends sandbox_link_list
     /**
      * @return array with all component names linked usually to one view
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
             if ($lnk->component() != null) {
-                $name = $lnk->component()->name();
+                $name = $lnk->component()->name($ignore_excluded);
                 if ($name <> '') {
                     if (!in_array($name, $result)) {
                         $result[] = $name;

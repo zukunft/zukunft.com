@@ -700,7 +700,7 @@ class formula_list extends sandbox_list_named
             // TODO Prio 2 review
             $cache = new term_list($this->user());
             $imp = new import();
-            $msg = $this->save($cache, $imp)->get_last_message();
+            $msg = $this->save_with_cache($imp, $cache)->get_last_message();
             if ($msg != '') {
                 $result = false;
             }
@@ -722,13 +722,16 @@ class formula_list extends sandbox_list_named
 
     /**
      * this function is called from dsp_id, so no other call is allowed
+     * @param bool $ignore_excluded if true also the excluded names are included
+     * @param ?int $limit the max number of ids to show
+     * @return array with all names of the list
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = array();
         if ($this->lst() != null) {
             foreach ($this->lst() as $frm) {
-                $result[] = $frm->name();
+                $result[] = $frm->name($ignore_excluded);
             }
         }
         return $result;
@@ -756,11 +759,11 @@ class formula_list extends sandbox_list_named
      * save all formulas of this list
      * TODO create one SQL and commit statement for faster execution
      *
-     * @param term_list $cache the cached phrases that does not need to be loaded from the db again
      * @param import $imp the import object with the filename and the estimated time of arrival
+     * @param term_list $cache the cached phrases that does not need to be loaded from the db again
      * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(term_list $cache, import $imp): user_message
+    function save_with_cache(import $imp, term_list $cache): user_message
     {
         $usr_msg = new user_message();
         foreach ($this->lst() as $frm) {

@@ -51,10 +51,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\import\import;
 use cfg\sandbox\sandbox_list_named;
-use cfg\ref\source_db;
 use cfg\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\const\triples;
 use shared\const\words;
 
 class source_list extends sandbox_list_named
@@ -231,10 +228,10 @@ class source_list extends sandbox_list_named
     /**
      * store all sources from this list in the database using grouped calls of predefined sql functions
      *
-     * @param import $imp the import object with the estimate of the total save time
+     * @param import|null $imp the import object with the estimate of the total save time
      * @return user_message in case of an issue the problem description what has failed and a suggested solution
      */
-    function save(import $imp): user_message
+    function save(import $imp = null): user_message
     {
         // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
         return parent::save_block_wise($imp, words::SOURCES, source::class, new source_list($this->user()));

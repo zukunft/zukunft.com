@@ -78,6 +78,7 @@ include_once SHARED_ENUM_PATH . 'foaf_direction.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
+include_once SHARED_PATH . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -99,6 +100,7 @@ use shared\const\triples;
 use shared\const\words;
 use shared\enum\foaf_direction;
 use shared\enum\messages as msg_id;
+use shared\library;
 use shared\types\verbs;
 
 class triple_list extends sandbox_list_named
@@ -112,10 +114,6 @@ class triple_list extends sandbox_list_named
     public ?word_list $wrd_lst = null; // show the graph elements related to these words
     public ?verb $vrb = null;     // show the graph elements related to this verb
     public foaf_direction $direction = foaf_direction::DOWN;  // either up, down or both
-
-    // cache for speed vs. memory optimisation
-    private ?phrase_list $phr_lst = null;
-    private bool $phrase_list_dirty = false;
 
 
     /*
@@ -156,6 +154,7 @@ class triple_list extends sandbox_list_named
 
     /**
      * load a list of words by the names
+     * TODO Prio 3 check if the calling function should test for an empty list
      * @param array $names a named object used for selection e.g. a word type
      * @param bool $load_all force to include also the excluded triples e.g. for admins
      * @return bool true if at least one word found
@@ -166,8 +165,12 @@ class triple_list extends sandbox_list_named
         if (count($names) === 0) {
             $names = $this->names();
         }
-        $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
-        return $this->load($qp, $load_all);
+        if (count($names) !== 0) {
+            $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
+            return $this->load($qp, $load_all);
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -310,15 +313,11 @@ class triple_list extends sandbox_list_named
      * set the SQL query parameters to load a list of triples by the ids
      * @param sql_creator $sc with the target db_type set
      * @param array $trp_ids a list of int values with the triple ids
-     * @param int $limit the number of rows to return
-     * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_ids(
         sql_creator $sc,
-        array       $trp_ids,
-        int         $limit = 0,
-        int         $offset = 0
+        array       $trp_ids
     ): sql_par
     {
         $qp = $this->load_sql($sc);
@@ -623,10 +622,38 @@ class triple_list extends sandbox_list_named
                 log_err('unexpected phrase instead of triple in triple list');
                 $phr_lst->add_by_name($lnk);
             } else {
-                $phr_lst->add_by_name($lnk->phrase());
+                $phr_lst->add_by_name_direct($lnk->phrase());
             }
         }
         return $phr_lst;
+    }
+
+    /**
+     * get the triples that does not yet have a database id, but have a name
+     * including the linked triples
+     * @return triple_list with all triples potentially missing in the database
+     */
+    function triples_to_add_to_db(): triple_list
+    {
+        $trp_lst = new triple_list($this->user());
+        foreach ($this->lst() as $trp) {
+            if ($trp->no_id_but_name()) {
+                $trp_lst->add_by_name_direct($trp);
+            }
+            $from = $trp->from();
+            if ($from->is_triple()) {
+                if ($from->no_id_but_name()) {
+                    $trp_lst->add_by_name_direct($from);
+                }
+            }
+            $to = $trp->to();
+            if ($to->is_triple()) {
+                if ($to->no_id_but_name()) {
+                    $trp_lst->add_by_name_direct($to);
+                }
+            }
+        }
+        return $trp_lst;
     }
 
 
@@ -648,17 +675,51 @@ class triple_list extends sandbox_list_named
         return $phr_lst;
     }
 
+    /**
+     * @return triple_list with all phrases that does not yet have a database id
+     */
+    function missing_ids(): triple_list
+    {
+        $trp_lst = new triple_list($this->user());
+        foreach ($this->lst() as $trp) {
+            if ($trp->id() == 0) {
+                $trp_lst->add_by_name_direct($trp);
+            }
+        }
+        return $trp_lst;
+    }
+
+    /**
+     * add the triples of the given list to this list but avoid duplicates
+     * merge as a function, because the array_merge does not create an object
+     * @param triple_list $lst_to_add with the phrases to be added
+     * @return triple_list with all phrases of this list and the given list
+     */
+    function merge(triple_list $lst_to_add): triple_list
+    {
+        if (!$lst_to_add->is_empty()) {
+            foreach ($lst_to_add->lst() as $trp_to_add) {
+                $this->add($trp_to_add);
+            }
+        }
+        return $this;
+    }
+
 
     /*
      * save
      */
 
     /**
-     * @param phrase_list $cache the cached phrases that does not need to be loaded from the db again
+     * add or update all triples to the database
+     * starting with the $cache that contains the words
+     * add the triples that does not yet have a database id
+     *
      * @param import $imp the import object with the filename and the estimated time of arrival
+     * @param phrase_list $cache the cached phrases that does not need to be loaded from the db again
      * @return user_message
      */
-    function save(phrase_list $cache, import $imp): user_message
+    function save_with_cache(import $imp, phrase_list $cache): user_message
     {
         global $cfg;
 
@@ -667,80 +728,193 @@ class triple_list extends sandbox_list_named
         $load_per_sec = $cfg->get_by([words::TRIPLES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $save_per_sec = $cfg->get_by([words::TRIPLES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $upd_per_sec = $cfg->get_by([words::TRIPLES, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $del_per_sec = $cfg->get_by([words::TRIPLES, words::DELETE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $max_trp_levels = $cfg->get_by([words::TRIPLES, triples::MAX_LEVELS, words::IMPORT], 99);
 
         if ($this->is_empty()) {
             log_info('no triples to save');
         } else {
-            // collect all phrases with names that are used
-            $phr_lst = $this->phrase_lst_of_names();
-            $phr_lst->merge($this->phrase_parts());
 
-            // add the database id to the list of used phrases from the cache
-            $phr_lst->fill_by_name($cache);
+            // repeat filling the database id to the triple list
+            // and adding missing triples to the database
+            // until it is clear that a triple is missing
+            $trp_added = true;
+            $level = 0;
+            $db_lst_all = new triple_list($this->user());
+            $add_lst = new triple_list($this->user());
+            while ($trp_added and $level < $max_trp_levels) {
+                $trp_added = false;
+                $usr_msg->unset_added_depending();
 
-            // check if any needed phrases have not yet a db id
-            $load_list = $phr_lst->missing_ids();
+                // collect all triples with names that does not yet have a database id and needs to be added
+                $chk_lst = $this->triples_to_add_to_db();
 
-            // load the objects that are already in the database
-            if (!$load_list->is_empty()) {
-                $step_time = $load_list->count() / $load_per_sec;
-                $imp->step_start(msg_id::LOAD, triple::class, $load_list->count(), $step_time);
+                // add the database id to the triple list of words and triples used until now
+                $chk_lst->fill_by_name($cache, true, false);
+
+                // fill missing verbs
+                $chk_lst->fill_missing_verbs();
+
+                // get the triples that needs to be added
+                // TODO check if other list save function are using the cache instead of this here
+                $load_lst = $chk_lst->missing_ids();
+
+                // load the triples by name from the database that does not yet have a database id
+                $step_time = $load_lst->count() / $load_per_sec;
+                $imp->step_start(msg_id::LOAD, triple::class, $load_lst->count(), $step_time);
                 $db_lst = new triple_list($this->user());
                 // force to load all names including the triples excluded by the user to potential include the triples due to the import
                 // TODO add load_all = true also to the other objects
-                $db_lst->load_by_names($load_list->names(), true);
-                $imp->step_end($load_list->count(), $load_per_sec);
+                $db_lst->load_by_names($load_lst->names(true), true);
+                $imp->step_end($load_lst->count(), $load_per_sec);
 
-                // fill up cache
+                // fill up the cache to prevent loading the same triple again in the next level
                 // TODO increase speed!
                 $cache = $cache->merge($db_lst->phrase_list());
 
-                // fill missing verbs
-                $load_list->fill_missing_verbs();
+                // fill up the overall db list with db value for later detection of the triples that needs to be updated
+                $db_lst_all->merge($db_lst);
 
-                // fill the loaded database id to this list
-                $load_list->fill_by_name($db_lst, true);
+                // fill up the loaded list with db value to select only the triples that really needs to be inserted
+                $load_lst->fill_by_name($db_lst, true, false);
+
+                // select the triples that are ready to be added to the database
+                $load_lst = $load_lst->get_ready();
 
                 // get the triples that still needs to be added
                 // TODO check if other list save function are using the cache instead of this here
-                $add_phr_lst = $load_list->missing_ids();
-                $add_lst = $add_phr_lst->triples_by_name();
-
-                // select the triples that are ready to be added to the database
-                $add_lst = $add_lst->get_ready();
+                $add_lst = $load_lst->missing_ids();
 
                 // create any missing sql insert functions and insert the missing triples
-                $step_time = $add_lst->count() / $save_per_sec;
-                $imp->step_start(msg_id::SAVE, triple::class, $add_lst->count(), $step_time);
-                $usr_msg->add($add_lst->insert($cache, true, $imp, triple::class));
-                if ($add_lst->count() > 0) {
-                    $usr_msg->set_added_depending();
+                if (!$add_lst->is_empty()) {
+                    $step_time = $add_lst->count() / $save_per_sec;
+                    $imp->step_start(msg_id::SAVE, triple::class, $add_lst->count(), $step_time);
+                    $usr_msg->add($add_lst->insert($cache, true, $imp, triple::class));
+                    if ($add_lst->count() > 0) {
+                        $usr_msg->set_added_depending();
+                        $trp_added = true;
+                    }
+                    $imp->step_end($add_lst->count(), $save_per_sec);
                 }
-                $imp->step_end($add_lst->count(), $save_per_sec);
 
-                // create any missing sql update functions and update the triples
-                $usr_msg->add($this->update($db_lst, true, $imp, triple::class, $upd_per_sec));
+                $cache->filter_valid();
+
+                $level++;
             }
+
+            // reload the id of the triples added with the last run
+            // TODO use the insert message instead to increase speed
+            $db_lst = new triple_list($this->user());
+            if (!$add_lst->is_empty()) {
+                $db_lst->load_by_names($add_lst->names(true), true);
+            }
+
+            // fill up the overall db list with db value for later detection of the triples that needs to be updated
+            $db_lst_all->merge($db_lst);
+
+
+            // create any missing sql update functions and update the triples
+            $usr_msg->add($this->update($db_lst_all, true, $imp, triple::class, $upd_per_sec));
+
+
+            // fill up the main list with the words
+            $this->fill_by_name($cache, true);
+            // fill up the main list with the triples to check if anything is missing
+            $this->fill_by_name($db_lst_all, true);
+
+            // report missing triples
+            $this->report_missing($usr_msg);
+
+
+            // create any missing sql delete functions and delete unused sandbox objects
+            $usr_msg->add($this->delete($db_lst_all, true, $imp, triple::class, $del_per_sec));
+
         }
 
         return $usr_msg;
     }
 
-    function set_id_by_name(phrase_list $phr_lst): void
+    /**
+     * add the ids and other variables from the given list and add missing words, triples, ...
+     * select the related object by the name
+     *
+     * @param triple_list|sandbox_list_named $db_lst a list of sandbox objects that might have more vars set e.g. the db id
+     * @param bool $fill_all force to include also the excluded names e.g. for import
+     * @param bool $report_missing if true it is expected that all triples are in the given $db_lst
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill_by_name(
+        triple_list|sandbox_list_named $db_lst,
+        bool                           $fill_all = false,
+        bool                           $report_missing = true
+    ): user_message
+    {
+        $usr_msg = new user_message();
+
+        // loop over the objects of theis list because it is expected to be smaller than tha cache list
+        foreach ($this->lst() as $trp) {
+            $needs_from = true;
+            if (in_array($trp->verb_code_id(), verbs::WITHOUT_FROM)) {
+                $needs_from = false;
+            }
+            if ($needs_from) {
+                $this->fill_triple_by_name($db_lst, $trp, $usr_msg, $fill_all, $report_missing);
+                $this->fill_triple_by_name($db_lst, $trp->from(), $usr_msg, $fill_all, $report_missing);
+            }
+            $this->fill_triple_by_name($db_lst, $trp->to(), $usr_msg, $fill_all, $report_missing);
+        }
+        return $usr_msg;
+    }
+
+    private function report_missing(user_message $usr_msg): user_message
     {
         foreach ($this->lst() as $trp) {
-            if ($trp->from_id() == 0) {
-                $phr = $trp->from();
-                $db_phr = $phr_lst->get_by_name($phr->name());
-                if ($db_phr != null) {
-                    $phr->set_id($db_phr->id());
+            if (!$trp->excluded) {
+                $needs_from = true;
+                if (in_array($trp->verb_code_id(), verbs::WITHOUT_FROM)) {
+                    $needs_from = false;
+                }
+                if ($needs_from) {
+                    $phr = $trp->from();
+                    if (!$phr->is_valid()) {
+                        $usr_msg->add_id_with_vars(msg_id::IMPORT_PHRASE_NOT_FOUND, [
+                            msg_id::VAR_NAME => $phr->name(),
+                            msg_id::VAR_ID => $trp->dsp_id()
+                        ]);
+                    }
+                }
+                $phr = $trp->to();
+                if (!$phr->is_valid()) {
+                    $usr_msg->add_id_with_vars(msg_id::IMPORT_PHRASE_NOT_FOUND, [
+                        msg_id::VAR_NAME => $phr->name(),
+                        msg_id::VAR_ID => $trp->dsp_id()
+                    ]);
                 }
             }
-            if ($trp->to_id() == 0) {
-                $phr = $trp->to();
-                $db_phr = $phr_lst->get_by_name($phr->name());
-                if ($db_phr != null) {
-                    $phr->set_id($db_phr->id());
+        }
+        return $usr_msg;
+    }
+
+    private function fill_triple_by_name(
+        triple_list|sandbox_list_named $db_lst,
+        triple|phrase                  $phr,
+        user_message                   $usr_msg,
+        bool                           $fill_all = false,
+        bool                           $report_missing = true
+    ): void
+    {
+        global $usr;
+        if ($phr->id() == 0 and $phr->name($fill_all) != '') {
+            $db_obj = $db_lst->get_by_name($phr->name($fill_all), $fill_all);
+            if ($db_obj != null) {
+                $phr->fill($db_obj, $usr);
+            } else {
+                if ($report_missing and !$phr->is_excluded()) {
+                    $lib = new library();
+                    $usr_msg->add_id_with_vars(msg_id::ADDED_OBJECT_NOT_FOUND, [
+                        msg_id::VAR_CLASS_NAME => $lib->class_to_name($phr::class),
+                        msg_id::VAR_NAME => $phr->dsp_id()
+                    ]);
                 }
             }
         }

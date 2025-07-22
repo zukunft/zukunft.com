@@ -69,6 +69,7 @@ include_once MODEL_FORMULA_PATH . 'formula_list.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_GROUP_PATH . 'group_id.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
+include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -99,6 +100,7 @@ use cfg\formula\formula_list;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\helper\data_object;
+use cfg\import\import;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_list_named;
 use cfg\user\user_message;
@@ -2182,9 +2184,10 @@ class phrase_list extends sandbox_list_named
      * save all changes of the phrase list to the database
      * TODO speed up by creation one SQL statement
      *
+     * @param import|null $imp the import object with the estimate of the total save time
      * @return user_message the message that should be shown to the user if something went wrong
      */
-    function save(): user_message
+    function save(import $imp = null): user_message
     {
         $usr_msg = new user_message();
 
@@ -2291,12 +2294,12 @@ class phrase_list extends sandbox_list_named
      * this function is called from dsp_id, so no call of another function is allowed
      * TODO move to a parent object for phrase list and term list
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $name_lst = array();
         foreach ($this->lst() as $phr) {
             if ($phr != null) {
-                $name_lst[] = $phr->name();
+                $name_lst[] = $phr->name($ignore_excluded);
             }
         }
         return $name_lst;

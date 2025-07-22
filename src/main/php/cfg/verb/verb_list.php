@@ -273,6 +273,11 @@ class verb_list extends type_list
         $vrb->set_code_id_db(verbs::MEASURE);
         $this->add_verb($vrb);
         $vrb = new verb();
+        $vrb->set_id(verbs::ALIAS_ID);
+        $vrb->set_name(verbs::ALIAS_NAME);
+        $vrb->set_code_id_db(verbs::ALIAS);
+        $this->add_verb($vrb);
+        $vrb = new verb();
         $vrb->set_id(verbs::CAN_BE_ID);
         $vrb->set_name(verbs::CAN_BE_NAME);
         $vrb->set_code_id_db(verbs::CAN_BE);
@@ -291,6 +296,11 @@ class verb_list extends type_list
         $vrb->set_id(verbs::CAN_CAUSE_ID);
         $vrb->set_name(verbs::CAN_CAUSE_NAME);
         $vrb->set_code_id_db(verbs::CAN_CAUSE);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->set_id(verbs::PER_ID);
+        $vrb->set_name(verbs::PER_NAME);
+        $vrb->set_code_id_db(verbs::PER);
         $this->add_verb($vrb);
         $vrb = new verb();
         $vrb->set_id(verbs::SYMBOL_ID);

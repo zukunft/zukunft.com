@@ -750,13 +750,13 @@ class result_list extends sandbox_value_list
     /**
      * return a list of the formula result names
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = array();
         $lib = new library();
         if (!$this->is_empty()) {
             foreach ($this->lst() as $res) {
-                $result[] = $res->name();
+                $result[] = $res->name($ignore_excluded);
 
                 // check user consistency (can be switched off once the program ist stable)
                 if (!isset($res->usr)) {

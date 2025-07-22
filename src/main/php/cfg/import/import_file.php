@@ -86,7 +86,7 @@ class import_file
      * TODO return a user message instead of a string
      *
      * @param string $filename
-     * @param user $usr
+     * @param user $usr the user who has requested the import
      * @param bool $direct true if each object should be saved separate in the database
      * @return user_message
      */
@@ -97,6 +97,8 @@ class import_file
         $usr_msg = new user_message();
         $imp = new import($filename);
         $imp->set_start_time($this->start_time);
+        // TODO Prio 1 use import user instead of $usr_req
+        $imp->usr = $usr;
 
         // load the config e.g. after initial setup
         if ($cfg == null) {
@@ -137,9 +139,9 @@ class import_file
 
                 // analyse the import file and update the database
                 if ($direct) {
-                    $import_result = $imp->put_json_direct($json_str, $usr);
+                    $import_result = $imp->put_json_direct($json_str);
                 } else {
-                    $import_result = $imp->put_json($json_str, $usr);
+                    $import_result = $imp->put_json($json_str);
                 }
 
                 // show the summery to the user
@@ -192,7 +194,8 @@ class import_file
                 $this->empty_warning($filename, $usr_msg);
             } else {
                 $imp = new import($filename);
-                $import_result = $imp->put_yaml($yaml_str, $usr);
+                $imp->usr = $usr;
+                $import_result = $imp->put_yaml($yaml_str);
                 if ($import_result->is_ok()) {
                     $this->done($imp->summary(), $usr_msg);
                 } else {
@@ -250,9 +253,10 @@ class import_file
 
                     // reload the target values to be able to report the missing config values
                     $imp = new import(files::SYSTEM_CONFIG);
+                    $imp->usr = $usr;
                     $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                     $yaml_array = yaml_parse($yaml_str);
-                    $dto = $imp->get_data_object_yaml($yaml_array, $usr);
+                    $dto = $imp->get_data_object_yaml($yaml_array);
                     $load_msg = $dto->load();
                     if (!$load_msg->is_ok()) {
 

@@ -532,20 +532,21 @@ class sandbox_list extends base_list
      */
     function name(int $limit = null): string
     {
-        return '"' . implode('","', $this->names($limit)) . '"';
+        return '"' . implode('","', $this->names(false, $limit)) . '"';
     }
 
     /**
+     * @param bool $ignore_excluded if true also the excluded names are included
      * @param ?int $limit the max number of ids to show
      * @return array with all names of the list
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = [];
         $pos = 0;
         foreach ($this->lst() as $sbx_obj) {
             if ($pos <= $limit or $limit == null) {
-                $result[] = $sbx_obj->name();
+                $result[] = $sbx_obj->name($ignore_excluded);
                 $pos++;
             }
         }

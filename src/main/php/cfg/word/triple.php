@@ -824,6 +824,32 @@ class triple extends sandbox_link_named
     }
 
     /**
+     * @return string the code_id of the verb
+     */
+    function verb_code_id(): string
+    {
+        global $vrb_cac;
+        $id = $this->predicate_id();
+        if ($id > 0) {
+            $vrb = $vrb_cac->get($this->predicate_id());
+            if ($vrb != null) {
+                return $vrb->code_id();
+            } else {
+                return '';
+            }
+        } elseif ($id < 0) {
+            $vrb = $vrb_cac->get($this->predicate_id() * -1);
+            if ($vrb != null) {
+                return $vrb->code_id();
+            } else {
+                return '';
+            }
+        } else {
+            return '';
+        }
+    }
+
+    /**
      * overwrite the link type function
      * @return string|null the name of the verb
      */
@@ -1089,6 +1115,28 @@ class triple extends sandbox_link_named
             $trp = $obj->obj();
         }
         if ($trp != null) {
+            // fill to link objects
+            if ($this->from_empty()) {
+                if (!$trp->from_empty()) {
+                    $this->set_from($trp->from());
+                }
+            } else {
+                $this->from()->fill($trp->from(), $usr_req);
+            }
+            if ($this->verb_empty()) {
+                if (!$trp->verb_empty()) {
+                    $this->set_verb($trp->verb());
+                }
+            }
+            if ($this->to_empty()) {
+                if (!$trp->to_empty()) {
+                    $this->set_to($trp->to());
+                }
+            } else {
+                $this->to()->fill($trp->to(), $usr_req);
+            }
+
+            // fill the names
             if ($trp->name_given != null) {
                 $this->name_given = $trp->name_given;
             }

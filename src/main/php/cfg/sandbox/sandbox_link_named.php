@@ -296,7 +296,7 @@ class sandbox_link_named extends sandbox_link
      */
     function description(): ?string
     {
-        if ($this->excluded) {
+        if ($this->is_excluded()) {
             return null;
         } else {
             return $this->description;
@@ -379,6 +379,17 @@ class sandbox_link_named extends sandbox_link
         }
         if ($this->type_id != null) {
             if ($this->type_id != $db_obj->type_id) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    function no_id_but_name(): bool
+    {
+        $result = false;
+        if ($this->id() == 0 or $this->id() == null) {
+            if ($this->name(true) != '' and $this->name(true) != null) {
                 $result = true;
             }
         }

@@ -16,9 +16,6 @@
   "triples": [
     {
       "name": "System Test Triple",
-      "from": "System Test Word",
-      "verb": "is a",
-      "to": "System Test Word To",
       "description": "System Test Triple Description"
     }
   ]

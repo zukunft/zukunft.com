@@ -1211,9 +1211,15 @@
       ]
     },
     {
-      "name": "m/s",
+      "name": "are",
       "type": "measure",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Hectare#Are",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "m2",

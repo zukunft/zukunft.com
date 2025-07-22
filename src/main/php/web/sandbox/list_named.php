@@ -78,7 +78,7 @@ class list_named extends list_dsp
      */
     function name_tip(int $limit = null): string
     {
-        return '"' . implode('","', $this->names($limit)) . '"';
+        return '"' . implode('","', $this->names(false, $limit)) . '"';
     }
 
     /**

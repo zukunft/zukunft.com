@@ -1147,6 +1147,32 @@ class phrase extends combine_named
         }
     }
 
+    function no_id_but_name(): bool
+    {
+        if ($this->is_word()) {
+            $wrd = $this->obj();
+            return $wrd->no_id_but_name();
+        } elseif ($this->is_triple()) {
+            $trp = $this->obj();
+            return $trp->no_id_but_name();
+        } else {
+            return false;
+        }
+    }
+
+    function is_excluded(): bool
+    {
+        if ($this->is_word()) {
+            $wrd = $this->obj();
+            return $wrd->is_excluded();
+        } elseif ($this->is_triple()) {
+            $trp = $this->obj();
+            return $trp->is_excluded();
+        } else {
+            return false;
+        }
+    }
+
 
     public static function cmp($a, $b): string
     {

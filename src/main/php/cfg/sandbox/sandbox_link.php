@@ -243,6 +243,21 @@ class sandbox_link extends sandbox
     }
 
     /**
+     * @return bool true if the from object is not set
+     */
+    function from_empty(): bool
+    {
+        if ($this->fob() == null) {
+            return true;
+        } elseif ($this->from_id() == 0
+            and ($this->from_name() == null or $this->from_name() == '')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * set the database id of the type
      *
      * @param int|null $predicate_id the database id of the type
@@ -268,6 +283,19 @@ class sandbox_link extends sandbox
     function predicate_name(): ?string
     {
         return null;
+    }
+
+    /**
+     * @return bool true if the verb object is not set
+     */
+    function verb_empty(): bool
+    {
+        if ($this->predicate_id() == 0
+            and ($this->predicate_name() == null or $this->predicate_name() == '')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     function set_tob(sandbox_named|combine_named|string|null $tob): void
@@ -299,6 +327,21 @@ class sandbox_link extends sandbox
     function to_name(): string
     {
         return $this->tob()?->name();
+    }
+
+    /**
+     * @return bool true if the from object is not set
+     */
+    function to_empty(): bool
+    {
+        if ($this->tob() == null) {
+            return true;
+        } elseif ($this->to_id() == 0
+            and ($this->to_name() == null or $this->to_name() == '')) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -499,7 +542,7 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * check if the triple might be added to the database
+     * check if the link object (e.g. triple) might be added to the database
      * if all related objects have been added to the database
      * @return user_message including suggested solutions
      *       if something is missing e.g. a linked object

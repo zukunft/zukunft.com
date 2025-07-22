@@ -449,6 +449,11 @@ class user_message
         $this->added_depending = true;
     }
 
+    function unset_added_depending(): void
+    {
+        $this->added_depending = false;
+    }
+
 
     /*
      * get

@@ -390,7 +390,7 @@ class sandbox_list_named extends sandbox_list
             // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
             $name = $obj_to_add->name();
             if ($name != '') {
-                if (!in_array($obj_to_add->name(), array_keys($this->name_pos_lst())) or $allow_duplicates) {
+                if (!in_array($name, array_keys($this->name_pos_lst())) or $allow_duplicates) {
                     // add only objects that have all mandatory values
                     $result = $obj_to_add->can_be_ready()->is_ok();
 
@@ -398,6 +398,33 @@ class sandbox_list_named extends sandbox_list
                         $this->add_direct($obj_to_add);
                         $this->set_lst_dirty();
                     }
+                } else {
+                    $result = parent::add_obj($obj_to_add, $allow_duplicates)->is_ok();
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * add a named object to the list that does not yet have an id but has a name
+     * without checking if the object is db ready
+     * used e.g. for the triple import to update triple fields
+     * without repeating the links in the import json message
+     * @param sandbox_named|triple|phrase|term|null $obj_to_add the named user sandbox object that should be added
+     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
+     * @returns bool true if the object has been added
+     */
+    function add_by_name_direct(sandbox_named|triple|phrase|term|null $obj_to_add, bool $allow_duplicates = false): bool
+    {
+        $result = false;
+        if ($obj_to_add != null) {
+            // if a sandbox object has a name, but not (yet) an id, add it nevertheless to the list
+            $name = $obj_to_add->name(true);
+            if ($name != '') {
+                if (!in_array($name, array_keys($this->name_pos_lst())) or $allow_duplicates) {
+                    $this->add_direct($obj_to_add);
+                    $this->set_lst_dirty();
                 } else {
                     $result = parent::add_obj($obj_to_add, $allow_duplicates)->is_ok();
                 }
@@ -445,7 +472,11 @@ class sandbox_list_named extends sandbox_list
                     $this->add($sbx_new);
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::ID_OR_NAME_MISSING, [msg_id::VAR_ID => $sbx_new->dsp_id()]);
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::FILL_OBJECT_ID_MISSING, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($sbx_new::class),
+                    msg_id::VAR_NAME => $sbx_new->dsp_id()
+                ]);
             }
         }
         return $usr_msg;
@@ -459,7 +490,10 @@ class sandbox_list_named extends sandbox_list
      * @param bool $fill_all force to include also the excluded names e.g. for import
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill_by_name(sandbox_list_named $db_lst, bool $fill_all = false): user_message
+    function fill_by_name(
+        sandbox_list_named $db_lst,
+        bool               $fill_all = false
+    ): user_message
     {
         global $usr;
         $usr_msg = new user_message();
@@ -472,13 +506,18 @@ class sandbox_list_named extends sandbox_list
                     $obj_to_fill->fill($db_obj, $usr);
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::ID_OR_NAME_MISSING, [msg_id::VAR_ID => $obj_to_fill->dsp_id()]);
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::USED_OBJECT_ID_AND_NAME_MISSING, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($obj_to_fill::class),
+                    msg_id::VAR_WORD_NAME => $obj_to_fill->dsp_id(),
+                    msg_id::VAR_NAME => $this->name()
+                ]);
             }
         }
         return $usr_msg;
     }
 
-    function add_id_by_name(array $id_lst): user_message
+    function add_id_by_name(array $id_lst, string $class): user_message
     {
         $usr_msg = new user_message();
         foreach ($id_lst as $name => $id) {
@@ -487,10 +526,18 @@ class sandbox_list_named extends sandbox_list
                 if ($sbx_old != null) {
                     $sbx_old->set_id($id);
                 } else {
-                    $usr_msg->add_id_with_vars(msg_id::ID_OR_NAME_MISSING, [msg_id::VAR_ID => $name]);
+                    $lib = new library();
+                    $usr_msg->add_id_with_vars(msg_id::ADDED_OBJECT_NOT_FOUND, [
+                        msg_id::VAR_CLASS_NAME => $lib->class_to_name($class),
+                        msg_id::VAR_NAME => $name
+                    ]);
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::ID_OR_NAME_MISSING, [msg_id::VAR_ID => $name]);
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::ADDED_OBJECT_ID_MISSING, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($class),
+                    msg_id::VAR_NAME => $name
+                ]);
             }
         }
         return $usr_msg;
@@ -703,7 +750,7 @@ class sandbox_list_named extends sandbox_list
         $del_lst->reset();
         foreach ($this->lst() as $sbx) {
             // TODO test if get_by_obj_id is faster
-            $db_sbx = $db_lst->get_by_name($sbx->name());
+            $db_sbx = $db_lst->get_by_name($sbx->name(true), true);
             if ($db_sbx != null) {
                 // TODO review not_used so that e.g. words are "not_used" that have an owner but are not used for other opbejct like values
                 // if ($sbx->is_excluded() and $sbx->not_used()) {
@@ -797,7 +844,7 @@ class sandbox_list_named extends sandbox_list
         $save_per_sec = $cfg->get_by([$cfg_wrd, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
         // get the db id from the loaded objects
-        $usr_msg->add($this->fill_by_name($db_lst));
+        $usr_msg->add($this->fill_by_name($db_lst, true, false));
 
         // get the objects that need to be added
         $db_names = $db_lst->names();
@@ -838,7 +885,7 @@ class sandbox_list_named extends sandbox_list
 
             // TODO create a loop to add depending triples
             // add the just added words or triples id to this list
-            $this->add_id_by_name($usr_msg->db_row_id_lst());
+            $this->add_id_by_name($usr_msg->db_row_id_lst(), $class);
 
             $imp->step_end($add_lst->count(), $save_per_sec);
 
@@ -902,7 +949,7 @@ class sandbox_list_named extends sandbox_list
             // add the remaining missing words or triples
             $step_time = $db_lst->count() / $upd_per_sec;
             $imp->step_start(msg_id::SAVE, $class, $db_lst->count(), $step_time);
-            $upd_calls = $upd_lst->sql_update_call_with_par($sc, $db_lst, $use_func);
+            $upd_calls = $upd_lst->sql_update_call_with_par($sc, $db_lst, $imp->usr, $use_func);
             $usr_msg->add($upd_calls->exe_update($class));
 
             $imp->step_end($db_lst->count(), $upd_per_sec);
@@ -1069,24 +1116,39 @@ class sandbox_list_named extends sandbox_list
 
     /**
      * get a list of all sql function names that are needed to update all loaded of this list to the database
+     * @param sql_creator $sc
+     * @param sandbox_list_named $db_lst
+     * @param user $usr_req the user who has requested the database update of the users
      * @param bool $use_func true if sql function should be used to write the named user sandbox objects to the database
      * @return sql_par_list with the sql function names
      */
-    function sql_update_call_with_par(sql_creator $sc, sandbox_list_named $db_lst, bool $use_func = true): sql_par_list
+    function sql_update_call_with_par(
+        sql_creator        $sc,
+        sandbox_list_named $db_lst,
+        user               $usr_req,
+        bool               $use_func = true
+    ): sql_par_list
     {
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
             $db_row = $db_lst->get_by_name($sbx->name());
             // another validation check as a second line of defence
             if ($db_row != null) {
-                // check always user sandbox and normal name, because reading from database for check would take longer
-                $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
-                if ($use_func) {
-                    $sc_par_lst->add(sql_type::LOG);
+                // do not overwrite db values not set by the import
+                $sbx->fill($db_row, $usr_req);
+
+                if (!$sbx->db_ready()) {
+                    log_err($sbx->dsp_id() . ' is not filled in sql_update_call_with_par');
+                } else {
+                    // check always user sandbox and normal name, because reading from database for check would take longer
+                    $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
+                    if ($use_func) {
+                        $sc_par_lst->add(sql_type::LOG);
+                    }
+                    $qp = $sbx->sql_update($sc, $db_row, $sc_par_lst);
+                    $qp->obj_name = $sbx->name();
+                    $sql_list->add($qp);
                 }
-                $qp = $sbx->sql_update($sc, $db_row, $sc_par_lst);
-                $qp->obj_name = $sbx->name();
-                $sql_list->add($qp);
             }
         }
         return $sql_list;
@@ -1101,7 +1163,7 @@ class sandbox_list_named extends sandbox_list
     {
         $sql_list = new sql_par_list();
         foreach ($this->lst() as $sbx) {
-            $db_row = $db_lst->get_by_name($sbx->name());
+            $db_row = $db_lst->get_by_name($sbx->name(true));
             // another validation check as a second line of defence
             if ($db_row != null) {
                 // check always user sandbox and normal name, because reading from database for check would take longer
@@ -1110,11 +1172,24 @@ class sandbox_list_named extends sandbox_list
                     $sc_par_lst->add(sql_type::LOG);
                 }
                 $qp = $sbx->sql_delete($sc, $sc_par_lst);
-                $qp->obj_name = $sbx->name();
+                $qp->obj_name = $sbx->name(true);
                 $sql_list->add($qp);
             }
         }
         return $sql_list;
+    }
+
+    /*
+     * overwrite
+     */
+
+    function save(import $imp = null): user_message
+    {
+        $msg = 'sandbox_list_named function save not overwritten';
+        log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_text($msg);
+        return $usr_msg;
     }
 
 
@@ -1123,10 +1198,12 @@ class sandbox_list_named extends sandbox_list
      */
 
     /**
+     * TODO PRIO 1 review and move away from debug section because it is used in the import
+     * @param bool $ignore_excluded if true also the excluded names are included
      * @param ?int $limit the max number of ids to show
      * @return array with all names of the list
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         if ($limit == null and !$this->is_name_list_dirty()) {
             $result = array_keys($this->name_pos_lst);
@@ -1135,7 +1212,7 @@ class sandbox_list_named extends sandbox_list
             $pos = 0;
             foreach ($this->lst() as $sbx_obj) {
                 if ($pos <= $limit or $limit == null) {
-                    $result[] = $sbx_obj->name();
+                    $result[] = $sbx_obj->name($ignore_excluded);
                     $pos++;
                 }
             }

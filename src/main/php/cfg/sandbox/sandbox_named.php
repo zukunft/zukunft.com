@@ -635,6 +635,17 @@ class sandbox_named extends sandbox
         }
     }
 
+    function no_id_but_name(): bool
+    {
+        $result = false;
+        if ($this->id() == 0 or $this->id() == null) {
+            if ($this->name(true) != '' and $this->name(true) != null) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
 
     /*
      * log read

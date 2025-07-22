@@ -434,7 +434,7 @@ class sandbox extends db_object_seq_id_user
         $usr_msg = parent::import_db_obj($this, $test_obj);
 
         if (key_exists(json_fields::EXCLUDED, $in_ex_json)) {
-            $this->excluded = $in_ex_json[json_fields::EXCLUDED];
+            $this->set_excluded($in_ex_json[json_fields::EXCLUDED]);
         }
         if (key_exists(json_fields::SHARE, $in_ex_json)) {
             $this->share_id = $shr_typ_cac->id($in_ex_json[json_fields::SHARE]);
@@ -564,7 +564,7 @@ class sandbox extends db_object_seq_id_user
 
         // add the exclusions
         if ($this->is_exclusion_set()) {
-            $vars[json_fields::EXCLUDED] = $this->excluded;
+            $vars[json_fields::EXCLUDED] = $this->is_excluded();
         }
 
         return $vars;
@@ -624,7 +624,7 @@ class sandbox extends db_object_seq_id_user
     function set_excluded(?bool $db_val): void
     {
         if ($db_val == null) {
-            $this->excluded = false;
+            $this->include();
         } else {
             $this->excluded = $db_val;
         }
@@ -3450,13 +3450,13 @@ class sandbox extends db_object_seq_id_user
                 );
             }
             // TODO review and remove exception if possible
-            $old_val = $sbx->excluded;
+            $old_val = $sbx->is_excluded();
             if ($sbx->excluded === false) {
                 $old_val = null;
             }
             $lst->add_field(
                 sql_db::FLD_EXCLUDED,
-                $this->excluded,
+                $this->is_excluded(),
                 sql_db::FLD_EXCLUDED_SQL_TYP,
                 $old_val
             );
@@ -3902,7 +3902,7 @@ class sandbox extends db_object_seq_id_user
         $sc_par_lst_sub->add(sql_type::LIST);
         $sc_par_lst_log = clone $sc_par_lst_sub;
         $sc_par_lst_log->add(sql_type::INSERT_PART);
-        if ($this->excluded) {
+        if ($this->is_excluded()) {
             $sc_par_lst_log->add(sql_type::EXCLUDE);
         }
 
@@ -3935,7 +3935,7 @@ class sandbox extends db_object_seq_id_user
         $par_lst_out->add_list($qp_log->par_fld_lst);
 
         // add the name field if it is missing and the object should be excluded
-        if ($this->excluded and $sc_par_lst->is_update()) {
+        if ($this->is_excluded() and $sc_par_lst->is_update()) {
             if ($this->is_named_obj()) {
                 if (!$par_lst_out->has_name($this->name_field())) {
                     global $cng_fld_cac;
@@ -3955,7 +3955,7 @@ class sandbox extends db_object_seq_id_user
         }
 
         // add additional log entry if the row has been excluded
-        if ($this->excluded) {
+        if ($this->is_excluded()) {
             // TODO use a common function for this part with in sql_delete_and_log
             $sc_par_lst_log = clone $sc_par_lst_sub;
             $sc_par_lst_log->add(sql_type::EXCL_NAME_ONLY);
