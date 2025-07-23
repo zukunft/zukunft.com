@@ -68,7 +68,7 @@ rootCheck() {
 }
 
 displayIntro() {
-    clear ">$(tty)"
+    clear > "$(tty)"
 
     # Initial prompt
     echo -e "${GREEN}ZUKUNFT INSTALLER${NC}"
