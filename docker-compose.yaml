@@ -4,7 +4,7 @@ services:
       context: ./docker
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
+      - "${APP_SERVICE_PORT:-8080}:80"
     volumes:
       - ./:/var/www/html
       - ./docker/apache-config.conf:/etc/apache2/sites-enabled/000-default.conf
@@ -35,7 +35,7 @@ services:
     image: adminer
     restart: always
     ports:
-      - "8081:80"
+      - "${ADMINER_SERVICE_PORT:-8081}:80"
     environment:
       - ADMINER_DEFAULT_SERVER=db
     depends_on:

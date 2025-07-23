@@ -118,8 +118,12 @@ Steps:
    cd zukunft.com
    ```
 
-2. (Optional) Create a `.env` file to customize database credentials:
+2. (Optional) Create a `.env` file to customize app credentials:
+   You can specify app and adminer custom ports if 8080 and 8081 are allocated in 
+   your system
    ```env
+   APP_SERVICE_PORT=8080
+   ADMINER_SERVICE_PORT=8081
    PGSQL_HOST=db
    PGSQL_PORT=5432
    PGSQL_DATABASE=zukunft
