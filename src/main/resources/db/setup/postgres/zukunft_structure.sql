@@ -1124,9 +1124,9 @@ COMMENT ON COLUMN verbs.words IS 'used for how many phrases or formulas';
 CREATE TABLE IF NOT EXISTS triples
 (
     triple_id           BIGSERIAL PRIMARY KEY,
-    from_phrase_id      bigint   NOT NULL,
-    verb_id             bigint   NOT NULL,
-    to_phrase_id        bigint   NOT NULL,
+    from_phrase_id      bigint            DEFAULT NULL,
+    verb_id             bigint                NOT NULL,
+    to_phrase_id        bigint                NOT NULL,
     user_id             bigint            DEFAULT NULL,
     triple_name         varchar(255)      DEFAULT NULL,
     name_given          varchar(255)      DEFAULT NULL,
@@ -1145,7 +1145,7 @@ CREATE TABLE IF NOT EXISTS triples
 
 COMMENT ON TABLE triples IS 'to link one word or triple with a verb to another word or triple';
 COMMENT ON COLUMN triples.triple_id IS 'the internal unique primary index';
-COMMENT ON COLUMN triples.from_phrase_id IS 'the phrase_id that is linked';
+COMMENT ON COLUMN triples.from_phrase_id IS 'the phrase_id that is linked which can be null e.g. if a symbol is assigned to a triple (m/s is symbol for meter per second)';
 COMMENT ON COLUMN triples.verb_id IS 'the verb_id that defines how the phrases are linked';
 COMMENT ON COLUMN triples.to_phrase_id IS 'the phrase_id to which the first phrase is linked';
 COMMENT ON COLUMN triples.user_id IS 'the owner / creator of the triple';

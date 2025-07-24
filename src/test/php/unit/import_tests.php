@@ -103,7 +103,7 @@ class import_tests
         $json_str = file_get_contents(test_files::IMPORT_FORMULAS);
         $json_array = json_decode($json_str, true);
         $dto = $imp->get_data_object($json_array);
-        $t->assert($test_name, $dto->formula_list()->count(), 3);
+        $t->assert($test_name, $dto->formula_list()->count(), 4);
 
         $test_name = 'JSON import warning creation';
         $json_str = file_get_contents(test_files::IMPORT_PATH . 'warning_and_error_test.json');

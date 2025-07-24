@@ -253,6 +253,16 @@ class expression extends shared_expression
         return $phr_lst;
     }
 
+    function is_valid(): bool
+    {
+        $is_valid = true;
+        if (($this->ref_text() == null or $this->ref_text() == '')
+        and ($this->user_text() == null or $this->user_text() == '')) {
+            $is_valid = false;
+        }
+        return $is_valid;
+    }
+
     /**
      * a formula element group is a group of words, verbs, phrases or formula
      * that retrieve a value or a list of values

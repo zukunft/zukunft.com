@@ -73,7 +73,7 @@ class triple_db
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
     const FLD_ID = 'triple_id';
-    const FLD_FROM_COM = 'the phrase_id that is linked';
+    const FLD_FROM_COM = 'the phrase_id that is linked which can be null e.g. if a symbol is assigned to a triple (m/s is symbol for meter per second)';
     const FLD_FROM = 'from_phrase_id';
     const FLD_VERB_COM = 'the verb_id that defines how the phrases are linked';
     const FLD_TO_COM = 'the phrase_id to which the first phrase is linked';
@@ -101,7 +101,7 @@ class triple_db
 
     // list of fields that MUST be set by one user
     const FLD_LST_LINK = array(
-        [self::FLD_FROM, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_FROM_COM],
+        [self::FLD_FROM, sql_field_type::INT_UNIQUE_PART, sql_field_default::NULL, sql::INDEX, '', self::FLD_FROM_COM],
         [verb_db::FLD_ID, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, verb::class, self::FLD_VERB_COM],
         [self::FLD_TO, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TO_COM],
     );

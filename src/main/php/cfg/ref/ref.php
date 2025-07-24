@@ -984,6 +984,10 @@ class ref extends sandbox_link
         return $result;
     }
 
+    function needs_to(): bool
+    {
+        return false;
+    }
 
     /*
      * log

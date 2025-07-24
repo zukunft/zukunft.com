@@ -1209,7 +1209,7 @@ ALTER TABLE verbs
 CREATE TABLE IF NOT EXISTS triples
 (
     triple_id           bigint           NOT NULL COMMENT 'the internal unique primary index',
-    from_phrase_id      bigint           NOT NULL COMMENT 'the phrase_id that is linked',
+    from_phrase_id      bigint       DEFAULT NULL COMMENT 'the phrase_id that is linked which can be null e.g. if a symbol is assigned to a triple (m/s is symbol for meter per second)',
     verb_id             bigint           NOT NULL COMMENT 'the verb_id that defines how the phrases are linked',
     to_phrase_id        bigint           NOT NULL COMMENT 'the phrase_id to which the first phrase is linked',
     user_id             bigint       DEFAULT NULL COMMENT 'the owner / creator of the triple',

@@ -89,6 +89,7 @@ include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_PHRASE_PATH . 'phrase_list.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_REF_PATH . 'ref.php';
+include_once MODEL_REF_PATH . 'ref_list.php';
 include_once MODEL_SANDBOX_PATH . 'sandbox.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VALUE_PATH . 'value_list.php';
@@ -129,6 +130,7 @@ use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\phrase\term;
 use cfg\ref\ref;
+use cfg\ref\ref_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_code_id;
 use cfg\user\user;
@@ -523,6 +525,19 @@ class word extends sandbox_code_id
     function type_id(): ?int
     {
         return $this->type_id;
+    }
+
+    function ref_array(): ?array
+    {
+        return $this->ref_lst;
+    }
+    function ref_list(): ref_list
+    {
+        $ref_lst = new ref_list($this->user());
+        foreach ($this->ref_lst as $ref) {
+            $ref_lst->add($ref);
+        }
+        return $ref_lst;
     }
 
 

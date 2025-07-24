@@ -859,6 +859,15 @@ class triple extends sandbox_link_named
     }
 
     /**
+     * overwrite the link type function
+     * @return string|null the code id of the verb
+     */
+    function predicate_code_id(): ?string
+    {
+        return $this->verb_code_id();
+    }
+
+    /**
      * set the "from" phrase of this triple
      * e.g. "city" for "Zurich (city)" based on "Zurich" (from) "is a" (verb) "city" (to)
      *
@@ -1087,6 +1096,20 @@ class triple extends sandbox_link_named
         $lnk->set_verb($this->verb());
         $lnk->set_tob($this->tob());
         return $lnk;
+    }
+
+
+    /*
+     * info
+     */
+
+    function needs_from(): bool
+    {
+        $needs_from = true;
+        if (in_array($this->verb_code_id(), verbs::WITHOUT_FROM)) {
+            $needs_from = false;
+        }
+        return $needs_from;
     }
 
 
@@ -1822,14 +1845,17 @@ class triple extends sandbox_link_named
     function check(): user_message
     {
         $usr_msg = new user_message();
-        if ($this->from() == null) {
-            $usr_msg->add_id(msg_id::TRIPLE_FROM_PHRASE_MISSING);
-        } else {
-            if ($this->from()->id() == 0) {
-                if ($this->from()->name() == '') {
-                    $usr_msg->add_id(msg_id::TRIPLE_PHRASE_FROM_NAME_MISSING);
-                } else {
-                    $usr_msg->add_info_text('triple phrase from id is 0');
+
+        if ($this->needs_from()) {
+            if ($this->from() == null) {
+                $usr_msg->add_id(msg_id::TRIPLE_FROM_PHRASE_MISSING);
+            } else {
+                if ($this->from()->id() == 0) {
+                    if ($this->from()->name() == '') {
+                        $usr_msg->add_id(msg_id::TRIPLE_PHRASE_FROM_NAME_MISSING);
+                    } else {
+                        $usr_msg->add_info_text('triple phrase from id is 0');
+                    }
                 }
             }
         }

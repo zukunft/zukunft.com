@@ -37,6 +37,7 @@ include_once MODEL_IMPORT_PATH . 'convert_wikipedia_table.php';
 include_once MODEL_CONST_PATH . 'files.php';
 include_once TEST_CONST_PATH . 'files.php';
 
+use cfg\formula\formula;
 use cfg\import\import_file;
 use cfg\ref\ref;
 use cfg\ref\source;
@@ -44,6 +45,7 @@ use cfg\user\user;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\word;
+use shared\const\formulas;
 use shared\const\refs;
 use shared\const\sources;
 use shared\const\triples;
@@ -312,6 +314,44 @@ class import_write_tests
         $ref->load_by_ex_key(refs::SYSTEM_TEST_ADD);
         $t->assert($test_name, $ref->id(), 0);
         */
+
+
+        $t->subheader($ts . 'formula');
+
+        $test_name = 'import the test formula';
+        $imp_msg = $imf->json_file(test_files::IMPORT_FORMULAS, $usr, false);
+        $t->assert_true($test_name, $imp_msg->is_ok());
+        $test_name = 'test if the formula has been added to the database';
+        $frm = new formula($usr);
+        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
+        $t->assert_greater_zero($test_name, $frm->id());
+
+        $test_name = 'add the description to the test formula via import';
+        $imp_msg = $imf->json_file(test_files::IMPORT_FORMULAS_UPDATE, $usr, false);
+        $t->assert_true($test_name, $imp_msg->is_ok());
+        $test_name = 'test if the description has been added in the database';
+        $frm = new formula($usr);
+        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
+        $t->assert($test_name, $frm->description(), formulas::SYSTEM_TEST_ADD_COM);
+
+        $test_name = 'remove the test formula via import';
+        $imp_msg = $imf->json_file(test_files::IMPORT_FORMULAS_UNDO, $usr, false);
+        $t->assert_true($test_name, $imp_msg->is_ok());
+        $test_name = 'test if the test formula has been deleted from the database';
+        $frm = new formula($usr);
+        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
+        $t->assert($test_name, $frm->id(), 0);
+
+        $test_name = 'remove the test formula directly as fallback to cleanup the database';
+        $frm = new formula($usr);
+        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
+        if ($frm->id() > 0) {
+            $frm->del();
+        }
+        $frm = new formula($usr);
+        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
+        $t->assert($test_name, $frm->id(), 0);
+
 
     }
 

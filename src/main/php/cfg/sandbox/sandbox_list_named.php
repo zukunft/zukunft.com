@@ -1010,7 +1010,10 @@ class sandbox_list_named extends sandbox_list
             $func_to_create->exe_delete($class);
             $imp->step_end($func_to_create->count());
 
-            // add the remaining missing words or triples
+            // delete upfront depending database entries like the formula elements
+            $this->delete_depending($usr_msg);
+
+            // add the remaining missing words, triples or ...
             $step_time = $db_lst->count() / $del_per_sec;
             $imp->step_start(msg_id::DEL, $class, $db_lst->count(), $step_time);
             $del_calls = $del_lst->sql_delete_call_with_par($sc, $db_lst, $use_func);
@@ -1088,6 +1091,12 @@ class sandbox_list_named extends sandbox_list
             }
         }
         return $sql_list;
+    }
+
+    // TODO Prio 3 use the given $usr_msg instead of $usr_msg->add() to increase speed
+    protected function delete_depending(user_message $usr_msg): void
+    {
+        $usr_msg->add_info_text('no depending defined for ' . $this::class);
     }
 
     /**

@@ -853,12 +853,8 @@ class triple_list extends sandbox_list_named
 
         // loop over the objects of theis list because it is expected to be smaller than tha cache list
         foreach ($this->lst() as $trp) {
-            $needs_from = true;
-            if (in_array($trp->verb_code_id(), verbs::WITHOUT_FROM)) {
-                $needs_from = false;
-            }
-            if ($needs_from) {
-                $this->fill_triple_by_name($db_lst, $trp, $usr_msg, $fill_all, $report_missing);
+            $this->fill_triple_by_name($db_lst, $trp, $usr_msg, $fill_all, $report_missing);
+            if ($trp->needs_from()) {
                 $this->fill_triple_by_name($db_lst, $trp->from(), $usr_msg, $fill_all, $report_missing);
             }
             $this->fill_triple_by_name($db_lst, $trp->to(), $usr_msg, $fill_all, $report_missing);
@@ -866,15 +862,11 @@ class triple_list extends sandbox_list_named
         return $usr_msg;
     }
 
-    private function report_missing(user_message $usr_msg): user_message
+    private function report_missing(user_message $usr_msg): void
     {
         foreach ($this->lst() as $trp) {
             if (!$trp->excluded) {
-                $needs_from = true;
-                if (in_array($trp->verb_code_id(), verbs::WITHOUT_FROM)) {
-                    $needs_from = false;
-                }
-                if ($needs_from) {
+                if ($trp->needs_from()) {
                     $phr = $trp->from();
                     if (!$phr->is_valid()) {
                         $usr_msg->add_id_with_vars(msg_id::IMPORT_PHRASE_NOT_FOUND, [
@@ -892,7 +884,6 @@ class triple_list extends sandbox_list_named
                 }
             }
         }
-        return $usr_msg;
     }
 
     private function fill_triple_by_name(
@@ -943,12 +934,19 @@ class triple_list extends sandbox_list_named
      * get a list of triples that are ready to be added to the database
      * @return triple_list list of the triples that have an id or a name
      */
-    function get_ready(): triple_list
+    function get_ready(user_message $usr_msg = new user_message(), string $file_name = ''): triple_list
     {
         $trp_lst = new triple_list($this->user());
         foreach ($this->lst() as $trp) {
-            if ($trp->db_ready()->is_ok()) {
+            $trp_msg = $trp->db_ready();
+            if ($trp_msg->is_ok()) {
                 $trp_lst->add_by_name($trp);
+            } else {
+                $usr_msg->add($trp_msg);
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_TRIPLE_NOT_READY, [
+                    msg_id::VAR_FILE_NAME => $file_name,
+                    msg_id::VAR_TRIPLE_NAME => $trp->dsp_id(),
+                ]);
             }
         }
         return $trp_lst;

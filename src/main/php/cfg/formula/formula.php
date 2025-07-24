@@ -142,6 +142,7 @@ use math;
 use shared\calc\parameter_type;
 use shared\const\chars;
 use shared\const\formulas;
+use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\json_fields;
@@ -187,6 +188,8 @@ class formula extends sandbox_code_id
 
     // in memory only fields
     // list of phrase that link to this formula
+    private ?formula_link_list $lnk_lst = null;
+    // old list of phrase that link to this formula
     private ?phrase_list $phr_lst = null;
     public ?string $type_cl = '';          // the code id of the formula type
     public ?word $name_wrd = null;         // the triple object for the formula name:
@@ -228,6 +231,7 @@ class formula extends sandbox_code_id
         $this->last_update = null;
         $this->usage = null;
 
+        $this->lnk_lst = null;
         $this->phr_lst = null;
         $this->type_cl = '';
         $this->name_wrd = null;
@@ -387,6 +391,26 @@ class formula extends sandbox_code_id
             }
         }
 
+        // assign the phrases to the formula
+        if (key_exists(json_fields::ASSIGNED_WORD, $in_ex_json)) {
+            $phr_names = explode(",", $in_ex_json[json_fields::ASSIGNED_WORD]);
+            if ($dto != null) {
+                $phr_lst = $dto->phrase_list();
+                foreach ($phr_names as $name) {
+                    $phr = $phr_lst->get_by_name($name);
+                    if ($phr == null) {
+                        $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING, [
+                            msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
+                            msg_id::VAR_NAME => $name,
+                            msg_id::VAR_FORMULA => $this->name(),
+                        ]);
+                    } else {
+                        $this->link_phrase($phr);
+                    }
+                }
+            }
+        }
+
         // set the default type if no type is specified
         if ($this->type_id == 0) {
             $this->type_id = $frm_typ_cac->default_id();
@@ -504,7 +528,7 @@ class formula extends sandbox_code_id
         return $this->usr_text;
     }
 
-    function ref_text(): string
+    function ref_text(): ?string
     {
         if ($this->ref_text_dirty) {
             $this->generate_ref_text();
@@ -637,8 +661,25 @@ class formula extends sandbox_code_id
      * word
      */
 
+
     /**
-     * create the corresponding name word for the formula name
+     * create the corresponding name word object for the formula name
+     * @return word with the name of the formula
+     */
+    function formula_word(): word
+    {
+        global $phr_typ_cac;
+
+        // if the formula word is missing, try a word creating as a kind of auto recovery
+        $name_wrd = new word($this->user());
+        $name_wrd->set_name($this->name());
+        $name_wrd->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
+        return $name_wrd;
+    }
+
+
+    /**
+     * add the corresponding name word for the formula name to the database
      * @return bool true if adding the word has been successful
      */
     function wrd_add(): bool
@@ -649,9 +690,7 @@ class formula extends sandbox_code_id
         $result = false;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
-        $name_wrd = new word($this->user());
-        $name_wrd->set_name($this->name());
-        $name_wrd->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
+        $name_wrd = $this->formula_word();
         $name_wrd->save()->get_last_message();
         if ($name_wrd->id() > 0) {
             $this->name_wrd = $name_wrd;
@@ -1394,20 +1433,23 @@ class formula extends sandbox_code_id
             // the phrase left of the equation sign should be added to the result
             // e.g. percent for the increase formula
             $has_result_phrases = false;
-            $res_add_phr_lst = $exp->result_phrases();
-            if (isset($res_add_phr_lst)) {
-                log_debug('use words ' . $res_add_phr_lst->dsp_id() . ' for the result');
-                $has_result_phrases = true;
-            }
-            // use only the part right of the equation sign for the result calculation
-            $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
-            log_debug('->calc got result words of ' . $this->ref_text_r);
+            $res_lst = new result_list($this->user());
+            if ($exp->is_valid()) {
+                $res_add_phr_lst = $exp->result_phrases();
+                if (isset($res_add_phr_lst)) {
+                    log_debug('use words ' . $res_add_phr_lst->dsp_id() . ' for the result');
+                    $has_result_phrases = true;
+                }
+                // use only the part right of the equation sign for the result calculation
+                $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
+                log_debug('->calc got result words of ' . $this->ref_text_r);
 
-            // get the list of the numeric results
-            // $res_lst is a list of all results saved in the database
-            $res_lst = $this->to_num($phr_lst);
-            if (isset($res_add_phr_lst)) {
-                log_debug($lib->dsp_count($res_lst->lst()) . ' formula results to save');
+                // get the list of the numeric results
+                // $res_lst is a list of all results saved in the database
+                $res_lst = $this->to_num($phr_lst);
+                if (isset($res_add_phr_lst)) {
+                    log_debug($lib->dsp_count($res_lst->lst()) . ' formula results to save');
+                }
             }
 
             // save the numeric results
@@ -1565,17 +1607,7 @@ class formula extends sandbox_code_id
         $usr_msg = parent::import_obj($in_ex_json, $usr_req, $dto, $test_obj);
 
         // assign the formula to the words and triple
-        if ($usr_msg->is_ok()) {
-            $phr_lst = $this->phr_lst;
-            if ($phr_lst != null) {
-                if (!$phr_lst->is_empty()) {
-                    $usr_msg->add($phr_lst->save());
-                    foreach ($phr_lst as $phr) {
-                        $this->assign_phrase($phr);
-                    }
-                }
-            }
-        }
+        $this->assign_phrases($usr_msg);
 
         return $usr_msg;
     }
@@ -1589,6 +1621,52 @@ class formula extends sandbox_code_id
             $result .= $this->assign_phrase($phr);
         }
         return $result;
+    }
+
+    /**
+     * add a phrase link to this formula object without updating the database
+     * @param phrase $phr
+     * @return void
+     */
+    function link_phrase(phrase $phr): void
+    {
+        if ($this->lnk_lst == null) {
+            $this->lnk_lst = new formula_link_list($this->user());
+        }
+        $lnk = new formula_link($this->user());
+        $lnk->set_formula($this);
+        $lnk->set_phrase($phr);
+        $this->lnk_lst->add_link_by_key($lnk);
+    }
+
+    function save_links(user_message $usr_msg): void
+    {
+        if ($this->lnk_lst != null) {
+            foreach ($this->lnk_lst->lst() as $lnk) {
+                $usr_msg->add($lnk->save());
+            }
+        }
+    }
+
+    /**
+     * assign the formula to the words and triple
+     * TODO dismiss and use instead the link_phrase and save_links functions
+     * @param user_message $usr_msg to enrich with messages
+     * @return void
+     */
+    function assign_phrases(user_message $usr_msg = new user_message()): void
+    {
+        if ($usr_msg->is_ok()) {
+            $phr_lst = $this->phr_lst;
+            if ($phr_lst != null) {
+                if (!$phr_lst->is_empty()) {
+                    $usr_msg->add($phr_lst->save());
+                    foreach ($phr_lst as $phr) {
+                        $this->assign_phrase($phr);
+                    }
+                }
+            }
+        }
     }
 
     function assign_phrase(phrase $phr): string
@@ -1968,6 +2046,7 @@ class formula extends sandbox_code_id
     /**
      * update the database reference text based on the user text
      * TODO check in not the left AND the right part needs to be transformed as expression
+     * TODO Prio 1 return a user message instead of a string
      *
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
      * @return string which is empty if the update of the reference text was successful and otherwise the error message that should be shown to the user

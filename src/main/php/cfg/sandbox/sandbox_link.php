@@ -76,6 +76,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
+include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
 
@@ -103,6 +104,7 @@ use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
+use shared\types\verbs;
 
 class sandbox_link extends sandbox
 {
@@ -281,6 +283,15 @@ class sandbox_link extends sandbox
      * @return string|null the name of connection type
      */
     function predicate_name(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * to be overwritten by the child objects
+     * @return string|null the name of connection type
+     */
+    function predicate_code_id(): ?string
     {
         return null;
     }
@@ -551,22 +562,45 @@ class sandbox_link extends sandbox
     {
         $usr_msg = parent::db_ready();
 
-        if ($this->fob == null) {
-            $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
-                [msg_id::VAR_NAME => $this->dsp_id()]);
-        } else {
-            $usr_msg->add($this->fob->can_be_ready());
+        if ($this->needs_triple_from()) {
+            if ($this->fob == null) {
+                $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
+                    [msg_id::VAR_NAME => $this->dsp_id()]);
+            } else {
+                $usr_msg->add($this->fob->can_be_ready());
+            }
         }
-        if ($this->fob == null) {
-            $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
-                [msg_id::VAR_NAME => $this->dsp_id()]);
-        } else {
-            // a reference have only an external key but not a target object
-            if ($this::class != ref::class) {
-                $usr_msg->add($this->tob->can_be_ready());
+        if ($this->needs_to()) {
+            if ($this->tob == null) {
+                $usr_msg->add_id_with_vars(msg_id::TO_MISSING,
+                    [msg_id::VAR_NAME => $this->dsp_id()]);
+            } else {
+                // a reference have only an external key but not a target object
+                if ($this::class != ref::class) {
+                    $usr_msg->add($this->tob->can_be_ready());
+                }
             }
         }
         return $usr_msg;
+    }
+
+    private function needs_triple_from(): bool
+    {
+        if ($this::class == triple::class) {
+            return $this->needs_from();
+        } else {
+            return false;
+        }
+    }
+
+    function needs_from(): bool
+    {
+        return true;
+    }
+
+    function needs_to(): bool
+    {
+        return true;
     }
 
     /**
@@ -579,14 +613,16 @@ class sandbox_link extends sandbox
     {
         $usr_msg = parent::db_ready();
 
-        if ($this->fob == null) {
-            $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
-                [msg_id::VAR_NAME => $this->dsp_id()]);
-        } else {
-            if (!$this->fob->is_valid()) {
-                $usr_msg->add_id_with_vars(msg_id::FROM_ZERO_ID,
+        if ($this->needs_triple_from()) {
+            if ($this->fob == null) {
+                $usr_msg->add_id_with_vars(msg_id::FROM_MISSING,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
+            } else {
+                if (!$this->fob->is_valid()) {
+                    $usr_msg->add_id_with_vars(msg_id::FROM_ZERO_ID,
+                        [msg_id::VAR_NAME => $this->dsp_id()]);
 
+                }
             }
         }
         if ($this->tob == null) {
@@ -594,7 +630,7 @@ class sandbox_link extends sandbox
                 [msg_id::VAR_NAME => $this->dsp_id()]);
         } else {
             if (!$this->tob->is_valid()) {
-                $usr_msg->add_id_with_vars(msg_id::FROM_ZERO_ID,
+                $usr_msg->add_id_with_vars(msg_id::TO_ZERO_ID,
                     [msg_id::VAR_NAME => $this->dsp_id()]);
 
             }
@@ -704,7 +740,7 @@ class sandbox_link extends sandbox
     }
 
     /**
-     * set the log entry parameter to delete a object
+     * set the log entry parameter to delete an object
      * @returns change_link with the object presets e.g. th object name
      */
     function log_del_link(): change_link
@@ -962,7 +998,7 @@ class sandbox_link extends sandbox
             $db_chk->set_predicate_id($this->predicate_id());
             if ($db_chk->load_standard()) {
                 if ($db_chk->id() > 0) {
-                    log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard linkspace');
+                    log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the standard link space');
                     $result = $db_chk;
                 }
             }
@@ -970,7 +1006,7 @@ class sandbox_link extends sandbox
             $db_chk->set_user($this->user());
             if ($db_chk->load_by_link_id($this->fob->id(), 0, $this->tob->id(), $this::class)) {
                 if ($db_chk->id() > 0) {
-                    log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user linkspace');
+                    log_debug('the ' . $this->fob->name() . ' "' . $this->fob->name() . '" is already linked to "' . $this->tob->name() . '" of the user link space');
                     $result = $db_chk;
                 }
             }
@@ -1007,11 +1043,15 @@ class sandbox_link extends sandbox
         $usr_tbl = $sc_par_lst_sub->is_usr_tbl();
         $ext = sql::NAME_SEP . sql_creator::FILE_INSERT;
 
-        // init the function body
-        $id_field = $sc->id_field_name();
+        $from_can_be_missing = false;
+        if ($this::class == triple::class) {
+            if (in_array($this->predicate_code_id(), verbs::WITHOUT_FROM)) {
+                $from_can_be_missing = true;
+            }
+        }
 
         // get the parameters used for the table key
-        $fvt_from = $fvt_lst->get($this->from_field());
+        $fvt_from = $fvt_lst->get($this->from_field(), $from_can_be_missing);
         $fvt_type = $fvt_lst->get($this->type_field());
         $fvt_to = $fvt_lst->get($this->to_field());
 
@@ -1029,14 +1069,14 @@ class sandbox_link extends sandbox
         // create the sql to insert the row
         $sql = '';
         $sc_insert = clone $sc;
-        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);;
+        $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub, $ext);
         $sc_par_lst_sub->add(sql_type::SELECT_FOR_INSERT);
         if ($sc->db_type == sql_db::MYSQL) {
             $sc_par_lst_sub->add(sql_type::NO_ID_RETURN);
         }
         $qp_insert->sql = $sc_insert->create_sql_insert(
             $fvt_insert_list, $sc_par_lst_sub, true, '', '', '', $id_fld_new);
-        $qp_insert->par = [$fvt_from->value, $fvt_type->value, $fvt_to->value];
+        $qp_insert->par = [$fvt_from?->value, $fvt_type->value, $fvt_to->value];
 
         // add the insert row to the function body
         $sql .= ' ' . $qp_insert->sql . '; ';

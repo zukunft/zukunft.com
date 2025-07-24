@@ -2706,7 +2706,7 @@ class create_test_objects extends test_base
         $frm = $this->formula_filled();
         $frm->include();
         $frm->set_id(0);
-        $frm->set_name(formulas::SYSTEM_TEXT_ADD);
+        $frm->set_name(formulas::SYSTEM_TEST_ADD);
         return $frm;
     }
 
@@ -2790,7 +2790,7 @@ class create_test_objects extends test_base
     function formula_add_by_func(): formula
     {
         $frm = new formula($this->usr1);
-        $frm->set_name(formulas::SYSTEM_TEXT_ADD_VIA_FUNC);
+        $frm->set_name(formulas::SYSTEM_TEST_ADD_VIA_FUNC);
         $frm->set_user_text(formulas::INCREASE_EXP, $this->term_list_increase());
         $frm->set_type(formula_type::CALC, $this->usr1);
         return $frm;
@@ -2803,7 +2803,7 @@ class create_test_objects extends test_base
     function formula_add_by_sql(): formula
     {
         $frm = new formula($this->usr1);
-        $frm->set_name(formulas::SYSTEM_TEXT_ADD_VIA_SQL);
+        $frm->set_name(formulas::SYSTEM_TEST_ADD_VIA_SQL);
         $frm->set_user_text(formulas::INCREASE_EXP, $this->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::CALC, $this->usr1);
         return $frm;

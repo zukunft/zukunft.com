@@ -131,6 +131,7 @@ class verbs
     // list of verbs that does not need a from phrase e.g. "per day" oder "m/s is alias of meter per second"
     const WITHOUT_FROM = array(
         self::ALIAS,
+        self::SYMBOL,
         self::PER
     );
 

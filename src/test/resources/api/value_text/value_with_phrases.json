@@ -1,5 +1,5 @@
 {
-  "id": 93169617471111306,
+  "id": 93169617471111319,
   "description": "URL of this zukunft.com pod from the system configuration",
   "phrases": [
     {
@@ -8,7 +8,7 @@
       "class": "word"
     },
     {
-      "id": 138,
+      "id": 151,
       "name": "system configuration",
       "class": "triple"
     },

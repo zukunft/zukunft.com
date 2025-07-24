@@ -123,14 +123,14 @@ class system_tests
         $t->assert_dsp_id($t->triple_list(), '"π (unit symbol)" (triple_id 2) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->triple()->phrase(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase');
         $t->assert_dsp_id($t->phrase_list_prime(), '"mathematics","constant","mathematical constant","π (unit symbol)" (phrase_id 1,2,-1,-2) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id 1,2,5,18,139,4,157,159,-1,-44,-115,-117,-118) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->group(), '"Pi (math)" (group_id 32812) as "Pi (math)" for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id 1,2,5,18,139,4,157,159,-1,-51,-128,-130,-131) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->group(), '"Pi (math)" (group_id 32819) as "Pi (math)" for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->group_list(), 'Pi (math)');
         $t->assert_dsp_id($t->group_list_long(), 'Pi (math) / Zurich City inhabitants (2019) / Zurich City inhabitants (2019) in million / System Test Word Increase in Switzerland\'s inhabitants from 2019 to 2020 in percent ... total 6');
         $t->assert_dsp_id($t->term(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test) as term');
         $t->assert_dsp_id($t->term_list(), '"mathematical constant","mathematics","not set","scale minute to sec" (-2,-1,1,2)');
-        $t->assert_dsp_id($t->value(), 'Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -44,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->value_list(), 'Pi (math): 3.1415926535898 / Zurich City inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -44,,, / 271,267,139,) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->value(), 'Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,,) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->value_list(), 'Pi (math): 3.1415926535898 / Zurich City inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,, / 271,267,139,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->source(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->reference(), 'ref of "Pi" to "wikidata" (' . refs::PI_ID . ')');
         $t->assert_dsp_id($t->formula(), '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)');
@@ -141,8 +141,8 @@ class system_tests
         $t->assert_dsp_id($t->expression(), '""second" = "minute" * 60" ({w' . words::SECOND_ID . '}={w' . words::MINUTE_ID . '}*60)');
         $t->assert_dsp_id($t->result_simple_1(), 'mathematics: 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->result_list(), 'mathematics: 123456 / ' . words::PERCENT . ': 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / 2,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->figure_value(), 'value figure Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -44,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');
-        $t->assert_dsp_id($t->figure_list(), ' 3.1415926535898 Pi (math)  123456 "mathematics"  (32812,-1)');
+        $t->assert_dsp_id($t->figure_value(), 'value figure Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');
+        $t->assert_dsp_id($t->figure_list(), ' 3.1415926535898 Pi (math)  123456 "mathematics"  (32819,-1)');
         $t->assert_dsp_id($t->view(), '"Start view" (view_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->view_list(), '"Start view","Add word" (view_id 1,3) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->component(), '"Word" (component_id 1) for user 1 (zukunft.com system test)');
@@ -155,7 +155,7 @@ class system_tests
         $t->assert_dsp_id($t->change_log_big(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t->change_log_list_named(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t->change_log_link(), 'user_log_link for user zukunft.com system (1) action add (1) table triples (7)');
-        $t->assert_dsp_id($t->change_log_value(), 'log add values,numeric_value (-44,,,) 3.1415927');
+        $t->assert_dsp_id($t->change_log_value(), 'log add values,numeric_value (-51,,,) 3.1415927');
         $t->assert_dsp_id($t->change_log_value_prime(), 'log add words,word_name  3.1415927');
         $t->assert_dsp_id($t->change_log_value_big(), 'log add words,word_name  3.1415927');
         $t->assert_dsp_id($t->sys_log(), 'system log id 1 at 2023-01-03T20:59:59+01:00 row the log text that describes the problem for the user or system admin');

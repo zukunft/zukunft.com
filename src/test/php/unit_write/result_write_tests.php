@@ -60,7 +60,7 @@ class result_write_tests
 
         // test adding of one formula
         $frm = new formula($t->usr1);
-        $frm->set_name(formulas::SYSTEM_TEXT_ADD);
+        $frm->set_name(formulas::SYSTEM_TEST_ADD);
         $frm->usr_text = formulas::INCREASE_EXP;
         $result = $frm->save()->get_last_message();
         if ($frm->id() > 0) {
@@ -70,18 +70,18 @@ class result_write_tests
         $t->display('formula->save for adding "' . $frm->name() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if the formula can be renamed
-        $frm = $t->load_formula(formulas::SYSTEM_TEXT_ADD);
-        $frm->set_name(formulas::SYSTEM_TEXT_RENAMED);
+        $frm = $t->load_formula(formulas::SYSTEM_TEST_ADD);
+        $frm->set_name(formulas::SYSTEM_TEST_RENAMED);
         $result = $frm->save()->get_last_message();
         $target = '';
-        $t->display('formula->save rename "' . formulas::SYSTEM_TEXT_ADD . '" to "' . formulas::SYSTEM_TEXT_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
+        $t->display('formula->save rename "' . formulas::SYSTEM_TEST_ADD . '" to "' . formulas::SYSTEM_TEST_RENAMED . '".', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
 
         // test load result without time
         $phr_lst = new phrase_list($usr);
         $phr_lst->add_name(words::CH);
         //$phr_lst->add_name(formulas::TN_ADD);
-        $phr_lst->add_name(formulas::SYSTEM_TEXT_RENAMED);
+        $phr_lst->add_name(formulas::SYSTEM_TEST_RENAMED);
         $phr_lst->add_name(words::PCT);
         $phr_lst->add_name(words::INHABITANTS);
         $ch_up_grp = $phr_lst->get_grp_id();
@@ -184,16 +184,16 @@ class result_write_tests
         // cleanup - fallback delete
         $frm = new formula($t->usr1);
         $frm->set_user($t->usr1);
-        $frm->load_by_name(formulas::SYSTEM_TEXT_ADD);
+        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
         $frm->del();
         $frm->set_user($t->usr2);
-        $frm->load_by_name(formulas::SYSTEM_TEXT_ADD);
+        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
         $frm->del();
         $frm->set_user($t->usr1);
-        $frm->load_by_name(formulas::SYSTEM_TEXT_RENAMED);
+        $frm->load_by_name(formulas::SYSTEM_TEST_RENAMED);
         $frm->del();
         $frm->set_user($t->usr2);
-        $frm->load_by_name(formulas::SYSTEM_TEXT_RENAMED);
+        $frm->load_by_name(formulas::SYSTEM_TEST_RENAMED);
         $frm->del();
 
 
@@ -207,7 +207,7 @@ class result_write_tests
         $t->header('result list database write tests');
 
         // load results by formula
-        $frm = $t->load_formula(formulas::SYSTEM_TEXT_RENAMED);
+        $frm = $t->load_formula(formulas::SYSTEM_TEST_RENAMED);
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($frm);
         $result = $res_lst->dsp_id();

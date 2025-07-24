@@ -108,7 +108,7 @@ class formula_tests
 
         $t->subheader($ts . 'sql write update');
         $frm = $t->formula_name_only();
-        $frm_renamed = $frm->cloned(formulas::SYSTEM_TEXT_RENAMED);
+        $frm_renamed = $frm->cloned(formulas::SYSTEM_TEST_RENAMED);
         $t->assert_sql_update($sc, $frm_renamed, $frm);
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::USER]);
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG]);

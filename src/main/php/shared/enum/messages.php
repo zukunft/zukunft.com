@@ -566,6 +566,28 @@ enum messages: string
         . '" failed because these values are missing '
         . self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
         . '.';
+    case IMPORT_TRIPLE_NOT_READY = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because the triple "'
+        . self::VAR_START . self::VAR_TRIPLE_NAME . self::VAR_END
+        . '" is incomplete.';
+    case IMPORT_FORMULA_NOT_READY = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because the formula "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is incomplete.';
+    case IMPORT_FORMULA_WORD_NOT_READY = 'Word with the formula name "'
+        . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
+        . '" missing for id '
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '.';
+    case IMPORT_FORMULA_ASSIGN_PHRASE_MISSING = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" should be assigned to formula "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" but it is not defined.';
     case IMPORT_VALUE_COUNT_VALIDATED = 'import from "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
         . '" validated by counting '
@@ -702,6 +724,10 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END;
 
     case IMPORT_PHRASE_NOT_FOUND = 'Cannot find word or triple "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" when importing '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
+    case IMPORT_TERM_NOT_FOUND = 'Cannot find word, verb, triple or formula "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" when importing '
         . self::VAR_START . self::VAR_ID . self::VAR_END;

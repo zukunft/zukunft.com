@@ -86,7 +86,7 @@ class group_tests
         $this->check_64_bit_key($t, [7], 7);
         $this->check_64_bit_key($t, [-2], 32770);
         $this->check_64_bit_key($t, [-3], 32771);
-        $this->check_64_bit_key($t, [-44], 32812);
+        $this->check_64_bit_key($t, [-51], 32819);
         $this->check_64_bit_key($t, [32767], 32767);
         $this->check_64_bit_key($t, [-32767], 65535);
         $this->check_64_bit_key($t, [1,32767], 2147418113);
@@ -161,11 +161,11 @@ class group_tests
         $t->assert('64 bit result_id for the formula increase, '
             . 'the phrases Zurich (City) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t->zh_inhabitants_2020(), $t->zh_inhabitants_2020(), $t->formula_increase()),
-            6052210224660751);
+            6052266059235599);
         $t->assert('128 bit result_id for the formula increase, '
             . 'the phrases Zurich (City), Geneva (City) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t->zh_ge_inhabitants_2020(), $t->zh_ge_inhabitants_2020(), $t->formula_increase()),
-            '9234956299617760256');
+            '9235041497717760256');
         $t->assert('512 bit result_id ',
             $res_id->get_id($t->phrase_list_14(), $t->phrase_list_14b(), $t->formula_increase()),
             '.....J=..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+1FajJ2(.4LYK3)1FajJ2)');

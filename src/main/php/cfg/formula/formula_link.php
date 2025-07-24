@@ -295,7 +295,7 @@ class formula_link extends sandbox_link
     {
         $result = 0;
         if ($this->tob() != null) {
-            if ($this->tob()->id() > 0) {
+            if ($this->tob()->id() != 0) {
                 $result = $this->tob()->id();
             }
         }
@@ -653,6 +653,12 @@ class formula_link extends sandbox_link
             $db_rec->load_by_id($this->id());
             $db_rec->load_objects();
             $db_con->set_class(formula_link::class);
+            // relevant is if there is a user config in the database
+            // so use this information to prevent
+            // the need to forward the db_rec to all functions
+            if ($db_rec->has_usr_cfg() and !$this->has_usr_cfg()) {
+                $this->usr_cfg_id = $db_rec->usr_cfg_id;
+            }
             log_debug("database formula loaded (" . $db_rec->id() . ")");
             $std_rec = new formula_link($this->user()); // must also be set to allow to take the ownership
             $std_rec->set_id($this->id());

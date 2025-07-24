@@ -38,6 +38,7 @@ namespace cfg\sandbox;
 include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
 include_once MODEL_COMPONENT_PATH . 'component.php';
 include_once MODEL_COMPONENT_PATH . 'component_link.php';
+include_once MODEL_FORMULA_PATH . 'formula_link.php';
 include_once MODEL_PHRASE_PATH . 'term.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
@@ -51,6 +52,7 @@ include_once SHARED_HELPER_PATH . 'TextIdObject.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
+use cfg\formula\formula_link;
 use cfg\phrase\term;
 use cfg\user\user;
 use cfg\user\user_message;
@@ -152,8 +154,8 @@ class sandbox_link_list extends sandbox_list
      * @return true if the link has been added
      */
     function add_link(
-        component_link|term_view $lnk_to_add,
-        bool                     $allow_duplicates = false
+        component_link|term_view|formula_link $lnk_to_add,
+        bool                                  $allow_duplicates = false
     ): bool
     {
         $added = false;
@@ -168,13 +170,13 @@ class sandbox_link_list extends sandbox_list
      * add one link to the list of user sandbox objects,
      * but only if it is not yet part of the list
      * based on the names (not the db id) of the linked objects
-     * @param component_link|term_view $obj_to_add the backend object that should be added
+     * @param component_link|term_view|formula_link $obj_to_add the backend object that should be added
      * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
      * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
      */
     function add_link_by_key(
-        component_link|term_view $obj_to_add,
-        bool                     $allow_duplicates = false
+        component_link|term_view|formula_link $obj_to_add,
+        bool                                  $allow_duplicates = false
     ): user_message
     {
         $usr_msg = new user_message();

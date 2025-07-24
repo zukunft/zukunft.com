@@ -460,6 +460,11 @@ class data_object
         $this->phr_lst_dirty = true;
         $this->trm_lst_dirty = true;
         $this->wrd_lst->add_by_name($wrd);
+
+        // add word references
+        foreach ($wrd->ref_array() as $ref) {
+            $this->add_reference($ref);
+        }
     }
 
     /**
@@ -541,6 +546,18 @@ class data_object
     {
         $this->trm_lst_dirty = true;
         $this->frm_lst->add_by_name($frm);
+    }
+
+    /**
+     * add a formula by the formula name without checking the links
+     * * e.g. to update or delete a formula without repeating the from and to phrases
+     * @param formula $frm with the name and word names set
+     * @return void
+     */
+    function add_formula_without_ready_check(formula $frm): void
+    {
+        $this->trm_lst_dirty = true;
+        $this->frm_lst->add_by_name_direct($frm);
     }
 
     /**
@@ -747,7 +764,7 @@ class data_object
             $usr_msg->add($ref_lst->save($imp, $ref_per_sec));
             $imp->step_end($ref_lst->count(), $ref_per_sec);
         } else {
-            log_debug('sources not imported because ' . $usr_msg->all_message_text());
+            log_debug('references not imported because ' . $usr_msg->all_message_text());
         }
 
         // import the values
@@ -766,68 +783,12 @@ class data_object
         // clone the term list as cache to filter the terms already fine
         // without removing the fine words, triples, verbs and formulas from the original lists
         $trm_lst = clone $phr_lst->term_list();
-        // TODO add the verbs
+        // TODO Prio 0 activate
+        //$trm_lst->merge($this->vrb_lst->term_list());
 
         // import the formulas
-        $frm_lst = $this->formula_list();
-        if (!$frm_lst->is_empty()) {
+        $usr_msg->add($this->save_formulas($imp, $trm_lst));
 
-            // add the id of the formulas just added to the terms
-            // repeat this id assign until all formulas have an id
-            // or until it is clear that a terms is missing
-            $frm_self_ref = true;
-            $frm_add = true;
-            while ($frm_self_ref and $frm_add) {
-                $frm_self_ref = false;
-                $frm_add = false;
-                foreach ($this->formula_list()->lst() as $frm) {
-                    if (!$frm->db_ready()) {
-                        $usr_msg->add_id_with_vars(msg_id::FORMULA_NOT_VALID,
-                            [msg_id::VAR_FORMULA => $frm->dsp_id()]);
-                    } else {
-                        $exp = $frm->expression($trm_lst);
-                        $frm_trm_lst = $exp->terms($trm_lst);
-                        foreach ($frm_trm_lst->lst() as $trm) {
-                            $frm_self_ref = $this->check_formula_term($frm, $trm, $frm_trm_lst, $usr_msg, $frm_self_ref);
-                        }
-                    }
-                }
-
-                // save the formulas that are ready which means that does not use a formula that is not yet saved in the database
-                if ($usr_msg->is_ok()) {
-                    // get the list of formulas that should be imported
-                    $frm_lst = $this->formula_list();
-                    // clone the list to filter the phrases already fine without removing the fine triples from the original list
-                    $cache = clone $trm_lst;
-                    $cache->filter_valid();
-                    // estimate the time for the import
-                    $frm_est = $frm_lst->count() / $frm_per_sec;
-                    $imp->step_start(msg_id::SAVE, formula::class, $frm_lst->count(), $frm_est);
-                    $usr_msg->add($frm_lst->save_with_cache($imp, $cache));
-                    $imp->step_end($frm_lst->count(), $frm_per_sec);
-                    if ($frm_lst->count() > 0) {
-                        $frm_add = true;
-                    }
-
-                    // prepare adding the id of the triples just added to the triples
-                    $trm_lst = $this->term_list();
-                } else {
-                    log_debug('formulas not imported because ' . $usr_msg->all_message_text());
-                }
-            }
-
-            // report missing formulas
-            foreach ($this->formula_list()->lst() as $frm) {
-                $exp = $frm->expression($trm_lst);
-                $frm_trm_lst = $exp->terms($trm_lst);
-                foreach ($frm_trm_lst->lst() as $trm) {
-                    $frm_trm = $trm_lst->get_by_name($trm->name());
-                    if ($frm_trm == null) {
-                        $usr_msg->add_type_message($trm->name(), msg_id::TERM_ID_NOT_FOUND->value);
-                    }
-                }
-            }
-        }
 
         // TODO Prio 1 review and use predefined functions
         if ($usr_msg->is_ok()) {
@@ -916,6 +877,28 @@ class data_object
     }
 
     /**
+     * add or update all verbs to the database
+     * @param import $imp the import object that includes the start time of the import
+     * @return user_message ok or the error message for the user with the suggested solution
+     */
+    private function save_verbs(import $imp): user_message
+    {
+        global $cfg;
+        $usr_msg = new user_message();
+
+        $vrb_per_sec = $cfg->get_by([words::VERBS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+
+        $vrb_lst = $this->verb_list();
+        if (!$vrb_lst->is_empty()) {
+            $vrb_est = $vrb_lst->count() / $vrb_per_sec;
+            $imp->step_start(msg_id::SAVE, verb::class, $vrb_lst->count(), $vrb_est);
+            $usr_msg->add($vrb_lst->save());
+            $imp->step_end($vrb_lst->count(), $vrb_per_sec);
+        }
+        return $usr_msg;
+    }
+
+    /**
      * add or update all triples to the database
      * @param import $imp the import object that includes the start time of the import
      * @param phrase_list $cache with the db words saved until now and filled up with the triples saved
@@ -934,6 +917,9 @@ class data_object
             $imp->step_start(msg_id::SAVE, triple::class, $trp_lst->count(), $trp_est);
             $usr_msg->add($trp_lst->save_with_cache($imp, $cache));
             $imp->step_end($trp_lst->count(), $trp_per_sec);
+
+            // fill up the data_object list to prevent reloading the same triples again
+            $this->triple_list()->fill_by_name($trp_lst);
         }
         return $usr_msg;
     }
@@ -949,23 +935,48 @@ class data_object
     }
 
     /**
-     * add or update all verbs to the database
+     * add or update all formulas to the database
      * @param import $imp the import object that includes the start time of the import
+     * @param term_list $cache with the db words saved until now and filled up with the formulas saved
      * @return user_message ok or the error message for the user with the suggested solution
      */
-    private function save_verbs(import $imp): user_message
+    private function save_formulas(import $imp, term_list $cache): user_message
     {
         global $cfg;
         $usr_msg = new user_message();
 
-        $vrb_per_sec = $cfg->get_by([words::VERBS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $frm_per_sec = $cfg->get_by([words::FORMULAS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
-        $vrb_lst = $this->verb_list();
-        if (!$vrb_lst->is_empty()) {
-            $vrb_est = $vrb_lst->count() / $vrb_per_sec;
-            $imp->step_start(msg_id::SAVE, verb::class, $vrb_lst->count(), $vrb_est);
-            $usr_msg->add($vrb_lst->save());
-            $imp->step_end($vrb_lst->count(), $vrb_per_sec);
+        $frm_lst = $this->formula_list();
+        if (!$frm_lst->is_empty()) {
+            $frm_est = $frm_lst->count() / $frm_per_sec;
+            $imp->step_start(msg_id::SAVE, formula::class, $frm_lst->count(), $frm_est);
+            $usr_msg->add($frm_lst->save_with_cache($imp, $cache));
+            $imp->step_end($frm_lst->count(), $frm_per_sec);
+
+            // update the reference table for fast calculation
+            // TODO Prio 2 use fast element_list block save process
+            foreach ($frm_lst->lst() as $frm) {
+                if ($usr_msg->is_ok() and !$frm->is_excluded()) {
+                    $frm->generate_ref_text($cache);
+                    if ($frm->ref_text != null) {
+                        if (!$frm->element_refresh($frm->ref_text)) {
+                            $usr_msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
+                        }
+                    }
+                }
+            }
+
+            // assign the formula to the words and triple
+            // TODO Prio 2 use fast formulas_link_list block save process
+            foreach ($frm_lst->lst() as $frm) {
+                if (!$frm->is_excluded()) {
+                    $frm->save_links($usr_msg);
+                }
+            }
+
+            // fill up the data_object list to prevent reloading the same triples again
+            $this->formula_list()->fill_by_name($frm_lst);
         }
         return $usr_msg;
     }
@@ -989,10 +1000,10 @@ class data_object
      * @return user_message ok or the error message for the user with the suggested solution
      */
     private function save_sandbox_list(
-        import $imp,
-        string $cfg_wrd,
+        import                           $imp,
+        string                           $cfg_wrd,
         sandbox_list_named|ip_range_list $sbx_lst,
-        string $class
+        string                           $class
     ): user_message
     {
         global $cfg;

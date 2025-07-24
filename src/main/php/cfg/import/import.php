@@ -1267,7 +1267,7 @@ class import
         foreach ($json_array as $frm_json) {
             $frm = new formula($this->usr);
             $usr_msg->add($frm->import_mapper($frm_json, $dto));
-            $dto->add_formula($frm);
+            $dto->add_formula_without_ready_check($frm);
             $i++;
             $this->display_progress($i, $per_sec, $frm->dsp_id());
         }

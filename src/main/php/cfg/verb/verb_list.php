@@ -316,6 +316,19 @@ class verb_list extends type_list
 
 
     /*
+     * cast
+     */
+
+    function term_list(): term_list
+    {
+        $trm_lst = new term_list($this->usr);
+        foreach ($this->lst() as $vrb) {
+            $trm_lst->add($vrb->term());
+        }
+        return $trm_lst;
+    }
+
+    /*
      * info
      */
 
@@ -337,6 +350,7 @@ class verb_list extends type_list
         }
         return $trm_lst;
     }
+
 
     /*
      * modify

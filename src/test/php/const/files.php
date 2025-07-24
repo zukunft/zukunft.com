@@ -118,6 +118,14 @@ class files
     const IMPORT_SOURCES_UNDO = self::IMPORT_UNIT_PATH . 'sources_undo' . self::JSON;
     const IMPORT_VALUES = self::IMPORT_UNIT_PATH . 'values' . self::JSON;
     const IMPORT_FORMULAS = self::IMPORT_UNIT_PATH . 'formulas' . self::JSON;
+    const IMPORT_FORMULAS_UPDATE = self::IMPORT_UNIT_PATH . 'formulas_update' . self::JSON;
+    const IMPORT_FORMULAS_UNDO = self::IMPORT_UNIT_PATH . 'formulas_undo' . self::JSON;
+    const IMPORT_VIEWS = self::IMPORT_UNIT_PATH . 'views' . self::JSON;
+    const IMPORT_VIEWS_UPDATE = self::IMPORT_UNIT_PATH . 'views_update' . self::JSON;
+    const IMPORT_VIEWS_UNDO = self::IMPORT_UNIT_PATH . 'views_undo' . self::JSON;
+    const IMPORT_COMPONENTS = self::IMPORT_UNIT_PATH . 'components' . self::JSON;
+    const IMPORT_COMPONENTS_UPDATE = self::IMPORT_UNIT_PATH . 'components_update' . self::JSON;
+    const IMPORT_COMPONENTS_UNDO = self::IMPORT_UNIT_PATH . 'components_undo' . self::JSON;
 
     const IMPORT_COUNTRIES = self::IMPORT_PATH . 'countries' . self::JSON;
     const IMPORT_COMPANIES = self::IMPORT_PATH . 'companies' . self::JSON;
