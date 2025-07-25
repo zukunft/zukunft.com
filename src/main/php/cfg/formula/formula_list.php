@@ -799,13 +799,6 @@ class formula_list extends sandbox_list_named
                 $frm_added = false;
                 $usr_msg->unset_added_depending();
 
-                // TODO Prio 0 remove temp
-                foreach ($this->lst() as $frm) {
-                    if ($frm->name() == 'this') {
-                        log_info('th');
-                    }
-                }
-
                 // collect the formulas used in the expressions
                 $chk_lst = clone $this;
                 foreach ($this->lst() as $frm) {
@@ -856,6 +849,10 @@ class formula_list extends sandbox_list_named
 
                 // create any missing sql insert functions and insert the missing formulas
                 if (!$add_lst->is_empty()) {
+
+                    // refresh reference text
+                    $this->refresh_ref_text($cache, $usr_msg);
+
                     $step_time = $add_lst->count() / $save_per_sec;
                     $imp->step_start(msg_id::SAVE, formula::class, $add_lst->count(), $step_time);
                     $usr_msg->add($add_lst->insert($cache, true, $imp, formula::class));
@@ -906,6 +903,13 @@ class formula_list extends sandbox_list_named
         return $usr_msg;
     }
 
+
+    private function refresh_ref_text(term_list $trm_lst, user_message $usr_msg): void
+    {
+        foreach ($this->lst() as $frm) {
+            $frm->generate_ref_text($trm_lst, $usr_msg);
+        }
+    }
 
     private function save_formulas_words(import $imp, user_message $usr_msg): void
     {

@@ -85,8 +85,7 @@ class element_tests
 
         $t->subheader($ts . 'element api');
         $elm = $t->element();
-        // TODO Prio 0 activate
-        //$t->assert_api_json($elm);
+        $t->assert_api_json($elm);
 
         // JSON export list
         /*

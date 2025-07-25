@@ -183,8 +183,7 @@ class value_write_tests
         $mio_val->load_by_grp($phr_lst->get_grp_id());
         $result = $mio_val->scale($dest_phr_lst);
         $target = values::CH_INHABITANTS_2020_IN_MIO * 1000000;
-        // TODO Prio 0 activate
-        //$t->assert(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $result, $target);
+        $t->assert(', value->val_scaling for a word list ' . $phr_lst->dsp_id(), $result, $target);
 
         // test the figure object creation
         $phr_lst = $t->load_phrase_list(array(words::CANTON, words::ZH, words::INHABITANTS, words::MIO, words::YEAR_2020));

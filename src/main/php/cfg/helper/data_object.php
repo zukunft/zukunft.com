@@ -162,7 +162,7 @@ class data_object
     {
         $this->set_user($usr);
         $this->wrd_lst = new word_list($usr);
-        $this->vrb_lst = new verb_list();
+        $this->vrb_lst = new verb_list($usr);
         $this->trp_lst = new triple_list($usr);
         $this->phr_lst = new phrase_list($usr);
         $this->phr_lst_dirty = false;
@@ -783,8 +783,7 @@ class data_object
         // clone the term list as cache to filter the terms already fine
         // without removing the fine words, triples, verbs and formulas from the original lists
         $trm_lst = clone $phr_lst->term_list();
-        // TODO Prio 0 activate
-        //$trm_lst->merge($this->vrb_lst->term_list());
+        $trm_lst->merge($this->vrb_lst->term_list());
 
         // import the formulas
         $usr_msg->add($this->save_formulas($imp, $trm_lst));

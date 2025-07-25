@@ -123,8 +123,7 @@ class formula_trigger_tests
         } else {
             $target = "0.79%";
         }
-        // TODO Prio 0 activate
-        //$t->display('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $target, $result, $t::TIMEOUT_LIMIT_LONG);
+        $t->display('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $target, $result, $t::TIMEOUT_LIMIT_LONG);
 
         // remove the test values
         $val_add1->del();

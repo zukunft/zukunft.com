@@ -1062,10 +1062,10 @@ class view extends sandbox_code_id
      * check if the view in the database needs to be updated
      * e.g. for import if this view has only the name set, the protection should not be updated in the database
      *
-     * @param view|sandbox $db_obj the word as saved in the database
+     * @param view|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(view|sandbox $db_obj): bool
+    function needs_db_update(view|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->style() != null) {

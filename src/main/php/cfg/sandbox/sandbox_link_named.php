@@ -47,9 +47,11 @@ include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 //include_once MODEL_LOG_PATH . 'change_log_list.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 include_once SHARED_PATH . 'library.php';
@@ -62,10 +64,12 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\data_object;
+use cfg\helper\db_object_seq_id;
 use cfg\log\change_log_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\enum\messages as msg_id;
+use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\types\api_type_list;
 use shared\library;
@@ -361,10 +365,10 @@ class sandbox_link_named extends sandbox_link
     /**
      * check if the named object in the database needs to be updated
      *
-     * @param sandbox_link_named|sandbox $db_obj the word as saved in the database
+     * @param sandbox_link_named|sandbox_link|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(sandbox_link_named|sandbox $db_obj): bool
+    function needs_db_update(sandbox_link_named|sandbox_link|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->name != null) {

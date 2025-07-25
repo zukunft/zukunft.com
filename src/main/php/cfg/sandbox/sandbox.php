@@ -724,6 +724,8 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * create human-readable messages of the differences between the sandbox objects
+     * is expected to be similar to the needs_db_update function
+     *
      * @param CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $obj which might be different to this sandbox object
      * @return user_message the human-readable messages of the differences between the sandbox objects
      */
@@ -764,6 +766,28 @@ class sandbox extends db_object_seq_id_user
             ]);
         }
         return $usr_msg;
+    }
+
+    /**
+     * check if a database relevant var of the object differs from the given reference sandbox object
+     * is expected to be similar to the diff_msg function
+     *
+     * @param CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $db_obj which might be different to this sandbox object
+     * @return bool true if there is a difference
+     */
+    function needs_db_update(CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $db_obj): bool
+    {
+        $result = false;
+        if ($this->owner_id() != null and $this->owner_id() != $db_obj->owner_id()) {
+            $result = true;
+        } elseif ($this->share_id() != null and $this->share_id() != $db_obj->share_id()) {
+            $result = true;
+        } elseif ($this->protection_id() != null and $this->protection_id() != $db_obj->protection_id()) {
+            $result = true;
+        } elseif ($this->is_excluded() != null and $this->is_excluded() != $db_obj->is_excluded()) {
+            $result = true;
+        }
+        return $result;
     }
 
 
@@ -1140,34 +1164,6 @@ class sandbox extends db_object_seq_id_user
     /*
      * info
      */
-
-    /**
-     * check if the sandbox object in the database needs to be updated
-     *
-     * @param sandbox $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the database
-     */
-    function needs_db_update(sandbox $db_obj): bool
-    {
-        $result = false;
-        if ($this->owner_id() != null) {
-            if ($this->owner_id() != $db_obj->owner_id()) {
-                $result = true;
-            }
-        }
-        if ($this->share_id() != null) {
-            if ($this->share_id() != $db_obj->share_id()) {
-                $result = true;
-            }
-        }
-        if ($this->protection_id() != null) {
-            if ($this->protection_id() != $db_obj->protection_id()) {
-                $result = true;
-            }
-        }
-        // TODO what about excluded?
-        return $result;
-    }
 
     /**
      * get the user who uses the value that most other users use to reduce the number of user overwrites

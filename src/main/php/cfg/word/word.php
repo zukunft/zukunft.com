@@ -850,6 +850,7 @@ class word extends sandbox_code_id
 
     /**
      * create human-readable messages of the differences between the word objects
+     * TODO Prio 2 move to db_object_seq_id ?
      * @param word|CombineObject|db_object_seq_id $obj which might be different to this word
      * @return user_message the human-readable messages of the differences between the word objects
      */
@@ -864,6 +865,30 @@ class word extends sandbox_code_id
             ]);
         }
         return $usr_msg;
+    }
+
+    /**
+     * check if the word in the database needs to be updated
+     * * e.g. for import  if this word has only the name set, the protection should not be updated in the database
+     * is expected to be similar to the diff_msg function
+     *
+     * @param word|CombineObject|db_object_seq_id $db_obj which might be different to this sandbox object
+     * @return bool true if this word has infos that should be saved in the database
+     */
+    function needs_db_update(word|CombineObject|db_object_seq_id $db_obj): bool
+    {
+        $result = parent::needs_db_update($db_obj);
+        if ($this->plural() != null) {
+            if ($this->plural() != $db_obj->plural()) {
+                $result = true;
+            }
+        }
+        if ($this->values != null) {
+            if ($this->values != $db_obj->values) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
     /**
@@ -927,29 +952,6 @@ class word extends sandbox_code_id
     function is_percent(): bool
     {
         return $this->is_type(phrase_type_shared::PERCENT);
-    }
-
-    /**
-     * check if the word in the database needs to be updated
-     * e.g. for import  if this word has only the name set, the protection should not be updated in the database
-     *
-     * @param word|sandbox $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the database
-     */
-    function needs_db_update(word|sandbox $db_obj): bool
-    {
-        $result = parent::needs_db_update($db_obj);
-        if ($this->plural() != null) {
-            if ($this->plural() != $db_obj->plural()) {
-                $result = true;
-            }
-        }
-        if ($this->values != null) {
-            if ($this->values != $db_obj->values) {
-                $result = true;
-            }
-        }
-        return $result;
     }
 
 

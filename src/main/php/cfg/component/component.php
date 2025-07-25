@@ -1006,6 +1006,7 @@ class component extends sandbox_code_id
 
     /**
      * create human-readable messages of the differences between the objects
+     * is expected to be similar to the has_diff function
      * @param component|sandbox|CombineObject|db_object_seq_id $obj which might be different to this sandbox object
      * @return user_message the human-readable messages of the differences between the sandbox objects
      */
@@ -1027,11 +1028,12 @@ class component extends sandbox_code_id
 
     /**
      * check if the named object in the database needs to be updated
+     * is expected to be similar to the diff_msg function
      *
-     * @param component|sandbox $db_obj the word as saved in the database
+     * @param component|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(component|sandbox $db_obj): bool
+    function needs_db_update(component|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->formula_id() != null) {

@@ -164,7 +164,7 @@ class test_api extends create_test_objects
         $target = '"id":1,"excluded":true';
         // TODO Prio 2 deprecate this exception
         if ($class == element::class) {
-            $target = '"id":101,"excluded":true';
+            $target = '"id":104,"excluded":true';
         }
         $result = $this->assert_text_contains($test_name, $json_excluded, $target);
         if ($result) {
@@ -178,7 +178,7 @@ class test_api extends create_test_objects
             $target = self::JSON_ID_ONLY;
             // TODO Prio 2 deprecate this exception
             if ($class == element::class) {
-                $target = '{"id":101,"name":"minute","class":"word"}';
+                $target = '{"id":104,"name":"minute","class":"word"}';
             }
             $result = $this->assert($test_name, $json_empty, $target);
         }

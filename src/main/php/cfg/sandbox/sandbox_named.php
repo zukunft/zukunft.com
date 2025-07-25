@@ -576,10 +576,10 @@ class sandbox_named extends sandbox
     /**
      * check if the named object in the database needs to be updated
      *
-     * @param sandbox_named|sandbox $db_obj the word as saved in the database
+     * @param sandbox_named|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(sandbox_named|sandbox $db_obj): bool
+    function needs_db_update(sandbox_named|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->name != null) {

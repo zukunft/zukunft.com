@@ -75,6 +75,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_ENUM_PATH . 'change_actions.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_TYPES_PATH . 'verbs.php';
 include_once SHARED_PATH . 'json_fields.php';
@@ -101,6 +102,7 @@ use cfg\user\user_message;
 use Exception;
 use shared\enum\change_actions;
 use shared\enum\messages as msg_id;
+use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type_list;
@@ -654,10 +656,10 @@ class sandbox_link extends sandbox
     /**
      * check if the named object in the database needs to be updated
      *
-     * @param sandbox_link|sandbox $db_obj the word as saved in the database
+     * @param sandbox_link|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(sandbox_link|sandbox $db_obj): bool
+    function needs_db_update(sandbox_link|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->fob->id() != 0) {

@@ -1149,14 +1149,18 @@ class sandbox_list_named extends sandbox_list
                 if (!$sbx->db_ready()) {
                     log_err($sbx->dsp_id() . ' is not filled in sql_update_call_with_par');
                 } else {
-                    // check always user sandbox and normal name, because reading from database for check would take longer
-                    $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
-                    if ($use_func) {
-                        $sc_par_lst->add(sql_type::LOG);
+                    if (!$sbx->needs_db_update($db_row)) {
+                        log_info($sbx->dsp_id() . ' has no database relevant difference so db update is skipped');
+                    } else {
+                        // check always user sandbox and normal name, because reading from database for check would take longer
+                        $sc_par_lst = new sql_type_list([sql_type::CALL_AND_PAR_ONLY]);
+                        if ($use_func) {
+                            $sc_par_lst->add(sql_type::LOG);
+                        }
+                        $qp = $sbx->sql_update($sc, $db_row, $sc_par_lst);
+                        $qp->obj_name = $sbx->name();
+                        $sql_list->add($qp);
                     }
-                    $qp = $sbx->sql_update($sc, $db_row, $sc_par_lst);
-                    $qp->obj_name = $sbx->name();
-                    $sql_list->add($qp);
                 }
             }
         }

@@ -132,6 +132,7 @@ enum messages: string
     // for the object main parameters created by the dsp_id function
     const VAR_TRIPLE = 'VarObjTriple';
     const VAR_FORMULA = 'VarObjFormula';
+    const VAR_EXPRESSION = 'VarObjExpression';
     const VAR_JSON_PART = 'VarJsonPart';
     const VAR_VERB_NAME = 'VarVerbName';
     const IMPORT_SUCCESS = 'finished successful';
@@ -673,6 +674,12 @@ enum messages: string
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' '
         . self::VAR_START . self::VAR_VAL_ID . self::VAR_END;
+    case FORMULA_TERM_MISSING = '"'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is missing in formula '
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . ' with the expression '
+        . self::VAR_START . self::VAR_EXPRESSION . self::VAR_END;
 
     case ID_MISSING_FOR_DEL = 'Deleting of '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END

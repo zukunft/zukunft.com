@@ -363,11 +363,11 @@ class sandbox_code_id extends sandbox_typed
 
     /**
      * check if the named object in the database needs to be updated
-     *
-     * @param sandbox $db_obj the word as saved in the database
+     * is expected to be similar to the diff_msg function
+     * @param sandbox|sandbox_link|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(sandbox $db_obj): bool
+    function needs_db_update(sandbox|sandbox_link|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->code_id != null) {

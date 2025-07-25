@@ -68,6 +68,7 @@ include_once DB_PATH . 'sql_par_field_list.php';
 include_once DB_PATH . 'sql_type.php';
 include_once DB_PATH . 'sql_type_list.php';
 include_once MODEL_HELPER_PATH . 'data_object.php';
+include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
 include_once MODEL_HELPER_PATH . 'type_object.php';
 include_once MODEL_LOG_PATH . 'change.php';
 include_once MODEL_REF_PATH . 'source_db.php';
@@ -78,6 +79,7 @@ include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once SHARED_CONST_PATH . 'sources.php';
 include_once SHARED_ENUM_PATH . 'messages.php';
+include_once SHARED_HELPER_PATH . 'CombineObject.php';
 include_once SHARED_TYPES_PATH . 'api_type_list.php';
 include_once SHARED_PATH . 'json_fields.php';
 
@@ -89,6 +91,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\data_object;
+use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\sandbox\sandbox;
@@ -97,6 +100,7 @@ use cfg\user\user;
 use cfg\user\user_message;
 use shared\const\sources;
 use shared\enum\messages as msg_id;
+use shared\helper\CombineObject;
 use shared\types\api_type_list;
 use shared\json_fields;
 
@@ -418,10 +422,10 @@ class source extends sandbox_code_id
      * check if the source in the database needs to be updated
      * e.g. for import  if this source has only the name set, the protection should not be updated in the database
      *
-     * @param source|sandbox $db_obj the source as saved in the database
+     * @param source|CombineObject|db_object_seq_id $db_obj the source as saved in the database
      * @return bool true if this source has infos that should be saved in the database
      */
-    function needs_db_update(source|sandbox $db_obj): bool
+    function needs_db_update(source|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->url() != null) {

@@ -1,0 +1,17 @@
+2025-07-22T14:13:44+00:00: FATAL ERROR! Insert to change log failed with (zukunft.com system test (1),add,verbs,verb_name,,is alias of,0)
+2025-07-22T14:13:44+00:00: FATAL ERROR! Insert to change log failed with (zukunft.com system test (1),add,verbs,verb_name,,is alias of,0)
+
+function user_log->add
+trace 
+#0 /home/timon/PhpstormProjects/zukunft.com/src/main/php/cfg/log/change_log.php(1056): log_fatal()
+#1 /home/timon/PhpstormProjects/zukunft.com/src/main/php/cfg/verb/verb.php(797): cfg\log\change_log->add()
+#2 /home/timon/PhpstormProjects/zukunft.com/src/main/php/cfg/verb/verb.php(1050): cfg\verb\verb->log_add()
+#3 /home/timon/PhpstormProjects/zukunft.com/src/main/php/cfg/verb/verb.php(1141): cfg\verb\verb->add()
+#4 /home/timon/PhpstormProjects/zukunft.com/src/main/php/cfg/word/triple.php(430): cfg\verb\verb->save()
+#5 /home/timon/PhpstormProjects/zukunft.com/src/main/php/cfg/import/import.php(1165): cfg\word\triple->import_mapper_user()
+#6 /home/timon/PhpstormProjects/zukunft.com/src/main/php/cfg/import/import.php(847): cfg\import\import->dto_get_triples()
+#7 /home/timon/PhpstormProjects/zukunft.com/src/test/php/unit/import_tests.php(87): cfg\import\import->get_data_object()
+#8 /home/timon/PhpstormProjects/zukunft.com/src/test/php/unit/all_unit_tests.php(372): unit\import_tests->run()
+#9 /home/timon/PhpstormProjects/zukunft.com/test/test_unit.php(79): unit\all_unit_tests->run_unit()
+#10 {main}
+by user 

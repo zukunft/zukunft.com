@@ -124,6 +124,7 @@ use unit_ui\base_ui_tests;
 use const\files as test_files;
 use unit_write\import_write_tests;
 use unit_write\user_write_tests;
+use unit_write\value_write_tests;
 use unit_write\word_write_tests;
 
 class all_unit_tests extends test_cleanup
@@ -213,7 +214,7 @@ class all_unit_tests extends test_cleanup
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::SYSTEM_VIEWS_FILE, $usr);
-            $this->file_import(files::MESSAGE_PATH . files::UNITS_FILE, $usr);
+            //$this->file_import(files::MESSAGE_PATH . files::UNITS_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::IP_BLACKLIST_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::TIME_FILE, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::BASE_VIEWS_FILE, $usr);
@@ -256,7 +257,7 @@ class all_unit_tests extends test_cleanup
             //(new group_write_tests)->run($this);
             //(new source_write_tests)->run($this);
             //(new ref_write_tests)->run($this);
-            //(new value_write_tests)->run($this);
+            (new value_write_tests)->run($this);
             //(new formula_write_tests)->run($this);
             //(new formula_link_write_tests)->run($this);
             //(new expression_write_tests)->run($this);

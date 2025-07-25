@@ -48,11 +48,13 @@ include_once WEB_WORD_PATH . 'triple.php';
 include_once WEB_VERB_PATH . 'verb.php';
 include_once WEB_WORD_PATH . 'word.php';
 include_once SHARED_CONST_PATH . 'chars.php';
+include_once SHARED_ENUM_PATH . 'messages.php';
 include_once SHARED_PATH . 'library.php';
 
 use cfg\formula\formula;
 use cfg\phrase\term;
 use cfg\phrase\term_list;
+use cfg\user\user_message;
 use cfg\word\triple;
 use cfg\verb\verb;
 use cfg\word\word;
@@ -63,6 +65,8 @@ use html\word\triple as triple_dsp;
 use html\verb\verb as verb_dsp;
 use html\word\word as word_dsp;
 use shared\const\chars;
+use shared\enum\messages;
+use shared\enum\messages as msg_id;
 use shared\library;
 
 class expression
@@ -72,11 +76,18 @@ class expression
      * object vars
      */
 
-    private ?string $usr_text;         // the formula expression in the human-readable format
-    private bool $usr_text_dirty;      // true if the reference text has been updated and not yet converted
-    private ?string $ref_text;         // the formula expression with the database references
-    private bool $ref_text_dirty;      // true if the human-readable text has been updated and not yet converted
-    public ?string $err_text = null;   // description of the problems that appeared during the conversion from the human-readable to the database reference format
+    // the formula expression in the human-readable format
+    private ?string $usr_text = null;
+    // true if the reference text has been updated and not yet converted
+    private bool $usr_text_dirty = false;
+    // the formula expression with the database references
+    private ?string $ref_text = null;
+    // true if the human-readable text has been updated and not yet converted
+    private bool $ref_text_dirty = false;
+    // the formula name only for better user messages
+    private string $frm_name = '';
+    // description of the problems that appeared during the conversion from the human-readable to the database reference format
+    public ?string $err_text = null;
 
 
     /*
@@ -89,6 +100,7 @@ class expression
         $this->usr_text_dirty = false;
         $this->ref_text = null;
         $this->ref_text_dirty = false;
+        $this->frm_name = '';
         $this->err_text = null;
     }
 
@@ -147,13 +159,21 @@ class expression
 
     /**
      * get and set the reference text based on the user formula expression
+     * TODO Prio 2 do not call it from the frontend
      * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @param user_message $usr_msg to enrich with problems and suggested solution
      * @return string|null the recreated expression in the database reference format or null if an error has occurred
      */
-    function ref_text(term_list|term_list_dsp|null $trm_lst = null): ?string
+    function ref_text(
+        term_list|term_list_dsp|null $trm_lst = null,
+        user_message                 $usr_msg = new user_message()
+    ): ?string
     {
         if ($this->ref_text_dirty) {
-            $this->ref_text = $this->get_ref_text($trm_lst);
+            $this->ref_text = $this->get_ref_text($trm_lst, $usr_msg);
+            if ($usr_msg->is_ok()) {
+                $this->ref_text_dirty = false;
+            }
         }
         if (!$this->ref_text_dirty) {
             return $this->ref_text;
@@ -171,9 +191,13 @@ class expression
     /**
      * convert the user text to the database reference format
      * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @param user_message $usr_msg to enrich with problems and suggested solution
      * @return string the expression in the formula reference format
      */
-    protected function get_ref_text(term_list|term_list_dsp|null $trm_lst = null): string
+    protected function get_ref_text(
+        term_list|term_list_dsp|null $trm_lst = null,
+        user_message                 $usr_msg = new user_message()
+    ): string
     {
         $result = '';
 
@@ -182,10 +206,10 @@ class expression
         if ($pos >= 0) {
             $left_part = $this->res_part_usr();
             $right_part = $this->r_part_usr();
-            $left_part = $this->get_ref_part($left_part, $trm_lst);
+            $left_part = $this->get_ref_part($left_part, $trm_lst, $usr_msg);
             // continue with the right part of the expression only if the left part has been fine
             if (!$this->usr_text_dirty) {
-                $right_part = $this->get_ref_part($right_part, $trm_lst);
+                $right_part = $this->get_ref_part($right_part, $trm_lst, $usr_msg);
             }
             $result = $left_part . chars::CHAR_CALC . $right_part;
         }
@@ -268,9 +292,14 @@ class expression
      *
      * @param string $frm_part_text the expression text in user format that should be converted
      * @param term_list|term_list_dsp|null $trm_lst a list of preloaded terms that should be preferred used for the conversion
+     * @param user_message $usr_msg to enrich with problems and suggested solution
      * @return string the expression text in the database ref format
      */
-    private function get_ref_part(string $frm_part_text, term_list|term_list_dsp $trm_lst = null): string
+    private function get_ref_part(
+        string                  $frm_part_text,
+        term_list|term_list_dsp $trm_lst = null,
+        user_message            $usr_msg = new user_message()
+    ): string
     {
         $result = $frm_part_text;
 
@@ -298,6 +327,12 @@ class expression
                         if ($trm->obj_id() > 0) {
                             $db_sym = $this->get_db_sym($trm);
                         }
+                    } else {
+                        $usr_msg->add_id_with_vars(msg_id::FORMULA_TERM_MISSING, [
+                            msg_id::VAR_NAME => $name,
+                            msg_id::VAR_FORMULA => $this->frm_name,
+                            msg_id::VAR_EXPRESSION => $frm_part_text
+                        ]);
                     }
                 }
 

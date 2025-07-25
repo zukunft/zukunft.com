@@ -858,10 +858,10 @@ class formula extends sandbox_code_id
      * check if the formula in the database needs to be updated
      * e.g. for import  if this formula has only the name set, the protection should not be updated in the database
      *
-     * @param formula|sandbox $db_obj the formula as saved in the database
+     * @param formula|CombineObject|db_object_seq_id $db_obj the formula as saved in the database
      * @return bool true if this formula has infos that should be saved in the database
      */
-    function needs_db_update(formula|sandbox $db_obj): bool
+    function needs_db_update(formula|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->ref_text() != null) {
@@ -2049,15 +2049,19 @@ class formula extends sandbox_code_id
      * TODO Prio 1 return a user message instead of a string
      *
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @param user_message $usr_msg to enrich with problems and suggested solution
      * @return string which is empty if the update of the reference text was successful and otherwise the error message that should be shown to the user
      */
-    function generate_ref_text(?term_list $trm_lst = null): string
+    function generate_ref_text(
+        ?term_list $trm_lst = null,
+        user_message $usr_msg = new user_message()
+    ): string
     {
         $result = '';
         if ($this->usr_text != null) {
             $exp = new expression($this->user());
             $exp->set_user_text($this->usr_text, $trm_lst);
-            $this->ref_text = $exp->ref_text($trm_lst);
+            $this->ref_text = $exp->ref_text($trm_lst, $usr_msg);
             $this->ref_text_dirty = false;
             $result .= $exp->err_text;
         }
