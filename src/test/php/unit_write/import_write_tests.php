@@ -35,6 +35,8 @@ namespace unit_write;
 include_once MODEL_IMPORT_PATH . 'import.php';
 include_once MODEL_IMPORT_PATH . 'convert_wikipedia_table.php';
 include_once MODEL_CONST_PATH . 'files.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\component\component;
@@ -42,8 +44,11 @@ use cfg\formula\formula;
 use cfg\import\import_file;
 use cfg\ref\ref;
 use cfg\ref\source;
+use cfg\sandbox\sandbox_link_named;
+use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\verb\verb;
+use cfg\view\view;
 use cfg\word\triple;
 use cfg\word\word;
 use shared\const\components;
@@ -52,10 +57,13 @@ use shared\const\refs;
 use shared\const\sources;
 use shared\const\triples;
 use shared\const\users;
+use shared\const\views;
 use shared\const\words;
+use shared\library;
 use shared\types\verbs;
 use test\test_cleanup;
 use const\files as test_files;
+use unit\lib_tests;
 
 class import_write_tests
 {
@@ -70,79 +78,21 @@ class import_write_tests
         $ts = 'db write import ';
         $t->header($ts);
 
+        $this->assert_import_json_named($t, $ts, new user(),
+            users::TEST_USER_NAME, users::TEST_USER_COM,
+            [
+                test_files::IMPORT_USERS,
+                test_files::IMPORT_USERS_UPDATE,
+                test_files::IMPORT_USERS_UNDO
+            ]);
 
-        $t->subheader($ts . 'user');
-
-        $test_name = 'import the test user';
-        $imp_msg = $imf->json_file(test_files::IMPORT_USERS, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the user has been added to the database';
-        $usr_add = new user();
-        $usr_add->load_by_name(users::TEST_USER_NAME);
-        $t->assert_greater_zero($test_name, $usr_add->id());
-
-        $test_name = 'add the description to the test user via import';
-        $imp_msg = $imf->json_file(test_files::IMPORT_USERS_UPDATE, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the description has been added in the database';
-        $usr_add = new user();
-        $usr_add->load_by_name(users::TEST_USER_NAME);
-        $t->assert($test_name, $usr_add->description, users::TEST_USER_COM);
-
-        $test_name = 'remove the test user via import';
-        $imp_msg = $imf->json_file(test_files::IMPORT_USERS_UNDO, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the test user has been deleted from the database';
-        $usr_add = new user();
-        $usr_add->load_by_name(users::TEST_USER_NAME);
-        $t->assert($test_name, $usr_add->id(), 0);
-
-        $test_name = 'remove the test user directly as fallback to cleanup the database';
-        $usr_add = new user();
-        $usr_add->load_by_name(users::TEST_USER_NAME);
-        if ($usr_add->id() > 0) {
-            $usr_add->del($usr);
-        }
-        $usr_add = new user();
-        $usr_add->load_by_name(users::TEST_USER_NAME);
-        $t->assert($test_name, $usr_add->id(), 0);
-
-
-        $t->subheader($ts . 'word');
-
-        $test_name = 'import the test word';
-        $imp_msg = $imf->json_file(test_files::IMPORT_WORDS, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the word has been added to the database';
-        $wrd = new word($usr);
-        $wrd->load_by_name(words::TEST_ADD);
-        $t->assert_greater_zero($test_name, $wrd->id());
-
-        $test_name = 'add the description to the test word via import';
-        $imp_msg = $imf->json_file(test_files::IMPORT_WORDS_UPDATE, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the description has been added in the database';
-        $wrd = new word($usr);
-        $wrd->load_by_name(words::TEST_ADD);
-        $t->assert($test_name, $wrd->description(), words::TEST_ADD_COM);
-
-        $test_name = 'remove the test word via import';
-        $imp_msg = $imf->json_file(test_files::IMPORT_WORDS_UNDO, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the test word has been deleted from the database';
-        $wrd = new word($usr);
-        $wrd->load_by_name(words::TEST_ADD);
-        $t->assert($test_name, $wrd->id(), 0);
-
-        $test_name = 'remove the test word directly as fallback to cleanup the database';
-        $wrd = new word($usr);
-        $wrd->load_by_name(words::TEST_ADD);
-        if ($wrd->id() > 0) {
-            $wrd->del();
-        }
-        $wrd = new word($usr);
-        $wrd->load_by_name(words::TEST_ADD);
-        $t->assert($test_name, $wrd->id(), 0);
+        $this->assert_import_json_named($t, $ts, new word($usr),
+            words::TEST_ADD, words::TEST_ADD_COM,
+            [
+                test_files::IMPORT_WORDS,
+                test_files::IMPORT_WORDS_UPDATE,
+                test_files::IMPORT_WORDS_UNDO
+            ]);
 
 
         $t->subheader($ts . 'verb');
@@ -186,43 +136,16 @@ class import_write_tests
         $t->assert($test_name, $vrb->id(), 0);
 
 
-        $t->subheader($ts . 'triple');
+        $this->assert_import_json_named($t, $ts, new triple($usr),
+            triples::SYSTEM_TEST_ADD, triples::SYSTEM_TEST_ADD_COM,
+            [
+                test_files::IMPORT_TRIPLES,
+                test_files::IMPORT_TRIPLES_UPDATE,
+                test_files::IMPORT_TRIPLES_UNDO
+            ]);
 
-        $test_name = 'import the test triple';
-        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLES, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the triple has been added to the database';
-        $trp = new triple($usr);
-        $trp->load_by_name(triples::SYSTEM_TEST_ADD);
-        $t->assert_greater_zero($test_name, $trp->id());
 
-        $test_name = 'add the description to the test triple via import';
-        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLES_UPDATE, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the description has been added in the database';
-        $trp = new triple($usr);
-        $trp->load_by_name(triples::SYSTEM_TEST_ADD);
-        $t->assert($test_name, $trp->description(), triples::SYSTEM_TEST_ADD_COM);
-
-        $test_name = 'remove the test triple via import';
-        $imp_msg = $imf->json_file(test_files::IMPORT_TRIPLES_UNDO, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the test triple has been deleted from the database';
-        $trp = new triple($usr);
-        $trp->load_by_name(triples::SYSTEM_TEST_ADD);
-        $t->assert($test_name, $trp->id(), 0);
-
-        $test_name = 'remove the test triple directly as fallback to cleanup the database';
-        $trp = new triple($usr);
-        $trp->load_by_name(triples::SYSTEM_TEST_ADD);
-        if ($trp->id() > 0) {
-            $trp->del();
-        }
-        $trp = new triple($usr);
-        $trp->load_by_name(triples::SYSTEM_TEST_ADD);
-        $t->assert($test_name, $trp->id(), 0);
-
-        $test_name = 'remove the test word and word to directly as fallback to cleanup the database';
+        $test_name = 'remove the test word and word to directly as fallback to cleanup the database as fallback for the triple case';
         $wrd = new word($usr);
         $wrd->load_by_name(words::TEST_ADD);
         if ($wrd->id() > 0) {
@@ -241,41 +164,13 @@ class import_write_tests
         $t->assert($test_name, $wrd_to->id(), 0);
 
 
-        $t->subheader($ts . 'source');
-
-        $test_name = 'import the test source';
-        $imp_msg = $imf->json_file(test_files::IMPORT_SOURCES, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the source has been added to the database';
-        $src = new source($usr);
-        $src->load_by_name(sources::SYSTEM_TEST_ADD);
-        $t->assert_greater_zero($test_name, $src->id());
-
-        $test_name = 'add the description to the test source via import';
-        $imp_msg = $imf->json_file(test_files::IMPORT_SOURCES_UPDATE, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the description has been added in the database';
-        $src = new source($usr);
-        $src->load_by_name(sources::SYSTEM_TEST_ADD);
-        $t->assert($test_name, $src->description(), sources::SYSTEM_TEST_ADD_COM);
-
-        $test_name = 'remove the test source via import';
-        $imp_msg = $imf->json_file(test_files::IMPORT_SOURCES_UNDO, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the test source has been deleted from the database';
-        $src = new source($usr);
-        $src->load_by_name(sources::SYSTEM_TEST_ADD);
-        $t->assert($test_name, $src->id(), 0);
-
-        $test_name = 'remove the test source directly as fallback to cleanup the database';
-        $src = new source($usr);
-        $src->load_by_name(sources::SYSTEM_TEST_ADD);
-        if ($src->id() > 0) {
-            $src->del();
-        }
-        $src = new source($usr);
-        $src->load_by_name(sources::SYSTEM_TEST_ADD);
-        $t->assert($test_name, $src->id(), 0);
+        $this->assert_import_json_named($t, $ts, new source($usr),
+            sources::SYSTEM_TEST_ADD, sources::SYSTEM_TEST_ADD_COM,
+            [
+                test_files::IMPORT_SOURCES,
+                test_files::IMPORT_SOURCES_UPDATE,
+                test_files::IMPORT_SOURCES_UNDO
+            ]);
 
 
         $t->subheader($ts . 'reference');
@@ -318,79 +213,91 @@ class import_write_tests
         */
 
 
-        $t->subheader($ts . 'formula');
+        $this->assert_import_json_named($t, $ts, new formula($usr),
+            formulas::SYSTEM_TEST_ADD, formulas::SYSTEM_TEST_ADD_COM,
+            [
+                test_files::IMPORT_FORMULAS,
+                test_files::IMPORT_FORMULAS_UPDATE,
+                test_files::IMPORT_FORMULAS_UNDO
+            ]);
 
-        $test_name = 'import the test formula';
-        $imp_msg = $imf->json_file(test_files::IMPORT_FORMULAS, $usr, false);
+        $this->assert_import_json_named($t, $ts, new component($usr),
+            components::TEST_ADD_NAME, components::TEST_ADD_COM,
+            [
+                test_files::IMPORT_COMPONENTS,
+                test_files::IMPORT_COMPONENTS_UPDATE,
+                test_files::IMPORT_COMPONENTS_UNDO
+            ]);
+
+        /*
+        $this->assert_import_json_named($t, $ts, new view($usr),
+            views::TEST_ADD_NAME, views::TEST_ADD_COM,
+            [
+                test_files::IMPORT_VIEWS,
+                test_files::IMPORT_VIEWS_UPDATE,
+                test_files::IMPORT_VIEWS_UNDO
+            ]);
+        */
+
+    }
+
+    /**
+     * test creating a sandbox named object via json import
+     * and update and delete it
+     *
+     * @param test_cleanup $t the test object to collect the test results
+     * @param string $ts the test section name just for the log header
+     * @param sandbox_named $sbx the named sandbox object
+     * @param string $add_name the name of the added test object
+     * @param string $description the description used for testing
+     * @param array $files with the create, update and delete json message file
+     * @return void the result is documented in the test object $t
+     */
+    function assert_import_json_named(
+        test_cleanup                          $t,
+        string                                $ts,
+        sandbox_named|sandbox_link_named|user $sbx,
+        string                                $add_name,
+        string                                $description,
+        array                                 $files
+    ): void
+    {
+        global $usr;
+
+        $lib = new library();
+        $imf = new import_file();
+
+        $name = $lib->class_to_name($sbx::class);
+        $t->subheader($ts . $name);
+
+        $test_name = 'import the test ' . $name;
+        $imp_msg = $imf->json_file($files[0], $usr, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the formula has been added to the database';
-        $frm = new formula($usr);
-        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
-        $t->assert_greater_zero($test_name, $frm->id());
+        $test_name = 'test if the ' . $name . ' has been added to the database';
+        $sbx->load_by_name($add_name);
+        $t->assert_greater_zero($test_name, $sbx->id());
 
-        $test_name = 'add the description to the test formula via import';
-        $imp_msg = $imf->json_file(test_files::IMPORT_FORMULAS_UPDATE, $usr, false);
+        $test_name = 'add the description to the test ' . $name . ' via import';
+        $imp_msg = $imf->json_file($files[1], $usr, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the description has been added in the database';
-        $frm = new formula($usr);
-        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
-        $t->assert($test_name, $frm->description(), formulas::SYSTEM_TEST_ADD_COM);
+        $sbx->load_by_name($add_name);
+        $t->assert($test_name, $sbx->description(), $description);
 
-        $test_name = 'remove the test formula via import';
-        $imp_msg = $imf->json_file(test_files::IMPORT_FORMULAS_UNDO, $usr, false);
+        $test_name = 'remove the test ' . $name . ' via import';
+        $imp_msg = $imf->json_file($files[2], $usr, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the test formula has been deleted from the database';
-        $frm = new formula($usr);
-        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
-        $t->assert($test_name, $frm->id(), 0);
+        $test_name = 'test if the test ' . $name . ' has been deleted from the database';
+        $sbx->load_by_name($add_name);
+        $t->assert($test_name, $sbx->id(), 0);
 
-        $test_name = 'remove the test formula directly as fallback to cleanup the database';
-        $frm = new formula($usr);
-        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
-        if ($frm->id() > 0) {
-            $frm->del();
+        $test_name = 'remove the test ' . $name . ' directly as fallback to cleanup the database';
+        $sbx->load_by_name($add_name);
+        if ($sbx->id() > 0) {
+            $sbx->del();
         }
-        $frm = new formula($usr);
-        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
-        $t->assert($test_name, $frm->id(), 0);
-
-
-        $t->subheader($ts . 'component');
-
-        $test_name = 'import the test component';
-        $imp_msg = $imf->json_file(test_files::IMPORT_COMPONENTS, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the component has been added to the database';
-        $frm = new component($usr);
-        $frm->load_by_name(components::TEST_ADD_NAME);
-        $t->assert_greater_zero($test_name, $frm->id());
-
-        $test_name = 'add the description to the test component via import';
-        $imp_msg = $imf->json_file(test_files::IMPORT_COMPONENTS_UPDATE, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the description has been added in the database';
-        $frm = new component($usr);
-        $frm->load_by_name(components::TEST_ADD_NAME);
-        $t->assert($test_name, $frm->description(), components::TEST_ADD_COM);
-
-        $test_name = 'remove the test component via import';
-        $imp_msg = $imf->json_file(test_files::IMPORT_COMPONENTS_UNDO, $usr, false);
-        $t->assert_true($test_name, $imp_msg->is_ok());
-        $test_name = 'test if the test component has been deleted from the database';
-        $frm = new component($usr);
-        $frm->load_by_name(components::TEST_ADD_NAME);
-        $t->assert($test_name, $frm->id(), 0);
-
-        $test_name = 'remove the test component directly as fallback to cleanup the database';
-        $frm = new component($usr);
-        $frm->load_by_name(components::TEST_ADD_NAME);
-        if ($frm->id() > 0) {
-            $frm->del();
-        }
-        $frm = new component($usr);
-        $frm->load_by_name(components::TEST_ADD_NAME);
-        $t->assert($test_name, $frm->id(), 0);
-
+        $sbx->load_by_name($add_name);
+        $t->assert($test_name, $sbx->id(), 0);
     }
 
 }

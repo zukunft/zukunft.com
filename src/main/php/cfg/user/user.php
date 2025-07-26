@@ -181,7 +181,7 @@ class user extends db_id_object_non_sandbox
     public ?string $password = null;      // only used for the login and password change process
 
     // additional info
-    public ?string $description = null;   // used for system users to describe the target; can be used by users for a short introduction
+    private ?string $description = null;  // used for system users to describe the target; can be used by users for a short introduction
     public ?string $first_name = null;    //
     public ?string $last_name = null;     //
 
@@ -316,7 +316,7 @@ class user extends db_id_object_non_sandbox
             $this->email = $db_row[user_db::FLD_EMAIL];
 
             if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
-                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+                $this->set_description($db_row[sql_db::FLD_DESCRIPTION]);
             }
             if (array_key_exists(user_db::FLD_FIRST_NAME, $db_row)) {
                 $this->first_name = $db_row[user_db::FLD_FIRST_NAME];
@@ -443,7 +443,7 @@ class user extends db_id_object_non_sandbox
         }
         // the password is not to be expected to be imported or exported
         if (key_exists(json_fields::DESCRIPTION, $json)) {
-            $this->description = $json[json_fields::DESCRIPTION];
+            $this->set_description($json[json_fields::DESCRIPTION]);
         }
         if (key_exists(json_fields::FIRST_NAME, $json)) {
             $this->first_name = $json[json_fields::FIRST_NAME];
@@ -485,8 +485,8 @@ class user extends db_id_object_non_sandbox
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = $this->api_json_array_core($typ_lst, $usr);
-        if ($this->description != null) {
-            $vars[json_fields::DESCRIPTION] = $this->description;
+        if ($this->description() != null) {
+            $vars[json_fields::DESCRIPTION] = $this->description();
         }
         if ($this->profile_id > 0) {
             $vars[json_fields::PROFILE_ID] = $this->profile_id;
@@ -636,6 +636,29 @@ class user extends db_id_object_non_sandbox
     function email(): ?string
     {
         return $this->email;
+    }
+
+    /**
+     * set the description of this user which explains the role of predefined users for the requesting user
+     *
+     * @param string|null $description the description from the user e.g. for system users
+     * @return void
+     */
+    function set_description(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * get the description of the user
+     * if the object is excluded null is returned
+     * to check the value before the exclusion access the var direct via $this->description
+     *
+     * @return string|null the description from the user e.g. for system users
+     */
+    function description(): ?string
+    {
+        return $this->description;
     }
 
     /**
@@ -1145,7 +1168,7 @@ class user extends db_id_object_non_sandbox
             $sys_usr = new user();
             $sys_usr->set_name(users::SYSTEM_NAME);
             $sys_usr->set_email(users::SYSTEM_EMAIL);
-            $sys_usr->description = users::SYSTEM_COM;
+            $sys_usr->set_description(users::SYSTEM_COM);
             $sys_usr->set_profile_id(user_profiles::SYSTEM_ID);
             $sys_usr->code_id = users::SYSTEM_CODE_ID;
             $sys_usr->excluded = false;
@@ -1160,7 +1183,7 @@ class user extends db_id_object_non_sandbox
                 $local_usr->set_name(users::SYSTEM_ADMIN_NAME);
                 $local_usr->ip_addr = users::SYSTEM_ADMIN_IP;
                 $local_usr->set_email(users::SYSTEM_ADMIN_EMAIL);
-                $local_usr->description = users::SYSTEM_ADMIN_COM;
+                $local_usr->set_description(users::SYSTEM_ADMIN_COM);
                 $local_usr->set_profile(user_profiles::ADMIN);
                 $local_usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
                 $local_usr->excluded = false;
@@ -1413,7 +1436,7 @@ class user extends db_id_object_non_sandbox
                 $this->name = $value;
             }
             if ($key == json_fields::DESCRIPTION) {
-                $this->description = $value;
+                $this->set_description($value);
             }
             if ($key == user_db::FLD_EMAIL) {
                 $this->email = $value;
@@ -1464,8 +1487,8 @@ class user extends db_id_object_non_sandbox
         $vars = [];
 
         $vars[json_fields::NAME] = $this->name;
-        if ($this->description <> '') {
-            $vars[json_fields::DESCRIPTION] = $this->description;
+        if ($this->description() <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description();
         }
         if ($this->email <> '') {
             $vars[json_fields::EMAIL] = $this->email;
@@ -1512,8 +1535,8 @@ class user extends db_id_object_non_sandbox
         if ($obj->password != null) {
             $this->password = $obj->password;
         }
-        if ($obj->description != null) {
-            $this->description = $obj->description;
+        if ($obj->description() != null) {
+            $this->set_description($obj->description());
         }
         if ($obj->code_id != null) {
             $this->code_id = $obj->code_id;
@@ -2596,7 +2619,7 @@ class user extends db_id_object_non_sandbox
         // the password is not part of the standard update process
 
         // the description is mainly used for system users
-        if ($db_usr->description <> $this->description) {
+        if ($db_usr->description() <> $this->description()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
@@ -2606,9 +2629,9 @@ class user extends db_id_object_non_sandbox
             }
             $lst->add_field(
                 sql_db::FLD_DESCRIPTION,
-                $this->description,
+                $this->description(),
                 sql_db::FLD_DESCRIPTION_SQL_TYP,
-                $db_usr->description
+                $db_usr->description()
             );
         }
 
