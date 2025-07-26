@@ -199,17 +199,19 @@ class sandbox_list_named extends sandbox_list
     /**
      * load a list by the names
      * @param array $names a named object used for selection e.g. a word type
+     * @param bool $load_all force to include also the excluded triples e.g. for admins
      * @return bool true if at least one found
      */
-    function load_by_names(array $names = []): bool
+    function load_by_names(array $names = [], bool $load_all = false): bool
     {
         global $db_con;
-        if (count($names) === 0) {
-            $names = $this->names();
-            $this->reset();
+        if (count($names) > 0) {
+            $sc = $db_con->sql_creator();
+            $qp = $this->load_sql_by_names($sc, $names);
+            return $this->load($qp, $load_all);
+        } else {
+            return false;
         }
-        $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
-        return $this->load($qp);
     }
 
     /**
@@ -331,6 +333,23 @@ class sandbox_list_named extends sandbox_list
             }
         }
         return $usr_msg;
+    }
+
+    /**
+     * get the words, formulas, components that needs to be saved to the database
+     * TODO review overwrites and e.g. check word list usage
+     * @return sandbox_list_named with all named sandbox object that does not yet have a database id
+     */
+    function missing_ids(): sandbox_list_named
+    {
+        $lst = clone $this;
+        $lst->reset();
+        foreach ($this->lst() as $sbx) {
+            if ($sbx->id() == 0) {
+                $lst->add_by_name_direct($sbx);
+            }
+        }
+        return $lst;
     }
 
 
@@ -541,6 +560,22 @@ class sandbox_list_named extends sandbox_list
             }
         }
         return $usr_msg;
+    }
+
+    /**
+     * add the named sandbox objects of the given list to this list but avoid duplicates
+     * merge as a function, because the array_merge does not create an object
+     * @param sandbox_list_named $lst_to_add with the terms to be added
+     * @return sandbox_list_named with all terms of this list and the given list
+     */
+    function merge(sandbox_list_named $lst_to_add): sandbox_list_named
+    {
+        if (!$lst_to_add->is_empty()) {
+            foreach ($lst_to_add->lst() as $obj_to_add) {
+                $this->add($obj_to_add);
+            }
+        }
+        return $this;
     }
 
 

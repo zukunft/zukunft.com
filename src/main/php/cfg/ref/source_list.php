@@ -167,18 +167,6 @@ class source_list extends sandbox_list_named
     }
 
     /**
-     * load a list of sources by the names
-     * @param array $names a named object used for selection e.g. a source type
-     * @return bool true if at least one source found
-     */
-    function load_by_names(array $names = []): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
-        return $this->load($qp);
-    }
-
-    /**
      * load the sources selected by the id
      *
      * @param array $ids of source ids that should be loaded

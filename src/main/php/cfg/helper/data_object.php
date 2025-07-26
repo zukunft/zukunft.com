@@ -672,8 +672,10 @@ class data_object
     function load(): user_message
     {
         $usr_msg = new user_message();
-        $this->word_list()->load_by_names();
-        $this->triple_list()->load_by_names();
+        $wrd_lst = $this->word_list();
+        $wrd_lst->load_by_names($wrd_lst->names());
+        $trp_lst = $this->triple_list();
+        $trp_lst->load_by_names($trp_lst->names());
         $usr_msg->add($this->value_list()->fill_phrase_ids_by_names($this->phrase_list()));
         //$this->value_list()->load_by_ids();
         return $usr_msg;
@@ -694,8 +696,6 @@ class data_object
         // get the relevant config values
         $ref_per_sec = $cfg->get_by([words::REFERENCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
         $val_per_sec = $cfg->get_by([words::VALUES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $frm_per_sec = $cfg->get_by([words::FORMULAS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $cmp_per_sec = $cfg->get_by([words::COMPONENTS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
 
 
         // save the data lists in order of the dependencies
@@ -788,44 +788,10 @@ class data_object
         // import the formulas
         $usr_msg->add($this->save_formulas($imp, $trm_lst));
 
+        // import the components before the view because the views use the components
+        $usr_msg->add($this->save_components($imp));
 
-        // TODO Prio 1 review and use predefined functions
-        if ($usr_msg->is_ok()) {
-            $cmp_lst = $this->component_list();
-            $cmp_est = $cmp_lst->count() / $cmp_per_sec;
-            $imp->step_start(msg_id::SAVE, component::class, $cmp_lst->count(), $cmp_est);
-            $usr_msg->add($cmp_lst->save($imp, $cmp_per_sec));
-            $imp->step_end($cmp_lst->count(), $cmp_per_sec);
-
-            // add the id of the components just added to the views
-            if ($usr_msg->is_ok()) {
-                $cmp_lst = $this->component_list();
-                foreach ($this->view_list()->lst() as $msk) {
-                    if ($msk->has_components()) {
-                        foreach ($msk->component_link_list()->lst() as $lnk) {
-                            $cmp = $lnk->component();
-                            if ($cmp->id() == 0) {
-                                if ($cmp->name() == '') {
-                                    $usr_msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
-                                } else {
-                                    $cmp_reloaded = $cmp_lst->get_by_name($cmp->name());
-                                    if ($cmp_reloaded == null) {
-                                        $usr_msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
-                                    } else {
-                                        $cmp->set_id($cmp_reloaded->id());
-                                        $lnk->set_component_id($cmp_reloaded->id());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            log_debug('components not imported because ' . $usr_msg->all_message_text());
-        }
-
-        // import the sources
+        // import the views
         // TODO Prio 1 review and use predefined functions for save view list
         $usr_msg->add($this->save_views($imp));
 
@@ -981,13 +947,50 @@ class data_object
     }
 
     /**
-     * add or update all sources to the database
+     * add or update all views to the database
      * @param import $imp the import object that includes the start time of the import
      * @return user_message ok or the error message for the user with the suggested solution
      */
     private function save_views(import $imp): user_message
     {
         return $this->save_sandbox_list($imp, words::VIEWS, $this->view_list(), view::class);
+    }
+
+    /**
+     * add or update all components to the database
+     * @param import $imp the import object that includes the start time of the import
+     * @return user_message ok or the error message for the user with the suggested solution
+     */
+    private function save_components(import $imp): user_message
+    {
+        $usr_msg = $this->save_sandbox_list($imp, words::COMPONENTS, $this->component_list(), component::class);
+
+        // add the id of the components just added to the views
+        if ($usr_msg->is_ok()) {
+            $cmp_lst = $this->component_list();
+            foreach ($this->view_list()->lst() as $msk) {
+                if ($msk->has_components()) {
+                    foreach ($msk->component_link_list()->lst() as $lnk) {
+                        $cmp = $lnk->component();
+                        if ($cmp->id() == 0) {
+                            if ($cmp->name() == '') {
+                                $usr_msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
+                            } else {
+                                $cmp_reloaded = $cmp_lst->get_by_name($cmp->name());
+                                if ($cmp_reloaded == null) {
+                                    $usr_msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
+                                } else {
+                                    $cmp->set_id($cmp_reloaded->id());
+                                    $lnk->set_component_id($cmp_reloaded->id());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $usr_msg;
     }
 
     /**

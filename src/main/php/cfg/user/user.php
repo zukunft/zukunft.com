@@ -1407,7 +1407,7 @@ class user extends db_id_object_non_sandbox
         // reset all parameters of this user object
         $this->reset();
 
-        // TODO Prio 0 move to import_mapper
+        // TODO Prio 1 move to import_mapper
         foreach ($json_obj as $key => $value) {
             if ($key == json_fields::NAME) {
                 $this->name = $value;

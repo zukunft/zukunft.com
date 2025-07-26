@@ -445,22 +445,6 @@ class term_list extends sandbox_list_named
     }
 
     /**
-     * add the terms of the given list to this list but avoid duplicates
-     * merge as a function, because the array_merge does not create an object
-     * @param term_list $lst_to_add with the terms to be added
-     * @return term_list with all terms of this list and the given list
-     */
-    function merge(term_list $lst_to_add): term_list
-    {
-        if (!$lst_to_add->is_empty()) {
-            foreach ($lst_to_add->lst() as $trm_to_add) {
-                $this->add($trm_to_add);
-            }
-        }
-        return $this;
-    }
-
-    /**
      * add the terms of the given list to this list
      * but avoid duplicates by the name
      * merge as a function, because the array_merge does not create an object

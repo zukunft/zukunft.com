@@ -429,22 +429,6 @@ class formula_list extends sandbox_list_named
     }
 
     /**
-     * load a list of formulas by the given formula names
-     * @param array $names an array of formula ids which should be loaded
-     * @return bool true if at least one formula found
-     */
-    function load_by_names(array $names = []): bool
-    {
-        global $db_con;
-        if (count($names) > 0) {
-            $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
-            return $this->load($qp);
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * load formulas with the given pattern
      *
      * @param string $pattern the text part that should be used to select the formulas
@@ -969,22 +953,6 @@ class formula_list extends sandbox_list_named
             }
         }
         return $frm_lst;
-    }
-
-    /**
-     * add the formulas of the given list to this list but avoid duplicates
-     * merge as a function, because the array_merge does not create an object
-     * @param formula_list $lst_to_add with the phrases to be added
-     * @return formula_list with all phrases of this list and the given list
-     */
-    function merge(formula_list $lst_to_add): formula_list
-    {
-        if (!$lst_to_add->is_empty()) {
-            foreach ($lst_to_add->lst() as $frm_to_add) {
-                $this->add($frm_to_add);
-            }
-        }
-        return $this;
     }
 
     /**

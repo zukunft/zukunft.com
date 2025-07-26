@@ -37,6 +37,7 @@ include_once MODEL_IMPORT_PATH . 'convert_wikipedia_table.php';
 include_once MODEL_CONST_PATH . 'files.php';
 include_once TEST_CONST_PATH . 'files.php';
 
+use cfg\component\component;
 use cfg\formula\formula;
 use cfg\import\import_file;
 use cfg\ref\ref;
@@ -45,6 +46,7 @@ use cfg\user\user;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\word;
+use shared\const\components;
 use shared\const\formulas;
 use shared\const\refs;
 use shared\const\sources;
@@ -352,6 +354,42 @@ class import_write_tests
         $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
         $t->assert($test_name, $frm->id(), 0);
 
+
+        $t->subheader($ts . 'component');
+
+        $test_name = 'import the test component';
+        $imp_msg = $imf->json_file(test_files::IMPORT_COMPONENTS, $usr, false);
+        $t->assert_true($test_name, $imp_msg->is_ok());
+        $test_name = 'test if the component has been added to the database';
+        $frm = new component($usr);
+        $frm->load_by_name(components::TEST_ADD_NAME);
+        $t->assert_greater_zero($test_name, $frm->id());
+
+        $test_name = 'add the description to the test component via import';
+        $imp_msg = $imf->json_file(test_files::IMPORT_COMPONENTS_UPDATE, $usr, false);
+        $t->assert_true($test_name, $imp_msg->is_ok());
+        $test_name = 'test if the description has been added in the database';
+        $frm = new component($usr);
+        $frm->load_by_name(components::TEST_ADD_NAME);
+        $t->assert($test_name, $frm->description(), components::TEST_ADD_COM);
+
+        $test_name = 'remove the test component via import';
+        $imp_msg = $imf->json_file(test_files::IMPORT_COMPONENTS_UNDO, $usr, false);
+        $t->assert_true($test_name, $imp_msg->is_ok());
+        $test_name = 'test if the test component has been deleted from the database';
+        $frm = new component($usr);
+        $frm->load_by_name(components::TEST_ADD_NAME);
+        $t->assert($test_name, $frm->id(), 0);
+
+        $test_name = 'remove the test component directly as fallback to cleanup the database';
+        $frm = new component($usr);
+        $frm->load_by_name(components::TEST_ADD_NAME);
+        if ($frm->id() > 0) {
+            $frm->del();
+        }
+        $frm = new component($usr);
+        $frm->load_by_name(components::TEST_ADD_NAME);
+        $t->assert($test_name, $frm->id(), 0);
 
     }
 

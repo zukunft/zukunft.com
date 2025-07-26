@@ -52,6 +52,7 @@ class components
     const TEST_ADD_NAME = 'System Test View Component';
     const TEST_ADD_VIA_FUNC_NAME = 'System Test Component added via sql function';
     const TEST_ADD_VIA_SQL_NAME = 'System Test Component added via sql insert';
+    const TEST_ADD_COM = 'System Test View Component description';
     const TEST_RENAMED_NAME = 'System Test View Component Renamed';
     const TEST_ADD_2_NAME = 'System Test View Component Two';
     const TEST_TITLE_NAME = 'System Test View Component Title';

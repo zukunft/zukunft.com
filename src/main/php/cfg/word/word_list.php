@@ -874,23 +874,6 @@ class word_list extends sandbox_list_named
     }
 
     /**
-     * merge as a function, because the array_merge does not create an object
-     * @param word_list $new_wrd_lst with the words that should be added
-     * @return bool true if at least one word has been added that has not yet been in the list
-     */
-    function merge(word_list $new_wrd_lst): bool
-    {
-        $result = false;
-        log_debug('->merge ' . $new_wrd_lst->name() . ' to ' . $this->dsp_id() . '"');
-        foreach ($new_wrd_lst->lst() as $new_wrd) {
-            log_debug('->merge add ' . $new_wrd->name() . ' (' . $new_wrd->id() . ')');
-            $this->add($new_wrd);
-            $result = true;
-        }
-        return $result;
-    }
-
-    /**
      * diff as a function, because it seems the array_diff does not work for an object list
      * TODO rename to del or intersect
      *

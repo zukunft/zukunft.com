@@ -220,31 +220,6 @@ class phrase_list extends sandbox_list_named
 
     /**
      * load the phrases including the related word or triple object
-     * by the given name list from the database
-     *
-     * @param array $names of phrase names that should be loaded
-     * @param phrase_list|null $phr_lst a list of preloaded phrase that should not be loaded again
-     * @return bool true if at least one phrase has been loaded
-     */
-    function load_by_names(array $names = [], ?phrase_list $phr_lst = null): bool
-    {
-        global $db_con;
-
-        // exclude the names that have been in the cache
-        if ($phr_lst != null) {
-            $names_to_load = array_diff($names, $phr_lst->names());
-        } else {
-            $names_to_load = $names;
-        }
-
-        // create the sql and load
-        $sc = $db_con->sql_creator();
-        $qp = $this->load_sql_by_names($sc, $names_to_load);
-        return $this->load($qp);
-    }
-
-    /**
-     * load the phrases including the related word or triple object
      * by the given id list from the database
      * TODO make it optional to include excluded phrases
      *
@@ -1422,22 +1397,6 @@ class phrase_list extends sandbox_list_named
                 }
             }
         }
-    }
-
-    /**
-     * add the phrases of the given list to this list but avoid duplicates
-     * merge as a function, because the array_merge does not create an object
-     * @param phrase_list $lst_to_add with the phrases to be added
-     * @return phrase_list with all phrases of this list and the given list
-     */
-    function merge(phrase_list $lst_to_add): phrase_list
-    {
-        if (!$lst_to_add->is_empty()) {
-            foreach ($lst_to_add->lst() as $phr_to_add) {
-                $this->add($phr_to_add);
-            }
-        }
-        return $this;
     }
 
     /**

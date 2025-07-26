@@ -153,27 +153,6 @@ class triple_list extends sandbox_list_named
     }
 
     /**
-     * load a list of words by the names
-     * TODO Prio 3 check if the calling function should test for an empty list
-     * @param array $names a named object used for selection e.g. a word type
-     * @param bool $load_all force to include also the excluded triples e.g. for admins
-     * @return bool true if at least one word found
-     */
-    function load_by_names(array $names = [], bool $load_all = false): bool
-    {
-        global $db_con;
-        if (count($names) === 0) {
-            $names = $this->names();
-        }
-        if (count($names) !== 0) {
-            $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
-            return $this->load($qp, $load_all);
-        } else {
-            return true;
-        }
-    }
-
-    /**
      * load a list of triples by the ids
      * @param array $wrd_ids a list of int values with the triple ids
      * @return bool true if at least one triple found
@@ -687,22 +666,6 @@ class triple_list extends sandbox_list_named
             }
         }
         return $trp_lst;
-    }
-
-    /**
-     * add the triples of the given list to this list but avoid duplicates
-     * merge as a function, because the array_merge does not create an object
-     * @param triple_list $lst_to_add with the phrases to be added
-     * @return triple_list with all phrases of this list and the given list
-     */
-    function merge(triple_list $lst_to_add): triple_list
-    {
-        if (!$lst_to_add->is_empty()) {
-            foreach ($lst_to_add->lst() as $trp_to_add) {
-                $this->add($trp_to_add);
-            }
-        }
-        return $this;
     }
 
 
