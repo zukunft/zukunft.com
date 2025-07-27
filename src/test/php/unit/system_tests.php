@@ -31,19 +31,20 @@
 
 namespace unit;
 
-include_once SERVICE_PATH . 'config.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
-include_once MODEL_SYSTEM_PATH . 'session.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
-include_once SHARED_CONST_PATH . 'refs.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_SYSTEM . 'ip_range.php';
+include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+include_once paths::MODEL_SYSTEM . 'session.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\config;
-use cfg\const\paths;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
@@ -74,6 +75,14 @@ use const\files as test_files;
 
 class system_tests
 {
+
+    // use path that does not need to be included
+    const PATH_NO_INCLUDE = [
+        'PgSql\Connection',
+        'cfg\const\paths',
+        'html\const\paths'
+    ];
+
     function run(test_cleanup $t): void
     {
 
@@ -354,9 +363,9 @@ class system_tests
         $t->assert('system_consistency->missing_owner_sql by formula', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
         $this->php_include_tests($t, paths::MODEL);
-        $this->php_include_tests($t, API_PATH);
-        $this->php_include_tests($t, WEB_PATH);
-        $this->php_class_section_tests($t, MODEL_COMPONENT_PATH);
+        $this->php_include_tests($t, paths::API);
+        $this->php_include_tests($t, paths::WEB);
+        $this->php_class_section_tests($t, paths::MODEL_COMPONENT);
 
         // ... and check if the prepared sql name is unique
         if (!in_array($qp->name, $sql_names)) {
@@ -517,13 +526,13 @@ class system_tests
                         $path_incl = $include[1];
                         if ($class == $class_incl) {
                             $path_conv = $lib->php_path_convert($path);
-                            if ($path_conv == $path_incl) {
+                            if ($path_conv == $path_incl or $path_conv == '') {
                                 $found = true;
                             }
                         }
                     }
                     if (!$found) {
-                        if (!in_array($path . '\\' . $class,PATH_NO_INCLUDE)) {
+                        if (!in_array($path . '\\' . $class,self::PATH_NO_INCLUDE)) {
                             $sub_path = $lib->str_right_of($base_path, '../');
                             $test_name = 'includes missing in ' . $path . '\\' . $class
                                 . ' in ' . $sub_path . $code_file

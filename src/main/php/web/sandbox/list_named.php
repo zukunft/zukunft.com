@@ -32,8 +32,10 @@
 
 namespace html\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 
 use html\phrase\phrase_list as phrase_list_dsp;
 

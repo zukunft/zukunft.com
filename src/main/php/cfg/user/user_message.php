@@ -41,9 +41,11 @@
 
 namespace cfg\user;
 
-include_once SHARED_ENUM_PATH . 'messages.php';
+use cfg\const\paths;
 
-//include_once SHARED_PATH . 'library.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+
+//include_once paths::SHARED . 'library.php';
 
 use shared\enum\messages as msg_id;
 use shared\library;

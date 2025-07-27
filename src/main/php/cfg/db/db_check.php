@@ -32,23 +32,25 @@
 
 namespace cfg\db;
 
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once SERVICE_PATH . 'config.php';
-include_once MODEL_CONST_PATH . 'files.php';
-include_once MODEL_FORMULA_PATH . 'formula_list.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_RESULT_PATH . 'result_two.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_USER_PATH . 'user_profile_list.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_db.php';
-include_once SHARED_CONST_PATH . 'users.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_RESULT . 'result_two.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_db.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\component\component;
 use cfg\config;

@@ -32,20 +32,21 @@
 
 namespace cfg\phrase;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once WEB_PHRASE_PATH . 'term_list.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

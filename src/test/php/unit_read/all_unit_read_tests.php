@@ -34,10 +34,12 @@
 
 namespace unit_read;
 
-include_once WEB_PATH . 'frontend.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::WEB . 'frontend.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use html\types\type_lists as type_list_dsp;
 use shared\const\groups;

@@ -35,16 +35,18 @@
 
 namespace cfg\value;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_type.php';
-//include_once MODEL_REF_PATH . 'source_db.php';
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_LANGUAGE_PATH . 'language.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_type.php';
+//include_once paths::MODEL_REF . 'source_db.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_LANGUAGE . 'language.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;

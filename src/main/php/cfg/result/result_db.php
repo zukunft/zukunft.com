@@ -35,18 +35,20 @@
 
 namespace cfg\result;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_db.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once MODEL_USER_PATH . 'user.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::MODEL_USER . 'user.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;

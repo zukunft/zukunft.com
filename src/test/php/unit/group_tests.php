@@ -32,11 +32,13 @@
 
 namespace unit;
 
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_GROUP_PATH . 'group_link.php';
-include_once MODEL_GROUP_PATH . 'group_list.php';
-include_once MODEL_GROUP_PATH . 'result_id.php';
-include_once SHARED_CONST_PATH . 'groups.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_GROUP . 'group_link.php';
+include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_GROUP . 'result_id.php';
+include_once paths::SHARED_CONST . 'groups.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;

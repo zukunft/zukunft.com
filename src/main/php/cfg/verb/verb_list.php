@@ -32,22 +32,24 @@
 
 namespace cfg\verb;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-//include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_WORD_PATH . 'triple_db.php';
-include_once SHARED_ENUM_PATH . 'foaf_direction.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+//include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 
 use cfg\db\sql_db;
 use cfg\db\sql_par;

@@ -43,35 +43,34 @@
 
 namespace cfg\log;
 
-include_once MODEL_LOG_PATH . 'change_log.php';
-//include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_LOG_PATH . 'change_log.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_USER_PATH . 'user_db.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once WEB_LOG_PATH . 'change_log_named.php';
-//include_once WEB_HELPER_PATH . 'config.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_LOG . 'change_log.php';
+//include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use cfg\component\component;
 use cfg\db\sql;
@@ -91,15 +90,14 @@ use cfg\user\user_db;
 use cfg\value\value;
 use cfg\view\view;
 use cfg\word\word;
-use DateTime;
-use DateTimeInterface;
-use Exception;
 use shared\enum\change_fields;
 use shared\enum\change_tables;
 use shared\enum\messages as msg_id;
 use shared\json_fields;
-use shared\library;
 use shared\types\api_type_list;
+use DateTime;
+use DateTimeInterface;
+use Exception;
 
 class change extends change_log
 {

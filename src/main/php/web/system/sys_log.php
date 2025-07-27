@@ -31,14 +31,16 @@
 
 namespace html\system;
 
-include_once WEB_LOG_PATH . 'log.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_USER_PATH . 'user.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::LOG . 'log.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\html_base;
 use html\log\log as log_dsp;

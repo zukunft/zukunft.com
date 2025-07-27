@@ -35,20 +35,22 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_FORMULA_PATH . 'formula_link.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'term_view.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_ENUM_PATH . 'value_types.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'value_types.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
 
 use cfg\component\component;
 use cfg\component\component_link;

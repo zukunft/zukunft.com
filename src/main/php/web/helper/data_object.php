@@ -32,11 +32,13 @@
 
 namespace html\helper;
 
-include_once SHARED_PATH . 'json_fields.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_VIEW_PATH . 'view_list.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_WORD_PATH . 'word_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED . 'json_fields.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::WORD . 'word_list.php';
 
 use html\phrase\phrase_list;
 use html\user\user_message;

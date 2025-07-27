@@ -32,12 +32,14 @@
 
 namespace cfg\helper;
 
-include_once DB_PATH . 'sql.php';
-include_once SHARED_ENUM_PATH . 'value_types.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'ListOf.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::SHARED_ENUM . 'value_types.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'ListOf.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
 
 use cfg\db\sql;
 use shared\enum\value_types;

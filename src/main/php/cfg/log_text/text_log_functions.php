@@ -29,15 +29,18 @@
   
 */
 
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once WEB_VIEW_PATH . 'view.php';
-include_once SHARED_CONST_PATH . 'users.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once html_paths::VIEW . 'view.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_db;
 use cfg\system\sys_log;

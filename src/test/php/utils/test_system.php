@@ -30,7 +30,9 @@
 
 */
 
-include_once SHARED_CONST_PATH . 'users.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'users.php';
 
 use cfg\user\user;
 use cfg\user\user_list;

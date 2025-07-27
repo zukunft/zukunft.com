@@ -32,8 +32,11 @@
 
 namespace unit;
 
-include_once MODEL_WORD_PATH . 'triple_list.php';
-include_once WEB_WORD_PATH . 'triple_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::MODEL_WORD . 'triple_list.php';
+include_once html_paths::WORD . 'triple_list.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;

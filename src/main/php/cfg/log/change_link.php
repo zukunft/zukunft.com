@@ -46,27 +46,29 @@
 
 namespace cfg\log;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-//include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_db.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+//include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

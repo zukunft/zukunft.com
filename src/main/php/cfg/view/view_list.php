@@ -32,25 +32,27 @@
 
 namespace cfg\view;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_IMPORT_PATH . 'import.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_db.php';
-include_once MODEL_VIEW_PATH . 'view_type.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\component\component;
 use cfg\component\component_link;

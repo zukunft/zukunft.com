@@ -51,43 +51,47 @@
 
 namespace test;
 
-include_once SERVICE_PATH . 'config.php';
-include_once DB_PATH . 'sql_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
-include_once MODEL_COMPONENT_PATH . 'position_type.php';
-include_once MODEL_COMPONENT_PATH . 'view_style.php';
-include_once MODEL_CONST_PATH . 'def.php';
-include_once MODEL_ELEMENT_PATH . 'element_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
-include_once MODEL_LANGUAGE_PATH . 'language.php';
-include_once MODEL_LANGUAGE_PATH . 'language_form.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_PHRASE_PATH . 'phrase_types.php';
-include_once MODEL_SYSTEM_PATH . 'job_type.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
-include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
-include_once MODEL_REF_PATH . 'ref_type.php';
-include_once MODEL_REF_PATH . 'source_type.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_USER_PATH . 'user_official_type.php';
-include_once MODEL_VIEW_PATH . 'view_type.php';
-include_once MODEL_VIEW_PATH . 'view_link_type.php';
-include_once WEB_HTML_PATH . 'styles.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::SERVICE . 'config.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::MODEL_COMPONENT . 'component_type.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::MODEL_COMPONENT . 'position_type.php';
+include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_ELEMENT . 'element_type.php';
+include_once paths::MODEL_FORMULA . 'formula_type.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_LANGUAGE . 'language.php';
+include_once paths::MODEL_LANGUAGE . 'language_form.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_PHRASE . 'phrase_types.php';
+include_once paths::MODEL_SYSTEM . 'job_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::MODEL_REF . 'ref_type.php';
+include_once paths::MODEL_REF . 'source_type.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_USER . 'user_official_type.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::MODEL_VIEW . 'view_link_type.php';
+include_once html_paths::HTML . 'styles.php';
+include_once html_paths::REF . 'ref.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\component\component;
@@ -191,7 +195,7 @@ const TEST_DEV_PATH = TEST_PHP_PATH . 'dev' . DIRECTORY_SEPARATOR;              
 
 
 // load the system config for testing
-include_once SERVICE_PATH . 'config.php';
+include_once paths::SERVICE . 'config.php';
 
 // load the other test utility modules (beside this base configuration module)
 include_once TEST_PHP_UTIL_PATH . 'create_test_objects.php';
@@ -329,8 +333,8 @@ include_once TEST_UNIT_WRITE_PATH . 'test_math.php';
 
 //
 include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
-include_once MODEL_LOG_TEXT_PATH . 'text_log_format.php';
-include_once MODEL_LOG_TEXT_PATH . 'text_log_level.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
 
 // load the integration test functions
 include_once TEST_UNIT_INT_PATH . 'test_import.php';
@@ -340,7 +344,7 @@ include_once TEST_UNIT_INT_PATH . 'test_export.php';
 include_once TEST_DEV_PATH . 'test_legacy.php';
 
 // TODO to be dismissed
-include_once WEB_USER_PATH . 'user_display_old.php';
+include_once html_paths::USER . 'user_display_old.php';
 
 
 /*

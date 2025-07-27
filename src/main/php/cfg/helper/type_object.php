@@ -41,30 +41,32 @@
 
 namespace cfg\helper;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
 // TODO avoid include loops
-//include_once MODEL_LANGUAGE_PATH . 'language.php';
-//include_once MODEL_LANGUAGE_PATH . 'language_form.php';
-//include_once MODEL_LOG_PATH . 'change_action.php';
-//include_once MODEL_LOG_PATH . 'change_table.php';
-//include_once MODEL_LOG_PATH . 'change_table_field.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-//include_once MODEL_SYSTEM_PATH . 'pod.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+//include_once paths::MODEL_LANGUAGE . 'language.php';
+//include_once paths::MODEL_LANGUAGE . 'language_form.php';
+//include_once paths::MODEL_LOG . 'change_action.php';
+//include_once paths::MODEL_LOG . 'change_table.php';
+//include_once paths::MODEL_LOG . 'change_table_field.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+//include_once paths::MODEL_SYSTEM . 'pod.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

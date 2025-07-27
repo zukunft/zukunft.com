@@ -40,30 +40,32 @@
 
 namespace cfg\component;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_IMPORT_PATH . 'import.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_db.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once SHARED_TYPES_PATH . 'component_type.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED_TYPES . 'component_type.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

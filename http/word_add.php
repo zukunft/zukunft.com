@@ -51,10 +51,12 @@ Delete a word (check if nothing is depending on the word to delete)
 
 */
 
+use cfg\const\paths;
+
 
 /* standard zukunft header for callable php files to allow debugging and lib loading */
 
-include_once SHARED_CONST_PATH . 'views.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use cfg\phrase\term;
 use cfg\user\user;

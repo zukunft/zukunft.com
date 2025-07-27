@@ -32,7 +32,9 @@
 
 namespace unit;
 
-include_once MODEL_SYSTEM_PATH . 'job_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'job_list.php';
 
 use cfg\db\sql_creator;
 use cfg\system\job_time;

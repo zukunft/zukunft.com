@@ -31,8 +31,10 @@
 
 namespace cfg\view;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_list.php';
-include_once MODEL_VIEW_PATH . 'term_view.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
 
 use cfg\sandbox\sandbox_link_list;
 

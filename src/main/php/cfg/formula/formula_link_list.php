@@ -31,16 +31,18 @@
 
 namespace cfg\formula;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_list.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;

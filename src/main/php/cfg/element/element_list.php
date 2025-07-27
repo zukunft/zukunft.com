@@ -37,14 +37,16 @@
 
 namespace cfg\element;
 
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_FORMULA_PATH . 'formula_db.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par;

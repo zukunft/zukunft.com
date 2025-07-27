@@ -38,19 +38,21 @@
 
 namespace cfg\db;
 
-include_once DB_PATH . 'sql_par_field.php';
-//include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-//include_once MODEL_FORMULA_PATH . 'formula_db.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-//include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_par_field.php';
+//include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+//include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\formula\formula_db;
 use cfg\helper\combine_named;

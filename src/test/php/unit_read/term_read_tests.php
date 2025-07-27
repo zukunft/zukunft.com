@@ -32,12 +32,14 @@
 
 namespace unit_read;
 
-include_once MODEL_FORMULA_PATH . 'formula_db.php';
-include_once MODEL_VERB_PATH . 'verb_db.php';
-include_once MODEL_WORD_PATH . 'triple_db.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\formula\formula;
 use cfg\formula\formula_db;

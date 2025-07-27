@@ -34,23 +34,26 @@
 
 namespace html\phrase;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_list_named.php';
-//include_once WEB_HELPER_PATH . 'config.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-//include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_USER_PATH . 'user_message.php';
-//include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_VERB_PATH . 'verb_list.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'word_list.php';
-include_once SHARED_ENUM_PATH . 'foaf_direction.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+//include_once html_paths::SANDBOX . 'sandbox_list_named.php';
+//include_once html_paths::HELPER . 'config.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+//include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VERB . 'verb_list.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::WORD . 'word_list.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'library.php';
 
 use html\formula\formula;
 use html\helper\config;

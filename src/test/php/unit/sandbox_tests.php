@@ -32,17 +32,19 @@
 
 namespace unit;
 
-include_once SERVICE_PATH . 'config.php';
-include_once DB_PATH . 'sql.php';
-include_once MODEL_FORMULA_PATH . 'formula_db.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_REF_PATH . 'source_db.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VERB_PATH . 'verb_db.php';
-include_once MODEL_VIEW_PATH . 'view_db.php';
-include_once MODEL_WORD_PATH . 'triple_db.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::SERVICE . 'config.php';
+include_once paths::DB . 'sql.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\component\component;
 use cfg\component\component_link;

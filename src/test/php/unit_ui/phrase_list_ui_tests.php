@@ -32,7 +32,9 @@
 
 namespace unit_ui;
 
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'verbs.php';
 
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;

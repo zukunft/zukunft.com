@@ -37,27 +37,30 @@
 
 namespace html\component;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once DB_PATH . 'sql_db.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'html_selector.php';
-include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_HELPER_PATH . 'data_object.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_code_id.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_VIEW_PATH . 'view_list.php';
-include_once WEB_TYPES_PATH . 'view_style_list.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once SHARED_TYPES_PATH . 'position_types.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once html_paths::SANDBOX . 'sandbox_typed.php';
+include_once paths::DB . 'sql_db.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::TYPES . 'view_style_list.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'position_types.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\helper\data_object as data_object_dsp;
 use html\html_base;

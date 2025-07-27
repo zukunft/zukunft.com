@@ -32,13 +32,13 @@
 
 namespace cfg\db;
 
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_db.php';
-//include_once MODEL_VALUE_PATH . 'value_text.php';
-//include_once MODEL_VALUE_PATH . 'value_time.php';
-//include_once MODEL_VALUE_PATH . 'value_geo.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_db.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
 
 use cfg\user\user;
 use cfg\value\value;

@@ -39,22 +39,24 @@
 
 namespace cfg\view;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VIEW_PATH . 'view.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_VIEW . 'view.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

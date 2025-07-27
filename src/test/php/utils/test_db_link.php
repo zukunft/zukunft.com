@@ -30,7 +30,9 @@
 
 */
 
-include_once SHARED_ENUM_PATH . 'change_tables.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'change_tables.php';
 
 use shared\enum\change_tables;
 use test\all_tests;

@@ -37,7 +37,9 @@
 
 namespace html\element;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
 
 use html\sandbox\list_dsp;
 

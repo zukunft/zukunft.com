@@ -32,8 +32,10 @@
 
 namespace unit;
 
-include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;

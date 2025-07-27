@@ -36,7 +36,9 @@
 
 namespace unit_read;
 
-include_once MODEL_CONST_PATH . 'def.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_CONST . 'def.php';
 
 use cfg\const\def;
 use test\test_cleanup;

@@ -32,8 +32,10 @@
 
 namespace unit;
 
-include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
-include_once MODEL_SYSTEM_PATH . 'system_time.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::MODEL_SYSTEM . 'system_time.php';
 
 use cfg\db\sql_creator;
 use cfg\system\sys_log;

@@ -32,13 +32,15 @@
 
 namespace unit_write;
 
-include_once DB_PATH . 'sql_db.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_db.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 
 use cfg\db\sql_db;
 use cfg\formula\formula;

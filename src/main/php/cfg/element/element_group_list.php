@@ -31,8 +31,10 @@
 
 namespace cfg\element;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
 
 use cfg\sandbox\sandbox_list;
 use cfg\phrase\term_list;

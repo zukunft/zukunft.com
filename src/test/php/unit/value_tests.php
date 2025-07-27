@@ -32,9 +32,11 @@
 
 namespace unit;
 
-include_once DB_PATH . 'sql.php';
-include_once MODEL_VALUE_PATH . 'value_time_series.php';
-include_once MODEL_VALUE_PATH . 'value_obj.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::MODEL_VALUE . 'value_time_series.php';
+include_once paths::MODEL_VALUE . 'value_obj.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

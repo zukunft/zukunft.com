@@ -31,23 +31,25 @@
 
 namespace cfg\system;
 
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;

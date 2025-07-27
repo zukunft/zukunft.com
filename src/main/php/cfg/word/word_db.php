@@ -35,16 +35,18 @@
 
 namespace cfg\word;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_LANGUAGE_PATH . 'language.php';
-//include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_LANGUAGE . 'language.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+//include_once paths::MODEL_VIEW . 'view.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;

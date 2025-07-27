@@ -32,11 +32,13 @@
 
 namespace unit;
 
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_PHRASE_PATH . 'term.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::PHRASE . 'term.php';
 
 use cfg\db\sql_creator;
 use html\phrase\term as term_dsp;

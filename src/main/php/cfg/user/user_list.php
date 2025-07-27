@@ -32,31 +32,33 @@
 
 namespace cfg\user;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_multi.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_REF_PATH . 'ref.php';
-//include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_time.php';
-//include_once MODEL_VALUE_PATH . 'value_text.php';
-//include_once MODEL_VALUE_PATH . 'value_geo.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_WORD_PATH . 'triple.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'users.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

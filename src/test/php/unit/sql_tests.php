@@ -31,7 +31,9 @@
 
 namespace unit;
 
-include_once MODEL_CONST_PATH . 'files.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_CONST . 'files.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\const\files;

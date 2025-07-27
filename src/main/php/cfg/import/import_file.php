@@ -28,15 +28,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 namespace cfg\import;
 
-include_once MODEL_HELPER_PATH . 'config_numbers.php';
-include_once MODEL_IMPORT_PATH . 'import.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_CONST_PATH . 'files.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'file_types.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'file_types.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\const\files;
@@ -219,6 +221,7 @@ class import_file
     function import_config_yaml(user $usr, bool $validate = false): user_message
     {
         global $mtr;
+        global $log_txt;
 
         $usr_msg = new user_message();
 
@@ -304,7 +307,7 @@ class import_file
 
             // show the last message to the user which is hopefully a confirmation how many config values have been imported
             $msg = $usr_msg->all_message_text();
-            echo $mtr->txt(msg_id::IMPORT_JSON) . ' ' . basename(files::SYSTEM_CONFIG) . ' ' . $msg . "\n";
+            $log_txt->echo_log($mtr->txt(msg_id::IMPORT_JSON) . ' ' . basename(files::SYSTEM_CONFIG) . ' ' . $msg);
             if (!$usr_msg->is_ok()) {
                 log_warning($msg);
             }

@@ -32,7 +32,9 @@
 
 namespace html\user;
 
-include_once SHARED_ENUM_PATH . 'messages.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use shared\enum\messages as msg_id;
 

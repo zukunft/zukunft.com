@@ -37,7 +37,9 @@
 
 namespace cfg\db;
 
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::SHARED . 'library.php';
 
 use shared\library;
 

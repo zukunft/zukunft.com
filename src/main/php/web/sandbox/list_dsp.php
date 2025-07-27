@@ -33,18 +33,20 @@
 
 namespace html\sandbox;
 
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once WEB_HTML_PATH . 'html_selector.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_USER_PATH . 'user.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once SHARED_HELPER_PATH . 'ListOfIdObjects.php';
-include_once SHARED_PATH . 'api.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::API_OBJECT . 'api_message.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
+include_once paths::SHARED . 'api.php';
 
 use controller\api_message;
 use html\rest_ctrl as api_dsp;

@@ -32,7 +32,9 @@
 
 namespace unit_write;
 
-include_once SHARED_ENUM_PATH . 'change_tables.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'change_tables.php';
 
 use cfg\formula\formula;
 use cfg\formula\formula_link;

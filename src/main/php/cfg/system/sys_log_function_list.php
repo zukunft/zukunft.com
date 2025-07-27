@@ -31,9 +31,11 @@
 
 namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql_db.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql_db.php';
 
 use cfg\helper\type_list;
 

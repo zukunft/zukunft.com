@@ -32,8 +32,11 @@
 
 namespace unit_read;
 
+use cfg\const\paths;
+
+include_once paths::EXPORT . 'xml.php';
+
 use cfg\export\xml;
-use cfg\export\json_io;
 use test\test_cleanup;
 
 class export_read_tests

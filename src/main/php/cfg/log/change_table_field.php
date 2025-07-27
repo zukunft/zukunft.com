@@ -32,11 +32,13 @@
 
 namespace cfg\log;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

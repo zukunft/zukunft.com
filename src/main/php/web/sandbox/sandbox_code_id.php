@@ -32,9 +32,11 @@
 
 namespace html\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_typed.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\user\user_message;
 use shared\json_fields;

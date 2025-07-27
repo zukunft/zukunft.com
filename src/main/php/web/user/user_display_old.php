@@ -29,23 +29,25 @@
   
 */
 
-include_once DB_PATH . 'sql_db.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_COMPONENT_PATH . 'component.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_SANDBOX_PATH . 'sandbox.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
-include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
-include_once WEB_USER_PATH . 'user.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_VIEW_PATH . 'view.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once MODEL_WORD_PATH . 'triple_db.php';
-include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
-include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_VIEW_PATH . 'view.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::DB . 'sql_db.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_named.php';
+include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once html_paths::SYSTEM . 'sys_log_list.php';
+include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::VIEW . 'view.php';
 
 use cfg\word\triple_db;
 use html\html_base;

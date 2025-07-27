@@ -32,7 +32,9 @@
 
 namespace unit;
 
-include_once SHARED_CONST_PATH . 'refs.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'refs.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;

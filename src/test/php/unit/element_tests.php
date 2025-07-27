@@ -32,7 +32,9 @@
 
 namespace unit;
 
-include_once MODEL_ELEMENT_PATH . 'element_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_ELEMENT . 'element_list.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;

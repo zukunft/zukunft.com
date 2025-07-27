@@ -32,9 +32,11 @@
 
 namespace unit_write;
 
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_VIEW_PATH . 'view_db.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
 
 use cfg\db\sql_db;
 use cfg\view\view;

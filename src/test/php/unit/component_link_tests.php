@@ -32,10 +32,12 @@
 
 namespace unit;
 
-include_once MODEL_COMPONENT_PATH . 'position_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_COMPONENT . 'position_type.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_COMPONENT . 'component_link_list.php';
 
 use cfg\component\component_link;
 use cfg\component\component_link_type;

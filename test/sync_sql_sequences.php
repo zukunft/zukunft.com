@@ -19,7 +19,8 @@ include_once TEST_PHP_UTIL_PATH . 'test_base.php';
 include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
 
 // load the sql sequence check functions
-include_once MODEL_DB_PATH . 'sql_sync_sequences.php';
+use cfg\const\paths;
+include_once paths::DB . 'sql_sync_sequences.php';
 
 use cfg\db\sql_sync_sequences;
 use cfg\user\user;

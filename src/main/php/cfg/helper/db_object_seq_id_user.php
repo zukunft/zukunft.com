@@ -42,12 +42,14 @@
 
 namespace cfg\helper;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\user\user;
 use cfg\user\user_message;

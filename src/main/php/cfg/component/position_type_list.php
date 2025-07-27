@@ -31,9 +31,11 @@
 
 namespace cfg\component;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_COMPONENT_PATH . 'position_type.php';
-include_once SHARED_TYPES_PATH . 'position_types.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_COMPONENT . 'position_type.php';
+include_once paths::SHARED_TYPES . 'position_types.php';
 
 use cfg\helper\type_list;
 use shared\types\position_types;

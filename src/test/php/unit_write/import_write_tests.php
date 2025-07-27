@@ -32,11 +32,13 @@
 
 namespace unit_write;
 
-include_once MODEL_IMPORT_PATH . 'import.php';
-include_once MODEL_IMPORT_PATH . 'convert_wikipedia_table.php';
-include_once MODEL_CONST_PATH . 'files.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\component\component;

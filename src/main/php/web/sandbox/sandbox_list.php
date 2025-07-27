@@ -41,7 +41,9 @@
 
 namespace html\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
 
 class sandbox_list extends list_dsp
 {

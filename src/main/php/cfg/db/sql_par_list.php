@@ -34,7 +34,9 @@
 
 namespace cfg\db;
 
-include_once MODEL_USER_PATH . 'user_message.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_USER . 'user_message.php';
 
 use cfg\user\user_message;
 

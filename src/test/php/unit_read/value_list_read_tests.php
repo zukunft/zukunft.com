@@ -32,8 +32,10 @@
 
 namespace unit_read;
 
-include_once SERVICE_PATH . 'config.php';
-include_once SHARED_CONST_PATH . 'triples.php';
+use cfg\const\paths;
+
+include_once paths::SERVICE . 'config.php';
+include_once paths::SHARED_CONST . 'triples.php';
 
 use cfg\phrase\phrase;
 use cfg\value\value;

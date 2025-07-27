@@ -38,39 +38,39 @@
 
 namespace cfg\import;
 
-include_once EXPORT_PATH . 'export.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once EXPORT_PATH . 'export.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_list.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_RESULT_PATH . 'result_list.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range.php';
-include_once MODEL_SYSTEM_PATH . 'session.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_REF_PATH . 'ref.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_RESULT_PATH . 'result_list.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once MODEL_VALUE_PATH . 'value_text.php';
-include_once MODEL_VALUE_PATH . 'value_list.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_list.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_SYSTEM . 'ip_range.php';
+include_once paths::MODEL_SYSTEM . 'session.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_VALUE . 'value_text.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\component\component;
 use cfg\formula\formula;
@@ -459,7 +459,7 @@ class import
      * @param array $json_array the zukunft.com JSON message to import as an array
      * @return user_message the result of the import
      */
-    private function put(
+    public function put(
         array $json_array
     ): user_message
     {

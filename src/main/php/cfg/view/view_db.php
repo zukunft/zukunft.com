@@ -35,15 +35,17 @@
 
 namespace cfg\view;
 
-//include_once MODEL_COMPONENT_PATH . 'view_style.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-//include_once MODEL_HELPER_PATH . 'type_object.php';
-//include_once MODEL_LANGUAGE_PATH . 'language.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+use cfg\const\paths;
+
+//include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+//include_once paths::MODEL_HELPER . 'type_object.php';
+//include_once paths::MODEL_LANGUAGE . 'language.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 
 use cfg\component\view_style;
 use cfg\db\sql;

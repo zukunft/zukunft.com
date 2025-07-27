@@ -32,10 +32,12 @@
 
 namespace unit_write;
 
-include_once DB_PATH . 'sql_db.php';
-include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_db.php';
+include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
 
 use cfg\component\component;
 use cfg\db\sql_db;

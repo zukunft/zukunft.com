@@ -31,7 +31,9 @@
 
 namespace cfg\log_text;
 
-include_once MODEL_LOG_TEXT_PATH . 'text_log.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 
 class text_log
 {

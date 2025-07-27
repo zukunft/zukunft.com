@@ -32,7 +32,9 @@
 
 namespace unit;
 
-include_once MODEL_GROUP_PATH . 'group_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_GROUP . 'group_list.php';
 
 use cfg\db\sql_creator;
 use cfg\group\group_list;

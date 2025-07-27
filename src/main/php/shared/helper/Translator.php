@@ -32,7 +32,9 @@
 
 namespace shared\helper;
 
-include_once SHARED_ENUM_PATH . 'messages.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use cfg\const\files;
 use shared\enum\language_codes;

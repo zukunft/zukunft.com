@@ -32,22 +32,24 @@
 
 namespace html\log;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once WEB_HTML_PATH . 'button.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_COMPONENT_PATH . 'component_exe.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_USER_PATH . 'user.php';
-include_once WEB_VALUE_PATH . 'value.php';
-include_once WEB_VIEW_PATH . 'view.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::COMPONENT . 'component_exe.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;

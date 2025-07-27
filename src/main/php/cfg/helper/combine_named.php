@@ -34,16 +34,18 @@
 
 namespace cfg\helper;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_type.php';
-include_once MODEL_DB_PATH . 'sql_where_type.php';
-include_once MODEL_HELPER_PATH . 'combine_object.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-//include_once MODEL_VERB_PATH . 'verb.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_where_type.php';
+include_once paths::MODEL_HELPER . 'combine_object.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

@@ -32,18 +32,20 @@
 
 namespace cfg\ref;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_IMPORT_PATH . 'import.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_REF_PATH . 'source_db.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

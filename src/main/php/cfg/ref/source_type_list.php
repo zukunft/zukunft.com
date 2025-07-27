@@ -32,14 +32,16 @@
 
 namespace cfg\ref;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_REF_PATH . 'source_type.php';
-include_once SHARED_ENUM_PATH . 'source_types.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_REF . 'source_type.php';
+include_once paths::SHARED_ENUM . 'source_types.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\helper\type_list;
 use cfg\db\sql;

@@ -32,8 +32,11 @@
 
 namespace unit;
 
-include_once MODEL_FORMULA_PATH . 'expression.php';
-include_once WEB_ELEMENT_PATH . 'element_group.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::MODEL_FORMULA . 'expression.php';
+include_once html_paths::ELEMENT . 'element_group.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
