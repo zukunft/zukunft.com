@@ -39,15 +39,12 @@ include_once MODEL_FORMULA_PATH . 'formula_list.php';
 include_once MODEL_GROUP_PATH . 'group.php';
 include_once MODEL_PHRASE_PATH . 'phrase.php';
 include_once MODEL_RESULT_PATH . 'result_two.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
 include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
 include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
 include_once MODEL_USER_PATH . 'user.php';
 include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_USER_PATH . 'user_profile_list.php';
 include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
 //include_once MODEL_VALUE_PATH . 'value_db.php';
 include_once SHARED_CONST_PATH . 'users.php';
 include_once SHARED_ENUM_PATH . 'user_profiles.php';
@@ -60,15 +57,12 @@ use cfg\formula\formula_list;
 use cfg\group\group;
 use cfg\phrase\phrase;
 use cfg\result\result_two;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
 use cfg\system\sys_log_function;
 use cfg\system\system_time_type;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\user\user_profile_list;
 use cfg\value\value;
-use cfg\value\value_base;
 use cfg\value\value_db;
 use shared\const\users;
 use shared\enum\user_profiles;
@@ -89,6 +83,7 @@ class db_check
     function db_check(sql_db $db_con): user_message
     {
         global $cfg;
+        global $log_txt;
 
         $usr_msg = new user_message(); // the message that should be shown to the user immediately
         $do_consistency_check = false;
@@ -99,7 +94,7 @@ class db_check
         $main_tbl_name = $lib->class_to_name(config::class);
         if (!$db_con->has_table($main_tbl_name)) {
             // because no log yet exists here echo instead of log_echo() is used
-            echo 'zukunft.com: empty database detected' . "\n";
+            $log_txt->echo_log('zukunft.com: empty database detected');
             $usr_msg = $db_con->setup_db();
             if ($usr_msg->is_ok()) {
                 $db_con->db_fill_code_links();

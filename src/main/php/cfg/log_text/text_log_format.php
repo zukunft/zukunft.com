@@ -30,9 +30,9 @@
 
 */
 
-namespace test;
+namespace cfg\log_text;
 
-enum format: int
+enum text_log_format: int
 {
 
     // use pure text output for local testing

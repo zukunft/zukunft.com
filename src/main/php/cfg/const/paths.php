@@ -39,8 +39,10 @@ class paths
     // set all path for the program code here at once
     const SRC = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
     const MAIN = self::SRC . 'main' . DIRECTORY_SEPARATOR;
-    const PHP_LIB = self::MAIN . 'php' . DIRECTORY_SEPARATOR; // recreation of the PHP for library use only
-    const MODEL = self::PHP_LIB . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
+    // recreation of the PHP for library use only
+    const PHP_LIB = self::MAIN . 'php' . DIRECTORY_SEPARATOR;
+    // path of the main model objects for db saving, api feed and processing
+    const MODEL = self::PHP_LIB . 'cfg' . DIRECTORY_SEPARATOR;
     const DB = self::MODEL . 'db' . DIRECTORY_SEPARATOR;
     const UTIL = self::PHP_LIB . 'utils' . DIRECTORY_SEPARATOR;
     const SERVICE = self::PHP_LIB . 'service' . DIRECTORY_SEPARATOR;

@@ -1154,7 +1154,7 @@ class sql_db
     function setup_db(): user_message
     {
         global $sys_times;
-
+        global $log_txt;
 
         $usr_msg = new user_message();
 
@@ -1162,7 +1162,7 @@ class sql_db
         $sql = $this->sql_to_create_database_structure();
         try {
             // because no log yet exists here echo instead of log_echo() is used
-            echo 'Run db setup sql script' . "\n";
+            $log_txt->echo_log('Run db setup sql script');
             $sys_times->switch(system_time_type::DB_SETUP);
             $sql_msg = $this->exe_script($sql);
             $sys_times->switch();
@@ -1187,7 +1187,7 @@ class sql_db
         // fill the tables with the essential data
         if ($usr_msg->is_ok()) {
             // because no user yet exists here echo instead of log_echo() is used
-            echo 'Create system users' . "\n";
+            $log_txt->echo_log('Create system users');
             $this->reset_config();
             $this->import_system_users();
 
@@ -1197,7 +1197,7 @@ class sql_db
             $usr->load_by_id(users::SYSTEM_ID);
 
             // recreate the code link database rows
-            log_echo('Create the code links');
+            $log_txt->echo_log('Create the code links');
             $this->db_fill_code_links();
             $sys_typ_lst = new type_lists();
             $sys_typ_lst->load($this, $usr);
@@ -1285,6 +1285,7 @@ class sql_db
     function run_db_truncate(user $sys_usr): void
     {
         global $sys_times;
+        global $log_txt;
 
         $lib = new library();
         $sys_times->switch(system_time_type::DB_WRITE);
@@ -1292,9 +1293,7 @@ class sql_db
         // the tables in order to avoid the usage of CASCADE
         $table_names = sql_db::DB_TABLE_CLASSES_DESC_DEPENDING;
 
-        log_echo("\n");
-        log_echo('truncate ');
-        log_echo("\n");
+        $log_txt->echo_log('truncate ');
 
         // truncate tables that have already a build in truncate statement creation
         $sql = '';
@@ -5690,9 +5689,10 @@ class sql_db
 
     function truncate_table_all(): void
     {
-        // the sequence names of the tables to reset
+        global $log_txt;
 
-        log_echo('truncate all tables ');
+        // the sequence names of the tables to reset
+        $log_txt->echo_log('truncate all tables ');
         foreach (DB_SEQ_LIST as $seq_name) {
             $this->reset_seq($seq_name);
         }
@@ -5700,8 +5700,9 @@ class sql_db
 
     function truncate_table(string $table_name): void
     {
+        global $log_txt;
 
-        log_echo('truncate table ' . $table_name);
+        $log_txt->echo_log('truncate table ' . $table_name);
         $sql = sql::TRUNCATE . ' ' . $this->get_table_name_esc($table_name) . ' ' . sql::CASCADE . '; ';
         try {
             $this->exe($sql);
@@ -5713,10 +5714,11 @@ class sql_db
     function drop_table(string $table_name): void
     {
         global $sys_times;
+        global $log_txt;
+
         $sys_times->switch(system_time_type::DB_WRITE);
 
-
-        log_echo('DROP TABLE ' . $table_name);
+        $log_txt->echo_log('DROP TABLE ' . $table_name);
         if ($this->has_table($table_name)) {
             $sql = 'drop table ' . $table_name . ' cascade;';
             try {
@@ -5739,10 +5741,11 @@ class sql_db
     function reset_seq(string $seq_name, int $start_id = 1): void
     {
         global $sys_times;
+        global $log_txt;
+
         $sys_times->switch(system_time_type::DB_WRITE);
 
-
-        log_echo('RESET SEQUENCE ' . $seq_name);
+        $log_txt->echo_log('RESET SEQUENCE ' . $seq_name);
         $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART ' . $start_id . ';';
         try {
             $this->exe($sql);

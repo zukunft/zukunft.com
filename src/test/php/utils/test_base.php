@@ -94,7 +94,6 @@ use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_list;
 use cfg\config;
-use cfg\const\def;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
@@ -114,6 +113,8 @@ use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\log\change_link;
+use cfg\log_text\text_log_format;
+use cfg\log_text\text_log_level;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
@@ -138,13 +139,14 @@ use cfg\value\value;
 use cfg\value\value_base;
 use cfg\value\value_list;
 use cfg\verb\verb;
+use cfg\view\term_view;
 use cfg\view\view;
 use cfg\view\view_list;
-use cfg\view\term_view;
 use cfg\word\triple;
 use cfg\word\triple_list;
 use cfg\word\word;
 use cfg\word\word_list;
+use const\files as test_files;
 use Exception;
 use html\component\component_exe as component_dsp;
 use html\formula\formula as formula_dsp;
@@ -157,23 +159,22 @@ use html\rest_ctrl;
 use html\result\result as result_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use html\styles;
+use html\user\user as user_dsp;
 use html\value\value as value_dsp;
 use html\verb\verb as verb_dsp;
 use html\view\view as view_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
-use html\user\user as user_dsp;
 use shared\api;
 use shared\const\users;
+use shared\const\words;
 use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
 use shared\enum\value_types;
 use shared\helper\CombineObject;
 use shared\library;
-use shared\const\words;
 use shared\types\api_type;
 use shared\types\verbs;
-use const\files as test_files;
 
 // TODO activate
 //use html\group\group as group_dsp;
@@ -328,8 +329,8 @@ include_once TEST_UNIT_WRITE_PATH . 'test_math.php';
 
 //
 include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
-include_once TEST_PHP_UTIL_PATH . 'format.php';
-include_once TEST_PHP_UTIL_PATH . 'level.php';
+include_once MODEL_LOG_TEXT_PATH . 'text_log_format.php';
+include_once MODEL_LOG_TEXT_PATH . 'text_log_level.php';
 
 // load the integration test functions
 include_once TEST_UNIT_INT_PATH . 'test_import.php';
@@ -395,7 +396,6 @@ class test_base
     public user $usr_admin; // a user with the admin profile to test allow of admin functionality
     public user $usr_system; // a user with the system profile to test allow of system functionality
 
-    private float $start_time; // time when all tests have started
     private float $exe_start_time; // time when the single test has started (end the end time of all tests)
 
     // the counter of the error for the summery
@@ -408,8 +408,8 @@ class test_base
 
     private int $seq_nbr;
 
-    public format $format = format::TEXT;
-    public level $level = level::TIMEOUT;
+    public text_log_format $format = text_log_format::TEXT;
+    public text_log_level $level = text_log_level::TIMEOUT;
 
 
     function __construct()
@@ -417,8 +417,7 @@ class test_base
         global $cfg;
 
         // init the times to be able to detect potential timeouts
-        $this->start_time = microtime(true);
-        $this->exe_start_time = $this->start_time;
+        $this->exe_start_time = microtime(true);
 
         // reset the error counters
         $this->error_counter = 0;
@@ -431,7 +430,7 @@ class test_base
         $this->resource_path = '';
 
         // load the test config
-        //$this->format = format::from($cfg->get_by([words::TEST, triples::OUTPUT_FORMAT]));
+        //$this->format = text_log_format::from($cfg->get_by([words::TEST, triples::OUTPUT_FORMAT]));
         //$this->level = level::from($cfg->get_by([words::TEST, words::LEVEL]));
     }
 
@@ -469,7 +468,7 @@ class test_base
 
     function start_time(): float
     {
-        return $this->start_time;
+        return $this->exe_start_time;
     }
 
 
@@ -482,11 +481,8 @@ class test_base
      */
     function header(string $header_text): void
     {
-        if ($this->format == format::TEXT) {
-            echo $this->time_stamp() . $header_text . "\n";
-        } else {
-            echo '<br><br><h2>' . $this->time_stamp() . $header_text . '</h2><br>' . "\n";
-        }
+        global $log_txt;
+        $log_txt->header($header_text);
     }
 
     /**
@@ -494,17 +490,10 @@ class test_base
      */
     function subheader(string $header_text): void
     {
-        if ($this->format == format::TEXT) {
-            echo $this->time_stamp() . $header_text . "\n";
-        } else {
-            echo '<br><h3>' . $this->time_stamp() . $header_text . '</h3><br>' . "\n";
-        }
+        global $log_txt;
+        $log_txt->header($header_text);
     }
 
-    private function time_stamp(): string
-    {
-        return sprintf('%08.4f', microtime(true) - $this->start_time) . ' ';
-    }
 
     /**
      * check if the test result is as expected and display the test result to an admin user
@@ -3734,6 +3723,8 @@ class test_base
         string            $diff_msg = '',
         float             $exe_max_time = self::TIMEOUT_LIMIT): bool
     {
+        global $log_txt;
+
         // calculate the execution time
         $new_start_time = microtime(true);
         $since_start = $new_start_time - $this->exe_start_time;
@@ -3743,15 +3734,15 @@ class test_base
         if ($test_result) {
             // check if executed in a reasonable time and if the result is fine
             if ($since_start > $exe_max_time) {
-                if ($this->format == format::TEXT) {
+                if ($this->format == text_log_format::TEXT) {
                     $final_msg .= 'timeout ' . $test_name;
                 } else {
                     $final_msg .= '<p style="color:orange">timeout</p><p>' . $test_name;
                 }
                 $this->timeout_counter++;
             } else {
-                if ($this->level == level::ALL) {
-                    if ($this->format == format::TEXT) {
+                if ($this->level == text_log_level::ALL) {
+                    if ($this->format == text_log_format::TEXT) {
                         $final_msg .= 'ok ' . $test_name;
                     } else {
                         $final_msg .= '<p style="color:green">ok</p><p>' . $test_name;
@@ -3768,7 +3759,7 @@ class test_base
                 $lib = new library();
                 $target = $lib->dsp_array($target);
             }
-            if ($this->format == format::TEXT) {
+            if ($this->format == text_log_format::TEXT) {
                 $final_msg .= 'ERROR ' . $test_name . ': ' . "\n";
             } else {
                 $final_msg .= '<p style="color:red">ERROR</p>' . "\n";
@@ -3785,16 +3776,9 @@ class test_base
 
         // show the execution time
         if ($final_msg != '') {
-            $final_msg = $this->time_stamp() . $final_msg;
             $final_msg .= ', took ';
             $final_msg .= round($since_start, 4) . ' seconds';
-
-            // --- and finally display the test result
-            if ($this->format == format::HTML) {
-                $final_msg .= '</p>';
-            }
-            echo $final_msg;
-            echo "\n";
+            $log_txt->echo_log($final_msg);
         }
         flush();
 
@@ -3879,7 +3863,7 @@ class test_base
             echo $this->error_counter . ' errors<br>';
         }
         echo "<br>";
-        $since_start = microtime(true) - $this->start_time;
+        $since_start = microtime(true) - $this->exe_start_time;
         echo round($since_start, 4) . ' seconds for testing zukunft.com</h2>';
         echo '<br>';
         echo '<br>';
@@ -3894,7 +3878,7 @@ class test_base
         global $sys_times;
 
         echo "\n";
-        $since_start = microtime(true) - $this->start_time;
+        $since_start = microtime(true) - $this->exe_start_time;
         echo round($since_start, 4) . ' seconds for testing zukunft.com';
         echo ' (' . $sys_times->report($since_start) . ')';
         echo "\n";

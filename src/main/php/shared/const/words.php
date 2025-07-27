@@ -397,6 +397,7 @@ class words
     const TEST_ADD_API_COM = 'System Test Word API Description';
     const TEST_UPD_API = 'System Test Word API Renamed';
     const TEST_UPD_API_COM = 'System Test Word API Description Renamed';
+    const TEST_ADD_VALUE = 'System Test Word for value curl testing';
 
 
     // list of predefined word names used for system testing that are expected to be never renamed

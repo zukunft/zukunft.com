@@ -47,6 +47,7 @@ class values
     CONST E = 0.57721566490153; // Euler const
     const E_ID = 32771;
     CONST SAMPLE_INT = 123456;
+    CONST SAMPLE_INT_COM = 'System Test Word Description for value curl testing';
     CONST SAMPLE_FLOAT = 123.456;
     CONST SAMPLE_BIG = 123456789;
     CONST SAMPLE_BIGGER = 234567890;

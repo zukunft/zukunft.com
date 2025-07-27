@@ -1424,6 +1424,30 @@ class sandbox_value extends sandbox_multi
         return $this->phrase_list()->triples();
     }
 
+    /**
+     * load a value by the phrase ids
+     * @param array $names with the word of triple names
+     * @param  phrase_list|null $phr_lst with the cache of the phrases already loaded
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_names(array $names, phrase_list $phr_lst = null): int
+    {
+        $load_lst = new phrase_list($this->user());
+        if ($phr_lst == null) {
+            $load_lst->load_by_names($names);
+        } else {
+            foreach ($names as $name) {
+                $phr = $phr_lst->get_by_name($name);
+                if ($phr == null) {
+                    $phr = new phrase($this->user());
+                    $phr->load_by_name($name);
+                }
+                $load_lst->add($phr);
+            }
+        }
+        return $this->load_by_grp($load_lst->get_grp_id());
+    }
+
 
     /*
      * api

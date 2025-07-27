@@ -279,7 +279,14 @@ class view_list extends sandbox_list_named
      */
     function save(import $imp = null): user_message
     {
-        return parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->user()));
+        $usr_msg = parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->user()));
+        // TODO Prio 2 use list based saving of the component links
+        foreach ($this->lst() as $msk) {
+            if ($msk->has_components()) {
+                $usr_msg->add($msk->save_component_links());
+            }
+        }
+        return $usr_msg;
     }
 
 }
