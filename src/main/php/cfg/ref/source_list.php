@@ -32,17 +32,20 @@
 
 namespace cfg\ref;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_IMPORT_PATH . 'import.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -51,8 +54,6 @@ use cfg\db\sql_par_type;
 use cfg\import\import;
 use cfg\sandbox\sandbox_list_named;
 use cfg\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\const\triples;
 use shared\const\words;
 
 class source_list extends sandbox_list_named
@@ -97,9 +98,9 @@ class source_list extends sandbox_list_named
         $sc->set_class(source::class);
         $sc->set_name($qp->name);
 
-        $sc->set_fields(source::FLD_NAMES);
-        $sc->set_usr_fields(source::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(source::FLD_NAMES_NUM_USR);
+        $sc->set_fields(source_db::FLD_NAMES);
+        $sc->set_usr_fields(source_db::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(source_db::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -121,8 +122,8 @@ class source_list extends sandbox_list_named
     ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(source::FLD_ID, $ids);
-        $sc->set_order(source::FLD_ID, sql::ORDER_ASC);
+        $sc->add_where(source_db::FLD_ID, $ids);
+        $sc->set_order(source_db::FLD_ID, sql::ORDER_ASC);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -139,7 +140,7 @@ class source_list extends sandbox_list_named
     function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
-        $sc->add_where(source::FLD_NAME, $pattern, sql_par_type::LIKE_R);
+        $sc->add_where(source_db::FLD_NAME, $pattern, sql_par_type::LIKE_R);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -168,18 +169,6 @@ class source_list extends sandbox_list_named
     }
 
     /**
-     * load a list of sources by the names
-     * @param array $names a named object used for selection e.g. a source type
-     * @return bool true if at least one source found
-     */
-    function load_by_names(array $names = []): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
-        return $this->load($qp);
-    }
-
-    /**
      * load the sources selected by the id
      *
      * @param array $ids of source ids that should be loaded
@@ -203,7 +192,7 @@ class source_list extends sandbox_list_named
     function load_sql_by_names(
         sql_creator $sc,
         array $names,
-        string $fld = source::FLD_NAME
+        string $fld = source_db::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);
@@ -229,45 +218,13 @@ class source_list extends sandbox_list_named
     /**
      * store all sources from this list in the database using grouped calls of predefined sql functions
      *
-     * @param import $imp the import object with the estimate of the total save time
-     * @param float $est_per_sec the expected number of sources that can be updated in the database per second
-     * @return user_message
+     * @param import|null $imp the import object with the estimate of the total save time
+     * @return user_message in case of an issue the problem description what has failed and a suggested solution
      */
-    function save(import $imp, float $est_per_sec = 0.0): user_message
+    function save(import $imp = null): user_message
     {
-        global $cfg;
-
-        $usr_msg = new user_message();
-
-        $load_per_sec = $cfg->get_by([words::SOURCES, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $save_per_sec = $cfg->get_by([words::SOURCES, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-
-        if ($this->is_empty()) {
-            $usr_msg->add_info_text('no sources to save');
-        } else {
-            // load the words that are already in the database
-            $step_time = $this->count() / $load_per_sec;
-            $imp->step_start(msg_id::LOAD, source::class, $this->count(), $step_time);
-            $db_lst = new source_list($this->user());
-            $db_lst->load_by_names($this->names());
-            $imp->step_end($this->count(), $load_per_sec);
-
-            // TODO add only the sources that needs to be added
-
-            // create any missing sql functions and insert the missing words
-            $step_time = $this->count() / $save_per_sec;
-            $imp->step_start(msg_id::SAVE, source::class, $this->count(), $step_time);
-            $usr_msg->add($this->insert($db_lst, true, $imp, source::class));
-            $imp->step_end($this->count(), $save_per_sec);
-
-            // update the existing sources
-            // TODO create a test that fields not included in the import message are not updated, but e.g. an empty descrption is updated
-            // loop over the sources and check if all needed functions exist
-            // create the missing functions
-            // create blocks of update function calls
-        }
-
-        return $usr_msg;
+        // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
+        return parent::save_block_wise($imp, words::SOURCES, source::class, new source_list($this->user()));
     }
 
 }

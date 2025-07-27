@@ -16,9 +16,9 @@
     - load:              database access object (DAO) functions
     - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - modify:            change potentially all variables of this word object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - to overwrite:      functions that should always be overwritten by the child objects
     - debug:             internal support functions for debugging
 
@@ -49,21 +49,24 @@
 
 namespace cfg\helper;
 
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-//include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-//include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+//include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -79,6 +82,7 @@ use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\types\api_type_list;
 use shared\json_fields;
+use shared\library;
 
 class db_object_seq_id extends db_object
 {
@@ -111,6 +115,8 @@ class db_object_seq_id extends db_object
         $this->set_id(0);
         if ($db_row != null) {
             if (array_key_exists($id_fld, $db_row)) {
+                // TODO check that $this->reset() is removed from all load function and only this reset is used
+                $this->reset();
                 if ($db_row[$id_fld] != 0) {
                     $this->set_id($db_row[$id_fld]);
                     $result = true;
@@ -328,7 +334,7 @@ class db_object_seq_id extends db_object
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -340,9 +346,11 @@ class db_object_seq_id extends db_object
     {
         $usr_msg = new user_message();
         if ($this->id() != $obj->id()) {
+            $lib = new library();
             $usr_msg->add_id_with_vars(msg_id::DIFF_ID, [
                 msg_id::VAR_ID => $obj->id(),
                 msg_id::VAR_ID_CHK => $this->id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_NAME => $this->dsp_id(),
             ]);
         }
@@ -358,17 +366,19 @@ class db_object_seq_id extends db_object
      * fill this seq id object based on the given object
      * if the given id is zero the id is never overwritten
      * if the given id is not zero the id is set if not yet done
+     * similar to db_object_multi->fill
      *
-     * @param CombineObject|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param CombineObject|db_object_seq_id $obj object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(CombineObject|db_object_seq_id $sbx): user_message
+    function fill(CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
         $usr_msg = new user_message();
-        if ($sbx->id() != 0) {
+        if ($obj->id() != 0) {
             if ($this->id() == 0) {
-                $this->set_id($sbx->id());
-            } elseif ($sbx->id() != $this->id()) {
+                $this->set_id($obj->id());
+            } elseif ($obj->id() != $this->id()) {
                 $usr_msg->add_id_with_vars(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
             }
         }
@@ -377,7 +387,7 @@ class db_object_seq_id extends db_object
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -408,7 +418,17 @@ class db_object_seq_id extends db_object
      */
     function name(): string
     {
-        return 'ERROR: name function not overwritten by child object';
+        return 'ERROR: name function not overwritten by child object ' . $this::class;
+    }
+
+    /**
+     * get the name of the database object which can be null if db object does not yet exist (only used by named objects)
+     *
+     * @return string|null the name from the object e.g. word using the same function as the phrase and term
+     */
+    function name_or_null(): ?string
+    {
+        return 'ERROR: name_or_null function not overwritten by child object ' . $this::class;
     }
 
     /**

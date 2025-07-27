@@ -31,9 +31,11 @@
 
 namespace html\component;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_COMPONENT_PATH . 'component_exe.php';
-include_once WEB_USER_PATH . 'user_message.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::COMPONENT . 'component_exe.php';
+include_once html_paths::USER . 'user_message.php';
 
 use html\sandbox\list_dsp;
 use html\component\component_exe as component;

@@ -37,15 +37,17 @@
 
 namespace html\component;
 
-include_once WEB_COMPONENT_PATH . 'component.php';
-include_once WEB_HELPER_PATH . 'data_object.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_HTML_PATH . 'list_sort.php';
-include_once WEB_HTML_PATH . 'sheet.php';
-include_once WEB_FORM_PATH . 'system_form.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_TYPES_PATH . 'component_type.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::HTML . 'list_sort.php';
+include_once html_paths::HTML . 'sheet.php';
+include_once html_paths::FORM . 'system_form.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_TYPES . 'component_type.php';
 
 use html\helper\data_object;
 use html\helper\data_object as data_object_dsp;

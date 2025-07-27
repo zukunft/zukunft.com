@@ -34,8 +34,10 @@
 
 namespace html;
 
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::HTML . 'html_base.php';
+include_once paths::SHARED . 'library.php';
 
 use shared\library;
 

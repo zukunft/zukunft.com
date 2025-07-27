@@ -62,6 +62,7 @@ class files
     const API_SYSTEM_RES_PATH = self::API_RES_PATH . 'system' . DIRECTORY_SEPARATOR;
     const DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
     const DB_FORMULA_PATH = self::DB_PATH . 'formula' . DIRECTORY_SEPARATOR;
+    const DB_USER_PATH = self::DB_PATH . 'user' . DIRECTORY_SEPARATOR;
     const EXPORT_PATH = self::RESOURCE_PATH . 'export' . DIRECTORY_SEPARATOR;
     const EXPORT_WORD_PATH = self::EXPORT_PATH . 'word' . DIRECTORY_SEPARATOR;
     const IMPORT_PATH = self::RESOURCE_PATH . 'import' . DIRECTORY_SEPARATOR;
@@ -93,6 +94,7 @@ class files
     const SYSTEM_CONFIG_SAMPLE = self::RESOURCE_PATH . 'config_sample' . self::YAML;
     const SYS_LOG_ADMIN = self::WEB_SYSTEM_RES_PATH . 'sys_log_admin' . self::HTML;
     const FORMULA_COUNT = self::DB_FORMULA_PATH . 'formula_count' . self::SQL;
+    const USER_COUNT = self::DB_USER_PATH . 'user_count' . self::SQL;
     const WORD_LIST = self::EXPORT_WORD_PATH . 'word_list' . self::JSON;
 
 
@@ -100,11 +102,17 @@ class files
      * import test files
      */
 
-    const IMPORT_WORDS = self::IMPORT_UNIT_PATH . 'words' . self::JSON;
-    const IMPORT_TRIPLES = self::IMPORT_UNIT_PATH . 'triples' . self::JSON;
-    const IMPORT_SOURCES = self::IMPORT_UNIT_PATH . 'sources' . self::JSON;
-    const IMPORT_VALUES = self::IMPORT_UNIT_PATH . 'values' . self::JSON;
-    const IMPORT_FORMULAS = self::IMPORT_UNIT_PATH . 'formulas' . self::JSON;
+    const IMPORT_USERS = self::IMPORT_UNIT_PATH . 'users';
+    const IMPORT_WORDS = self::IMPORT_UNIT_PATH . 'words';
+    const IMPORT_VERBS = self::IMPORT_UNIT_PATH . 'verbs';
+    const IMPORT_TRIPLES = self::IMPORT_UNIT_PATH . 'triples';
+    const IMPORT_SOURCES = self::IMPORT_UNIT_PATH . 'sources';
+    const IMPORT_VALUES = self::IMPORT_UNIT_PATH . 'values';
+    const IMPORT_FORMULAS = self::IMPORT_UNIT_PATH . 'formulas';
+    const IMPORT_VIEWS = self::IMPORT_UNIT_PATH . 'views';
+    const IMPORT_COMPONENTS = self::IMPORT_UNIT_PATH . 'components';
+    const IMPORT_UPDATE_EXT = '_update';
+    const IMPORT_UNDO_EXT = '_undo';
 
     const IMPORT_COUNTRIES = self::IMPORT_PATH . 'countries' . self::JSON;
     const IMPORT_COMPANIES = self::IMPORT_PATH . 'companies' . self::JSON;

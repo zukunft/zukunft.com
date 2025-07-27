@@ -37,17 +37,19 @@
 
 namespace html\component\form;
 
-include_once WEB_COMPONENT_PATH . 'component.php';
-include_once DB_PATH . 'sql_db.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_TYPES_PATH . 'view_style_list.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::COMPONENT . 'component.php';
+include_once paths::DB . 'sql_db.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::TYPES . 'view_style_list.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'library.php';
 
 use html\component\component;
 use html\html_base;

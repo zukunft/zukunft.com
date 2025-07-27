@@ -36,10 +36,17 @@ enum user_profiles: string
 {
 
     // list of the user profiles that have a coded functionality
-    const NORMAL = "normal";
-    const ADMIN = "admin";
-    const DEV = "dev";       // reserved for developers which are supposed to code the verb functionality
-    const TEST = "test";     // reserved for the system test user e.g. for internal unit and integration tests
-    const SYSTEM = "system"; // reserved for the system user which is executing cleanup tasks
+    const IP_ONLY = "ip";         // if only the ip of the request is known
+    const NORMAL = self::IP_ONLY; // the default profile for new users
+    const NAME_ONLY = "name";     // the user has selected and reserved a unique username
+    const EMAIL = "email";        // the email of the account has been confirmed
+    const HUMAN = "human";        // it is confirmed that this user is a human
+    const SYS_LINK = "link";      // for technical accounts for external but trustworthy systems
+    const ADMIN = "admin";        // administrator that can add and change verbs and sees the code_id
+    const DEV = "dev";            // reserved for developers which are supposed to code the verb functionality
+    const TEST = "test";          // reserved for the system test user e.g. for internal unit and integration tests
+    const SYSTEM = "system";      // reserved for the system user which is executing cleanup tasks
+    const SYSTEM_ID = 18;         // only used for the initial setup
+    const NORMAL_ID = 1;          // fixed id used as default for new users
 
 }

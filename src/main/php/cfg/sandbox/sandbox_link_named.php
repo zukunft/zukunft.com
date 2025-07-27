@@ -37,20 +37,26 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-//include_once MODEL_LOG_PATH . 'change_log_list.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+//include_once paths::MODEL_LOG . 'change_log_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -60,11 +66,15 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\data_object;
+use cfg\helper\db_object_seq_id;
 use cfg\log\change_log_list;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\messages as msg_id;
+use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\types\api_type_list;
+use shared\library;
 
 class sandbox_link_named extends sandbox_link
 {
@@ -124,8 +134,8 @@ class sandbox_link_named extends sandbox_link
                     $this->set_name($db_row[$name_fld]);
                 }
             }
-            if (array_key_exists(sandbox_named::FLD_DESCRIPTION, $db_row)) {
-                $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
+            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             }
         }
         return $result;
@@ -137,20 +147,20 @@ class sandbox_link_named extends sandbox_link
      */
     function api_mapper(array $api_json): user_message
     {
+        global $usr;
+
         $msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
+        if (array_key_exists(json_fields::NAME, $api_json)) {
+            $this->set_name($api_json[json_fields::NAME]);
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            if ($api_json[json_fields::DESCRIPTION] <> '') {
+                $this->description = $api_json[json_fields::DESCRIPTION];
             }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
-            }
-            if ($key == json_fields::TYPE) {
-                $this->set_type_id($value);
-            }
+        }
+        if (array_key_exists(json_fields::TYPE, $api_json)) {
+            $this->set_type_id($api_json[json_fields::TYPE], $usr);
         }
         return $msg;
     }
@@ -231,6 +241,20 @@ class sandbox_link_named extends sandbox_link
     }
 
     /**
+     * get the name of the word object or null
+     *
+     * @return string|null the name from the object e.g. word using the same function as the phrase and term
+     */
+    function name_or_null(): ?string
+    {
+        if ($this->name == null) {
+            return null;
+        } else {
+            return $this->name();
+        }
+    }
+
+    /**
      * dummy function that should always be overwritten by the child object
      * @return string
      */
@@ -278,7 +302,7 @@ class sandbox_link_named extends sandbox_link
      */
     function description(): ?string
     {
-        if ($this->excluded) {
+        if ($this->is_excluded()) {
             return null;
         } else {
             return $this->description;
@@ -289,11 +313,24 @@ class sandbox_link_named extends sandbox_link
      * set the database id of the type
      *
      * @param int|null $type_id the database id of the type
-     * @return void
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message warning message for the user if the permissions are missing
      */
-    function set_type_id(?int $type_id): void
+    function set_type_id(?int $type_id, user $usr_req): user_message
     {
-        $this->type_id = $type_id;
+        $usr_msg = new user_message();
+        if ($usr_req->can_set_type_id()) {
+            $this->type_id = $type_id;
+        } else {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $usr_req->name(),
+                msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
+                msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $usr_msg;
     }
 
     /**
@@ -324,18 +361,18 @@ class sandbox_link_named extends sandbox_link
 
 
     /*
-     * information
+     * info
      */
 
     /**
      * check if the named object in the database needs to be updated
      *
-     * @param sandbox_link_named $db_obj the word as saved in the database
+     * @param sandbox_link_named|sandbox_link|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update_named(sandbox_link_named $db_obj): bool
+    function needs_db_update(sandbox_link_named|sandbox_link|CombineObject|db_object_seq_id $db_obj): bool
     {
-        $result = parent::needs_db_update_linked($db_obj);
+        $result = parent::needs_db_update($db_obj);
         if ($this->name != null) {
             if ($this->name != $db_obj->name) {
                 $result = true;
@@ -348,6 +385,17 @@ class sandbox_link_named extends sandbox_link
         }
         if ($this->type_id != null) {
             if ($this->type_id != $db_obj->type_id) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    function no_id_but_name(): bool
+    {
+        $result = false;
+        if ($this->id() == 0 or $this->id() == null) {
+            if ($this->name(true) != '' and $this->name(true) != null) {
                 $result = true;
             }
         }
@@ -407,7 +455,7 @@ class sandbox_link_named extends sandbox_link
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id();
-                $log->set_field(sandbox_named::FLD_DESCRIPTION);
+                $log->set_field(sql_db::FLD_DESCRIPTION);
                 $result = $this->save_field_user($db_con, $log);
             }
         }
@@ -495,7 +543,7 @@ class sandbox_link_named extends sandbox_link
             parent::db_all_fields_link($sc_par_lst),
             [
                 $this->name_field(),
-                sandbox_named::FLD_DESCRIPTION
+                sql_db::FLD_DESCRIPTION
             ]);
     }
 

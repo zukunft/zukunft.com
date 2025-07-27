@@ -31,13 +31,15 @@
 
 namespace html\user;
 
+use cfg\const\paths;
+use html\const\paths as html_paths;
 // get the api const that are shared between the backend and the html frontend
 // get the pure html frontend objects
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_PATH . 'json_fields.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\html_base;
 use html\sandbox\db_object;

@@ -34,9 +34,12 @@
 
 namespace html;
 
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+//include_once html_paths::PHRASE . 'phrase_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
 
 use shared\library;
 use html\phrase\phrase_list;
@@ -48,10 +51,10 @@ class button
     const IMG_ADD_FA = "fa-plus-square";
     const IMG_EDIT_FA = "fa-edit";
     const IMG_DEL_FA = "fa-times-circle";
-    const IMG_UNDO = REL_IMAGE_PATH . 'button_undo.svg';
-    const IMG_FIND = REL_IMAGE_PATH . 'button_find.svg';
-    const IMG_UN_FILTER = REL_IMAGE_PATH . 'button_filter_off.svg';
-    const IMG_BACK = REL_IMAGE_PATH . 'button_back.svg';
+    const IMG_UNDO = paths::REL_IMAGE . 'button_undo.svg';
+    const IMG_FIND = paths::REL_IMAGE . 'button_find.svg';
+    const IMG_UN_FILTER = paths::REL_IMAGE . 'button_filter_off.svg';
+    const IMG_BACK = paths::REL_IMAGE . 'button_back.svg';
 
     // parameters for the simple buttons
     public string $title = ''; // title to display on mouse over

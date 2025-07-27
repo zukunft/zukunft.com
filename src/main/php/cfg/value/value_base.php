@@ -46,7 +46,7 @@
     - load:              database access object (DAO) functions
     - sql:               to create sql statements e.g. for load
     - sql fields:        field names for sql
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - check:             functions to check the consistency
     - im- and export:    create an export object and set the vars from an import object
     - save:              manage to update the database
@@ -79,69 +79,69 @@
 
 namespace cfg\value;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once EXPORT_PATH . 'export.php';
-include_once MODEL_FORMULA_PATH . 'expression.php';
-include_once MODEL_FORMULA_PATH . 'figure.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_multi.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_LOG_PATH . 'changes_big.php';
-include_once MODEL_LOG_PATH . 'changes_norm.php';
-include_once MODEL_LOG_PATH . 'change_value.php';
-include_once MODEL_LOG_PATH . 'change_values_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_big.php';
-include_once MODEL_LOG_PATH . 'change_value_text.php';
-include_once MODEL_LOG_PATH . 'change_values_text_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_text_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_text_big.php';
-include_once MODEL_LOG_PATH . 'change_value_time.php';
-include_once MODEL_LOG_PATH . 'change_values_time_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_time_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_time_big.php';
-include_once MODEL_LOG_PATH . 'change_value_geo.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_big.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_RESULT_PATH . 'result_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'log.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_CONST_PATH . 'chars.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_FORMULA . 'expression.php';
+include_once paths::MODEL_FORMULA . 'figure.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'changes_big.php';
+include_once paths::MODEL_LOG . 'changes_norm.php';
+include_once paths::MODEL_LOG . 'change_value.php';
+include_once paths::MODEL_LOG . 'change_values_prime.php';
+include_once paths::MODEL_LOG . 'change_values_norm.php';
+include_once paths::MODEL_LOG . 'change_values_big.php';
+include_once paths::MODEL_LOG . 'change_value_text.php';
+include_once paths::MODEL_LOG . 'change_values_text_prime.php';
+include_once paths::MODEL_LOG . 'change_values_text_norm.php';
+include_once paths::MODEL_LOG . 'change_values_text_big.php';
+include_once paths::MODEL_LOG . 'change_value_time.php';
+include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+include_once paths::MODEL_LOG . 'change_values_time_big.php';
+include_once paths::MODEL_LOG . 'change_value_geo.php';
+include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
+include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_SYSTEM . 'log.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_par_field_list;
@@ -165,8 +165,8 @@ use cfg\log\change_values_time_prime;
 use cfg\log\changes_big;
 use cfg\log\changes_norm;
 use cfg\ref\source;
-use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_multi;
+use cfg\ref\source_db;
 use cfg\system\log;
 use shared\const\chars;
 use shared\enum\change_actions;
@@ -177,11 +177,9 @@ use shared\types\api_type_list;
 use shared\types\protection_type as protect_type_shared;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_type;
-use cfg\export\export;
 use cfg\formula\expression;
 use cfg\group\group;
 use cfg\group\group_id;
@@ -210,103 +208,20 @@ class value_base extends sandbox_value
      * db const
      */
 
-    // object specific database and JSON object field names
-    const FLD_ID = 'group_id';
-    // TODO move the sandbox value object
-    const FLD_VALUE_TEXT = 'text_value';
-    const FLD_VALUE_TIME = 'time_value';
-    const FLD_VALUE_GEO = 'geo_value';
-    const FLD_TS_ID_COM = 'the id of the time series as a 64 bit integer value because the number of time series is not expected to be too high';
-    const FLD_TS_ID_COM_USER = 'the 64 bit integer which is unique for the standard and the user series';
-    const FLD_VALUE_TS_ID = 'value_time_series_id';
-    const FLD_ALL_TIME_SERIES = array(
-        [self::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM],
-    );
-    const FLD_ALL_TIME_SERIES_USER = array(
-        [self::FLD_VALUE_TS_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TS_ID_COM_USER],
-    );
+    // forward the const to enable usage of $this::CONST_NAME
+    const FLD_ID = value_db::FLD_ID;
+    const FLD_VALUE_TEXT = value_db::FLD_VALUE_TEXT;
+    const FLD_VALUE_TIME = value_db::FLD_VALUE_TIME;
+    const FLD_VALUE_GEO = value_db::FLD_VALUE_GEO;
 
     // all database field names excluding the id and excluding the user specific fields
-    const FLD_NAMES = array();
-    const FLD_NAMES_STD = array(
-        self::FLD_VALUE,
-        source::FLD_ID,
-    );
-    // fields that are not part of the standard result table, but that needs to be included for a correct union field match
-    const FLD_NAMES_STD_DUMMY = array(
-        user::FLD_ID,
-    );
-    // list of the user specific numeric database field names
-    const FLD_NAMES_NUM_USR_EX_STD = array(
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
-    // list of the user specific datetime database field names
-    const FLD_NAMES_DATE_USR_EX_STD = array(
-        self::FLD_LAST_UPDATE
-    );
-    // list of the user specific database text field names for numeric tables and queries
-    const FLD_NAMES_USR = array();
-    // list of the user specific database text field names for text tables and queries
-    const FLD_NAMES_USR_TEXT = array(
-        self::FLD_VALUE_TEXT,
-    );
-    // list of the user specific database text field names for geo point tables and queries
-    const FLD_NAMES_USR_GEO = array(
-        self::FLD_VALUE_GEO,
-    );
-    // list of the user specific numeric database field names for numeric tables and queries
-    const FLD_NAMES_NUM_USR = array(
-        self::FLD_VALUE,
-        source::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
-    // list of the user specific numeric database field names for text tables and queries
-    const FLD_NAMES_NUM_USR_TEXT = array(
-        source::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
-    // list of the user specific numeric database field names for timetables and queries
-    const FLD_NAMES_NUM_USR_TIME = array(
-        self::FLD_VALUE_TIME,
-        source::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
-    // list of the user specific numeric database field names for geo point tables and queries
-    const FLD_NAMES_NUM_USR_GEO = array(
-        source::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
-    // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
-        self::FLD_VALUE,
-        source::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_PROTECT
-    );
-    // list of field names that are only on the user sandbox row
-    // e.g. the standard value does not need the share type, because it is by definition public (even if share types within a group of users needs to be defined, the value for the user group are also user sandbox table)
-    const FLD_NAMES_USR_ONLY = array(
-        sandbox::FLD_CHANGE_USER,
-        sandbox::FLD_SHARE
-    );
-    // list of fixed tables where a value might be stored
-    const TBL_LIST = array(
-        [sql_type::PRIME, sql_type::STANDARD],
-        [sql_type::MOST, sql_type::STANDARD],
-        [sql_type::MOST],
-        [sql_type::PRIME],
-        [sql_type::BIG]
-    );
+    const FLD_NAMES = value_db::FLD_NAMES;
+    const FLD_NAMES_STD = value_db::FLD_NAMES_STD;
+    const FLD_NAMES_USR = value_db::FLD_NAMES_USR;
+    const FLD_NAMES_NUM_USR = value_db::FLD_NAMES_NUM_USR;
+    const FLD_ALL_TIME_SERIES = value_db::FLD_ALL_TIME_SERIES;
+    const FLD_ALL_TIME_SERIES_USER = value_db::FLD_ALL_TIME_SERIES_USER;
+    const ALL_SANDBOX_FLD_NAMES = value_db::ALL_SANDBOX_FLD_NAMES;
 
 
     /*
@@ -388,7 +303,7 @@ class value_base extends sandbox_value
         string $ext,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = self::FLD_ID,
+        string $id_fld = value_db::FLD_ID,
         bool   $one_id_fld = true
     ): bool
     {
@@ -445,8 +360,8 @@ class value_base extends sandbox_value
                 log_err('Value for ' . $this::FLD_VALUE . ' is undefined');
             }
             // TODO check if phrase_group_id and time_word_id are user specific or time series specific
-            $this->set_source_id($db_row[source::FLD_ID]);
-            $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE]));
+            $this->set_source_id($db_row[source_db::FLD_ID]);
+            $this->set_last_update($lib->get_datetime($db_row[sandbox_multi::FLD_LAST_UPDATE]));
         }
         return $result;
     }
@@ -457,11 +372,9 @@ class value_base extends sandbox_value
      */
     function api_mapper(array $api_json): user_message
     {
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-
-        $usr_msg = new user_message();
         $lib = new library();
+
+        $usr_msg = parent::api_mapper($api_json);
 
         // make sure that there are no unexpected leftovers but keep the user
         // TODO check that it is always moved to sandbox object
@@ -470,53 +383,53 @@ class value_base extends sandbox_value
         $this->reset();
         $this->set_user($usr);
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::ID) {
-                $this->set_id($value);
+        if (array_key_exists(json_fields::PHRASES, $api_json)) {
+            $phr_lst = new phrase_list($this->user());
+            $usr_msg->add($phr_lst->api_mapper($api_json[json_fields::PHRASES]));
+            if ($usr_msg->is_ok()) {
+                $this->grp()->set_phrase_list($phr_lst);
             }
-
-            if ($key == json_fields::PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $usr_msg->add($phr_lst->api_mapper($value));
-                if ($usr_msg->is_ok()) {
-                    $this->grp()->set_phrase_list($phr_lst);
-                }
+        }
+        if (array_key_exists(json_fields::ID, $api_json)) {
+            $this->set_id($api_json[json_fields::ID]);
+        }
+        if (array_key_exists(json_fields::TIMESTAMP, $api_json)) {
+            $time_stamp = $api_json[json_fields::TIMESTAMP];
+            if (strtotime($time_stamp)) {
+                $this->time_stamp = $lib->get_datetime($time_stamp, $this->dsp_id(), 'JSON import');
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP, [
+                    msg_id::VAR_VALUE => $time_stamp,
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
             }
-
-            if ($key == json_fields::TIMESTAMP) {
-                if (strtotime($value)) {
-                    $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
-                } else {
-                    $usr_msg->add_message_text('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
-                }
+        }
+        if (array_key_exists(json_fields::NUMBER, $api_json)) {
+            $value = $api_json[json_fields::NUMBER];
+            if (is_numeric($value)) {
+                $this->set_value($value);
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
+                    msg_id::VAR_VALUE => $value,
+                    msg_id::VAR_GROUP => $this->grp()->dsp_id()
+                ]);
             }
-
-            if ($key == json_fields::NUMBER) {
-                if (is_numeric($value)) {
-                    $this->set_value($value);
-                } else {
-                    $usr_msg->add_message_text('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
-                }
+        }
+        if (array_key_exists(json_fields::SHARE, $api_json)) {
+            $this->set_share_id($api_json[json_fields::SHARE]);
+        }
+        if (array_key_exists(json_fields::PROTECTION, $api_json)) {
+            $this->set_protection_id($api_json[json_fields::PROTECTION]);
+            /* TODO Prio 2 review
+            if ($api_json[json_fields::PROTECTION] <> protect_type_shared::NO_PROTECT) {
+                $get_ownership = true;
             }
-
-            if ($key == json_fields::SHARE) {
-                $this->set_share_id($shr_typ_cac->id($value));
-            }
-
-            if ($key == json_fields::PROTECTION) {
-                $this->set_protection_id($ptc_typ_cac->id($value));
-                if ($value <> protect_type_shared::NO_PROTECT) {
-                    $get_ownership = true;
-                }
-            }
-
-            if ($key == json_fields::SOURCE_NAME) {
-                $src = new source($this->user());
-                $src->set_name($value);
-                $this->source = $src;
-            }
-
+            */
+        }
+        if (array_key_exists(json_fields::SOURCE_NAME, $api_json)) {
+            $src = new source($this->user());
+            $src->set_name($api_json[json_fields::SOURCE_NAME]);
+            $this->source = $src;
         }
 
         return $usr_msg;
@@ -585,7 +498,9 @@ class value_base extends sandbox_value
             if (strtotime($value)) {
                 $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
             } else {
-                $usr_msg->add_message_text('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
+                $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP,
+                    [msg_id::VAR_VALUE => $value, msg_id::VAR_ID => $this->dsp_id()]
+                );
             }
         }
 
@@ -594,7 +509,9 @@ class value_base extends sandbox_value
             if (is_numeric($value)) {
                 $this->set_value($value);
             } else {
-                $usr_msg->add_message_text('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC,
+                    [msg_id::VAR_VALUE => $value, msg_id::VAR_GROUP => $this->grp()->dsp_id()]
+                );
             }
         }
 
@@ -864,22 +781,22 @@ class value_base extends sandbox_value
         $sc->set_id_field($this->id_field($sc_par_lst));
 
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(self::FLD_NAMES);
+        $sc->set_fields(value_db::FLD_NAMES);
         if ($this->is_numeric()) {
-            $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+            $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
         } elseif ($this->is_time_value()) {
-            $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR_TIME);
+            $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR_TIME);
         } elseif ($this->is_text_value()) {
-            $sc->set_usr_fields(self::FLD_NAMES_USR_TEXT);
-            $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR_TEXT);
+            $sc->set_usr_fields(value_db::FLD_NAMES_USR_TEXT);
+            $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR_TEXT);
         } elseif ($this->is_geo_value()) {
-            $sc->set_usr_fields(self::FLD_NAMES_USR_GEO);
-            $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR_GEO);
+            $sc->set_usr_fields(value_db::FLD_NAMES_USR_GEO);
+            $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR_GEO);
         } else {
             // fallback option
-            $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+            $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
         }
-        $sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
+        $sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
 
         return $qp;
     }
@@ -894,35 +811,35 @@ class value_base extends sandbox_value
     {
         if ($this->is_numeric()) {
             $fld_lst = array_merge(
-                self::FLD_NAMES,
-                self::FLD_NAMES_NUM_USR,
+                value_db::FLD_NAMES,
+                value_db::FLD_NAMES_NUM_USR,
                 array(user::FLD_ID)
             );
         } elseif ($this->is_time_value()) {
             $fld_lst = array_merge(
-                self::FLD_NAMES,
-                self::FLD_NAMES_NUM_USR_TIME,
+                value_db::FLD_NAMES,
+                value_db::FLD_NAMES_NUM_USR_TIME,
                 array(user::FLD_ID)
             );
         } elseif ($this->is_text_value()) {
             $fld_lst = array_merge(
-                self::FLD_NAMES,
-                self::FLD_NAMES_USR_TEXT,
-                self::FLD_NAMES_NUM_USR_TEXT,
+                value_db::FLD_NAMES,
+                value_db::FLD_NAMES_USR_TEXT,
+                value_db::FLD_NAMES_NUM_USR_TEXT,
                 array(user::FLD_ID)
             );
         } elseif ($this->is_geo_value()) {
             $fld_lst = array_merge(
-                self::FLD_NAMES,
-                self::FLD_NAMES_USR_GEO,
-                self::FLD_NAMES_NUM_USR_GEO,
+                value_db::FLD_NAMES,
+                value_db::FLD_NAMES_USR_GEO,
+                value_db::FLD_NAMES_NUM_USR_GEO,
                 array(user::FLD_ID)
             );
         } else {
             // fallback option
             $fld_lst = array_merge(
-                self::FLD_NAMES,
-                self::FLD_NAMES_NUM_USR,
+                value_db::FLD_NAMES,
+                value_db::FLD_NAMES_NUM_USR,
                 array(user::FLD_ID)
             );
         }
@@ -1020,9 +937,32 @@ class value_base extends sandbox_value
     }
 
 
+    /*
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     *
+     * @param value_base|db_object_multi $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(value_base|db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->source() != null) {
+            $this->set_source($obj->source());
+        }
+        if ($obj->value() != null) {
+            $this->set_value($obj->value());
+        }
+        return $usr_msg;
+    }
+
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -1113,10 +1053,12 @@ class value_base extends sandbox_value
         if ($this->source_id() != $obj->source_id()
             and $obj->source() != null
             and $this->source() != null) {
+            $lib = new library();
             $usr_msg->add_id_with_vars(msg_id::DIFF_SOURCE, [
                 msg_id::VAR_SOURCE => $obj->source()?->dsp_id(),
                 msg_id::VAR_SOURCE_CHK => $this->source()?->dsp_id(),
-                msg_id::VAR_VAL_ID => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_VAL_ID => $this->name(),
             ]);
         }
         return $usr_msg;
@@ -1320,13 +1262,20 @@ class value_base extends sandbox_value
      * TODO import the description and save it in the group description
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    function import_obj(
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         log_debug();
-        $result = parent::import_obj($in_ex_json, $test_obj);
+        $result = parent::import_obj($in_ex_json, $usr_req, $dto, $test_obj);
 
         if ($test_obj) {
             $do_save = false;
@@ -1435,21 +1384,65 @@ class value_base extends sandbox_value
      */
     function save_from_api_msg(array $api_json, bool $do_save = true): user_message
     {
+        global $shr_typ_cac;
+        global $ptc_typ_cac;
+
         log_debug();
         $usr_msg = new user_message();
 
-        foreach ($api_json as $key => $value) {
+        $lib = new library();
 
-            if ($key == json_fields::WORDS) {
-                $grp = new group($this->user());
-                $usr_msg->add($grp->save_from_api_msg($value, $do_save));
-                if ($usr_msg->is_ok()) {
-                    $this->set_grp($grp);
+        if (array_key_exists(json_fields::WORDS, $api_json)) {
+            $grp = new group($this->user());
+            $usr_msg->add($grp->save_from_api_msg($api_json[json_fields::WORDS], $do_save));
+            if ($usr_msg->is_ok()) {
+                $this->set_grp($grp);
+            }
+        }
+
+        if (array_key_exists(json_fields::TIMESTAMP, $api_json)) {
+            if (strtotime($api_json[json_fields::TIMESTAMP])) {
+                $this->time_stamp = $lib->get_datetime($api_json[json_fields::TIMESTAMP], $this->dsp_id(), 'JSON import');
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP, [
+                    msg_id::VAR_VALUE => $api_json[json_fields::TIMESTAMP],
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
+            }
+        }
+
+        if (array_key_exists(json_fields::NUMBER, $api_json)) {
+            if (is_numeric($api_json[json_fields::NUMBER])) {
+                $this->set_value($api_json[json_fields::NUMBER]);
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
+                    msg_id::VAR_GROUP => $this->grp()->dsp_id(),
+                    msg_id::VAR_VALUE => $api_json[json_fields::NUMBER]
+                ]);
+            }
+        }
+
+        if (array_key_exists(json_fields::SHARE, $api_json)) {
+            $this->set_share_id($shr_typ_cac->id($api_json[json_fields::SHARE]));
+        }
+
+        if (array_key_exists(json_fields::PROTECTION, $api_json)) {
+            $this->set_protection_id($ptc_typ_cac->id($api_json[json_fields::PROTECTION]));
+            if ($api_json[json_fields::PROTECTION] <> protect_type_shared::NO_PROTECT) {
+                $get_ownership = true;
+            }
+        }
+
+        if (array_key_exists(json_fields::SOURCE_NAME, $api_json)) {
+            $src = new source($this->user());
+            $src->set_name($api_json[json_fields::SOURCE_NAME]);
+            if ($usr_msg->is_ok() and $do_save) {
+                $src->load_by_name($api_json[json_fields::SOURCE_NAME]);
+                if ($src->id() == 0) {
+                    $src->save();
                 }
             }
-
-            $usr_msg->add($this->set_fields_from_json($key, $value, $usr_msg, $do_save));
-
+            $this->source = $src;
         }
 
         if ($usr_msg->is_ok() and $do_save) {
@@ -1483,7 +1476,9 @@ class value_base extends sandbox_value
             if (strtotime($value)) {
                 $this->time_stamp = $lib->get_datetime($value, $this->dsp_id(), 'JSON import');
             } else {
-                $msg->add_message_text('Cannot add timestamp "' . $value . '" when importing ' . $this->dsp_id());
+                $msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP,
+                    [msg_id::VAR_VALUE => $value, msg_id::VAR_ID => $this->dsp_id()]
+                );
             }
         }
 
@@ -1491,7 +1486,10 @@ class value_base extends sandbox_value
             if (is_numeric($value)) {
                 $this->set_value($value);
             } else {
-                $msg->add_message_text('Import value: "' . $value . '" is expected to be a number (' . $this->grp()->dsp_id() . ')');
+                $msg->add_id_with_vars(msg_id::IMPORT_VALUE_NOT_NUMERIC, [
+                    msg_id::VAR_GROUP => $this->grp()->dsp_id(),
+                    msg_id::VAR_VALUE => $value
+                ]);
             }
         }
 
@@ -1914,6 +1912,7 @@ class value_base extends sandbox_value
     function save_field_trigger_update($db_con): string
     {
         global $job_typ_cac;
+        global $usr;
 
         $result = '';
 
@@ -1921,7 +1920,7 @@ class value_base extends sandbox_value
         $ext = $this->grp()->table_extension();
         $db_con->set_class(self::class, false, $ext);
         $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(value_base::FLD_LAST_UPDATE, sql::NOW, sql_field_type::TIME);
+        $fvt_lst->add_field(sandbox_multi::FLD_LAST_UPDATE, sql::NOW, sql_field_type::TIME);
         $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
         try {
             $db_con->exe_par($qp);
@@ -1936,7 +1935,7 @@ class value_base extends sandbox_value
         log_debug('value->save_field_trigger_update group id "' . $this->grp()->id() . '" for user ' . $this->user()->name . '');
         if ($this->is_id_set()) {
             $job = new job($this->user());
-            $job->set_type(job_type_list::VALUE_UPDATE);
+            $job->set_type(job_type_list::VALUE_UPDATE, $usr);
             $job->obj = $this;
             $job->add();
         } else {
@@ -1982,7 +1981,7 @@ class value_base extends sandbox_value
                 $log->new_value = $this->value();
                 $log->std_value = $std_rec->value();
                 $this->save_set_log_id($log);
-                $log->set_field(self::FLD_VALUE_TEXT);
+                $log->set_field(value_db::FLD_VALUE_TEXT);
                 $result .= $this->save_field_user($db_con, $log);
                 $updated = true;
             }
@@ -1993,7 +1992,7 @@ class value_base extends sandbox_value
                 $log->new_value = $this->value();
                 $log->std_value = $std_rec->value();
                 $this->save_set_log_id($log);
-                $log->set_field(self::FLD_VALUE_GEO);
+                $log->set_field(value_db::FLD_VALUE_GEO);
                 $result .= $this->save_field_user($db_con, $log);
                 $updated = true;
             }
@@ -2004,7 +2003,7 @@ class value_base extends sandbox_value
                 $log->new_value = $this->number();
                 $log->std_value = $std_rec->number();
                 $this->save_set_log_id($log);
-                $log->set_field(self::FLD_VALUE);
+                $log->set_field(value_db::FLD_VALUE);
                 $result .= $this->save_field_user($db_con, $log);
             }
         }
@@ -2031,7 +2030,7 @@ class value_base extends sandbox_value
             $log->std_value = $std_rec->source_name();
             $log->std_id = $std_rec->get_source_id();
             $this->save_set_log_id($log);
-            $log->set_field(source::FLD_ID);
+            $log->set_field(source_db::FLD_ID);
             $result = $this->save_field_user($db_con, $log);
         }
         return $result;
@@ -2227,12 +2226,12 @@ class value_base extends sandbox_value
                 //    $this->set_id($ins_result->get_row_id());
                 //}
                 //$db_con->set_type(self::class);
-                //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, self::FLD_VALUE, self::FLD_LAST_UPDATE), array($this->grp()->id(), $this->user()->id, $this->number, sql::NOW)));
+                //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, value_db::FLD_VALUE, sandbox_multi::FLD_LAST_UPDATE), array($this->grp()->id(), $this->user()->id, $this->number, sql::NOW)));
                 if ($this->is_id_set()) {
                     // update the reference in the log
                     if ($this->grp()->is_prime()) {
                         if (!$log->add_ref($this->id())) {
-                            $usr_msg->add_message_text('adding the value reference in the system log failed');
+                            $usr_msg->add_id(msg_id::VALUE_REFERENCE_LOG_REF_FAILED);
                         }
                     } else {
                         // TODO: save in the value or value big change log
@@ -2261,7 +2260,9 @@ class value_base extends sandbox_value
                     }
 
                 } else {
-                    $usr_msg->add_message_text("Adding value " . $this->id() . " failed.");
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_VALUE, [
+                        msg_id::VAR_ID => $this->id()
+                    ]);
                 }
             }
         }
@@ -2392,7 +2393,7 @@ class value_base extends sandbox_value
     {
         $fields = parent::db_fields_all();
         if (!$sc_par_lst->is_standard()) {
-            $fields[] = source::FLD_ID;
+            $fields[] = source_db::FLD_ID;
             $fields = array_merge($fields, $this->db_fields_all_sandbox());
         }
         return $fields;
@@ -2423,13 +2424,13 @@ class value_base extends sandbox_value
             if ($sbx->source_id() <> $this->source_id() or $sc_par_lst->is_usr_tbl()) {
                 if ($sc_par_lst->incl_log()) {
                     $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
-                        $cng_fld_cac->id($table_id . source::FLD_ID),
+                        sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
+                        $cng_fld_cac->id($table_id . source_db::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 $lst->add_field(
-                    source::FLD_ID,
+                    source_db::FLD_ID,
                     $this->source_id(),
                     sql_field_type::INT
                 );

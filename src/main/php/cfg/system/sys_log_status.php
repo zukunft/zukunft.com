@@ -31,9 +31,11 @@
 
 namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
 
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;

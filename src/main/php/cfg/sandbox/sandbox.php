@@ -23,7 +23,7 @@
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - modify:            change potentially all variables of this seq id object with one function
     - owner and access:  functions to make code easier to read
     - sandbox:           manage the user sandbox
@@ -71,57 +71,64 @@
 namespace cfg\sandbox;
 
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-//include_once MODEL_COMPONENT_PATH . 'component.php';
-//include_once MODEL_COMPONENT_PATH . 'component_link.php';
-//include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_FORMULA_PATH . 'formula_link.php';
-//include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-//include_once MODEL_LOG_PATH . 'change_link.php';
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-//include_once MODEL_REF_PATH . 'ref.php';
-//include_once MODEL_REF_PATH . 'source.php';
-//include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_list.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-//include_once MODEL_VERB_PATH . 'verb.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_VIEW_PATH . 'term_view.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-//include_once MODEL_WORD_PATH . 'triple.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
+//include_once paths::MODEL_COMPONENT . 'component.php';
+//include_once paths::MODEL_COMPONENT . 'component_link.php';
+//include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_FORMULA . 'formula_db.php';
+//include_once paths::MODEL_FORMULA . 'formula_link.php';
+//include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+//include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+//include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VERB . 'verb.php';
+//include_once paths::MODEL_VERB . 'verb_db.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_VIEW . 'term_view.php';
+//include_once paths::MODEL_WORD . 'word.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_type;
+use cfg\const\def;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -133,6 +140,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\formula\formula_link;
 use cfg\formula\formula_link_type;
 use cfg\helper\combine_named;
@@ -149,16 +157,17 @@ use cfg\phrase\phrase;
 use cfg\ref\ref;
 use cfg\ref\source;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_list;
 use cfg\user\user_message;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\view\view;
 use cfg\view\term_view;
 use cfg\word\triple;
 use cfg\word\word;
 use Exception;
 use shared\enum\change_actions;
-use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\json_fields;
@@ -183,9 +192,6 @@ class sandbox extends db_object_seq_id_user
     const FLD_ID_COM = 'the owner / creator of the -=class=-';
     const FLD_ID_COM_CHANGER = 'the changer of the -=class=-';
     const FLD_ID = ''; // is always overwritten by the child class just added here to prevent polymorph warning
-    const FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
-    const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
-    const FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
     const FLD_CHANGE_USER = 'change_user_id'; // id of the user who wants something the object to be different from most other users
     const FLD_USER_NAME = 'user_name';
     const FLD_SHARE_COM = 'to restrict the access';
@@ -203,7 +209,7 @@ class sandbox extends db_object_seq_id_user
         [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_ID_COM_CHANGER],
     );
     const FLD_LST_ALL = array(
-        [self::FLD_EXCLUDED, self::FLD_EXCLUDED_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_EXCLUDED_COM],
+        [sql_db::FLD_EXCLUDED, sql_db::FLD_EXCLUDED_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_EXCLUDED_COM],
         [self::FLD_SHARE, self::FLD_SHARE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_SHARE_COM],
         [self::FLD_PROTECT, self::FLD_PROTECT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_PROTECT_COM],
     );
@@ -217,7 +223,7 @@ class sandbox extends db_object_seq_id_user
     const FLD_NAMES_USR_ONLY = array();
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
-        self::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         self::FLD_SHARE,
         self::FLD_PROTECT
     );
@@ -250,7 +256,7 @@ class sandbox extends db_object_seq_id_user
     private ?int $owner_id = null;      // the user id of the person who created the object, which is the default object
     private ?int $share_id = null;      // id for public, personal, group or private
     private ?int $protection_id = null; // id for no, user, admin or full protection
-    public bool $excluded = false;     // the user sandbox for object is implemented, but can be switched off for the complete instance
+    public ?bool $excluded = null;     // the user sandbox for object is implemented, but can be switched off for the complete instance
     // but for calculation, use and display an excluded should not be used
     // when loading the word and saving the excluded field is handled as a normal user sandbox field,
     // but for calculation, use and display an excluded should not be used
@@ -350,8 +356,8 @@ class sandbox extends db_object_seq_id_user
             }
             // e.g. the list of names does not include the field excluded
             // TODO instead the excluded rows are filtered out on SQL level
-            if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
-                $this->set_excluded($db_row[self::FLD_EXCLUDED]);
+            if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
+                $this->set_excluded($db_row[sql_db::FLD_EXCLUDED]);
             }
         }
         return $result;
@@ -400,18 +406,14 @@ class sandbox extends db_object_seq_id_user
         $this->reset();
         $this->set_user($usr);
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::ID) {
-                $this->set_id($value);
-            }
-            if ($key == json_fields::SHARE) {
-                $this->share_id = $value;
-            }
-            if ($key == json_fields::PROTECTION) {
-                $this->protection_id = $value;
-            }
-
+        if (array_key_exists(json_fields::ID, $api_json)) {
+            $this->set_id($api_json[json_fields::ID]);
+        }
+        if (array_key_exists(json_fields::SHARE, $api_json)) {
+            $this->share_id = $api_json[json_fields::SHARE];
+        }
+        if (array_key_exists(json_fields::PROTECTION, $api_json)) {
+            $this->protection_id = $api_json[json_fields::PROTECTION];
         }
 
         return $usr_msg;
@@ -433,6 +435,9 @@ class sandbox extends db_object_seq_id_user
 
         $usr_msg = parent::import_db_obj($this, $test_obj);
 
+        if (key_exists(json_fields::EXCLUDED, $in_ex_json)) {
+            $this->set_excluded($in_ex_json[json_fields::EXCLUDED]);
+        }
         if (key_exists(json_fields::SHARE, $in_ex_json)) {
             $this->share_id = $shr_typ_cac->id($in_ex_json[json_fields::SHARE]);
             if ($this->share_id < 0) {
@@ -474,9 +479,12 @@ class sandbox extends db_object_seq_id_user
         $vars = [];
 
         $vars[json_fields::ID] = $this->id();
-        if ($this->is_excluded()) {
+        if ($this->is_excluded() and !$typ_lst->test_mode()) {
             $vars[json_fields::EXCLUDED] = true;
         } else {
+            if ($this->is_excluded() and $typ_lst->test_mode()) {
+                $vars[json_fields::EXCLUDED] = true;
+            }
             if ($this->share_id != null) {
                 $vars[json_fields::SHARE] = $this->share_id;
             }
@@ -493,6 +501,46 @@ class sandbox extends db_object_seq_id_user
     /*
      * im- and export
      */
+
+    /**
+     * set the vars of this sandbox object based on an import json array
+     *
+     * @param array $in_ex_json an array with the data of the json object but without any database ids
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_obj(
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
+    {
+        log_debug();
+
+        if (in_array( $this::class, def::CODE_ID_CLASSES)) {
+            $usr_msg = $this->import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
+        } else {
+            $usr_msg = $this->import_mapper($in_ex_json, $dto, $test_obj);
+        }
+
+        // save this object in the database
+        if (!$test_obj) {
+            if ($usr_msg->is_ok()) {
+                $usr_msg->add($this->save());
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_NOT_SAVED, [
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
+            }
+        }
+
+        return $usr_msg;
+    }
 
     /**
      * create an array with the export json fields
@@ -516,6 +564,11 @@ class sandbox extends db_object_seq_id_user
             $vars[json_fields::PROTECTION] = $this->protection_type_code_id();
         }
 
+        // add the exclusions
+        if ($this->is_exclusion_set()) {
+            $vars[json_fields::EXCLUDED] = $this->is_excluded();
+        }
+
         return $vars;
     }
 
@@ -523,6 +576,16 @@ class sandbox extends db_object_seq_id_user
     /*
      * set and get
      */
+
+    /**
+     * set the vars of this object based on json string from the frontend object
+     * @param string $api_json
+     * @return user_message
+     */
+    function set_from_api(string $api_json): user_message
+    {
+        return $this->api_mapper(json_decode($api_json, true));
+    }
 
     /**
      * set the share type id based on the code id
@@ -563,7 +626,7 @@ class sandbox extends db_object_seq_id_user
     function set_excluded(?bool $db_val): void
     {
         if ($db_val == null) {
-            $this->excluded = false;
+            $this->include();
         } else {
             $this->excluded = $db_val;
         }
@@ -592,7 +655,24 @@ class sandbox extends db_object_seq_id_user
      */
     function is_excluded(): bool
     {
-        return $this->excluded;
+        if ($this->excluded == null) {
+            // by default an object is not excluded
+            return false;
+        } else {
+            return $this->excluded;
+        }
+    }
+
+    /**
+     * @return bool true if the excluded field is set
+     */
+    function is_exclusion_set(): bool
+    {
+        if ($this->excluded == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     function set_owner_id(?int $id): void
@@ -641,46 +721,75 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
-     * information
+     * info
      */
 
     /**
      * create human-readable messages of the differences between the sandbox objects
-     * @param CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $sbx which might be different to this sandbox object
+     * is expected to be similar to the needs_db_update function
+     *
+     * @param CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $obj which might be different to this sandbox object
      * @return user_message the human-readable messages of the differences between the sandbox objects
      */
-    function diff_msg(CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $sbx): user_message
+    function diff_msg(CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($sbx);
-        if ($this->owner_id() != $sbx->owner_id()) {
+        $usr_msg = parent::diff_msg($obj);
+        $lib = new library();
+        if ($this->owner_id() != $obj->owner_id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_OWNER, [
-                msg_id::VAR_USER => $sbx->owner()->dsp_id(),
+                msg_id::VAR_USER => $obj->owner()->dsp_id(),
                 msg_id::VAR_USER_CHK => $this->owner()->dsp_id(),
-                msg_id::VAR_NAME => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
             ]);
         }
-        if ($this->share_id() != $sbx->share_id()) {
+        if ($this->share_id() != $obj->share_id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
-                msg_id::VAR_SHARE => $sbx->share_type_name(),
+                msg_id::VAR_SHARE => $obj->share_type_name(),
                 msg_id::VAR_SHARE_CHK => $this->share_type_name(),
-                msg_id::VAR_NAME => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
             ]);
         }
-        if ($this->protection_id() != $sbx->protection_id()) {
+        if ($this->protection_id() != $obj->protection_id()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
-                msg_id::VAR_PROTECT => $sbx->protection_type_name(),
+                msg_id::VAR_PROTECT => $obj->protection_type_name(),
                 msg_id::VAR_PROTECT_CHK => $this->protection_type_name(),
-                msg_id::VAR_NAME => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
             ]);
         }
-        if ($this->is_excluded() != $sbx->is_excluded()) {
+        if ($this->is_excluded() != $obj->is_excluded()) {
             $usr_msg->add_id_with_vars(msg_id::DIFF_EXCLUSION, [
-                msg_id::VAR_EXCLUDE => $sbx->is_excluded(),
+                msg_id::VAR_EXCLUDE => $obj->is_excluded(),
                 msg_id::VAR_EXCLUDE_CHK => $this->is_excluded(),
-                msg_id::VAR_NAME => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
             ]);
         }
         return $usr_msg;
+    }
+
+    /**
+     * check if a database relevant var of the object differs from the given reference sandbox object
+     * is expected to be similar to the diff_msg function
+     *
+     * @param CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $db_obj which might be different to this sandbox object
+     * @return bool true if there is a difference
+     */
+    function needs_db_update(CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $db_obj): bool
+    {
+        $result = false;
+        if ($this->owner_id() != null and $this->owner_id() != $db_obj->owner_id()) {
+            $result = true;
+        } elseif ($this->share_id() != null and $this->share_id() != $db_obj->share_id()) {
+            $result = true;
+        } elseif ($this->protection_id() != null and $this->protection_id() != $db_obj->protection_id()) {
+            $result = true;
+        } elseif ($this->is_excluded() != null and $this->is_excluded() != $db_obj->is_excluded()) {
+            $result = true;
+        }
+        return $result;
     }
 
 
@@ -693,20 +802,25 @@ class sandbox extends db_object_seq_id_user
      * if the given type is not set (null) the type is not removed
      * if the given type is zero (not null) the type is removed
      *
-     * @param sandbox|CombineObject|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param sandbox|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(sandbox|CombineObject|db_object_seq_id $sbx): user_message
+    function fill(sandbox|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($sbx);
-        if ($sbx->owner_id() != null) {
-            $this->set_owner_id($sbx->owner_id());
+        $usr_msg = parent::fill($obj, $usr_req);
+        // e.g. if the import contains the information that this object is excluded for one user this excluded setting should also be imported
+        if ($obj->is_exclusion_set()) {
+            $this->set_excluded($obj->is_excluded());
         }
-        if ($sbx->share_id() != null) {
-            $this->set_share_id($sbx->share_id());
+        if ($obj->owner_id() != null) {
+            $this->set_owner_id($obj->owner_id());
         }
-        if ($sbx->protection_id() != null) {
-            $this->set_protection_id($sbx->protection_id());
+        if ($obj->share_id() != null) {
+            $this->set_share_id($obj->share_id());
+        }
+        if ($obj->protection_id() != null) {
+            $this->set_protection_id($obj->protection_id());
         }
         return $usr_msg;
     }
@@ -773,7 +887,7 @@ class sandbox extends db_object_seq_id_user
     function type_name_field(): string
     {
         log_err('type_name_field is not overwritten for the ' . $this::class . ' object');
-        return verb::FLD_NAME;
+        return verb_db::FLD_NAME;
     }
 
 
@@ -1050,36 +1164,8 @@ class sandbox extends db_object_seq_id_user
 
 
     /*
-     * information
+     * info
      */
-
-    /**
-     * check if the sandbox object in the database needs to be updated
-     *
-     * @param sandbox $db_obj the word as saved in the database
-     * @return bool true if this word has infos that should be saved in the database
-     */
-    function needs_db_update_sandbox(sandbox $db_obj): bool
-    {
-        $result = false;
-        if ($this->owner_id() != null) {
-            if ($this->owner_id() != $db_obj->owner_id()) {
-                $result = true;
-            }
-        }
-        if ($this->share_id() != null) {
-            if ($this->share_id() != $db_obj->share_id()) {
-                $result = true;
-            }
-        }
-        if ($this->protection_id() != null) {
-            if ($this->protection_id() != $db_obj->protection_id()) {
-                $result = true;
-            }
-        }
-        // TODO what about excluded?
-        return $result;
-    }
 
     /**
      * get the user who uses the value that most other users use to reduce the number of user overwrites
@@ -1280,7 +1366,7 @@ class sandbox extends db_object_seq_id_user
         if ($this->owner_id() > 0) {
             $sc->add_where(user::FLD_ID, $this->owner_id(), sql_par_type::INT_NOT);
         }
-        $sc->add_where(self::FLD_EXCLUDED, 1, sql_par_type::CONST_OR_NULL);
+        $sc->add_where(sql_db::FLD_EXCLUDED, 1, sql_par_type::CONST_OR_NULL);
         $qp->sql = $sc->sql();
 
         $qp->par = $sc->get_par();
@@ -1331,12 +1417,12 @@ class sandbox extends db_object_seq_id_user
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
-            array_merge(array(user::FLD_ID, user::FLD_NAME), user::FLD_NAMES_LIST),
+            array_merge(array(user::FLD_ID, user_db::FLD_NAME), user_db::FLD_NAMES_LIST),
             user::class,
             user::FLD_ID,
             user::FLD_ID);
         $sc->add_where($this->id_field(), $this->id());
-        $sc->add_where(sandbox::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
+        $sc->add_where(sql_db::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
 
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -1894,6 +1980,20 @@ class sandbox extends db_object_seq_id_user
             }
         } else {
             $sc_par_lst->add(sql_type::USER);
+            // make sure that the code id never differs between the standard row and the user row
+            if (in_array( $this::class, def::CODE_ID_CLASSES)) {
+                if ($this->code_id() != $norm_obj->code_id()) {
+                    $this->set_code_id($norm_obj->code_id(), $this->user());
+                    log_warning('code id has been changed in ' . $this->dsp_id() . ' with is not expected');
+                }
+            }
+            // make sure that the ui msg code id never differs between the standard row and the user row
+            if (in_array( $this::class, def::UI_MSG_CODE_ID_CLASSES)) {
+                if ($this->ui_msg_code_id() != $norm_obj->ui_msg_code_id()) {
+                    $this->set_ui_msg_code_id($norm_obj->ui_msg_code_id(), $this->user());
+                    log_warning('ui message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
+                }
+            }
             // TODO check why $this seems to be here updated but not in the sandbox multi object
             if ($this->has_usr_cfg()) {
                 if ($this->no_diff($norm_obj)) {
@@ -2074,7 +2174,7 @@ class sandbox extends db_object_seq_id_user
                 }
             }
         }
-        $log->set_field(self::FLD_EXCLUDED);
+        $log->set_field(sql_db::FLD_EXCLUDED);
         return $log;
     }
 
@@ -2547,7 +2647,7 @@ class sandbox extends db_object_seq_id_user
                     } else {
                         if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                             or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
-                            $usr_msg->add_message_text($similar->id_used_msg($this));
+                            $usr_msg->add($similar->id_used_msg($this));
                         }
                     }
                 }
@@ -2571,7 +2671,7 @@ class sandbox extends db_object_seq_id_user
                     // e.g. if a source already exists update the source
                     // but if a word with the same name of a formula already exists suggest a new formula name
                     if (!$this->is_same($similar)) {
-                        $usr_msg->add_message_text($similar->id_used_msg($this));
+                        $usr_msg->add($similar->id_used_msg($this));
                     }
                 }
 
@@ -2870,15 +2970,20 @@ class sandbox extends db_object_seq_id_user
     }
 
     /**
-     * @return string a message to use a different name
+     * @return user_message a message to use a different name
      */
-    function id_used_msg(sandbox $obj_to_add): string
+    function id_used_msg(sandbox $obj_to_add): user_message
     {
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
         $obj_to_add_name = $lib->class_to_name($obj_to_add::class);
-        return 'A ' . $class_name . ' with the name "' . $obj_to_add->name() . '" already exists. '
-            . 'Please use another ' . $obj_to_add_name . ' name.';
+        $usr_msg = new user_message();
+        $usr_msg->add_id_with_vars(msg_id::CLASS_ALREADY_EXISTS, [
+            msg_id::VAR_CLASS_NAME => $class_name,
+            msg_id::VAR_NAME => $obj_to_add->name(),
+            msg_id::VAR_VALUE => $obj_to_add_name
+        ]);
+        return $usr_msg;
     }
 
     /**
@@ -3311,7 +3416,7 @@ class sandbox extends db_object_seq_id_user
     function db_fields_all_sandbox(): array
     {
         return [
-            self::FLD_EXCLUDED,
+            sql_db::FLD_EXCLUDED,
             self::FLD_SHARE,
             self::FLD_PROTECT
         ];
@@ -3337,20 +3442,20 @@ class sandbox extends db_object_seq_id_user
         if ($sbx->excluded <> $this->excluded) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED,
-                    $cng_fld_cac->id($table_id . self::FLD_EXCLUDED),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             // TODO review and remove exception if possible
-            $old_val = $sbx->excluded;
+            $old_val = $sbx->is_excluded();
             if ($sbx->excluded === false) {
                 $old_val = null;
             }
             $lst->add_field(
-                self::FLD_EXCLUDED,
-                $this->excluded,
-                self::FLD_EXCLUDED_SQL_TYP,
+                sql_db::FLD_EXCLUDED,
+                $this->is_excluded(),
+                sql_db::FLD_EXCLUDED_SQL_TYP,
                 $old_val
             );
         }
@@ -3476,7 +3581,7 @@ class sandbox extends db_object_seq_id_user
             if ($this->is_link_obj()) {
                 if ($sc_par_lst->is_usr_tbl()) {
                     $fvt_lst->del($this->from_field());
-                    $fvt_lst->del(verb::FLD_ID);
+                    $fvt_lst->del(verb_db::FLD_ID);
                     $fvt_lst->del($this->to_field());
                 }
             }
@@ -3573,7 +3678,7 @@ class sandbox extends db_object_seq_id_user
         }
 
         // create the log entry for the link
-        if ($this->is_link_obj() and (!$usr_tbl or $fvt_lst->has_name(sandbox::FLD_EXCLUDED))) {
+        if ($this->is_link_obj() and (!$usr_tbl or $fvt_lst->has_name(sql_db::FLD_EXCLUDED))) {
             if ($usr_tbl) {
                 $qp_log_lnk = $sc->sql_func_log_user_link($this, $this->user(), $fvt_lst, $sc_par_lst_log);
             } else {
@@ -3593,7 +3698,7 @@ class sandbox extends db_object_seq_id_user
                 $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->type_field()]);
                 // TODO remove this exception e.g. by adding the $sc_par_lst to the call
                 if ($this::class == triple::class) {
-                    $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb::FLD_ID, $this->to_field()]);
+                    $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb_db::FLD_ID, $this->to_field()]);
                 } elseif ($this->is_link_obj()) {
                     $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), $this->to_field()]);
                 }
@@ -3605,7 +3710,7 @@ class sandbox extends db_object_seq_id_user
 
         // remove the internal last update field from the list of field that should be logged
         $fld_lst_log = array_diff($fld_lst_ex_log_and_key, [
-            formula::FLD_LAST_UPDATE
+            formula_db::FLD_LAST_UPDATE
         ]);
 
         // create the query parameters for the log entries for the single fields
@@ -3620,7 +3725,7 @@ class sandbox extends db_object_seq_id_user
                 $fld_lst_ex_log_and_key = array_merge([$this->id_field(), user::FLD_ID], $fld_lst_ex_log);
                 // TODO remove this exception e.g. by adding the $sc_par_lst to the call
                 if ($this::class == triple::class) {
-                    $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb::FLD_ID, $this->to_field()]);
+                    $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb_db::FLD_ID, $this->to_field()]);
                 } elseif ($this->is_link_obj()) {
                     $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), $this->to_field()]);
                 }
@@ -3795,7 +3900,7 @@ class sandbox extends db_object_seq_id_user
         $sc_par_lst_sub->add(sql_type::LIST);
         $sc_par_lst_log = clone $sc_par_lst_sub;
         $sc_par_lst_log->add(sql_type::INSERT_PART);
-        if ($this->excluded) {
+        if ($this->is_excluded()) {
             $sc_par_lst_log->add(sql_type::EXCLUDE);
         }
 
@@ -3813,7 +3918,7 @@ class sandbox extends db_object_seq_id_user
 
         // remove the internal last update field from the list of field that should be logged
         $fld_lst_log = array_diff($fld_lst_chg, [
-            formula::FLD_LAST_UPDATE
+            formula_db::FLD_LAST_UPDATE
         ]);
 
         // add the row id
@@ -3828,7 +3933,7 @@ class sandbox extends db_object_seq_id_user
         $par_lst_out->add_list($qp_log->par_fld_lst);
 
         // add the name field if it is missing and the object should be excluded
-        if ($this->excluded and $sc_par_lst->is_update()) {
+        if ($this->is_excluded() and $sc_par_lst->is_update()) {
             if ($this->is_named_obj()) {
                 if (!$par_lst_out->has_name($this->name_field())) {
                     global $cng_fld_cac;
@@ -3848,7 +3953,7 @@ class sandbox extends db_object_seq_id_user
         }
 
         // add additional log entry if the row has been excluded
-        if ($this->excluded) {
+        if ($this->is_excluded()) {
             // TODO use a common function for this part with in sql_delete_and_log
             $sc_par_lst_log = clone $sc_par_lst_sub;
             $sc_par_lst_log->add(sql_type::EXCL_NAME_ONLY);
@@ -4054,6 +4159,62 @@ class sandbox extends db_object_seq_id_user
     function is_value_obj(): bool
     {
         return false;
+    }
+
+
+    /*
+     * overwrite
+     */
+
+    /**
+     * set the vars of this view object based on the given json without writing to the database
+     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit testing object
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper_user(
+        array       $in_ex_json,
+        user        $usr_req,
+        data_object $dto = null,
+        object      $test_obj = null
+    ): user_message
+    {
+        log_err('overwrite of import_mapper_user missing in ' . $this::class);
+        return new user_message();
+    }
+
+    function set_code_id(?string $code_id, user $usr): user_message
+    {
+        $msg = 'code id change has been requested to be set but ' . $this->dsp_id() .  ' is not expected to have a code id';
+        log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_text($msg);
+        return $usr_msg;
+    }
+
+    function code_id(): ?string
+    {
+        log_err('code id has been requested but ' . $this->dsp_id() .  ' is not expected to have a code id');
+        return '';
+    }
+
+    function set_ui_msg_code_id(?msg_id $ui_msg_id, user $usr): user_message
+    {
+        $msg = 'frontend message code id has been requested to be set but ' . $this->dsp_id() .  ' is not expected to have a code id';
+        log_err($msg);
+        $usr_msg = new user_message();
+        $usr_msg->add_warning_text($msg);
+        return $usr_msg;
+    }
+
+    function ui_msg_code_id(): ?msg_id
+    {
+        log_err('a frontend message code id change has been requested but ' . $this->dsp_id() .  ' is not expected to have a code id');
+        return null;
     }
 
 

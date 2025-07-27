@@ -32,16 +32,18 @@
 
 namespace html\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_list.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-//include_once WEB_PHRASE_PATH . 'term.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_list.php';
+include_once html_paths::PHRASE . 'phrase.php';
+//include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
 
 use html\phrase\phrase;
 use html\phrase\term;
@@ -167,17 +169,21 @@ class sandbox_list_named extends sandbox_list
      */
     function fill_by_id(sandbox_list_named $lst_new): user_message
     {
+        global $usr;
+
         $usr_msg = new user_message();
         foreach ($lst_new->lst() as $sbx_new) {
             if ($sbx_new->id() != 0 and $sbx_new->name() != '') {
                 $sbx_old = $this->get_by_id($sbx_new->id());
                 if ($sbx_old != null) {
-                    $sbx_old->fill($sbx_new);
+                    $sbx_old->fill($sbx_new, $usr);
                 } else {
                     $this->add($sbx_new);
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::ID_OR_NAME_MISSING, [msg_id::VAR_ID => $sbx_new->dsp_id()]);
+                $usr_msg->add_id_with_vars(msg_id::ID_AND_NAME_MISSING, [
+                    msg_id::VAR_ID => $sbx_new->dsp_id()
+                ]);
             }
         }
         return $usr_msg;
@@ -201,7 +207,9 @@ class sandbox_list_named extends sandbox_list
                     $this->add($sbx_new);
                 }
             } else {
-                $usr_msg->add_id_with_vars(msg_id::ID_OR_NAME_MISSING, [msg_id::VAR_ID => $sbx_new->dsp_id()]);
+                $usr_msg->add_id_with_vars(msg_id::ID_AND_NAME_MISSING, [
+                    msg_id::VAR_ID => $sbx_new->dsp_id()
+                ]);
             }
         }
         return $usr_msg;

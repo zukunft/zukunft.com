@@ -30,7 +30,9 @@
 
 */
 
-include_once SHARED_CONST_PATH . 'users.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'users.php';
 
 use cfg\user\user;
 use cfg\user\user_list;
@@ -83,9 +85,9 @@ function run_system_test(all_tests $t): void
 
     // load by name
     $usr_by_id = new user;
-    $usr_by_id->load_by_id(user::SYSTEM_TEST_ID);
+    $usr_by_id->load_by_id(users::SYSTEM_TEST_ID);
     $usr_test = new user;
-    $usr_test->load_by_name(user::SYSTEM_TEST_NAME);
+    $usr_test->load_by_name(users::SYSTEM_TEST_NAME);
     $target = '<a href="/http/user.php?id=' . $usr_test->id() . '">zukunft.com system test</a>';
     $result = $usr_by_id->display();
     $t->display('user->load for id ' . $wrd_company->id(), $target, $result);

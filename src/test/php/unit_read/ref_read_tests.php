@@ -32,8 +32,10 @@
 
 namespace unit_read;
 
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_CONST_PATH . 'refs.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_CONST . 'refs.php';
 
 use cfg\ref\ref;
 use cfg\ref\ref_type_list;

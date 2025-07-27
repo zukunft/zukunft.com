@@ -39,13 +39,15 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_FORMULA_PATH . 'fig_ids.php';
-include_once MODEL_FORMULA_PATH . 'figure_list.php';
+use cfg\const\paths;
+
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_FORMULA . 'fig_ids.php';
+include_once paths::MODEL_FORMULA . 'figure_list.php';
 
 use cfg\formula\fig_ids;
 use controller\controller;
@@ -56,30 +58,33 @@ use shared\api;
 // open database
 $db_con = prg_start("api/figureList", "", false);
 
-// get the parameters
-$frm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // get the parameters
+    $frm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if ($frm_ids != '') {
-        $lst = new figure_list($usr);
-        $lst->load_by_ids(new fig_ids($frm_ids));
-        $result = $lst->api_json();
-    } else {
-        $msg = 'formula id is missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        if ($frm_ids != '') {
+            $lst = new figure_list($usr);
+            $lst->load_by_ids(new fig_ids($frm_ids));
+            $result = $lst->api_json();
+        } else {
+            $msg = 'formula id is missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

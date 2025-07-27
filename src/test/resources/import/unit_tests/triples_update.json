@@ -1,0 +1,23 @@
+{
+  "version": "0.0.3",
+  "time": "2025-07-17 14:06:27",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message for adding a description to a triple via data_object based import"
+  ],
+  "words": [
+    {
+      "name": "System Test Word"
+    },
+    {
+      "name": "System Test Word To"
+    }
+  ],
+  "triples": [
+    {
+      "name": "System Test Triple",
+      "description": "System Test Triple Description"
+    }
+  ]
+}
+

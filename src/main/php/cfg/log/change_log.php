@@ -71,39 +71,50 @@ TODO    rename to change_base
 
 namespace cfg\log;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-//include_once MODEL_COMPONENT_PATH . 'component.php';
-//include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_FORMULA_PATH . 'formula_link.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-//include_once MODEL_REF_PATH . 'ref.php';
-//include_once MODEL_REF_PATH . 'source.php';
-//include_once MODEL_VERB_PATH . 'verb.php';
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_VIEW_PATH . 'term_view.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-//include_once MODEL_WORD_PATH . 'word_db.php';
-//include_once MODEL_WORD_PATH . 'triple.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+//include_once paths::MODEL_COMPONENT . 'component.php';
+//include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_FORMULA . 'formula_db.php';
+//include_once paths::MODEL_FORMULA . 'formula_link.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+//include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'ref_db.php';
+//include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_REF . 'source_db.php';
+//include_once paths::MODEL_VERB . 'verb.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_db.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VERB . 'verb_db.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_VIEW . 'term_view.php';
+//include_once paths::MODEL_WORD . 'word.php';
+//include_once paths::MODEL_WORD . 'word_db.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+//include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -117,23 +128,30 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\formula\formula_db;
+use cfg\helper\db_object_seq_id;
 use cfg\helper\db_object_seq_id_user;
 use cfg\helper\type_object;
 use cfg\formula\formula;
 use cfg\formula\formula_link;
+use cfg\ref\source_db;
+use cfg\ref\ref_db;
 use cfg\sandbox\sandbox_link;
 use cfg\ref\ref;
 use cfg\ref\source;
+use cfg\user\user_db;
 use cfg\value\value;
+use cfg\value\value_db;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\word\triple;
 use cfg\user\user;
-use cfg\value\value_base;
 use cfg\view\view;
 use cfg\view\term_view;
+use cfg\word\triple_db;
 use cfg\word\word;
 use cfg\word\word_db;
-use shared\enum\change_actions;
+use shared\const\users;
 use shared\enum\change_tables;
 use shared\json_fields;
 use shared\library;
@@ -517,7 +535,7 @@ class change_log extends db_object_seq_id_user
             $db_changed = $this->set_table($table_name, $db_con);
             if ($table_name == change_tables::USER) {
                 $db_con->set_class(user::class);
-                foreach (user::FLD_NAMES as $field_name) {
+                foreach (user_db::FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::WORD) {
@@ -532,37 +550,37 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::VERB) {
                 $db_con->set_class(verb::class);
-                foreach (verb::FLD_NAMES as $field_name) {
+                foreach (verb_db::FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::TRIPLE) {
                 $db_con->set_class(triple::class);
-                foreach (triple::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (triple_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::TRIPLE_USR) {
                 $db_con->set_class(triple::class, true);
-                foreach (triple::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (triple_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VALUE) {
                 $db_con->set_class(value::class);
-                foreach (value_base::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (value_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::VALUE_USR) {
                 $db_con->set_class(value::class, true);
-                foreach (value_base::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (value_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA) {
                 $db_con->set_class(formula::class);
-                foreach (formula::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (formula_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA_USR) {
                 $db_con->set_class(formula::class, true);
-                foreach (formula::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (formula_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::FORMULA_LINK) {
@@ -612,28 +630,28 @@ class change_log extends db_object_seq_id_user
                 }
             } elseif ($table_name == change_tables::REF) {
                 $db_con->set_class(ref::class);
-                foreach (ref::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (ref_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::REF_USR) {
                 $db_con->set_class(ref::class, true);
-                foreach (ref::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (ref_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::SOURCE) {
                 $db_con->set_class(source::class);
-                foreach (source::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (source_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } elseif ($table_name == change_tables::SOURCE_USR) {
                 $db_con->set_class(source::class, true);
-                foreach (source::ALL_SANDBOX_FLD_NAMES as $field_name) {
+                foreach (source_db::ALL_SANDBOX_FLD_NAMES as $field_name) {
                     $db_changed = $this->set_field($field_name, $db_con);
                 }
             } else {
                 $sys_usr = new user();
-                $sys_usr->set_id(user::SYSTEM_ID);
-                $sys_usr->set_name(user::SYSTEM_NAME);
+                $sys_usr->set_id(users::SYSTEM_ID);
+                $sys_usr->set_name(users::SYSTEM_NAME);
                 log_warning('Log field settings for table ' . $table_name . ' are missing',
                     '', '', '', $sys_usr, $db_con);
             }
@@ -940,6 +958,7 @@ class change_log extends db_object_seq_id_user
 
     /**
      * get a list of all database fields
+     * this is just the db fields that are always used e.g. to log the changes
      * list must be corresponding to the db_values fields
      *
      * @param sql_creator $sc the sql creation script with preset parameters
@@ -954,7 +973,12 @@ class change_log extends db_object_seq_id_user
     ): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQL_TYP);
+        if ($sc_par_lst->has_requesting_user()) {
+            $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), db_object_seq_id::FLD_ID_SQL_TYP,
+                null, sql::PAR_PREFIX . sql::FLD_LOG_REQ_USER);
+        } else {
+            $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), db_object_seq_id::FLD_ID_SQL_TYP);
+        }
         $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
         if ($this->field_id != null) {
             $fvt_lst->add_field(change_field::FLD_ID, $this->field_id, type_object::FLD_ID_SQL_TYP);

@@ -32,7 +32,9 @@
 
 namespace unit_read;
 
-include_once SHARED_TYPES_PATH . 'share_type.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'share_type.php';
 
 use cfg\sandbox\share_type_list;
 use shared\types\share_type as share_type_shared;

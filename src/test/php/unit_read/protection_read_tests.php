@@ -32,7 +32,9 @@
 
 namespace unit_read;
 
-include_once SHARED_TYPES_PATH . 'protection_type.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'protection_type.php';
 
 use cfg\sandbox\protection_type_list;
 use shared\types\protection_type as protect_type_shared;

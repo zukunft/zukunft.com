@@ -47,6 +47,7 @@ class source_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init for source
         $sc = new sql_creator();
@@ -119,7 +120,7 @@ class source_tests
         $src = $t->source();
         $t->assert_api_json($src);
         $db_con = new sql_db();
-        $src->code_id = sources::SIB_CODE;
+        $src->set_code_id_db(sources::SIB_CODE);
         $t->assert_api_msg($db_con, $src);
 
         $t->subheader($ts . 'frontend');
@@ -127,8 +128,8 @@ class source_tests
         $t->assert_api_to_dsp($src, new source_dsp());
 
         $t->subheader($ts . 'import and export');
-        $t->assert_ex_and_import($t->source());
-        $t->assert_ex_and_import($t->source_filled());
+        $t->assert_ex_and_import($t->source(), $usr_sys);
+        $t->assert_ex_and_import($t->source_filled(), $usr_sys);
         $json_file = 'unit/ref/bipm.json';
         $t->assert_json_file(new source($usr), $json_file);
 

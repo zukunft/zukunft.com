@@ -53,6 +53,8 @@ enum messages: string
     const VAR_ID_CHK = 'VarObjIdCheck';
     // the name of a sandbox object
     const VAR_NAME = 'VarObjName';
+    // the list of names e.g. the reserved names that should not be used
+    const VAR_NAME_LIST = 'VarObjNameList';
     // the name of the compare sandbox object
     const VAR_NAME_CHK = 'VarObjNameCheck';
     // the description of a sandbox object using dsp_id()
@@ -73,6 +75,8 @@ enum messages: string
     const VAR_USER_CHK = 'VarUserCheck';
     // the name of a user
     const VAR_USER_NAME = 'VarUserName';
+    // the name, profile and permissions of a user
+    const VAR_USER_PROFILE = 'VarUserProfile';
     // the name of a user of a list
     const VAR_USER_LIST_NAME = 'VarUserListName';
     // the name of a sandbox object
@@ -99,6 +103,7 @@ enum messages: string
     const VAR_SOURCE = 'VarSource';
     // the source of a compare value
     const VAR_SOURCE_CHK = 'VarSourceCheck';
+    const VAR_FORMULA_CHK = 'VarFormulaCheck';
     // the name of a class
     const VAR_CLASS_NAME = 'VarClassName';
     // the share permission of a sandbox object
@@ -127,6 +132,7 @@ enum messages: string
     // for the object main parameters created by the dsp_id function
     const VAR_TRIPLE = 'VarObjTriple';
     const VAR_FORMULA = 'VarObjFormula';
+    const VAR_EXPRESSION = 'VarObjExpression';
     const VAR_JSON_PART = 'VarJsonPart';
     const VAR_VERB_NAME = 'VarVerbName';
     const IMPORT_SUCCESS = 'finished successful';
@@ -151,90 +157,135 @@ enum messages: string
     case NONE = '';
 
     // messages with vars
-    case DIFF_ID = 'id is '
+    case DIFF_ID = 'id is "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_ID_CHK . self::VAR_END
-        . ' for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_NAME = 'name is '
+    case DIFF_NAME = 'name is "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END
-        . ' for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
         . '"';
-    case DIFF_USER = 'user is '
+    case DIFF_USER = 'user is "'
         . self::VAR_START . self::VAR_USER . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_USER_CHK . self::VAR_END
-        . ' for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_OWNER = 'owner is '
+    case DIFF_OWNER = 'owner is "'
         . self::VAR_START . self::VAR_USER . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_USER_CHK . self::VAR_END
-        . ' for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_TYPE = 'type is '
+    case DIFF_TYPE = 'type is "'
         . self::VAR_START . self::VAR_TYPE . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_TYPE_CHK . self::VAR_END
-        . ' for "'
-        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_SHARE = 'share permission is '
+    case DIFF_SHARE = 'share permission is "'
         . self::VAR_START . self::VAR_SHARE . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_SHARE_CHK . self::VAR_END
-        . ' for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_PROTECTION = 'modify protect is '
+    case DIFF_PROTECTION = 'modify protect is "'
         . self::VAR_START . self::VAR_PROTECT . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_PROTECT_CHK . self::VAR_END
-        . ' for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_EXCLUSION = 'exclusion is '
+    case DIFF_EXCLUSION = 'exclusion is "'
         . self::VAR_START . self::VAR_EXCLUDE . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_EXCLUDE_CHK . self::VAR_END
-        . ' for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case DIFF_VALUE = 'value is '
+    case DIFF_VALUE = 'value is "'
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
         . '"';
-    case DIFF_VALUE_TYPE = 'value type is '
+    case DIFF_VALUE_TYPE = 'value type is "'
         . self::VAR_START . self::VAR_TYPE . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_TYPE_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
         . '"';
-    case DIFF_GROUP = 'group name is '
+    case DIFF_GROUP = 'group name is "'
         . self::VAR_START . self::VAR_GROUP . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_GROUP_CHK . self::VAR_END
-        . ' for "'
+        . '" for "'
         . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
         . '"';
-    case DIFF_SOURCE = 'source is '
+    case DIFF_SOURCE = 'source is "'
         . self::VAR_START . self::VAR_SOURCE . self::VAR_END
-        . ' instead of '
+        . '" instead of "'
         . self::VAR_START . self::VAR_SOURCE_CHK . self::VAR_END
-        . ' for "'
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
         . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
         . '"';
+    case DIFF_FORMULA = 'formula is "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" instead of "'
+        . self::VAR_START . self::VAR_FORMULA_CHK . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '"';
+    case DIFF_CODE_ID = 'code_id is "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" instead of "'
+        . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '"';
+
+    case LOAD_FORMULA_ID = 'unexpected formula id '
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . ' in database for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_SANDBOX_NAME . self::VAR_END
+        . '"';
+
     case TRIM_NAME = 'trim "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
@@ -265,7 +316,9 @@ enum messages: string
     case TRIPLE_ID_ADDITIONAL = 'triple id additional of "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '"';
-    case TRIPLE_NOT_SAVED = 'triple "'
+    case IMPORT_NOT_SAVED = 'import of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '" cannot be saved';
     case PHRASE_MISSING_MSG = 'phrase "'
@@ -311,6 +364,11 @@ enum messages: string
         . ' to list of user '
         . self::VAR_START . self::VAR_USER_LIST_NAME . self::VAR_END
         . ' list';
+    case LIST_USER_INVALID = 'trying to add an invalid user '
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . ' to list of user '
+        . self::VAR_START . self::VAR_USER_LIST_NAME . self::VAR_END
+        . ' list';
     case FILL_WORD_WITH_OTHER = 'word "'
         . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
         . '" cannot be filled with '
@@ -342,8 +400,7 @@ enum messages: string
     case IMPORT_UNKNOWN_ELEMENT = 'Unknown element "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
-    case IMPORT_SUMMARY = ''
-        . self::VAR_START . self::VAR_SUMMARY . self::VAR_END;
+    case IMPORT_SUMMARY = self::VAR_START . self::VAR_SUMMARY . self::VAR_END;
     case PHRASE_NAME_EMPTY = self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
         . ' contains an empty phrase name';
 
@@ -354,19 +411,47 @@ enum messages: string
         . '" is expected to be a number ('
         . self::VAR_START . self::VAR_GROUP . self::VAR_END
         . ')';
+    case IMPORT_VALUE_NOT_NUMERIC = 'Import value: "'
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . '" is expected to be a number ('
+        . self::VAR_START . self::VAR_GROUP . self::VAR_END
+        . ')';
     case FAILED_ADD_LOGGING_ERROR = 'Adding "'
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . '" "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '" failed due to logging error';
-    case ID_OR_NAME_MISSING = 'id or name of word "'
-        . self::VAR_START . self::VAR_ID . self::VAR_END
-        . '" missing';
+    case USED_OBJECT_ID_AND_NAME_MISSING =
+        self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
+        . '" missing but it is used "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '"';
+    case FILL_OBJECT_ID_MISSING =
+        self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" has no id but is used in fill_by_id';
+    case ADDED_OBJECT_ID_MISSING =
+        self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" has no id after expected to be added to the database';
+    case ADDED_OBJECT_NOT_FOUND =
+        self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is not found any more after expected to be added to the database';
 
     case SOURCE_MISSING_IMPORT = 'source "'
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
         . '" is missing in the import message '
         . self::VAR_START . self::VAR_SOURCE_NAME . self::VAR_END;
+    case FORMULA_MISSING_IMPORT = 'formula "'
+        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
+        . '" is missing in the import message '
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
     case FORMULA_EXPRESSION_MISSING = 'formula expression is missing in '
         . self::VAR_START . self::VAR_FORMULA . self::VAR_END;
     case COMPONENT_MISSING = 'component with name "'
@@ -398,11 +483,25 @@ enum messages: string
     case CONFIG_PART = 'configuration part '
         . self::VAR_START . self::VAR_PART . self::VAR_END
         . ' cannot yet be selected';
-    case API_MESSAGE = ''
-        . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case API_MESSAGE = self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case MANDATORY_FIELD_NAME_MISSING = 'Mandatory field name missing in API JSON '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case PHRASE_TYPE_NOT_FOUND = 'word/triple type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case SOURCE_TYPE_NOT_FOUND = 'source type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case FORMULA_TYPE_NOT_FOUND = 'formula type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
     case VIEW_TYPE_NOT_FOUND = 'view type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case COMPONENT_TYPE_NOT_FOUND = 'component type "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
+    case VIEW_STYLE_NOT_FOUND = 'view style "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" not found';
     case VIEW_IMPORT_ERROR = ' when importing '
@@ -420,6 +519,7 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' because id is zero';
     case VALUE_TIME_SERIES_LOG_REF_FAILED = 'adding the value time series reference in the system log failed';
+    case VALUE_REFERENCE_LOG_REF_FAILED = 'adding the value reference in the system log failed';
     case SHARE_TYPE_NOT_EXPECTED = 'share type "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is not expected when importing '
@@ -467,6 +567,28 @@ enum messages: string
         . '" failed because these values are missing '
         . self::VAR_START . self::VAR_VALUE_LIST . self::VAR_END
         . '.';
+    case IMPORT_TRIPLE_NOT_READY = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because the triple "'
+        . self::VAR_START . self::VAR_TRIPLE_NAME . self::VAR_END
+        . '" is incomplete.';
+    case IMPORT_FORMULA_NOT_READY = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because the formula "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" is incomplete.';
+    case IMPORT_FORMULA_WORD_NOT_READY = 'Word with the formula name "'
+        . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
+        . '" missing for id '
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '.';
+    case IMPORT_FORMULA_ASSIGN_PHRASE_MISSING = 'import of "'
+        . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
+        . '" failed because "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" should be assigned to formula "'
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . '" but it is not defined.';
     case IMPORT_VALUE_COUNT_VALIDATED = 'import from "'
         . self::VAR_START . self::VAR_FILE_NAME . self::VAR_END
         . '" validated by counting '
@@ -526,6 +648,16 @@ enum messages: string
     case FAILED_RELOAD_CLASS = 'Reload "'
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . '" failed';
+    case FAILED_RELOAD_VALUE = 'Reload '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
+        . '" failed';
+    case FAILED_RELOAD_OBJECT = 'Reload '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" failed';
     case TRIPLE_VERB_SET = 'verb for triple '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' set to '
@@ -542,6 +674,17 @@ enum messages: string
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' '
         . self::VAR_START . self::VAR_VAL_ID . self::VAR_END;
+    case FORMULA_TERM_MISSING = '"'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is missing in formula '
+        . self::VAR_START . self::VAR_FORMULA . self::VAR_END
+        . ' with the expression '
+        . self::VAR_START . self::VAR_EXPRESSION . self::VAR_END;
+
+    case ID_MISSING_FOR_DEL = 'Deleting of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' not possible because database id is missing in '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END;
 
     case FAILED_ADD_GROUP = 'Adding group '
         . self::VAR_START . self::VAR_ID . self::VAR_END
@@ -550,9 +693,34 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
-    case OBJECT_RELOADING_FAILED = 'Reloading of the object for '
-        . self::VAR_START . self::VAR_VALUE . self::VAR_END
-        . ' failed';
+
+    case USER_NO_IMPORT_PRIVILEGES = 'user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" cannot be imported due to missing privileges of the requesting user '
+        . self::VAR_START . self::VAR_USER_PROFILE . self::VAR_END;
+    case USER_NO_ADD_PRIVILEGES = 'user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" cannot be added due to missing privileges of the requesting user '
+        . self::VAR_START . self::VAR_USER_PROFILE . self::VAR_END;
+    case USER_NO_UPDATE_PRIVILEGES = 'user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" cannot be updated due to missing privileges of the requesting user '
+        . self::VAR_START . self::VAR_USER_PROFILE . self::VAR_END;
+    case NOT_ALLOWED_TO = 'user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" with profile '
+        . self::VAR_START . self::VAR_USER_PROFILE . self::VAR_END
+        . ' is not permitted to update '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' of '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END;
+    case USER_IS_RESERVED = 'user name "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" is used by the system. Please use another name, which should not be one of these '
+        . self::VAR_START . self::VAR_NAME_LIST . self::VAR_END;
+    case USER_CANNOT_DEL = 'user "'
+        . self::VAR_START . self::VAR_USER_NAME . self::VAR_END
+        . '" cannot be deleted because otherwise log entries would be lost';
     case DEFAULT_VALUES_RELOADING_FAILED = 'Reloading of the default values for '
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . ' failed';
@@ -561,6 +729,65 @@ enum messages: string
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' != '
         . self::VAR_START . self::VAR_ID . self::VAR_END;
+
+    case IMPORT_PHRASE_NOT_FOUND = 'Cannot find word or triple "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" when importing '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
+    case IMPORT_TERM_NOT_FOUND = 'Cannot find word, verb, triple or formula "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" when importing '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
+
+    case IMPORT_SOURCE_NOT_FOUND = 'Cannot find source "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" when importing '
+        . self::VAR_START . self::VAR_ID . self::VAR_END;
+
+    case CLASS_ALREADY_EXISTS = 'A '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' with the name "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" already exists. Please use another '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' name.';
+
+    case VERB_UPDATE_FAILED = 'updating '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' to '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' for verb '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed';
+
+    case VERB_ADD_FAILED = 'Adding verb '
+        .self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' failed.';
+
+
+    case JOB_FORMULA_MISSING = 'Job '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' cannot be added, because formula is missing.';
+    case JOB_WORD_MISSING = 'Job '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' cannot be added, because no words or triples are defined.';
+    case JOB_ALREADY_ACTIVE = 'Job for phrases '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' is already in the list of active jobs';
+
+    case UPDATE_FAILED = 'updating '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' to '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' '
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed';
+
+    case SANDBOX_NOT_SIMILAR = self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' seems to be not similar to '
+        . self::VAR_START . self::VAR_ID_CHK . self::VAR_END;
 
     // for the change log
     case LOG_ADD = 'added';
@@ -740,10 +967,17 @@ enum messages: string
     case FAILED_ADD_REFERENCE = 'Adding reference '
     . self::VAR_START . self::VAR_ID . self::VAR_END
     . ' failed.';
+    case FAILED_ADD_VALUE = 'Adding value '
+    . self::VAR_START . self::VAR_ID . self::VAR_END
+    . ' failed.';
+
     case FAILED_ADD_REFERENCE_LOG = 'Adding reference for '
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . ' in the log failed.';
 
+    case PHRASE_NOT_FOUND = 'word or triple "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" not found';
     case REFERENCE_TYPE_NOT_FOUND = 'Reference type for {VAR_TYPE_NAME} not found';
     case VAR_TYPE_NAME = 'TYPE_NAME';
 

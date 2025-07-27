@@ -32,24 +32,24 @@
 
 namespace unit_write;
 
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
 
+include_once paths::DB . 'sql_db.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+
+use cfg\db\sql_db;
 use cfg\formula\formula;
-use cfg\log\change;
-use cfg\log\change_field_list;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\word;
 use html\word\word as word_dsp;
+use shared\const\users;
 use shared\enum\change_fields;
-use shared\enum\change_tables;
 use shared\library;
 use shared\const\formulas;
 use shared\const\triples;
@@ -71,8 +71,9 @@ class word_write_tests
         $lib = new library();
         $t->name = 'word db write->';
 
-
-        $t->header('word db write tests');
+        // start the test section (ts)
+        $ts = 'db write word ';
+        $t->header($ts);
 
         $t->subheader('word prepared write');
         $test_name = 'add word ' . words::TEST_ADD_VIA_SQL . ' via sql insert';
@@ -283,19 +284,19 @@ class word_write_tests
         $test_name = 'check if saving a word with an existing name (' . words::MATH . ') creates a warning message for the user';
         $wrd_new = new word($t->usr1);
         $wrd_new->set_name(words::MATH);
-        $result = $wrd_new->save()->get_last_message();
+        $result = $wrd_new->save()->get_last_message_translated();
         $target = 'A word with the name "'.words::MATH.'" already exists. Please use another word name.';
         $t->display($test_name, $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // test the creation of a new word
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(words::TEST_ADD);
-        $result = $wrd_add->save()->get_last_message();
+        $result = $wrd_add->save()->get_last_message_translated();
         $target = '';
         $t->assert('word->save for "' . words::TEST_ADD . '"', $result, $target, $t::TIMEOUT_LIMIT_DB);
         $wrd_add = new word($t->usr1);
         $wrd_add->set_name(words::TEST_ADD);
-        $result = $wrd_add->save()->get_last_message();
+        $result = $wrd_add->save()->get_last_message_translated();
         $target = 'A word with the name "'.words::TEST_ADD.'" already exists. Please use another word name.';
         $t->display('word->save reject for "' . words::TEST_ADD . '"', $target, $result, $t::TIMEOUT_LIMIT_DB);
 
@@ -303,7 +304,7 @@ class word_write_tests
         $vrb = new verb();
         $vrb->set_user($t->usr1);
         $vrb->set_name(words::TEST_ADD);
-        $result = $vrb->save()->get_last_message();
+        $result = $vrb->save()->get_last_message_translated();
         $target = 'A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(verb::class) . ' name.';
         $t->assert('verb cannot have an already used word name', $result, $target);
@@ -312,7 +313,7 @@ class word_write_tests
         $trp = new triple($t->usr1);
         $trp->load_by_name(triples::PI_NAME);
         $trp->set_name(words::TEST_ADD);
-        $result = $trp->save()->get_last_message();
+        $result = $trp->save()->get_last_message_translated();
         $target = 'A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(triple::class) . ' name.';
         $t->assert('triple cannot by renamed to an already used word name', $result, $target);
@@ -321,7 +322,7 @@ class word_write_tests
         $frm = new formula($t->usr1);
         $frm->load_by_name(formulas::SCALE_TO_SEC);
         $frm->set_name(words::TEST_ADD);
-        $result = $frm->save()->get_last_message();
+        $result = $frm->save()->get_last_message_translated();
         $target = 'A word with the name "System Test Word" already exists. '
             . 'Please use another ' . $lib->class_to_name(formula::class) . ' name.';
         $t->assert('formula cannot by renamed to an already used word name', $result, $target);
@@ -333,7 +334,7 @@ class word_write_tests
         if ($wrd_add->id() > 0) {
             $result = $t->log_last_by_field($wrd_add, change_fields::FLD_WORD_NAME, $wrd_add->id(), true);
         }
-        $target = user::SYSTEM_TEST_NAME . ' added "' . words::TEST_ADD . '"';
+        $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_ADD . '"';
         $t->display('word->save logged for "' . words::TEST_ADD . '"', $target, $result);
 
         // ... test if the new word has been created
@@ -362,7 +363,7 @@ class word_write_tests
         $t->display('word->load renamed word "' . words::TEST_RENAMED . '"', $target, $result);
 
         // check if the word parameters can be added
-        $wrd_renamed->plural = words::TEST_RENAMED . 's';
+        $wrd_renamed->set_plural(words::TEST_RENAMED . 's');
         $wrd_renamed->description = words::TEST_RENAMED . ' description';
         $wrd_renamed->type_id = $phr_typ_cac->id(phrase_type_shared::OTHER);
         $result = $wrd_renamed->save()->get_last_message();
@@ -372,7 +373,7 @@ class word_write_tests
 
         // check if the word parameters have been added
         $wrd_reloaded = $t->load_word(words::TEST_RENAMED);
-        $result = $wrd_reloaded->plural;
+        $result = $wrd_reloaded->plural();
         $target = words::TEST_RENAMED . 's';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '"', $target, $result);
         $result = $wrd_reloaded->description;
@@ -384,20 +385,20 @@ class word_write_tests
 
         // check if the word parameter adding have been logged
         $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_WORD_PLURAL, $wrd_reloaded->id(), true);
-        $target = user::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . 's"';
+        $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . 's"';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '" logged', $target, $result);
-        $result = $t->log_last_by_field($wrd_reloaded, sandbox_named::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
-        $target = user::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . ' description"';
+        $result = $t->log_last_by_field($wrd_reloaded, sql_db::FLD_DESCRIPTION, $wrd_reloaded->id(), true);
+        $target = users::SYSTEM_TEST_NAME . ' added "' . words::TEST_RENAMED . ' description"';
         $t->display('word->load description for "' . words::TEST_RENAMED . '" logged', $target, $result);
         $t->display('word->load ref_2 for "' . words::TEST_RENAMED . '" logged', $target, $result);
         $result = $t->log_last_by_field($wrd_reloaded, change_fields::FLD_PHRASE_TYPE, $wrd_reloaded->id(), true);
-        $target = user::SYSTEM_TEST_NAME . ' added "differentiator filler"';
+        $target = users::SYSTEM_TEST_NAME . ' added "differentiator filler"';
         $t->display('word->load type_id for "' . words::TEST_RENAMED . '" logged', $target, $result);
 
         // check if a user specific word is created if another user changes the word
         $wrd_usr2 = new word($t->usr2);
         $wrd_usr2->load_by_name(words::TEST_RENAMED);
-        $wrd_usr2->plural = words::TEST_RENAMED . 's2';
+        $wrd_usr2->set_plural(words::TEST_RENAMED . 's2');
         $wrd_usr2->description = words::TEST_RENAMED . ' description2';
         $wrd_usr2->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $result = $wrd_usr2->save()->get_last_message();
@@ -407,7 +408,7 @@ class word_write_tests
         // check if a user specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);
         $wrd_usr2_reloaded->load_by_name(words::TEST_RENAMED);
-        $result = $wrd_usr2_reloaded->plural;
+        $result = $wrd_usr2_reloaded->plural();
         $target = words::TEST_RENAMED . 's2';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '"', $target, $result);
         $result = $wrd_usr2_reloaded->description;
@@ -419,7 +420,7 @@ class word_write_tests
 
         // check the word for the original user remains unchanged
         $wrd_reloaded = $t->load_word(words::TEST_RENAMED);
-        $result = $wrd_reloaded->plural;
+        $result = $wrd_reloaded->plural();
         $target = words::TEST_RENAMED . 's';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '" unchanged for user 1', $target, $result);
         $result = $wrd_reloaded->description;
@@ -434,7 +435,7 @@ class word_write_tests
         // check if undo all specific changes removes the user word
         $wrd_usr2 = new word($t->usr2);
         $wrd_usr2->load_by_name(words::TEST_RENAMED);
-        $wrd_usr2->plural = words::TEST_RENAMED . 's';
+        $wrd_usr2->set_plural(words::TEST_RENAMED . 's');
         $wrd_usr2->description = words::TEST_RENAMED . ' description';
         $wrd_usr2->type_id = $phr_typ_cac->id(phrase_type_shared::OTHER);
         $result = $wrd_usr2->save()->get_last_message();
@@ -444,7 +445,7 @@ class word_write_tests
         // check if a user specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);
         $wrd_usr2_reloaded->load_by_name(words::TEST_RENAMED);
-        $result = $wrd_usr2_reloaded->plural;
+        $result = $wrd_usr2_reloaded->plural();
         $target = words::TEST_RENAMED . 's';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '" unchanged now also for user 2', $target, $result);
         $result = $wrd_usr2_reloaded->description;

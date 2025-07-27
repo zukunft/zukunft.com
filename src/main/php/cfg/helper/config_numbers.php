@@ -32,15 +32,17 @@
 
 namespace cfg\helper;
 
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value_list.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_ENUM_PATH . 'language_codes.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'api.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_ENUM . 'language_codes.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
 
 use cfg\phrase\phrase;
 use cfg\user\user;
@@ -156,6 +158,7 @@ class config_numbers extends value_list
         [words::TOOLTIP_COMMENT_COM, words::TOOLTIP_COMMENT],
         [words::SYS_CONF_VALUE_COM, words::SYS_CONF_VALUE],
         [words::SYS_CONF_SOURCE_COM, words::SYS_CONF_SOURCE],
+        [words::SYS_CONF_USER_COM, words::SYS_CONF_USER],
         [words::TIME_COM, words::TIME],
         [words::YEAR_COM, words::YEAR],
         [words::CALCULATION_COM, words::CALCULATION],

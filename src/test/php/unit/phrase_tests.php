@@ -32,9 +32,12 @@
 
 namespace unit;
 
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once html_paths::PHRASE . 'phrase.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\db\sql_creator;
 use cfg\phrase\phrase;
@@ -95,7 +98,7 @@ class phrase_tests
 
         // check the Postgres query syntax
         $wrd_company = new word($usr);
-        $wrd_company->set(2, words::COMPANY);
+        $wrd_company->set(words::CONST_ID, words::COMPANY);
         $sql_name = 'phrase_list_related';
         $file_name = $t->resource_path . $sql_name . test_base::FILE_EXT;
         $created_sql = $phr->sql_list($wrd_company);

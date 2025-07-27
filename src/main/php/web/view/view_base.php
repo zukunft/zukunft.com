@@ -45,27 +45,29 @@
 
 namespace html\view;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once WEB_HTML_PATH . 'display_list.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_COMPONENT_PATH . 'component.php';
-include_once WEB_COMPONENT_PATH . 'component_list.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_VIEW_PATH . 'view_list.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once SHARED_CONST_PATH . 'components.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::HTML . 'display_list.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::COMPONENT . 'component_list.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::WORD . 'triple.php';
+include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use html\component\component_list;
 use html\sandbox\db_object;
-use html\sandbox\sandbox_typed;
+use html\sandbox\sandbox_code_id;
 use html\user\user_message;
 use html\word\triple;
 use html\word\word;
@@ -74,15 +76,14 @@ use shared\const\views;
 use shared\enum\messages as msg_id;
 use shared\json_fields;
 
-class view_base extends sandbox_typed
+class view_base extends sandbox_code_id
 {
 
     /*
      * object vars
      */
 
-    // used for system views
-    private ?string $code_id;
+    // code_id is used for system views
     protected component_list $cmp_lst;
 
     // objects that should be displayed (only one is supposed to be not null)
@@ -96,7 +97,7 @@ class view_base extends sandbox_typed
 
     function __construct(?string $api_json = null)
     {
-        $this->code_id = null;
+        $this->set_code_id(null);
         $this->cmp_lst = new component_list();
         $this->dbo = null;
         parent::__construct($api_json);
@@ -110,11 +111,6 @@ class view_base extends sandbox_typed
     function component_list(): component_list
     {
         return $this->cmp_lst;
-    }
-
-    function code_id(): ?string
-    {
-        return $this->code_id;
     }
 
 
@@ -132,11 +128,6 @@ class view_base extends sandbox_typed
     {
         // the root view object
         $usr_msg = parent::api_mapper($json_array);
-        if (array_key_exists(json_fields::CODE_ID, $json_array)) {
-            $this->code_id = $json_array[json_fields::CODE_ID];
-        } else {
-            $this->code_id = null;
-        }
         // set the components
         $cmp_lst = new component_list();
         if (array_key_exists(json_fields::COMPONENTS, $json_array)) {
@@ -176,7 +167,6 @@ class view_base extends sandbox_typed
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[json_fields::CODE_ID] = $this->code_id;
         $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }

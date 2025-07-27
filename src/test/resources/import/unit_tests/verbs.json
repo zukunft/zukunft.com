@@ -1,0 +1,14 @@
+{
+  "version": "0.0.3",
+  "time": "2025-07-17 09:26:37",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message for data_object based import by counting the verbs"
+  ],
+  "verbs": [
+    {
+      "name": "System Test Verb"
+    }
+  ]
+}
+

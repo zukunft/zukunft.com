@@ -46,15 +46,15 @@ class api
     const HOST_UAT = 'https://test.zukunft.com/';
     const HOST_PROD = 'https://www.zukunft.com/';
     const HOST_SAME = '/';
-    const BS_PATH_DEV = 'bootstrap-5.3.3-dist/';
-    const BS_PATH_UAT = 'bootstrap/4.1.3/';
-    const BS_PATH_PROD = 'bootstrap/4.1.3/';
+    const BS_PATH_DEV = 'bootstrap/';
+    const BS_PATH_UAT = 'bootstrap/';
+    const BS_PATH_PROD = 'bootstrap/';
     const BS_JS = 'js' . DIRECTORY_SEPARATOR . 'bootstrap.js';
-    const BS_CSS_PATH_DEV = 'bootstrap-5.3.3-dist/';
-    const BS_CSS_PATH_UAT = 'bootstrap/4.3.1/';
-    const BS_CSS_PATH_PROD = 'bootstrap/4.3.1/';
+    const BS_CSS_PATH_DEV = 'bootstrap/';
+    const BS_CSS_PATH_UAT = 'bootstrap/';
+    const BS_CSS_PATH_PROD = 'bootstrap/';
     const BS_CSS = 'css' . DIRECTORY_SEPARATOR . 'bootstrap.css';
-    const EXT_LIB_PATH = 'lib_external' . DIRECTORY_SEPARATOR;
+    const EXT_LIB_PATH = 'external_lib' . DIRECTORY_SEPARATOR;
     const HOST_SYS_LOG = '';
 
     // the url name of the main script that is used in combination with the host url
@@ -136,6 +136,9 @@ class api
     const URL_VAR_FORMULA_TYPE = 'formula_type';
     const URL_VAR_USER_PROFILE = 'user_profile';
     const URL_VAR_PLURAL = 'plural';
+    const URL_VAR_REVERSE = 'reverse';
+    const URL_VAR_REVERSE_PLURAL = 'plural_reverse';
+    const URL_VAR_URL = 'url';
 
     // used for the change log
     // the short name of the object class name e.g. word instead of cfg/word

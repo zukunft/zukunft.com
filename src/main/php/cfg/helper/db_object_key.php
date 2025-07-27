@@ -35,20 +35,22 @@
 
 namespace cfg\helper;
 
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-//include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_RESULT_PATH . 'result.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+//include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -335,7 +337,7 @@ class db_object_key extends TextIdObject
 
 
     /*
-     * information
+     * info
      */
 
     /**

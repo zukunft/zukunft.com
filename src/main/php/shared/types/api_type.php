@@ -42,6 +42,7 @@ enum api_type: string
     case NO_KEY_FILL = 'no_key_fill';
 
     // internal parameter for unit testing to switch off the database loading of missing objects
+    // and ignore the excluded flag so include all fields also for excluded
     case TEST_MODE = 'test_mode';
 
     // include the message header

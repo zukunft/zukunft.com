@@ -33,7 +33,9 @@
 
 namespace model;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
 
 use cfg\helper\type_object;
 
@@ -49,6 +51,7 @@ class db_cl
     const VIEW = "view";
     const VIEW_TYPE = "view_type";
     const VIEW_COMPONENT_TYPE = "component_type";
+    const VIEW_COMPONENT_LINK_TYPE = "component_link_type";
     const VIEW_COMPONENT_POS_TYPE = "position_type";
     const REF_TYPE = "ref_type";
     const SOURCE_TYPE = "source_type";
@@ -134,6 +137,12 @@ class db_cl
     {
         global $cmp_typ_cac;
         return $cmp_typ_cac->id($code_id);
+    }
+
+    function component_link_type_id(string $code_id): int
+    {
+        global $cmp_lnk_typ_cac;
+        return $cmp_lnk_typ_cac->id($code_id);
     }
 
     function component_pos_type_id(string $code_id): int
@@ -382,6 +391,12 @@ class db_cl
         return $cmp_typ_cac->name($id);
     }
 
+    function component_link_type_name(int $id): string
+    {
+        global $cmp_lnk_typ_cac;
+        return $cmp_lnk_typ_cac->name($id);
+    }
+
     function component_pos_type_name(int $id): string
     {
         global $pos_typ_cac;
@@ -496,6 +511,9 @@ function cl_name(string $type, int $id): string
         case db_cl::VIEW_COMPONENT_TYPE:
             $result = $db_code_link->component_type_name($id);
             break;
+        case db_cl::VIEW_COMPONENT_LINK_TYPE:
+            $result = $db_code_link->component_link_type_name($id);
+            break;
         case db_cl::VIEW_COMPONENT_POS_TYPE:
             $result = $db_code_link->component_pos_type_name($id);
             break;
@@ -576,6 +594,9 @@ function get_type(string $type, string $code_id): type_object
             break;
         case db_cl::VIEW_COMPONENT_TYPE:
             $result = $db_code_link->component_type($db_code_link->component_type_id($code_id));
+            break;
+        case db_cl::VIEW_COMPONENT_LINK_TYPE:
+            $result = $db_code_link->component_link_type($db_code_link->component_link_type_id($code_id));
             break;
         case db_cl::VIEW_COMPONENT_POS_TYPE:
             $result = $db_code_link->component_pos_type($db_code_link->component_pos_type_id($code_id));

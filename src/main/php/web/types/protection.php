@@ -32,7 +32,9 @@
 
 namespace html\types;
 
-include_once SHARED_TYPES_PATH . 'protection_type.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED_TYPES . 'protection_type.php';
 
 use shared\types\protection_type;
 

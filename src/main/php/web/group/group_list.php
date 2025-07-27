@@ -32,15 +32,17 @@
 
 namespace html\group;
 
-include_once WEB_GROUP_PATH . 'group.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_list.php';
-include_once WEB_USER_PATH . 'user.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::GROUP . 'group.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
+include_once html_paths::USER . 'user.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED . 'library.php';
 
 use html\phrase\phrase;
 use html\phrase\phrase_list;

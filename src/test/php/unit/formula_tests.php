@@ -32,8 +32,11 @@
 
 namespace unit;
 
-include_once MODEL_FORMULA_PATH . 'expression.php';
-include_once WEB_ELEMENT_PATH . 'element_group.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::MODEL_FORMULA . 'expression.php';
+include_once html_paths::ELEMENT . 'element_group.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -58,6 +61,7 @@ class formula_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init
         $lib = new library();
@@ -107,7 +111,7 @@ class formula_tests
 
         $t->subheader($ts . 'sql write update');
         $frm = $t->formula_name_only();
-        $frm_renamed = $frm->cloned(formulas::SYSTEM_TEXT_RENAMED);
+        $frm_renamed = $frm->cloned(formulas::SYSTEM_TEST_RENAMED);
         $t->assert_sql_update($sc, $frm_renamed, $frm);
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::USER]);
         $t->assert_sql_update($sc, $frm_renamed, $frm, [sql_type::LOG]);
@@ -134,8 +138,8 @@ class formula_tests
         $t->assert_api_to_dsp($frm, new formula_dsp());
 
         $t->subheader($ts . 'im- and export');
-        $t->assert_ex_and_import($t->formula());
-        $t->assert_ex_and_import($t->formula_filled());
+        $t->assert_ex_and_import($t->formula(), $usr_sys);
+        $t->assert_ex_and_import($t->formula_filled(), $usr_sys);
         $json_file = 'unit/formula/scale_second_to_minute.json';
         $t->assert_json_file(new formula($usr), $json_file);
 

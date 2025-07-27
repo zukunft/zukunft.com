@@ -32,7 +32,9 @@
 
 namespace html\sandbox;
 
-include_once WEB_HTML_PATH . 'html_selector.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::HTML . 'html_selector.php';
 
 
 class user_sandbox_display

@@ -32,16 +32,18 @@
 
 namespace cfg\view;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_list.php';
-include_once SHARED_CONST_PATH . 'views.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -51,8 +53,6 @@ use cfg\db\sql_par_type;
 use cfg\helper\type_list;
 use cfg\user\user;
 use shared\const\views as view_shared;
-
-global $sys_msk_cac;
 
 class view_sys_list extends type_list
 {
@@ -130,8 +130,8 @@ class view_sys_list extends type_list
         $sc->set_name($qp->name);
         $msk = new view($this->user());
         $sc->set_id_field($msk->id_field());
-        $sc->add_where(sql::FLD_CODE_ID, '', sql_par_type::NOT_NULL);
-        $sc->set_order(view::FLD_ID);
+        $sc->add_where(sql_db::FLD_CODE_ID, '', sql_par_type::NOT_NULL);
+        $sc->set_order(view_db::FLD_ID);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -161,7 +161,7 @@ class view_sys_list extends type_list
         $msk = new view($this->usr);
         $msk->set_id(2);
         $msk->set_name(view_shared::WORD);
-        $msk->code_id = view_shared::WORD;
+        $msk->set_code_id_db(view_shared::WORD_CODE_ID);
         $this->add($msk);
     }
 

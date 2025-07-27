@@ -29,7 +29,9 @@
 
 */
 
-include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 
 use cfg\system\sys_log_level;
 

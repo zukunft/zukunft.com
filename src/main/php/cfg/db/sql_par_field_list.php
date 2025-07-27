@@ -38,23 +38,25 @@
 
 namespace cfg\db;
 
-include_once DB_PATH . 'sql_par_field.php';
-//include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-//include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
 
+include_once paths::DB . 'sql_par_field.php';
+//include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+//include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED . 'library.php';
+
+use cfg\formula\formula_db;
 use cfg\helper\combine_named;
 use cfg\helper\db_object_seq_id;
-use cfg\formula\formula;
 use cfg\log\change;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link_named;
@@ -351,7 +353,7 @@ class sql_par_field_list
         global $cng_fld_cac;
 
         // include the name field for the log also if the object is only excluded
-        if ($sbx_db->name() <> $sbx_upd->name()) {
+        if ($sbx_db->name_or_null() <> $sbx_upd->name()) {
             if ($do_log) {
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . $sbx_upd->name_field(),
@@ -359,30 +361,25 @@ class sql_par_field_list
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            if ($sbx_db->name() == '') {
-                $old_name = null;
-            } else {
-                $old_name = $sbx_db->name();
-            }
             $this->add_field(
                 $sbx_upd->name_field(),
                 $sbx_upd->name(),
                 sandbox_named::FLD_NAME_SQL_TYP,
-                $old_name
+                $sbx_db->name_or_null()
             );
         }
         if ($sbx_db->description <> $sbx_upd->description) {
             if ($do_log) {
                 $this->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $this->add_field(
-                sandbox_named::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
                 $sbx_upd->description,
-                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $sbx_db->description
             );
         }
@@ -439,7 +436,7 @@ class sql_par_field_list
     function is_empty_except_internal_fields(): bool
     {
         $names = array_diff($this->names(),
-            [sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID, user::FLD_ID, formula::FLD_LAST_UPDATE]);
+            [sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID, user::FLD_ID, formula_db::FLD_LAST_UPDATE]);
         if (count($names) == 0) {
             return true;
         } else {
@@ -656,6 +653,15 @@ class sql_par_field_list
                 $this->lst[$key]->name = $sc->name_sql_esc($fld->name);
             }
         }
+    }
+
+    function sql_field_list(): sql_field_list
+    {
+        $lst = new sql_field_list();
+        foreach ($this->lst as $par_fld) {
+            $lst->add_par_field($par_fld);
+        }
+        return $lst;
     }
 
     /**

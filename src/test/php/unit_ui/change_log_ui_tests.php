@@ -32,7 +32,9 @@
 
 namespace unit_ui;
 
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::SYSTEM . 'back_trace.php';
 
 use html\html_base;
 use html\log\change_log_list;

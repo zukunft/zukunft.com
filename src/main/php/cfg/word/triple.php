@@ -21,7 +21,7 @@
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - internal:          e.g. to generate the name based on the link
     - save:              manage to update the database
     - sql write:         sql statement creation to write to the database
@@ -56,52 +56,56 @@
 
 namespace cfg\word;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_LANGUAGE_PATH . 'language.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-//include_once MODEL_LOG_PATH . 'change_link.php';
-//include_once MODEL_LOG_PATH . 'change_table_list.php';
-//include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
-//include_once MODEL_PHRASE_PATH . 'term.php';
-//include_once MODEL_REF_PATH . 'ref.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-//include_once MODEL_VALUE_PATH . 'value_list.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'word_db.php';
-//include_once MODEL_WORD_PATH . 'word_list.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_LANGUAGE . 'language.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+//include_once paths::MODEL_LOG . 'change_link.php';
+//include_once paths::MODEL_LOG . 'change_table_list.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_type.php';
+//include_once paths::MODEL_PHRASE . 'term.php';
+//include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_VIEW . 'view_db.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_db.php';
+//include_once paths::MODEL_WORD . 'word_list.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -116,11 +120,9 @@ use cfg\db\sql_type_list;
 use cfg\helper\combine_named;
 use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
-use cfg\language\language;
 use cfg\log\change;
 use cfg\log\change_link;
 use cfg\phrase\phrase;
-use cfg\phrase\phrase_type;
 use cfg\phrase\term;
 use cfg\ref\ref;
 use cfg\sandbox\sandbox;
@@ -131,7 +133,9 @@ use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value_list;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\view\view;
+use cfg\view\view_db;
 use shared\const\triples;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
@@ -154,124 +158,38 @@ class triple extends sandbox_link_named
     // comment used for the database creation
     const TBL_COMMENT = 'to link one word or triple with a verb to another word or triple';
 
-    // object specific database and JSON object field names
-    const FLD_ID = 'triple_id';
-    const FLD_FROM_COM = 'the phrase_id that is linked';
-    const FLD_FROM = 'from_phrase_id';
-    const FLD_VERB_COM = 'the verb_id that defines how the phrases are linked';
-    const FLD_TO_COM = 'the phrase_id to which the first phrase is linked';
-    const FLD_TO = 'to_phrase_id';
-    const FLD_NAME_COM = 'the name used which must be unique within the terms of the user';
-    const FLD_NAME = 'triple_name';
-    const FLD_NAME_GIVEN_COM = 'the unique name manually set by the user, which can be null if the generated name should be used';
-    const FLD_NAME_GIVEN = 'name_given';
-    const FLD_NAME_GIVEN_SQL_TYP = sql_field_type::NAME;
-    const FLD_NAME_AUTO_COM = 'the generated name is saved in the database for database base unique check based on the phrases and verb, which can be overwritten by the given name';
-    const FLD_NAME_AUTO = 'name_generated';
-    const FLD_NAME_AUTO_SQL_TYP = sql_field_type::NAME;
-    const FLD_DESCRIPTION_COM = 'text that should be shown to the user in case of mouseover on the triple name';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
-    const FLD_VIEW_COM = 'the default mask for this triple';
-    const FLD_VIEW = 'view_id';
-    const FLD_VIEW_SQL_TYP = sql_field_type::INT;
-    const FLD_VALUES_COM = 'number of values linked to the word, which gives an indication of the importance';
-    const FLD_VALUES = 'values';
-    const FLD_VALUES_SQL_TYP = sql_field_type::INT;
-    const FLD_INACTIVE_COM = 'true if the word is not yet active e.g. because it is moved to the prime words with a 16 bit id';
-    const FLD_INACTIVE = 'inactive';
-    const FLD_CODE_ID_COM = 'to link coded functionality to a specific triple e.g. to get the values of the system configuration';
-    const FLD_COND_ID_COM = 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
-    const FLD_COND_ID = 'triple_condition_id';
-    const FLD_REFS = 'refs';
-
-    // list of fields that MUST be set by one user
-    const FLD_LST_LINK = array(
-        [self::FLD_FROM, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_FROM_COM],
-        [verb::FLD_ID, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, verb::class, self::FLD_VERB_COM],
-        [self::FLD_TO, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TO_COM],
-    );
-    // list of must fields that CAN be changed by the user
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [language::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::ONE, sql::INDEX, language::class, self::FLD_NAME_COM],
-    );
-    // list of fields that CAN be changed by the user
-    const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
-        [self::FLD_NAME_GIVEN, self::FLD_NAME_GIVEN_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_GIVEN_COM],
-        [self::FLD_NAME_AUTO, self::FLD_NAME_AUTO_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_AUTO_COM],
-        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_COND_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_COND_ID_COM],
-        [phrase::FLD_TYPE, phrase::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, phrase_type::class, word_db::FLD_TYPE_COM],
-        [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
-        [self::FLD_VALUES, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_VALUES_COM],
-    );
-    // list of fields that CANNOT be changed by the user
-    const FLD_LST_NON_CHANGEABLE = array(
-        [self::FLD_INACTIVE, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_INACTIVE_COM],
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-    );
-
-    // all database field names excluding the id and excluding the user specific fields
-    const FLD_NAMES = array(
-        phrase::FLD_TYPE,
-        self::FLD_COND_ID
-    );
-    // list of the link database field names
-    // TODO use this name for all links
-    const FLD_NAMES_LINK = array(
-        self::FLD_FROM,
-        verb::FLD_ID,
-        self::FLD_TO
-    );
-    // list of the user specific database field names
-    const FLD_NAMES_USR = array(
-        self::FLD_NAME,
-        self::FLD_NAME_GIVEN,
-        self::FLD_NAME_AUTO,
-        sandbox_named::FLD_DESCRIPTION
-    );
-    // list of the user specific numeric database field names
-    const FLD_NAMES_NUM_USR = array(
-        self::FLD_VALUES,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
-    );
-    // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
-        self::FLD_NAME,
-        self::FLD_NAME_GIVEN,
-        self::FLD_NAME_AUTO,
-        sandbox_named::FLD_DESCRIPTION,
-        phrase::FLD_TYPE,
-        self::FLD_VALUES,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
-    );
-
-
-    /*
-     * im- and export const
-     */
-
-    // the field names used for the im- and export in the json or yaml format
-    const FLD_EX_FROM = 'from';
-    const FLD_EX_TO = 'to';
-    const FLD_EX_VERB = 'verb';
-
+    // forward the const to enable usage of $this::CONST_NAME
+    const FLD_ID = triple_db::FLD_ID;
+    const FLD_LST_LINK = triple_db::FLD_LST_LINK;
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = triple_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
+    const FLD_LST_USER_CAN_CHANGE = triple_db::FLD_LST_USER_CAN_CHANGE;
+    const FLD_LST_NON_CHANGEABLE = triple_db::FLD_LST_NON_CHANGEABLE;
+    const FLD_NAMES_LINK = triple_db::FLD_NAMES_LINK;
+    const FLD_NAMES = triple_db::FLD_NAMES;
+    const FLD_NAMES_USR = triple_db::FLD_NAMES_USR;
+    const FLD_NAMES_NUM_USR = triple_db::FLD_NAMES_NUM_USR;
+    const ALL_SANDBOX_FLD_NAMES = triple_db::ALL_SANDBOX_FLD_NAMES;
 
     /*
      * object vars
      */
 
     // triple vars additional to the name and link vars of the parent user sandbox object
-    private ?string $name_given;     // the name manually set by the user, which can be empty
-    private string $name_generated; // the generated name based on the linked objects and saved in the database for faster searching
-    public ?int $values;            // the total number of values linked to this triple as an indication how common the triple is and to sort the triples
+    // the name manually set by the user, which can be empty
+    private ?string $name_given;
+    // the generated name based on the linked objects and saved in the database for faster searching
+    private string $name_generated;
+
+    // to select single triple used by the system without using the type that can potentially select more than one triple
+    private ?string $code_id;
+
+    // to cache the query results
+    // the total number of values linked to this triple as an indication how common the triple is and to sort the triples
+    private ?int $values;
 
     // only used for the export object
-    private ?view $view; // name of the default view for this word
+    // name of the default view for this word
+    private ?view $view;
     private ?array $ref_lst = [];
 
 
@@ -292,8 +210,6 @@ class triple extends sandbox_link_named
         $this->rename_can_switch = UI_CAN_CHANGE_triple_NAME;
 
         $this->reset();
-        $this->name_given = null;
-        $this->name_generated = '';
 
         // also create the link objects because there is now case where they are supposed to be null
         $this->create_objects();
@@ -305,9 +221,10 @@ class triple extends sandbox_link_named
     function reset(): void
     {
         parent::reset();
-        $this->set_name('');
+        $this->set_name(null);
         $this->name_given = null;
         $this->name_generated = '';
+        $this->code_id = null;
         $this->values = null;
 
         $this->view = null;
@@ -341,41 +258,41 @@ class triple extends sandbox_link_named
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = self::FLD_ID,
-        string $name_fld = self::FLD_NAME,
+        string $id_fld = triple_db::FLD_ID,
+        string $name_fld = triple_db::FLD_NAME,
         string $type_fld = phrase::FLD_TYPE): bool
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
         if ($result) {
-            if (array_key_exists(self::FLD_FROM, $db_row)) {
-                $phr_id = $db_row[self::FLD_FROM];
+            if (array_key_exists(triple_db::FLD_FROM, $db_row)) {
+                $phr_id = $db_row[triple_db::FLD_FROM];
                 if ($phr_id != null) {
                     $this->from()->set_obj_from_id($phr_id);
                 }
             }
-            if (array_key_exists(self::FLD_TO, $db_row)) {
-                $phr_id = $db_row[self::FLD_TO];
+            if (array_key_exists(triple_db::FLD_TO, $db_row)) {
+                $phr_id = $db_row[triple_db::FLD_TO];
                 if ($phr_id != null) {
                     $this->to()->set_obj_from_id($phr_id);
                 }
             }
-            if (array_key_exists(verb::FLD_ID, $db_row)) {
-                if ($db_row[verb::FLD_ID] != null) {
-                    $this->set_verb_id($db_row[verb::FLD_ID]);
+            if (array_key_exists(verb_db::FLD_ID, $db_row)) {
+                if ($db_row[verb_db::FLD_ID] != null) {
+                    $this->set_verb_id($db_row[verb_db::FLD_ID]);
                 }
             }
             // TODO use json_fields object
-            if (array_key_exists(self::FLD_NAME_GIVEN, $db_row)) {
-                $this->set_name_given($db_row[self::FLD_NAME_GIVEN]);
+            if (array_key_exists(triple_db::FLD_NAME_GIVEN, $db_row)) {
+                $this->set_name_given($db_row[triple_db::FLD_NAME_GIVEN]);
             }
-            if (array_key_exists(self::FLD_NAME_AUTO, $db_row)) {
-                $this->set_name_generated($db_row[self::FLD_NAME_AUTO]);
+            if (array_key_exists(triple_db::FLD_NAME_AUTO, $db_row)) {
+                $this->set_name_generated($db_row[triple_db::FLD_NAME_AUTO]);
             }
             if (array_key_exists($type_fld, $db_row)) {
                 $this->type_id = $db_row[$type_fld];
             }
-            if (array_key_exists(self::FLD_VALUES, $db_row)) {
-                $this->values = $db_row[self::FLD_VALUES];
+            if (array_key_exists(triple_db::FLD_VALUES, $db_row)) {
+                $this->values = $db_row[triple_db::FLD_VALUES];
             }
         }
         return $result;
@@ -391,57 +308,33 @@ class triple extends sandbox_link_named
     {
         $msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::FROM) {
-                $phr = $this->phrase_from_api_json($value);
-                $this->set_from($phr);
+        if (array_key_exists(json_fields::FROM, $api_json)) {
+            $phr = $this->phrase_from_api_json($api_json[json_fields::FROM]);
+            $this->set_from($phr);
+        }
+        if (array_key_exists(json_fields::VERB, $api_json)) {
+            $vrb = $this->verb_from_api_json($api_json[json_fields::VERB]);
+            $this->set_verb($vrb);
+        }
+        if (array_key_exists(json_fields::TO, $api_json)) {
+            $phr = $this->phrase_from_api_json($api_json[json_fields::TO]);
+            $this->set_to($phr);
+        }
+        // TODO move plural to language forms
+        /*
+        if (array_key_exists(json_fields::PLURAL, $api_json)) {
+            if ($api_json[json_fields::PLURAL] <> '') {
+                $this->set_plural($api_json[json_fields::PLURAL]);
             }
-            if ($key == json_fields::TO) {
-                $phr = $this->phrase_from_api_json($value);
-                $this->set_to($phr);
+        }
+        */
+        if (array_key_exists(json_fields::VIEW, $api_json)) {
+            $msk = new view($this->user());
+            $id = $api_json[json_fields::VIEW];
+            if ($id != 0) {
+                $msk->set_id($id);
+                $this->view = $msk;
             }
-            if ($key == json_fields::VERB) {
-                $vrb = $this->verb_from_api_json($value);
-                $this->set_verb($vrb);
-            }
-
-            /* TODO review
-            if ($key == self::FLD_PLURAL) {
-                if ($value <> '') {
-                    $this->plural = $value;
-                }
-            }
-            if ($key == json_fields::SHARE) {
-                $this->set_share_id($shr_typ_cac->id($value));
-            }
-            if ($key == json_fields::PROTECTION) {
-                $this->set_protection_id($ptc_typ_cac->id($value));
-            }
-            if ($key == exp_obj::FLD_VIEW) {
-                $wrd_view = new view($this->user());
-                if ($do_save) {
-                    $wrd_view->load_by_name($value);
-                    if ($wrd_view->id() == 0) {
-                        $result->add_message_text('Cannot find view "' . $value . '" when importing ' . $this->dsp_id());
-                    } else {
-                        $this->view_id = $wrd_view->id();
-                    }
-                } else {
-                    $wrd_view->set_name($value);
-                }
-                $this->view = $wrd_view;
-            }
-
-            if ($key == json_fields::PHRASES) {
-                $phr_lst = new phrase_list($this->user());
-                $msg->add($phr_lst->db_obj($value));
-                if ($msg->is_ok()) {
-                    $this->grp->phr_lst = $phr_lst;
-                }
-            }
-            */
-
         }
 
         return $msg;
@@ -451,11 +344,17 @@ class triple extends sandbox_link_named
      * set the vars of this triple object based on the given json without writing to the database
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper_user(
+        array       $in_ex_json,
+        user        $usr_req,
+        data_object $dto = null,
+        object      $test_obj = null
+    ): user_message
     {
         global $phr_typ_cac;
         global $vrb_cac;
@@ -477,7 +376,14 @@ class triple extends sandbox_link_named
                     } else {
                         $phr = $dto->get_phrase_by_name($value);
                         if ($phr == null) {
-                            $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
+                            // create a phrase without saving to the database
+                            $phr = new phrase($this->user());
+                            $phr->set_name($value, word::class);
+                            if ($phr->db_ready()) {
+                                $this->set_from($phr);
+                            } else {
+                                $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
+                            }
                         } else {
                             $this->set_from($phr);
                         }
@@ -498,7 +404,14 @@ class triple extends sandbox_link_named
                 } else {
                     $phr = $dto->get_phrase_by_name($value);
                     if ($phr == null) {
-                        $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
+                        // create a phrase without saving to the database
+                        $phr = new phrase($this->user());
+                        $phr->set_name($value, word::class);
+                        if ($phr->db_ready()) {
+                            $this->set_to($phr);
+                        } else {
+                            $usr_msg->add_type_message($value, msg_id::PHRASE_MISSING->value);
+                        }
                     } else {
                         $this->set_to($phr);
                     }
@@ -517,9 +430,7 @@ class triple extends sandbox_link_named
                     $vrb->set_user($this->user());
                     // TODO remove this exception
                     $vrb->save();
-                    if ($dto != null) {
-                        $dto->add_verb($vrb);
-                    }
+                    $dto?->add_verb($vrb);
                 } else {
                     $vrb = $vrb_cac->get_verb(verbs::NOT_SET);
                     $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_MISSING, [msg_id::VAR_ID => $this->dsp_id()]);
@@ -572,7 +483,7 @@ class triple extends sandbox_link_named
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        if ($this->is_excluded()) {
+        if ($this->is_excluded() and !$typ_lst->test_mode()) {
             $vars = [];
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;
@@ -701,52 +612,34 @@ class triple extends sandbox_link_named
      * import a triple from a json object
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    function import_obj(
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
-        global $phr_typ_cac;
+        $usr_msg = parent::import_obj($in_ex_json, $usr_req, $dto, $test_obj);
 
-        log_debug();
-
-        // set the object vars based on the json
-        $result = $this->import_mapper($in_ex_json, null, $test_obj);
-
-        // save the triple in the database
-        if (!$test_obj) {
-            if ($result->is_ok()) {
-                // remove unneeded given names
-                $this->set_names();
-                $result->add($this->save());
-            }
-        }
-
-        // add related parameters to the word object
-        if ($result->is_ok()) {
-            log_debug('saved ' . $this->dsp_id());
-
-            if (!$test_obj) {
-                if ($this->id() == 0) {
-                    $usr_msg->add_id_with_vars(msg_id::TRIPLE_NOT_SAVED, [msg_id::VAR_ID => $this->dsp_id()]);
-                } else {
-                    foreach ($in_ex_json as $key => $value) {
-                        if ($result->is_ok()) {
-                            if ($key == self::FLD_REFS) {
-                                foreach ($value as $ref_data) {
-                                    $ref_obj = new ref($this->user());
-                                    $ref_obj->set_phrase($this->phrase());
-                                    $result->add($ref_obj->import_obj($ref_data, $test_obj));
-                                    $this->ref_lst[] = $ref_obj;
-                                }
-                            }
-                        }
-                    }
+        // add related parameters to the triple object
+        if ($usr_msg->is_ok()) {
+            if (key_exists(json_fields::REFS, $in_ex_json)) {
+                $ref_json = $in_ex_json[json_fields::REFS];
+                foreach ($ref_json as $ref_data) {
+                    $ref_obj = new ref($this->user());
+                    $ref_obj->set_phrase($this->phrase());
+                    $usr_msg->add($ref_obj->import_obj($ref_data, $usr_req, $dto, $test_obj));
+                    $this->ref_lst[] = $ref_obj;
                 }
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -933,12 +826,47 @@ class triple extends sandbox_link_named
     }
 
     /**
+     * @return string the code_id of the verb
+     */
+    function verb_code_id(): string
+    {
+        global $vrb_cac;
+        $id = $this->predicate_id();
+        if ($id > 0) {
+            $vrb = $vrb_cac->get($this->predicate_id());
+            if ($vrb != null) {
+                return $vrb->code_id();
+            } else {
+                return '';
+            }
+        } elseif ($id < 0) {
+            $vrb = $vrb_cac->get($this->predicate_id() * -1);
+            if ($vrb != null) {
+                return $vrb->code_id();
+            } else {
+                return '';
+            }
+        } else {
+            return '';
+        }
+    }
+
+    /**
      * overwrite the link type function
      * @return string|null the name of the verb
      */
     function predicate_name(): ?string
     {
         return $this->verb_name();
+    }
+
+    /**
+     * overwrite the link type function
+     * @return string|null the code id of the verb
+     */
+    function predicate_code_id(): ?string
+    {
+        return $this->verb_code_id();
     }
 
     /**
@@ -973,10 +901,10 @@ class triple extends sandbox_link_named
 
     /**
      * set the name used object
-     * @param string $name
+     * @param string|null $name
      * @return void
      */
-    function set_name(string $name): void
+    function set_name(?string $name): void
     {
         $this->name = $name;
     }
@@ -1099,6 +1027,39 @@ class triple extends sandbox_link_named
     }
 
     /**
+     * set the unique id to select a single triple by the program
+     *r
+     * @param string|null $code_id the unique key to select a word used by the system e.g. for the system configuration
+     * @param user $usr the user who has requested the change
+     * @return user_message warning message for the user if the permissions are missing
+     */
+    function set_code_id(?string $code_id, user $usr): user_message
+    {
+        $usr_msg = new user_message();
+        if ($usr->can_set_code_id()) {
+            $this->code_id = $code_id;
+        } else {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $usr->name(),
+                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return string|null the unique key or null if the word is not used by the system
+     */
+    function code_id(): ?string
+    {
+        return $this->code_id;
+    }
+
+
+    /**
      * @return int the id of the default view for this triple or null if no view is preferred
      */
     function view_id(): int
@@ -1141,6 +1102,20 @@ class triple extends sandbox_link_named
 
 
     /*
+     * info
+     */
+
+    function needs_from(): bool
+    {
+        $needs_from = true;
+        if (in_array($this->verb_code_id(), verbs::WITHOUT_FROM)) {
+            $needs_from = false;
+        }
+        return $needs_from;
+    }
+
+
+    /*
      * modify
      */
 
@@ -1150,20 +1125,43 @@ class triple extends sandbox_link_named
      * if the given name is not set (null) the given name is not remove
      * if the given name is an empty string the given name is removed
      *
-     * @param triple|CombineObject|db_object_seq_id $sbx word with the values that should been updated e.g. based on the import
+     * @param triple|CombineObject|db_object_seq_id $obj word with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(triple|CombineObject|db_object_seq_id $sbx): user_message
+    function fill(triple|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($sbx);
+        $usr_msg = parent::fill($obj, $usr_req);
         // TODO use set and get function to enable phrase fill
         $trp = null;
-        if ($sbx::class == triple::class) {
-            $trp = $sbx;
-        } elseif ($sbx->obj()::class == triple::class) {
-            $trp = $sbx->obj();
+        if ($obj::class == triple::class) {
+            $trp = $obj;
+        } elseif ($obj->obj()::class == triple::class) {
+            $trp = $obj->obj();
         }
         if ($trp != null) {
+            // fill to link objects
+            if ($this->from_empty()) {
+                if (!$trp->from_empty()) {
+                    $this->set_from($trp->from());
+                }
+            } else {
+                $this->from()->fill($trp->from(), $usr_req);
+            }
+            if ($this->verb_empty()) {
+                if (!$trp->verb_empty()) {
+                    $this->set_verb($trp->verb());
+                }
+            }
+            if ($this->to_empty()) {
+                if (!$trp->to_empty()) {
+                    $this->set_to($trp->to());
+                }
+            } else {
+                $this->to()->fill($trp->to(), $usr_req);
+            }
+
+            // fill the names
             if ($trp->name_given != null) {
                 $this->name_given = $trp->name_given;
             }
@@ -1171,8 +1169,8 @@ class triple extends sandbox_link_named
                 $this->name_generated = $trp->name_generated;
             }
         }
-        if ($sbx->usage() != null) {
-            $this->set_usage($sbx->usage());
+        if ($obj->usage() != null) {
+            $this->set_usage($obj->usage());
         }
         return $usr_msg;
     }
@@ -1292,22 +1290,22 @@ class triple extends sandbox_link_named
 
     function from_field(): string
     {
-        return self::FLD_FROM;
+        return triple_db::FLD_FROM;
     }
 
     function type_field(): string
     {
-        return verb::FLD_ID;
+        return verb_db::FLD_ID;
     }
 
     function type_name_field(): string
     {
-        return verb::FLD_NAME;
+        return verb_db::FLD_NAME;
     }
 
     function to_field(): string
     {
-        return self::FLD_TO;
+        return triple_db::FLD_TO;
     }
 
 
@@ -1322,9 +1320,8 @@ class triple extends sandbox_link_named
     {
         $phr = new phrase($this->user());
         // the triple has positive id, but the phrase uses a negative id
-        $phr->set_name($this->name, triple::class);
+        $phr->set_name($this->name(), triple::class);
         $phr->set_obj($this);
-        log_debug('triple->phrase of ' . $this->dsp_id());
         return $phr;
     }
 
@@ -1338,7 +1335,6 @@ class triple extends sandbox_link_named
         $trm->set_id_from_obj($this->id(), self::class);
         $trm->set_name($this->name(), triple::class);
         $trm->set_obj($this);
-        log_debug($this->dsp_id());
         return $trm;
     }
 
@@ -1419,7 +1415,7 @@ class triple extends sandbox_link_named
                 log_debug('triple->load_standard check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
                 if ($new_name <> $this->name) {
                     $db_con->set_class(triple::class);
-                    $result = $db_con->update_old($this->id(), self::FLD_NAME_GIVEN, $new_name);
+                    $result = $db_con->update_old($this->id(), triple_db::FLD_NAME_GIVEN, $new_name);
                     $this->name = $new_name;
                 }
             }
@@ -1443,10 +1439,10 @@ class triple extends sandbox_link_named
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_fields(array_merge(
-            self::FLD_NAMES_LINK,
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR,
+            triple_db::FLD_NAMES_LINK,
+            triple_db::FLD_NAMES,
+            triple_db::FLD_NAMES_USR,
+            triple_db::FLD_NAMES_NUM_USR,
             array(user::FLD_ID)
         ));
 
@@ -1469,9 +1465,9 @@ class triple extends sandbox_link_named
         $sc->set_class($class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(array_merge(self::FLD_NAMES_LINK, self::FLD_NAMES));
-        $sc->set_usr_fields(self::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
+        $sc->set_fields(array_merge(triple_db::FLD_NAMES_LINK, triple_db::FLD_NAMES));
+        $sc->set_usr_fields(triple_db::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(triple_db::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -1504,7 +1500,7 @@ class triple extends sandbox_link_named
     function load_sql_by_name_generated(sql_creator $sc, string $name, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'name_generated', $class);
-        $sc->add_where(self::FLD_NAME_AUTO, $name, sql_par_type::TEXT_USR);
+        $sc->add_where(triple_db::FLD_NAME_AUTO, $name, sql_par_type::TEXT_USR);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -1524,9 +1520,9 @@ class triple extends sandbox_link_named
     function load_sql_by_link(sql_creator $sc, int $from, int $predicate_id, int|string $to, string $class): sql_par
     {
         $qp = $this->load_sql($sc, 'link_ids', $class);
-        $sc->add_where(self::FLD_FROM, $from);
-        $sc->add_where(self::FLD_TO, $to);
-        $sc->add_where(verb::FLD_ID, $predicate_id);
+        $sc->add_where(triple_db::FLD_FROM, $from);
+        $sc->add_where(triple_db::FLD_TO, $to);
+        $sc->add_where(verb_db::FLD_ID, $predicate_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -1547,7 +1543,7 @@ class triple extends sandbox_link_named
             log_debug('triple->load check if name ' . $this->dsp_id() . ' needs to be updated to "' . $new_name . '"');
             if ($new_name <> $this->name_generated) {
                 $db_con->set_class(triple::class);
-                $db_con->update_old($this->id(), self::FLD_NAME_AUTO, $new_name);
+                $db_con->update_old($this->id(), triple_db::FLD_NAME_AUTO, $new_name);
                 $this->set_name_generated($new_name);
             }
         }
@@ -1570,12 +1566,12 @@ class triple extends sandbox_link_named
 
     function name_field(): string
     {
-        return self::FLD_NAME;
+        return triple_db::FLD_NAME;
     }
 
     function all_sandbox_fields(): array
     {
-        return self::ALL_SANDBOX_FLD_NAMES;
+        return triple_db::ALL_SANDBOX_FLD_NAMES;
     }
 
     /**
@@ -1591,7 +1587,7 @@ class triple extends sandbox_link_named
             /*
              * TODO remove
             if ($this->has_verb()) {
-                $this->verb->set_name($this->verb->reverse);
+                $this->verb->set_name($this->verb->reverse());
             }
             */
             $this->set_from($to);
@@ -1723,13 +1719,13 @@ class triple extends sandbox_link_named
         } elseif ($this->name != '') {
             $sc->add_where($this->name_field(), $this->name());
         } elseif ($this->has_objects()) {
-            $sc->add_where(self::FLD_FROM, $this->from_id());
-            $sc->add_where(self::FLD_TO, $this->to_id());
-            $sc->add_where(verb::FLD_ID, $this->verb_id());
+            $sc->add_where(triple_db::FLD_FROM, $this->from_id());
+            $sc->add_where(triple_db::FLD_TO, $this->to_id());
+            $sc->add_where(verb_db::FLD_ID, $this->verb_id());
         } elseif ($this->name_generated() != '') {
-            $sc->add_where(self::FLD_NAME_AUTO, $this->name_generated());
+            $sc->add_where(triple_db::FLD_NAME_AUTO, $this->name_generated());
         } elseif ($this->name_given() != '') {
-            $sc->add_where(self::FLD_NAME_GIVEN, $this->name_given());
+            $sc->add_where(triple_db::FLD_NAME_GIVEN, $this->name_given());
         } else {
             log_err('Cannot load default triple because no unique field is set');
         }
@@ -1752,8 +1748,8 @@ class triple extends sandbox_link_named
     {
         $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
         $sc->set_fields(array_merge(
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR
+            triple_db::FLD_NAMES_USR,
+            triple_db::FLD_NAMES_NUM_USR
         ));
         return parent::load_sql_user_changes($sc, $sc_par_lst);
     }
@@ -1840,7 +1836,7 @@ class triple extends sandbox_link_named
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -1851,14 +1847,17 @@ class triple extends sandbox_link_named
     function check(): user_message
     {
         $usr_msg = new user_message();
-        if ($this->from() == null) {
-            $usr_msg->add_id(msg_id::TRIPLE_FROM_PHRASE_MISSING);
-        } else {
-            if ($this->from()->id() == 0) {
-                if ($this->from()->name() == '') {
-                    $usr_msg->add_id(msg_id::TRIPLE_PHRASE_FROM_NAME_MISSING);
-                } else {
-                    $usr_msg->add_info_text('triple phrase from id is 0');
+
+        if ($this->needs_from()) {
+            if ($this->from() == null) {
+                $usr_msg->add_id(msg_id::TRIPLE_FROM_PHRASE_MISSING);
+            } else {
+                if ($this->from()->id() == 0) {
+                    if ($this->from()->name() == '') {
+                        $usr_msg->add_id(msg_id::TRIPLE_PHRASE_FROM_NAME_MISSING);
+                    } else {
+                        $usr_msg->add_info_text('triple phrase from id is 0');
+                    }
                 }
             }
         }
@@ -1905,24 +1904,24 @@ class triple extends sandbox_link_named
      * check if the word in the database needs to be updated
      * e.g. for import  if this word has only the name set, the protection should not be updated in the database
      *
-     * @param triple $db_trp the word as saved in the database
+     * @param triple|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(triple $db_trp): bool
+    function needs_db_update(triple|CombineObject|db_object_seq_id $db_obj): bool
     {
-        $result = parent::needs_db_update_named($db_trp);
+        $result = parent::needs_db_update($db_obj);
         if ($this->verb_id() > 0) {
-            if ($this->verb_id() != $db_trp->verb_id()) {
+            if ($this->verb_id() != $db_obj->verb_id()) {
                 $result = true;
             }
         }
         if ($this->name_given != null) {
-            if ($this->name_given != $db_trp->name_given) {
+            if ($this->name_given != $db_obj->name_given) {
                 $result = true;
             }
         }
         if ($this->values != null) {
-            if ($this->values != $db_trp->values) {
+            if ($this->values != $db_obj->values) {
                 $result = true;
             }
         }
@@ -2084,19 +2083,25 @@ class triple extends sandbox_link_named
      * returns null if no similar object is found
      * or returns the term with the same unique key that is not the actual object
      * similar to sandbox named get_similar but
+     *
+     * @param string $name if given the specific name to check
      * @return term|null a filled object that has the same name
      *                or a sandbox object with id() = 0 if nothing similar has been found
      */
-    function get_similar_named(): ?term
+    function get_similar_named(string $name = ''): ?term
     {
         $trm = new term($this->user());
-        if ($this->name() != '') {
-            $trm->load_by_name($this->name());
-            if ($trm->id_obj() == 0) {
-                $similar_trp = new triple($this->user());
-                $similar_trp->load_by_name_generated($this->name());
-                if ($similar_trp->id() != 0) {
-                    $trm = $similar_trp->term();
+        if ($name != '') {
+            $trm->load_by_name($name);
+        } else {
+            if ($this->name() != '') {
+                $trm->load_by_name($this->name());
+                if ($trm->id_obj() == 0) {
+                    $similar_trp = new triple($this->user());
+                    $similar_trp->load_by_name_generated($this->name());
+                    if ($similar_trp->id() != 0) {
+                        $trm = $similar_trp->term();
+                    }
                 }
             }
         }
@@ -2109,16 +2114,17 @@ class triple extends sandbox_link_named
 
     /**
      * check if the given name can be used for this triple
+     * @param string $name if given the specific name to test
      * @return user_message the message that should be shown to the user in case something went wrong
      */
-    private function is_name_used_msg(): user_message
+    private function is_name_used_msg(string $name = ''): user_message
     {
         $usr_msg = new user_message();
         // check if the name is used
-        $similar = $this->get_similar_named();
+        $similar = $this->get_similar_named($name);
         // if the similar object is not the same as $this object, suggest renaming $this object
         if ($similar != null) {
-            $usr_msg->add_message_text($similar->id_used_msg($this));
+            $usr_msg->add($similar->id_used_msg($this));
         }
         return $usr_msg;
     }
@@ -2149,7 +2155,7 @@ class triple extends sandbox_link_named
                 $log->new_value = $this->name(true);
                 $log->std_value = $std_rec->name();
                 $log->row_id = $this->id();
-                $log->set_field(self::FLD_NAME);
+                $log->set_field(triple_db::FLD_NAME);
                 $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
@@ -2174,7 +2180,7 @@ class triple extends sandbox_link_named
                 $log->new_value = $this->name_given();
                 $log->std_value = $std_rec->name_given();
                 $log->row_id = $this->id();
-                $log->set_field(self::FLD_NAME_GIVEN);
+                $log->set_field(triple_db::FLD_NAME_GIVEN);
                 $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
@@ -2203,7 +2209,7 @@ class triple extends sandbox_link_named
                     $log->new_value = $this->name_generated();
                     $log->std_value = $std_rec->name_generated;
                     $log->row_id = $this->id();
-                    $log->set_field(self::FLD_NAME_AUTO);
+                    $log->set_field(triple_db::FLD_NAME_AUTO);
                     $usr_msg->add($this->save_field_user($db_con, $log));
                 }
             }
@@ -2224,7 +2230,7 @@ class triple extends sandbox_link_named
             $log->new_value = $this->description;
             $log->std_value = $std_rec->description;
             $log->row_id = $this->id();
-            $log->set_field(sandbox_named::FLD_DESCRIPTION);
+            $log->set_field(sql_db::FLD_DESCRIPTION);
             $usr_msg->add($this->save_field_user($db_con, $log));
         }
         return $usr_msg;
@@ -2281,11 +2287,11 @@ class triple extends sandbox_link_named
             $log->new_to = $this->to();
             $log->std_to = $std_rec->to();
             $log->row_id = $this->id();
-            //$log->set_field(self::FLD_FROM);
+            //$log->set_field(triple_db::FLD_FROM);
             if ($log->add()) {
                 $db_con->set_class(triple::class);
                 if (!$db_con->update_old($this->id(),
-                    array(triple::FLD_FROM, verb::FLD_ID, triple::FLD_TO),
+                    array(triple_db::FLD_FROM, verb_db::FLD_ID, triple_db::FLD_TO),
                     array($this->from_id(), $this->verb_id(), $this->to_id()))) {
                     $result = msg_id::FAILED_UPDATE_WORK_LINK_NAME;
                 }
@@ -2346,7 +2352,7 @@ class triple extends sandbox_link_named
                     // in this case change is allowed and done
                     log_debug('triple->save_id_if_updated change the existing triple ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
                     $this->load_objects();
-                    $usr_msg->add_id($this->save_id_fields($db_con, $db_rec, $std_rec));
+                    $usr_msg->add_message_text($this->save_id_fields($db_con, $db_rec, $std_rec));
                 } else {
                     // if the target link has not yet been created
                     // ... request to delete the old
@@ -2411,7 +2417,7 @@ class triple extends sandbox_link_named
                     }
                 } else {
                     $db_con->set_class(triple::class);
-                    $this->set_id($db_con->insert_old(array(triple::FLD_FROM, verb::FLD_ID, triple::FLD_TO, user::FLD_ID),
+                    $this->set_id($db_con->insert_old(array(triple_db::FLD_FROM, verb_db::FLD_ID, triple_db::FLD_TO, user::FLD_ID),
                         array($this->from_id(), $this->verb_id(), $this->to_id(), $this->user()->id())));
                 }
                 // TODO make sure on all add functions that the database object is always set
@@ -2655,11 +2661,11 @@ class triple extends sandbox_link_named
             parent::db_fields_all($sc_par_lst),
             [
                 phrase::FLD_TYPE,
-                verb::FLD_ID,
-                self::FLD_NAME_GIVEN,
-                self::FLD_NAME_AUTO,
-                self::FLD_VALUES,
-                self::FLD_VIEW
+                verb_db::FLD_ID,
+                triple_db::FLD_NAME_GIVEN,
+                triple_db::FLD_NAME_AUTO,
+                triple_db::FLD_VALUES,
+                triple_db::FLD_VIEW
             ],
             parent::db_fields_all_sandbox()
         );
@@ -2712,15 +2718,15 @@ class triple extends sandbox_link_named
             if ($sbx->verb_id() <> $this->verb_id()) {
                 if ($do_log) {
                     $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                        $cng_fld_cac->id($table_id . verb::FLD_ID),
+                        sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_ID,
+                        $cng_fld_cac->id($table_id . verb_db::FLD_ID),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 global $vrb_cac;
                 $lst->add_type_field(
-                    verb::FLD_ID,
-                    verb::FLD_NAME,
+                    verb_db::FLD_ID,
+                    verb_db::FLD_NAME,
                     $this->verb_id(),
                     $sbx->verb_id(),
                     $vrb_cac
@@ -2735,15 +2741,15 @@ class triple extends sandbox_link_named
                     // the verb field is added for triple exclude insert statements
                     if ($do_log) {
                         $lst->add_field(
-                            sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                            $cng_fld_cac->id($table_id . verb::FLD_ID),
+                            sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_ID,
+                            $cng_fld_cac->id($table_id . verb_db::FLD_ID),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     global $vrb_cac;
                     $lst->add_type_field(
-                        verb::FLD_ID,
-                        verb::FLD_NAME,
+                        verb_db::FLD_ID,
+                        verb_db::FLD_NAME,
                         null,
                         $sbx->verb_id(),
                         $vrb_cac
@@ -2751,28 +2757,28 @@ class triple extends sandbox_link_named
                     // TODO check if the excluded field is not already added by the sandbox function
                     if ($do_log) {
                         $lst->add_field(
-                            sql::FLD_LOG_FIELD_PREFIX . sandbox::FLD_EXCLUDED,
-                            $cng_fld_cac->id($table_id . sandbox::FLD_EXCLUDED),
+                            sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
+                            $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     $lst->add_field(
-                        sandbox::FLD_EXCLUDED,
+                        sql_db::FLD_EXCLUDED,
                         1,
-                        sandbox::FLD_EXCLUDED_SQL_TYP
+                        sql_db::FLD_EXCLUDED_SQL_TYP
                     );
                 } elseif (!$this->is_excluded() and $sbx->is_excluded()) {
                     if ($do_log) {
                         $lst->add_field(
-                            sql::FLD_LOG_FIELD_PREFIX . verb::FLD_ID,
-                            $cng_fld_cac->id($table_id . verb::FLD_ID),
+                            sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_ID,
+                            $cng_fld_cac->id($table_id . verb_db::FLD_ID),
                             change::FLD_FIELD_ID_SQL_TYP
                         );
                     }
                     global $vrb_cac;
                     $lst->add_type_field(
-                        verb::FLD_ID,
-                        verb::FLD_NAME,
+                        verb_db::FLD_ID,
+                        verb_db::FLD_NAME,
                         $this->verb_id(),
                         null,
                         $vrb_cac
@@ -2784,8 +2790,8 @@ class triple extends sandbox_link_named
         if ($sbx->is_excluded() <> $this->is_excluded()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sandbox::FLD_EXCLUDED,
-                    $cng_fld_cac->id($table_id . sandbox::FLD_EXCLUDED),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -2795,29 +2801,24 @@ class triple extends sandbox_link_named
                 $new_excl = 0;
             }
             $lst->add_field(
-                sandbox::FLD_EXCLUDED,
+                sql_db::FLD_EXCLUDED,
                 $new_excl,
-                sandbox::FLD_EXCLUDED_SQL_TYP
+                sql_db::FLD_EXCLUDED_SQL_TYP
             );
         }
         if ($sbx->name_given() <> $this->name_given()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME_GIVEN,
-                    $cng_fld_cac->id($table_id . self::FLD_NAME_GIVEN),
+                    sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_NAME_GIVEN,
+                    $cng_fld_cac->id($table_id . triple_db::FLD_NAME_GIVEN),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            if ($sbx->name_given() == '') {
-                $old_name = null;
-            } else {
-                $old_name = $sbx->name_given();
-            }
             $lst->add_field(
-                self::FLD_NAME_GIVEN,
+                triple_db::FLD_NAME_GIVEN,
                 $this->name_given(),
-                self::FLD_NAME_GIVEN_SQL_TYP,
-                $old_name
+                triple_db::FLD_NAME_GIVEN_SQL_TYP,
+                $sbx->name_given()
             );
         }
         // TODO add test case
@@ -2826,21 +2827,16 @@ class triple extends sandbox_link_named
             if ($sbx->name_generated() <> $this->name_generated()) {
                 if ($do_log) {
                     $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . self::FLD_NAME_AUTO,
-                        $cng_fld_cac->id($table_id . self::FLD_NAME_AUTO),
+                        sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_NAME_AUTO,
+                        $cng_fld_cac->id($table_id . triple_db::FLD_NAME_AUTO),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
-                if ($sbx->name_generated() == '') {
-                    $old_name = null;
-                } else {
-                    $old_name = $sbx->name_generated();
-                }
                 $lst->add_field(
-                    self::FLD_NAME_AUTO,
+                    triple_db::FLD_NAME_AUTO,
                     $this->name_generated(),
-                    self::FLD_NAME_AUTO_SQL_TYP,
-                    $old_name
+                    triple_db::FLD_NAME_AUTO_SQL_TYP,
+                    $sbx->name_generated()
                 );
             }
         }
@@ -2848,29 +2844,29 @@ class triple extends sandbox_link_named
         if ($sbx->values <> $this->values) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_VALUES,
-                    $cng_fld_cac->id($table_id . self::FLD_VALUES),
+                    sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_VALUES,
+                    $cng_fld_cac->id($table_id . triple_db::FLD_VALUES),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                self::FLD_VALUES,
+                triple_db::FLD_VALUES,
                 $this->values,
-                self::FLD_VALUES_SQL_TYP,
+                triple_db::FLD_VALUES_SQL_TYP,
                 $sbx->values
             );
         }
         if ($sbx->view_id() <> $this->view_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW,
-                    $cng_fld_cac->id($table_id . self::FLD_VIEW),
+                    sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_VIEW,
+                    $cng_fld_cac->id($table_id . triple_db::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
-                self::FLD_VIEW,
-                view::FLD_NAME,
+                triple_db::FLD_VIEW,
+                view_db::FLD_NAME,
                 $this->view,
                 $sbx->view
             );

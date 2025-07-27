@@ -294,7 +294,7 @@ CREATE TABLE IF NOT EXISTS user_profiles
     type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
-    right_level  smallint     DEFAULT NULL COMMENT 'the access right level to prevent unpermitted right gaining'
+    right_level  smallint     DEFAULT NULL COMMENT 'the access right level to prevent not permitted right gaining'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -341,11 +341,12 @@ CREATE TABLE IF NOT EXISTS users
     user_name          varchar(255)     NOT NULL COMMENT 'the user name unique for this pod',
     ip_address         varchar(100) DEFAULT NULL COMMENT 'all users a first identified with the ip address',
     password           varchar(255) DEFAULT NULL COMMENT 'the hash value of the password',
-    description        text         DEFAULT NULL COMMENT 'for system users the description to expain the profile to human users',
+    description        text         DEFAULT NULL COMMENT 'for system users the description to explain the profile to human users',
     code_id            varchar(100) DEFAULT NULL COMMENT 'to select e.g. the system batch user',
     user_profile_id    bigint       DEFAULT NULL COMMENT 'to define the user roles and read and write rights',
     user_type_id       bigint       DEFAULT NULL COMMENT 'to set the confirmation level of a user',
-    right_level        smallint     DEFAULT NULL COMMENT 'the access right level to prevent unpermitted right gaining',
+    excluded           smallint     DEFAULT NULL COMMENT 'true if the user is deactivated but cannot be deleted due to log entries',
+    right_level        smallint     DEFAULT NULL COMMENT 'the access right level to prevent not permitted right gaining',
     email              varchar(255) DEFAULT NULL COMMENT 'the primary email for verification',
     email_status       smallint     DEFAULT NULL COMMENT 'if the email has been verified or if a password reset has been send',
     email_alternative  varchar(255) DEFAULT NULL COMMENT 'an alternative email for account recovery',
@@ -1208,7 +1209,7 @@ ALTER TABLE verbs
 CREATE TABLE IF NOT EXISTS triples
 (
     triple_id           bigint           NOT NULL COMMENT 'the internal unique primary index',
-    from_phrase_id      bigint           NOT NULL COMMENT 'the phrase_id that is linked',
+    from_phrase_id      bigint       DEFAULT NULL COMMENT 'the phrase_id that is linked which can be null e.g. if a symbol is assigned to a triple (m/s is symbol for meter per second)',
     verb_id             bigint           NOT NULL COMMENT 'the verb_id that defines how the phrases are linked',
     to_phrase_id        bigint           NOT NULL COMMENT 'the phrase_id to which the first phrase is linked',
     user_id             bigint       DEFAULT NULL COMMENT 'the owner / creator of the triple',

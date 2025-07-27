@@ -28,8 +28,11 @@
 
 namespace unit;
 
-include_once MODEL_FORMULA_PATH . 'formula_list.php';
-include_once WEB_FORMULA_PATH . 'formula_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::MODEL_FORMULA . 'formula_list.php';
+include_once html_paths::FORMULA . 'formula_list.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -231,7 +234,7 @@ class formula_list_tests
     {
         // prepare
         $wrd = new word($t->usr1);
-        $wrd->set(1,words::TEST_ADD);
+        $wrd->set(words::DEFAULT_WORD_ID,words::TEST_ADD);
         $phr = $wrd->phrase();
 
         // check the Postgres query syntax

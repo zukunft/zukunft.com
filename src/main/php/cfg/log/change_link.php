@@ -46,26 +46,29 @@
 
 namespace cfg\log;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-//include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+//include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -81,6 +84,7 @@ use cfg\sandbox\sandbox_link;
 use cfg\ref\source;
 use cfg\helper\type_object;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\word\word;
 use Exception;
 use shared\enum\change_actions;
@@ -212,7 +216,7 @@ class change_link extends change_log
             // TODO check if not the complete user should be loaded
             $usr = new user();
             $usr->set_id($db_row[user::FLD_ID]);
-            $usr->name = $db_row[user::FLD_NAME];
+            $usr->name = $db_row[user_db::FLD_NAME];
             $this->set_user($usr);
         }
         return $result;
@@ -236,7 +240,7 @@ class change_link extends change_log
         $sc->set_name($qp->name);
         $sc->set_usr($usr->id());
         $sc->set_fields(self::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), user::class);
+        $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
 
         $sc->add_where(user::FLD_ID, $usr->id());
         $sc->set_order(self::FLD_ID, sql::ORDER_DESC);
@@ -280,7 +284,7 @@ class change_link extends change_log
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(self::FLD_NAMES);
-        $db_con->set_join_fields(array(user::FLD_NAME), user::class);
+        $db_con->set_join_fields(array(user_db::FLD_NAME), user::class);
 
         $db_con->set_where_text($db_con->where_par($fields, $values));
         $db_con->set_order(self::FLD_ID, sql::ORDER_DESC);
@@ -461,8 +465,8 @@ class change_link extends change_log
             if (!$ex_time) {
                 $result .= $db_row['change_time'] . ' ';
             }
-            if ($db_row[user::FLD_NAME] <> '') {
-                $result .= $db_row[user::FLD_NAME] . ' ';
+            if ($db_row[user_db::FLD_NAME] <> '') {
+                $result .= $db_row[user_db::FLD_NAME] . ' ';
             }
             if ($db_row['new_text_from'] <> '' and $db_row['new_text_to'] <> '') {
                 $result .= 'linked ' . $db_row['new_text_from'] . ' to ' . $db_row['new_text_to'];
@@ -519,7 +523,7 @@ class change_link extends change_log
                 if ($this->new_from != null and $this->new_link != null and $this->new_to != null) {
                     $this->new_text_from = $this->new_from->name();
                     $this->new_text_link = $this->new_link->name();
-                    $this->new_text_to = $this->new_to->external_key;
+                    $this->new_text_to = $this->new_to->external_key();
                     $this->new_from_id = $this->new_from->id();
                     $this->new_link_id = $this->new_link->id();
                     $this->new_to_id = $this->new_to->id();
@@ -531,7 +535,7 @@ class change_link extends change_log
                 if ($this->old_from != null and $this->old_link != null and $this->old_to != null) {
                     $this->old_text_from = $this->old_from->name();
                     $this->old_text_link = $this->old_link->name();
-                    $this->old_text_to = $this->old_to->external_key;
+                    $this->old_text_to = $this->old_to->external_key();
                     $this->old_from_id = $this->old_from->id();
                     $this->old_link_id = $this->old_link->id();
                     $this->old_to_id = $this->old_to->id();
@@ -760,7 +764,7 @@ class change_link extends change_log
     ): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user::FLD_ID_SQL_TYP);
+        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user_db::FLD_ID_SQL_TYP);
         $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
         $fvt_lst->add_field(change_table::FLD_ID, $this->table_id, type_object::FLD_ID_SQL_TYP);
 

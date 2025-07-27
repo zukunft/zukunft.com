@@ -90,6 +90,9 @@ class verbs
     const CAN_USE = "can_use";
     const CAN_USE_NAME = "can use";
     const CAN_USE_ID = 24;
+    const PER = "per";
+    const PER_NAME = "per";
+    const PER_ID = 26;
     const SYMBOL = "symbol";
     const SYMBOL_NAME = "is symbol for";
     const SYMBOL_ID = 29;
@@ -103,7 +106,10 @@ class verbs
     const FOLLOWED_BY = "is followed by";
     const FOLLOWER_OF = "is follower of";
     const TIME_STEP = "time jump";
+
+    // persevered verb names for unit and integration tests based on the database
     const TEST_ADD_NAME = "System Test Verb";
+    const TEST_ADD_COM = "test description if it can be added to the verb via import";
 
     // search directions to get related words (phrases)
     const DIRECTION_NO = '';
@@ -120,6 +126,13 @@ class verbs
     );
     const TEST_WORDS = array(
         self::TEST_ADD_NAME
+    );
+
+    // list of verbs that does not need a from phrase e.g. "per day" oder "m/s is alias of meter per second"
+    const WITHOUT_FROM = array(
+        self::ALIAS,
+        self::SYMBOL,
+        self::PER
     );
 
 }

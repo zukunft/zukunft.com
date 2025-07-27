@@ -31,7 +31,9 @@
 
 namespace cfg\system;
 
-include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'BasicEnum.php';
 
 use ReflectionException;
 

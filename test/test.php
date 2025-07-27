@@ -59,21 +59,24 @@ global $db_con;
 // open database and display header
 $db_con = prg_start("unit and integration testing", '', false);
 
-// load the session user parameters
-$start_usr = new user;
-$result = $start_usr->get();
+if ($db_con->is_open()) {
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($start_usr->id() > 0) {
-    if ($start_usr->is_admin()) {
+    // load the session user parameters
+    $start_usr = new user;
+    $result = $start_usr->get();
 
-        // run all unit, read and write tests
-        (new all_tests())->run_all_tests();
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($start_usr->id() > 0) {
+        if ($start_usr->is_admin()) {
 
-    } else {
-        echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.';
+            // run all unit, read and write tests
+            (new all_tests())->run_all_tests();
+
+        } else {
+            echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.' . "\n";
+        }
     }
-}
 
-// Closing connection
-prg_end($db_con, false);
+    // Closing connection
+    prg_end($db_con, false);
+}

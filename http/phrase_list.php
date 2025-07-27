@@ -35,7 +35,9 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_CONST_PATH . 'views.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 use cfg\phrase\term;
 use cfg\user\user;
@@ -122,7 +124,7 @@ if ($usr->id() > 0) {
                   zu_debug('word_add -> changed type to ('.$wrd->type_id.')');
                 } else {
                 */
-                $msg .= $html->dsp_err($trm->id_used_msg($this));
+                $msg .= $html->dsp_err($trm->id_used_msg_text($this));
                 log_debug();
                 //}
             }

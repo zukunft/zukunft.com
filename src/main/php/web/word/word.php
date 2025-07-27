@@ -48,34 +48,36 @@
 
 namespace html\word;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once WEB_HTML_PATH . 'button.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'html_selector.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_HTML_PATH . 'styles.php';
-include_once SHARED_ENUM_PATH . 'foaf_direction.php';
-//include_once WEB_FORMULA_PATH . 'formula.php';
-//include_once WEB_HELPER_PATH . 'config.php';
-include_once WEB_LOG_PATH . 'change_log_named.php';
-//include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-//include_once WEB_PHRASE_PATH . 'term.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_VERB_PATH . 'verb_list.php';
-//include_once WEB_VIEW_PATH . 'view.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_typed.php';
+include_once paths::API_OBJECT . 'api_message.php';
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'styles.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+//include_once html_paths::FORMULA . 'formula.php';
+//include_once html_paths::HELPER . 'config.php';
+include_once html_paths::LOG . 'change_log_named.php';
+//include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+//include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VERB . 'verb_list.php';
+//include_once html_paths::VIEW . 'view.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
 
 use controller\api_message;
 use html\button;
@@ -89,7 +91,7 @@ use html\phrase\phrase;
 use html\phrase\phrase_list;
 use html\phrase\term;
 use html\rest_ctrl;
-use html\sandbox\sandbox_typed;
+use html\sandbox\sandbox_code_id;
 use html\styles;
 use html\system\back_trace;
 use html\user\user_message;
@@ -104,7 +106,7 @@ use shared\enum\messages as msg_id;
 use shared\types\phrase_type;
 use shared\types\view_styles;
 
-class word extends sandbox_typed
+class word extends sandbox_code_id
 {
 
     /*
@@ -162,6 +164,11 @@ class word extends sandbox_typed
         $json_array = $api_msg->validate($json_array);
 
         $usr_msg = parent::api_mapper($json_array);
+        if (array_key_exists(json_fields::PLURAL, $json_array)) {
+            $this->set_plural($json_array[json_fields::PLURAL]);
+        } else {
+            $this->set_plural(null);
+        }
         if (array_key_exists(json_fields::PLURAL, $json_array)) {
             $this->set_plural($json_array[json_fields::PLURAL]);
         } else {

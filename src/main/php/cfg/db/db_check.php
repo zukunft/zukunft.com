@@ -2,8 +2,8 @@
 
 /*
 
-  db_check.php - test if the database exists and start the creation or upgrade process
-  ------------
+    cfg/db/db_check.php - test if the database exists and start the creation or upgrade process
+    -------------------
   
 
     This file is part of zukunft.com - calc with words
@@ -32,24 +32,25 @@
 
 namespace cfg\db;
 
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once SERVICE_PATH . 'config.php';
-include_once MODEL_CONST_PATH . 'files.php';
-include_once MODEL_FORMULA_PATH . 'formula_list.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_RESULT_PATH . 'result_two.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_USER_PATH . 'user_profile_list.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_RESULT . 'result_two.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_db.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\component\component;
 use cfg\config;
@@ -58,15 +59,14 @@ use cfg\formula\formula_list;
 use cfg\group\group;
 use cfg\phrase\phrase;
 use cfg\result\result_two;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
 use cfg\system\sys_log_function;
 use cfg\system\system_time_type;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\user\user_profile_list;
 use cfg\value\value;
-use cfg\value\value_base;
+use cfg\value\value_db;
+use shared\const\users;
 use shared\enum\user_profiles;
 use shared\library;
 
@@ -84,6 +84,8 @@ class db_check
      */
     function db_check(sql_db $db_con): user_message
     {
+        global $cfg;
+        global $log_txt;
 
         $usr_msg = new user_message(); // the message that should be shown to the user immediately
         $do_consistency_check = false;
@@ -93,6 +95,8 @@ class db_check
         // TODO remove rewrite before moved to PROD
         $main_tbl_name = $lib->class_to_name(config::class);
         if (!$db_con->has_table($main_tbl_name)) {
+            // because no log yet exists here echo instead of log_echo() is used
+            $log_txt->echo_log('zukunft.com: empty database detected');
             $usr_msg = $db_con->setup_db();
             if ($usr_msg->is_ok()) {
                 $db_con->db_fill_code_links();
@@ -258,24 +262,24 @@ class db_check
         $result .= $db_con->change_column_name('user', 'isactive', 'is_active');
         $result .= $db_con->change_column_name('user', 'email_alternativ', 'email_alternative');
         $result .= $db_con->change_column_name('element_type', 'formula_element_type_name', 'type_name');
-        $result .= $db_con->change_column_name('view', 'comment', sandbox_named::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('user_' . 'view', 'comment', sandbox_named::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('component', 'comment', sandbox_named::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('user_' . 'component', 'comment', sandbox_named::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('view', 'comment', sql_db::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('user_' . 'view', 'comment', sql_db::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('component', 'comment', sql_db::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('user_' . 'component', 'comment', sql_db::FLD_DESCRIPTION);
         $result .= $db_con->change_column_name('component_type', 'component_type_name', 'type_name');
         $result .= $db_con->change_column_name('formula_type', 'name', 'type_name');
         $result .= $db_con->change_column_name('ref_type', 'ref_type_name', 'type_name');
         $result .= $db_con->change_column_name('ref_type', 'source_type_name', 'type_name');
-        $result .= $db_con->change_column_name('source', 'comment', sandbox_named::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('user_' . 'source', 'comment', sandbox_named::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('source', 'comment', sql_db::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('user_' . 'source', 'comment', sql_db::FLD_DESCRIPTION);
         $result .= $db_con->change_column_name('share_type', 'share_type_name', 'type_name');
         $result .= $db_con->change_column_name('protection_type', 'protection_type_name', 'type_name');
         $result .= $db_con->change_column_name('user_profile', 'user_profile_name', 'type_name');
-        $result .= $db_con->change_column_name('user_profile', 'commen', sandbox_named::FLD_DESCRIPTION);
-        $result .= $db_con->change_column_name('sys_log_status', 'comment', sandbox_named::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('user_profile', 'commen', sql_db::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('sys_log_status', 'comment', sql_db::FLD_DESCRIPTION);
         $result .= $db_con->change_column_name('sys_log_status', 'sys_log_status_name', 'type_name');
         $result .= $db_con->change_column_name('job_type', 'calc_and_cleanup_task_type_name', 'type_name');
-        $result .= $db_con->change_column_name('user_profile', 'comment', sandbox_named::FLD_DESCRIPTION);
+        $result .= $db_con->change_column_name('user_profile', 'comment', sql_db::FLD_DESCRIPTION);
         $result .= $db_con->change_column_name('formula', 'protection_type_id', 'protect_id');
         $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'protection_type_id', 'protect_id');
         $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'protection_type_id', 'protect_id');
@@ -315,9 +319,9 @@ class db_check
         $result .= $db_con->column_allow_null('phrase_type', 'word_symbol');
         $result .= $db_con->column_allow_null('change_table', 'description');
         $result .= $db_con->column_allow_null('change_field', 'code_id');
-        $result .= $db_con->column_allow_null('view', sandbox_named::FLD_DESCRIPTION);
+        $result .= $db_con->column_allow_null('view', sql_db::FLD_DESCRIPTION);
         $result .= $db_con->column_allow_null('component_type', 'description');
-        $result .= $db_con->column_allow_null($lib->class_to_name(value::class), sandbox::FLD_EXCLUDED);
+        $result .= $db_con->column_allow_null($lib->class_to_name(value::class), sql_db::FLD_EXCLUDED);
         $result .= $db_con->column_allow_null($lib->class_to_name(value::class), 'protect_id');
         $result .= $db_con->column_allow_null('formula_link', 'link_type_id');
         $result .= $db_con->column_allow_null('user_' . $lib->class_to_name(value::class), 'protect_id');
@@ -329,8 +333,8 @@ class db_check
         $result .= $db_con->column_allow_null('job', 'end_time');
         $result .= $db_con->column_allow_null('job', 'row_id');
         $result .= $db_con->column_force_not_null('user_' . 'source', user::FLD_ID);
-        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'word_value', value_base::FLD_VALUE);
-        $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'word_value', value_base::FLD_VALUE);
+        $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'word_value', value_db::FLD_VALUE);
+        $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'word_value', value_db::FLD_VALUE);
         $result .= $db_con->change_table_name('word_types', 'phrase_type');
         $result .= $db_con->change_column_name('phrase_type', 'word_type_id', phrase::FLD_TYPE);
         $result .= $db_con->change_column_name('word', 'word_type_id', phrase::FLD_TYPE);
@@ -374,42 +378,42 @@ class db_check
             // add missing system users if needed
             $sys_usr = new user();
             if (!$sys_usr->has_any_user_this_profile(user_profiles::SYSTEM)) {
-                $sys_usr->load_by_name(user::SYSTEM_NAME);
+                $sys_usr->load_by_name(users::SYSTEM_NAME);
                 $sys_usr->set_profile(user_profiles::SYSTEM);
-                $sys_usr->save($db_con);
+                $sys_usr->save();
             }
             // add missing system users if needed
             $usr_admin = new user();
             if (!$usr_admin->has_any_user_this_profile(user_profiles::ADMIN)) {
-                $usr_admin->load_by_name(user::SYSTEM_ADMIN_NAME);
+                $usr_admin->load_by_name(users::SYSTEM_ADMIN_NAME);
                 $usr_admin->set_profile(user_profiles::ADMIN);
-                $usr_admin->save($db_con);
+                $usr_admin->save();
             }
 
             // add missing system test users if needed
             $test_usr = new user();
             if (!$test_usr->has_any_user_this_profile(user_profiles::TEST)) {
-                $test_usr->load_by_name(user::SYSTEM_TEST_NAME);
+                $test_usr->load_by_name(users::SYSTEM_TEST_NAME);
                 $test_usr->set_profile(user_profiles::TEST);
-                $test_usr->save($db_con);
+                $test_usr->save();
                 $test_usr2 = new user();
-                $test_usr2->load_by_name(user::SYSTEM_TEST_PARTNER_NAME);
+                $test_usr2->load_by_name(users::SYSTEM_TEST_PARTNER_NAME);
                 $test_usr2->set_profile(user_profiles::TEST);
-                $test_usr2->save($db_con);
+                $test_usr2->save();
             }
 
             $test_usr_normal = new user();
             if (!$test_usr_normal->has_any_user_this_profile(user_profiles::NORMAL)) {
                 $test_usr_normal = new user();
-                $test_usr_normal->load_by_name(user::SYSTEM_TEST_NORMAL_NAME);
+                $test_usr_normal->load_by_name(users::SYSTEM_TEST_NORMAL_NAME);
                 $test_usr_normal->set_profile(user_profiles::NORMAL);
-                $test_usr_normal->save($db_con);
+                $test_usr_normal->save();
             }
         }
 
         // prepare the high level upgrade
         $sys_usr = new user();
-        $sys_usr->load_by_name(user::SYSTEM_NAME);
+        $sys_usr->load_by_name(users::SYSTEM_NAME);
 
         // refresh the formula ref_text, because the coding has changed (use "{w" instead of "{t")
         $frm_lst = new formula_list($sys_usr);

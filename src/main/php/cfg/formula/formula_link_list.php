@@ -31,17 +31,21 @@
 
 namespace cfg\formula;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_list.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
@@ -87,7 +91,7 @@ class formula_link_list extends sandbox_link_list
         $sc->set_class(formula_link::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(array(formula::FLD_ID, phrase::FLD_ID));
+        $sc->set_fields(array(formula_db::FLD_ID, phrase::FLD_ID));
         $sc->set_usr_num_fields(formula_link::FLD_NAMES_NUM_USR);
         // also load the linked user specific phrase with the same SQL statement
         $sc->set_join_fields(
@@ -122,7 +126,7 @@ class formula_link_list extends sandbox_link_list
     {
         $qp = $this->load_sql($sc, 'frm_id');
         if ($frm_id > 0) {
-            $sc->add_where(formula::FLD_ID, $frm_id);
+            $sc->add_where(formula_db::FLD_ID, $frm_id);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -186,7 +190,7 @@ class formula_link_list extends sandbox_link_list
                     $db_con->usr_id = $this->user()->id();
                     // delete first all user configuration that have also been excluded
                     $db_con->set_class(formula_link::class, true);
-                    $result = $db_con->delete_old(array(formula_link::FLD_ID, sandbox::FLD_EXCLUDED), array($frm_lnk->id(), '1'));
+                    $result = $db_con->delete_old(array(formula_link::FLD_ID, sql_db::FLD_EXCLUDED), array($frm_lnk->id(), '1'));
                     if ($result == '') {
                         $db_con->set_class(formula_link::class);
                         $result = $db_con->delete_old(formula_link::FLD_ID, $frm_lnk->id());

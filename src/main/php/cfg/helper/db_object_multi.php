@@ -34,17 +34,19 @@
 
 namespace cfg\helper;
 
-include_once MODEL_HELPER_PATH . 'db_object_key.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-//include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_key.php';
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+//include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
@@ -240,7 +242,35 @@ class db_object_multi extends db_object_key
 
 
     /*
-     * information
+     * modify
+     */
+
+    /**
+     * fill this seq id object based on the given object
+     * if the given id is zero or an empty string the id is never overwritten
+     * if the given id is valid the id of this object is set if not yet done
+     * similar to db_object_seq_id->fill
+     *
+     * @param db_object_multi $obj object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = new user_message();
+        if ($obj->id() !== 0 and $obj->id() !== '' ) {
+            if ($this->id() === 0 or $this->id() === '') {
+                $this->set_id($obj->id());
+            } elseif ($obj->id() != $this->id()) {
+                $usr_msg->add_id_with_vars(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
+            }
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * info
      */
 
     /**

@@ -32,7 +32,9 @@
 
 namespace unit_ui;
 
-include_once SHARED_TYPES_PATH . 'api_type.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'api_type.php';
 
 use html\html_base;
 use html\figure\figure_list as figure_list_dsp;

@@ -42,29 +42,32 @@
 
 namespace cfg\element;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'expression.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_CALC_PATH . 'parameter_type.php';
-include_once SHARED_CONST_PATH . 'chars.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_FORMULA . 'expression.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CALC . 'parameter_type.php';
+include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -75,6 +78,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\helper\db_object_seq_id_user;
 use cfg\helper\type_object;
 use cfg\phrase\term;
@@ -125,7 +129,7 @@ class element extends db_object_seq_id_user
 
     // all database field names excluding the id, standard name and user specific fields
     const FLD_NAMES = array(
-        formula::FLD_ID,
+        formula_db::FLD_ID,
         user::FLD_ID,
         self::FLD_ORDER,
         self::FLD_TYPE,
@@ -134,7 +138,7 @@ class element extends db_object_seq_id_user
 
     // field lists for the table creation
     const FLD_LST_ALL = array(
-        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
+        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
         [element_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, element_type::class, ''],
         [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', user::class, ''],
@@ -245,7 +249,7 @@ class element extends db_object_seq_id_user
      */
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        if ($this->is_excluded()) {
+        if ($this->is_excluded() and !$typ_lst->test_mode()) {
             $vars = [];
             $vars[json_fields::ID] = $this->id();
             $vars[json_fields::EXCLUDED] = true;

@@ -30,11 +30,12 @@
 
 */
 
-include_once EXPORT_PATH . 'xml.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\phrase\phrase_list;
-use im_export\json_io;
+use cfg\export\json_io;
 use shared\const\words;
 use test\test_cleanup;
 

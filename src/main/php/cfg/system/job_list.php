@@ -36,20 +36,24 @@
 
 namespace cfg\system;
 
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\user\user;
 use cfg\user\user_message;
 use DateTime;
+use shared\enum\messages as msg_id;
 
 class job_list extends base_list
 {
@@ -165,11 +169,9 @@ class job_list extends base_list
         // check if the job to add has all needed parameters
         if ($job->type_code_id() != job_type_list::BASE_IMPORT) {
             if (!isset($job->frm)) {
-                $msg = 'Job ' . $job->dsp_id() . ' cannot be added, because formula is missing.';
-                $usr_msg->add_message_text($msg);
+                $usr_msg->add_id_with_vars(msg_id::JOB_FORMULA_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
             } elseif (!isset($job->phr_lst)) {
-                $msg = 'Job ' . $job->dsp_id() . ' cannot be added, because no words or triples are defined.';
-                $usr_msg->add_message_text($msg);
+                $usr_msg->add_id_with_vars(msg_id::JOB_WORD_MISSING, [msg_id::VAR_ID => $job->dsp_id()]);
             }
         }
 
@@ -207,8 +209,7 @@ class job_list extends base_list
             if ($chk_job->frm == $job->frm) {
                 if ($chk_job->usr == $job->user()) {
                     if (in_array($chk_job->phr_lst->id(), $chk_phr_lst_ids)) {
-                        $msg = 'Job for phrases ' . $chk_job->phr_lst->name() . ' is already in the list of active jobs';
-                        $usr_msg->add_message_text($msg);
+                        $usr_msg->add_id_with_vars(msg_id::JOB_ALREADY_ACTIVE, [msg_id::VAR_NAME => $chk_job->phr_lst->name()]);
                     }
                 }
             }

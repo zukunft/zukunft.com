@@ -1,0 +1,51 @@
+services:
+  app:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    ports:
+      - "${APP_SERVICE_PORT:-8080}:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/apache-config.conf:/etc/apache2/sites-enabled/000-default.conf
+    depends_on:
+      - db
+    environment:
+      - PGSQL_HOST=${PGSQL_HOST:-db}
+      - PGSQL_PORT=${PGSQL_PORT:-5432}
+      - PGSQL_DATABASE=${PGSQL_DATABASE:-zukunft}
+      - PGSQL_USERNAME=${PGSQL_USERNAME:-zukunft}
+      - PGSQL_PASSWORD=${PGSQL_PASSWORD:-zukunft}
+    networks:
+      - zukunft_network
+
+  db:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_DB: ${PGSQL_DATABASE:-zukunft}
+      POSTGRES_USER: ${PGSQL_USERNAME:-zukunft}
+      POSTGRES_PASSWORD: ${PGSQL_PASSWORD:-zukunft}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - zukunft_network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "${ADMINER_SERVICE_PORT:-8081}:80"
+    environment:
+      - ADMINER_DEFAULT_SERVER=db
+    depends_on:
+      - db
+    networks:
+      - zukunft_network
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  zukunft_network:

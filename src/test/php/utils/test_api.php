@@ -39,17 +39,18 @@
 
 namespace test;
 
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_LOG_PATH . 'change_log_list.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once WEB_LOG_PATH . 'change_log_list.php';
-include_once EXPORT_PATH . 'export.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once html_paths::LOG . 'change_log_list.php';
 
 use cfg\db\sql_db;
 use cfg\element\element;
-use cfg\export\export;
 use cfg\formula\formula;
 use cfg\log\change_log_list;
 use cfg\system\job;
@@ -65,22 +66,29 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\word\word;
 use controller\controller;
-use DateTime;
-use Exception;
 use html\rest_ctrl;
 use html\log\change_log_list as change_log_list_dsp;
 use shared\api;
+use shared\const\users;
 use shared\json_fields;
 use shared\library;
 use shared\types\api_type;
 use shared\types\api_type_list;
 use unit\sys_log_tests;
+use DateTime;
+use Exception;
 
 class test_api extends create_test_objects
 {
     // path
     const API_PATH = 'api';
     const JSON_EXT = '.json';
+    // an api json message for an empty object
+    const JSON_ID_ONLY = '{"id":0}';
+    // an export json message for an empty object
+    const JSON_NAME_ONLY = '{"name":""}';
+    // an export json message for an empty array object e.g.
+    const JSON_ARRAY_ONLY = '[]';
 
     /**
      * check if the HTML frontend object can be set based on the api json message
@@ -157,7 +165,7 @@ class test_api extends create_test_objects
         $target = '"id":1,"excluded":true';
         // TODO Prio 2 deprecate this exception
         if ($class == element::class) {
-            $target = '"id":101,"excluded":true';
+            $target = '"id":104,"excluded":true';
         }
         $result = $this->assert_text_contains($test_name, $json_excluded, $target);
         if ($result) {
@@ -168,10 +176,10 @@ class test_api extends create_test_objects
             $clone_obj = clone $usr_obj;
             $clone_obj->reset();
             $json_empty = $clone_obj->api_json();
-            $target = '{"id":0}';
+            $target = self::JSON_ID_ONLY;
             // TODO Prio 2 deprecate this exception
             if ($class == element::class) {
-                $target = '{"id":101,"name":"minute","class":"word"}';
+                $target = '{"id":104,"name":"minute","class":"word"}';
             }
             $result = $this->assert($test_name, $json_empty, $target);
         }
@@ -826,7 +834,7 @@ class test_api extends create_test_objects
                 or $actual_user == '127.0.0.1'
                 or 'zukunft.com system'
                 or 'localhost') {
-                $new_value = user::SYSTEM_TEST_NAME;
+                $new_value = users::SYSTEM_TEST_NAME;
                 $json = $this->json_remove_volatile_replace_field($json, json_fields::USER_NAME, $new_value);
             }
         }
@@ -835,7 +843,7 @@ class test_api extends create_test_objects
         if (array_key_exists(json_fields::USER_ID, $json)) {
             $user_id = $json[json_fields::USER_ID];
             if ($user_id >= 0) {
-                $user_id = user::SYSTEM_TEST_ID;
+                $user_id = users::SYSTEM_TEST_ID;
             }
             $json = $this->json_remove_volatile_replace_int_field($json, json_fields::USER_ID, $user_id);
         }

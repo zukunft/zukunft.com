@@ -36,12 +36,14 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VIEW_PATH . 'view_list.php';
+use cfg\const\paths;
+
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
 
 use controller\controller;
 use cfg\user\user;
@@ -51,35 +53,38 @@ use shared\api;
 // open database
 $db_con = prg_start("api/viewList", "", false);
 
-// get the parameters
-$cmp_id = $_GET[api::URL_VAR_VIEW_ID] ?? '';
-$pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // get the parameters
+    $cmp_id = $_GET[api::URL_VAR_VIEW_ID] ?? '';
+    $pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if ($cmp_id != '') {
-        $lst = new view_list($usr);
-        $lst->load_by_component_id($cmp_id);
-        $result = $lst->api_json();
-    } elseif ($_GET[api::URL_VAR_PATTERN] != null) {
-        $lst = new view_list($usr);
-        $lst->load_names(($pattern));
-        $result = $lst->api_json();
-    } else {
-        $msg = 'view id and pattern missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        if ($cmp_id != '') {
+            $lst = new view_list($usr);
+            $lst->load_by_component_id($cmp_id);
+            $result = $lst->api_json();
+        } elseif ($_GET[api::URL_VAR_PATTERN] != null) {
+            $lst = new view_list($usr);
+            $lst->load_names(($pattern));
+            $result = $lst->api_json();
+        } else {
+            $msg = 'view id and pattern missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

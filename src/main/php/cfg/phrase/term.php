@@ -45,29 +45,36 @@
 
 namespace cfg\phrase;
 
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'word_db.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
 
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_db.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED . 'library.php';
+
+use cfg\formula\formula_db;
 use cfg\helper\combine_named;
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -82,9 +89,12 @@ use cfg\sandbox\sandbox_named;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\user\user;
+use cfg\verb\verb_db;
+use cfg\word\triple_db;
 use cfg\word\word;
 use cfg\word\triple;
 use cfg\word\word_db;
+use shared\enum\messages as msg_id;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\share_type as share_type_shared;
 use shared\types\phrase_type as phrase_type_shared;
@@ -114,14 +124,14 @@ class term extends combine_named
     // this is done because the total number of terms is expected to be less than 10 million
     // which database should be able to handle and only a few hundred are expected to be sent to via api at once
     const FLD_NAMES_USR = array(
-        sandbox_named::FLD_DESCRIPTION,
-        formula::FLD_FORMULA_TEXT,
-        formula::FLD_FORMULA_USER_TEXT
+        sql_db::FLD_DESCRIPTION,
+        formula_db::FLD_FORMULA_TEXT,
+        formula_db::FLD_FORMULA_USER_TEXT
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_USAGE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -154,54 +164,54 @@ class term extends combine_named
             [word_db::FLD_ID, term::FLD_ID, self::FLD_WORD_ID_TO_TERM_ID],
             [user::FLD_ID],
             [word_db::FLD_NAME, term::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
+            [sql_db::FLD_DESCRIPTION],
             [word_db::FLD_VALUES, self::FLD_USAGE],
             [phrase::FLD_TYPE, self::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
-            ['', formula::FLD_FORMULA_TEXT],
-            ['', formula::FLD_FORMULA_USER_TEXT]
+            ['', formula_db::FLD_FORMULA_TEXT],
+            ['', formula_db::FLD_FORMULA_USER_TEXT]
         ], [phrase::FLD_TYPE, word_db::FLD_ID]],
         [triple::class, [
-            [triple::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
+            [triple_db::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
             [user::FLD_ID],
-            [[triple::FLD_NAME, triple::FLD_NAME_GIVEN, triple::FLD_NAME_AUTO], term::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
-            [triple::FLD_VALUES, self::FLD_USAGE],
+            [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], term::FLD_NAME],
+            [sql_db::FLD_DESCRIPTION],
+            [triple_db::FLD_VALUES, self::FLD_USAGE],
             [phrase::FLD_TYPE, self::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
-            ['', formula::FLD_FORMULA_TEXT],
-            ['', formula::FLD_FORMULA_USER_TEXT]
-        ], ['', triple::FLD_ID]],
+            ['', formula_db::FLD_FORMULA_TEXT],
+            ['', formula_db::FLD_FORMULA_USER_TEXT]
+        ], ['', triple_db::FLD_ID]],
         [formula::class, [
-            [formula::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
+            [formula_db::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
             [user::FLD_ID],
-            [formula::FLD_NAME, term::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
-            [formula::FLD_USAGE, self::FLD_USAGE],
-            [formula::FLD_TYPE, self::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [formula_db::FLD_NAME, term::FLD_NAME],
+            [sql_db::FLD_DESCRIPTION],
+            [formula_db::FLD_USAGE, self::FLD_USAGE],
+            [formula_db::FLD_TYPE, self::FLD_TYPE],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
-            [formula::FLD_FORMULA_TEXT],
-            [formula::FLD_FORMULA_USER_TEXT]
-        ], ['', formula::FLD_ID]],
+            [formula_db::FLD_FORMULA_TEXT],
+            [formula_db::FLD_FORMULA_USER_TEXT]
+        ], ['', formula_db::FLD_ID]],
         [verb::class, [
-            [verb::FLD_ID, term::FLD_ID, self::FLD_VERB_ID_TO_TERM_ID],
-            [sql::NULL_VALUE, user::FLD_ID, sql::FLD_CONST],
-            [verb::FLD_NAME, term::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
-            [verb::FLD_WORDS, self::FLD_USAGE],
-            [sql::NULL_VALUE, self::FLD_TYPE, sql::FLD_CONST],
-            [sql::NULL_VALUE, sandbox::FLD_EXCLUDED, sql::FLD_CONST],
-            [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql::FLD_CONST],
-            [protect_type_shared::ADMIN_ID, sandbox::FLD_PROTECT, sql::FLD_CONST],
-            ['', formula::FLD_FORMULA_TEXT],
-            ['', formula::FLD_FORMULA_USER_TEXT]
-        ], ['', verb::FLD_ID]]
+            [verb_db::FLD_ID, term::FLD_ID, self::FLD_VERB_ID_TO_TERM_ID],
+            [sql::NULL_VALUE, user::FLD_ID, sql_db::FLD_CONST],
+            [verb_db::FLD_NAME, term::FLD_NAME],
+            [sql_db::FLD_DESCRIPTION],
+            [verb_db::FLD_WORDS, self::FLD_USAGE],
+            [sql::NULL_VALUE, self::FLD_TYPE, sql_db::FLD_CONST],
+            [sql::NULL_VALUE, sql_db::FLD_EXCLUDED, sql_db::FLD_CONST],
+            [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql_db::FLD_CONST],
+            [protect_type_shared::ADMIN_ID, sandbox::FLD_PROTECT, sql_db::FLD_CONST],
+            ['', formula_db::FLD_FORMULA_TEXT],
+            ['', formula_db::FLD_FORMULA_USER_TEXT]
+        ], ['', verb_db::FLD_ID]]
     ];
 
 
@@ -215,11 +225,16 @@ class term extends combine_named
      */
     function __construct(user|word|triple|formula|verb|null $obj)
     {
-        if ($obj::class == user::class) {
-            // create a dummy word object to remember the user
-            parent::__construct(new word($obj));
+        if ($obj != null) {
+            if ($obj::class == user::class) {
+                // create a dummy word object to remember the user
+                parent::__construct(new word($obj));
+            } else {
+                parent::__construct($obj);
+            }
         } else {
-            parent::__construct($obj);
+            log_err('object is null when trying to construct a term');
+            parent::__construct(new word($obj));
         }
     }
 
@@ -1003,25 +1018,35 @@ class term extends combine_named
      */
 
     /**
-     * create a message text that the name is already used
+     * create a translatable message that the name is already used
      */
-    function id_used_msg(db_object_seq_id $obj_to_add): string
+    function id_used_msg(db_object_seq_id $obj_to_add): user_message
     {
         $lib = new library();
-        $result = "";
+        $usr_msg = new user_message();
 
         if ($this->id() != 0) {
             $class = $lib->class_to_name($this->type());
-            $result =
-                'A ' . $class . ' with the name "' . $this->name() . '" already exists. '
-                . 'Please use another ' . $lib->class_to_name($obj_to_add::class) . ' name.';
+            $usr_msg->add_id_with_vars(msg_id::CLASS_ALREADY_EXISTS, [
+                msg_id::VAR_CLASS_NAME => $class,
+                msg_id::VAR_NAME => $this->name(),
+                msg_id::VAR_VALUE => $lib->class_to_name($obj_to_add::class)
+            ]);
         }
 
-        return $result;
+        return $usr_msg;
+    }
+
+    /**
+     * create a message text that the name is already used
+     */
+    function id_used_msg_text(db_object_seq_id $obj_to_add): string
+    {
+        return $this->id_used_msg($obj_to_add)->get_last_message_translated();
     }
 
     /*
-     * information functions
+     * info functions
      */
 
     function is_time(): bool
@@ -1040,6 +1065,36 @@ class term extends combine_named
     /*
      * info
      */
+
+    /**
+     * check if the word, verb, triple or formula in the database needs to be updated
+     * e.g. for import if this word has only the name set, the protection should not be updated in the database
+     *
+     * @param term $db_trm the word, verb, triple or formula as saved in the database
+     * @return bool true if this word has infos that should be saved in the database
+     */
+    function needs_db_update(term $db_trm): bool
+    {
+        if ($this->is_word() and $db_trm->is_word()) {
+            $wrd = $this->obj();
+            $db_wrd = $db_trm->obj();
+            return $wrd->needs_db_update($db_wrd);
+        } elseif ($this->is_verb() and $db_trm->is_verb()) {
+            $vrb = $this->obj();
+            $db_vrb = $db_trm->obj();
+            return $vrb->needs_db_update($db_vrb);
+        } elseif ($this->is_triple() and $db_trm->is_triple()) {
+            $trp = $this->obj();
+            $db_trp = $db_trm->obj();
+            return $trp->needs_db_update($db_trp);
+        } elseif ($this->is_formula() and $db_trm->is_formula()) {
+            $frm = $this->obj();
+            $db_frm = $db_trm->obj();
+            return $frm->needs_db_update($db_frm);
+        } else {
+            return true;
+        }
+    }
 
     /**
      * @return user_message ok message if this word or triple might be read to be added to the database

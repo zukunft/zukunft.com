@@ -31,12 +31,14 @@
 
 namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once DB_PATH . 'sql_db.php';
-include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 
 use cfg\helper\type_list;
 use cfg\helper\type_object;

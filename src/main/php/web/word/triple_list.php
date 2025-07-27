@@ -31,17 +31,19 @@
 
 namespace html\word;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'styles.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'triple_list.php';
-include_once SHARED_ENUM_PATH . 'foaf_direction.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'triple_list.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
@@ -176,17 +178,17 @@ class triple_list extends list_dsp
                     // display the link type
                     if ($lnk->verb()->id() == $next_lnk->verb()->id()) {
                         if ($this->wrd != null) {
-                            $result .= $this->wrd->plural;
+                            $result .= $this->wrd->plural();
                         }
                         if ($this->direction == foaf_direction::DOWN) {
                             $result .= " " . $lnk->verb()->rev_plural;
                         } else {
-                            $result .= " " . $lnk->verb()->plural;
+                            $result .= " " . $lnk->verb()->plural();
                         }
                     } else {
                         $result .= $this->wrd->name();
                         if ($this->direction == foaf_direction::DOWN) {
-                            $result .= " " . $lnk->verb()->reverse;
+                            $result .= " " . $lnk->verb()->reverse();
                         } else {
                             $result .= " " . $lnk->verb()->name;
                         }

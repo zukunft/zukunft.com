@@ -35,17 +35,19 @@
 
 namespace html\formula;
 
-include_once WEB_ELEMENT_PATH . 'element.php';
-include_once WEB_ELEMENT_PATH . 'element_list.php';
-include_once WEB_PHRASE_PATH . 'term.php';
-include_once WEB_PHRASE_PATH . 'term_list.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_CALC_PATH . 'expression.php';
-include_once SHARED_CALC_PATH . 'parameter_type.php';
-include_once SHARED_CONST_PATH . 'chars.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::ELEMENT . 'element.php';
+include_once html_paths::ELEMENT . 'element_list.php';
+include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::PHRASE . 'term_list.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CALC . 'expression.php';
+include_once paths::SHARED_CALC . 'parameter_type.php';
+include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED . 'library.php';
 
 use html\element\element;
 use html\element\element_list;
@@ -79,7 +81,7 @@ class expression extends shared_expression
         $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
         while ($obj_sym != '') {
             $elm = $this->element_by_symbol($obj_sym, $trm_lst);
-            $elm_lst->add_obj($elm);
+            $elm_lst->add_obj($elm, true);
             $work = $lib->str_right_of($work, chars::TERM_END);
             $obj_sym = $lib->str_between($work, chars::TERM_START, chars::TERM_END);
         }

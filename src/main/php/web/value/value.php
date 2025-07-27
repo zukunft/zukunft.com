@@ -35,25 +35,27 @@
 
 namespace html\value;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
-include_once DB_PATH . 'sql_db.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_HTML_PATH . 'styles.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_FIGURE_PATH . 'figure.php';
-include_once WEB_HELPER_PATH . 'config.php';
-include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once WEB_GROUP_PATH . 'group.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_REF_PATH . 'source.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once paths::DB . 'sql_db.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'styles.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::FIGURE . 'figure.php';
+include_once html_paths::HELPER . 'config.php';
+include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::GROUP . 'group.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use html\group\group;
 use html\figure\figure;
@@ -513,7 +515,7 @@ class value extends sandbox_value
 
         // get value changes by the user that are not standard
         $sql = "SELECT v.group_id,
-                    " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(value_db::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                    t.word_id,
                    t.word_name
               FROM groups g,

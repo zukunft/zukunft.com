@@ -32,9 +32,11 @@
 
 namespace unit_read;
 
-include_once SHARED_TYPES_PATH . 'view_type.php';
-include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once SHARED_CONST_PATH . 'views.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'view_type.php';
+include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use cfg\component\component;
 use cfg\component\component_type_list;

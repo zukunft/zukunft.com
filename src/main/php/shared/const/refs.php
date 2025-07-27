@@ -54,6 +54,7 @@ class refs
     const CHANGE_NEW_KEY = 'Q999999999';
 
     // to test adding a new reference type
+    const SYSTEM_TEST_ADD = 'System Test Reference External Key';
     const SYSTEM_TEST_ADD_COM = 'System Test Reference Type';
 
     // must be the same as in /resource/api/source/source_put.json

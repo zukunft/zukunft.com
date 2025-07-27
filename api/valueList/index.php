@@ -39,12 +39,14 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once API_OBJECT_PATH . 'controller.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VALUE_PATH . 'value_list.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once SHARED_PATH . 'api.php';
+use cfg\const\paths;
+
+include_once paths::API_OBJECT . 'controller.php';
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED . 'api.php';
 
 use controller\controller;
 use cfg\user\user;
@@ -54,33 +56,36 @@ use shared\api;
 // open database
 $db_con = prg_start("api/valueList", "", false);
 
-// get the parameters
-// TODO use a json with the ids
-// TODO add load by phrase list, formula and source
-$ids = $_GET[api::URL_VAR_ID_LST] ?? '';
-$ids = explode(",", $ids);
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = ''; // reset the json message string
+    // get the parameters
+    // TODO use a json with the ids
+    // TODO add load by phrase list, formula and source
+    $ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+    $ids = explode(",", $ids);
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    if ($ids != '') {
-        $lst = new value_list($usr);
-        $lst->load_by_ids($ids);
-        $result = $lst->api_json();
-    } else {
-        $msg = 'formula id is missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        if ($ids != '') {
+            $lst = new value_list($usr);
+            $lst->load_by_ids($ids);
+            $result = $lst->api_json();
+        } else {
+            $msg = 'formula id is missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get_json($result, $msg);
-
-
-prg_end_api($db_con);

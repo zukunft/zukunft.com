@@ -43,20 +43,26 @@
 
 namespace cfg\value;
 
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_LOG_PATH . 'change_value_geo.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_big.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
 
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_LOG . 'change_value_geo.php';
+include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
+include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\group\group;
@@ -64,8 +70,9 @@ use cfg\log\change_value_geo;
 use cfg\log\change_values_geo_prime;
 use cfg\log\change_values_geo_norm;
 use cfg\log\change_values_geo_big;
-use cfg\ref\source;
 use cfg\sandbox\sandbox;
+use cfg\ref\source_db;
+use cfg\sandbox\sandbox_multi;
 use cfg\user\user;
 use DateTime;
 use shared\json_fields;
@@ -93,7 +100,7 @@ class value_geo extends value_base
 
     const FLD_NAMES_STD = array(
         self::FLD_VALUE,
-        source::FLD_ID,
+        source_db::FLD_ID,
     );
 
     // list of the user specific database field names for geo values
@@ -102,18 +109,18 @@ class value_geo extends value_base
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
-        source::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        source_db::FLD_ID,
+        sandbox_multi::FLD_LAST_UPDATE,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_VALUE,
-        source::FLD_ID,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        source_db::FLD_ID,
+        sandbox_multi::FLD_LAST_UPDATE,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
 

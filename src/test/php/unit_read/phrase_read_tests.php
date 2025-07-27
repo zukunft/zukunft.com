@@ -32,9 +32,11 @@
 
 namespace unit_read;
 
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_type;

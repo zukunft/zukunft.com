@@ -40,23 +40,25 @@
 
 namespace cfg\helper;
 
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once DB_PATH . 'sql_db.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_RESULT_PATH . 'result.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-//include_once MODEL_VERB_PATH . 'verb.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-//include_once MODEL_WORD_PATH . 'triple.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::DB . 'sql_db.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VERB . 'verb.php';
+//include_once paths::MODEL_WORD . 'word.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_db;
 use cfg\formula\formula;
@@ -103,7 +105,7 @@ class combine_object extends CombineObject
         $this->obj = $obj;
     }
 
-    function obj(): IdObject|TextIdObject|null
+    function obj(): IdObject|TextIdObject|word|triple|null
     {
         return $this->obj;
     }
@@ -168,7 +170,7 @@ class combine_object extends CombineObject
 
 
     /*
-     * information
+     * info
      */
 
     /**

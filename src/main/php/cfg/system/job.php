@@ -71,29 +71,38 @@ A user updates a formula
 
 namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_SYSTEM_PATH . 'job_type.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_REF_PATH . 'ref.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_REF . 'ref_db.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_SYSTEM . 'job_type.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
@@ -102,15 +111,20 @@ use cfg\db\sql_type_list;
 use cfg\helper\db_object_seq_id_user;
 use cfg\formula\formula;
 use cfg\helper\type_object;
+use cfg\ref\ref_db;
 use cfg\ref\source;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\ref\ref;
+use cfg\ref\source_db;
 use cfg\user\user;
+use cfg\user\user_message;
 use DateTime;
 use DateTimeInterface;
-use shared\json_fields;
+use shared\enum\messages as msg_id;
 use shared\types\api_type_list;
+use shared\json_fields;
+use shared\library;
 
 class job extends db_object_seq_id_user
 {
@@ -174,8 +188,8 @@ class job extends db_object_seq_id_user
         [self::FLD_PARAMETER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PARAMETER_COM, phrase::FLD_ID],
         [self::FLD_CHANGE_FIELD, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_CHANGE_FIELD_COM],
         [self::FLD_ROW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_COM],
-        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
-        [ref::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
+        [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
+        [ref_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, ref::class, self::FLD_REF_COM],
     );
 
 
@@ -245,9 +259,33 @@ class job extends db_object_seq_id_user
      * set and get
      */
 
-    function set_type_id(?int $type_id = null): void
+    /**
+     * set the database id of the type
+     *
+     * @param int|null $type_id the database id of the type
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message warning message for the user if the permissions are missing
+     */
+    function set_type_id(?int $type_id = null, user $usr_req = new user()): user_message
     {
-        $this->type_id = $type_id;
+        $usr_msg = new user_message();
+        if ($usr_req->can_set_type_id()) {
+            $this->type_id = $type_id;
+        } else {
+            // the type of a job can be set once if not defined already
+            if ($type_id === null) {
+                $this->type_id = $type_id;
+            } else {
+                $lib = new library();
+                $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                    msg_id::VAR_USER_NAME => $usr_req->name(),
+                    msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
+                    msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
+                    msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+                ]);
+            }
+        }
+        return $usr_msg;
     }
 
     function type_id(): ?int
@@ -255,10 +293,10 @@ class job extends db_object_seq_id_user
         return $this->type_id;
     }
 
-    function set_type(string $code_id): void
+    function set_type(string $code_id, user $usr_req): void
     {
         global $job_typ_cac;
-        $this->set_type_id($job_typ_cac->id($code_id));
+        $this->set_type_id($job_typ_cac->id($code_id), $usr_req);
     }
 
     function type_code_id(): string
@@ -379,6 +417,7 @@ class job extends db_object_seq_id_user
     {
 
         global $db_con;
+        global $usr;
 
         $result = 0;
         log_debug();
@@ -388,7 +427,7 @@ class job extends db_object_seq_id_user
             if ($code_id == '') {
                 log_debug('invalid batch job type');
             } else {
-                $this->set_type($code_id);
+                $this->set_type($code_id, $usr);
             }
         }
 

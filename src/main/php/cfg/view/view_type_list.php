@@ -32,9 +32,11 @@
 
 namespace cfg\view;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once SHARED_TYPES_PATH . 'view_type.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_TYPES . 'view_type.php';
 
 use cfg\helper\type_list;
 use shared\types\view_type as view_type_shared;

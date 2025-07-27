@@ -39,17 +39,19 @@
 
 namespace unit;
 
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_LOG_PATH . 'change_log_list.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once WEB_HELPER_PATH . 'data_object.php';
-include_once EXPORT_PATH . 'export.php';
-include_once SHARED_CONST_PATH . 'formulas.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once html_paths::HELPER . 'data_object.php';
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
 
 use cfg\component\component;
 use cfg\component\component_list;
@@ -81,6 +83,7 @@ use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use shared\api;
 use shared\const\triples;
+use shared\const\users;
 use shared\enum\change_fields;
 use shared\helper\Config as shared_config;
 use shared\library;
@@ -119,9 +122,9 @@ class api_tests
         $ts = 'api ';
         $t->header($ts);
 
-        $t->assert_api_get(user::class, user::SYSTEM_TEST_ID);
-        $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_NAME);
-        $t->assert_api_get_by_text(user::class, user::SYSTEM_TEST_EMAIL, api::URL_VAR_EMAIL);
+        $t->assert_api_get(user::class, users::SYSTEM_TEST_ID);
+        $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_NAME);
+        $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_EMAIL, api::URL_VAR_EMAIL);
         $t->assert_api_get(word::class);
         $t->assert_api_get_json(word::class, api::URL_VAR_WORD_ID);
         $t->assert_api_get_by_text(word::class, words::MATH);

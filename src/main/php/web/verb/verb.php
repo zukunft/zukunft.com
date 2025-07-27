@@ -39,14 +39,16 @@
 
 namespace html\verb;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_PHRASE_PATH . 'term.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_named.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::SANDBOX . 'sandbox_named.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\html_base;
 use html\phrase\term;
@@ -65,6 +67,8 @@ class verb extends sandbox_named
     // this id text is unique for all code links and is used for system im- and export
     public string $code_id;
     public int $usage = 0;
+    public ?string $reverse = null;
+    public ?string $rev_plural = null;
 
 
     /*
@@ -191,7 +195,7 @@ class verb extends sandbox_named
         $result .= '      verb plural:';
         $result .= '    </td>';
         $result .= '    <td>';
-        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural" value="' . $this->plural . '">';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural" value="' . $this->plural() . '">';
         $result .= '    </td>';
         $result .= '  </tr>';
         $result .= '  <tr>';

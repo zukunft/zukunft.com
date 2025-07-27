@@ -32,7 +32,9 @@
 
 namespace unit_ui;
 
-include_once WEB_COMPONENT_PATH . 'component_list.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::COMPONENT . 'component_list.php';
 
 use html\component\component_list as component_list_dsp;
 use html\html_base;

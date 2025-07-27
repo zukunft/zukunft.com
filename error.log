@@ -1,0 +1,30 @@
+2025-06-12T15:59:38+00:00: FATAL ERROR! Cannot connect to database
+2025-06-12T15:59:38+00:00: FATAL ERROR! Cannot connect to database
+
+function prg_restart
+trace 
+#0 /var/www/html/zukunft.com/src/main/php/zu_lib.php(1695): log_fatal()
+#1 /var/www/html/zukunft.com/src/main/php/zu_lib.php(1669): prg_restart()
+#2 /var/www/html/zukunft.com/test/test.php(60): prg_start()
+#3 {main}
+by user 
+2025-06-12T19:32:18+00:00: FATAL ERROR! Cannot connect to database
+2025-06-12T19:32:18+00:00: FATAL ERROR! Cannot connect to database
+
+function prg_restart
+trace 
+#0 /var/www/html/zukunft.com/src/main/php/zu_lib.php(1695): log_fatal()
+#1 /var/www/html/zukunft.com/src/main/php/zu_lib.php(1669): prg_restart()
+#2 /var/www/html/zukunft.com/test/test.php(60): prg_start()
+#3 {main}
+by user 
+2025-06-12T19:32:45+00:00: FATAL ERROR! Cannot connect to database
+2025-06-12T19:32:45+00:00: FATAL ERROR! Cannot connect to database
+
+function prg_restart
+trace 
+#0 /var/www/html/zukunft.com/src/main/php/zu_lib.php(1695): log_fatal()
+#1 /var/www/html/zukunft.com/src/main/php/zu_lib.php(1669): prg_restart()
+#2 /var/www/html/zukunft.com/test/test.php(60): prg_start()
+#3 {main}
+by user 

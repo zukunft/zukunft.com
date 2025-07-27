@@ -34,8 +34,10 @@
 
 namespace unit_write;
 
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SERVICE_PATH . 'config.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SERVICE . 'config.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\import\import_file;
@@ -44,6 +46,7 @@ use cfg\system\job;
 use cfg\system\job_type_list;
 use cfg\user\user;
 use const\files as test_files;
+use shared\const\users;
 use shared\enum\user_profiles;
 use shared\library;
 use test\all_tests;
@@ -72,7 +75,7 @@ class all_unit_write_tests extends all_unit_read_tests
             if (array_key_exists("REMOTE_ADDR", $_SERVER)) {
                 $ip_addr = $_SERVER['REMOTE_ADDR'];
             }
-            if ($ip_addr == user::SYSTEM_LOCAL_IP) {
+            if ($ip_addr == users::SYSTEM_ADMIN_IP) {
                 $db_con->import_system_users();
             }
 
@@ -107,6 +110,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 $t->set_users();
                 $t->create_test_db_entries($t);
                 // run the db write tests
+                (new user_write_tests)->run($t);
                 (new word_write_tests)->run($t);
                 (new word_list_write_tests)->run($t);
                 (new verb_write_tests)->run($t);
@@ -139,6 +143,8 @@ class all_unit_write_tests extends all_unit_read_tests
                 (new view_link_write_tests)->run($this);
                 (new component_write_tests)->run($t);
                 (new component_link_write_tests)->run($t);
+
+                (new import_write_tests())->run($t);
 
                 // TODO activate Prio 2
                 // run_export_test($t);
@@ -174,7 +180,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
     /**
      * recreate the database to test the database setup script
-     * TODO make shure that this can never be called in PROD
+     * TODO make sure that this can never be called in PROD
      *
      * @return void
      */
@@ -195,7 +201,7 @@ class all_unit_write_tests extends all_unit_read_tests
         if ($db_con->has_table($ip_tbl_name)) {
             $result = $usr->get();
         } else {
-            $usr->set_id(SYSTEM_USER_ID);
+            $usr->set_id(users::SYSTEM_ID);
             $usr->set_profile(user_profiles::ADMIN);
         }
 
@@ -204,9 +210,9 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // use the system user for the database updates
         if ($db_con->has_table($ip_tbl_name)) {
-            $usr->load_by_id(SYSTEM_USER_ID);
+            $usr->load_by_id(users::SYSTEM_ID);
         } else {
-            $usr->set_id(SYSTEM_USER_ID);
+            $usr->set_id(users::SYSTEM_ID);
             $usr->set_profile(user_profiles::ADMIN);
         }
 
@@ -229,7 +235,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // use the system user for the database updates
         $usr = new user;
-        $usr->load_by_id(SYSTEM_USER_ID);
+        $usr->load_by_id(users::SYSTEM_ID);
         $sys_usr = $usr;
 
         // run reset the main database tables
@@ -266,7 +272,7 @@ class all_unit_write_tests extends all_unit_read_tests
         // use the system user again to create the database test datasets
         global $usr;
         $usr = new user;
-        $usr->load_by_id(SYSTEM_USER_ID);
+        $usr->load_by_id(users::SYSTEM_ID);
         $sys_usr = $usr;
 
         // create the test dataset to check the basic write functions
@@ -321,11 +327,9 @@ class all_unit_write_tests extends all_unit_read_tests
         $imf = new import_file();
 
         foreach (test_files::TEST_IMPORT_FILE_LIST as $filename) {
-            $this->echo('load ' . basename($filename));
             $result .= $imf->json_file($filename, $usr, false)->get_last_message();
         }
         foreach (test_files::TEST_DIRECT_IMPORT_FILE_LIST as $filename) {
-            $this->echo('load ' . basename($filename));
             $result .= $imf->json_file($filename, $usr)->get_last_message();
         }
 

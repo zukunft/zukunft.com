@@ -37,7 +37,9 @@
 
 namespace unit_ui;
 
-include_once WEB_SYSTEM_PATH . 'language.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::SYSTEM . 'language.php';
 
 use html\html_base;
 use html\system\language as language_dsp;

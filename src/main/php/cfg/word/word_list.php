@@ -51,38 +51,39 @@
 
 namespace cfg\word;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_IMPORT_PATH . 'import.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once MODEL_VALUE_PATH . 'value_list.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'foaf_direction.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -91,6 +92,7 @@ use cfg\db\sql_par_type;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\helper\combine_named;
+use cfg\helper\data_object;
 use cfg\import\import;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
@@ -105,12 +107,9 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_list;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use shared\const\triples;
 use shared\const\words;
-use shared\enum\messages;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\enum\foaf_direction;
 use shared\enum\messages as msg_id;
@@ -374,24 +373,24 @@ class word_list extends sandbox_list_named
         } else {
             if ($direction == foaf_direction::UP) {
                 $qp->name .= 'parents';
-                $sc->add_where(triple::FLD_FROM, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
-                $join_field = triple::FLD_TO;
+                $sc->add_where(triple_db::FLD_FROM, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
+                $join_field = triple_db::FLD_TO;
             } elseif ($direction == foaf_direction::DOWN) {
                 $qp->name .= 'children';
-                $sc->add_where(triple::FLD_TO, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
-                $join_field = triple::FLD_FROM;
+                $sc->add_where(triple_db::FLD_TO, $this->ids(), sql_par_type::INT_LIST, sql_db::LNK_TBL);
+                $join_field = triple_db::FLD_FROM;
             } else {
                 log_err('Unknown direction ' . $direction->value);
             }
             $sc->set_join_fields(
-                array(verb::FLD_ID),
+                array(verb_db::FLD_ID),
                 triple::class,
                 word_db::FLD_ID,
                 $join_field);
             // verbs can have a negative id for the reverse selection
             if ($vrb != null) {
                 $qp->name .= '_verb_select';
-                $sc->add_where(verb::FLD_ID, $vrb->id(), null, sql_db::LNK_TBL);
+                $sc->add_where(verb_db::FLD_ID, $vrb->id(), null, sql_db::LNK_TBL);
             }
             $sc->set_name($qp->name);
             $qp->sql = $sc->sql();
@@ -473,12 +472,12 @@ class word_list extends sandbox_list_named
             if ($db_wrd_lst) {
                 log_debug('got ' . $lib->dsp_count($db_wrd_lst));
                 foreach ($db_wrd_lst as $db_wrd) {
-                    if (is_null($db_wrd[sandbox::FLD_EXCLUDED]) or $db_wrd[sandbox::FLD_EXCLUDED] == 0) {
+                    if (is_null($db_wrd[sql_db::FLD_EXCLUDED]) or $db_wrd[sql_db::FLD_EXCLUDED] == 0) {
                         if ($db_wrd[word_db::FLD_ID] > 0 and !in_array($db_wrd[word_db::FLD_ID], $this->ids())) {
                             $new_word = new word($this->user());
                             $new_word->row_mapper_sandbox($db_wrd);
                             $additional_added->add($new_word);
-                            log_debug('added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb::FLD_ID] . ')');
+                            log_debug('added "' . $new_word->dsp_id() . '" for verb (' . $db_wrd[verb_db::FLD_ID] . ')');
                         }
                     }
                 }
@@ -490,25 +489,6 @@ class word_list extends sandbox_list_named
 
 
     /*
-     * search
-     */
-
-    /**
-     * overwrite of the parent function just to add the word as a return type
-     * find an object from the loaded list by name using the hash
-     * should be cast by the child function get_by_name
-     *
-     * @param string $name the unique name of the object that should be returned
-     * @param bool $use_all force to include also the excluded names e.g. for import
-     * @return word|phrase|CombineObject|IdObject|TextIdObject|null the found user sandbox object or null if no name is found
-     */
-    function get_by_name(string $name, bool $use_all = false): word|phrase|CombineObject|IdObject|TextIdObject|null
-    {
-        return parent::get_by_name($name, $use_all);
-    }
-
-
-    /*
      * im- and export
      */
 
@@ -516,15 +496,22 @@ class word_list extends sandbox_list_named
      * import a word list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $value) {
             $wrd = new word($this->user());
-            $usr_msg->add($wrd->import_obj($value, $test_obj));
+            $usr_msg->add($wrd->import_obj($value, $usr_req, $dto, $test_obj));
             $this->add($wrd);
         }
 
@@ -883,23 +870,6 @@ class word_list extends sandbox_list_named
             $wrd_to_add->load_by_name($wrd_name_to_add);
 
             $this->add($wrd_to_add);
-            $result = true;
-        }
-        return $result;
-    }
-
-    /**
-     * merge as a function, because the array_merge does not create an object
-     * @param word_list $new_wrd_lst with the words that should be added
-     * @return bool true if at least one word has been added that has not yet been in the list
-     */
-    function merge(word_list $new_wrd_lst): bool
-    {
-        $result = false;
-        log_debug('->merge ' . $new_wrd_lst->name() . ' to ' . $this->dsp_id() . '"');
-        foreach ($new_wrd_lst->lst() as $new_wrd) {
-            log_debug('->merge add ' . $new_wrd->name() . ' (' . $new_wrd->id() . ')');
-            $this->add($new_wrd);
             $result = true;
         }
         return $result;
@@ -1626,38 +1596,12 @@ class word_list extends sandbox_list_named
     /**
      * store all words from this list in the database using grouped calls of predefined sql functions
      *
-     * @param import $imp the import object with the estimate of the total save time
-     * @return user_message
+     * @param import|null $imp the import object with the estimate of the total save time
+     * @return user_message in case of an issue the problem description what has failed and a suggested solution
      */
-    function save(import $imp): user_message
+    function save(import $imp = null): user_message
     {
-        global $cfg;
-
-        $usr_msg = new user_message();
-
-        $load_per_sec = $cfg->get_by([words::WORDS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-        $upd_per_sec = $cfg->get_by([words::WORDS, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
-
-        if ($this->is_empty()) {
-            $usr_msg->add_info_text('no words to save');
-        } else {
-            // load the words that are already in the database
-            $step_time = $this->count() / $load_per_sec;
-            $imp->step_start(msg_id::LOAD, word::class, $this->count(), $step_time);
-            $db_lst = new word_list($this->user());
-            $db_lst->load_by_names($this->names());
-            $imp->step_end($db_lst->count(), $load_per_sec);
-
-            // create any missing sql functions and insert the missing words
-            $usr_msg->add($this->insert($db_lst, true, $imp, word::class));
-
-            // create any missing sql update functions and update the words
-            // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
-            // TODO create blocks of update function calls
-            $usr_msg->add($this->update($db_lst, true, $imp, word::class, $upd_per_sec));
-        }
-
-        return $usr_msg;
+        return parent::save_block_wise($imp, words::WORDS, word::class, new word_list($this->user()));
     }
 
 }

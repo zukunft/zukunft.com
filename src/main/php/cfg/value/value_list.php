@@ -14,7 +14,7 @@
     to select the tables where the value might be stored
 
     The main sections of this object are
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
 
 
     This file is part of zukunft.com - calc with words
@@ -43,36 +43,39 @@
 
 namespace cfg\value;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_list.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_IMPORT_PATH . 'import.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_GROUP_PATH . 'group_list.php';
-include_once MODEL_HELPER_PATH . 'value_type_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'word_list.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_ENUM_PATH . 'value_types.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_value_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_list.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'value_type_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'value_types.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_field_list;
@@ -85,6 +88,7 @@ use cfg\db\sql_type;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
+use cfg\helper\data_object;
 use cfg\helper\value_type_list;
 use cfg\import\import;
 use cfg\phrase\phrase;
@@ -132,11 +136,11 @@ class value_list extends sandbox_value_list
                     log_info('group id missing');
                 }
                 $excluded = null;
-                if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
-                    $excluded = $db_row[sandbox::FLD_EXCLUDED];
+                if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
+                    $excluded = $db_row[sql_db::FLD_EXCLUDED];
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
-                    if (array_key_exists(value::FLD_VALUE, $db_row)) {
+                    if (array_key_exists(value_db::FLD_VALUE, $db_row)) {
                         $obj_to_add = new value($this->user());
                     } elseif (array_key_exists(value_text::FLD_VALUE, $db_row)) {
                         $obj_to_add = new value_text($this->user());
@@ -168,8 +172,12 @@ class value_list extends sandbox_value_list
 
         foreach ($this->lst() as $val) {
             $phr_lst = $val->phrase_list();
-            $val->set_grp($phr_lst->get_grp_id(false));
-            //$usr_msg->add_message_text('');
+            if ($phr_lst->is_empty()) {
+                log_err('phrase list is empty for value ' . $val->dsp_id());
+            } else {
+                $val->set_grp($phr_lst->get_grp_id(false));
+                //$usr_msg->add_message_text('');
+            }
         }
         return $usr_msg;
 
@@ -420,7 +428,7 @@ class value_list extends sandbox_value_list
         $par_lst = clone $sc->par_list();
 
         // loop over the possible tables where the value might be stored in this pod
-        foreach (value_base::TBL_LIST as $tbl_typ) {
+        foreach (value_db::TBL_LIST as $tbl_typ) {
             // reset but keep the parameter list
             $sc->reset();
             $qp_tbl = $this->load_sql_by_phr_single($sc, $pos_phr, $pos_grp, $pos_usr, $tbl_typ, $par_lst, $sc_par_lst);
@@ -472,9 +480,9 @@ class value_list extends sandbox_value_list
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(value_base::FLD_NAMES);
-        //$sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
-        //$sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+        $sc->set_fields(value_db::FLD_NAMES);
+        //$sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
+        //$sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
         //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word_db::FLD_VALUES) . ' DESC, ' . word_db::FLD_NAME);
         return $qp;
     }
@@ -665,7 +673,7 @@ class value_list extends sandbox_value_list
                     $sc->set_usr_num_fields($num_fld_lst, false);
                     $sc->set_usr_geo_fields($geo_fld_lst, false);
                 }
-                $sc->set_usr_only_fields(value_base::FLD_NAMES_USR_ONLY);
+                $sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
                 for ($pos = 1; $pos <= $max_row_ids; $pos++) {
                     // the array of the phrase ids starts with 0 whereas the phrase id fields start with 1
                     $id_pos = $pos - 1;
@@ -725,11 +733,11 @@ class value_list extends sandbox_value_list
                 }
                 $qp_tbl = $this->load_sql_multi($sc, 'grp_lst', $sc_par_lst);
                 if ($par_offset == 0) {
-                    $sc->set_usr_num_fields(value_base::FLD_NAMES_NUM_USR);
+                    $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
                 } else {
-                    $sc->set_usr_num_fields(value_base::FLD_NAMES_NUM_USR, false);
+                    $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR, false);
                 }
-                $sc->set_usr_only_fields(value_base::FLD_NAMES_USR_ONLY);
+                $sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
                 for ($pos = 1; $pos <= $max_row_ids; $pos++) {
                     // the array of the phrase ids starts with o whereas the phrase id fields start with 1
                     $id_pos = $pos - 1;
@@ -856,10 +864,17 @@ class value_list extends sandbox_value_list
      * import a value from an external object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         global $shr_typ_cac;
         global $ptc_typ_cac;
@@ -1417,7 +1432,7 @@ class value_list extends sandbox_value_list
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
             $val = new value($this->user());
-            $val->load_by_id($db_val[value::FLD_ID]);
+            $val->load_by_id($db_val[value_db::FLD_ID]);
             if (!$val->check()) {
                 $result = false;
             }

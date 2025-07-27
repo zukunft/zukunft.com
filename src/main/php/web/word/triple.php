@@ -42,37 +42,38 @@
 
 namespace html\word;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once WEB_HTML_PATH . 'button.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'html_names.php';
-include_once WEB_HTML_PATH . 'html_selector.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-//include_once WEB_PHRASE_PATH . 'term.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once WEB_USER_PATH . 'user_message.php';
-//include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_names.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+//include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::VERB . 'verb.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\html_names;
 use html\phrase\phrase_list;
 use html\html_base;
 use html\html_selector;
 use html\phrase\phrase_list as phrase_list_dsp;
+use html\sandbox\sandbox_code_id;
 use html\user\user_message;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
-use html\sandbox\sandbox_typed;
 use html\phrase\term as term_dsp;
 use html\verb\verb as verb_dsp;
 use shared\const\views;
@@ -82,7 +83,7 @@ use shared\types\phrase_type;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\view_styles;
 
-class triple extends sandbox_typed
+class triple extends sandbox_code_id
 {
 
     /*

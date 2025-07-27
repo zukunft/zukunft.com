@@ -32,7 +32,9 @@
 
 namespace unit;
 
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -54,6 +56,7 @@ class result_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init
         $db_con = new sql_db();
@@ -166,8 +169,8 @@ class result_tests
 
 
         $t->subheader($ts . 'im- and export');
-        $t->assert_ex_and_import($t->result());
-        $t->assert_ex_and_import($t->result_main_filled());
+        $t->assert_ex_and_import($t->result(), $usr_sys);
+        $t->assert_ex_and_import($t->result_main_filled(), $usr_sys);
         $json_file = 'unit/result/result_import_part.json';
         $t->assert_json_file(new result($usr), $json_file);
 

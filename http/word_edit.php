@@ -35,7 +35,9 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_CONST_PATH . 'views.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 use cfg\user\user;
 use cfg\view\view;
@@ -79,8 +81,8 @@ if ($usr->id() > 0) {
         if (isset($_GET[api::URL_VAR_NAME])) {
             $wrd->set_name($_GET[api::URL_VAR_NAME]);
         } //
-        if (isset($_GET['plural'])) {
-            $wrd->plural = $_GET['plural'];
+        if (isset($_GET[api::URL_VAR_PLURAL])) {
+            $wrd->set_plural($_GET[api::URL_VAR_PLURAL]);
         } //
         if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
             $wrd->description = $_GET[api::URL_VAR_DESCRIPTION];

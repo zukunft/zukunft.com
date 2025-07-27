@@ -32,7 +32,9 @@
 
 namespace unit_ui;
 
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'words.php';
 
 use html\html_base;
 use html\phrase\phrase_list;

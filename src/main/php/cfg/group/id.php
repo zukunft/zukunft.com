@@ -34,7 +34,7 @@
 
 namespace cfg\group;
 
-//include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+//include_once paths::MODEL_PHRASE . 'phrase_list.php';
 
 use cfg\phrase\phrase_list;
 
@@ -156,8 +156,8 @@ class id
                 $chars[] = $this->int2char($id);
                 $id = 0;
             } else {
-                $chars[] = $this->int2char($id % 64);
-                $id = $id / 64;
+                $chars[] = $this->int2char((int)($id % 64));
+                $id = (int)($id / 64);
             }
             $i--;
         }

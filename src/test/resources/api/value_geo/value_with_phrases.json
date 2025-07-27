@@ -1,5 +1,5 @@
 {
-  "id": 105554537921216641,
+  "id": 106117487874637975,
   "description": "the geolocation of the initial development of zukunft.com",
   "phrases": [
     {
@@ -8,7 +8,7 @@
       "class": "word"
     },
     {
-      "id": 129,
+      "id": 151,
       "name": "system configuration",
       "class": "triple"
     },
@@ -18,7 +18,7 @@
       "class": "word"
     },
     {
-      "id": 375,
+      "id": 377,
       "name": "point",
       "class": "word"
     }

@@ -3,3 +3,5 @@
 /src/main/resources/images/.directory
 /src/main/resources/style/.directory
 /.idea/
+.env
+.vscode/

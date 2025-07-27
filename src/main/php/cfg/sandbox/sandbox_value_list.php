@@ -32,32 +32,37 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+use cfg\const\paths;
 
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_list.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_GROUP_PATH . 'group_id.php';
-//include_once MODEL_GROUP_PATH . 'result_id.php';
-//include_once MODEL_PHRASE_PATH . 'phrase.php';
-//include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-//include_once MODEL_RESULT_PATH . 'result.php';
-//include_once MODEL_RESULT_PATH . 'result_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VALUE_PATH . 'value_list.php';
-//include_once MODEL_VALUE_PATH . 'value_text.php';
-//include_once MODEL_VALUE_PATH . 'value_time.php';
-//include_once MODEL_VALUE_PATH . 'value_geo.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'library.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_list.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_id.php';
+//include_once paths::MODEL_GROUP . 'result_id.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+//include_once paths::MODEL_PHRASE . 'phrase_list.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+//include_once paths::MODEL_RESULT . 'result_db.php';
+//include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_db.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value_list.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -66,17 +71,20 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\result_id;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\result\result;
+use cfg\result\result_db;
 use cfg\result\result_list;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_base;
+use cfg\value\value_db;
 use cfg\value\value_list;
 use shared\enum\messages as msg_id;
 use shared\library;
@@ -89,8 +97,6 @@ class sandbox_value_list extends sandbox_list
      */
 
     // speed versus memory var for fast getting a value of the list
-    private array $id_hash = [];
-    private bool $id_hash_dirty = true;
     private array $name_hash = [];
     private bool $name_hash_dirty = true;
 
@@ -103,9 +109,6 @@ class sandbox_value_list extends sandbox_list
     function __construct(user $usr, array $lst = [])
     {
         parent::__construct($usr, $lst);
-        if (count($lst) > 0) {
-            $this->id_hash_dirty = true;
-        }
     }
 
 
@@ -142,7 +145,6 @@ class sandbox_value_list extends sandbox_list
      */
     protected function set_lst_dirty(): void
     {
-        $this->id_hash_dirty = true;
         $this->name_hash_dirty = true;
         parent::set_lst_dirty();
     }
@@ -222,10 +224,10 @@ class sandbox_value_list extends sandbox_list
     {
         // differences between value and result list
         $list_class = value_list::class;
-        $tbl_lst = value_base::TBL_LIST;
+        $tbl_lst = value_db::TBL_LIST;
         if ($class !== value::class) {
             $list_class = result_list::class;
-            $tbl_lst = result::TBL_LIST;
+            $tbl_lst = result_db::TBL_LIST;
         }
 
         $lib = new library();
@@ -342,7 +344,7 @@ class sandbox_value_list extends sandbox_list
                 $max_phr = result_id::PRIME_PHRASES_STD;
                 if ($frm_pos != 0) {
                     $sc->add_where_no_par(
-                        '', formula::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
+                        '', formula_db::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
                 }
             }
             $this->load_sql_set_phrase_fields($sc, $phr_pos_lst, $or, $max_phr);
@@ -356,7 +358,7 @@ class sandbox_value_list extends sandbox_list
             }
             if ($frm_pos != 0) {
                 $sc->add_where_no_par(
-                    '', formula::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
+                    '', formula_db::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
             }
             $this->load_sql_set_phrase_fields($sc, $phr_pos_lst, $or, $max_phr);
         } else {
@@ -434,36 +436,36 @@ class sandbox_value_list extends sandbox_list
         // set the default settings for values
         $val = $sc_typ_lst->value_object($this->user());
         $list_class = value_list::class;
-        $fld_lst = value_base::FLD_NAMES;
+        $fld_lst = value_db::FLD_NAMES;
         $fld_lst_std = $val::FLD_NAMES_STD;
-        $fld_lst_dummy = value_base::FLD_NAMES_STD_DUMMY;
-        $fld_lst_usr_ex_std = value_base::FLD_NAMES_DATE_USR_EX_STD;
-        $fld_lst_usr_num_ex_std = value_base::FLD_NAMES_NUM_USR_EX_STD;
+        $fld_lst_dummy = value_db::FLD_NAMES_STD_DUMMY;
+        $fld_lst_usr_ex_std = value_db::FLD_NAMES_DATE_USR_EX_STD;
+        $fld_lst_usr_num_ex_std = value_db::FLD_NAMES_NUM_USR_EX_STD;
         $fld_lst_usr_txt = $val::FLD_NAMES_USR;
         $fld_lst_usr_num = $val::FLD_NAMES_NUM_USR;
-        $fld_lst_usr_only = value_base::FLD_NAMES_USR_ONLY;
+        $fld_lst_usr_only = value_db::FLD_NAMES_USR_ONLY;
 
         // overwrite the value settings for results
         if (!$lib->is_value($class)) {
             $list_class = result_list::class;
-            $fld_lst_std = result::FLD_NAMES_STD;
+            $fld_lst_std = result_db::FLD_NAMES_STD;
             if ($is_std) {
-                $fld_lst = result::FLD_NAMES_ALL;
+                $fld_lst = result_db::FLD_NAMES_ALL;
                 if ($is_prime or $is_main) {
-                    $fld_lst_dummy = result::FLD_NAMES_STD_DUMMY;
+                    $fld_lst_dummy = result_db::FLD_NAMES_STD_DUMMY;
                 } else {
-                    $fld_lst_dummy = result::FLD_NAMES_DUMMY;
+                    $fld_lst_dummy = result_db::FLD_NAMES_DUMMY;
                 }
             } else {
-                $fld_lst = result::FLD_NAMES_NON_STD;
-                $fld_lst_dummy = result::FLD_NAMES_DUMMY;
+                $fld_lst = result_db::FLD_NAMES_NON_STD;
+                $fld_lst_dummy = result_db::FLD_NAMES_DUMMY;
             }
-            $fld_lst_usr_ex_std = result::FLD_NAMES_DATE_USR_EX_STD;
-            $fld_lst_usr_num_ex_std = result::FLD_NAMES_NUM_USR_EX_STD;
+            $fld_lst_usr_ex_std = result_db::FLD_NAMES_DATE_USR_EX_STD;
+            $fld_lst_usr_num_ex_std = result_db::FLD_NAMES_NUM_USR_EX_STD;
             // TODO use const overwrites for the result types a.g. for geo location results
             $fld_lst_usr_txt = [];
-            $fld_lst_usr_num = result::FLD_NAMES_NUM_USR;
-            $fld_lst_usr_only = result::FLD_NAMES_USR_ONLY;
+            $fld_lst_usr_num = result_db::FLD_NAMES_NUM_USR;
+            $fld_lst_usr_only = result_db::FLD_NAMES_USR_ONLY;
         }
 
         $tbl_ext = $this->table_extension($tbl_types);
@@ -520,7 +522,7 @@ class sandbox_value_list extends sandbox_list
                 $sc->set_fields($fld_lst_std);
             } else {
                 if ($is_prime or $is_main) {
-                    $sc->set_fields(array_merge(result::FLD_NAMES_STD_NON_DUMMY, $fld_lst_std));
+                    $sc->set_fields(array_merge(result_db::FLD_NAMES_STD_NON_DUMMY, $fld_lst_std));
                 } else {
                     $sc->set_fields($fld_lst_std);
                 }
@@ -545,7 +547,7 @@ class sandbox_value_list extends sandbox_list
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -587,21 +589,7 @@ class sandbox_value_list extends sandbox_list
      */
     function id_lst(): array
     {
-        $lst = array();
-        if ($this->name_hash_dirty) {
-            if ($this->count() > 0) {
-                foreach ($this->lst() as $val) {
-                    // use only valid ids
-                    if ($val->id() <> 0) {
-                        $lst[] = $val->id();
-                    }
-                }
-            }
-            asort($lst);
-            $this->id_hash = $lst;
-            $this->id_hash_dirty = false;
-        }
-        return $this->id_hash;
+        return $this->id_pos_lst();
     }
 
 
@@ -637,17 +625,6 @@ class sandbox_value_list extends sandbox_list
         return $result;
     }
 
-    private function add_hash_id(int|string $id): void
-    {
-        if ($this->count() != count($this->id_hash)) {
-            $this->id_lst();
-        } else {
-            $this->id_hash[] = $id;
-            // assuming that in most cases either the id or the names has is needed for building up the list but not both
-            $this->name_hash_dirty = true;
-        }
-    }
-
     private function add_hash_name(string $name): void
     {
         if ($this->count() != count($this->name_hash)) {
@@ -678,12 +655,10 @@ class sandbox_value_list extends sandbox_list
                     if (count($this->id_lst()) > 0) {
                         if (!in_array($id, $this->id_lst())) {
                             parent::add_obj($val_to_add);
-                            $this->add_hash_id($id);
                             $result = true;
                         }
                     } else {
                         parent::add_obj($val_to_add);
-                        $this->add_hash_id($id);
                         $result = true;
                     }
                 }

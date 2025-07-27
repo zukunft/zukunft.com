@@ -14,7 +14,7 @@
     - api:               create an api array for the frontend and set the vars based on a frontend api message
     - im- and export:    create an export object and set the vars from an import object
     - modify:            change potentially all variables of this list object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - internal:          private functions to make code easier to read
 
 
@@ -44,14 +44,17 @@
 
 namespace cfg\component;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_list.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -60,6 +63,7 @@ use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_link_list;
 use cfg\user\user_message;
 use cfg\view\view;
+use cfg\view\view_db;
 
 class component_link_list extends sandbox_link_list
 {
@@ -188,9 +192,9 @@ class component_link_list extends sandbox_link_list
      */
     function load_sql_by_view(sql_creator $sc, view $msk): sql_par
     {
-        $qp = $this->load_sql($sc, view::FLD_ID);
+        $qp = $this->load_sql($sc, view_db::FLD_ID);
         if ($msk->id() > 0) {
-            $sc->add_where(view::FLD_ID, $msk->id());
+            $sc->add_where(view_db::FLD_ID, $msk->id());
             $sc->set_order(component_link::FLD_ORDER_NBR);
             $sc = (new component($this->user()))->set_join($sc);
             $qp->sql = $sc->sql();
@@ -253,7 +257,7 @@ class component_link_list extends sandbox_link_list
     {
         $added = false;
         if ($this->can_add($lnk_to_add)) {
-            $this->add_link_by_name($lnk_to_add);
+            $this->add_link_by_key($lnk_to_add);
             $added = true;
         }
         return $added;
@@ -277,7 +281,7 @@ class component_link_list extends sandbox_link_list
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -317,12 +321,12 @@ class component_link_list extends sandbox_link_list
     /**
      * @return array with all component names linked usually to one view
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
             if ($lnk->component() != null) {
-                $name = $lnk->component()->name();
+                $name = $lnk->component()->name($ignore_excluded);
                 if ($name <> '') {
                     if (!in_array($name, $result)) {
                         $result[] = $name;
@@ -348,6 +352,14 @@ class component_link_list extends sandbox_link_list
     {
         $usr_msg = new user_message();
         foreach ($this->lst() as $sbx) {
+            // save upfront and missing components
+            $cmp = $sbx->component();
+            if (!$cmp->is_valid()) {
+                if ($cmp->db_ready()) {
+                    $usr_msg->add($cmp->save());
+                }
+            }
+            // save the link of the view to the component
             $usr_msg->add($sbx->save());
         }
         return $usr_msg;

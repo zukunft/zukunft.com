@@ -31,11 +31,13 @@
 
 namespace html\verb;
 
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_TYPES_PATH . 'type_list.php';
-include_once WEB_USER_PATH . 'user.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::TYPES . 'type_list.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'library.php';
 
 use html\html_base;
 use html\types\type_list;

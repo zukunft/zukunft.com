@@ -32,16 +32,18 @@
 
 namespace cfg\db;
 
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_text.php';
-//include_once MODEL_VALUE_PATH . 'value_time.php';
-//include_once MODEL_VALUE_PATH . 'value_geo.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_db.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
 
 use cfg\user\user;
 use cfg\value\value;
 use cfg\value\value_base;
+use cfg\value\value_db;
 use cfg\value\value_geo;
 use cfg\value\value_text;
 use cfg\value\value_time;
@@ -341,6 +343,14 @@ class sql_type_list
     }
 
     /**
+     * @return bool true if a chance requesting user is part of the parameters
+     */
+    public function has_requesting_user(): bool
+    {
+        return in_array(sql_type::REQUESTING_USER, $this->lst);
+    }
+
+    /**
      * @return bool true if the standard sandbox fields should be added to the sql statement
      */
     public function use_sandbox_fields(): bool
@@ -552,13 +562,13 @@ class sql_type_list
     public function num_user_fields(): array
     {
         if (in_array(sql_type::TEXT, $this->lst)) {
-            return value_base::FLD_NAMES_NUM_USR_TEXT;
+            return value_db::FLD_NAMES_NUM_USR_TEXT;
         } elseif (in_array(sql_type::TIME, $this->lst)) {
-            return value_base::FLD_NAMES_NUM_USR_TIME;
+            return value_db::FLD_NAMES_NUM_USR_TIME;
         } elseif (in_array(sql_type::GEO, $this->lst)) {
-            return value_base::FLD_NAMES_NUM_USR_GEO;
+            return value_db::FLD_NAMES_NUM_USR_GEO;
         } else {
-            return value_base::FLD_NAMES_NUM_USR;
+            return value_db::FLD_NAMES_NUM_USR;
         }
     }
 
@@ -566,7 +576,7 @@ class sql_type_list
     public function txt_user_fields(): array
     {
         if (in_array(sql_type::TEXT, $this->lst)) {
-            return value_base::FLD_NAMES_USR_TEXT;
+            return value_db::FLD_NAMES_USR_TEXT;
         } else {
             return [];
         }
@@ -576,7 +586,7 @@ class sql_type_list
     public function geo_user_fields(): array
     {
         if (in_array(sql_type::GEO, $this->lst)) {
-            return value_base::FLD_NAMES_USR_GEO;
+            return value_db::FLD_NAMES_USR_GEO;
         } else {
             return [];
         }

@@ -36,7 +36,7 @@
     - load related:      load related objects from the database
     - data retrieval:    load related lists from the database
     - classification:    information what
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - save:              manage to update the database
 
 
@@ -66,40 +66,45 @@
 
 namespace cfg\phrase;
 
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_link.php';
-include_once MODEL_GROUP_PATH . 'group_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_VALUE_PATH . 'value_list.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_VERB_PATH . 'verb_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'word_db.php';
-include_once MODEL_WORD_PATH . 'word_list.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once SHARED_ENUM_PATH . 'foaf_direction.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_db.php';
+include_once paths::MODEL_WORD . 'word_list.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
+use cfg\formula\formula_db;
 use cfg\helper\combine_named;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -113,10 +118,11 @@ use cfg\group\group_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
 use cfg\value\value_list;
-use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\verb\verb_list;
 use cfg\user\user;
 use cfg\user\user_message;
+use cfg\word\triple_db;
 use cfg\word\word;
 use cfg\word\word_db;
 use cfg\word\word_list;
@@ -153,21 +159,21 @@ class phrase extends combine_named
     );
     // list of the common user specific database field names of phrases excluding the standard name field
     const FLD_NAMES_USR_EX = array(
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the common user specific database field names of phrases
     const FLD_NAMES_USR = array(
         phrase::FLD_NAME,
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the common user specific database field names of phrases
     const FLD_NAMES_USR_NO_NAME = array(
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the common user specific numeric database field names of phrases
     const FLD_NAMES_NUM_USR = array(
         self::FLD_VALUES,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -189,24 +195,24 @@ class phrase extends combine_named
             [word_db::FLD_ID, phrase::FLD_ID],
             [user::FLD_ID],
             [word_db::FLD_NAME, phrase::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
+            [sql_db::FLD_DESCRIPTION],
             [word_db::FLD_VALUES],
             [phrase::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT]
         ], word_db::FLD_ID],
         [triple::class, [
-            [triple::FLD_ID, phrase::FLD_ID, '* -1'],
+            [triple_db::FLD_ID, phrase::FLD_ID, '* -1'],
             [user::FLD_ID],
-            [[triple::FLD_NAME, triple::FLD_NAME_GIVEN, triple::FLD_NAME_AUTO], phrase::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
-            [triple::FLD_VALUES],
+            [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], phrase::FLD_NAME],
+            [sql_db::FLD_DESCRIPTION],
+            [triple_db::FLD_VALUES],
             [phrase::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT]
-        ], triple::FLD_ID]
+        ], triple_db::FLD_ID]
     ];
 
 
@@ -271,14 +277,14 @@ class phrase extends combine_named
                 $wrd = new word($this->user());
                 $wrd->set_id($db_row[$id_fld]);
                 $wrd->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
-                if (array_key_exists(sandbox_named::FLD_DESCRIPTION . $fld_ext, $db_row)) {
-                    $wrd->description = $db_row[sandbox_named::FLD_DESCRIPTION . $fld_ext];
+                if (array_key_exists(sql_db::FLD_DESCRIPTION . $fld_ext, $db_row)) {
+                    $wrd->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 }
                 if (array_key_exists(phrase::FLD_TYPE . $fld_ext, $db_row)) {
                     $wrd->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
                 }
-                if (array_key_exists(sandbox::FLD_EXCLUDED . $fld_ext, $db_row)) {
-                    $wrd->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
+                if (array_key_exists(sql_db::FLD_EXCLUDED . $fld_ext, $db_row)) {
+                    $wrd->set_excluded($db_row[sql_db::FLD_EXCLUDED . $fld_ext]);
                 }
                 if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
                     $wrd->set_share_id($db_row[sandbox::FLD_SHARE . $fld_ext]);
@@ -297,14 +303,14 @@ class phrase extends combine_named
                 if ($name != null) {
                     $trp->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
                 }
-                if (array_key_exists(sandbox_named::FLD_DESCRIPTION . $fld_ext, $db_row)) {
-                    $trp->description = $db_row[sandbox_named::FLD_DESCRIPTION . $fld_ext];
+                if (array_key_exists(sql_db::FLD_DESCRIPTION . $fld_ext, $db_row)) {
+                    $trp->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 }
                 if (array_key_exists(phrase::FLD_TYPE . $fld_ext, $db_row)) {
                     $trp->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
                 }
-                if (array_key_exists(sandbox::FLD_EXCLUDED . $fld_ext, $db_row)) {
-                    $trp->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
+                if (array_key_exists(sql_db::FLD_EXCLUDED . $fld_ext, $db_row)) {
+                    $trp->set_excluded($db_row[sql_db::FLD_EXCLUDED . $fld_ext]);
                 }
                 if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
                     $trp->set_share_id($db_row[sandbox::FLD_SHARE . $fld_ext]);
@@ -313,11 +319,11 @@ class phrase extends combine_named
                     $trp->set_protection_id($db_row[sandbox::FLD_PROTECT . $fld_ext]);
                 }
                 // not yet loaded with initial load
-                // $trp->name = $db_row[triple::FLD_NAME_GIVEN . $fld_ext];
+                // $trp->name = $db_row[triple_db::FLD_NAME_GIVEN . $fld_ext];
                 // $trp->set_owner_id($db_row[_user::FLD_ID . $fld_ext]);
-                // $trp->from->set_id($db_row[triple::FLD_FROM]);
-                // $trp->to->set_id($db_row[triple::FLD_TO]);
-                // $trp->verb->set_id($db_row[verb::FLD_ID]);
+                // $trp->from->set_id($db_row[triple_db::FLD_FROM]);
+                // $trp->to->set_id($db_row[triple_db::FLD_TO]);
+                // $trp->verb->set_id($db_row[verb_db::FLD_ID]);
                 $this->obj = $trp;
                 $result = true;
             }
@@ -580,15 +586,16 @@ class phrase extends combine_named
      * fill this word or triple based on the given phrase
      *
      * @param phrase|db_object_seq_id $phr word with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(phrase|db_object_seq_id $phr): user_message
+    function fill(phrase|db_object_seq_id $phr, user $usr_req): user_message
     {
         $usr_msg = new user_message();
         if ($this->is_word()) {
             if ($phr::class == phrase::class) {
                 if ($phr->is_word()) {
-                    $usr_msg->add($this->obj()->fill($phr->word()));
+                    $usr_msg->add($this->obj()->fill($phr->word(), $usr_req));
                 } else {
                     $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
                         [
@@ -597,7 +604,7 @@ class phrase extends combine_named
                         ]);
                 }
             } elseif ($phr::class == word::class) {
-                $usr_msg->add($this->obj()->fill($phr));
+                $usr_msg->add($this->obj()->fill($phr, $usr_req));
             } else {
                 $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
                     [
@@ -608,7 +615,7 @@ class phrase extends combine_named
         } else {
             if ($phr::class == phrase::class) {
                 if ($phr->is_triple()) {
-                    $usr_msg->add($this->obj()->fill($phr->triple()));
+                    $usr_msg->add($this->obj()->fill($phr->triple(), $usr_req));
                 } else {
                     $usr_msg->add_id_with_vars(msg_id::FILL_TRIPLE_WITH_OTHER,
                         [
@@ -617,7 +624,7 @@ class phrase extends combine_named
                         ]);
                 }
             } elseif ($phr::class == triple::class) {
-                $usr_msg->add($this->obj()->fill($phr));
+                $usr_msg->add($this->obj()->fill($phr, $usr_req));
             } else {
                 $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
                     [
@@ -912,15 +919,15 @@ class phrase extends combine_named
         $qp = new sql_par(self::class);
         $qp->name = 'phrase_formula_by_id';
         $db_con->set_name($qp->name);
-        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+        $db_con->set_link_fields(formula_db::FLD_ID, phrase::FLD_ID);
         $db_con->set_where_link_no_fld(0, 0, $this->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         $db_row = $db_con->get1($qp);
         $frm = new formula($this->user());
         if ($db_row !== false) {
-            if ($db_row[formula::FLD_ID] > 0) {
-                $frm->load_by_id($db_row[formula::FLD_ID]);
+            if ($db_row[formula_db::FLD_ID] > 0) {
+                $frm->load_by_id($db_row[formula_db::FLD_ID]);
             }
         }
 
@@ -1100,25 +1107,25 @@ class phrase extends combine_named
 
 
     /*
-     * information
+     * info
      */
 
     /**
-     * check if the word in the database needs to be updated
-     * e.g. for import  if this word has only the name set, the protection should not be updated in the database
+     * check if the word or triple in the database needs to be updated
+     * e.g. for import if this word has only the name set, the protection should not be updated in the database
      *
-     * @param phrase $db_phr the word as saved in the database
+     * @param phrase $db_phr the word or triple as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
     function needs_db_update(phrase $db_phr): bool
     {
         if ($this->is_word() and $db_phr->is_word()) {
             $wrd = $this->obj();
-            $db_wrd = $this->obj();
+            $db_wrd = $db_phr->obj();
             return $wrd->needs_db_update($db_wrd);
         } elseif ($this->is_triple() and $db_phr->is_triple()) {
             $trp = $this->obj();
-            $db_trp = $this->obj();
+            $db_trp = $db_phr->obj();
             return $trp->needs_db_update($db_trp);
         } else {
             return true;
@@ -1137,6 +1144,32 @@ class phrase extends combine_named
         } elseif ($this->is_triple()) {
             $trp = $this->obj();
             return $trp->is_type($type);
+        } else {
+            return false;
+        }
+    }
+
+    function no_id_but_name(): bool
+    {
+        if ($this->is_word()) {
+            $wrd = $this->obj();
+            return $wrd->no_id_but_name();
+        } elseif ($this->is_triple()) {
+            $trp = $this->obj();
+            return $trp->no_id_but_name();
+        } else {
+            return false;
+        }
+    }
+
+    function is_excluded(): bool
+    {
+        if ($this->is_word()) {
+            $wrd = $this->obj();
+            return $wrd->is_excluded();
+        } elseif ($this->is_triple()) {
+            $trp = $this->obj();
+            return $trp->is_excluded();
         } else {
             return false;
         }
@@ -1381,7 +1414,7 @@ class phrase extends combine_named
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple::FLD_FROM, triple::FLD_TO, $this->id(), verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple_db::FLD_FROM, triple_db::FLD_TO, $this->id(), verb_db::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1410,7 +1443,7 @@ class phrase extends combine_named
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple::FLD_TO, triple::FLD_FROM, $this->id(), verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple_db::FLD_TO, triple_db::FLD_FROM, $this->id(), verb_db::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {

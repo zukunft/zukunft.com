@@ -39,22 +39,24 @@
 
 namespace html\ref;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\html_base;
-use html\sandbox\sandbox_typed;
+use html\sandbox\sandbox_code_id;
 use html\user\user_message;
 use shared\const\views;
 use shared\json_fields;
 use shared\types\view_styles;
 
-class source extends sandbox_typed
+class source extends sandbox_code_id
 {
 
     /*
@@ -188,7 +190,7 @@ class source extends sandbox_typed
         $result .= $html->dsp_form_hidden("confirm", 1);
         $result .= $html->dsp_form_fld("name", $this->name, "Source name:");
         $result .= '<tr><td>type   </td><td>' . $this->dsp_select_type($script, $back) . '</td></tr>';
-        $result .= $html->dsp_form_fld("url", $this->url, "URL:");
+        $result .= $html->dsp_form_fld("url", $this->url(), "URL:");
         $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
         //$result .= dsp_tbl_end ();
         $result .= $html->dsp_form_end('', $back);
@@ -208,7 +210,7 @@ class source extends sandbox_typed
 
         // for new values assume the last source used, but not for existing values to enable only changing the value, but not setting the source
         if ($this->id() <= 0 and $form_name == "value_add") {
-            $this->id = $usr->source_id;
+            $this->id = $usr->source_id();
         }
 
         log_debug("source id used (" . $this->id() . ")");

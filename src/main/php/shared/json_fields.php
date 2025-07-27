@@ -78,6 +78,8 @@ class json_fields
     const TEXT_VALUE = 'text_value'; // a text value that should not be used for searching
     const GEO_VALUE = 'geo_value'; // a geolocation value or result
 
+    const LAST_UPDATE = 'last_update';
+
     // the code id of the view style of a view, component or component_link
     const STYLE = 'style';
 
@@ -148,6 +150,7 @@ class json_fields
     const REF_TEXT = 'ref_text'; // the formula expression in a database reference format
     const NEED_ALL_VAL = 'need_all_val'; // calculate and save the result only if all used values are not null
     const FORMULA_NAME_PHRASE = 'name_phrase'; // the phrase object for the formula name
+    const FORMULA_NAME = 'formula'; // the name of the formula for im- and export
 
     // batch job fields
     const TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested
@@ -235,7 +238,7 @@ class json_fields
     const LIST_VIEW_STYLES = 'view_styles';
     const LIST_VIEW_LINK_TYPES = 'view_link_types';
     const LIST_COMPONENT_TYPES = 'component_types';
-    // const LIST_COMPONENT_LINK_TYPES = 'component_link_types';
+    const LIST_COMPONENT_LINK_TYPES = 'component_link_types';
     const LIST_COMPONENT_POSITION_TYPES = 'position_types';
     const LIST_REF_TYPES = 'ref_types';
     const LIST_SOURCE_TYPES = 'source_types';
@@ -277,6 +280,7 @@ class json_fields
     const ASSIGNED = 'assigned';
 
     // for the user object
+    const IP_ADDR = 'ip_address';
     const EMAIL = 'email';
     const FIRST_NAME = 'first_name';
     const LAST_NAME = 'last_name';

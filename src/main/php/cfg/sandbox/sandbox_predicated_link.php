@@ -34,7 +34,9 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 
 class sandbox_predicated_link extends sandbox_link
 {

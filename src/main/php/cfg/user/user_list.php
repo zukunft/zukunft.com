@@ -32,28 +32,33 @@
 
 namespace cfg\user;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_multi.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_REF_PATH . 'ref.php';
-//include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_time.php';
-//include_once MODEL_VALUE_PATH . 'value_text.php';
-//include_once MODEL_VALUE_PATH . 'value_geo.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_WORD_PATH . 'triple.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -69,11 +74,15 @@ use cfg\value\value;
 use cfg\view\view;
 use cfg\word\triple;
 use cfg\word\word;
+use shared\const\users;
+use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
 use shared\library;
+use shared\types\api_type_list;
 
 global $system_users;
 
+// TODO base it on the base_list object
 class user_list
 {
     // internal db field name to count the changes by on user
@@ -102,7 +111,7 @@ class user_list
      * set and get
      */
 
-    function lst(): array
+    function lst(): ?array
     {
         return $this->lst;
     }
@@ -126,7 +135,7 @@ class user_list
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(user::FLD_NAMES_LIST);
+        $sc->set_fields(user_db::FLD_NAMES_LIST);
         return $qp;
     }
 
@@ -164,7 +173,7 @@ class user_list
     function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id');
-        $sc->add_where(sql::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -186,7 +195,7 @@ class user_list
         $sc->set_join_fields(
             array(user_profile::FLD_LEVEL),
             user_profile::class,
-            user::FLD_PROFILE,
+            user_db::FLD_PROFILE,
             user_profile::FLD_ID);
         $sc->add_where(user_profile::FLD_LEVEL, $profile_id, sql_par_type::INT_HIGHER, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
@@ -331,7 +340,7 @@ class user_list
     function load_system(sql_db $db_con): void
     {
         global $system_users;
-        $this->load_by_profile_and_higher($db_con, user::RIGHT_LEVEL_SYSTEM_TEST);
+        $this->load_by_profile_and_higher($db_con, users::RIGHT_LEVEL_SYSTEM_TEST);
         $system_users = clone $this;
     }
 
@@ -371,8 +380,8 @@ class user_list
             foreach ($db_usr_lst as $db_usr) {
                 $usr = new user;
                 $usr->set_id($db_usr[user::FLD_ID]);
-                $usr->name = $db_usr[user::FLD_NAME];
-                $usr->code_id = $db_usr[sql::FLD_CODE_ID];
+                $usr->name = $db_usr[user_db::FLD_NAME];
+                $usr->code_id = $db_usr[sql_db::FLD_CODE_ID];
                 $this->lst[] = $usr;
             }
         }
@@ -404,11 +413,35 @@ class user_list
         return $lib->dsp_array($this->names());
     }
 
+    function id_lst(): array
+    {
+        $result = array();
+        if ($this->lst != null) {
+            foreach ($this->lst as $usr) {
+                $result[] = $usr->id();
+            }
+        }
+        return $result;
+    }
+
     function names(): array
     {
         $result = array();
-        foreach ($this->lst as $usr) {
-            $result[] = $usr->name;
+        if ($this->lst != null) {
+            foreach ($this->lst as $usr) {
+                $result[] = $usr->name;
+            }
+        }
+        return $result;
+    }
+
+    function emails(): array
+    {
+        $result = array();
+        if ($this->lst != null) {
+            foreach ($this->lst as $usr) {
+                $result[] = $usr->email;
+            }
         }
         return $result;
     }
@@ -458,50 +491,191 @@ class user_list
         $this->lst = array();
         $this->code_id_hash = array();
 
-        $usr = new user(user::SYSTEM_NAME, user::SYSTEM_EMAIL);
-        $usr->code_id = user::SYSTEM_CODE_ID;
+        $usr = new user(users::SYSTEM_NAME, users::SYSTEM_EMAIL);
+        $usr->code_id = users::SYSTEM_CODE_ID;
         $usr->profile_id = $usr_pro_cac->id(user_profiles::SYSTEM);
-        $this->lst[user::SYSTEM_ID] = $usr;
-        $this->code_id_hash[user::SYSTEM_CODE_ID] = user::SYSTEM_ID;
+        $this->lst[users::SYSTEM_ID] = $usr;
+        $this->code_id_hash[users::SYSTEM_CODE_ID] = users::SYSTEM_ID;
 
-        $usr = new user(user::SYSTEM_ADMIN_NAME, user::SYSTEM_ADMIN_EMAIL);
-        $usr->code_id = user::SYSTEM_ADMIN_CODE_ID;
+        $usr = new user(users::SYSTEM_ADMIN_NAME, users::SYSTEM_ADMIN_EMAIL);
+        $usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
         $usr->profile_id = $usr_pro_cac->id(user_profiles::ADMIN);
-        $this->lst[user::SYSTEM_ADMIN_ID] = $usr;
-        $this->code_id_hash[user::SYSTEM_ADMIN_CODE_ID] = user::SYSTEM_ADMIN_ID;
+        $this->lst[users::SYSTEM_ADMIN_ID] = $usr;
+        $this->code_id_hash[users::SYSTEM_ADMIN_CODE_ID] = users::SYSTEM_ADMIN_ID;
 
-        $usr = new user(user::SYSTEM_TEST_NAME, user::SYSTEM_TEST_EMAIL);
-        $usr->code_id = user::SYSTEM_TEST_CODE_ID;
+        $usr = new user(users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
+        $usr->code_id = users::SYSTEM_TEST_CODE_ID;
         $usr->profile_id = $usr_pro_cac->id(user_profiles::TEST);
-        $this->lst[user::SYSTEM_TEST_ID] = $usr;
-        $this->code_id_hash[user::SYSTEM_TEST_CODE_ID] = user::SYSTEM_TEST_ID;
+        $this->lst[users::SYSTEM_TEST_ID] = $usr;
+        $this->code_id_hash[users::SYSTEM_TEST_CODE_ID] = users::SYSTEM_TEST_ID;
 
-        $usr = new user(user::SYSTEM_TEST_PARTNER_NAME, user::SYSTEM_TEST_PARTNER_EMAIL);
-        $usr->code_id = user::SYSTEM_TEST_PARTNER_CODE_ID;
+        $usr = new user(users::SYSTEM_TEST_PARTNER_NAME, users::SYSTEM_TEST_PARTNER_EMAIL);
+        $usr->code_id = users::SYSTEM_TEST_PARTNER_CODE_ID;
         $usr->profile_id = $usr_pro_cac->id(user_profiles::TEST);
-        $this->lst[user::SYSTEM_TEST_PARTNER_ID] = $usr;
-        $this->code_id_hash[user::SYSTEM_TEST_PARTNER_CODE_ID] = user::SYSTEM_TEST_PARTNER_ID;
+        $this->lst[users::SYSTEM_TEST_PARTNER_ID] = $usr;
+        $this->code_id_hash[users::SYSTEM_TEST_PARTNER_CODE_ID] = users::SYSTEM_TEST_PARTNER_ID;
 
-        $usr = new user(user::SYSTEM_TEST_NORMAL_NAME, user::SYSTEM_TEST_NORMAL_EMAIL);
-        $usr->code_id = user::SYSTEM_TEST_NORMAL_CODE_ID;
+        $usr = new user(users::SYSTEM_TEST_NORMAL_NAME, users::SYSTEM_TEST_NORMAL_EMAIL);
+        $usr->code_id = users::SYSTEM_TEST_NORMAL_CODE_ID;
         $usr->profile_id = $usr_pro_cac->id(user_profiles::NORMAL);
-        $this->lst[user::SYSTEM_TEST_NORMAL_ID] = $usr;
-        $this->code_id_hash[user::SYSTEM_TEST_NORMAL_CODE_ID] = user::SYSTEM_TEST_NORMAL_ID;
+        $this->lst[users::SYSTEM_TEST_NORMAL_ID] = $usr;
+        $this->code_id_hash[users::SYSTEM_TEST_NORMAL_CODE_ID] = users::SYSTEM_TEST_NORMAL_ID;
 
     }
 
 
     /*
-     * information
+     * info
      */
 
+    /**
+     * @returns int the number of elements in the list
+     */
+    function count(): int
+    {
+        if ($this->lst() == null) {
+            return 0;
+        } else {
+            return count($this->lst);
+        }
+    }
+
+    /**
+     * @return bool true if the list is already empty
+     */
     function is_empty(): bool
     {
         $result = true;
-        if ($this->lst > 0) {
-            $result = false;
+        if ($this->lst() != null) {
+            if (count($this->lst) > 0) {
+                $result = false;
+            }
         }
         return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * add a user to the list
+     *
+     * @param user $usr_to_add an object with a unique database id that should be added to the list
+     * @param bool $allow_duplicates set it to true if duplicate db id should be allowed
+     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
+     */
+    function add(
+        user $usr_to_add,
+        bool $allow_duplicates = false
+    ): user_message
+    {
+        $usr_msg = new user_message();
+
+        // check boolean first because in_array might take longer
+        if ($allow_duplicates) {
+            $this->add_direct($usr_to_add);
+        } else {
+            if ($usr_to_add->id() != 0) {
+                if (!array_key_exists($usr_to_add->id(), $this->id_lst())) {
+                    if (!array_key_exists($usr_to_add->name(), $this->names())) {
+                        $this->add_direct($usr_to_add);
+                    } else {
+                        $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                    }
+                } else {
+                    $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                }
+            } elseif ($usr_to_add->name() != '') {
+                if (!array_key_exists($usr_to_add->name(), $this->names())) {
+                    $this->add_direct($usr_to_add);
+                } else {
+                    $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                }
+            } elseif ($usr_to_add->email() != '') {
+                if (!array_key_exists($usr_to_add->email(), $this->emails())) {
+                    $this->add_direct($usr_to_add);
+                } else {
+                    $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
+                }
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::LIST_USER_INVALID,
+                    [
+                        msg_id::VAR_USER_NAME => $usr_to_add->dsp_id(),
+                        msg_id::VAR_USER_LIST_NAME => $this->names(),
+                    ]);
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * add the user to the list without duplicate check
+     * and later add the id to the id hash
+     *
+     * @param user $usr_to_add
+     * @return void
+     */
+    protected function add_direct(user $usr_to_add): void
+    {
+        $this->lst[] = $usr_to_add;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the json api message
+     *
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr_req the user for whom the api message should be created which can differ from the session user
+     * @returns array with the json fields to create an api message
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr_req = null): array
+    {
+        $lst = [];
+        foreach ($this->lst() as $usr) {
+            $vars = $usr->api_json_array($typ_lst, $usr_req);
+            $lst[] = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+        }
+        return $lst;
+    }
+
+
+    /*
+     * save
+     */
+
+    /**
+     * simple loop to save all users of the list
+     * because there are probably not many users to save at once
+     *
+     * @param user $usr_req the user who has requested the database update
+     * @return user_message in case of an issue the problem description what has failed and a suggested solution
+     */
+    function save(user $usr_req): user_message
+    {
+        $usr_msg = new user_message();
+
+        if ($this->is_empty()) {
+            $usr_msg->add_info_text('no users to save');
+        } else {
+            foreach ($this->lst() as $usr) {
+                if ($usr->excluded === true) {
+                    if ($usr->id() == 0 and $usr->name() != '') {
+                        $usr->load_by_name($usr->name());
+                    }
+                    $usr_msg->add($usr->del($usr_req));
+                } else {
+                    $usr_msg->add($usr->save($usr_req));
+                }
+            }
+        }
+
+        return $usr_msg;
     }
 
 }

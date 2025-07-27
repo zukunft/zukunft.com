@@ -37,20 +37,23 @@
 
 namespace cfg\value;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -62,6 +65,7 @@ use cfg\group\group;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_value;
 use cfg\ref\source;
+use cfg\ref\source_db;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\enum\messages as msg_id;
@@ -89,8 +93,8 @@ class value_time_series extends sandbox_value
 
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
-        source::FLD_ID,
-        sandbox::FLD_EXCLUDED,
+        source_db::FLD_ID,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
 
@@ -163,9 +167,9 @@ class value_time_series extends sandbox_value
         $result = parent::row_mapper_multi($db_row, '', self::FLD_ID);
         if ($result) {
             $this->grp()->set_id($db_row[group::FLD_ID]);
-            if ($db_row[source::FLD_ID] > 0) {
+            if ($db_row[source_db::FLD_ID] > 0) {
                 $this->source = new source($this->user());
-                $this->source->set_id($db_row[source::FLD_ID]);
+                $this->source->set_id($db_row[source_db::FLD_ID]);
             }
             $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id()));
         }
@@ -349,7 +353,7 @@ class value_time_series extends sandbox_value
     }
 
     /*
-     * information
+     * info
      */
 
     /**

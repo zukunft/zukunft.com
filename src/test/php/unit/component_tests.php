@@ -32,7 +32,9 @@
 
 namespace unit;
 
-include_once MODEL_COMPONENT_PATH . 'component.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_COMPONENT . 'component.php';
 
 use cfg\component\component;
 use cfg\component\component_type;
@@ -49,6 +51,7 @@ class component_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init
         $sc = new sql_creator();
@@ -94,7 +97,7 @@ class component_tests
         $t->assert_sql_insert($sc, $cmp, [sql_type::LOG, sql_type::USER]);
         $cmp = $t->component_word_add_title(); // a component with a code_id as it might be imported
         $t->assert_sql_insert($sc, $cmp, [sql_type::LOG]);
-        $cmp = $t->component_filled();
+        $cmp = $t->component_filled_all();
         $t->assert_sql_insert($sc, $cmp, [sql_type::LOG]);
 
         $t->subheader($ts . 'component sql write update');
@@ -121,8 +124,8 @@ class component_tests
         $t->assert_api_to_dsp($cmp, new component_dsp());
 
         $t->subheader($ts . 'component im- and export');
-        $t->assert_ex_and_import($t->component());
-        $t->assert_ex_and_import($t->component_filled());
+        $t->assert_ex_and_import($t->component(), $usr_sys);
+        $t->assert_ex_and_import($t->component_filled(), $usr_sys);
         $json_file = 'unit/view/component_import.json';
         $t->assert_json_file(new component($usr), $json_file);
 

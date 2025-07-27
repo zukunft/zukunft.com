@@ -32,52 +32,55 @@
 
 namespace cfg\helper;
 
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
-include_once MODEL_USER_PATH . 'user_list.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once MODEL_PHRASE_PATH . 'phrase_types.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
-include_once MODEL_VERB_PATH . 'verb_list.php';
-include_once MODEL_ELEMENT_PATH . 'element_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_sys_list.php';
-include_once MODEL_VIEW_PATH . 'view_sys_list.php';
-include_once MODEL_VIEW_PATH . 'view_type.php';
-include_once MODEL_VIEW_PATH . 'view_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'view_style.php';
-include_once MODEL_COMPONENT_PATH . 'view_style_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_REF_PATH . 'ref_type_list.php';
-include_once MODEL_REF_PATH . 'source_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_action_list.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_profile_list.php';
-include_once MODEL_USER_PATH . 'user_list.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
 
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::MODEL_PHRASE . 'phrase_types.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
+include_once paths::MODEL_ELEMENT . 'element_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_type.php';
+include_once paths::MODEL_FORMULA . 'formula_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type_list.php';
+include_once paths::MODEL_VIEW . 'view_sys_list.php';
+include_once paths::MODEL_VIEW . 'view_sys_list.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::MODEL_VIEW . 'view_type_list.php';
+include_once paths::MODEL_VIEW . 'view_link_type_list.php';
+include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::MODEL_COMPONENT . 'view_style_list.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
+include_once paths::MODEL_COMPONENT . 'component_type_list.php';
+include_once paths::MODEL_COMPONENT . 'position_type_list.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_REF . 'ref_type_list.php';
+include_once paths::MODEL_REF . 'source_type_list.php';
+include_once paths::MODEL_SANDBOX . 'share_type_list.php';
+include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
+include_once paths::MODEL_LANGUAGE . 'language_list.php';
+include_once paths::MODEL_LANGUAGE . 'language_form_list.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_action_list.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use cfg\component\component_link_type_list;
 use cfg\component\position_type_list;
 use cfg\component\component_type_list;
 use cfg\component\view_style_list;
@@ -115,6 +118,29 @@ class type_lists
     /*
      * load
      */
+
+    /**
+     * reload the cache used for logging the changes
+     * @param sql_db $db_con
+     * @return bool
+     */
+    function load_log(sql_db $db_con): bool
+    {
+        global $cng_act_cac;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
+
+        $result = true;
+
+        $cng_act_cac = new change_action_list();
+        $cng_act_cac->load($db_con);
+        $cng_tbl_cac = new change_table_list();
+        $cng_tbl_cac->load($db_con);
+        $cng_fld_cac = new change_field_list();
+        $cng_fld_cac->load($db_con);
+
+        return $result;
+    }
 
     function load(sql_db $db_con, ?user $usr): bool
     {
@@ -173,9 +199,8 @@ class type_lists
         $msk_lnk_typ_cac->load($db_con);
         $cmp_typ_cac = new component_type_list();
         $cmp_typ_cac->load($db_con);
-        // TODO review: not yet needed?
-        //$cmp_lnk_typ_cac = new component_link_type_list();
-        //$cmp_lnk_typ_cac->load($db_con);
+        $cmp_lnk_typ_cac = new component_link_type_list();
+        $cmp_lnk_typ_cac->load($db_con);
         $pos_typ_cac = new position_type_list();
         $pos_typ_cac->load($db_con);
         $ref_typ_cac = new ref_type_list();
@@ -264,9 +289,8 @@ class type_lists
         $vars[json_fields::LIST_VIEW_LINK_TYPES] = $msk_lnk_typ_cac->api_json_array();
         global $cmp_typ_cac;
         $vars[json_fields::LIST_COMPONENT_TYPES] = $cmp_typ_cac->api_json_array();
-        // TODO activate
-        //global $cmp_lnk_typ_cac;
-        //$vars[json_fields::LIST_VIEW_COMPONENT_LINK_TYPES] = $cmp_lnk_typ_cac->api_json_array();
+        global $cmp_lnk_typ_cac;
+        $vars[json_fields::LIST_COMPONENT_LINK_TYPES] = $cmp_lnk_typ_cac->api_json_array();
         global $pos_typ_cac;
         $vars[json_fields::LIST_COMPONENT_POSITION_TYPES] = $pos_typ_cac->api_json_array();
         global $ref_typ_cac;

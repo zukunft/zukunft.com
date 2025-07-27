@@ -51,6 +51,9 @@ class words
     //
     // if words have a predefined behaviour instead of the code_id the phrase type is used
 
+    // the standard word displayed to the user if she/he as not yet viewed any other word
+    const DEFAULT_WORD_ID = 1;
+
     // keywords to select the system configuration
     const THIS_SYSTEM = 'zukunft.com';
     const SYSTEM = 'system';
@@ -63,6 +66,8 @@ class words
     const SYS_CONF_VALUE = 'sys-conf-value';
     const SYS_CONF_SOURCE = 'source-name';
     const SYS_CONF_SOURCE_COM = 'source-description';
+    const SYS_CONF_USER = 'pod-user-config';
+    const SYS_CONF_USER_COM = 'keyword to read the user configuration for a specific user';
 
     // for the system setup and all pods of zukunft.com
     const POD = 'pod';
@@ -81,7 +86,7 @@ class words
     const URL_ID = 326;
     // e.g. the launch date of the first beta version of zukunft.com
     const LAUNCH = 'launch';
-    const LAUNCH_ID = 374;
+    const LAUNCH_ID = 376;
 
     // for the user settings
     const ROW = 'row';
@@ -91,6 +96,7 @@ class words
     const SOURCE = 'source';
     const FORMULA = 'formula';
     const WORDS = 'words';
+    const VERBS = 'verbs';
     const TRIPLES = 'triples';
     const SOURCES = 'sources';
     const REFERENCES = 'references';
@@ -103,11 +109,12 @@ class words
     const DECIMAL = 'decimal';
 
     // to exchange system configurations
+    const USERS = 'users';
     const IP_RANGES = 'ip-ranges';
 
     // e.g. the geolocation of the development of zukunft.com
     const POINT = 'point';
-    const POINT_ID = 375;
+    const POINT_ID = 377;
 
     // general words used also for the system configuration that have a fixed tooltip
     const TIME = 'time';
@@ -322,9 +329,9 @@ class words
 
     // words from import test file companies.json used for the start page in order of appearance
     const ABB = 'ABB';
-    const ABB_ID = 1008;
+    const ABB_ID = 1010;
     const VESTAS = 'Vestas';
-    const VESTAS_ID = 1011;
+    const VESTAS_ID = 1013;
 
     // for the config.yaml
     const TEST = 'test';
@@ -339,6 +346,7 @@ class words
     // persevered word names for unit and integration tests based on the database
     // TWN_* - is a Test Word Name for words created only for testing (see also TN_*)
     const TEST_ADD = 'System Test Word';
+    const TEST_ADD_COM = 'test description added to the word via import';
     const TEST_ADD_TO = 'System Test Word To';
     const TEST_ADD_VIA_FUNC = 'System Test Word added via sql function';
     const TEST_ADD_VIA_SQL = 'System Test Word added via sql insert';
@@ -389,6 +397,7 @@ class words
     const TEST_ADD_API_COM = 'System Test Word API Description';
     const TEST_UPD_API = 'System Test Word API Renamed';
     const TEST_UPD_API_COM = 'System Test Word API Description Renamed';
+    const TEST_ADD_VALUE = 'System Test Word for value curl testing';
 
 
     // list of predefined word names used for system testing that are expected to be never renamed

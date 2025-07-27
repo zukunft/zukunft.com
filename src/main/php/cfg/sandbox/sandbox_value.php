@@ -34,49 +34,55 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_GROUP_PATH . 'result_id.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_HELPER_PATH . 'db_object_multi.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_LOG_PATH . 'change_link.php';
-include_once MODEL_LOG_PATH . 'change_value.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_WORD_PATH . 'triple_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_time.php';
-//include_once MODEL_VALUE_PATH . 'value_text.php';
-//include_once MODEL_VALUE_PATH . 'value_geo.php';
-//include_once MODEL_VALUE_PATH . 'value_time_series.php';
-include_once MODEL_WORD_PATH . 'word_list.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_GROUP . 'result_id.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_LOG . 'change_value.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_RESULT . 'result_db.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_db.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+//include_once paths::MODEL_VALUE . 'value_time_series.php';
+include_once paths::MODEL_WORD . 'word_list.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -89,6 +95,7 @@ use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\result_id;
@@ -103,6 +110,9 @@ use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\ref\source;
 use cfg\result\result;
+use cfg\result\result_db;
+use cfg\ref\source_db;
+use cfg\value\value_db;
 use cfg\value\value_geo;
 use cfg\value\value;
 use cfg\value\value_text;
@@ -199,29 +209,29 @@ class sandbox_value extends sandbox_multi
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', 'the user specific numeric value change'],
     );
     const FLD_ALL_VALUE_TEXT = array(
-        [value_base::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', 'the text value given by the user'],
+        [value_db::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', 'the text value given by the user'],
     );
     const FLD_ALL_VALUE_TIME = array(
-        [value_base::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NOT_NULL, '', '', 'the timestamp given by the user'],
+        [value_db::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NOT_NULL, '', '', 'the timestamp given by the user'],
     );
     const FLD_ALL_VALUE_GEO = array(
-        [value_base::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NOT_NULL, '', '', 'the geolocation given by the user'],
+        [value_db::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NOT_NULL, '', '', 'the geolocation given by the user'],
     );
     const FLD_ALL_VALUE_TEXT_USER = array(
-        [value_base::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific text value change'],
+        [value_db::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific text value change'],
     );
     const FLD_ALL_VALUE_TIME_USER = array(
-        [value_base::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NULL, '', '', 'the user specific timestamp change'],
+        [value_db::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NULL, '', '', 'the user specific timestamp change'],
     );
     const FLD_ALL_VALUE_GEO_USER = array(
-        [value_base::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, '', '', 'the user specific geolocation change'],
+        [value_db::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, '', '', 'the user specific geolocation change'],
     );
     const FLD_ALL_SOURCE = array(
-        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, 'the source of the value as given by the user'],
+        [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, 'the source of the value as given by the user'],
     );
     // TODO use this for the user tables
     const FLD_USER_SOURCE = array(
-        [source::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_USER_SOURCE_COM],
+        [source_db::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_USER_SOURCE_COM],
     );
     const FLD_ALL_CHANGED = array(
         [self::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
@@ -297,6 +307,18 @@ class sandbox_value extends sandbox_multi
     {
         $this->set_last_update(null);
         return parent::row_mapper_multi($db_row, $id_fld);
+    }
+
+    /**
+     * map a value api json to this model value object
+     * @param array $api_json the api array with the values that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        if (array_key_exists(json_fields::LAST_UPDATE, $api_json)) {
+            $this->set_last_update($api_json[json_fields::LAST_UPDATE]);
+        }
+        return parent::api_mapper($api_json);
     }
 
 
@@ -730,7 +752,7 @@ class sandbox_value extends sandbox_multi
             // standard main: for results without user specific changes and for up to e prime phrases
             if ($this::class == result::class) {
                 $sc->set_class($this::class, new sql_type_list(), $ext_type . self::TBL_EXT_STD . sql_type::MAIN->extension());
-                $fields = array_merge(result::FLD_KEY_MAIN_STD, $fld_par, $this::FLD_ALL_SOURCE);
+                $fields = array_merge(result_db::FLD_KEY_MAIN_STD, $fld_par, $this::FLD_ALL_SOURCE);
                 $tbl_comment = $this::TBL_COMMENT_STD . $type_class_name . $this::TBL_COMMENT_STD_MAIN_CONT;
                 $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
                 $sql_index .= $sc->index_create($fields, true);
@@ -818,7 +840,7 @@ class sandbox_value extends sandbox_multi
         // main: for results based on up to eight prime phrases
         if ($this::class == result::class and $type_name != $this::TYPE_TIME_SERIES) {
             $sql .= $sc->sql_separator();
-            $fields = array_merge(result::FLD_KEY_MAIN, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
+            $fields = array_merge(result_db::FLD_KEY_MAIN, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_fields);
             $sc->set_class($this::class, new sql_type_list(), $ext_type . sql_type::MAIN->extension());
             $tbl_comment = $this::TBL_COMMENT_MAIN . $type_class_name . $this::TBL_COMMENT_MAIN_CONT;
             if ($comment_overwrite != '') {
@@ -827,7 +849,7 @@ class sandbox_value extends sandbox_multi
             $sql .= $sc->table_create($fields, $type_class_name, $tbl_comment, $this::class);
             $sql_index .= $sc->index_create($fields, true);
             $sql_foreign .= $sc->foreign_key_create($fields);
-            $fields = array_merge(result::FLD_KEY_MAIN_USER, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_usr_fields);
+            $fields = array_merge(result_db::FLD_KEY_MAIN_USER, $this::FLD_ALL_SOURCE_GROUP_PRIME, $std_usr_fields);
             // most user: for user changes in values based on up to four prime phrases
             $sc->set_class($this::class, new sql_type_list([sql_type::USER]), $ext_type . sql_type::MAIN->extension());
             $tbl_comment = $this::TBL_COMMENT_MAIN_USER . $type_class_name . $this::TBL_COMMENT_MAIN_USER_CONT;
@@ -959,7 +981,7 @@ class sandbox_value extends sandbox_multi
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array(user::FLD_ID));
         $this->load_sql_where_id($qp, $sc, true);
-        $sc->add_where(sandbox::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
+        $sc->add_where(sql_db::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -1076,7 +1098,31 @@ class sandbox_value extends sandbox_multi
 
 
     /*
-     * information
+     * modify
+     */
+
+    /**
+     * fill this sandbox object based on the given object
+     *
+     * @param sandbox_value|db_object_multi $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(sandbox_value|db_object_multi $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->grp() != null) {
+            $this->set_grp($obj->grp());
+        }
+        if ($obj->last_update() != null) {
+            $this->set_last_update($obj->last_update());
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * info
      */
 
     /**
@@ -1136,7 +1182,7 @@ class sandbox_value extends sandbox_multi
             if ($this::class == result::class) {
                 // results are always depending on a formula
                 $lst->add_field(
-                    formula::FLD_ID,
+                    formula_db::FLD_ID,
                     $this->formula_id(),
                     sql_field_type::INT_SMALL
                 );
@@ -1162,7 +1208,7 @@ class sandbox_value extends sandbox_multi
             }
         } elseif ($this::class == result::class and $this->is_main()) {
             $lst->add_field(
-                formula::FLD_ID,
+                formula_db::FLD_ID,
                 $this->formula_id(),
                 sql_field_type::INT_SMALL
             );
@@ -1219,7 +1265,7 @@ class sandbox_value extends sandbox_multi
                     or $this::class == value_text::class
                     or $this::class == value_geo::class)) {
                 $lst->add_field(
-                    source::FLD_ID,
+                    source_db::FLD_ID,
                     $this->source()?->id(),
                     db_object_seq_id::FLD_ID_SQL_TYP
                 );
@@ -1240,23 +1286,23 @@ class sandbox_value extends sandbox_multi
         $result = $this->id_field_group();
         if ($this->is_prime()) {
             if ($this::class == result::class and $sc_par_lst->is_standard()) {
-                // TODO merge with result::FLD_KEY_PRIME ?
+                // TODO merge with result_db::FLD_KEY_PRIME ?
                 $id_fields = $this->id_fields_prime(1, result_id::PRIME_PHRASES_STD);
-                $result = array_merge([formula::FLD_ID], $id_fields);
+                $result = array_merge([formula_db::FLD_ID], $id_fields);
             } else {
                 if ($this::class == result::class) {
-                    $result = array_merge([formula::FLD_ID], $this->id_fields_prime());
+                    $result = array_merge([formula_db::FLD_ID], $this->id_fields_prime());
                 } else {
                     $result = $this->id_fields_prime();
                 }
             }
         } elseif ($this->is_main()) {
             if ($this::class == result::class and $sc_par_lst->is_standard()) {
-                // TODO merge with result::FLD_KEY_PRIME ?
+                // TODO merge with result_db::FLD_KEY_PRIME ?
                 $id_fields = $this->id_fields_main(1, group_id::MAIN_PHRASES_STD);
-                $result = array_merge([formula::FLD_ID], $id_fields);
+                $result = array_merge([formula_db::FLD_ID], $id_fields);
             } else {
-                $result = array_merge([formula::FLD_ID], $this->id_fields_main());
+                $result = array_merge([formula_db::FLD_ID], $this->id_fields_main());
             }
         }
         return $result;
@@ -1378,6 +1424,30 @@ class sandbox_value extends sandbox_multi
     function trp_lst(): triple_list
     {
         return $this->phrase_list()->triples();
+    }
+
+    /**
+     * load a value by the phrase ids
+     * @param array $names with the word of triple names
+     * @param  phrase_list|null $phr_lst with the cache of the phrases already loaded
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_names(array $names, phrase_list $phr_lst = null): int
+    {
+        $load_lst = new phrase_list($this->user());
+        if ($phr_lst == null) {
+            $load_lst->load_by_names($names);
+        } else {
+            foreach ($names as $name) {
+                $phr = $phr_lst->get_by_name($name);
+                if ($phr == null) {
+                    $phr = new phrase($this->user());
+                    $phr->load_by_name($name);
+                }
+                $load_lst->add($phr);
+            }
+        }
+        return $this->load_by_grp($load_lst->get_grp_id());
     }
 
 
@@ -1981,11 +2051,11 @@ class sandbox_value extends sandbox_multi
         if ($this->is_numeric()) {
             $fields[] = self::FLD_VALUE;
         } elseif ($this->is_time_value()) {
-            $fields[] = value_base::FLD_VALUE_TIME;
+            $fields[] = value_db::FLD_VALUE_TIME;
         } elseif ($this->is_text_value()) {
-            $fields[] = value_base::FLD_VALUE_TEXT;
+            $fields[] = value_db::FLD_VALUE_TEXT;
         } elseif ($this->is_geo_value()) {
-            $fields[] = value_base::FLD_VALUE_GEO;
+            $fields[] = value_db::FLD_VALUE_GEO;
         } else {
             $fields[] = self::FLD_VALUE;
         }
@@ -2066,21 +2136,21 @@ class sandbox_value extends sandbox_multi
             if ($sbx->value() !== $this->value()) {
                 if ($do_log) {
                     $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . value_base::FLD_VALUE_TIME,
-                        $cng_fld_cac->id($table_id . value_base::FLD_VALUE_TIME),
+                        sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_TIME,
+                        $cng_fld_cac->id($table_id . value_db::FLD_VALUE_TIME),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 if ($is_update) {
                     $lst->add_field(
-                        value_base::FLD_VALUE_TIME,
+                        value_db::FLD_VALUE_TIME,
                         $this->value(),
                         sql_field_type::TIME,
                         $sbx->number()
                     );
                 } else {
                     $lst->add_field(
-                        value_base::FLD_VALUE_TIME,
+                        value_db::FLD_VALUE_TIME,
                         $this->value(),
                         sql_field_type::TIME
                     );
@@ -2090,21 +2160,21 @@ class sandbox_value extends sandbox_multi
             if ($sbx->value() !== $this->value()) {
                 if ($do_log) {
                     $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . value_base::FLD_VALUE_TEXT,
-                        $cng_fld_cac->id($table_id . value_base::FLD_VALUE_TEXT),
+                        sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_TEXT,
+                        $cng_fld_cac->id($table_id . value_db::FLD_VALUE_TEXT),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 if ($is_update) {
                     $lst->add_field(
-                        value_base::FLD_VALUE_TEXT,
+                        value_db::FLD_VALUE_TEXT,
                         $this->value(),
                         sql_field_type::TEXT,
                         $sbx->value()
                     );
                 } else {
                     $lst->add_field(
-                        value_base::FLD_VALUE_TEXT,
+                        value_db::FLD_VALUE_TEXT,
                         $this->value(),
                         sql_field_type::TEXT
                     );
@@ -2114,21 +2184,21 @@ class sandbox_value extends sandbox_multi
             if ($sbx->value() !== $this->value()) {
                 if ($do_log) {
                     $lst->add_field(
-                        sql::FLD_LOG_FIELD_PREFIX . value_base::FLD_VALUE_GEO,
-                        $cng_fld_cac->id($table_id . value_base::FLD_VALUE_GEO),
+                        sql::FLD_LOG_FIELD_PREFIX . value_db::FLD_VALUE_GEO,
+                        $cng_fld_cac->id($table_id . value_db::FLD_VALUE_GEO),
                         change::FLD_FIELD_ID_SQL_TYP
                     );
                 }
                 if ($is_update) {
                     $lst->add_field(
-                        value_base::FLD_VALUE_GEO,
+                        value_db::FLD_VALUE_GEO,
                         $this->value(),
                         sql_field_type::NUMERIC_FLOAT,
                         $sbx->value()
                     );
                 } else {
                     $lst->add_field(
-                        value_base::FLD_VALUE_GEO,
+                        value_db::FLD_VALUE_GEO,
                         $this->value(),
                         sql_field_type::NUMERIC_FLOAT
                     );
@@ -2199,7 +2269,7 @@ class sandbox_value extends sandbox_multi
             $result[] = group::FLD_ID;
         }
         if ($sbx->number() <> $this->number()) {
-            $result[] = value_base::FLD_VALUE;
+            $result[] = value_db::FLD_VALUE;
         }
         return $result;
     }

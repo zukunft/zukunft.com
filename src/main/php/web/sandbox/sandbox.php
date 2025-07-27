@@ -32,17 +32,19 @@
 
 namespace html\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_HTML_PATH . 'button.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_USER_PATH . 'user.php';
-include_once WEB_USER_PATH . 'user_message.php';
-//include_once WEB_VIEW_PATH . 'view_list.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::VIEW . 'view_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\button;
 use html\html_base;
@@ -143,6 +145,21 @@ class sandbox extends db_object_dsp
             $vars[json_fields::PROTECTION] = $this->protection_id;
         }
         return $vars;
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function share_id(): ?int
+    {
+        return $this->share_id;
+    }
+
+    function protection_id(): ?int
+    {
+        return $this->protection_id;
     }
 
 

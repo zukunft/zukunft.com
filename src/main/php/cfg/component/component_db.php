@@ -16,7 +16,7 @@
     - retrieval:         get related objects assigned to this component
     - cast:              create an api object and set the vars from an api json
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - log:               write the changes to the log
     - link:              link and release the component to and from a view
     - save:              manage to update the database
@@ -52,19 +52,25 @@
 
 namespace cfg\component;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_COMPONENT_PATH . 'view_style.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
 use cfg\helper\type_object;
@@ -106,7 +112,6 @@ class component_db
     const FLD_LINK_TYPE_COM = 'e.g. for type 4 to select possible terms';
     const FLD_LINK_TYPE = 'link_type_id';
     const FLD_LINK_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
-    const FLD_POSITION = 'position'; // TODO move to component_link
 
     // list of fields that MUST be set by one user
     const FLD_LST_MUST_BE_IN_STD = array(
@@ -118,12 +123,12 @@ class component_db
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, component_type::class, self::FLD_TYPE_COM],
         [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
         // TODO link with a foreign key to phrases (or terms?) if link to a view is allowed
         [self::FLD_ROW_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_ROW_PHRASE_COM],
-        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
+        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
         [self::FLD_COL_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_COL_PHRASE_COM],
         [self::FLD_COL2_PHRASE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_COL2_PHRASE_COM],
         [self::FLD_LINK_COMP, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_COMP_COM],
@@ -132,18 +137,18 @@ class component_db
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [self::FLD_UI_MSG_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_UI_MSG_ID_COM],
     );
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        sql::FLD_CODE_ID,
+        sql_db::FLD_CODE_ID,
         self::FLD_UI_MSG_ID
     );
     // list of the user specific database field names
     const FLD_NAMES_USR = array(
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the user specific database field names
     const FLD_NAMES_NUM_USR = array(
@@ -151,25 +156,25 @@ class component_db
         self::FLD_STYLE,
         self::FLD_ROW_PHRASE,
         self::FLD_LINK_TYPE,
-        formula::FLD_ID,
+        formula_db::FLD_ID,
         self::FLD_COL_PHRASE,
         self::FLD_COL2_PHRASE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
     const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_NAME,
-        sandbox_named::FLD_DESCRIPTION,
+        sql_db::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_STYLE,
         self::FLD_ROW_PHRASE,
         self::FLD_LINK_TYPE,
-        formula::FLD_ID,
+        formula_db::FLD_ID,
         self::FLD_COL_PHRASE,
         self::FLD_COL2_PHRASE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );

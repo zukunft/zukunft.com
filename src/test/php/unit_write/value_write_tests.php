@@ -32,9 +32,11 @@
 
 namespace unit_write;
 
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
 
 use cfg\log\change_values_big;
 use cfg\log\change_values_norm;
@@ -44,7 +46,9 @@ use cfg\user\user;
 use cfg\value\value;
 use html\figure\figure as figure_dsp;
 use html\value\value as value_dsp;
+use shared\const\users;
 use shared\enum\change_fields;
+use shared\helper\Config as shared_config;
 use shared\library;
 use shared\const\triples;
 use shared\const\values;
@@ -197,7 +201,7 @@ class value_write_tests
 
         // test the HTML code creation
         $result = $mio_val_dsp->value();
-        $target = number_format(values::CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, DEFAULT_DEC_POINT, DEFAULT_THOUSAND_SEP);
+        $target = number_format(values::CANTON_ZH_INHABITANTS_2020_IN_MIO, 2, shared_config::DEFAULT_DEC_POINT, shared_config::DEFAULT_THOUSAND_SEP);
         $t->display(', value->display', $result, $target);
 
         // test the HTML code creation including the hyperlink
@@ -248,7 +252,7 @@ class value_write_tests
             }
             $result = $t->log_last_by_field($add_val, change_fields::FLD_NUMERIC_VALUE, $add_val->id(), true);
         }
-        $target = user::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST;
+        $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST;
         // TODO activate
         //$t->assert(', value->save logged for "' . $phr_grp->name() . '"', $result, $target);
 
@@ -287,7 +291,7 @@ class value_write_tests
         if ($add_val->is_id_set()) {
             $result = $t->log_last_by_field($add_val2, change_fields::FLD_NUMERIC_VALUE, $add_val2->id(), true);
         }
-        $target = user::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_ADD2;
+        $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_ADD2;
         // TODO activate
         //$t->assert(', value->save logged for "' . $phr_grp2->name() . '"', $result, $target);
 
@@ -313,9 +317,9 @@ class value_write_tests
             $result = $t->log_last_by_field($added_val, change_fields::FLD_NUMERIC_VALUE, $added_val->id(), true);
         }
         // TODO fix it
-        $target = user::SYSTEM_TEST_NAME . ' changed ' . self::NUMBER_TEST . ' to ' . self::NUMBER_ADD;
+        $target = users::SYSTEM_TEST_NAME . ' changed ' . self::NUMBER_TEST . ' to ' . self::NUMBER_ADD;
         if ($result != $target) {
-            $target = user::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST . '';
+            $target = users::SYSTEM_TEST_NAME . ' added ' . self::NUMBER_TEST . '';
         }
         // TODO activate
         //$t->assert(', value->save logged for "' . words::TN_RENAMED . '"', $result, $target);
@@ -343,7 +347,7 @@ class value_write_tests
             $result = $t->log_last_by_field($val_usr2, change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
                 true);
         }
-        $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_ADD . '" to "' . self::NUMBER_CHANGED . '"';
+        $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_ADD . '" to "' . self::NUMBER_CHANGED . '"';
         // TODO activate
         //$t->assert(', value->save logged for user "' . $t->usr2->name . '"', $result, $target);
 
@@ -377,7 +381,7 @@ class value_write_tests
             $result = $t->log_last_by_field($val_usr2,  change_fields::FLD_NUMERIC_VALUE, $val_usr2->id(),
                 true);
         }
-        $target = user::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_CHANGED . '" to "' . self::NUMBER_ADD . '"';
+        $target = users::SYSTEM_TEST_PARTNER_NAME . ' changed "' . self::NUMBER_CHANGED . '" to "' . self::NUMBER_ADD . '"';
         $t->assert(', value->save logged for user "' . $t->usr2->name . '"', $result, $target);
 
         // ... check if the value has really been changed back

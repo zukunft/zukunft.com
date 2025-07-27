@@ -28,15 +28,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 namespace cfg\import;
 
-include_once MODEL_HELPER_PATH . 'config_numbers.php';
-include_once MODEL_IMPORT_PATH . 'import.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_CONST_PATH . 'files.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'file_types.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'file_types.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\const\files;
@@ -67,12 +69,26 @@ class import_file
         $this->start_save = microtime(true);
     }
 
+
+    /*
+     * set and get
+     */
+
+    /*
+     * use to apply the time of the parent process for continuous timestamp reporting
+     */
+    function set_start_time(float $tart_time): void
+    {
+        $this->start_time = $tart_time;
+    }
+
+
     /**
      * import a single json file
      * TODO return a user message instead of a string
      *
      * @param string $filename
-     * @param user $usr
+     * @param user $usr the user who has requested the import
      * @param bool $direct true if each object should be saved separate in the database
      * @return user_message
      */
@@ -82,6 +98,15 @@ class import_file
 
         $usr_msg = new user_message();
         $imp = new import($filename);
+        $imp->set_start_time($this->start_time);
+        // TODO Prio 1 use import user instead of $usr_req
+        $imp->usr = $usr;
+
+        // load the config e.g. after initial setup
+        if ($cfg == null) {
+            $cfg = new config_numbers($usr);
+            $cfg->load_cfg($usr);
+        }
 
         // get the relevant config values
         $read_bytes_per_sec = $cfg->get_by([triples::FILE_READ, triples::BYTES_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
@@ -116,9 +141,9 @@ class import_file
 
                 // analyse the import file and update the database
                 if ($direct) {
-                    $import_result = $imp->put_json_direct($json_str, $usr);
+                    $import_result = $imp->put_json_direct($json_str);
                 } else {
-                    $import_result = $imp->put_json($json_str, $usr);
+                    $import_result = $imp->put_json($json_str);
                 }
 
                 // show the summery to the user
@@ -171,7 +196,8 @@ class import_file
                 $this->empty_warning($filename, $usr_msg);
             } else {
                 $imp = new import($filename);
-                $import_result = $imp->put_yaml($yaml_str, $usr);
+                $imp->usr = $usr;
+                $import_result = $imp->put_yaml($yaml_str);
                 if ($import_result->is_ok()) {
                     $this->done($imp->summary(), $usr_msg);
                 } else {
@@ -195,6 +221,7 @@ class import_file
     function import_config_yaml(user $usr, bool $validate = false): user_message
     {
         global $mtr;
+        global $log_txt;
 
         $usr_msg = new user_message();
 
@@ -229,9 +256,10 @@ class import_file
 
                     // reload the target values to be able to report the missing config values
                     $imp = new import(files::SYSTEM_CONFIG);
+                    $imp->usr = $usr;
                     $yaml_str = file_get_contents(files::SYSTEM_CONFIG);
                     $yaml_array = yaml_parse($yaml_str);
-                    $dto = $imp->get_data_object_yaml($yaml_array, $usr);
+                    $dto = $imp->get_data_object_yaml($yaml_array);
                     $load_msg = $dto->load();
                     if (!$load_msg->is_ok()) {
 
@@ -279,7 +307,7 @@ class import_file
 
             // show the last message to the user which is hopefully a confirmation how many config values have been imported
             $msg = $usr_msg->all_message_text();
-            echo $mtr->txt(msg_id::IMPORT_JSON) . ' ' . basename(files::SYSTEM_CONFIG) . ' ' . $msg . "\n";
+            $log_txt->echo_log($mtr->txt(msg_id::IMPORT_JSON) . ' ' . basename(files::SYSTEM_CONFIG) . ' ' . $msg);
             if (!$usr_msg->is_ok()) {
                 log_warning($msg);
             }
@@ -307,13 +335,11 @@ class import_file
         );
 
         foreach (files::BASE_CONFIG_FILES as $filename) {
-            $this->echo('load ' . $filename);
             $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
         }
 
         // config files that cannot yet be loaded via list saving
         foreach (files::BASE_CONFIG_FILES_DIRECT as $filename) {
-            $this->echo('load ' . $filename);
             $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, true)->get_last_message();
         }
 
@@ -338,7 +364,6 @@ class import_file
         );
 
         foreach (files::POD_CONFIG_FILES_DIRECT as $filename) {
-            $this->echo('load ' . $filename);
             $result .= $this->json_file(files::MESSAGE_PATH . $filename, $usr, $direct)->get_last_message();
         }
 
@@ -363,7 +388,6 @@ class import_file
         );
 
         foreach (test_files::TEST_IMPORT_FILE_LIST as $filename) {
-            $this->echo('load ' . $filename);
             $result .= $this->json_file($filename, $usr, $direct)->get_last_message();
         }
 

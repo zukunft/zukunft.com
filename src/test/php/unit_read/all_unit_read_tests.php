@@ -34,10 +34,12 @@
 
 namespace unit_read;
 
-include_once WEB_PATH . 'frontend.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::WEB . 'frontend.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use html\types\type_lists as type_list_dsp;
 use shared\const\groups;
@@ -48,6 +50,7 @@ use shared\types\verbs;
 use test\all_tests;
 use unit\all_unit_tests;
 use unit\api_tests;
+use unit_ui\all_ui_tests;
 
 class all_unit_read_tests extends all_unit_tests
 {
@@ -80,6 +83,7 @@ class all_unit_read_tests extends all_unit_tests
         (new user_read_tests)->run($this);
         (new protection_read_tests)->run($this);
         (new share_read_tests)->run($this);
+        (new horizontal_read_tests)->run($this);
         (new word_read_tests)->run($this);
         (new word_list_read_tests)->run($this);
         (new verb_read_tests)->run($this);

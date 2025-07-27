@@ -32,9 +32,11 @@
 
 namespace unit;
 
-include_once SHARED_CONST_PATH . 'formulas.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\formula\expression;
 use cfg\phrase\term_list;

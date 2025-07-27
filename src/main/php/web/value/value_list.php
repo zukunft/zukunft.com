@@ -34,24 +34,26 @@
 
 namespace html\value;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_HTML_PATH . 'button.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_HTML_PATH . 'styles.php';
-include_once WEB_GROUP_PATH . 'group.php';
-include_once WEB_GROUP_PATH . 'group_list.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_VALUE_PATH . 'value.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'word_list.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'styles.php';
+include_once html_paths::GROUP . 'group.php';
+include_once html_paths::GROUP . 'group_list.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::WORD . 'word_list.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'library.php';
 
 use html\button;
 use html\group\group;

@@ -16,7 +16,11 @@ use html\phrase\phrase_group as phrase_group_dsp;
     but first this needs to be prioritized:
 
     TODO Release 0.0.3
-    TODO Release 0.0.4
+    TODO complete the import db write tests (pending: )
+    TODO make main backend object vars private (pending: ref, value, formula, result, view, component, user)
+    TODO complete and test the url mapper in the frontend
+    TODO clean up import_mapper and move all mapping from import_obj to the mapper
+
 
     TODO Substeps: create insert, update and delete sql create tests for the main objects (TODO activate db write)
                    include the log in the prepared sql write statement
@@ -49,6 +53,11 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO Step 16: deprecate the get_old in ???
     TODO review the remaining db write tests
     TODO activate the tests and create a unit and read test if possible
+
+    TODO Release 0.0.4
+    TODO save the config for backend, frontend and user as a cache json file and use to trigger for recreation
+    TODO activate the class section test
+    TODO include owner and user in im- and export
 
     TODO set the vars of the backend objects to private e.g. to make sure that missing db updates can be detected
     TODO set vars in the frontend object to public and reduce the set and get function because frontend objects never save directly to the database
@@ -157,6 +166,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
     TODO define a phrase range for global prime phrases (e.g. 5124)
          and a range for pot prime terms
     TODO add a frontend cache e.g. for terms, formulas and view
+    TODO test if the redis memory db is faster than the object lists for caching
     TODO allow the user to configure the frontend cache size and show to the user suggestion in increase speed
     TODO add a backend cache e.g. for terms, formulas and view
     TODO allow the admin to configure the backend cache size and show to the user suggestion in increase speed
@@ -511,11 +521,12 @@ use html\phrase\phrase_group as phrase_group_dsp;
                 sandbox - a user sandbox object
                     sandbox_named - user sandbox objects that have a given name
                         sandbox_typed - named sandbox object that have a type and a predefined behavior
-                            word - the base object to find values
-                            source - a non automatic source for a value
-                            formulas - a calculation rule
-                            view - to show an object to the user
-                            component - an formatting element for the user view e.g. to show a word or number
+                            sandbox_code_id - named sandbox object that have a type, a predefined behavior and a code id
+                                word - the base object to find values
+                                source - a non automatic source for a value
+                                formula - a calculation rule
+                                view - to show an object to the user
+                                component - an formatting element for the user view e.g. to show a word or number
                     sandbox_Link - user sandbox objects that link two objects
                         sandbox_link_named - user sandbox objects that link two objects
                             triple - link two words with a predicate / verb
@@ -643,185 +654,70 @@ use html\phrase\phrase_group as phrase_group_dsp;
 
 */
 
-use cfg\component\component_link_type;
-use cfg\component\component_type;
-use cfg\component\position_type;
-use cfg\component\view_style;
+use cfg\const\paths;
+use html\const\paths as html_paths;
 use cfg\db\db_check;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\element\element;
-use cfg\element\element_type;
-use cfg\formula\formula;
-use cfg\formula\formula_link_type;
-use cfg\formula\formula_type;
 use cfg\helper\config_numbers;
 use cfg\helper\type_lists;
-use cfg\ref\ref;
-use cfg\ref\ref_type;
-use cfg\ref\source;
-use cfg\ref\source_type;
-use cfg\result\result;
-use cfg\system\job;
-use cfg\system\job_type;
-use cfg\language\language;
-use cfg\language\language_form;
 use cfg\log\change_action;
 use cfg\log\change_field;
 use cfg\log\change_link;
 use cfg\log\change_log;
 use cfg\log\change_table;
 use cfg\log\change_value;
-use cfg\phrase\phrase_types;
+use cfg\log_text\text_log;
+use cfg\system\job;
 use cfg\system\session;
-use cfg\system\sys_log;
 use cfg\system\sys_log_function;
-use cfg\system\sys_log_level;
 use cfg\system\sys_log_status;
-use cfg\system\sys_log_status_list;
 use cfg\system\sys_log_type;
 use cfg\system\system_time;
-use cfg\system_time_list;
 use cfg\system\system_time_type;
+use cfg\system_time_list;
 use cfg\user\user;
 use cfg\user\user_profile;
-use cfg\user\user_type;
-use cfg\user\user_official_type;
 use cfg\user\user_profile_list;
-use cfg\value\value;
-use cfg\verb\verb;
-use cfg\view\view;
-use cfg\view\view_link_type;
-use cfg\view\view_type;
-use cfg\word\triple;
-use cfg\word\word;
-use html\component\component_exe as component;
+use cfg\user\user_type;
 use html\html_base;
-use html\view\view as view_dsp;
+use shared\const\users;
 use shared\helper\Translator;
 use shared\library;
-use shared\types\protection_type;
-use shared\types\share_type;
 use test\test_cleanup;
-
-// the fixed system user
-const SYSTEM_USER_ID = 1; //
-const SYSTEM_USER_TEST_ID = 2; //
 
 // parameters for internal testing and debugging
 const LIST_MIN_NAMES = 4; // number of object names that should at least be shown
 const LIST_MIN_NUM = 20; // number of object ids that should at least be shown
 const DEBUG_SHOW_USER = 10; // starting from this debug level the user should be shown in the debug text
 
-// set all path for the program code here at once
-const SRC_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
-const MAIN_PATH = SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
-const PHP_PATH_LIB = MAIN_PATH . 'php' . DIRECTORY_SEPARATOR; // recreation of the PHP_PATH for library use only
-const MODEL_PATH = PHP_PATH_LIB . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
-const DB_LINK_PATH = ROOT_PATH . 'db_link' . DIRECTORY_SEPARATOR;
-const DB_PATH = MODEL_PATH . 'db' . DIRECTORY_SEPARATOR;
-const UTIL_PATH = PHP_PATH_LIB . 'utils' . DIRECTORY_SEPARATOR;
-const SERVICE_PATH = PHP_PATH_LIB . 'service' . DIRECTORY_SEPARATOR;
-const MODEL_IMPORT_PATH = MODEL_PATH . 'import' . DIRECTORY_SEPARATOR;
-const SERVICE_EXPORT_PATH = SERVICE_PATH . 'export' . DIRECTORY_SEPARATOR;
-const EXPORT_PATH = MODEL_PATH . 'export' . DIRECTORY_SEPARATOR;
-const SERVICE_MATH_PATH = SERVICE_PATH . 'math' . DIRECTORY_SEPARATOR;
-const MODEL_CONST_PATH = MODEL_PATH . 'const' . DIRECTORY_SEPARATOR;
-const MODEL_HELPER_PATH = MODEL_PATH . 'helper' . DIRECTORY_SEPARATOR;
-const MODEL_SYSTEM_PATH = MODEL_PATH . 'system' . DIRECTORY_SEPARATOR;
-const MODEL_LOG_PATH = MODEL_PATH . 'log' . DIRECTORY_SEPARATOR;
-const MODEL_DB_PATH = MODEL_PATH . 'db' . DIRECTORY_SEPARATOR;
-const MODEL_LANGUAGE_PATH = MODEL_PATH . 'language' . DIRECTORY_SEPARATOR;
-const MODEL_USER_PATH = MODEL_PATH . 'user' . DIRECTORY_SEPARATOR;
-const MODEL_SANDBOX_PATH = MODEL_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
-const MODEL_WORD_PATH = MODEL_PATH . 'word' . DIRECTORY_SEPARATOR;
-const MODEL_PHRASE_PATH = MODEL_PATH . 'phrase' . DIRECTORY_SEPARATOR;
-const MODEL_GROUP_PATH = MODEL_PATH . 'group' . DIRECTORY_SEPARATOR;
-const MODEL_VERB_PATH = MODEL_PATH . 'verb' . DIRECTORY_SEPARATOR;
-const MODEL_VALUE_PATH = MODEL_PATH . 'value' . DIRECTORY_SEPARATOR;
-const MODEL_REF_PATH = MODEL_PATH . 'ref' . DIRECTORY_SEPARATOR;
-const MODEL_ELEMENT_PATH = MODEL_PATH . 'element' . DIRECTORY_SEPARATOR;
-const MODEL_FORMULA_PATH = MODEL_PATH . 'formula' . DIRECTORY_SEPARATOR;
-const MODEL_RESULT_PATH = MODEL_PATH . 'result' . DIRECTORY_SEPARATOR;
-const MODEL_VIEW_PATH = MODEL_PATH . 'view' . DIRECTORY_SEPARATOR;
-const MODEL_COMPONENT_PATH = MODEL_PATH . 'component' . DIRECTORY_SEPARATOR;
-const MODEL_SHEET_PATH = MODEL_COMPONENT_PATH . 'sheet' . DIRECTORY_SEPARATOR;
+// set all path for the backend program code here at once
+const CONST_PATH = PHP_PATH . 'cfg' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR;
+include_once CONST_PATH . 'paths.php';
 
-const SHARED_PATH = PHP_PATH_LIB . 'shared' . DIRECTORY_SEPARATOR;
-const SHARED_CALC_PATH = SHARED_PATH . 'calc' . DIRECTORY_SEPARATOR;
-const SHARED_CONST_PATH = SHARED_PATH . 'const' . DIRECTORY_SEPARATOR;
-const SHARED_ENUM_PATH = SHARED_PATH . 'enum' . DIRECTORY_SEPARATOR;
-const SHARED_HELPER_PATH = SHARED_PATH . 'helper' . DIRECTORY_SEPARATOR;
-const SHARED_TYPES_PATH = SHARED_PATH . 'types' . DIRECTORY_SEPARATOR;
-
-const API_PATH = ROOT_PATH . 'api' . DIRECTORY_SEPARATOR; // path of the api objects for the message creation to the frontend
-
-const API_OBJECT_PATH = PHP_PATH_LIB . 'api' . DIRECTORY_SEPARATOR; // path of the api objects for the message creation to the frontend
-const API_SANDBOX_PATH = API_OBJECT_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
-const API_SYSTEM_PATH = API_OBJECT_PATH . 'system' . DIRECTORY_SEPARATOR;
-const API_USER_PATH = API_OBJECT_PATH . 'user' . DIRECTORY_SEPARATOR;
-const API_LOG_PATH = API_OBJECT_PATH . 'log' . DIRECTORY_SEPARATOR;
-const API_LANGUAGE_PATH = API_OBJECT_PATH . 'language' . DIRECTORY_SEPARATOR;
-const API_WORD_PATH = API_OBJECT_PATH . 'word' . DIRECTORY_SEPARATOR;
-const API_PHRASE_PATH = API_OBJECT_PATH . 'phrase' . DIRECTORY_SEPARATOR;
-const API_VERB_PATH = API_OBJECT_PATH . 'verb' . DIRECTORY_SEPARATOR;
-const API_VALUE_PATH = API_OBJECT_PATH . 'value' . DIRECTORY_SEPARATOR;
-const API_FORMULA_PATH = API_OBJECT_PATH . 'formula' . DIRECTORY_SEPARATOR;
-const API_RESULT_PATH = API_OBJECT_PATH . 'result' . DIRECTORY_SEPARATOR;
-const API_VIEW_PATH = API_OBJECT_PATH . 'view' . DIRECTORY_SEPARATOR;
-const API_COMPONENT_PATH = API_OBJECT_PATH . 'component' . DIRECTORY_SEPARATOR;
-const API_REF_PATH = API_OBJECT_PATH . 'ref' . DIRECTORY_SEPARATOR;
-const WEB_PATH = PHP_PATH_LIB . 'web' . DIRECTORY_SEPARATOR; // path of the pure html frontend objects
-const WEB_ELEMENT_PATH = WEB_PATH . 'element' . DIRECTORY_SEPARATOR;
-const WEB_LOG_PATH = WEB_PATH . 'log' . DIRECTORY_SEPARATOR;
-const WEB_USER_PATH = WEB_PATH . 'user' . DIRECTORY_SEPARATOR;
-const WEB_SYSTEM_PATH = WEB_PATH . 'system' . DIRECTORY_SEPARATOR;
-const WEB_HELPER_PATH = WEB_PATH . 'helper' . DIRECTORY_SEPARATOR;
-const WEB_TYPES_PATH = WEB_PATH . 'types' . DIRECTORY_SEPARATOR;
-const WEB_SANDBOX_PATH = WEB_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
-const WEB_HTML_PATH = WEB_PATH . 'html' . DIRECTORY_SEPARATOR;
-const WEB_HIST_PATH = WEB_PATH . 'hist' . DIRECTORY_SEPARATOR;
-const WEB_WORD_PATH = WEB_PATH . 'word' . DIRECTORY_SEPARATOR;
-const WEB_PHRASE_PATH = WEB_PATH . 'phrase' . DIRECTORY_SEPARATOR;
-const WEB_GROUP_PATH = WEB_PATH . 'group' . DIRECTORY_SEPARATOR;
-const WEB_VERB_PATH = WEB_PATH . 'verb' . DIRECTORY_SEPARATOR;
-const WEB_VALUE_PATH = WEB_PATH . 'value' . DIRECTORY_SEPARATOR;
-const WEB_FORMULA_PATH = WEB_PATH . 'formula' . DIRECTORY_SEPARATOR;
-const WEB_RESULT_PATH = WEB_PATH . 'result' . DIRECTORY_SEPARATOR;
-const WEB_FIGURE_PATH = WEB_PATH . 'figure' . DIRECTORY_SEPARATOR;
-const WEB_VIEW_PATH = WEB_PATH . 'view' . DIRECTORY_SEPARATOR;
-const WEB_COMPONENT_PATH = WEB_PATH . 'component' . DIRECTORY_SEPARATOR;
-const WEB_FORM_PATH = WEB_COMPONENT_PATH . 'form' . DIRECTORY_SEPARATOR;
-const WEB_SHEET_PATH = WEB_COMPONENT_PATH . 'sheet' . DIRECTORY_SEPARATOR;
-const WEB_REF_PATH = WEB_PATH . 'ref' . DIRECTORY_SEPARATOR;
-
-// resource paths
-const RES_PATH = MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
-const IMAGE_RES_PATH = RES_PATH . 'images' . DIRECTORY_SEPARATOR;
-const DB_RES_SUB_PATH = 'db' . DIRECTORY_SEPARATOR;
-const DB_SETUP_SUB_PATH = 'setup' . DIRECTORY_SEPARATOR;
-
-// resource paths used for testing to avoid local paths in the test resources
-const REL_ROOT_PATH = DIRECTORY_SEPARATOR;
-const REL_SRC_PATH = REL_ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
-const REL_MAIN_PATH = REL_SRC_PATH . 'main' . DIRECTORY_SEPARATOR;
-const REL_RES_PATH = REL_MAIN_PATH . 'resources' . DIRECTORY_SEPARATOR;
-const REL_IMAGE_PATH = REL_RES_PATH . 'images' . DIRECTORY_SEPARATOR;
+// set all path for the frontend program code here at once
+const WEB_CONST_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR . 'const' . DIRECTORY_SEPARATOR;
+include_once WEB_CONST_PATH . 'paths.php';
 
 // test path for the initial load of the test files
-const TEST_PATH = SRC_PATH . 'test' . DIRECTORY_SEPARATOR;
+const TEST_PATH = paths::SRC . 'test' . DIRECTORY_SEPARATOR;
 // the test code path
 const TEST_PHP_PATH = TEST_PATH . 'php' . DIRECTORY_SEPARATOR;
 // the test const path
 const TEST_CONST_PATH = TEST_PHP_PATH . 'const' . DIRECTORY_SEPARATOR;
 
 
-const DB_SETUP_SQL_FILE = 'zukunft_structure.sql';
-
 // the main global vars to shorten the code by avoiding them in many function calls as parameter
-global $db_com; // the database connection
+global $db_con; // the database connection
 global $usr;    // the session user
 global $debug;  // the debug level
+
+// logging
+include_once paths::MODEL_LOG_TEXT . 'text_log_functions.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log.php';
 
 // global vars for system control
 global $sys_script;      // name php script that has been call this library
@@ -829,12 +725,14 @@ global $sys_trace;       // names of the php functions
 global $sys_time_start;  // to measure the execution time
 global $sys_time_limit;  // to write too long execution times to the log to improve the code
 global $sys_log_msg_lst; // to avoid repeating the same message
+global $log_txt; // the log object for standard io logging
 
 $sys_script = "";
 $sys_trace = "";
 $sys_time_start = time();
 $sys_time_limit = time() + 2;
 $sys_log_msg_lst = array();
+$log_txt = new text_log();
 
 // check php version
 $version = explode('.', PHP_VERSION);
@@ -847,65 +745,62 @@ if ($version[0] < 8) {
 //phpinfo();
 
 // database links
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'db_check.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'db_check.php';
 
-include_once WEB_HTML_PATH . 'html_base.php';
+include_once html_paths::HTML . 'html_base.php';
 
 // include all other libraries that are usually needed
-include_once DB_LINK_PATH . 'zu_lib_sql_link.php';
-include_once SERVICE_PATH . 'db_code_link.php';
-include_once SERVICE_PATH . 'config.php';
+include_once paths::MODEL_CONST . 'env.php';
+include_once paths::SERVICE . 'db_code_link.php';
+include_once paths::SERVICE . 'config.php';
 
 // to avoid circle include
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_LOG_PATH . 'change_link.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_LOG . 'change_link.php';
 
 // preloaded lists
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_lists.php';
-include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
-include_once MODEL_SYSTEM_PATH . 'system_time_list.php';
-include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
-include_once MODEL_USER_PATH . 'user_list.php';
-include_once MODEL_USER_PATH . 'user_profile_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase_types.php';
-include_once MODEL_ELEMENT_PATH . 'element_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_type.php';
-include_once MODEL_VIEW_PATH . 'view_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
-include_once MODEL_REF_PATH . 'ref_type_list.php';
-include_once MODEL_REF_PATH . 'source_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_action_list.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_VERB_PATH . 'verb_list.php';
-include_once MODEL_VIEW_PATH . 'view_sys_list.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_lists.php';
+include_once paths::MODEL_SYSTEM . 'BasicEnum.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_SYSTEM . 'system_time_list.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_PHRASE . 'phrase_types.php';
+include_once paths::MODEL_ELEMENT . 'element_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type_list.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::MODEL_VIEW . 'view_type_list.php';
+include_once paths::MODEL_COMPONENT . 'component_type_list.php';
+include_once paths::MODEL_COMPONENT . 'position_type_list.php';
+include_once paths::MODEL_REF . 'ref_type_list.php';
+include_once paths::MODEL_REF . 'source_type_list.php';
+include_once paths::MODEL_SANDBOX . 'share_type_list.php';
+include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
+include_once paths::MODEL_LANGUAGE . 'language_list.php';
+include_once paths::MODEL_LANGUAGE . 'language_form_list.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_action_list.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log.php';
+include_once paths::MODEL_LOG_TEXT . 'text_log_functions.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
+include_once paths::MODEL_VIEW . 'view_sys_list.php';
 
 
 // used at the moment, but to be replaced with R-Project call
-include_once SERVICE_MATH_PATH . 'calc_internal.php';
+include_once paths::SERVICE_MATH . 'calc_internal.php';
 
 // settings
-include_once PHP_PATH_LIB . 'application.php';
-
-// potentially to be loaded by composer
-//include_once $path_php . 'utils/json-diff/JsonDiff.php';
-//include_once $path_php . 'utils/json-diff/JsonPatch.php';
-//include_once $path_php . 'utils/json-diff/JsonPointer.php';
+include_once paths::PHP_LIB . 'application.php';
 
 // libraries that may be useful in the future
 /*
@@ -946,64 +841,15 @@ const UI_CAN_CHANGE_VERB_NAME = TRUE; // dito for verbs
 const UI_CAN_CHANGE_SOURCE_NAME = TRUE; // dito for sources
 
 // data retrieval settings
-
-// the possible SQL DB names (must be the same as in sql_db)
-const POSTGRES = "Postgres";
-const MYSQL = "MySQL";
-const SQL_DB_TYPE = POSTGRES;
-// const SQL_DB_TYPE = sql_db::MYSQL;
-
 const MAX_LOOP = 10000; // maximal number of loops to avoid hanging while loops; used for example for the number of formula elements
 
 // max number of recursive call to avoid endless looping in case of a program error
 const MAX_RECURSIVE = 10;
 
-// the standard word displayed to the user if she/he as not yet viewed any other word
-const DEFAULT_WORD_ID = 1;
-const DEFAULT_WORD_TYPE_ID = 1;
-const DEFAULT_DEC_POINT = ".";
-const DEFAULT_THOUSAND_SEP = "'";
-const DEFAULT_PERCENT_DECIMALS = 2;
-
 const ZUC_MAX_CALC_LAYERS = '10000';    // max number of calculation layers
 
-// classes that use a standard sql sequence for the database id
-const SQL_STD_CLASSES = [
-    sys_log_status_list::class,
-    sys_log_function::class
-];
-
-// type classes that have a csv file for the initial load
-const BASE_CODE_LINK_FILES = [
-    sys_log_status::class,
-    sys_log_type::class,
-    job_type::class,
-    change_action::class,
-    change_table::class,
-    change_field::class,
-    element_type::class,
-    formula_link_type::class,
-    formula_type::class,
-    language::class,
-    language_form::class,
-    protection_type::class,
-    ref_type::class,
-    share_type::class,
-    source_type::class,
-    system_time_type::class,
-    user_official_type::class,
-    user_profile::class,
-    user_type::class,
-    position_type::class,
-    component_link_type::class,
-    component_type::class,
-    view_link_type::class,
-    view_type::class,
-    view_style::class,
-    phrase_types::class
-];
-
 // list of classes that use a database table but where the changes do not need to be logged
+// TODO Prio 2 move to const/def class?
 const CLASSES_NO_CHANGE_LOG = [
     sys_log_status::class,
     sys_log_function::class,
@@ -1031,26 +877,14 @@ const CLASSES_NO_CHANGE_LOG = [
     'user_result*',
 ];
 
-// list of classes that are used in the api e.g. to receive the user changes
-const API_CLASSES = [
-    word::class,
-    verb::class,
-    triple::class,
-    source::class,
-    ref::class,
-    value::class,
-    formula::class,
-    result::class,
-    view::class,
-    component::class
-];
-
-const USER_CODE_LINK_FILES = [
+// TODO Prio 2 move to const/def class?
+const CLASS_WITH_USER_CODE_LINK_CSV = [
     user_profile::class,
     user_type::class
 ];
 // list of all sequences used in the database
 // TODO base the list on the class list const and a sequence name function
+// TODO Prio 2 move to const/def class?
 const DB_SEQ_LIST = [
     'sys_log_status_sys_log_status_id_seq',
     'sys_log_sys_log_id_seq',
@@ -1088,6 +922,8 @@ const DB_SEQ_LIST = [
     'users_user_id_seq',
     'user_profiles_user_profile_id_seq'
 ];
+
+// TODO Prio 2 move to const/def class?
 const DB_TABLE_LIST = [
     'config',
     'sys_log_types',
@@ -1271,370 +1107,6 @@ const DB_TABLE_LIST = [
 
 
 /**
- * for internal functions debugging
- * each complex function should call this at the beginning with the parameters and with -1 at the end with the result
- * called function should use $debug-1
- * TODO focus debug on time consuming function calls e.g. all database accesses
- *
- * @param string $msg_text debug information additional to the class and function
- * @param int|null $debug_overwrite used to force the output
- * @return string the final output text
- */
-function log_debug(string $msg_text = '', int $debug_overwrite = null): string
-{
-    global $debug;
-
-    if ($debug_overwrite == null) {
-        $debug_used = $debug;
-    } else {
-        $debug_used = $debug_overwrite;
-    }
-
-    // add the standard prefix
-    if ($msg_text != '') {
-        $msg_text = ': ' . $msg_text;
-    }
-
-    // get the last script before this script
-    $backtrace = debug_backtrace();
-    if (array_key_exists(1, $backtrace)) {
-        $last = $backtrace[1];
-    } else {
-        $last = $backtrace[0];
-    }
-
-    // extract the relevant part from backtrace
-    if ($last != null) {
-        if (array_key_exists('class', $last)) {
-            $msg_text = $last['class'] . '->' . $last['function'] . $msg_text;
-        } else {
-            $msg_text = $last['function'] . $msg_text;
-        }
-    } else {
-        $msg_text = $last['function'] . $msg_text;
-    }
-
-    if ($debug_used > 0) {
-        echo $msg_text . '.<br>';
-        //ob_flush();
-        //flush();
-    }
-
-    return $msg_text;
-}
-
-/**
- * write a log message to the database and return the message that should be shown to the user
- * with the link for more details and to trace the resolution process
- * used also for system messages so no debug calls from here to avoid loops
- *
- * @param string $msg_text is a short description that is used to group and limit the number of error messages
- * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
- * @param string $msg_log_level is the criticality level e.g. debug, info, warning, error or fatal error
- * @param string $function_name is the function name which has most likely caused the error
- * @param string $function_trace is the complete system trace to get more details
- * @param user|null $usr is the user who has probably seen the error message
- * @return string the text that can be shown to the user in the navigation bar
- * TODO return the link to the log message so that the user can trace the bug fixing
- * TODO check that log_msg is never called from any function used here
- */
-function log_msg(string  $msg_text,
-                 string  $msg_description,
-                 string  $msg_log_level,
-                 string  $function_name,
-                 string  $function_trace,
-                 ?user   $usr = null,
-                 bool    $force_log = false,
-                 ?sql_db $given_db_con = null): string
-{
-
-    global $sys_log_msg_lst;
-    global $db_con;
-
-    $result = '';
-
-    // use an alternative database connection if requested
-    $used_db_con = $db_con;
-    if ($given_db_con != null) {
-        $used_db_con = $given_db_con;
-    }
-
-    // create a database object if needed
-    if ($used_db_con == null) {
-        $used_db_con = new sql_db();
-    }
-    // try to reconnect to the database
-    // TODO activate Prio 3
-    /*
-    if (!$used_db_con->connected()) {
-        if (!$used_db_con->open_with_retry($msg_text, $msg_description, $function_name, $function_trace, $usr)) {
-            log_fatal('Stopped database connection retry', 'log_msg');
-        }
-    }
-    */
-
-    if ($used_db_con->connected()) {
-
-        $lib = new library();
-
-        // fill up fields with default values
-        if ($msg_description == '') {
-            $msg_description = $msg_text;
-        }
-        if ($function_name == '' or $function_name == null) {
-            $function_name = (new Exception)->getTraceAsString();
-            $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
-            $function_name = $lib->str_left_of($function_name, ': log_');
-        }
-        if ($function_trace == '') {
-            $function_trace = (new Exception)->getTraceAsString();
-        }
-        $user_id = 0;
-        if ($usr != null) {
-            $user_id = $usr->id();
-        }
-        if ($user_id <= 0) {
-            $user_id = $_SESSION['usr_id'] ?? SYSTEM_USER_ID;
-        }
-
-        // assuming that the relevant part of the message is at the beginning of the message at least to avoid double entries
-        $msg_type_text = $user_id . substr($msg_text, 0, 200);
-        if (!in_array($msg_type_text, $sys_log_msg_lst)) {
-            $used_db_con->usr_id = $user_id;
-            $sys_log_id = 0;
-
-            $sys_log_msg_lst[] = $msg_type_text;
-            if ($msg_log_level > LOG_LEVEL or $force_log) {
-                $used_db_con->set_class(sys_log_function::class);
-                $function_id = $used_db_con->get_id($function_name);
-                if ($function_id <= 0) {
-                    $function_id = $used_db_con->add_id($function_name);
-                }
-                $msg_text = str_replace("'", "", $msg_text);
-                $msg_description = str_replace("'", "", $msg_description);
-                $function_trace = str_replace("'", "", $function_trace);
-                $msg_text = $used_db_con->sf($msg_text);
-                $msg_description = $used_db_con->sf($msg_description);
-                $function_trace = $used_db_con->sf($function_trace);
-                $fields = array();
-                $values = array();
-                $fields[] = "sys_log_type_id";
-                $values[] = $msg_log_level;
-                $fields[] = "sys_log_function_id";
-                $values[] = $function_id;
-                $fields[] = "sys_log_text";
-                $values[] = $msg_text;
-                $fields[] = "sys_log_description";
-                $values[] = $msg_description;
-                $fields[] = "sys_log_trace";
-                $values[] = $function_trace;
-                if ($user_id > 0) {
-                    $fields[] = user::FLD_ID;
-                    $values[] = $user_id;
-                }
-                $used_db_con->set_class(sys_log::class);
-
-                $sys_log_id = $used_db_con->insert_old($fields, $values, false);
-                //$sql_result = mysqli_query($sql) or die('zukunft.com system log failed by query '.$sql.': '.mysqli_error().'. If this happens again, please send this message to errors@zukunft.com.');
-                //$sys_log_id = mysqli_insert_id();
-            }
-            if ($msg_log_level >= MSG_LEVEL) {
-                echo "Zukunft.com has detected a critical internal error: <br><br>" . $msg_text . " by " . $function_name . ".<br><br>";
-                if ($sys_log_id > 0) {
-                    echo 'You can track the solving of the error with this link: <a href="/http/error_log.php?id=' . $sys_log_id . '">www.zukunft.com/http/error_log.php?id=' . $sys_log_id . '</a><br>';
-                }
-            } else {
-                if ($msg_log_level >= DSP_LEVEL) {
-                    $usr = new user();
-                    $usr->load_by_id($user_id);
-                    $msk = new view($usr);
-                    $msk_dsp = new view_dsp($msk->api_json());
-                    $result .= $msk_dsp->dsp_navbar_simple();
-                    $result .= $msg_text . " (by " . $function_name . ").<br><br>";
-                }
-            }
-        }
-    }
-    return $result;
-}
-
-
-function get_user_id(?user $calling_usr = null): ?int
-{
-    global $usr;
-    $user_id = 0;
-    if ($calling_usr != null) {
-        $user_id = $calling_usr->id();
-    } else {
-        if ($usr != null) {
-            $user_id = $usr->id();
-        }
-    }
-    return $user_id;
-}
-
-function log_info(string $msg_text,
-                  string $function_name = '',
-                  string $msg_description = '',
-                  string $function_trace = '',
-                  ?user  $calling_usr = null,
-                  bool   $force_log = false): string
-{
-    return log_msg($msg_text,
-        $msg_description,
-        sys_log_level::INFO,
-        $function_name, $function_trace,
-        $calling_usr,
-        $force_log);
-}
-
-function log_warning(string  $msg_text,
-                     string  $function_name = '',
-                     string  $msg_description = '',
-                     string  $function_trace = '',
-                     ?user   $calling_usr = null,
-                     ?sql_db $given_db_con = null): string
-{
-    return log_msg($msg_text,
-        $msg_description,
-        sys_log_level::WARNING,
-        $function_name,
-        $function_trace,
-        $calling_usr,
-        false,
-        $given_db_con
-    );
-}
-
-function log_err(string $msg_text,
-                 string $function_name = '',
-                 string $msg_description = '',
-                 string $function_trace = '',
-                 ?user  $calling_usr = null): string
-{
-    global $errors;
-    $errors++;
-    // TODO move the next lines to a class and a private function "get_function_name"
-    $lib = new library();
-    if ($function_name == '' or $function_name == null) {
-        $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '#1 ');
-        $function_name = $lib->str_left_of($function_name, '): ');
-        $function_name = $lib->str_right_of($function_name, '/main/php/');
-        $function_name = $lib->str_left_of($function_name, '.php(');
-    }
-    if ($function_name == '' or $function_name == null) {
-        $function_name = 'no function name detected';
-    }
-    if ($function_trace == '') {
-        $function_trace = (new Exception)->getTraceAsString();
-    }
-    return log_msg($msg_text,
-        $msg_description,
-        sys_log_level::ERROR,
-        $function_name,
-        $function_trace,
-        $calling_usr);
-}
-
-/**
- * if still possible write the fatal error message to the database and stop the execution
- * @param string $msg_text is a short description that is used to group and limit the number of error messages
- * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
- * @param string $function_name is the function name which has most likely caused the error
- * @param string $function_trace is the complete system trace to get more details
- * @param user|null $calling_usr the user who has trigger the error
- * @return string
- */
-function log_fatal_db(
-    string $msg_text,
-    string $function_name,
-    string $msg_description = '',
-    string $function_trace = '',
-    ?user  $calling_usr = null): string
-{
-    echo 'FATAL ERROR! ' . $msg_text;
-    $lib = new library();
-    if ($function_name == '' or $function_name == null) {
-        $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
-        $function_name = $lib->str_left_of($function_name, ': log_');
-    }
-    if ($function_trace == '') {
-        $function_trace = (new Exception)->getTraceAsString();
-    }
-    return log_msg(
-        'FATAL ERROR! ' . $msg_text,
-        $msg_description,
-        sys_log_level::FATAL,
-        $function_name,
-        $function_trace,
-        $calling_usr);
-}
-
-/**
- * try to write the error message to any possible out device if database connection is lost
- * TODO move to a log class and expose only the interface function
- * @param string $msg_text is a short description that is used to group and limit the number of error messages
- * @param string $msg_description is the description or the problem with all details if two errors have the same $msg_text only one is used
- * @param string $function_name is the function name which has most likely caused the error
- * @param string $function_trace is the complete system trace to get more details
- * @param user|null $calling_usr the user who has trigger the error
- * @return string the message that should be shown to the user if possible
- */
-function log_fatal(string $msg_text,
-                   string $function_name,
-                   string $msg_description = '',
-                   string $function_trace = '',
-                   ?user  $calling_usr = null): string
-{
-    $time = (new DateTime())->format('c');
-    echo $time . ': FATAL ERROR! ' . $msg_text;
-    $STDERR = fopen('error.log', 'a');
-    fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text . "\n");
-    $write_with_more_info = false;
-    $usr_txt = '';
-    if ($calling_usr != null) {
-        $usr_txt = $calling_usr->dsp_id();
-        $write_with_more_info = true;
-    }
-    if ($write_with_more_info) {
-        fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text
-            . '", by user "' . $usr_txt . "\n");
-    }
-    $lib = new library();
-    if ($function_name == '' or $function_name == null) {
-        $function_name = (new Exception)->getTraceAsString();
-        $function_name = $lib->str_right_of($function_name, '/git/zukunft.com/');
-        $function_name = $lib->str_left_of($function_name, ': log_');
-        $write_with_more_info = true;
-    }
-    if ($function_trace == '') {
-        $function_trace = (new Exception)->getTraceAsString();
-        $write_with_more_info = true;
-    }
-    if ($write_with_more_info) {
-        fwrite($STDERR, $time . ': FATAL ERROR! ' . $msg_text . "\n"
-            . $msg_description . "\n"
-            . 'function ' . $function_name . "\n"
-            . 'trace ' . "\n" . $function_trace . "\n"
-            . 'by user ' . $usr_txt . "\n");
-    }
-    return $msg_text;
-}
-
-/**
- * display a message immediately to the user
- * @param string $txt the text that should be should to the user
- */
-function log_echo(string $txt): void
-{
-    echo $txt;
-    echo "\n";
-}
-
-
-/**
  * should be called from all code that can be accessed by an url
  * return null if the db connection fails or the db is not compatible
  * TODO create a separate class for starting the backend and frontend
@@ -1652,6 +1124,21 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
     // resume session (based on cookies)
     session_start();
 
+    /*
+    require __DIR__ . '/vendor/autoload.php';
+    // Looking for .env at the root directory
+    $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+    $dotenv->load();
+    */
+
+    // check if environment is loaded
+    $env = getenv('ENV');
+    if (!$env) {
+        log_warning('no environment found using fallback values');
+    } else {
+        log_info('environment ' . getenv('ENV'));
+    }
+
     $sys_time_start = time();
     $sys_times = new system_time_list();
     $sys_times->switch(system_time_type::DEFAULT);
@@ -1666,7 +1153,7 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
         echo $html->header("", $style);
     }
 
-    return prg_restart($code_name, $style);
+    return prg_restart($code_name);
 }
 
 /**
@@ -1687,12 +1174,13 @@ function prg_restart(string $code_name): sql_db
     $sc = new sql_creator();
     $sc->set_db_type($db_con->db_type);
     $db_con->open();
-    if ($db_con->postgres_link === false) {
+    if (!$db_con->is_open()) {
         log_debug($code_name . ': start db setup');
-        $db_con->setup();
-        $db_con->open();
-        if ($db_con->postgres_link === false) {
-            log_fatal('Cannot connect to database', 'prg_restart');
+        if ($db_con->setup()) {
+            $db_con->open();
+            if (!$db_con->is_open()) {
+                log_fatal('Cannot connect to database', 'prg_restart');
+            }
         }
     } else {
         log_debug($code_name . ': db open');
@@ -1709,10 +1197,11 @@ function prg_restart(string $code_name): sql_db
 
         // create a virtual one-time system user to load the system users
         $usr_sys = new user();
-        $usr_sys->set_id(user::SYSTEM_ID);
-        $usr_sys->name = user::SYSTEM_NAME;
+        $usr_sys->set_id(users::SYSTEM_ID);
+        $usr_sys->name = users::SYSTEM_NAME;
 
         // load system configuration
+        // TODO cache the system config json and detect
         $cfg = new config_numbers($usr_sys);
         $cfg->load_cfg($usr_sys);
         $mtr = new Translator($cfg->language());
@@ -1806,7 +1295,7 @@ function prg_end_write_time($db_con): void
     $time_report = $sys_times->report();
     $sys_time_end = time();
     if ($sys_time_end > $sys_time_limit) {
-        $db_con->usr_id = SYSTEM_USER_ID;
+        $db_con->usr_id = users::SYSTEM_ID;
         $db_con->set_class(system_time_type::class);
         $sys_script_id = $db_con->get_id($sys_script);
         if ($sys_script_id <= 0) {
@@ -1891,9 +1380,9 @@ function prg_end_api($link)
  */
 function resource_file(string $resource_path): string
 {
-    $result = file_get_contents(RES_PATH . $resource_path);
+    $result = file_get_contents(paths::RES . $resource_path);
     if ($result === false) {
-        $result = 'Cannot get file from ' . RES_PATH . $resource_path;
+        $result = 'Cannot get file from ' . paths::RES . $resource_path;
     }
     return $result;
 }

@@ -84,6 +84,7 @@ enum sql_type: string
     case EXCL_NAME_ONLY = 'excl_name_only';
     case SANDBOX = 'sandbox'; // to include the standard sandbox fields in the sql statement
     case KEY_SMALL_INT = 'key_small_int'; // use a smallint as the prime db key e.g. for types
+    case REQUESTING_USER = 'request_user'; // the change requesting user is part of the query parameters which is needed e.g. to separate the requesting user id when deleting a user
     case SELECT_FOR_INSERT = 'select_for_insert'; // use a select statement for the insert values
 
     /**

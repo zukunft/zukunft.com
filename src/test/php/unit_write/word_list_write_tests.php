@@ -32,8 +32,10 @@
 
 namespace unit_write;
 
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 
 use cfg\group\group;
 use cfg\word\word_list;
@@ -54,7 +56,9 @@ class word_list_write_tests
         global $usr;
         global $vrb_cac;
 
-        $t->header('word list database write tests');
+        // start the test section (ts)
+        $ts = 'db write word list ';
+        $t->header($ts);
 
         /*
          * prepare

@@ -35,8 +35,11 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_CONST_PATH . 'views.php';
-include_once WEB_VERB_PATH . 'verb.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::SHARED_CONST . 'views.php';
+include_once html_paths::VERB . 'verb.php';
 
 use cfg\user\user;
 use cfg\verb\verb;
@@ -84,14 +87,14 @@ if ($usr->id() > 0) {
             if (isset($_GET[api::URL_VAR_NAME])) {
                 $vrb->set_name($_GET[api::URL_VAR_NAME]);
             }
-            if (isset($_GET['plural'])) {
-                $vrb->plural = $_GET['plural'];
+            if (isset($_GET[api::URL_VAR_PLURAL])) {
+                $vrb->set_plural($_GET[api::URL_VAR_PLURAL]);
             }
-            if (isset($_GET['reverse'])) {
-                $vrb->reverse = $_GET['reverse'];
+            if (isset($_GET[api::URL_VAR_REVERSE])) {
+                $vrb->set_reverse($_GET[api::URL_VAR_REVERSE]);
             }
-            if (isset($_GET['plural_reverse'])) {
-                $vrb->rev_plural = $_GET['plural_reverse'];
+            if (isset($_GET[api::URL_VAR_REVERSE_PLURAL])) {
+                $vrb->set_reverse_plural($_GET[api::URL_VAR_REVERSE_PLURAL]);
             }
 
             // save the changes

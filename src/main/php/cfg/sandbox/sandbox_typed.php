@@ -13,7 +13,7 @@
     - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the variables from unexpected changes
     - preloaded:         get preloaded information such as the type code id
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - modify:            change potentially all variables of this sandbox object
     - cast:              create an api object and set the vars from an api json
     - save:              manage to update the database
@@ -45,29 +45,35 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-//include_once MODEL_PHRASE_PATH . 'phrase.php';
-//include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
 
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_HELPER . 'type_list.php';
+//include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
+use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\helper\db_object_seq_id;
-use cfg\phrase\phrase;
+use cfg\helper\type_list;
 use cfg\ref\source;
 use cfg\user\user;
 use cfg\user\user_message;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
-use shared\json_fields;
 use shared\types\api_type_list;
+use shared\json_fields;
+use shared\library;
 
 class sandbox_typed extends sandbox_named
 {
@@ -102,12 +108,11 @@ class sandbox_typed extends sandbox_named
      */
     function api_mapper(array $api_json): user_message
     {
+        global $usr;
         $msg = parent::api_mapper($api_json);
 
-        foreach ($api_json as $key => $value) {
-            if ($key == json_fields::TYPE) {
-                $this->set_type_id($value);
-            }
+        if (key_exists(json_fields::TYPE, $api_json)) {
+            $this->set_type_id($api_json[json_fields::TYPE], $usr);
         }
         return $msg;
     }
@@ -142,11 +147,56 @@ class sandbox_typed extends sandbox_named
      * set the database id of the type
      *
      * @param int|null $type_id the database id of the type
-     * @return void
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message warning message for the user if the permissions are missing
      */
-    function set_type_id(?int $type_id): void
+    function set_type_id(?int $type_id, user $usr_req = new user()): user_message
     {
-        $this->type_id = $type_id;
+        $usr_msg = new user_message();
+        if ($usr_req->can_set_type_id()) {
+            $this->type_id = $type_id;
+        } else {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $usr_req->name(),
+                msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
+                msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the type based on the given code id and type list
+     *
+     * @param string|null $code_id the code id that should be added to this view
+     * @param type_list $typ_lst the parent object specific preloaded list of types
+     * @param msg_id $msg_id the id of the message used to report a missing type
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
+     */
+    function set_type_by_code_id(
+        ?string   $code_id,
+        type_list $typ_lst,
+        msg_id    $msg_id,
+        user      $usr_req = new user()
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        if ($code_id == null) {
+            $this->type_id = null;
+        } else {
+            if ($typ_lst->has_code_id($code_id)) {
+                $this->set_type_id($typ_lst->id($code_id), $usr_req);
+            } else {
+                $usr_msg->add_id_with_vars($msg_id, [
+                    msg_id::VAR_NAME => $code_id
+                ]);
+                $this->type_id = null;
+            }
+        }
+        return $usr_msg;
     }
 
     /**
@@ -220,22 +270,24 @@ class sandbox_typed extends sandbox_named
 
 
     /*
-     * information
+     * info
      */
 
     /**
      * create human-readable messages of the differences between the named sandbox objects
-     * @param sandbox_typed|CombineObject|db_object_seq_id $sbx which might be different to this named sandbox
+     * @param sandbox_typed|CombineObject|db_object_seq_id $obj which might be different to this named sandbox
      * @return user_message the human-readable messages of the differences between the named sandbox objects
      */
-    function diff_msg(sandbox_typed|CombineObject|db_object_seq_id $sbx): user_message
+    function diff_msg(sandbox_typed|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::diff_msg($sbx);
-        if ($this->type_id() != $sbx->type_id()) {
+        $usr_msg = parent::diff_msg($obj);
+        if ($this->type_id() != $obj->type_id()) {
+            $lib = new library();
             $usr_msg->add_id_with_vars(msg_id::DIFF_TYPE, [
-                msg_id::VAR_TYPE => $sbx->type_name(),
+                msg_id::VAR_TYPE => $obj->type_name(),
                 msg_id::VAR_TYPE_CHK => $this->type_name(),
-                msg_id::VAR_NAME => $this->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_NAME => $this->name(),
             ]);
         }
         return $usr_msg;
@@ -244,12 +296,12 @@ class sandbox_typed extends sandbox_named
     /**
      * check if the typed object in the database needs to be updated
      *
-     * @param sandbox_typed $db_obj the word as saved in the database
+     * @param sandbox_typed|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update_typed(sandbox_typed $db_obj): bool
+    function needs_db_update(sandbox_typed|CombineObject|db_object_seq_id $db_obj): bool
     {
-        $result = parent::needs_db_update_named($db_obj);
+        $result = parent::needs_db_update($db_obj);
         if ($this->type_id != null) {
             if ($this->type_id != $db_obj->type_id) {
                 $result = true;
@@ -268,14 +320,15 @@ class sandbox_typed extends sandbox_named
      * if the given type is not set (null) the type is not removed
      * if the given type is zero (not null) the type is removed
      *
-     * @param sandbox_typed|CombineObject|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param sandbox_typed|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(sandbox_typed|CombineObject|db_object_seq_id $sbx): user_message
+    function fill(sandbox_typed|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($sbx);
-        if ($sbx->type_id() != null) {
-            $this->set_type_id($sbx->type_id());
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->type_id() != null) {
+            $this->set_type_id($obj->type_id(), $usr_req);
         }
         return $usr_msg;
     }
