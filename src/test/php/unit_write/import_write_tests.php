@@ -63,7 +63,6 @@ use shared\library;
 use shared\types\verbs;
 use test\test_cleanup;
 use const\files as test_files;
-use unit\lib_tests;
 
 class import_write_tests
 {
@@ -229,7 +228,6 @@ class import_write_tests
                 test_files::IMPORT_COMPONENTS_UNDO
             ]);
 
-        /*
         $this->assert_import_json_named($t, $ts, new view($usr),
             views::TEST_ADD_NAME, views::TEST_ADD_COM,
             [
@@ -237,7 +235,6 @@ class import_write_tests
                 test_files::IMPORT_VIEWS_UPDATE,
                 test_files::IMPORT_VIEWS_UNDO
             ]);
-        */
 
     }
 

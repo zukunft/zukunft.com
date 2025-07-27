@@ -50,6 +50,7 @@ include_once MODEL_USER_PATH . 'user_message.php';
 include_once MODEL_VIEW_PATH . 'view.php';
 include_once MODEL_VIEW_PATH . 'view_db.php';
 include_once MODEL_VIEW_PATH . 'view_type.php';
+include_once SHARED_CONST_PATH . 'words.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -66,8 +67,7 @@ use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\user\user_message;
-
-global $sys_msk_cac;
+use shared\const\words;
 
 class view_list extends sandbox_list_named
 {
@@ -152,6 +152,23 @@ class view_list extends sandbox_list_named
         $qp->par = $sc->get_par();
 
         return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of views by the names
+     * TODO use name_field() function to avoid overwrites
+     * @param sql_creator $sc with the target db_type set
+     * @param array $names a list of strings with the word names
+     * @param string $fld the name of the name field
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_names(
+        sql_creator $sc,
+        array $names,
+        string $fld = view_db::FLD_NAME
+    ): sql_par
+    {
+        return parent::load_sql_by_names($sc, $names, $fld);
     }
 
     /**
@@ -262,11 +279,7 @@ class view_list extends sandbox_list_named
      */
     function save(import $imp = null): user_message
     {
-        $result = new user_message();
-        foreach ($this->lst() as $msk) {
-            $result->add($msk->save());
-        }
-        return $result;
+        return parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->user()));
     }
 
 }
