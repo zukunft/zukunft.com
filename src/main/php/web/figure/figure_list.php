@@ -2,8 +2,8 @@
 
 /*
 
-    /web/figure/figure_list.php - the display extension of the api figure list object
-    ---------------------------
+    web/figure/figure_list.php - the display extension of the api figure list object
+    --------------------------
 
     to creat the HTML code to display a list of figures
 
@@ -34,15 +34,27 @@
 
 namespace html\figure;
 
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::FIGURE . 'figure.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+
 use html\figure\figure as figure_dsp;
 use html\sandbox\list_dsp;
 use html\user\user_message;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 
 class figure_list extends list_dsp
 {
 
     /*
-     * set and get
+     * construct and map
      */
 
     /**
@@ -50,9 +62,9 @@ class figure_list extends list_dsp
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new figure_dsp());
+        return parent::api_mapper_list($json_array, new figure_dsp());
     }
 
 
@@ -62,22 +74,23 @@ class figure_list extends list_dsp
 
     /**
      * add a figure to the list
-     * @param figure_dsp $fig the figure frontend object that should be added to the list
+     * @param figure_dsp|IdObject|TextIdObject|CombineObject|null $to_add the figure frontend object that should be added to the list
      * @returns bool true if the figure has been added
      */
-    function add(figure_dsp $fig): bool
+    function add(figure_dsp|IdObject|TextIdObject|CombineObject|null $to_add): bool
     {
         $result = false;
-        if (!in_array($fig->id(), $this->id_lst())) {
-            $this->lst[] = $fig;
+        if (!in_array($to_add->id(), $this->id_lst())) {
+            $this->add_direct($to_add);
             $this->set_lst_dirty();
             $result = true;
         }
         return $result;
     }
 
+
     /*
-     * display
+     * base
      */
 
     /**
@@ -87,7 +100,7 @@ class figure_list extends list_dsp
     function display(): string
     {
         $figures = array();
-        foreach ($this->lst as $fig) {
+        foreach ($this->lst() as $fig) {
             $figures[] = $fig->display();
         }
         return implode(', ', $figures);
@@ -110,7 +123,7 @@ class figure_list extends list_dsp
     function names_linked(string $back = ''): array
     {
         $names = array();
-        foreach ($this->lst as $fig) {
+        foreach ($this->lst() as $fig) {
             $names[] = $fig->display_linked();
         }
         return $names;
@@ -123,7 +136,7 @@ class figure_list extends list_dsp
     {
         // cast the single list objects
         $lst_dsp = array();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             if ($val != null) {
                 $val_dsp = $val->dsp_obj();
                 $lst_dsp[] = $val_dsp;

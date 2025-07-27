@@ -32,8 +32,10 @@
 
 namespace unit_read;
 
-use cfg\sys_log_list;
+use cfg\system\sys_log_list;
 use cfg\user\user;
+use shared\const\users;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class sys_log_read_tests
@@ -52,9 +54,9 @@ class sys_log_read_tests
 
         $t->subheader('Load error log tests');
 
-        // use the system user for the database updates
+        // use the system test user for the database updates
         $sys_usr = new user;
-        $sys_usr->load_by_id(SYSTEM_USER_TEST_ID);
+        $sys_usr->load_by_name(users::SYSTEM_TEST_NAME);
 
         // check if loading the system errors technically works
         $err_lst = new sys_log_list();
@@ -66,7 +68,7 @@ class sys_log_read_tests
         $t->assert('system errors', $result, true);
 
         $t->subheader('API unit db tests');
-        $t->assert_api($err_lst, 'sys_log_list_setup', true);
+        $t->assert_api($err_lst, 'sys_log_list_setup', [api_type::HEADER], true);
 
     }
 

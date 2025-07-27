@@ -32,36 +32,51 @@
 
 namespace unit_ui;
 
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::SYSTEM . 'back_trace.php';
 
 use html\html_base;
+use html\log\change_log_list;
+use html\log\change_log_named;
 use html\system\back_trace;
+use shared\types\api_type;
+use shared\types\api_type_list;
 use test\test_cleanup;
 
 class change_log_ui_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
         $html = new html_base();
 
-        $t->subheader('Change log display unit tests');
+        // start the test section (ts)
+        $ts = 'unit ui change log ';
+        $t->header($ts);
 
-        //$wrd_pi = new word_dsp(2, word_api::TN_CONST);
+        $t->subheader($ts . 'display');
+
+        //$wrd_pi = new word_dsp(2, words::TN_CONST);
         $test_page = $html->text_h2('Change log display test');
 
         // prepare test data
         $back = new back_trace();
+        $api_typ_lst = new api_type_list([api_type::TEST_MODE]);
 
-        $test_page .= 'simple list of changes of a word<br>';
+        $test_page .= '<br>changes as a text<br>';
+        $chg = $t->change_log_named();
+        $chg_dsp = new change_log_named($chg->api_json());
+        $test_page .= $chg_dsp->dsp() .  '<br>';
+
+
+        $test_page .= '<br>simple list of changes of a word<br>';
         $log_lst = $t->change_log_list_named();
-        $log_dsp = $log_lst->dsp_obj();
+        $log_dsp = new change_log_list($log_lst->api_json($api_typ_lst));
         $test_page .= $log_dsp->tbl($back);
 
-        $test_page .= 'condensed list of changes of a word<br>';
+        $test_page .= '<br>condensed list of changes of a word<br>';
         $log_lst = $t->change_log_list_named();
-        $log_dsp = $log_lst->dsp_obj();
-        $back = new back_trace();
+        $log_dsp = new change_log_list($log_lst->api_json($api_typ_lst));
         $test_page .= $log_dsp->tbl($back, true, true);
 
         $t->html_test($test_page, 'change_log', 'change_log', $t);

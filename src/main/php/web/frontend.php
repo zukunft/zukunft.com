@@ -31,72 +31,46 @@
 
 namespace html;
 
-// path of the const and classes that are shared between the backend and the html frontend
-const SHARED_PATH = PHP_PATH . 'shared' . DIRECTORY_SEPARATOR;
-const SHARED_TYPES_PATH = SHARED_PATH . 'types' . DIRECTORY_SEPARATOR;
+use cfg\const\paths;
 
-// path of the pure html frontend objects
-const WEB_PATH = PHP_PATH . 'web' . DIRECTORY_SEPARATOR;
-const LOG_PATH = WEB_PATH . 'log' . DIRECTORY_SEPARATOR;
-const USER_PATH = WEB_PATH . 'user' . DIRECTORY_SEPARATOR;
-const SYSTEM_PATH = WEB_PATH . 'system' . DIRECTORY_SEPARATOR;
-const TYPES_PATH = WEB_PATH . 'types' . DIRECTORY_SEPARATOR;
-const SANDBOX_PATH = WEB_PATH . 'sandbox' . DIRECTORY_SEPARATOR;
-const HTML_PATH = WEB_PATH . 'html' . DIRECTORY_SEPARATOR;
-const HTML_HELPER_PATH = HTML_PATH . 'helper' . DIRECTORY_SEPARATOR;
-const HIST_PATH = WEB_PATH . 'hist' . DIRECTORY_SEPARATOR;
-const WORD_PATH = WEB_PATH . 'word' . DIRECTORY_SEPARATOR;
-const PHRASE_PATH = WEB_PATH . 'phrase' . DIRECTORY_SEPARATOR;
-const VERB_PATH = WEB_PATH . 'verb' . DIRECTORY_SEPARATOR;
-const VALUE_PATH = WEB_PATH . 'value' . DIRECTORY_SEPARATOR;
-const FORMULA_PATH = WEB_PATH . 'formula' . DIRECTORY_SEPARATOR;
-const RESULT_PATH = WEB_PATH . 'result' . DIRECTORY_SEPARATOR;
-const FIGURE_PATH = WEB_PATH . 'figure' . DIRECTORY_SEPARATOR;
-const VIEW_PATH = WEB_PATH . 'view' . DIRECTORY_SEPARATOR;
-const COMPONENT_PATH = WEB_PATH . 'component' . DIRECTORY_SEPARATOR;
-const REF_PATH = WEB_PATH . 'ref' . DIRECTORY_SEPARATOR;
+include_once paths::WEB_CONST . 'paths.php';
+
+use html\const\paths as html_paths;
 
 // get library that is shared between the backend and the html frontend
-include_once SHARED_PATH . 'library.php';
+include_once paths::SHARED . 'library.php';
 
 // get the api const that are shared between the backend and the html frontend
-include_once SHARED_PATH . 'api.php';
+include_once paths::SHARED . 'api.php';
 
 // get the pure html frontend objects
-include_once USER_PATH . 'user.php';
+include_once html_paths::USER . 'user.php';
 
-include_once TYPES_PATH . 'type_object.php';
-include_once TYPES_PATH . 'type_list.php';
-include_once TYPES_PATH . 'change_action_list.php';
-include_once TYPES_PATH . 'change_table_list.php';
-include_once TYPES_PATH . 'change_field_list.php';
-include_once TYPES_PATH . 'sys_log_status_list.php';
-include_once TYPES_PATH . 'user_profiles.php';
-include_once TYPES_PATH . 'job_type_list.php';
-include_once TYPES_PATH . 'languages.php';
-include_once TYPES_PATH . 'language_forms.php';
-include_once TYPES_PATH . 'share.php';
-include_once TYPES_PATH . 'protection.php';
-include_once TYPES_PATH . 'verbs.php';
-include_once TYPES_PATH . 'phrase_types.php';
-include_once TYPES_PATH . 'formula_type_list.php';
-include_once TYPES_PATH . 'formula_link_type_list.php';
-include_once TYPES_PATH . 'source_type_list.php';
-include_once TYPES_PATH . 'ref_type_list.php';
-include_once TYPES_PATH . 'view_type_list.php';
-include_once TYPES_PATH . 'view_link_type_list.php';
-include_once TYPES_PATH . 'component_type_list.php';
-include_once TYPES_PATH . 'component_link_type_list.php';
-include_once TYPES_PATH . 'position_type_list.php';
-include_once VIEW_PATH . 'view_list.php';
+include_once html_paths::TYPES . 'type_object.php';
+include_once html_paths::TYPES . 'type_list.php';
+include_once html_paths::TYPES . 'change_action_list.php';
+include_once html_paths::TYPES . 'change_table_list.php';
+include_once html_paths::TYPES . 'change_field_list.php';
+include_once html_paths::TYPES . 'sys_log_status_list.php';
+include_once html_paths::TYPES . 'job_type_list.php';
+include_once html_paths::TYPES . 'languages.php';
+include_once html_paths::TYPES . 'language_forms.php';
+include_once html_paths::TYPES . 'share.php';
+include_once html_paths::TYPES . 'protection.php';
+include_once html_paths::TYPES . 'verbs.php';
+include_once html_paths::TYPES . 'phrase_types.php';
+include_once html_paths::TYPES . 'formula_type_list.php';
+include_once html_paths::TYPES . 'formula_link_type_list.php';
+include_once html_paths::TYPES . 'source_type_list.php';
+include_once html_paths::TYPES . 'ref_type_list.php';
+include_once html_paths::TYPES . 'view_type_list.php';
+include_once html_paths::TYPES . 'view_link_type_list.php';
+include_once html_paths::TYPES . 'component_type_list.php';
+include_once html_paths::TYPES . 'component_link_type_list.php';
+include_once html_paths::TYPES . 'position_type_list.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::VIEW . 'view_list.php';
 
-include_once TYPES_PATH . 'type_lists.php';
-
-
-include_once VIEW_PATH . 'view_list.php';
-
-use html\html_base;
-use html\rest_ctrl;
 use shared\library;
 use shared\api;
 use html\user\user;
@@ -116,7 +90,7 @@ class frontend
      * servers
      */
 
-    // TODO review (move to application.yaml and detect and fix it on initial program start)
+    // TODO Prio 1 review (get from .env and not move to application.yaml and detect and fix it on initial program start)
     const HOST_DEV = 'http://localhost/';
     const HOST_UAT = 'https://test.zukunft.com/';
     const HOST_PROD = 'https://www.zukunft.com/';

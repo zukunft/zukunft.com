@@ -5,6 +5,7 @@
     model/source/source_list.php - al list of source objects
     ----------------------------
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -29,23 +30,31 @@
   
 */
 
-namespace cfg;
+namespace cfg\ref;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once API_REF_PATH . 'source_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_REF_PATH . 'source.php';
+use cfg\const\paths;
 
-use api\ref\source_list as source_list_api;
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
-use cfg\ref\source;
+use cfg\import\import;
 use cfg\sandbox\sandbox_list_named;
+use cfg\user\user_message;
+use shared\const\words;
 
 class source_list extends sandbox_list_named
 {
@@ -70,31 +79,6 @@ class source_list extends sandbox_list_named
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return source_list_api the word list object with the display interface functions
-     */
-    function api_obj(): source_list_api
-    {
-        $api_obj = new source_list_api(array());
-        foreach ($this->lst() as $src) {
-            $api_obj->add($src->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-
-    /*
      * load
      */
 
@@ -106,7 +90,7 @@ class source_list extends sandbox_list_named
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql_creator $sc, string $query_name): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -114,9 +98,9 @@ class source_list extends sandbox_list_named
         $sc->set_class(source::class);
         $sc->set_name($qp->name);
 
-        $sc->set_fields(source::FLD_NAMES);
-        $sc->set_usr_fields(source::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(source::FLD_NAMES_NUM_USR);
+        $sc->set_fields(source_db::FLD_NAMES);
+        $sc->set_usr_fields(source_db::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(source_db::FLD_NAMES_NUM_USR);
 
         return $qp;
     }
@@ -125,13 +109,21 @@ class source_list extends sandbox_list_named
      * create an SQL statement to retrieve a list of sources from the database
      *
      * @param sql_creator $sc with the target db_type set
+     * @param array $ids an array of source ids which should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $ids): sql_par
+    function load_sql_by_ids(
+        sql_creator $sc,
+        array       $ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(source::FLD_ID, $ids);
-        $sc->set_order(source::FLD_ID, sql::ORDER_ASC);
+        $sc->add_where(source_db::FLD_ID, $ids);
+        $sc->set_order(source_db::FLD_ID, sql::ORDER_ASC);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -148,7 +140,7 @@ class source_list extends sandbox_list_named
     function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
-        $sc->add_where(source::FLD_NAME, $pattern, sql_par_type::LIKE_R);
+        $sc->add_where(source_db::FLD_NAME, $pattern, sql_par_type::LIKE_R);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -191,6 +183,22 @@ class source_list extends sandbox_list_named
     }
 
     /**
+     * set the SQL query parameters to load a list of sources by the names
+     * @param sql_creator $sc with the target db_type set
+     * @param array $names a list of strings with the word names
+     * @param string $fld the name of the name field
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_names(
+        sql_creator $sc,
+        array $names,
+        string $fld = source_db::FLD_NAME
+    ): sql_par
+    {
+        return parent::load_sql_by_names($sc, $names, $fld);
+    }
+
+    /**
      * load the sources that matches the given pattern
      * @param string $pattern part of the name that should be used to select the sources
      */
@@ -200,6 +208,23 @@ class source_list extends sandbox_list_named
 
         $qp = $this->load_sql_like($db_con->sql_creator(), $pattern);
         return $this->load($qp);
+    }
+
+
+    /*
+     * save
+     */
+
+    /**
+     * store all sources from this list in the database using grouped calls of predefined sql functions
+     *
+     * @param import|null $imp the import object with the estimate of the total save time
+     * @return user_message in case of an issue the problem description what has failed and a suggested solution
+     */
+    function save(import $imp = null): user_message
+    {
+        // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
+        return parent::save_block_wise($imp, words::SOURCES, source::class, new source_list($this->user()));
     }
 
 }

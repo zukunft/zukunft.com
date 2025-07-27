@@ -8,13 +8,13 @@
   },
   {
     "id": 1,
-    "name": "Mathematics",
+    "name": "mathematics",
     "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
     "protection": 3,
     "type_id": 1
   },
   {
-    "id": 4,
+    "id": 17,
     "name": "Pi",
     "description": "ratio of the circumference of a circle to its diameter",
     "protection": 3,

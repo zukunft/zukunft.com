@@ -34,80 +34,21 @@
 
 namespace controller;
 
-include_once API_PATH . 'api_message.php';
-include_once API_SYSTEM_PATH . 'type_lists.php';
-include_once API_SANDBOX_PATH . 'combine_object.php';
-include_once API_SANDBOX_PATH . 'list_object.php';
-include_once API_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
 
-use api\api_message;
-use api\sandbox\combine_object as combine_object_api;
-use api\sandbox\list_object as list_api;
-use api\system\type_lists as type_lists_api;
-use api\sandbox\sandbox as sandbox_api;
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
+
 use cfg\helper\combine_object;
-use cfg\sandbox\sandbox;
 use cfg\ref\source;
+use cfg\sandbox\sandbox;
 use cfg\word\word;
 use shared\api;
-use shared\views as view_shared;
 
 class controller
 {
-
-    /*
-     * API
-     */
-
-    // json field names of the api json messages
-    const API_TYPE_LISTS = 'type_lists';
-    const API_LIST_USER_PROFILES = 'user_profiles';
-    const API_LIST_PHRASE_TYPES = 'phrase_types';
-    const API_LIST_FORMULA_TYPES = 'formula_types';
-    const API_LIST_FORMULA_LINK_TYPES = 'formula_link_types';
-    const API_LIST_ELEMENT_TYPES = 'element_types';
-    const API_LIST_VIEW_TYPES = 'view_types';
-    const API_LIST_VIEW_STYLES = 'view_styles';
-    const API_LIST_VIEW_LINK_TYPES = 'view_link_types';
-    const API_LIST_COMPONENT_TYPES = 'component_types';
-    // const API_LIST_COMPONENT_LINK_TYPES = 'component_link_types';
-    const API_LIST_COMPONENT_POSITION_TYPES = 'position_types';
-    const API_LIST_REF_TYPES = 'ref_types';
-    const API_LIST_SOURCE_TYPES = 'source_types';
-    const API_LIST_SHARE_TYPES = 'share_types';
-    const API_LIST_PROTECTION_TYPES = 'protection_types';
-    const API_LIST_LANGUAGES = 'languages';
-    const API_LIST_LANGUAGE_FORMS = 'language_forms';
-    const API_LIST_SYS_LOG_STATI = 'sys_log_stati';
-    const API_LIST_JOB_TYPES = 'job_types';
-    const API_LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
-    const API_LIST_CHANGE_LOG_TABLES = 'change_table_list';
-    const API_LIST_CHANGE_LOG_FIELDS = 'change_field_list';
-    const API_LIST_VERBS = 'verbs';
-    const API_LIST_SYSTEM_VIEWS = 'system_views';
-    const API_BACK = 'back'; // to include the url that should be call after an action has been finished into the url
-
-    // path parameters
-    const PATH_API_REDIRECT = '/../../'; // get from the __DIR__ to the php root path
-    const PATH_MAIN_LIB = 'src/main/php/zu_lib.php'; // the main php library the contains all other paths
-
-
-    /*
-     * VIEWS
-     */
-
-    // list of add system views which don't need an object
-    const DSP_SYS_ADD = array(
-        view_shared::MC_WORD_ADD,
-        view_shared::MC_TRIPLE_ADD,
-        view_shared::MC_VALUE_ADD,
-        view_shared::MC_COMPONENT_ADD
-    );
-
 
     /*
      * functions
@@ -154,9 +95,15 @@ class controller
      * @param string $api_obj the object as a json string that should be returned
      * @param string $msg the message as a json string that should be returned
      * @param int $id the id of object that should be deleted
+     * @param sandbox|combine_object|null $obj
      * @return void
      */
-    private function curl_response(string $api_obj, string $msg, int $id = 0, sandbox|combine_object|null $obj = null): void
+    private function curl_response(
+        string                      $api_obj,
+        string                      $msg,
+        int                         $id = 0,
+        sandbox|combine_object|null $obj = null
+    ): void
     {
         // required headers
         header("Access-Control-Allow-Origin: *");
@@ -281,70 +228,17 @@ class controller
         }
     }
 
-    public
-    function not_permitted(string $msg): void
+    public function not_permitted(string $msg): void
     {
         http_response_code(401);
         $this->curl_response('', $msg);
     }
 
-    /**
-     * encode an user sandbox object for the frontend api
-     * and response to a get request
-     *
-     * @param sandbox_api|combine_object_api $api_obj the object that should be encoded
-     * @param string $msg if filled the message that should be shown to the user instead of the object
-     * @return void
-     */
-    function get(sandbox_api|combine_object_api $api_obj, string $msg): void
+    function get_json(string $api_json, string $msg): void
     {
         // return the api json or the error message
         if ($msg == '') {
-            $this->get_response(json_encode($api_obj), $msg);
-        } else {
-            // tell the user e.g. that no products found
-            $this->get_response('', $msg);
-        }
-    }
-
-    function get_list(list_api $api_obj, string $msg): void
-    {
-        // return the api json or the error message
-        if ($msg == '') {
-            $this->get_response(json_encode($api_obj), $msg);
-        } else {
-            // tell the user e.g. that no products found
-            $this->get_response('', $msg);
-        }
-    }
-
-    function get_api_msg(api_message $api_obj, string $msg): void
-    {
-        // return the api json or the error message
-        if ($msg == '') {
-            $this->get_response(json_encode($api_obj), $msg);
-        } else {
-            // tell the user e.g. that no products found
-            $this->get_response('', $msg);
-        }
-    }
-
-    function get_types(type_lists_api $api_obj, string $msg): void
-    {
-        // return the api json or the error message
-        if ($msg == '') {
-            $this->get_response(json_encode($api_obj), $msg);
-        } else {
-            // tell the user e.g. that no products found
-            $this->get_response('', $msg);
-        }
-    }
-
-    function get_export(object $api_obj, string $msg): void
-    {
-        // return the api json or the error message
-        if ($msg == '') {
-            $this->get_response(json_encode($api_obj), $msg);
+            $this->get_response($api_json, $msg);
         } else {
             // tell the user e.g. that no products found
             $this->get_response('', $msg);
@@ -392,27 +286,6 @@ class controller
             }
         } else {
             return array();
-        }
-    }
-
-    /**
-     * encode a user sandbox object for the frontend api
-     * and response to curl requests
-     *
-     * @param api_message $api_msg the object that should be encoded
-     * @param string $msg if filled the message that should be shown to the user instead of the object
-     * @param int $id
-     * @param sandbox|combine_object $obj
-     * @return void
-     */
-    function curl(api_message $api_msg, string $msg, int $id, sandbox|combine_object $obj): void
-    {
-        // return the api json or the error message
-        if ($msg == '') {
-            $this->curl_response(json_encode($api_msg), $msg, $id, $obj);
-        } else {
-            // tell the user e.g. that no products found
-            $this->curl_response('', $msg, $id, $obj);
         }
     }
 

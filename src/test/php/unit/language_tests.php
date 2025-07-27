@@ -46,31 +46,34 @@ class language_tests
         $t->name = 'language->';
         $t->resource_path = 'db/language/';
 
+        // start the test section (ts)
+        $ts = 'unit language ';
+        $t->header($ts);
 
-        $t->header('Unit tests of the language class (src/main/php/model/language/language.php)');
-
-        $t->subheader('Language SQL setup statements');
+        $t->subheader($ts . 'sql setup');
         $lan = new language('');
         $t->assert_sql_table_create($lan);
         $t->assert_sql_index_create($lan);
 
-        $t->subheader('Language form SQL setup statements');
+        $t->subheader($ts . 'form sql setup');
         $lan_for = new language_form('');
         $t->assert_sql_table_create($lan_for);
         $t->assert_sql_index_create($lan_for);
         $t->assert_sql_foreign_key_create($lan_for);
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         global $lan_cac;
         $lan = $lan_cac->get_by_code_id(language::DEFAULT);
         $t->assert_api($lan, 'language');
 
 
-        $t->header('Unit tests of the language form class (src/main/php/model/language/language_form.php)');
+        // start the test section (ts)
+        $ts = 'unit language form ';
+        $t->header($ts);
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         global $lan_for_cac;
         $lan_typ = $lan_for_cac->get_by_code_id(language_form::PLURAL);

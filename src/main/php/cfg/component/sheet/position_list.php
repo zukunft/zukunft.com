@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/component/sheet/position_list.php - a list of positions of a data object within a sheet
+    model/component/sheet/position_list.php - a list of positions of a data object within a sheet
     -------------------------------------
 
 

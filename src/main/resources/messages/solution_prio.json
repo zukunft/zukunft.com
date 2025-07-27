@@ -8,15 +8,21 @@
   "words": [
     {
       "name": "problem",
-      "comment": "here more a personal issue (wikipedia does not really match)",
+      "comment": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
       "refs": [
         {
-          "name": "List_of_global_issues",
+          "name": "Problem_solving",
           "type": "wikipedia"
-        },
+        }
+      ]
+    },
+    {
+      "name": "global",
+      "comment": "here more a something that effects all people on earth (wikipedia does not really match)",
+      "refs": [
         {
-          "name": "Q65117122",
-          "type": "wikidata"
+          "name": "Globalization",
+          "type": "wikipedia"
         }
       ]
     },
@@ -73,7 +79,13 @@
       ]
     },
     {
-      "name": "loss"
+      "name": "loss",
+      "refs": [
+        {
+          "name": "Loss",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "percent",
@@ -146,7 +158,62 @@
       "name": "emissions"
     },
     {
-      "name": "populism"
+      "name": "populism",
+      "refs": [
+        {
+          "name": "Populism",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q180490",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "right",
+      "refs": [
+        {
+          "name": "Right_(direction)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "left",
+      "refs": [
+        {
+          "name": "Left_(direction)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "wing"
+    },
+    {
+      "name": "simple"
+    },
+    {
+      "name": "ordinary"
+    },
+    {
+      "name": "least"
+    },
+    {
+      "name": "square"
+    },
+    {
+      "name": "OLS"
+    },
+    {
+      "name": "aftermath"
+    },
+    {
+      "name": "5-year"
+    },
+    {
+      "name": "15-year"
     },
     {
       "name": "avoid"
@@ -249,14 +316,20 @@
       "name": "htp"
     },
     {
-      "name": "billion"
-    },
-    {
-      "name": "trillion"
-    },
-    {
       "name": "million",
       "comment": "to specify numbers in millions",
+      "type": "scaling",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "billion",
+      "comment": "to specify numbers in billion",
+      "type": "scaling",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "trillion",
+      "comment": "to specify numbers in trillion",
       "type": "scaling",
       "protection": "admin_protection"
     },
@@ -265,6 +338,9 @@
     },
     {
       "name": "m"
+    },
+    {
+      "name": "b"
     },
     {
       "name": "CHF",
@@ -278,13 +354,36 @@
       "name": "world"
     },
     {
+      "name": "annual"
+    },
+    {
       "name": "GDP"
+    },
+    {
+      "name": "decline"
     },
     {
       "name": "2024"
     }
   ],
   "triples": [
+    {
+      "name": "global problem",
+      "from": "problem",
+      "verb": "can be",
+      "to": "global",
+      "comment": "here more a personal issue (wikipedia does not really match)",
+      "refs": [
+        {
+          "name": "List_of_global_issues",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q65117122",
+          "type": "wikidata"
+        }
+      ]
+    },
     {
       "from": "warmer",
       "verb": "is a",
@@ -296,7 +395,7 @@
       "to": "warm"
     },
     {
-      "name": "climate warming",
+      "name": "global warming",
       "from": "climate",
       "verb": "can get",
       "to": "warmer",
@@ -312,7 +411,7 @@
       ]
     },
     {
-      "name": "warming potential",
+      "name": "global warming potential",
       "from": "warming",
       "verb": "can use",
       "to": "potential"
@@ -335,7 +434,7 @@
     },
     {
       "name": "world population",
-      "from": "Population",
+      "from": "population",
       "verb": "of",
       "to": "human",
       "refs": [
@@ -382,6 +481,68 @@
       "from": "b",
       "verb": "is symbol for",
       "to": "billion"
+    },
+    {
+      "from": "global warming",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "from": "populism",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "name": "health can be a global problem",
+      "from": "health",
+      "verb": "can be",
+      "to": "global problem"
+    },
+    {
+      "name": "GDP decline",
+      "from": "GDP",
+      "verb": "can",
+      "to": "decline"
+    },
+    {
+      "from": "poverty",
+      "verb": "is a",
+      "to": "global problem"
+    },
+    {
+      "from": "education",
+      "verb": "can be",
+      "to": "global problem"
+    },
+    {
+      "name": "least squares",
+      "from": "square",
+      "verb": "can be",
+      "to": "least"
+    },
+    {
+      "name": "ordinary least squares",
+      "from": "least squares",
+      "verb": "can be",
+      "to": "ordinary"
+    },
+    {
+      "from": "OLS",
+      "verb": "is symbol for",
+      "to": "ordinary least squares"
+    },
+    {
+      "from": "populism",
+      "verb": "can cause",
+      "to": "GDP decline"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Populist Leaders and the Economy (Kiel Working Paper)",
+      "description": "Journal Article\nPopulist Leaders and the Economy\n\nAmerican Economic Review, 113 (2): 3249-3288 ",
+      "url": "https://www.ifw-kiel.de/fileadmin/Dateiverwaltung/IfW-Publications/fis-import/63738460-817f-4a88-837b-794a7c021251-KWP_2169_update_june_2022.pdf",
+      "type": "pdf"
     }
   ],
   "values": [
@@ -406,7 +567,7 @@
     },
     {
       "words": [
-        "climate warming",
+        "global warming",
         "potential",
         "loss",
         "percent",
@@ -416,7 +577,7 @@
     },
     {
       "words": [
-        "climate warming",
+        "global warming",
         "potential",
         "loss",
         "percent",
@@ -503,6 +664,34 @@
         "GDP"
       ],
       "number": "-13"
+    },
+    {
+      "words": [
+        "populism",
+        "annual",
+        "GDP",
+        "decline",
+        "percent",
+        "5-year",
+        "aftermath",
+        "OLS"
+      ],
+      "number": "-0.97",
+      "source": "Populist Leaders and the Economy (Kiel Working Paper)"
+    },
+    {
+      "words": [
+        "populism",
+        "annual",
+        "GDP",
+        "decline",
+        "percent",
+        "15-year",
+        "aftermath",
+        "OLS"
+      ],
+      "number": "-1.04",
+      "source": "Populist Leaders and the Economy (Kiel Working Paper)"
     }
   ],
   "formulas": [
@@ -525,6 +714,25 @@
       "name": "global happy time points",
       "expression": "\"htp\" = \"htp\",\"percent\" * \"global\",\"human\",\"population\"",
       "assigned_word": "htp"
+    }
+  ],
+  "results": [
+    {
+      "context": [
+        "global warming",
+        "potential",
+        "loss",
+        "percent",
+        "htp"
+      ],
+      "formula": "global happy time points",
+      "words": [
+        "global warming",
+        "potential",
+        "loss",
+        "htp"
+      ],
+      "number": "31.5"
     }
   ]
 }

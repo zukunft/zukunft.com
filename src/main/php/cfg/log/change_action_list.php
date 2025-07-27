@@ -2,8 +2,9 @@
 
 /*
 
-    cfg/log/change_action_list.php - the const for the change log action table
+    model/log/change_action_list.php - the const for the change log action table
     -----------------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -31,11 +32,15 @@
 
 namespace cfg\log;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
 
 use cfg\helper\type_list;
 use cfg\helper\type_object;
+use shared\enum\change_actions;
 
 class change_action_list extends type_list
 {
@@ -47,11 +52,11 @@ class change_action_list extends type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new type_object(change_action::ADD, change_action::ADD, '', 1);
+        $type = new type_object(change_actions::ADD, change_actions::ADD, '', 1);
         $this->add($type);
-        $type = new type_object(change_action::UPDATE, change_action::UPDATE, '', 2);
+        $type = new type_object(change_actions::UPDATE, change_actions::UPDATE, '', 2);
         $this->add($type);
-        $type = new type_object(change_action::DELETE, change_action::DELETE, '', 3);
+        $type = new type_object(change_actions::DELETE, change_actions::DELETE, '', 3);
         $this->add($type);
     }
 
@@ -60,7 +65,7 @@ class change_action_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(change_action::ADD);
+        return parent::id(change_actions::ADD);
     }
 
 }

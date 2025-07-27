@@ -35,24 +35,28 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
 
+include_once paths::SHARED_CONST . 'views.php';
+
+use cfg\user\user;
 use cfg\value\value;
-use html\rest_ctrl;
+use cfg\view\view;
 use html\button;
 use html\html_base;
-use html\system\messages;
+use html\rest_ctrl;
 use html\view\view as view_dsp;
-use cfg\user\user;
-use cfg\view\view;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
+use shared\enum\messages as msg_id;
 
 // to create the code for the html frontend
 $html = new html_base();
 
 // open database
 $db_con = prg_start("value_del");
+
+global $mtr;
 
 $result = ''; // reset the html code var
 
@@ -67,7 +71,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_VALUE_DEL);
+    $msk->load_by_code_id(view_shared::VALUE_DEL);
     $back = $_GET[api::URL_VAR_BACK] = '';  // the page from which the value deletion has been called
 
     // get the parameters
@@ -92,9 +96,8 @@ if ($usr->id() > 0) {
 
             $val->load_phrases();
             $url = $html->url(rest_ctrl::VALUE . rest_ctrl::REMOVE, $val_id, $back);
-            $ui_msg = new messages();
             $result .= (new button($url, $back))->yes_no(
-                messages::VALUE_DEL, $val->number() . $ui_msg->txt(messages::FOR) . $val->phr_lst()->dsp_name() . '?');
+                msg_id::VALUE_DEL->value, $val->number() . $mtr->txt(msg_id::FOR) . $val->phr_lst()->dsp_name() . '?');
         }
     } else {
         $result .= $html->dsp_go_back($back, $usr);

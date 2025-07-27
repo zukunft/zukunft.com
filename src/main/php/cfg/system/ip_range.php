@@ -32,21 +32,26 @@
 
 namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-//include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -55,11 +60,13 @@ use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
+use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
 use cfg\log\change;
-use cfg\log\change_action;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\change_actions;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 
@@ -143,6 +150,43 @@ class ip_range extends db_object_seq_id
             $this->active = $db_row[self::FLD_ACTIVE];
         }
         return $result;
+    }
+
+    /**
+     * set the vars of this ip range object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @return user_message
+     */
+    function import_mapper(array $in_ex_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        // set the object vars based on the json
+        if (key_exists(json_fields::IP_FROM, $in_ex_json)) {
+            $this->from = $in_ex_json[json_fields::IP_FROM];
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
+                msg_id::VAR_NAME => json_fields::IP_FROM,
+                msg_id::VAR_IP_RANGE => $in_ex_json,
+            ]);
+        }
+        if (key_exists(json_fields::IP_TO, $in_ex_json)) {
+            $this->to = $in_ex_json[json_fields::IP_TO];
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::IMPORT_IP_MISSING, [
+                msg_id::VAR_NAME => json_fields::IP_TO,
+                msg_id::VAR_IP_RANGE => $in_ex_json,
+            ]);
+        }
+        if (key_exists(json_fields::REASON, $in_ex_json)) {
+            $this->reason = $in_ex_json[json_fields::REASON];
+        }
+        if (key_exists(json_fields::IS_ACTIVE, $in_ex_json)) {
+            $this->active = filter_var($in_ex_json[json_fields::IS_ACTIVE], FILTER_VALIDATE_BOOLEAN);
+        }
+
+        return $usr_msg;
     }
 
 
@@ -260,10 +304,17 @@ class ip_range extends db_object_seq_id
      * import an ip range from an imported json object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         $usr_msg = parent::import_db_obj($this, $test_obj);
 
@@ -344,30 +395,35 @@ class ip_range extends db_object_seq_id
      * actually update a formula field in the main database record
      * @param sql_db $db_con the active database connection
      * @param change $log with the action and table already set
-     * @return string string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_field_do(sql_db $db_con, change $log): string
+    private function save_field_do(sql_db $db_con, change $log): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($log->add()) {
             $db_con->set_class(self::class);
             if (!$db_con->update_old($this->id(), $log->field(), $log->new_value)) {
-                $result .= 'updating ' . $log->field() . ' to ' . $log->new_value . ' for ' . self::OBJ_NAME . ' ' . $this->dsp_id() . ' failed';
+                $usr_msg->add_id_with_vars(msg_id::UPDATE_FAILED, [
+                    msg_id::VAR_NAME => $log->field(),
+                    msg_id::VAR_VALUE => $log->new_value,
+                    msg_id::VAR_CLASS_NAME => self::OBJ_NAME,
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
             }
 
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters for the block reason
      * @param sql_db $db_con the active database connection
      * @param ip_range $db_rec the ip range reason as saved in the database before the change
-     * @return string string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_field_reason(sql_db $db_con, ip_range $db_rec): string
+    private function save_field_reason(sql_db $db_con, ip_range $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->reason <> $this->reason) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->reason;
@@ -375,20 +431,20 @@ class ip_range extends db_object_seq_id
             $log->std_value = $db_rec->reason;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_REASON);
-            $result .= $this->save_field_do($db_con, $log);
+            $usr_msg = $this->save_field_do($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
      * set the update parameters for the block reason
      * @param sql_db $db_con the active database connection
      * @param ip_range $db_rec the ip range active flag as saved in the database before the change
-     * @return string string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_field_active(sql_db $db_con, ip_range $db_rec): string
+    private function save_field_active(sql_db $db_con, ip_range $db_rec): user_message
     {
-        $result = '';
+        $usr_msg = new user_message();
         if ($db_rec->active <> $this->active) {
             $log = $this->log_upd();
             $log->old_value = $db_rec->active;
@@ -396,9 +452,9 @@ class ip_range extends db_object_seq_id
             $log->std_value = $db_rec->active;
             $log->row_id = $this->id();
             $log->set_field(self::FLD_ACTIVE);
-            $result .= $this->save_field_do($db_con, $log);
+            $usr_msg = $this->save_field_do($db_con, $log);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -412,7 +468,7 @@ class ip_range extends db_object_seq_id
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
-        $log->set_action(change_action::ADD);
+        $log->set_action(change_actions::ADD);
         $log->set_table($tbl_name);
         $log->set_field(self::FLD_FROM . '_' . self::FLD_TO);
         $log->new_value = $this->name();
@@ -433,7 +489,7 @@ class ip_range extends db_object_seq_id
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
-        $log->set_action(change_action::UPDATE);
+        $log->set_action(change_actions::UPDATE);
         $log->set_table($tbl_name);
 
         return $log;
@@ -443,13 +499,16 @@ class ip_range extends db_object_seq_id
      * save all updated verb fields excluding the name, because already done when adding a verb
      * @param sql_db $db_con the active database connection
      * @param ip_range $db_rec the ip range entry as saved in the database before the change
-     * @return string string any message that should be shown to the user or an empty string if everything is fine
+     * @return user_message string any message that should be shown to the user or an empty string if everything is fine
      */
-    private function save_fields(sql_db $db_con, ip_range $db_rec): string
+    private function save_fields(sql_db $db_con, ip_range $db_rec): user_message
     {
-        $result = $this->save_field_reason($db_con, $db_rec);
-        $result .= $this->save_field_active($db_con, $db_rec);
-        return $result;
+        $usr_msg = $this->save_field_reason($db_con, $db_rec);
+        $result = $this->save_field_active($db_con, $db_rec);
+        if ($result) {
+            $usr_msg = $result;
+        }
+        return $usr_msg;
     }
 
     /**
@@ -475,14 +534,16 @@ class ip_range extends db_object_seq_id
             if ($this->id() > 0) {
                 // update the id in the log for the correct reference
                 if (!$log->add_ref($this->id())) {
-                    $msg = 'Adding reference for ' . $this->dsp_id() . ' in the log failed.';
-                    $usr_msg->add_message($msg);
-                    log_err($msg, self::class . '->add');
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE_LOG, [
+                        msg_id::VAR_ID => $this->dsp_id()
+                    ]);
+                    log_err('Adding reference for ' . $this->dsp_id() . ' in the log failed.', self::class . '->add');
                 }
             } else {
-                $msg = 'Adding reference ' . $this->dsp_id() . ' failed.';
-                $usr_msg->add_message($msg);
-                log_err($msg, self::class . '->add');
+                $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE, [
+                    msg_id::VAR_ID => $this->dsp_id()
+                ]);
+                log_err('Adding reference ' . $this->dsp_id() . ' failed.', self::class . '->add');
             }
         }
 
@@ -556,7 +617,7 @@ class ip_range extends db_object_seq_id
             $db_rec->set_user($this->user());
             $qp = $this->load_sql_by_vars($db_con);
             if ($db_rec->load($qp) > 0) {
-                $usr_msg->add_message($this->save_fields($db_con, $db_rec));
+                $usr_msg->add($this->save_fields($db_con, $db_rec));
             }
         }
         return $usr_msg;

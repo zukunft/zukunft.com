@@ -36,50 +36,54 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'api.php';
-include_once API_PATH . 'controller.php';
-include_once API_PATH . 'api_message.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once API_FORMULA_PATH . 'formula.php';
+use cfg\const\paths;
+
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
 
 use controller\controller;
 use cfg\user\user;
 use cfg\formula\formula;
-use api\formula\formula as formula_api;
 use shared\api;
 
 // open database
 $db_con = prg_start("api/formula", "", false);
 
-// get the parameters
-$frm_id = $_GET[api::URL_VAR_ID] ?? 0;
-$frm_name = $_GET[api::URL_VAR_NAME] ?? '';
+if ($db_con->is_open()) {
 
-$msg = '';
-$result = new formula_api(); // reset the html code var
+    // get the parameters
+    $frm_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $frm_name = $_GET[api::URL_VAR_NAME] ?? '';
 
-// load the session user parameters
-$usr = new user;
-$msg .= $usr->get();
+    $msg = '';
+    $result = ''; // reset the json message string
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // load the session user parameters
+    $usr = new user;
+    $msg .= $usr->get();
 
-    $frm = new formula($usr);
-    if ($frm_id > 0) {
-        $frm->load_by_id($frm_id);
-        $result = $frm->api_obj();
-    } elseif ($frm_name != '') {
-        $frm->load_by_name($frm_name);
-        $result = $frm->api_obj();
-    } else {
-        $msg = 'formula id or name is missing';
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
+
+        $frm = new formula($usr);
+        if ($frm_id > 0) {
+            $frm->load_by_id($frm_id);
+            $result = $frm->api_json();
+        } elseif ($frm_name != '') {
+            $frm->load_by_name($frm_name);
+            $result = $frm->api_json();
+        } else {
+            $msg = 'formula id or name is missing';
+        }
     }
+
+    $ctrl = new controller();
+    $ctrl->get_json($result, $msg);
+
+
+    prg_end_api($db_con);
 }
-
-$ctrl = new controller();
-$ctrl->get($result, $msg);
-
-
-prg_end_api($db_con);

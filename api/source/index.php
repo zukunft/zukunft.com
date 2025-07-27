@@ -36,59 +36,65 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'api.php';
-include_once API_PATH . 'controller.php';
-include_once API_PATH . 'api_message.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_REF_PATH . 'source.php';
+use cfg\const\paths;
 
-use api\api_message;
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+
 use controller\controller;
 use cfg\user\user;
 use cfg\ref\source;
 use shared\api;
+use shared\types\api_type;
 
 // open database
 $db_con = prg_start("api/ref", "", false);
 
-// get the parameters
-$src_id = $_GET[api::URL_VAR_ID] ?? 0;
-$src_name = $_GET[api::URL_VAR_NAME] ?? '';
-$src_code_id = $_GET[api::URL_VAR_CODE_ID] ?? '';
+if ($db_con->is_open()) {
 
-// load the session user parameters
-$msg = '';
-$usr = new user;
-$msg .= $usr->get();
+    // get the parameters
+    $src_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $src_name = $_GET[api::URL_VAR_NAME] ?? '';
+    $src_code_id = $_GET[api::URL_VAR_CODE_ID] ?? '';
 
-$ctrl = new controller();
-$result = new api_message($db_con, source::class, $usr); // create the message header
+    // load the session user parameters
+    $msg = '';
+    $usr = new user;
+    $msg .= $usr->get();
+
+    $ctrl = new controller();
+    $result = ''; // reset the json message string
 
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($usr->id() > 0) {
 
-    // load the source from the database for GET, UPDATE and DELETE
-    $src = new source($usr);
-    $result->set_user($usr);
-    if ($src_id > 0) {
-        $src->load_by_id($src_id);
-        $result->add_body($src->api_obj());
-    } elseif ($src_name != '') {
-        $src->load_by_name($src_name);
-        $result->add_body($src->api_obj());
-    } elseif ($src_code_id != '') {
-        $src->load_by_code_id($src_code_id);
-        $result->add_body($src->api_obj());
+        // load the source from the database for GET, UPDATE and DELETE
+        $src = new source($usr);
+        if ($src_id > 0) {
+            $src->load_by_id($src_id);
+            $result = $src->api_json([api_type::HEADER], $usr);
+        } elseif ($src_name != '') {
+            $src->load_by_name($src_name);
+            $result = $src->api_json([api_type::HEADER], $usr);
+        } elseif ($src_code_id != '') {
+            $src->load_by_code_id($src_code_id);
+            $result = $src->api_json([api_type::HEADER], $usr);
+        } else {
+            $msg = 'Cannot load source because id, name and code id is missing';
+        }
+
+        // add, update or delete the source
+        $ctrl->get_json($result, $msg);
+
     } else {
-        $msg = 'Cannot load source because id, name and code id is missing';
+        $ctrl->not_permitted($msg);
     }
 
-    // add, update or delete the source
-    $ctrl->curl($result, $msg, $src_id, $src);
-
-} else {
-    $ctrl->not_permitted($msg);
+    prg_end_api($db_con);
 }
-
-prg_end_api($db_con);

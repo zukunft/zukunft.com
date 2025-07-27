@@ -2,8 +2,9 @@
 
 /*
 
-    /cfg/dp/sql_field_type.php - enum of the sql field types used e.g. for creating the table
+    model/dp/sql_field_type.php - enum of the sql field types used e.g. for creating the table
     --------------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -49,6 +50,7 @@ enum sql_field_type: string
     case IP_ADDR = 'ip_addr'; // an ipv4 or ipv6 address
     case CODE_ID = 'code_id'; // a unique text to select single database rows by the program
     case TEXT = 'text'; // a text with variable length that can be used for a combined index without auto increase
+    case POINT = 'point'; // a geographical point on earth
     case KEY_PART_TEXT = 'textKeyPart'; // a text with variable length that is part of a combined index
     case KEY_PART_512 = '512bitKeyPart'; // a 512-bit text for a combined index without auto increase
     case KEY_PART_INT_SMALL = 'smallIntKeyPart'; // a small integer that is part of a combined index
@@ -77,7 +79,7 @@ enum sql_field_type: string
             self::INT_SMALL, self::BOOL, self::KEY_PART_INT_SMALL => 'smallint',
             self::NUMERIC_FLOAT => 'double precision',
             self::TIME => 'timestamp',
-            self::GEO => 'point',
+            self::POINT, self::GEO => 'point',
             default => 'postgres type ' . $this->value .' missing',
         };
     }
@@ -96,7 +98,7 @@ enum sql_field_type: string
             self::INT_SMALL, self::BOOL, self::KEY_INT_SMALL, self::KEY_PART_INT_SMALL => 'smallint',
             self::NUMERIC_FLOAT => 'double',
             self::TIME => 'timestamp',
-            self::GEO => 'point',
+            self::POINT, self::GEO => 'point',
             default => 'MySQL type ' . $this->value .' missing',
         };
     }
@@ -108,6 +110,7 @@ enum sql_field_type: string
             self::INT_SMALL, self::BOOL => sql_par_type::INT_SMALL,
             self::NUMERIC_FLOAT => sql_par_type::FLOAT,
             self::TIME => sql_par_type::TIME,
+            self::POINT => sql_par_type::POINT,
             default => sql_par_type::TEXT,
         };
     }

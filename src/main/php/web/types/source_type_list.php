@@ -32,8 +32,13 @@
 
 namespace html\types;
 
-use cfg\ref\source_type;
-use html\html_selector;
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_ENUM . 'source_types.php';
+
+use shared\enum\source_types;
+use shared\types\view_styles;
 
 class source_type_list extends type_list
 {
@@ -47,7 +52,7 @@ class source_type_list extends type_list
         string $form = '',
         int $selected = 0,
         string $name = self::NAME,
-        string $bs_class = '',
+        string $bs_class = view_styles::COL_SM_4,
         string $label = ''
     ): string
     {
@@ -62,7 +67,7 @@ class source_type_list extends type_list
 
     function default_id(): int
     {
-        return parent::id(source_type::CSV);
+        return parent::id(source_types::CSV);
     }
 
 }

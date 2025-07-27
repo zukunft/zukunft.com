@@ -32,15 +32,16 @@
 
 namespace unit_read;
 
-include_once SERVICE_PATH . 'config.php';
+use cfg\const\paths;
 
-use api\word\word as word_api;
-use cfg\config;
+include_once paths::SERVICE . 'config.php';
+include_once paths::SHARED_CONST . 'triples.php';
+
 use cfg\phrase\phrase;
 use cfg\value\value;
 use cfg\value\value_list;
-use api\value\value as value_api;
-use cfg\word\word;
+use shared\const\triples;
+use shared\const\values;
 use test\test_cleanup;
 
 class value_list_read_tests
@@ -50,7 +51,7 @@ class value_list_read_tests
     {
 
         // init
-        $t->header('Value list unit database tests to test src/main/php/model/value/value_list.php');
+        $t->header('value list database read tests');
         $t->name = 'value list_read db->';
         $t->resource_path = 'db/value/';
 
@@ -61,16 +62,16 @@ class value_list_read_tests
         $val_lst = new value_list($t->usr1);
         $val_lst->load_by_phr($t->phrase_pi());
         $result = $val_lst->dsp_id();
-        $target = '"" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 3 (zukunft.com system test)';
+        $target = '3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,,) for user 3 (zukunft.com system test)';
         $t->assert($test_name, $result, $target);
 
         // load by ids
         $val_lst = new value_list($t->usr1);
-        $val_lst->load_by_ids([4,7]);
+        $val_lst->load_by_ids([values::PI_ID,values::E_ID]);
         $pi = new value($t->usr1);
-        $pi->load_by_id(4);
+        $pi->load_by_id(values::PI_ID);
         $e = new value($t->usr1);
-        $e->load_by_id(7);
+        $e->load_by_id(values::E_ID);
         $target_lst = new value_list($t->usr1);
         $target_lst->add($pi);
         $target_lst->add($e);
@@ -82,7 +83,7 @@ class value_list_read_tests
             $target = '"" 0.57721566490153 / "" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 4,,, / -2,,,) for user 3 (zukunft.com system test)';
         }
         $t->assert($test_name, $result, $target);
-        $target = '"" 3.1415926535898 / "" 0.57721566490153 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 4,,, / 7,,,) for user 3 (zukunft.com system test)';
+        $target = '3.1415926535898 / 0.57721566490153 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,, / -3,,,) for user 3 (zukunft.com system test)';
         $test_name = 'A value list with pi and e matches the expected result';
         $t->assert($test_name, $val_lst->dsp_id(), $target);
 
@@ -93,8 +94,8 @@ class value_list_read_tests
         $val_lst->load_by_phr_lst($phr_lst);
         $result = $val_lst->dsp_id();
         // TODO check why not all years are loaded
-        //$target = value_api::TV_CH_INHABITANTS_2019_IN_MIO;
-        $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
+        //$target = values::TV_CH_INHABITANTS_2019_IN_MIO;
+        $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->assert_text_contains($test_name, $result, $target);
 
         // load values related to any phrase of a list
@@ -103,15 +104,15 @@ class value_list_read_tests
         $phr_lst = $t->phrase_list_math_const();
         $val_lst->load_by_phr_lst($phr_lst, true);
         $result = $val_lst->dsp_id();
-        $target = '"" 3.1415926535898 / "" 0.57721566490153 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / -3,,,) for user 3 (zukunft.com system test)';
+        $target = '3.1415926535898 / 0.57721566490153 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,, / -3,,,) for user 3 (zukunft.com system test)';
         if ($target != $result) {
-            $target = '"" 0.57721566490153 / "" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -3,,, / -2,,,) for user 3 (zukunft.com system test)';
+            $target = '0.57721566490153 / 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -3,,, / -51,,,) for user 3 (zukunft.com system test)';
         }
         $t->assert($test_name, $result, $target);
 
         // load by phrase list
         $phr = new phrase($t->usr1);
-        $phr->load_by_name(word::SYSTEM_CONFIG);
+        $phr->load_by_name(triples::SYSTEM_CONFIG);
         $phr_lst = $phr->all_children();
         $val_lst = new value_list($t->usr1);
         // TODO activate Prio 2
@@ -124,12 +125,12 @@ class value_list_read_tests
         //$t->assert_contains($test_name, $val_lst->numbers(), [$target]);
 
         // ... based on the phrase list
-        $phr_lst = $t->phrase_list();
+        $phr_lst = $t->phrase_list_pi_const();
         $val_lst = $phr_lst->val_lst();
         $result = $val_lst->dsp_id();
-        $target = '"" 3.1415926535898 / "" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 4,,,) for user 3 (zukunft.com system test)';
+        $target = '3.1415926535898 / 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / 4,,,) for user 3 (zukunft.com system test)';
         if ($target != $result) {
-            $target = '"" 3.1415926535898 / "" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 4,,, / -2,,,) for user 3 (zukunft.com system test)';
+            $target = '3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,,) for user 3 (zukunft.com system test)';
         }
         $t->assert($test_name, $result, $target);
 

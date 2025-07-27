@@ -31,49 +31,69 @@
 
 namespace cfg\db;
 
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_SYSTEM_PATH . 'log.php';
-include_once MODEL_DB_PATH . 'sql_field_type.php';
-include_once MODEL_DB_PATH . 'sql_field_default.php';
-include_once MODEL_DB_PATH . 'sql_where_type.php';
-include_once MODEL_DB_PATH . 'sql_where.php';
-include_once MODEL_DB_PATH . 'sql_where_list.php';
-include_once MODEL_DB_PATH . 'sql_pg.php';
-include_once MODEL_DB_PATH . 'sql.php';
-//include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_ELEMENT_PATH . 'element.php';
-include_once MODEL_FORMULA_PATH . 'formula_link.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_values_big.php';
-include_once MODEL_LOG_PATH . 'change_link.php';
-include_once MODEL_LOG_PATH . 'change_values_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_prime.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-include_once MODEL_LOG_PATH . 'changes_big.php';
-include_once MODEL_LOG_PATH . 'changes_norm.php';
-include_once MODEL_REF_PATH . 'ref.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
-include_once MODEL_USER_PATH . 'user_type.php';
-include_once MODEL_USER_PATH . 'user_official_type.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_time_series.php';
-include_once MODEL_VIEW_PATH . 'view_term_link.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_SYSTEM . 'log.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_where_type.php';
+include_once paths::DB . 'sql_where.php';
+include_once paths::DB . 'sql_where_list.php';
+include_once paths::DB . 'sql_pg.php';
+include_once paths::DB . 'sql.php';
+//include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_ELEMENT . 'element.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_LOG . 'change_value.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_SYSTEM . 'ip_range.php';
+include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_values_big.php';
+include_once paths::MODEL_LOG . 'change_values_norm.php';
+include_once paths::MODEL_LOG . 'change_values_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_big.php';
+include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+include_once paths::MODEL_LOG . 'change_values_text_big.php';
+include_once paths::MODEL_LOG . 'change_values_text_norm.php';
+include_once paths::MODEL_LOG . 'change_values_text_prime.php';
+include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
+include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'changes_big.php';
+include_once paths::MODEL_LOG . 'changes_norm.php';
+include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+include_once paths::MODEL_USER . 'user_type.php';
+include_once paths::MODEL_USER . 'user_official_type.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_time.php';
+include_once paths::MODEL_VALUE . 'value_text.php';
+include_once paths::MODEL_VALUE . 'value_geo.php';
+include_once paths::MODEL_VALUE . 'value_time_series.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\component\component_link;
 use cfg\helper\db_object_seq_id;
@@ -81,7 +101,18 @@ use cfg\element\element;
 use cfg\formula\formula_link;
 use cfg\group\group;
 use cfg\group\group_id;
-use cfg\sandbox\sandbox_value;
+use cfg\log\change_log;
+use cfg\log\change_value;
+use cfg\log\change_values_geo_big;
+use cfg\log\change_values_geo_norm;
+use cfg\log\change_values_geo_prime;
+use cfg\log\change_values_text_big;
+use cfg\log\change_values_text_norm;
+use cfg\log\change_values_text_prime;
+use cfg\log\change_values_time_big;
+use cfg\log\change_values_time_norm;
+use cfg\log\change_values_time_prime;
+use cfg\sandbox\sandbox_multi;
 use cfg\system\ip_range;
 use cfg\system\ip_range_list;
 use cfg\system\job;
@@ -100,14 +131,19 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_link_named;
 use cfg\system\sys_log;
+use cfg\value\value;
+use cfg\value\value_geo;
+use cfg\value\value_text;
+use cfg\value\value_time;
 use cfg\word\triple;
 use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\user\user_type;
 use cfg\user\user_official_type;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\value\value_time_series;
-use cfg\view\view_term_link;
+use cfg\view\term_view;
+use shared\const\users;
 use shared\library;
 use DateTime;
 
@@ -125,12 +161,15 @@ class sql_creator
     const DB_TYPES_NOT_NAMED = [
         triple::class,
         value::class,
+        value_time::class,
+        value_text::class,
+        value_geo::class,
         value_time_series::class,
         formula_link::class,
         result::class,
         element::class,
         component_link::class,
-        view_term_link::class,
+        term_view::class,
         ref::class,
         ip_range::class,
         ip_range_list::class,
@@ -166,6 +205,10 @@ class sql_creator
     private const FVT_VAL = 1;
     private const FVT_TYP = 2;
 
+    // parameters for the sql creation that might be used for the next query creation
+    private ?string $page;     // the LIMIT and OFFSET      SQL statement that is used for the next select query
+
+
     // parameters for the sql creation that are set step by step with the functions of the sql creator
     private ?int $usr_id;           // the user id of the person who request the database changes
     private ?int $usr_view_id;      // the user id of the person which values should be returned e.g. an admin might want to check the data of a user
@@ -197,7 +240,6 @@ class sql_creator
     private ?string $join;     // the JOIN                  SQL statement that is used for the next select query
     private ?string $where;    // the WHERE condition as an SQL statement that is used for the next select query
     private ?string $order;    // the ORDER                 SQL statement that is used for the next select query
-    private ?string $page;     // the LIMIT and OFFSET      SQL statement that is used for the next select query
     private ?string $end;      // the closing               SQL statement that is used for the next select query
     //private ?string $sub_sql;  // a complex sql statement used for the next select query
     private bool $use_page;    // true if the limit and offset statement should be added at the end
@@ -209,6 +251,7 @@ class sql_creator
     private ?array $field_lst_date_dummy;      // list of datetime fields filled with dummy values for a union query
     private ?array $usr_field_lst;             // list of user specific fields that should be returned to the next select query
     private ?array $usr_num_field_lst;         // list of user specific numeric fields that should be returned to the next select query
+    private ?array $usr_geo_field_lst;         // list of user specific geo point fields that should be returned to the next select query
     private ?array $usr_bool_field_lst;        // list of user specific boolean / tinyint fields that should be returned to the next select query
     private ?array $usr_only_field_lst;        // list of fields that are only in the user sandbox
     private ?array $grp_field_lst;             // list of fields where e.g. the min or max of a group should be calculated
@@ -251,6 +294,11 @@ class sql_creator
     //private ?array $join2_usr_count_field_lst; // same as $join_usr_count_field_lst but for the second join
     //private ?array $join3_usr_count_field_lst; // same as $join_usr_count_field_lst but for the third join
     //private ?array $join4_usr_count_field_lst; // same as $join_usr_count_field_lst but for the fourth join
+    private ?array $join_usr_geo_field_lst;    // list of fields that should be returned to the next select query that are taken from a joined table
+    // TODO activate or review
+    //private ?array $join2_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the second join
+    //private ?array $join3_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the third join
+    //private ?array $join4_usr_geo_field_lst;   // same as $join_usr_num_field_lst but for the fourth join
     private bool $join_usr_fields;             // true, if the joined query is also expected to retrieve user specific data
     private bool $join2_usr_fields;            // same as $join_usr_fields but for the second join
     private bool $join3_usr_fields;            // same as $join_usr_fields but for the third join
@@ -333,6 +381,7 @@ class sql_creator
         $this->field_lst_date_dummy = [];
         $this->usr_field_lst = [];
         $this->usr_num_field_lst = [];
+        $this->usr_geo_field_lst = [];
         $this->usr_bool_field_lst = [];
         $this->usr_only_field_lst = [];
         $this->grp_field_lst = [];
@@ -371,6 +420,7 @@ class sql_creator
         $this->join3_usr_num_field_lst = [];
         $this->join4_usr_num_field_lst = [];
         $this->join_usr_count_field_lst = [];
+        $this->join_usr_geo_field_lst = [];
         $this->join_usr_fields = false;
         $this->join2_usr_fields = false;
         $this->join3_usr_fields = false;
@@ -493,7 +543,6 @@ class sql_creator
      */
     function table_id(string $class): int
     {
-        $lib = new library();
         global $cng_tbl_cac;
         return $cng_tbl_cac->id($this->get_table_name($class));
     }
@@ -512,7 +561,7 @@ class sql_creator
      */
     function sql_par(string $class, sql_type_list $sc_par_lst): sql_par
     {
-        $this->set_class($class, new sql_type_list([]));
+        $this->set_class($class, new sql_type_list());
         return new sql_par($class, $sc_par_lst);
     }
 
@@ -527,14 +576,14 @@ class sql_creator
      * @param string $ext the table name extension that is not implied in the $sc_par_lst e.g. to switch between standard and prime values
      * @return bool true if setting the type was successful
      */
-    function set_class(string $class, sql_type_list $sc_par_lst = new sql_type_list([]), string $ext = ''): bool
+    function set_class(string $class, sql_type_list $sc_par_lst = new sql_type_list(), string $ext = ''): bool
     {
         global $usr;
 
         $this->reset();
         $this->class = $class;
         if ($usr == null) {
-            $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
+            $this->set_usr(users::SYSTEM_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
             if ($usr->id() == null) {
                 $this->set_usr(0); // fallback for special cases
@@ -560,6 +609,11 @@ class sql_creator
         }
         // the query name cannot be longer than 62 chars
         $this->query_name = substr($query_name, 0, sql_db::SQL_QUERY_NAME_MAX_LEN);
+    }
+
+    function name(): string
+    {
+        return $this->query_name;
     }
 
     /**
@@ -681,11 +735,17 @@ class sql_creator
      * which can be user specific
      *
      * @param array $usr_field_lst list of the user specific fields that should be loaded from the database
+     * @param bool $std_fld false if the standard fields e.g. the user id should not be added again
+     * @param string $usr_par the name of the user id parameter e.g. $1 for some postgres queries for correct merge in union queries
      */
-    function set_usr_fields(array $usr_field_lst): void
+    function set_usr_fields(
+        array  $usr_field_lst,
+        bool   $std_fld = true,
+        string $usr_par = ''
+    ): void
     {
         $this->usr_field_lst = $usr_field_lst;
-        $this->set_usr_query();
+        $this->set_usr_query($std_fld, $usr_par);
     }
 
     /**
@@ -702,6 +762,23 @@ class sql_creator
         string $usr_par = ''): void
     {
         $this->usr_num_field_lst = $usr_field_lst;
+        $this->set_usr_query($std_fld, $usr_par);
+    }
+
+    /**
+     * set the SQL statement for the geo point user sandbox fields that should be returned in a select query
+     * which can be user specific
+     *
+     * @param array $usr_field_lst list of the geo point user specific fields that should be loaded from the database
+     * @param bool $std_fld false if the standard fields e.g. the user id should not be added again
+     * @param string $usr_par the name of the user id parameter e.g. $1 for some postgres queries for correct merge in union queries
+     */
+    function set_usr_geo_fields(
+        array  $usr_field_lst,
+        bool   $std_fld = true,
+        string $usr_par = ''): void
+    {
+        $this->usr_geo_field_lst = $usr_field_lst;
         $this->set_usr_query($std_fld, $usr_par);
     }
 
@@ -889,6 +966,29 @@ class sql_creator
             $this->join4_usr_fields = true;
         } else {
             log_err('Max four table joins expected in version ' . PRG_VERSION);
+        }
+    }
+
+    function set_join_usr_geo_fields(array  $join_field_lst,
+                                     string $join_type,
+                                     string $join_field = '',
+                                     string $join_to_field = '',
+                                     bool   $force_rename = false): void
+    {
+        $join_type = $this->class_to_name($join_type);
+        // fill up the join field places or add settings to a matching join link
+        // e.g. add the user fields to an existing not user specific join
+        if ($this->join_type == ''
+            or (($this->join_field == $join_field and $join_field != '')
+                and ($this->join_to_field == $join_to_field and $join_to_field != ''))) {
+            $this->join_type = $join_type;
+            $this->join_usr_geo_field_lst = $join_field_lst;
+            $this->join_field = $join_field;
+            $this->join_to_field = $join_to_field;
+            $this->join_force_rename = $force_rename;
+            $this->join_usr_fields = true;
+        } else {
+            log_err('Max one geo table joins expected in version ' . PRG_VERSION);
         }
     }
 
@@ -1100,7 +1200,7 @@ class sql_creator
      */
     function create_sql_insert(
         sql_par_field_list $fvt_lst,
-        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_type_list      $sc_par_lst = new sql_type_list(),
         bool               $log_err = true,
         string             $val_tbl = '',
         string             $chg_add_fld = '',
@@ -1178,12 +1278,12 @@ class sql_creator
                     if ($par_name == change::FLD_OLD_ID) {
                         $par_name = $chg_add_fld . change::FLD_OLD_EXT;
                     }
-                    if ($par_name == change::FLD_ROW_ID
+                    if ($par_name == change_log::FLD_ROW_ID
                         and $val_tbl != ''
                         and !$sc_par_lst->use_select_for_insert()) {
                         $par_name = $val_tbl . '.' . $chg_row_fld;
                     } else {
-                        if ($par_name == change::FLD_ROW_ID
+                        if ($par_name == change_log::FLD_ROW_ID
                             and ($usr_tbl or $insert_part or $update_part or $delete_part)) {
                             if ($this->db_type == sql_db::MYSQL
                                 and !$usr_tbl
@@ -1286,7 +1386,7 @@ class sql_creator
         string|array|int   $id,
         sql_par_field_list $fvt_lst,
         array              $types = [],
-        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_type_list      $sc_par_lst = new sql_type_list(),
         bool               $log_err = true,
         string             $val_tbl = '',
         string             $chg_row_fld = ''): string
@@ -1425,7 +1525,7 @@ class sql_creator
     function create_sql_update_fvt(
         sql_par_field_list $fvt_lst_id,
         sql_par_field_list $fvt_lst,
-        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_type_list      $sc_par_lst = new sql_type_list(),
         string             $val_tbl = ''): string
     {
 
@@ -1441,9 +1541,13 @@ class sql_creator
             log_err('SQL statement is not yet named');
         }
 
+        // exclude the id fields from the list of changed fields
+        $fvt_lst_chg = clone $fvt_lst;
+        $fvt_lst_chg = $fvt_lst_chg->get_diff($fvt_lst_id->names());
+
         // get the value parameter types
         $par_pos = 1;
-        foreach ($fvt_lst->lst as $fvt) {
+        foreach ($fvt_lst_chg->lst as $fvt) {
             $fld = $fvt->name;
             $val = $fvt->value;
             if ($fvt->type_id != null) {
@@ -1535,7 +1639,7 @@ class sql_creator
             $sql .= ' ' . $this->name_sql_esc($this->table);
             $sql_set = '';
             $i = 0;
-            foreach ($fvt_lst->lst as $fvt) {
+            foreach ($fvt_lst_chg->lst as $fvt) {
                 $fld = $fvt->name;
                 $val = $fvt->value;
                 if ($sql_set == '') {
@@ -1595,11 +1699,14 @@ class sql_creator
 
     /**
      * create the sql function part to log the insert changes
+     * TODO combine with sql_func_log_update function or move common parts to private functions
+     *
      * @param string $class the class name of the calling object
      * @param user $usr the user who has requested the change
      * @param array $fld_lst list of field names that should be logged (excluding internal field like last_update)
      * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change (including internal fields)
-     * @param sql_type_list $sc_par_lst
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
+     * @param value_base|null $val the value object e.g. the select the correct log table
      * @return sql_par with the sql and the list of parameters actually used
      */
     function sql_func_log(
@@ -1607,15 +1714,18 @@ class sql_creator
         user               $usr,
         array              $fld_lst,
         sql_par_field_list $fvt_lst,
-        sql_type_list      $sc_par_lst
+        sql_type_list      $sc_par_lst,
+        sandbox_multi|null $val = null
     ): sql_par
     {
         // set some var names to shorten the code lines
         $id_fld = $this->id_field_name();
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $ext = sql::NAME_SEP . self::FILE_INSERT;
-        if ($class == value::class) {
-            $id_fld_new = sql::NAME_SEP . $this->id_field_name();
+        if ($this->is_value_class($class)) {
+            // to log changes of values or results always the group id is used instead e.g. the four id phrase fields
+            $id_fld = group::FLD_ID;
+            $id_fld_new = sql::NAME_SEP . $id_fld;
         } else {
             $id_fld_new = $this->var_name_new_id($sc_par_lst);
         }
@@ -1634,7 +1744,11 @@ class sql_creator
         // create the log sql statements for each field
         foreach ($fld_lst as $fld) {
             // init the log object
-            $log = new change($usr);
+            if ($this->is_value_class($class)) {
+                $log = $val->log_object();
+            } else {
+                $log = new change($usr);
+            }
             $log->set_class($class);
             $log->set_field($fld);
             $log->new_value = $fvt_lst->get_value($fld);
@@ -1656,10 +1770,12 @@ class sql_creator
             if (!str_ends_with($qp->sql, ';')) {
                 $qp->sql .= '; ';
             }
+            // add the user id to the field list
             $par_lst_out->add_field(
                 user::FLD_ID,
                 $fvt_lst->get_value(user::FLD_ID),
                 sql_par_type::INT);
+            // add the action id to the field list
             $par_lst_out->add_field(
                 change_action::FLD_ID,
                 $fvt_lst->get_value(change_action::FLD_ID),
@@ -1668,7 +1784,7 @@ class sql_creator
                 sql::FLD_LOG_FIELD_PREFIX . $fld,
                 $fvt_lst->get_value(sql::FLD_LOG_FIELD_PREFIX . $fld),
                 sql_par_type::INT_SMALL);
-            if ($fvt_lst->get_old($fld) != null) {
+            if ($fvt_lst->get_old($fld) != null or $fvt_lst->get_old_id($fld) != null) {
                 if ($fvt_lst->get_old_id($fld) != null) {
                     $par_lst_out->add_field(
                         $fvt_lst->get_par_name($fld) . change::FLD_OLD_EXT,
@@ -1685,11 +1801,14 @@ class sql_creator
                         $fvt_lst->get_type($fld));
                 }
             }
-            if ($fvt_lst->get_id($fld) != null) {
+            if ($fvt_lst->get_id($fld) != null or $fvt_lst->get_old_id($fld) != null) {
+                // a null text value does not need to be included in the parameter list because null is anyway the default value for the log
+                //if ($fvt_lst->get_value($fld) != null) {
                 $par_lst_out->add_field(
                     $fvt_lst->get_par_name($fld),
                     $fvt_lst->get_value($fld),
                     $fvt_lst->get_type($fld));
+                //}
                 $par_lst_out->add_field(
                     $fld,
                     $fvt_lst->get_id($fld),
@@ -1698,7 +1817,13 @@ class sql_creator
                 $par_lst_out->add($fvt_lst->get($fld));
             }
             if ($usr_tbl) {
-                $par_lst_out->add($fvt_lst->get($id_fld));
+                if (is_array($id_fld)) {
+                    foreach ($id_fld as $is_fld_part) {
+                        $par_lst_out->add($fvt_lst->get($is_fld_part));
+                    }
+                } else {
+                    $par_lst_out->add($fvt_lst->get($id_fld));
+                }
             }
         }
 
@@ -1709,13 +1834,34 @@ class sql_creator
     }
 
     /**
+     * TODO combine with sandbox_value function
+     * @return bool true if the class is one of the value classes and not a result class
+     */
+    private function is_value_class(string $class): bool
+    {
+        if ($class == value::class
+            or $class == value_time::class
+            or $class == value_text::class
+            or $class == value_geo::class
+            or $class == value_time_series::class) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    /**
      * create the sql function part to log the update changes
+     * TODO combine with sql_func_log function or move common parts to private functions
+     *
      * @param string $class the class name of the calling object
      * @param user $usr the user who has requested the change
      * @param array $fld_lst list of field names that should be logged (excluding internal field like last_update)
      * @param sql_par_field_list $fvt_lst fields (with value and type) used for the change (including internal fields)
-     * @param sql_type_list $sc_par_lst
-     * @param int $id the id of the
+     * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param int|string $id the id of the db row that should be updated
+     * @param sandbox_multi|null $val the value object e.g. the select the correct log table
      * @return sql_par with the sql and the list of parameters actually used
      */
     function sql_func_log_update(
@@ -1724,7 +1870,8 @@ class sql_creator
         array              $fld_lst,
         sql_par_field_list $fvt_lst,
         sql_type_list      $sc_par_lst,
-        int                $id
+        int|string         $id,
+        sandbox_multi|null $val = null
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1733,7 +1880,7 @@ class sql_creator
         $ext = sql::NAME_SEP . self::FILE_INSERT;
 
         // init the result
-        $qp = new sql_par($class);
+        $qp = new sql_par($class, $sc_par_lst);
         $par_lst_out = new sql_par_field_list();
         $qp->sql = ' ';
 
@@ -1749,7 +1896,11 @@ class sql_creator
         foreach ($fld_lst as $fld) {
 
             // create the insert log statement for the field of the loop
-            $log = new change($usr);
+            if ($val != null) {
+                $log = $this->log_value_object($val, $usr, $sc_par_lst);
+            } else {
+                $log = new change($usr);
+            }
             $log->set_class($class);
             $log->set_field($fld);
             $log->old_value = $fvt_lst->get_old($fld);
@@ -1838,10 +1989,12 @@ class sql_creator
             if ($log_id == null) {
                 $log_id = $id;
             }
+
+            $id_type = $fvt_lst->get_type($id_fld);
             $par_lst_out->add_field(
                 $id_fld,
                 $log_id,
-                db_object_seq_id::FLD_ID_SQL_TYP);
+                $id_type);
 
         }
 
@@ -1857,7 +2010,7 @@ class sql_creator
      * @param sandbox|sandbox_link|sandbox_link_named $dbo the sandbox object as in db without user updates
      * @param user $usr
      * @param sql_par_field_list $fvt_lst
-     * @param sql_type_list $sc_par_lst
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return sql_par
      */
     function sql_func_log_link(
@@ -1941,7 +2094,7 @@ class sql_creator
      * @param sandbox|sandbox_link|sandbox_link_named $sbx the name of the calling class use for the query names
      * @param user $usr
      * @param sql_par_field_list $fvt_lst
-     * @param sql_type_list $sc_par_lst
+     * @param sql_type_list $sc_par_lst of parameters for the sql creation
      * @return sql_par
      */
     function sql_func_log_user_link(
@@ -2010,45 +2163,44 @@ class sql_creator
     }
 
     /**
-     * create the sql function part to log adding a link
-     * @param sandbox_value $sbx the name of the calling class use for the query names
+     * create the sql function part to log adding or updating only a value in the database
+     * the value parameters are logged with the sql_func_log and sql_func_log_update function
+     *
+     * @param sandbox_multi $sbx the name of the calling class use for the query names
      * @param user $usr the user who has requested the change
      * @param sql_par_field_list $fvt_lst list of fields, values and types to fill the log entry
      * @param sql_type_list $sc_par_lst sql parameters e.g. if the prime table should be used
      * @return sql_par the sql statement with the parameter to add the log entry
      */
     function sql_func_log_value(
-        sandbox_value      $sbx,
+        sandbox_multi      $sbx,
         user               $usr,
         sql_par_field_list $fvt_lst,
         sql_type_list      $sc_par_lst
     ): sql_par
     {
-        // get the change table id
         global $cng_tbl_cac;
         global $cng_fld_cac;
+
+        // get the change table id
         $lib = new library();
         $table_name = $lib->class_to_table($sbx::class);
         $table_id = $cng_tbl_cac->id($table_name);
 
         // select which log to use and set the parameters
-        if ($sc_par_lst->is_prime()) {
-            $log = new change_values_prime($usr);
-        } elseif ($sc_par_lst->is_big()) {
-            $log = new change_values_big($usr);
-        } else {
-            $log = new change_values_norm($usr);
-        }
+        $num_fld = $sbx::FLD_VALUE;
+        $num_fld_typ = $sbx->sql_field_type();
+        $log = $this->log_value_object($sbx, $usr, $sc_par_lst);
         $log->set_class($sbx::class);
-        $log->set_field(sandbox_value::FLD_VALUE);
+        $log->set_field($num_fld);
 
         $log->group_id = $fvt_lst->get_value(group::FLD_ID);
         $val_old = null;
         if ($sc_par_lst->is_update()) {
-            $val_old = $fvt_lst->get_old(sandbox_value::FLD_VALUE);
+            $val_old = $fvt_lst->get_old($num_fld);
             $log->old_value = $val_old;
         }
-        $val_new = $fvt_lst->get_value(sandbox_value::FLD_VALUE);
+        $val_new = $fvt_lst->get_value($num_fld);
         $log->new_value = $val_new;
 
         // set the parameters for the log sql statement creation
@@ -2058,7 +2210,7 @@ class sql_creator
         $sc_par_lst->add(sql_type::INSERT_PART);
 
         // create the sql for the log entry
-        $qp = $log->sql_insert($sc_log, $sc_par_lst, '', '', sandbox_value::FLD_VALUE);
+        $qp = $log->sql_insert($sc_log, $sc_par_lst, '', '', $num_fld);
 
         // fill the parameter list in order of usage in the sql
         $par_lst_out = new sql_par_field_list();
@@ -2075,22 +2227,22 @@ class sql_creator
             $fvt_lst->get_value(change_action::FLD_ID),
             sql_par_type::INT_SMALL);
         $par_lst_out->add_field(
-            sql::FLD_LOG_FIELD_PREFIX . sandbox_value::FLD_VALUE,
-            $cng_fld_cac->id($table_id . sandbox_value::FLD_VALUE),
+            sql::FLD_LOG_FIELD_PREFIX . $num_fld,
+            $cng_fld_cac->id($table_id . $num_fld),
             change::FLD_FIELD_ID_SQL_TYP
         );
         if ($sc_par_lst->is_update()) {
             $par_lst_out->add_field(
-                sandbox_value::FLD_VALUE . change::FLD_OLD_EXT,
+                $num_fld . change::FLD_OLD_EXT,
                 $val_old,
-                sql_field_type::NUMERIC_FLOAT
+                $num_fld_typ
             );
         }
         if (!$sc_par_lst->is_delete()) {
             $par_lst_out->add_field(
-                sandbox_value::FLD_VALUE,
+                $num_fld,
                 $val_new,
-                sql_field_type::NUMERIC_FLOAT
+                $num_fld_typ
             );
         }
         if (is_numeric($log->group_id)) {
@@ -2107,6 +2259,63 @@ class sql_creator
         $qp->par_fld_lst = $par_lst_out;
 
         return $qp;
+    }
+
+    /**
+     * gat the log object for a value because e.g. the group_id db key field type differs
+     * for changing parameters of a prime value the log table with the bigint group_id can be used
+     * but for changing parameters of a value with a 512-bit key the log table with the 512-bit key group_id must be used
+     *
+     * @param sandbox_multi $sbx
+     * @param user $usr
+     * @param sql_type_list $sc_par_lst
+     * @return change_value
+     */
+    private function log_value_object(
+        sandbox_multi $sbx,
+        user          $usr,
+        sql_type_list $sc_par_lst
+    ): change_value
+    {
+        if ($sc_par_lst->is_prime()) {
+            if ($sbx->is_numeric()) {
+                $log = new change_values_prime($usr);
+            } elseif ($sbx->is_time_value()) {
+                $log = new change_values_time_prime($usr);
+            } elseif ($sbx->is_text_value()) {
+                $log = new change_values_text_prime($usr);
+            } elseif ($sbx->is_geo_value()) {
+                $log = new change_values_geo_prime($usr);
+            } else {
+                $log = new change_values_prime($usr);
+            }
+        } elseif ($sc_par_lst->is_big()) {
+            if ($sbx->is_numeric()) {
+                $log = new change_values_big($usr);
+            } elseif ($sbx->is_time_value()) {
+                $log = new change_values_time_big($usr);
+            } elseif ($sbx->is_text_value()) {
+                $log = new change_values_text_big($usr);
+            } elseif ($sbx->is_geo_value()) {
+                $log = new change_values_geo_big($usr);
+            } else {
+                $log = new change_values_big($usr);
+            }
+        } else {
+            if ($sbx->is_numeric()) {
+                $log = new change_values_norm($usr);
+            } elseif ($sbx->is_time_value()) {
+                $log = new change_values_time_norm($usr);
+            } elseif ($sbx->is_text_value()) {
+                $log = new change_values_text_norm($usr);
+            } elseif ($sbx->is_geo_value()) {
+                $log = new change_values_geo_norm($usr);
+            } else {
+                $log = new change_values_norm($usr);
+            }
+        }
+
+        return $log;
     }
 
     /**
@@ -2189,7 +2398,7 @@ class sql_creator
      */
     function create_sql_delete_fvt(
         sql_par_field_list $fvt_lst_id,
-        sql_type_list      $sc_par_lst = new sql_type_list([])
+        sql_type_list      $sc_par_lst = new sql_type_list()
     ): string
     {
 
@@ -2221,7 +2430,7 @@ class sql_creator
                 $sql = sql::DELETE . ' ' . $this->table . ' ';
                 $sql .= $sql_where;
                 if ($sc_par_lst->exclude_sql()) {
-                    $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                    $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
                 }
             }
         } else {
@@ -2230,7 +2439,7 @@ class sql_creator
             $sql .= $sql_where;
 
             if ($sc_par_lst->exclude_sql()) {
-                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
         }
 
@@ -2250,7 +2459,7 @@ class sql_creator
      */
     function create_sql_delete_fvt_new(
         sql_par_field_list $fvt_lst_id,
-        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_type_list      $sc_par_lst = new sql_type_list(),
         sql_par_field_list $fvt_lst = new sql_par_field_list()
     ): string
     {
@@ -2261,7 +2470,7 @@ class sql_creator
             $sql .= ' ' . $this->name_sql_esc($this->table) . ' ';
             $sql .= $this->sql_where_fvt($fvt_lst_id);
             if ($sc_par_lst->exclude_sql()) {
-                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
             $sql .= sql::SEP;
         }
@@ -2281,7 +2490,7 @@ class sql_creator
     function create_sql_delete(
         int|string|array   $id_field,
         int|string|array   $id,
-        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_type_list      $sc_par_lst = new sql_type_list(),
         sql_par_field_list $fvt_lst = new sql_par_field_list(),
     ): string
     {
@@ -2317,7 +2526,7 @@ class sql_creator
                 $sql = sql::DELETE . ' ' . $this->table . ' ';
                 $sql .= $sql_where;
                 if ($excluded) {
-                    $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                    $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
                 }
             }
         } else {
@@ -2326,7 +2535,7 @@ class sql_creator
             $sql .= $sql_where;
 
             if ($excluded) {
-                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
         }
 
@@ -2452,7 +2661,7 @@ class sql_creator
      */
     private function sql_where_fvt_new(
         sql_par_field_list $fvt_lst_id,
-        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_type_list      $sc_par_lst = new sql_type_list(),
         int                $offset = 0
     ): string
     {
@@ -2613,9 +2822,51 @@ class sql_creator
      */
     private function str_array_to_sql_string(array $str_array): string
     {
-        // TODO check how to escape ","
+        // TODO Prio 3 check if escape function of the database can be used
+        $str_array = $this->str_array_esc_comma($str_array);
         return "{" . implode(",", $str_array) . "}";
     }
+
+    private function str_array_esc_comma(array $str_array): array
+    {
+        $result = [];
+        foreach ($str_array as $key => $txt) {
+            if (str_contains($txt, ',')) {
+                $result[$key] = '"' . $txt . '"';
+            } else {
+                $result[$key] = $txt;
+            }
+        }
+        return $result;
+    }
+
+    // TODO test where this is needed
+    private function str_array_esc_high_quote(array $str_array): array
+    {
+        $result = [];
+        foreach ($str_array as $key => $txt) {
+            if (str_contains($txt, "'")) {
+                $txt = str_replace("'", "''", $txt);
+            }
+            $result[$key] = $txt;
+        }
+        return $result;
+    }
+
+    /*
+    // TODO test where this is needed
+    private function str_array_esc_dollar(array $str_array): array
+    {
+        $result = [];
+        foreach ($str_array as $key => $txt) {
+            if (str_contains($txt, "$")) {
+                $txt = str_replace("'", "''", $txt);
+            }
+            $result[$key] = $txt;
+        }
+        return $result;
+    }
+    */
 
     /**
      * create the field statement based on the fields
@@ -2931,6 +3182,13 @@ class sql_creator
             $result .= $this->set_field_usr_num($field);
         }
 
+        // add user specific geo point fields
+        foreach ($this->usr_geo_field_lst as $field) {
+            $field = $this->name_sql_esc($field);
+            $result = $this->sep($result);
+            $result .= $this->set_field_usr_geo($field);
+        }
+
         // add user specific boolean fields
         foreach ($this->usr_bool_field_lst as $field) {
             $field = $this->name_sql_esc($field);
@@ -2946,6 +3204,17 @@ class sql_creator
                 $result .= $this->set_field_usr_text($field_esc, sql_db::LNK_TBL, sql_db::ULK_TBL, $this->name_sql_esc($field . '1'));
             } else {
                 $result .= $this->set_field_usr_text($field_esc, sql_db::LNK_TBL, sql_db::ULK_TBL);
+            }
+        }
+
+        // add user specific geo point join fields
+        foreach ($this->join_usr_geo_field_lst as $field) {
+            $field_esc = $this->name_sql_esc($field);
+            $result = $this->sep($result);
+            if ($this->join_force_rename) {
+                $result .= $this->set_field_usr_geo($field_esc, sql_db::LNK_TBL, sql_db::ULK_TBL, $this->name_sql_esc($field . '1'));
+            } else {
+                $result .= $this->set_field_usr_geo($field_esc, sql_db::LNK_TBL, sql_db::ULK_TBL);
             }
         }
 
@@ -3317,7 +3586,7 @@ class sql_creator
             // set the opening bracket around a or field list if needed
             $is_or = $typ->is_or();
 
-            // check if the next is an or and if yes open the braket now
+            // check if the next is an or and if yes open the bracket now
             if (!$typ->is_or()) {
                 if (isset($this->par_where->lst[$key + 1])) {
                     $next_where_fld = $this->par_where->lst[$key + 1];
@@ -3456,8 +3725,7 @@ class sql_creator
                 $sql_where .= $tbl . $fld . ' IS NULL ';
             } elseif ($typ == sql_par_type::NOT_NULL) {
                 //$par_offset--;
-                // TODO review table prefix
-                $sql_where .= sql_db::LNK_TBL . '.' . $fld . ' IS NOT NULL ';
+                $sql_where .= $tbl . $fld . ' IS NOT NULL ';
             } elseif ($typ == sql_par_type::INT_NOT) {
                 $sql_where .= $tbl . $fld . ' <> ' . $par->name;
             } elseif ($typ == sql_par_type::INT_NOT_OR_NULL) {
@@ -3477,13 +3745,13 @@ class sql_creator
 
             // include rows where code_id is null
             if ($typ == sql_par_type::TEXT or $typ == sql_par_type::KEY_512) {
-                if ($fld == sql::FLD_CODE_ID) {
+                if ($fld == sql_db::FLD_CODE_ID) {
                     if ($this->db_type == sql_db::POSTGRES) {
                         $sql_where .= ' ' . sql::AND . ' ';
                         if ($this->usr_query or $this->join <> '') {
                             $sql_where .= sql_db::STD_TBL . '.';
                         }
-                        $sql_where .= sql::FLD_CODE_ID . ' IS NOT NULL';
+                        $sql_where .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
                     }
                 }
             }
@@ -3655,13 +3923,13 @@ class sql_creator
 
                         // include rows where code_id is null
                         if ($typ == sql_par_type::TEXT or $typ == sql_par_type::KEY_512) {
-                            if ($this->par_lst->name($i) == sql::FLD_CODE_ID) {
+                            if ($this->par_lst->name($i) == sql_db::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $result .= ' ' . sql::AND . ' ';
                                     if ($this->usr_query or $this->join <> '') {
                                         $result .= sql_db::STD_TBL . '.';
                                     }
-                                    $result .= sql::FLD_CODE_ID . ' IS NOT NULL';
+                                    $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
                                 }
                             }
                         }
@@ -3820,7 +4088,7 @@ class sql_creator
      */
     private function prepare_this_sql(
         string             $sql_statement_type = sql::SELECT,
-        sql_type_list      $sc_par_lst = new sql_type_list([]),
+        sql_type_list      $sc_par_lst = new sql_type_list(),
         sql_par_field_list $fvt_lst = new sql_par_field_list()
     ): string
     {
@@ -4357,7 +4625,7 @@ class sql_creator
     private function end_sql(
         string        $sql,
         string        $sql_statement_type = sql::SELECT,
-        sql_type_list $sc_par_lst = new sql_type_list([]),
+        sql_type_list $sc_par_lst = new sql_type_list(),
         string        $new_id_fld = ''
     ): string
     {
@@ -4435,6 +4703,51 @@ class sql_creator
     function get_par_types(): array
     {
         return $this->par_lst->types();
+    }
+
+    /**
+     * create the SQL parameters to count the number of rows related to a database table type
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function count_qp(string $class_name = '', string $id_fld = ''): sql_par
+    {
+        $lib = new library();
+        if ($class_name == '') {
+            $class_name = $lib->class_to_name($this->class);
+        }
+        $qp = new sql_par($class_name);
+        $qp->name = $class_name . sql::NAME_EXT_COUNT;
+        $qp->sql = $this->count_sql($qp->name, $id_fld);
+        return $qp;
+    }
+
+    /**
+     * create a SQL select statement to count the number of rows related to a database table type
+     * the table type includes the table for the standard parameters and the user sandbox exceptions
+     * @return string the created SQL statement in the previous set dialect
+     */
+    function count_sql(string $sql_name = '', string $id_fld = ''): string
+    {
+        $lib = new library();
+        $class = $lib->class_to_name($this->class);
+        if ($id_fld == '') {
+            $id_fld = $lib->class_to_id_field($this->class);
+        }
+        if ($sql_name == '') {
+            $sql_name = $class . sql::NAME_EXT_COUNT;
+        }
+        if ($lib->class_is_sandbox($this->class)) {
+            return sql::PREPARE . ' ' . $sql_name . ' ' . sql::AS . '
+                ' . sql::SELECT . ' ' . sql::FUNCTION_COUNT . '(' . sql_db::STD_TBL . '.' . $id_fld . ') 
+                                  + ' . sql::FUNCTION_COUNT . '(' . sql_db::USR_TBL . '.' . $id_fld . ') ' . sql::AS . ' count
+                  ' . sql::FROM . ' ' . $this->table . ' ' . sql_db::STD_TBL . '
+             ' . sql::LEFT_JOIN . ' ' . sql_db::USER_PREFIX . $this->table . '  ' . sql_db::USR_TBL . ' 
+                    ' . sql::ON . ' ' . sql_db::STD_TBL . '.' . $id_fld . ' = ' . sql_db::USR_TBL . '.' . $id_fld . ';';
+        } else {
+            return sql::PREPARE . ' ' . $sql_name . ' ' . sql::AS . '
+                ' . sql::SELECT . ' ' . sql::FUNCTION_COUNT . '(' . $id_fld . ') ' . sql::AS . ' count
+                  ' . sql::FROM . ' ' . $this->table . ';';
+        }
     }
 
     /**
@@ -4551,10 +4864,37 @@ class sql_creator
         if ($result == 'change_values_prime_id') {
             $result = 'change_id';
         }
+        if ($result == 'change_values_time_prime_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'change_values_text_prime_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'change_values_geo_prime_id') {
+            $result = 'change_id';
+        }
         if ($result == 'change_values_norm_id') {
             $result = 'change_id';
         }
+        if ($result == 'change_values_time_norm_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'change_values_text_norm_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'change_values_geo_norm_id') {
+            $result = 'change_id';
+        }
         if ($result == 'change_values_big_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'change_values_time_big_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'change_values_text_big_id') {
+            $result = 'change_id';
+        }
+        if ($result == 'change_values_geo_big_id') {
             $result = 'change_id';
         }
         return $result;
@@ -4587,6 +4927,7 @@ class sql_creator
         if (!str_ends_with($this->table, $ext)) {
             $this->table .= $ext;
         }
+        $this->table = $this->fix_table_name($this->table);
         log_debug('to "' . $this->table . '"', $debug - 20);
     }
 
@@ -4630,11 +4971,38 @@ class sql_creator
         if ($result == 'change_values_norms') {
             $result = 'change_values_norm';
         }
+        if ($result == 'change_values_time_norms') {
+            $result = 'change_values_time_norm';
+        }
+        if ($result == 'change_values_text_norms') {
+            $result = 'change_values_text_norm';
+        }
+        if ($result == 'change_values_geo_norms') {
+            $result = 'change_values_geo_norm';
+        }
         if ($result == 'change_values_primes') {
             $result = 'change_values_prime';
         }
+        if ($result == 'change_values_time_primes') {
+            $result = 'change_values_time_prime';
+        }
+        if ($result == 'change_values_text_primes') {
+            $result = 'change_values_text_prime';
+        }
+        if ($result == 'change_values_geo_primes') {
+            $result = 'change_values_geo_prime';
+        }
         if ($result == 'change_values_bigs') {
             $result = 'change_values_big';
+        }
+        if ($result == 'change_values_time_bigs') {
+            $result = 'change_values_time_big';
+        }
+        if ($result == 'change_values_text_bigs') {
+            $result = 'change_values_text_big';
+        }
+        if ($result == 'change_values_geo_bigs') {
+            $result = 'change_values_geo_big';
         }
         if ($result == 'sys_log_statuss') {
             $result = 'sys_log_status';
@@ -4653,6 +5021,15 @@ class sql_creator
         }
         if ($result == 'userss') {
             $result = 'users';
+        }
+        if ($result == 'value_times') {
+            $result = 'values_time';
+        }
+        if ($result == 'value_texts') {
+            $result = 'values_text';
+        }
+        if ($result == 'value_geos') {
+            $result = 'values_geo';
         }
         if ($result == 'value_time_seriess') {
             $result = 'values_time_series';
@@ -4692,6 +5069,50 @@ class sql_creator
     }
 
     /**
+     * final exception correction of the table name
+     * TODO Prio 3 deprecate because this should not be needed
+     *
+     * @param string $name the generated table name
+     * @return string the corrected table name
+     */
+    function fix_table_name(string $name): string
+    {
+        if ($name == 'change_values_time_prime_time_prime') {
+            $name = 'change_values_time_prime';
+        }
+        if ($name == 'change_values_text_prime_text_prime') {
+            $name = 'change_values_text_prime';
+        }
+        if ($name == 'change_values_geo_prime_geo_prime') {
+            $name = 'change_values_geo_prime';
+        }
+        if ($name == 'change_values_time_norm_time_norm') {
+            $name = 'change_values_time_norm';
+        }
+        if ($name == 'change_values_text_norm_text_norm') {
+            $name = 'change_values_text_norm';
+        }
+        if ($name == 'change_values_geo_norm_geo_norm') {
+            $name = 'change_values_geo_norm';
+        }
+        if ($name == 'change_values_time_big_time_big') {
+            $name = 'change_values_time_big';
+        }
+        if ($name == 'change_values_text_big_text_big') {
+            $name = 'change_values_text_big';
+        }
+        if ($name == 'change_values_geo_big_geo_big') {
+            $name = 'change_values_geo_big';
+        }
+        // no extra table for prime value changes is used at the moment
+        if ($name == 'changes_prime') {
+            $name = 'changes';
+        }
+        return $name;
+    }
+
+
+    /**
      * the expect name field based on the given database object name
      * @return string the field name of the unique database name used as an index
      */
@@ -4709,55 +5130,58 @@ class sql_creator
         $result = $type . '_name';
         // TODO remove these exceptions for a unique name in the "with_log" undate queries
         if ($result == 'link_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_link_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'component_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
+        }
+        if ($result == 'component_link_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'position_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'element_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'formula_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'formula_link_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'ref_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'source_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'share_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'protection_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'profile_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'job_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
         if ($result == 'triple_name') {
@@ -4900,15 +5324,13 @@ class sql_creator
      *                 in the previous set dialect
      */
     function load_sql_not_changed_multi(
-        int|string   $id,
-        ?int         $owner_id = 0,
-        string|array $id_field = '',
-        string       $ext = '',
-        sql_type     $tbl_typ = sql_type::MOST
+        int|string    $id,
+        ?int          $owner_id = 0,
+        string|array  $id_field = '',
+        string        $ext = '',
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
-        $sc_par_lst = new sql_type_list([]);
-        $sc_par_lst->add($tbl_typ);
         $qp = new sql_par($this->class, $sc_par_lst);
         $qp->name .= 'not_changed';
         if ($owner_id > 0) {
@@ -4924,7 +5346,7 @@ class sql_creator
         } else {
             // TODO review
             $sql_mid_where = '';
-            if ($tbl_typ == sql_type::PRIME) {
+            if ($sc_par_lst->is_prime()) {
                 $grp_id = new group_id();
                 $id_lst = $grp_id->get_array($id, true);
                 if (is_array($this->id_field)) {
@@ -4951,7 +5373,7 @@ class sql_creator
                 } else {
                     log_err('the id fields are expected to be an array');
                 }
-            } elseif ($tbl_typ == sql_type::BIG) {
+            } elseif ($sc_par_lst->is_big()) {
                 $sql_mid_where .= ' ' . sql::WHERE . ' ';
                 $this->add_par(sql_par_type::TEXT, $id);
             } else {
@@ -5037,7 +5459,7 @@ class sql_creator
         $lib = new library();
 
         $qp = new sql_par($class, new sql_type_list([sql_type::DELETE]));
-        $this->set_class($class, new sql_type_list([]));
+        $this->set_class($class, new sql_type_list());
         $this->add_where($id_field, $id_lst, sql_par_type::INT_LIST);
         $sql = sql::DELETE . ' ' . $this->name_sql_esc($this->table) . ' ';
         $sql .= sql::WHERE . ' ' . $id_field . ' ';
@@ -5094,6 +5516,20 @@ class sql_creator
         string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL, string $as = ''): string
     {
         return $this->sql_usr_field($field, sql_db::FLD_FORMAT_VAL, $stb_tbl, $usr_tbl, $as);
+    }
+
+    /**
+     * internal interface function for sql_usr_field using the class db type settings and geo point fields
+     * @param string $field the field name of the user specific field
+     * @param string $stb_tbl the table prefix for the table with the default values for all users
+     * @param string $usr_tbl the table prefix for the table with the user specific values
+     * @param string $as to overwrite the field name than contains the user specific value or the default value
+     * @return string the SQL statement for a field taken from the user sandbox table or from the table with the common values
+     */
+    private function set_field_usr_geo(
+        string $field, string $stb_tbl = sql_db::STD_TBL, string $usr_tbl = sql_db::USR_TBL, string $as = ''): string
+    {
+        return $this->sql_usr_field($field, sql_db::FLD_FORMAT_GEO, $stb_tbl, $usr_tbl, $as);
     }
 
     /**
@@ -5168,12 +5604,18 @@ class sql_creator
             if ($field_format == sql_db::FLD_FORMAT_TEXT) {
                 $result = " "
                     . sql::CASE . " (" . $usr_tbl . "." . $field . " <> '' " . sql::NOT_TRUE . ") "
-                    . sql::THEN . " "  . $stb_tbl . "." . $field . " "
+                    . sql::THEN . " " . $stb_tbl . "." . $field . " "
                     . sql::ELSE . " " . $usr_tbl . "." . $field . " " . sql::END . " "
                     . sql::AS . " " . $as;
             } elseif ($field_format == sql_db::FLD_FORMAT_VAL) {
                 $result = " "
                     . sql::CASE . " (" . $usr_tbl . "." . $field . " " . sql::IS_NULL . ") "
+                    . sql::THEN . " " . $stb_tbl . "." . $field . " "
+                    . sql::ELSE . " " . $usr_tbl . "." . $field . " " . sql::END . " "
+                    . sql::AS . " " . $as;
+            } elseif ($field_format == sql_db::FLD_FORMAT_GEO) {
+                $result = " "
+                    . sql::CASE . " (point_eq(" . $usr_tbl . "." . $field . ", " . sql::NULL . ")) "
                     . sql::THEN . " " . $stb_tbl . "." . $field . " "
                     . sql::ELSE . " " . $usr_tbl . "." . $field . " " . sql::END . " "
                     . sql::AS . " " . $as;
@@ -5187,7 +5629,9 @@ class sql_creator
                 log_err('Unexpected field format ' . $field_format);
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
-            if ($field_format == sql_db::FLD_FORMAT_TEXT or $field_format == sql_db::FLD_FORMAT_VAL) {
+            if ($field_format == sql_db::FLD_FORMAT_TEXT
+                or $field_format == sql_db::FLD_FORMAT_VAL
+                or $field_format == sql_db::FLD_FORMAT_GEO) {
                 $result = ' '
                     . sql::CASE_MYSQL . $usr_tbl . '.' . $field . ' ' . sql::IS_NULL
                     . sql::THEN_MYSQL . ' ' . $stb_tbl . '.' . $field
@@ -5206,6 +5650,32 @@ class sql_creator
             log_err('Unexpected database type ' . $this->db_type);
         }
         return $result;
+    }
+
+
+    /*
+     * db roles
+     */
+
+    /**
+     * create the SQL statement to add a role to the database
+     * TODO review and test the MySQL role
+     * @param string $name
+     * @param string $pw
+     * @return string the sql statement to create a role
+     */
+    function create_db_role(string $name, string $pw): string
+    {
+        $sql = sql::ROLE_CREATE . ' ' . $name . ' ';
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql .= sql::ROLE_WITH . ' ' . sql::PASSWORD . $pw . sql::PASSWORD_END;
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $sql .= sql::ROLE_WITH_MYSQL . ' ' . sql::PASSWORD . $pw . sql::PASSWORD_END;
+        } else {
+            log_err('Unexpected database type ' . $this->db_type);
+        }
+        $sql .= sql::SEP;
+        return $sql;
     }
 
 
@@ -5271,13 +5741,12 @@ class sql_creator
     }
 
     /**
-     * @return string with the name of the id field
+     * @return string|array with the name of the id field
      */
-    function id_field_name(): string
+    function id_field_name(): string|array
     {
         return $this->id_field;
     }
-
 
 
     /*

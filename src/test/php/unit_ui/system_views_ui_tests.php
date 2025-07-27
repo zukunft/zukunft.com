@@ -32,12 +32,13 @@
 
 namespace unit_ui;
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 use html\html_base;
-use html\word\word as word_dsp;
+use shared\const\views as view_shared;
 use test\test_cleanup;
-use shared\views as view_shared;
 
 class system_views_ui_tests
 {
@@ -48,7 +49,9 @@ class system_views_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('System view tests');
+        // start the test section (ts)
+        $ts = 'unit ui html system view ';
+        $t->header($ts);
 
         // test the type list display functions
         $test_page = $html->text_h2('add word');
@@ -56,11 +59,11 @@ class system_views_ui_tests
         $wrd = $t->word_dsp();
 
         // check if the system views have set
-        $msk = $html_system_views->get(view_shared::MC_WORD_ADD);
+        $msk = $html_system_views->get_by_code_id(view_shared::WORD_ADD);
         $test_page .= $msk->show($wrd, null, $back) . '<br>';
 
         // TODO review and combine with read db tests
-        $t->html_view_test($test_page, view_shared::MC_WORD_ADD, $t);
+        $t->html_view_test($test_page, view_shared::WORD_ADD, $t);
     }
 
 }

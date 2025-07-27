@@ -28,24 +28,27 @@
 
 namespace unit;
 
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
 
-use api\formula\formula as formula_api;
-use api\word\triple as triple_api;
-use api\verb\verb as verb_api;
-use api\word\word as word_api;
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'words.php';
+
 use cfg\db\sql_creator;
-use cfg\phrase\phrase_list;
-use cfg\phrase\trm_ids;
-use html\html_base;
-use html\phrase\term_list as term_list_dsp;
-use cfg\formula\formula;
 use cfg\db\sql_db;
+use cfg\formula\formula;
 use cfg\phrase\term;
 use cfg\phrase\term_list;
-use cfg\word\triple;
+use cfg\phrase\trm_ids;
 use cfg\verb\verb;
+use cfg\word\triple;
 use cfg\word\word;
+use html\html_base;
+use html\phrase\term_list as term_list_dsp;
+use shared\const\formulas;
+use shared\const\triples;
+use shared\const\words;
 use shared\types\verbs;
 use test\test_cleanup;
 
@@ -69,36 +72,37 @@ class term_list_tests
         $t->name = 'term_list->';
         $t->resource_path = 'db/term/';
 
-        $t->header('Unit tests of the term list class (src/main/php/model/phrase/term_list.php)');
+        // start the test section (ts)
+        $ts = 'unit term list ';
+        $t->header($ts);
 
-        $html = new html_base();
-
-        $t->subheader('term list display tests');
+        $t->subheader($ts . 'term list display');
 
         $this->t = $t;
 
 
-        $t->subheader('SQL statement creation tests');
+        $t->subheader($ts . 'sql statement creation');
 
         // load only the names
         $phr_lst = new term_list($usr);
         $t->assert_sql_names($sc, $phr_lst, new term($usr));
-        $t->assert_sql_names($sc, $phr_lst, new term($usr), verb_api::TN_IS);
+        $t->assert_sql_names($sc, $phr_lst, new term($usr), verbs::IS_NAME);
 
+        $test_name = 'load terms by ids';
         $trm_lst = new term_list($usr);
         $trm_ids = new trm_ids(array(3, -2, 4, -7));
-        $t->assert_sql_by_ids($sc, $trm_lst, $trm_ids);
+        $t->assert_sql_by_ids($test_name, $sc, $trm_lst, $trm_ids);
         $lst = $this->new_list();
         $t->assert_sql_like($sc, $lst);
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $trm_lst = $t->term_list();
         $t->assert_api($trm_lst);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $trm_lst = $t->term_list();
         $t->assert_api_to_dsp($trm_lst, new term_list_dsp());
@@ -113,11 +117,11 @@ class term_list_tests
         global $usr;
 
         $lst = new term_list($usr);
-        $lst->add($this->t->new_word(word_api::TN_READ)->term());
+        $lst->add($this->t->new_word(words::MATH)->term());
         $lst->add($this->t->new_triple(
-            triple_api::TN_PI_NAME,
-            triple_api::TN_PI, verbs::IS, word_api::TN_READ)->term());
-        $lst->add($this->t->new_formula(formula_api::TN_INCREASE)->term());
+            triples::PI_NAME,
+            words::PI, verbs::IS, words::MATH)->term());
+        $lst->add($this->t->new_formula(formulas::INCREASE)->term());
         $lst->add($this->t->new_verb(verbs::IS)->term());
         return $lst;
     }

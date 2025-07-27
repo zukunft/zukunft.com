@@ -3,7 +3,7 @@
 /*
 
     web/types/language_form.php - the preloaded data language_forms used for the html frontend
-    ------------------------
+    ---------------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -31,8 +31,6 @@
 */
 
 namespace html\types;
-
-use html\html_selector;
 
 class language_forms extends type_list
 {

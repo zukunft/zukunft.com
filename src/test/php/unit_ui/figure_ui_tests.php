@@ -42,7 +42,9 @@ class figure_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('Figure tests');
+        // start the test section (ts)
+        $ts = 'unit ui html figure ';
+        $t->header($ts);
 
         $fig = new figure_dsp($t->figure_value()->api_json());
         $test_page = $html->text_h2('Figure display test');

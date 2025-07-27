@@ -54,9 +54,11 @@
 
 namespace cfg\group;
 
-include_once MODEL_GROUP_PATH . 'id.php';
-include_once DB_PATH . 'sql_type.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_GROUP . 'id.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
 
 use cfg\db\sql_type;
 use cfg\phrase\phrase_list;
@@ -78,10 +80,11 @@ class group_id extends id
 
     /**
      * @param phrase_list $phr_lst the list of phrases that define the value
+     * @param bool $fill true if a 512-bit key should be created
      * @return int|string the group id based on the given phrase list
      *                    as 64-bit integer, 512-bit key as 112 chars or list of more than 16 keys with 6 chars
      */
-    function get_id(phrase_list $phr_lst): int|string
+    function get_id(phrase_list $phr_lst, bool $fill = true): int|string
     {
         if ($phr_lst->count() <= self::PRIME_PHRASES_STD
             and $phr_lst->prime_only()
@@ -91,7 +94,7 @@ class group_id extends id
             $db_key = $this->int_group_id($phr_lst);
         } elseif ($phr_lst->count() <= self::STANDARD_PHRASES) {
             $phr_lst = $phr_lst->sort_by_id();
-            $db_key = $this->alpha_num($phr_lst);
+            $db_key = $this->alpha_num($phr_lst, $fill);
         } else {
             $phr_lst = $phr_lst->sort_by_id();
             $db_key = $this->alpha_num_big($phr_lst);

@@ -32,19 +32,22 @@
 
 namespace unit;
 
-include_once MODEL_WORD_PATH . 'triple_list.php';
-include_once WEB_WORD_PATH . 'triple_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
 
-use api\word\triple as triple_api;
+include_once paths::MODEL_WORD . 'triple_list.php';
+include_once html_paths::WORD . 'triple_list.php';
+
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
+use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\triple_list;
-use cfg\verb\verb;
 use html\word\triple_list as triple_list_dsp;
 use shared\enum\foaf_direction;
+use shared\const\triples;
 use test\test_cleanup;
 
 class triple_list_tests
@@ -60,18 +63,21 @@ class triple_list_tests
         $t->name = 'triple_list->';
         $t->resource_path = 'db/triple/';
 
-        $t->header('Unit tests of the word link list class (src/main/php/model/word/triple_list.php)');
+        // start the test section (ts)
+        $ts = 'unit triple list ';
+        $t->header($ts);
 
-        $t->subheader('Database query creation tests');
+        $t->subheader($ts . 'database query creation');
 
         // load only the names
         $trp_lst = new triple_list($usr);
         $t->assert_sql_names($sc, $trp_lst, new triple($usr));
-        $t->assert_sql_names($sc, $trp_lst, new triple($usr), triple_api::TD_READ);
+        $t->assert_sql_names($sc, $trp_lst, new triple($usr), triples::MATH_CONST_COM);
 
         // load by triple ids
+        $test_name = 'load triples by ids';
         $trp_lst = new triple_list($usr);
-        $t->assert_sql_by_ids($sc, $trp_lst, array(3,2,4));
+        $t->assert_sql_by_ids($test_name, $sc, $trp_lst, array(3,2,4));
 
         // load by phr
         $trp_lst = new triple_list($usr);
@@ -100,12 +106,12 @@ class triple_list_tests
         // $this->assert_sql_by_phr_lst($t, $db_con, $trp_lst, $phr_lst, $vrb);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
         $json_file = 'unit/triple/triple_list.json';
         $t->assert_json_file(new triple_list($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $trp_lst = $t->triple_list();
         $t->assert_api_to_dsp($trp_lst, new triple_list_dsp());

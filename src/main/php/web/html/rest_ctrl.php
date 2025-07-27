@@ -32,7 +32,11 @@
 
 namespace html;
 
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+//include_once paths::API_OBJECT . 'controller.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'library.php';
 
 use controller\controller;
 use shared\api;
@@ -88,12 +92,6 @@ class rest_ctrl
     const PAR_VIEW_NEW_ID = 'new_id'; // if the user has changed the view for this word, save it
     const PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
 
-    // styles used
-    const STYLE_GREY = 'grey';
-    const STYLE_GLYPH = 'glyphicon glyphicon-pencil';
-    const STYLE_USER = 'user_specific';
-    const STYLE_RIGHT = 'right_ref';
-
     // classes used
     const CLASS_FORM_ROW = 'form-row';
 
@@ -114,21 +112,21 @@ class rest_ctrl
     }
 
     /**
-     * create an execute an api call for a database object
+     * create and execute an api call for a database object
      * by id
      * @param string $class the frontend class name that should be loaded
-     * @param int $id the id of the database object that should be loaded
+     * @param int|string $id|string the id of the database object that should be loaded
      * @param array $data additional data that should be included in the get request
      * @return array with the body json message from the backend
      */
-    function api_call_id(string $class, int $id, array $data = []): array
+    function api_call_id(string $class, int|string $id, array $data = []): array
     {
         $data[api::URL_VAR_ID] = $id;
         return $this->api_get($class, $data);
     }
 
     /**
-     * create an execute an api call for a database object
+     * create and execute an api call for a database object
      * by id
      * @param string $class the frontend class name that should be loaded
      * @param string $name the name of the database object that should be loaded

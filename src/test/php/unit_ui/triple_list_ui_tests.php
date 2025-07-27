@@ -32,16 +32,13 @@
 
 namespace unit_ui;
 
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
 
-use api\word\triple as triple_api;
-use api\word\word as word_api;
+include_once paths::SHARED_TYPES . 'verbs.php';
+
 use html\html_base;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
+use html\word\triple;
 use html\word\triple_list as triple_list_dsp;
-use cfg\verb\verb;
-use shared\types\verbs;
 use test\test_cleanup;
 
 class triple_list_ui_tests
@@ -51,7 +48,9 @@ class triple_list_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('HTML triple list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html triple list ';
+        $t->header($ts);
 
         // fill the triple list based on the api message
         $db_lst = $t->triple_list();
@@ -60,12 +59,12 @@ class triple_list_ui_tests
 
         // create the triple list test set
         $lst = new triple_list_dsp();
-        $phr_city = $this->triple_api_triple(1,  triple_api::TN_ZH_CITY_NAME,
-            word_api::TN_ZH, verbs::IS, word_api::TN_CITY);
-        $phr_canton = $this->triple_api_triple(2,  triple_api::TN_ZH_CANTON_NAME,
-            word_api::TN_ZH, verbs::IS, word_api::TN_CANTON);
-        $lst->add($phr_city);
-        $lst->add($phr_canton);
+        $phr_city = $t->zh_city();
+        $phr_canton = $t->zh_canton();
+        $phr_city_dsp = new triple($phr_city->api_json());
+        $phr_canton_dsp = new triple($phr_canton->api_json());
+        $lst->add($phr_city_dsp);
+        $lst->add($phr_canton_dsp);
 
         // test the triple list display functions
         $test_page = $html->text_h2('triple list display test');
@@ -76,20 +75,10 @@ class triple_list_ui_tests
         */
 
         $test_page .= 'selector: ' . '<br>';
-        $test_page .= $lst->selector('', 0, 'triple list test selector', 'please select') . '<br>';
+        $test_page .= $lst->selector('', 0,
+                'triple list test selector', 'please select') . '<br>';
 
         $t->html_test($test_page, 'triple_list', 'triple_list', $t);
-    }
-
-    function triple_api_triple(
-        int $id,
-        string $name,
-        string $from = '',
-        string $verb = '',
-        string $to = ''
-    ): triple_dsp {
-        $trp = new triple_api($id, $name, $from, $verb, $to);
-        return new triple_dsp($trp->get_json());
     }
 
 }

@@ -33,7 +33,7 @@
 namespace unit;
 
 use cfg\db\sql_creator;
-use cfg\source_list;
+use cfg\ref\source_list;
 use test\test_cleanup;
 
 class source_list_tests
@@ -47,10 +47,15 @@ class source_list_tests
         $sc = new sql_creator();
         $t->name = 'source_list->';
 
-        $t->subheader('source list sql read');
+        // start the test section (ts)
+        $ts = 'unit source list ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'sql read');
+        $test_name = 'load sources by ids';
         $src_lst = new source_list($usr);
         $trm_ids = array(1, 2, 3);
-        $t->assert_sql_by_ids($sc, $src_lst, $trm_ids);
+        $t->assert_sql_by_ids($test_name, $sc, $src_lst, $trm_ids);
         $src_lst = new source_list($usr);
         $t->assert_sql_like($sc, $src_lst);
 

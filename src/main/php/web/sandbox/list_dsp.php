@@ -33,22 +33,36 @@
 
 namespace html\sandbox;
 
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::API_OBJECT . 'api_message.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
+include_once paths::SHARED . 'api.php';
+
+use controller\api_message;
 use html\rest_ctrl as api_dsp;
 use html\html_selector;
+use html\user\user;
 use html\user\user_message;
 use shared\api;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\ListOfIdObjects;
+use shared\helper\TextIdObject;
+use shared\types\api_type_list;
 use shared\types\view_styles;
 
-class list_dsp
+class list_dsp extends ListOfIdObjects
 {
-
-    // the protected main var
-    protected array $lst;
-
-    // memory vs speed optimize vars
-    private array $id_lst;
-    private bool $lst_dirty;
-
 
     /*
      * construct and map
@@ -56,11 +70,7 @@ class list_dsp
 
     function __construct(?string $api_json = null)
     {
-        $this->lst = array();
-
-        $this->id_lst = array();
-        $this->lst_dirty = false;
-
+        parent::__construct();
         if ($api_json != null) {
             $this->set_from_json($api_json);
         }
@@ -74,46 +84,39 @@ class list_dsp
     /**
      * set the vars of these list display objects bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json(string $json_api_msg): void
+    function set_from_json(string $json_api_msg): user_message
     {
-        $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->api_mapper(json_decode($json_api_msg, true));
+    }
+
+    /**
+     * set the vars of this figure list based on the given json
+     * @param array $json_array an api single object json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function api_mapper(array $json_array): user_message
+    {
+        return new user_message('set_from_json_array not overwritten by child object ' . $this::class);
     }
 
     /**
      * set the vars of these list display objects bases on the api json array
      * @param array $json_array an api list json message
+     * @param IdObject|TextIdObject|CombineObject $dbo an object with a unique database id that should be added to the list
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_list_from_json(array $json_array, db_object|combine_object $dbo): user_message
+    function api_mapper_list(array $json_array, IdObject|TextIdObject|CombineObject $dbo): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
             $new = clone $dbo;
-            $msg = $new->set_from_json_array($value);
+            $msg = $new->api_mapper($value);
             $usr_msg->add($msg);
             $this->add_obj($new, true);
         }
         return $usr_msg;
-    }
-
-    /**
-     * @returns true if the list has been replaced
-     */
-    function set_lst(array $lst): bool
-    {
-        $this->lst = $lst;
-        $this->set_lst_dirty();
-        return true;
-    }
-
-    /**
-     * @returns array the protected list of values or formula results
-     */
-    function lst(): array
-    {
-        return $this->lst;
     }
 
     /**
@@ -122,19 +125,10 @@ class list_dsp
     function lst_key(): array
     {
         $result = array();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             $result[$val->id()] = $val->name();
         }
         return $result;
-    }
-
-    /**
-     * @returns true if the list has been replaced
-     */
-    function set_lst_dirty(): bool
-    {
-        $this->lst_dirty = true;
-        return true;
     }
 
 
@@ -146,15 +140,41 @@ class list_dsp
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array() calls
      */
-    function api_array(): array
+    function api_array(api_type_list|array $typ_lst = []): array
     {
         $result = array();
-        foreach ($this->lst as $obj) {
+        foreach ($this->lst() as $obj) {
             if ($obj != null) {
                 $result[] = $obj->api_array();
             }
         }
         return $result;
+    }
+
+    /**
+     * create the api json message string of this list that can be sent to the backend
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return string with the api json string that should be sent to the backend
+     */
+    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        $vars = $this->api_array($typ_lst);
+
+        // add header if requested
+        if ($typ_lst->use_header()) {
+            global $db_con;
+            $api_msg = new api_message();
+            $msg = $api_msg->api_header_array($db_con, $this::class, $usr, $vars);
+        } else {
+            $msg = $vars;
+        }
+
+        return json_encode($msg);
     }
 
 
@@ -175,8 +195,35 @@ class list_dsp
         $data = array();
         $data[api::URL_VAR_PATTERN] = $pattern;
         $json_body = $api->api_get($this::class, $data);
-        $this->set_from_json_array($json_body);
+        $this->api_mapper($json_body);
         if (!$this->is_empty()) {
+            $result = true;
+        }
+        return $result;
+    }
+
+
+    /*
+     * modify
+     */
+
+    function merge(list_dsp $lst): void
+    {
+        foreach ($lst->lst() as $phr) {
+            $this->add($phr);
+        }
+    }
+
+    /**
+     * add one named object e.g. a word to the list, but only if it is not yet part of the list
+     * @param IdObject|TextIdObject|CombineObject|null $to_add the named object e.g. a word object that should be added
+     * @returns bool true the object has been added
+     */
+    function add(IdObject|TextIdObject|CombineObject|null $to_add): bool
+    {
+        $result = false;
+        if ($to_add != null) {
+            $this->add_obj($to_add);
             $result = true;
         }
         return $result;
@@ -188,73 +235,11 @@ class list_dsp
      */
 
     /**
-     * @returns int the number of objects of the protected list
-     */
-    function count(): int
-    {
-        return count($this->lst);
-    }
-
-    /**
-     * @returns true if the list does not contain any object
-     */
-    function is_empty(): bool
-    {
-        if ($this->count() <= 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /*
-     * modify functions
-     */
-
-    /**
-     * add a phrase or ... to the list but only if it does not exist
-     * @param object $obj the frontend object that should be added
-     * @param bool $allow_duplicates true if the list can contain the same entry twice e.g. for the components
-     * @returns bool true if the object has been added
-     */
-    protected function add_obj(object $obj, bool $allow_duplicates = false): bool
-    {
-        $result = false;
-        if (!in_array($obj->id(), $this->id_lst()) or $allow_duplicates) {
-            $this->lst[] = $obj;
-            $this->lst_dirty = true;
-            $result = true;
-        }
-        return $result;
-    }
-
-    /**
-     * add a phrase or ... to the list also if it is already part of the list
-     */
-    protected function add_always(object $obj): void
-    {
-        $this->lst[] = $obj;
-        $this->lst_dirty = true;
-    }
-
-    /**
      * @returns array with all unique ids of this list
      */
     function id_lst(): array
     {
-        $result = array();
-        if ($this->lst_dirty) {
-            foreach ($this->lst as $val) {
-                if (!in_array($val->id(), $result)) {
-                    $result[] = $val->id();
-                }
-            }
-            $this->id_lst = $result;
-            $this->lst_dirty = false;
-        } else {
-            $result = $this->id_lst;
-        }
-        return $result;
+        return parent::ids();
     }
 
 
@@ -281,7 +266,7 @@ class list_dsp
      */
     function selector(
         string $form = '',
-        int $selected = 0,
+        int    $selected = 0,
         string $name = '',
         string $label = '',
         string $col_class = view_styles::COL_SM_4,

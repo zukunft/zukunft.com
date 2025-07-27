@@ -32,8 +32,6 @@
 
 namespace html\types;
 
-use html\html_selector;
-
 class component_link_type_list extends type_list
 {
 

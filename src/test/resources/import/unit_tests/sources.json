@@ -1,0 +1,28 @@
+{
+  "version": "0.0.3",
+  "time": "2023-04-29 09:51:30",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message for data_object based import by counting the sources"
+  ],
+  "sources": [
+    {
+      "name": "The International System of Units",
+      "description": "Bureau International des Poids et Mesures - The intergovernmental organization through which Member States act together on matters related to measurement science and measurement standards",
+      "code_id": "BIPM",
+      "url": "https://www.bipm.org/documents/20126/41483022/SI-Brochure-9.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "wikidata",
+      "description": "the base API link to wikidata",
+      "type": "api",
+      "code_id": "wikidata",
+      "url": "https://www.wikidata.org/wiki/"
+    },
+    {
+      "name": "System Test Source"
+    }
+  ]
+}
+

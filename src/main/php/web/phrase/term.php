@@ -32,29 +32,36 @@
 
 namespace html\phrase;
 
-include_once WEB_SANDBOX_PATH . 'combine_named.php';
-include_once API_SANDBOX_PATH . 'combine_object.php';
-include_once API_PHRASE_PATH . 'term.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'combine_named.php';
+include_once paths::SHARED . 'api.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::VERB . 'verb.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
-use shared\api;
-use api\phrase\term as term_api;
-use api\sandbox\combine_object as combine_object_api;
+use html\formula\formula;
+use html\verb\verb;
+use html\word\triple;
+use html\word\word;
 use html\sandbox\combine_named as combine_named_dsp;
 use html\formula\formula as formula_dsp;
 use html\user\user_message;
 use html\verb\verb as verb_dsp;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
+use shared\types\phrase_type;
 use shared\json_fields;
+use shared\library;
 
 class term extends combine_named_dsp
 {
-
 
     /*
      * set and get
@@ -65,28 +72,28 @@ class term extends combine_named_dsp
      * @param array $json_array an api json message as a string
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
         $usr_msg = new user_message();
-        if ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_WORD) {
+        if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
             $wrd = new word_dsp();
-            $wrd->set_from_json_array($json_array);
+            $wrd->api_mapper($json_array);
             $this->set_obj($wrd);
             // unlike the cases below the switch of the term id to the object id not needed for words
-        } elseif ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_TRIPLE) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
             $trp = new triple_dsp();
-            $trp->set_from_json_array($json_array);
+            $trp->api_mapper($json_array);
             $this->set_obj($trp);
             // TODO check if needed
             //$this->set_id($trp->id());
-        } elseif ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_VERB) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
             $vrb = new verb_dsp();
-            $vrb->set_from_json_array($json_array);
+            $vrb->api_mapper($json_array);
             $this->set_obj($vrb);
             //$this->set_id($vrb->id());
-        } elseif ($json_array[json_fields::OBJECT_CLASS] == term_api::CLASS_FORMULA) {
+        } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
             $frm = new formula_dsp();
-            $frm->set_from_json_array($json_array);
+            $frm->api_mapper($json_array);
             $this->set_obj($frm);
             //$this->set_id($frm->id());
         } else {
@@ -98,6 +105,25 @@ class term extends combine_named_dsp
     function set_term_obj(word_dsp|triple_dsp|verb_dsp|formula_dsp|null $obj): void
     {
         $this->obj = $obj;
+    }
+
+    /**
+     * create the expected object based on the class name
+     * must have the same logic as the database view and the frontend
+     * @param string $class the term id as received e.g. from the database view
+     * @return void
+     */
+    function set_obj_from_class(string $class): void
+    {
+        if ($class == triple::class) {
+            $this->obj = new triple();
+        } elseif ($class == formula::class) {
+            $this->obj = new formula();
+        } elseif ($class == verb::class) {
+            $this->obj = new verb();
+        } else {
+            $this->obj = new word();
+        }
     }
 
     /**
@@ -145,10 +171,163 @@ class term extends combine_named_dsp
 
 
     /*
+     * load
+     */
+
+    /**
+     * load the term object by the word or triple id (not the phrase id)
+     * @param int $id the id of the term object e.g. for a triple "-1"
+     * @param string $class not used for this term object just to be compatible with the db base object
+     * @param bool $including_triples to include the words or triple of a triple (not recursive)
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_obj_id(int $id, string $class, bool $including_triples = true): int
+    {
+        log_debug($this->name());
+        $result = 0;
+
+        if ($class == word::class) {
+            if ($this->load_word_by_id($id)) {
+                $result = $this->obj_id();
+            }
+        } elseif ($class == triple::class) {
+            if ($this->load_triple_by_id($id, $including_triples)) {
+                $result = $this->obj_id();
+            }
+        } elseif ($class == formula::class) {
+            if ($this->load_formula_by_id($id)) {
+                $result = $this->obj_id();
+            }
+        } elseif ($class == verb::class) {
+            if ($this->load_verb_by_id($id)) {
+                $result = $this->obj_id();
+            }
+        } else {
+            log_err('Unexpected class ' . $class . ' when creating term ' . $this->dsp_id());
+        }
+
+        log_debug('term->load loaded id "' . $this->id() . '" for ' . $this->name());
+
+        return $result;
+    }
+
+    /**
+     * simply load a word
+     * (separate functions for loading  for a better overview)
+     */
+    private
+    function load_word_by_id(int $id): bool
+    {
+        global $phr_typ_cac;
+
+        $result = false;
+        $wrd = new word();
+        if ($wrd->load_by_id($id)) {
+            if ($wrd->type_id() == $phr_typ_cac->id(phrase_type::FORMULA_LINK)) {
+                $result = $this->load_formula_by_id($id);
+            } else {
+                $this->set_id_from_obj($wrd->id(), word::class);
+                $this->obj = $wrd;
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * simply load a triple
+     */
+    private
+    function load_triple_by_id(int $id, bool $including_triples): bool
+    {
+        $result = false;
+        if ($including_triples) {
+            $trp = new triple();
+            if ($trp->load_by_id($id)) {
+                $this->set_id_from_obj($trp->id(), triple::class);
+                $this->obj = $trp;
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * simply load a formula
+     * without fixing any missing related word issues
+     */
+    private function load_formula_by_id(int $id): bool
+    {
+        $result = false;
+        $frm = new formula();
+        if ($frm->load_by_id($id)) {
+            $this->set_id_from_obj($frm->id(), formula::class);
+            $this->obj = $frm;
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * simply load a verb
+     */
+    private function load_verb_by_id(int $id): bool
+    {
+        $result = false;
+        $vrb = new verb;
+        $vrb->set_name($this->name());
+        if ($vrb->load_by_id($id)) {
+            $this->set_id_from_obj($vrb->id(), verb::class);
+            $this->obj = $vrb;
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * set the term id based id the word, triple, verb or formula id
+     * must have the same logic as the database view and the frontend
+     * TODO deprecate?
+     *
+     * @param int $id the object id that is converted to the term id
+     * @param string $class the class of the term object
+     * @return void
+     */
+    function set_id_from_obj(int $id, string $class): void
+    {
+        if ($id != null) {
+            if ($class == word::class) {
+                if ($this->obj == null) {
+                    $this->obj = new word();
+                    $this->obj->set_id($id);
+                }
+            } elseif ($class == triple::class) {
+                if ($this->obj == null) {
+                    $this->obj = new triple();
+                    $this->obj->set_id($id);
+                }
+            } elseif ($class == formula::class) {
+                if ($this->obj == null) {
+                    $this->obj = new formula();
+                    $this->obj->set_id($id);
+                }
+            } elseif ($class == verb::class) {
+                if ($this->obj == null) {
+                    $this->obj = new verb();
+                    $this->obj->set_id($id);
+                }
+            }
+            $this->obj->set_id($id);
+        }
+    }
+
+
+    /*
      * interface
      */
 
     /**
+     * TODO review and use the api_array function of the objects
      * @return array the json message array to send the updated data to the backend
      * corresponding to the api jsonSerialize function:
      * use the object id not the term id because the class is included
@@ -156,37 +335,42 @@ class term extends combine_named_dsp
      */
     function api_array(): array
     {
+        $lib = new library();
         $vars = array();
-        if ($this->is_word()) {
-            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_WORD;
-        } elseif ($this->is_triple()) {
-            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_TRIPLE;
-            $trp = $this->obj();
-            $vars[json_fields::FROM] = $trp->from()->id();
-            $vars[json_fields::VERB] = $trp->verb()->id();
-            $vars[json_fields::TO] = $trp->to()->id();
-        } elseif ($this->is_formula()) {
-            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_FORMULA;
-        } elseif ($this->is_verb()) {
-            $vars[json_fields::OBJECT_CLASS] = term_api::CLASS_VERB;
+        if ($this->is_verb()) {
+            $vars = $this->obj()?->api_array();
+            $class = $lib->class_to_name($this->obj()::class);
+            $vars[json_fields::OBJECT_CLASS] = $class;
         } else {
-            log_err('cannot create api message for term ' . $this->dsp_id() . ' because class is unknown');
-        }
-        $vars[json_fields::ID] = $this->obj_id();
-        $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
-        if (!$this->is_verb()) {
+            if ($this->is_word()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
+            } elseif ($this->is_triple()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
+                $trp = $this->obj();
+                $vars[json_fields::FROM] = $trp->from()->id();
+                $vars[json_fields::VERB] = $trp->verb()->id();
+                $vars[json_fields::TO] = $trp->to()->id();
+            } elseif ($this->is_formula()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
+            } elseif ($this->is_verb()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_VERB;
+            } else {
+                log_err('cannot create api message for term ' . $this->dsp_id() . ' because class is unknown');
+            }
+            $vars[json_fields::ID] = $this->obj_id();
+            $vars[json_fields::NAME] = $this->name();
+            $vars[json_fields::DESCRIPTION] = $this->description();
             $vars[json_fields::TYPE] = $this->type_id();
-        }
-        if ($this->is_formula()) {
-            $vars[json_fields::USER_TEXT] = $this->obj()->usr_text();
-        }
-        // TODO add exclude field and move to a parent object?
-        if ($this->obj()?->share_id != null) {
-            $vars[json_fields::SHARE] = $this->obj()?->share_id;
-        }
-        if ($this->obj()?->protection_id != null) {
-            $vars[json_fields::PROTECTION] = $this->obj()?->protection_id;
+            if ($this->is_formula()) {
+                $vars[json_fields::USER_TEXT] = $this->obj()->usr_text();
+            }
+            // TODO add exclude field and move to a parent object?
+            if ($this->obj()?->share_id() != null) {
+                $vars[json_fields::SHARE] = $this->obj()?->share_id();
+            }
+            if ($this->obj()?->protection_id() != null) {
+                $vars[json_fields::PROTECTION] = $this->obj()?->protection_id();
+            }
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
@@ -260,24 +444,24 @@ class term extends combine_named_dsp
     /**
      * @returns string the html code to display with mouse over that shows the description
      */
-    function display(): string
+    function name_tip(): string
     {
-        return $this->obj()->display();
+        return $this->obj()->name_tip();
     }
 
     /**
      * @returns string the html code to display the phrase with reference links
      */
-    function display_linked(): string
+    function name_link(): string
     {
         if ($this->is_word()) {
-            return $this->obj()->display_linked();
+            return $this->obj()->name_link();
         } elseif ($this->is_triple()) {
-            return $this->obj()->display_linked();
+            return $this->obj()->name_link();
         } elseif ($this->is_formula()) {
-            return $this->obj()->display_linked();
+            return $this->obj()->name_link();
         } elseif ($this->is_verb()) {
-            return $this->obj()->display_linked();
+            return $this->obj()->name_link();
         } else {
             $msg = 'Unexpected term type ' . $this->dsp_id();
             log_err($msg);
@@ -317,14 +501,14 @@ class term extends combine_named_dsp
      * create a selector that contains the words and triples
      * if one form contains more than one selector, $pos is used for identification
      *
-     * @param term_api $type is a word to preselect the list to only those phrases matching this type
+     * @param term $type is a word to preselect the list to only those phrases matching this type
      * @param string $form_name
      * @param int $pos
      * @param string $class
      * @param string $back
      * @return string
      */
-    function dsp_selector(term_api $type, string $form_name, int $pos, string $class, string $back = ''): string
+    function dsp_selector(term $type, string $form_name, int $pos, string $class, string $back = ''): string
     {
         // TODO include pattern in the call
         $pattern = '';

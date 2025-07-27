@@ -32,7 +32,9 @@
 
 namespace unit;
 
-include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_COMPONENT . 'component_link_list.php';
 
 use cfg\component\component_link_list;
 use cfg\db\sql_creator;
@@ -54,9 +56,11 @@ class component_link_list_tests
         $t->name = 'component_link_list->';
         $t->resource_path = 'db/component/';
 
-        $t->header('Unit tests of the view component link list class (src/main/php/model/component/component_link_list.php)');
 
-        $t->subheader('Database query creation tests');
+        $ts = 'unit component link list ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'sql query');
 
         // load by component_link ids
         $lst = new component_link_list($usr);

@@ -30,7 +30,11 @@
 
 */
 
+include_once TEST_CONST_PATH . 'files.php';
+
+use cfg\import\import_file;
 use test\test_cleanup;
+use const\files as test_files;
 
 function run_import_test($file_list, test_cleanup $t): void
 {
@@ -38,12 +42,14 @@ function run_import_test($file_list, test_cleanup $t): void
 
     $t->header('Zukunft.com integration tests by importing the sample cases');
 
-    $import_path = PATH_TEST_IMPORT_FILES;
+    $import_path = test_files::IMPORT_PATH;
 
     foreach ($file_list as $json_test_filename) {
-        $result = import_json_file($import_path . $json_test_filename, $usr);
+        $imf = new import_file();
+        $result = $imf->json_file($import_path . $json_test_filename, $usr);
         $target = 'done';
-        $t->dsp_contains(', import of ' . $json_test_filename . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_IMPORT);
+        $t->dsp_contains(', import of ' . $json_test_filename . ' contains at least ' . $target, $target,
+            $result->get_last_message(), $t::TIMEOUT_LIMIT_IMPORT);
     }
 
 }

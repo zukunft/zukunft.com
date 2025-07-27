@@ -34,13 +34,36 @@
 
 namespace html\result;
 
-use html\html_base;
-use html\sandbox\list_value;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\result\result as result_dsp;
-use html\user\user_message;
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_value.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'html_base.php';
+//include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::GROUP . 'group_list.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::SANDBOX . 'sandbox_list.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'library.php';
 
-include_once WEB_SANDBOX_PATH . 'list_value.php';
+use html\rest_ctrl as api_dsp;
+use html\html_base;
+use html\formula\formula;
+use html\group\group_list;
+use html\phrase\phrase_list;
+use html\sandbox\list_value;
+use html\system\back_trace;
+use html\user\user_message;
+use shared\api;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
+use shared\library;
 
 class result_list extends list_value
 {
@@ -54,10 +77,39 @@ class result_list extends list_value
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new result_dsp());
+        return parent::api_mapper_list($json_array, new result());
     }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load all a result by the phrase group id and time phrase
+     *
+     * @param formula $frm to select the result
+     * @param group_list $lst the group used for the selection
+     * @return bool true if result has been loaded
+     */
+    function load_by_formula_and_group_list(formula $frm, group_list $lst): bool
+    {
+        $result = false;
+
+        $api = new api_dsp();
+        $data = array();
+        $data[api::URL_VAR_FORMULA] = $frm->id();
+        $data[api::URL_VAR_GROUP] = $lst->ids();
+        $json_body = $api->api_get(self::class, $data);
+        $this->api_mapper($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
+        }
+        return $result;
+    }
+
 
 
     /*
@@ -68,15 +120,35 @@ class result_list extends list_value
      * add a formula result to the list
      * @returns bool true if the formula result has been added
      */
-    function add(result_dsp $res): bool
+    function add(result|IdObject|TextIdObject|CombineObject|null $to_add): bool
     {
         $result = false;
-        if (!in_array($res->id(), $this->id_lst())) {
-            $this->lst[] = $res;
+        if (!in_array($to_add->id(), $this->id_lst())) {
+            $this->add_direct($to_add);
             $this->set_lst_dirty();
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * load a list of results linked to
+     * a formula
+     * a phrase group
+     *   either of the source or the result
+     *   and with or without time selection
+     * a word or a triple
+     *
+     * @param object $obj a named object used for selection e.g. a formula
+     * @param bool $by_source set to true to force the selection e.g. by source phrase group id
+     * @return bool true if value or phrases are found
+     */
+    function load_by_obj(object $obj, bool $by_source = false): bool
+    {
+        global $db_con;
+
+        $qp = $this->load_sql_by_obj_old($db_con, $obj, $by_source);
+        return $this->load($qp);
     }
 
 
@@ -91,7 +163,7 @@ class result_list extends list_value
     function display(): string
     {
         $results = array();
-        foreach ($this->lst as $res) {
+        foreach ($this->lst() as $res) {
             $results[] = $res->display();
         }
         return implode(', ', $results);
@@ -114,7 +186,7 @@ class result_list extends list_value
     function names_linked(string $back = ''): array
     {
         $result = array();
-        foreach ($this->lst as $res) {
+        foreach ($this->lst() as $res) {
             $result[] = $res->display_linked();
         }
         return $result;
@@ -123,7 +195,7 @@ class result_list extends list_value
     /**
      * @return string the html code to show the results as a table to the user
      */
-    function table(phrase_list_dsp $context_phr_lst = null, string $back = ''): string
+    function table(phrase_list $context_phr_lst = null, string $back = ''): string
     {
         $html = new html_base();
 
@@ -141,7 +213,7 @@ class result_list extends list_value
         if ($header_phrases->count() <= 0) {
             $head_text = 'description';
         } else {
-            $head_text = $header_phrases->display_linked();
+            $head_text = $header_phrases->name_link();
         }
         $header_rows = '';
         $rows = '';
@@ -158,6 +230,66 @@ class result_list extends list_value
         }
 
         return $html->tbl($header_rows . $rows, $html::SIZE_HALF);
+    }
+
+    /**
+     * create the html code to show the formula results to the user
+     * TODO move to result_list_min_display
+     */
+    function display_old(string $back = ''): string
+    {
+        $lib = new library();
+        $html = new html_base();
+
+        log_debug("res_lst->display (" . $lib->dsp_count($this->lst()) . ")");
+        $result = ''; // reset the html code var
+
+        // prepare to show where the user uses different word than a normal viewer
+        //$row_nbr = 0;
+        $result .= $html->dsp_tbl_start_half();
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $res) {
+                //$row_nbr++;
+                $result .= '<tr>';
+                /*if ($row_nbr == 1) {
+                  $result .= '<th>words</th>';
+                  $result .= '<th>value</th>';
+                } */
+                $res->load_phrases(); // load any missing objects if needed
+                $phr_lst = clone $res->grp->phr_lst;
+                if (isset($res->time_phr)) {
+                    log_debug("add time " . $res->time_phr->name() . ".");
+                    $phr_lst->add($res->time_phr);
+                }
+                $phr_lst_dsp = new phrase_list($phr_lst->api_json());
+                $result .= '</tr><tr>';
+                $result .= '<td>' . $phr_lst_dsp->name_link() . '</td>';
+                $result .= '<td>' . $res->display_linked($back) . '</td>';
+                $result .= '</tr>';
+            }
+        }
+        $result .= $html->dsp_tbl_end();
+
+        log_debug("done");
+        return $result;
+    }
+
+    /**
+     * create the pure html (5) code for all formula links related to this value list
+     * @param back_trace|null $back list of past url calls of the session user
+     * @return string the html code part with the formula links
+     */
+    function frm_links_html(?back_trace $back = null): string
+    {
+        $result = '';
+        $formula_links = '';
+        foreach ($this->lst() as $res) {
+            $formula_links .= ' <a href="/http/formula_edit.php?id=' . $res->frm->id . '&back=' . $back->url_encode() . '">' . $res->number . '</a> ';
+        }
+        if ($formula_links <> '') {
+            $result .= ' (or ' . $formula_links . ')';
+        }
+        return $result;
     }
 
 }

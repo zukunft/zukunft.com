@@ -2,10 +2,9 @@
 
 /*
 
-    model/phrase/group_list.php - a list of word and triple groups
-    ----------------------------------
+    model/group/group_list.php - a list of word and triple groups
+    --------------------------
 
-    TODO base on sandbox_list
 
     This file is part of zukunft.com - calc with words
 
@@ -33,17 +32,19 @@
 
 namespace cfg\group;
 
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -60,7 +61,7 @@ use shared\library;
 class group_list extends sandbox_list
 {
 
-    public ?array $time_lst = null;     // the list of the time phrase (the add function)
+    public array $time_lst = [];     // the list of the time phrase (the add function)
     public ?array $grp_ids = null;      // the list of the phrase group ids
 
     // search fields
@@ -203,7 +204,7 @@ class group_list extends sandbox_list
         $qp->name .= $query_name;
 
         $tbl_ext = $this->table_extension($tbl_types);
-        $sc->set_class($class, new sql_type_list([]), $tbl_ext);
+        $sc->set_class($class, new sql_type_list(), $tbl_ext);
         // TODO add pattern filter for the prime group id
         $grp = new group($this->user());
         $sc->set_id_field($grp->id_field());
@@ -288,7 +289,12 @@ class group_list extends sandbox_list
      * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $grp_ids, int $limit = 0, int $offset = 0): sql_par
+    function load_sql_by_ids(
+        sql_creator $sc,
+        array       $grp_ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(group::FLD_ID, $grp_ids);
@@ -384,8 +390,8 @@ class group_list extends sandbox_list
 
     used to request an update for a formula result for each phrase group
     e.g. the formula is assigned to "Company" ($frm_linked) and the "operating income" formula result should be calculated
-         so "Sales" and "Cost" are words of the formula
-         if "Sales" and "Cost" for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. "ABB")
+         so "sales" and "Cost" are words of the formula
+         if "sales" and "Cost" for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. "ABB")
          the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
          so the result would be to add 4 results to the list:
          1. calculate "operating income" for "ABB", "EUR" and "2016"
@@ -415,7 +421,7 @@ class group_list extends sandbox_list
 
     /**
      * query to get the value or formula result phrase groups and time words that contains at least one phrase of two lists based on the user sandbox
-     * e.g. which value that have "Sales" and "2016"?
+     * e.g. which value that have "sales" and "2016"?
      */
     private function get_grp_by_phr($type, $phr_linked, $phr_used): array
     {
@@ -453,9 +459,9 @@ class group_list extends sandbox_list
                   GROUP BY l1.group_id';
         } else {
             log_warning('Phrases missing while loading the phrase groups');
-            // e.g. if "Sales" is assigned, but never  used in the formula no value needs to be calculated, so no group should be used
-            //   or if "Sales" is used, but never  assigned to the formula no value needs to be calculated, so no group should be used
-            //   or if "Sales" is not used and not assigned to the formula no value needs to be calculated, so no group should be used
+            // e.g. if "sales" is assigned, but never  used in the formula no value needs to be calculated, so no group should be used
+            //   or if "sales" is used, but never  assigned to the formula no value needs to be calculated, so no group should be used
+            //   or if "sales" is not used and not assigned to the formula no value needs to be calculated, so no group should be used
             // in all these cases only value selected by time needs to be updated
         }
 
@@ -528,7 +534,7 @@ class group_list extends sandbox_list
                 // add the phrase group of the value or formula result add the time using a combined index
                 // because a time word should never be part of a phrase group to have a useful number of groups
                 log_debug('add id ' . $val_row[group::FLD_ID]);
-                // log_debug('add time id ' . $val_row[value::FLD_TIME_WORD]);
+                // log_debug('add time id ' . $val_row[value_db::FLD_TIME_WORD]);
                 // remove the formula name phrase and the result phrases from the value phrases to avoid potentials loops and
                 $val_grp = new group($this->user());
                 $val_grp->load_by_id($val_row[group::FLD_ID]);
@@ -551,7 +557,7 @@ class group_list extends sandbox_list
                     $changed++;
                 }
                 /* TODO deprecate now
-                if ($this->add_grp_time_id($grp_to_add->id(), $val_row[value::FLD_TIME_WORD])) {
+                if ($this->add_grp_time_id($grp_to_add->id(), $val_row[value_db::FLD_TIME_WORD])) {
                     $added++;
                     $changed++;
                     log_debug('added ' . $added . ' in ' . $lib->dsp_count($this->grp_time_ids));
@@ -604,7 +610,7 @@ class group_list extends sandbox_list
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -639,21 +645,6 @@ class group_list extends sandbox_list
         return $result;
     }
 
-    /**
-     * @return array with the database ids of all objects of this list
-     */
-    function ids(int $limit = null): array
-    {
-        $result = array();
-        foreach ($this->lst() as $sbx_obj) {
-            // use only valid ids
-            if ($sbx_obj->id() <> 0) {
-                $result[] = $sbx_obj->id();
-            }
-        }
-        return $result;
-    }
-
 
     /*
      * debug
@@ -667,15 +658,24 @@ class group_list extends sandbox_list
     {
         global $debug;
         $lib = new library();
+
+        // show at least 4 elements by name
+        $min_names = $debug;
+        if ($min_names < LIST_MIN_NAMES) {
+            $min_names = LIST_MIN_NAMES;
+        }
+
         $result = '';
         // check the object setup
         if (count($this->lst()) <> count($this->time_lst)) {
-            $result .= 'The number of groups (' . $lib->dsp_count($this->lst()) . ') are not equal the number of times (' . $lib->dsp_count($this->time_lst) . ') of this phrase group list';
+            $result .= 'The number of groups (' . $lib->dsp_count($this->lst())
+                . ') are not equal the number of times (' . $lib->dsp_count($this->time_lst)
+                . ') of this phrase group list';
         } else {
 
             $pos = 0;
             foreach ($this->lst() as $phr_lst) {
-                if ($debug > $pos) {
+                if ($pos < $min_names) {
                     if ($result <> '') {
                         $result .= ' / ';
                     }
@@ -717,7 +717,7 @@ class group_list extends sandbox_list
     /**
      * return a list of the word names
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $phr_lst) {

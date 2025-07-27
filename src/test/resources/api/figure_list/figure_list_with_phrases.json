@@ -1,0 +1,72 @@
+[
+  {
+    "id": 32819,
+    "phrases": [
+      {
+        "id": 51,
+        "name": "Pi (math)",
+        "description": "ratio of the circumference of a circle to its diameter",
+        "type_id": 22,
+        "from_id": 17,
+        "from_phrase": {
+          "id": 17,
+          "protection": 3,
+          "name": "Pi",
+          "description": "ratio of the circumference of a circle to its diameter",
+          "type_id": 17,
+          "code_id": null,
+          "plural": null
+        },
+        "verb_id": 2,
+        "to_id": -1,
+        "to_phrase": {
+          "id": 1,
+          "protection": 3,
+          "name": "mathematical constant",
+          "description": "A mathematical constant that never changes e.g. Pi",
+          "type_id": 17,
+          "from_id": 2,
+          "from_phrase": {
+            "id": 2,
+            "protection": 3,
+            "name": "constant",
+            "description": "fixed and well-defined number",
+            "type_id": 17,
+            "code_id": null,
+            "plural": null
+          },
+          "verb_id": 3,
+          "to_id": 1,
+          "to_phrase": {
+            "id": 1,
+            "protection": 3,
+            "name": "mathematics",
+            "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+            "type_id": 1,
+            "code_id": null,
+            "plural": null
+          }
+        },
+        "class": "triple"
+      }
+    ],
+    "number": 3.1415926535898,
+    "class": "value"
+  },
+  {
+    "id": 1,
+    "phrases": [
+      {
+        "id": 1,
+        "protection": 3,
+        "name": "mathematics",
+        "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
+        "type_id": 1,
+        "class": "word"
+      }
+    ],
+    "context": [],
+    "number": 123456,
+    "class": "result"
+  }
+]

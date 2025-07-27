@@ -32,7 +32,9 @@
 
 namespace unit_ui;
 
-include_once WEB_WORD_PATH . 'word_list.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::WORD . 'word_list.php';
 
 use html\html_base;
 use html\word\word_list as word_list_dsp;
@@ -44,7 +46,9 @@ class word_list_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('Word list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html word list ';
+        $t->header($ts);
 
         // create the word list test set
         $lst = new word_list_dsp($t->word_list_short()->api_json());
@@ -52,12 +56,12 @@ class word_list_ui_tests
 
         // test the word list display functions
         $test_page = $html->text_h1('Word list display test');
-        $test_page .= 'names with links:<br>' . $lst->display() . '<br><br>';
+        $test_page .= 'names with links:<br>' . $lst->name_link() . '<br><br>';
         $test_page .= 'table cells<br>';
         $test_page .= $lst->tbl();
-        $test_page .= 'all word types: ' . '<br>' . $lst_long->display() . '<br><br>';
-        $test_page .= 'ex measure and time: ' . '<br>' . $lst_long->ex_measure_and_time_lst()->display() . '<br><br>';
-        $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->display() . '<br><br>';
+        $test_page .= 'all word types: ' . '<br>' . $lst_long->name_link() . '<br><br>';
+        $test_page .= 'ex measure and time: ' . '<br>' . $lst_long->ex_measure_and_time_lst()->name_link() . '<br><br>';
+        $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->name_link() . '<br><br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst_long->selector('', 0, 'test_selector', 'No word selected') . '<br>';

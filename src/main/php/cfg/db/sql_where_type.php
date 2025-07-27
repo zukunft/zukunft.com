@@ -2,7 +2,7 @@
 
 /*
 
-    /cfg/dp/sql_where_type.php - enum of the sql where condition and connection types e.g. =, IN, AND, OR, ...
+    model/dp/sql_where_type.php - enum of the sql where condition and connection types e.g. =, IN, AND, OR, ...
     --------------------------
 
     This file is part of zukunft.com - calc with words

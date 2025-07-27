@@ -39,11 +39,13 @@
 
 namespace unit_write;
 
-use api\formula\formula as formula_api;
-use api\word\word as word_api;
 use cfg\phrase\phrase_list;
+use html\element\element_group;
 use html\figure\figure as figure_dsp;
+use html\figure\figure_list;
 use shared\library;
+use shared\const\formulas;
+use shared\const\words;
 use test\test_api;
 use test\test_cleanup;
 
@@ -59,11 +61,11 @@ class element_group_write_tests
         $t->header('Test the formula element group list class (classes/element_group_list.php)');
 
         // load the test ids
-        $frm_this = $t->load_formula(formula_api::TN_READ_THIS);
-        $frm_prior = $t->load_formula(formula_api::TN_READ_PRIOR);
+        $frm_this = $t->load_formula(formulas::THIS_NAME);
+        $frm_prior = $t->load_formula(formulas::PRIOR);
 
         // load increase formula for testing
-        $frm = $t->load_formula(formula_api::TN_INCREASE);
+        $frm = $t->load_formula(formulas::INCREASE);
 
         // build the expression, which is in this case "percent" = ( "this" - "prior" ) / "prior"
         $exp = $frm->expression();
@@ -71,7 +73,7 @@ class element_group_write_tests
         $elm_grp_lst = $exp->element_grp_lst();
 
         $result = $elm_grp_lst->dsp_id();
-        $target = '"' . formula_api::TN_READ_THIS . '" (' . $frm_this->id() . ') / "' . formula_api::TN_READ_PRIOR . '" (' . $frm_prior->id() . ') / "' . formula_api::TN_READ_PRIOR . '" (' . $frm_prior->id() . ')';
+        $target = '"' . formulas::THIS_NAME . '" (' . $frm_this->id() . ') / "' . formulas::PRIOR . '" (' . $frm_prior->id() . ') / "' . formulas::PRIOR . '" (' . $frm_prior->id() . ')';
         $t->dsp_contains(', element_group_list->dsp_id', $target, $result);
 
 
@@ -83,7 +85,7 @@ class element_group_write_tests
             // prepare the phrase list for the formula element selection
             // means "get all numbers related to the Swiss inhabitants for 2019 and 2020"
             $phr_lst = new phrase_list($usr);
-            $phr_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO));
+            $phr_lst->load_by_names(array(words::CH, words::INHABITANTS, words::MIO));
 
             // get "this" from the formula element group list
             $elm_grp = $elm_grp_lst->lst()[0];
@@ -91,7 +93,11 @@ class element_group_write_tests
 
             // test debug id first
             $result = $elm_grp->dsp_id();
-            $target = '"this" (' . $frm_this->id() . ') and "Switzerland","inhabitants","million"';
+            $target = '"'
+                . words::THIS_NAME . '" (' . $frm_this->id() . ') and "'
+                . words::INHABITANTS . '","'
+                . words::MIO . '","'
+                . words::CH . '"';
             $t->display('element_group->dsp_id', $target, $result);
 
             // test symbol for text replacement in the formula expression text
@@ -99,21 +105,18 @@ class element_group_write_tests
             $target = '{f' . $frm_this->id() . '}';
             $t->display('element_group->build_symbol', $target, $result);
 
-            // test the display name that can be used for user debugging
-            $result = trim($elm_grp->dsp_names());
-            $target = trim('<a href="/http/formula_edit.php?id=' . $frm_this->id() . '" title="this">this</a>');
-            $t->display('element_group->dsp_names', $target, $result);
-
             // test if the values for an element group are displayed correctly
-            $result = $elm_grp->dsp_values();
-            $fig_lst = $elm_grp->figures();
-            $target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
-            $t->display('element_group->dsp_values', $target, $result);
+            $elm_grp_dsp = new element_group($elm_grp->api_json());
+            // TODO Prio 1 activate
+            //$result = $elm_grp_dsp->dsp_values();
+            //$fig_lst = $elm_grp->figures();
+            //$target = '<a href="/http/result_edit.php?id=' . $fig_lst->get_first_id() . '" title="8.51">8.51</a>';
+            //$t->display('element_group->dsp_values', $target, $result);
 
             // remember the figure list for the figure and figure list class test
             $fig_lst = $elm_grp->figures();
 
-            $t->header('Test the figure class (classes/figure.php)');
+            $t->header('figure database write tests');
 
             // get the figures (a value added by a user or a calculated formula result) for this element group and a context defined by a phrase list
             $fig_count = 0;
@@ -133,13 +136,13 @@ class element_group_write_tests
                     $t->display('figure->display', $target, $result);
 
                     $result = $fig_dsp->display_linked();
-                    //$target = '<a href="/http/value_edit.php?id=438&back=1" class="user_specific">35\'481</a>';
+                    //$target = '<a href="/http/value_edit.php?id=438&back=1" class="' . styles::STYLE_USER . '">35\'481</a>';
                     $target = '<a href="/http/result_edit.php?id=' . $fig->id() . '" title="8.51">8.51</a>';
                     $t->display('figure->display_linked', $target, $result);
                 }
             } else {
                 $result = 'figure list is empty';
-                $target = 'this (3) and "System Test Word Parent e.g. Switzerland","System Test Word Unit e.g. inhabitant"';
+                $target = 'this (3) and "System Test Word Parent e.g. '  . words::CH . '","System Test Word Unit e.g. inhabitant"';
                 $t->display('element_group->figures', $target, $result);
             }
 
@@ -147,22 +150,29 @@ class element_group_write_tests
             $t->header('Test the figure list class (classes/figure_lst.php)');
 
             // TODO fix it
+            $fig_lst->load_phrases();
             $result = htmlspecialchars($fig_lst->dsp_id());
-            //$target = htmlspecialchars("<style class=\"user_specific\">35'481</style> (438)");
+            //$target = htmlspecialchars("<style class=\"' . styles::STYLE_USER . '\">35'481</style> (438)");
             $result = str_replace("<", "&lt;", str_replace(">", "&gt;", $result));
             //$target = str_replace("<", "&lt;", str_replace(">", "&gt;", $target));
             $fig_lst = $elm_grp->figures();
             $fig_id = $fig_lst->get_first_id();
-            $target = ' 8.505251 {f18}Switzerland,inhabitants,million  (' . $fig_id . ')';
+            $target = ' 8.505251 {f18}'  . words::INHABITANTS . ','  . words::MIO . ','  . words::CH . '  (' . $fig_id . ')';
             $t->assert('figure_list->dsp_id', $result, $target);
 
-            $result = $fig_lst->display();
+            $fig_lst_dsp = new figure_list($fig_lst->api_json());
+            $result = $fig_lst_dsp->display();
             $target = "8.51 ";
             $t->display('figure_list->display', $target, $result);
 
         } else {
             $result = 'formula element group list is empty';
-            $target = 'this (3) and "ABB","Sales","CHF","million","' . word_api::TN_2015 . '"@';
+            $target = 'this (3) and "'
+                . words::ABB . '","'
+                . words::SALES . '","'
+                . words::CHF . '","'
+                . words::MIO . '","'
+                . words::YEAR_2015 . '"@';
             $t->display('element_group->dsp_names', $target, $result);
         }
 

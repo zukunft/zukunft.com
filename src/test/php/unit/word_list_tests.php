@@ -32,12 +32,16 @@
 
 namespace unit;
 
-include_once MODEL_WORD_PATH . 'word_list.php';
-include_once WEB_WORD_PATH . 'word_list.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
 
-use api\word\word as word_api;
+include_once paths::MODEL_WORD . 'word_list.php';
+include_once html_paths::WORD . 'word_list.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once TEST_CONST_PATH . 'files.php';
+
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\verb\verb;
@@ -46,9 +50,11 @@ use cfg\word\word_list;
 use html\word\word_list as word_list_dsp;
 use shared\enum\foaf_direction;
 use shared\library;
+use shared\const\words;
 use shared\types\phrase_type as phrase_type_shared;
-use test\test_cleanup;
 use shared\types\verbs;
+use test\test_cleanup;
+use const\files as test_files;
 
 class word_list_tests
 {
@@ -65,22 +71,25 @@ class word_list_tests
         $t->name = 'word_list->';
         $t->resource_path = 'db/word/';
 
-        $t->header('Unit tests of the word list class (src/main/php/model/word/word_list.php)');
+        // start the test section (ts)
+        $ts = 'unit word list ';
+        $t->header($ts);
 
-        $t->subheader('Database query creation tests');
+        $t->subheader($ts . 'database query creation');
 
         // load only the names
         $wrd_lst = new word_list($usr);
         $t->assert_sql_names($sc, $wrd_lst, new word($usr));
-        $t->assert_sql_names($sc, $wrd_lst, new word($usr), word_api::TN_READ);
+        $t->assert_sql_names($sc, $wrd_lst, new word($usr), words::MATH);
 
         // load by word ids
+        $test_name = 'load words by ids';
         $wrd_lst = new word_list($usr);
-        $t->assert_sql_by_ids($sc, $wrd_lst, array(3, 2, 4));
+        $t->assert_sql_by_ids($test_name, $sc, $wrd_lst, array(3, 2, 4));
 
         // load by word names
         $wrd_lst = new word_list($usr);
-        $wrd_names = array(word_api::TN_READ, word_api::TN_ADD);
+        $wrd_names = array(words::MATH, words::TEST_ADD);
         $this->assert_sql_by_names($t, $db_con, $wrd_lst, $wrd_names);
 
         // load by type
@@ -127,7 +136,7 @@ class word_list_tests
         $vrb = $vrb_cac->get_verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
 
-        $t->subheader('Modify and filter word lists');
+        $t->subheader($ts . 'modify and filter word lists');
 
         // create words for unit testing
         // TODO used create dummy functions
@@ -241,12 +250,12 @@ class word_list_tests
         $t->assert($t->name . '->sorted', $wrd_lst_filtered->name(), '"word3","word2"');
 
         // filter by name
-        $test_name = 'filtered word list by name does not contain ' . word_api::TN_E . ' any more';
+        $test_name = 'filtered word list by name does not contain ' . words::E_SYMBOL . ' any more';
         $wrd_lst = $t->word_list();
-        $filtered = $wrd_lst->filter_by_name([word_api::TN_E]);
-        $t->assert_contains_not($test_name, $filtered->names(), word_api::TN_E);
-        $test_name = 'filtered word list by name still contains ' . word_api::TN_PI;
-        $t->assert_contains($test_name, $filtered->names(), word_api::TN_PI);
+        $filtered = $wrd_lst->filter_by_name([words::E_SYMBOL]);
+        $t->assert_contains_not($test_name, $filtered->names(), words::E_SYMBOL);
+        $test_name = 'filtered word list by name still contains ' . words::PI_SYMBOL;
+        $t->assert_contains($test_name, $filtered->names(), words::PI_SYMBOL);
 
         // time list
         $wrd_lst = new word_list($usr);
@@ -283,7 +292,7 @@ class word_list_tests
         $wrd_lst->add($wrd_measure);
         $wrd_lst->add($wrd_scale);
         $json = $wrd_lst->export_json();
-        $json_expected = json_decode(file_get_contents(PATH_TEST_FILES . 'export/word/word_list.json'));
+        $json_expected = json_decode(file_get_contents(test_files::WORD_LIST));
         $result = $lib->json_is_similar($json, $json_expected);
         // TODO remove, for faster debugging only
         $json_expected_txt = json_encode($json_expected);
@@ -291,12 +300,12 @@ class word_list_tests
         $t->assert('JSON export word list', $result, true);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
         $json_file = 'unit/word/word_list.json';
         $t->assert_json_file(new word_list($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $wrd_lst = $t->word_list();
         $t->assert_api_to_dsp($wrd_lst, new word_list_dsp());

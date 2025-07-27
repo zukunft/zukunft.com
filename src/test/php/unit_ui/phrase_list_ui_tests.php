@@ -32,17 +32,13 @@
 
 namespace unit_ui;
 
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
 
-use api\word\triple as triple_api;
-use api\word\word as word_api;
+include_once paths::SHARED_TYPES . 'verbs.php';
+
 use html\html_base;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
-use cfg\verb\verb;
-use shared\types\verbs;
 use test\test_cleanup;
 
 class phrase_list_ui_tests
@@ -52,7 +48,9 @@ class phrase_list_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('HTML phrase list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html phrase list ';
+        $t->header($ts);
 
         // fill the phrase list based on the api message
         $db_lst = $t->phrase_list();
@@ -61,14 +59,15 @@ class phrase_list_ui_tests
 
         // create the phrase list test set
         $lst = new phrase_list_dsp();
-        $phr_city = $this->phrase_api_triple(1,  triple_api::TN_ZH_CITY_NAME,
-            word_api::TN_ZH, verbs::IS, word_api::TN_CITY);
-        $phr_canton = $this->phrase_api_triple(2,  triple_api::TN_ZH_CANTON_NAME,
-            word_api::TN_ZH, verbs::IS, word_api::TN_CANTON);
-        $phr_ch = $this->phrase_api_word(1, word_api::TN_CH);
-        $lst->add_phrase($phr_city);
-        $lst->add_phrase($phr_canton);
-        $lst->add_phrase($phr_ch);
+        $phr_city = $t->zh_city()->phrase();
+        $phr_canton = $t->zh_canton()->phrase();
+        $phr_ch = $t->word_ch()->phrase();
+        $phr_city_dsp = new phrase_dsp($phr_city->api_json());
+        $phr_canton_dsp = new phrase_dsp($phr_canton->api_json());
+        $phr_ch_dsp = new phrase_dsp($phr_ch->api_json());
+        $lst->add_phrase($phr_city_dsp);
+        $lst->add_phrase($phr_canton_dsp);
+        $lst->add_phrase($phr_ch_dsp);
 
         // test the phrase list display functions
         $test_page = $html->text_h2('phrase list display test');
@@ -82,27 +81,35 @@ class phrase_list_ui_tests
         $test_page .= $lst->selector('', 0, 'phrase list test selector', 'please select') . '<br>';
 
         $t->html_test($test_page, 'phrase_list', 'phrase_list', $t);
-    }
 
-    function phrase_api_word(
-        int $id,
-        string $name
-    ): phrase_dsp {
-        $wrd = new word_api($id, $name);
-        $wrd_dsp = new word_dsp($wrd->get_json());
-        return $wrd_dsp->phrase();
-    }
+        /*
+         * TODO add a phrase selector if the phrase list is short and add an test
+        // test the phrase selector
+        $form_name = 'test_phrase_selector';
+        $pos = 1;
+        $back = $company_id;
+        $phr = new phrase($usr);
+        $phr->load_by_id($zh_company_id);
+        $result = $phr->dsp_selector(Null, $form_name, $pos, '', $back);
+        $target = triples::COMPANY_ZURICH;
+        $t->dsp_contains(', phrase->dsp_selector ' . $result . ' with ' .
+            triples::COMPANY_ZURICH . ' selected contains ' .
+            triples::COMPANY_ZURICH, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
-    function phrase_api_triple(
-        int $id,
-        string $name,
-        string $from = '',
-        string $verb = '',
-        string $to = ''
-    ): phrase_dsp {
-        $trp = new triple_api($id, $name, $from, $verb, $to);
-        $trp_dsp = new triple_dsp($trp->get_json());
-        return $trp_dsp->phrase();
+        // test the phrase selector for the word company
+        $wrd = new word($usr);
+        $wrd->load_by_name(words::COMPANY, word::class);
+        $trp_ins = new triple($usr);
+        $trp_ins->load_by_name(triples::COMPANY_ZURICH, triple::class);
+        $phr = $wrd->phrase();
+        $phr_dsp = new phrase_dsp($phr->api_json());
+        $result = $phr->dsp_selector($phr_dsp, $form_name, $pos, '', $back);
+        $target = $trp_ins->name();
+        $t->dsp_contains(', phrase->dsp_selector of type ' . words::COMPANY . ' is : ' .
+            $result . ' which contains ' . triples::COMPANY_ZURICH,
+            $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        */
+
     }
 
 }

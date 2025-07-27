@@ -5,6 +5,7 @@
     model/formula/result_list.php - a list of formula results
     ------------------------------------
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -31,40 +32,43 @@
 
 namespace cfg\result;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
-include_once API_RESULT_PATH . 'result_list.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_list.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_GROUP_PATH . 'group_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once MODEL_SYSTEM_PATH . 'job_list.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_list.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once HTML_PATH . 'html_base.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
 
+include_once paths::MODEL_SANDBOX . 'sandbox_value_list.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_list.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_SYSTEM . 'job_list.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_db.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'library.php';
+
+use cfg\formula\formula_db;
+use cfg\helper\data_object;
 use cfg\sandbox\sandbox_value_list;
-use api\result\result_list as result_list_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_field_list;
@@ -86,41 +90,16 @@ use cfg\word\triple;
 use cfg\user\user;
 use cfg\user\user_list;
 use cfg\user\user_message;
-use cfg\value\value;
+use cfg\value\value_base;
+use cfg\word\triple_db;
 use cfg\word\word;
-use html\html_base;
-use html\formula\formula as formula_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\system\back_trace;
-use html\word\word as word_dsp;
+use cfg\word\word_db;
+use shared\enum\messages as msg_id;
 use shared\library;
 use Exception;
 
 class result_list extends sandbox_value_list
 {
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return result_list_api frontend API object filled with the relevant data of this object
-     */
-    function api_obj(bool $do_save = true): result_list_api
-    {
-        $api_obj = new result_list_api();
-        $api_obj->set_lst($this->api_lst($do_save));
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(bool $do_save = true): string
-    {
-        return $this->api_obj($do_save)->get_json();
-    }
-
 
     /*
      * load
@@ -202,6 +181,19 @@ class result_list extends sandbox_value_list
         return $this->load($qp);
     }
 
+    /**
+     * load the result objects by the given complete id list from the database
+     *
+     * @param array $ids result ids that should be loaded
+     * @return bool true if at least one phrase has been loaded
+     */
+    function load_by_ids(array $ids): bool
+    {
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
+        return $this->load($qp);
+    }
+
     // internal load
 
     /**
@@ -272,7 +264,7 @@ class result_list extends sandbox_value_list
         $qp = new sql_par(result_list::class);
         $qp->name .= 'frm';
         $par_types = array();
-        foreach (result::TBL_LIST_EX_STD as $tbl_typ) {
+        foreach (result_db::TBL_LIST_EX_STD as $tbl_typ) {
             $qp_tbl = $this->load_sql_by_frm_single($sc, $frm, $tbl_typ);
 
             $qp->merge($qp_tbl);
@@ -359,7 +351,7 @@ class result_list extends sandbox_value_list
         $par_lst = clone $sc->par_list();
 
         // loop over the possible tables where the value might be stored in this pod
-        foreach (result::TBL_LIST as $tbl_typ) {
+        foreach (result_db::TBL_LIST as $tbl_typ) {
             $sc->reset();
             $sc->set_par_list($par_lst);
             $qp_tbl = $this->load_sql_by_phr_lst_single(
@@ -391,15 +383,50 @@ class result_list extends sandbox_value_list
      */
     function load_sql_by_frm_single(sql_creator $sc, formula $frm, array $sc_par_lst): sql_par
     {
-        $qp = $this->load_sql_init($sc, result::class, 'frm', $sc_par_lst, new sql_field_list());
-        $sc->add_where(formula::FLD_ID, $frm->id());
+        $qp = $this->load_sql_init(
+            $sc,
+            result::class,
+            'frm',
+            $sc_par_lst,
+            new sql_field_list(),
+            new sql_type_list()
+        );
+        $sc->add_where(formula_db::FLD_ID, $frm->id());
         $qp->sql = $sc->sql(0, true, false);
         $qp->par = $sc->get_par();
 
         return $qp;
     }
 
-    // to review
+    /**
+     * create an SQL statement to retrieve a list of result objects by the complete id from the database
+     * TODO Prio 1 load also from prime and big tables
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param array $ids result ids that should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_ids(
+        sql_creator $sc,
+        array       $ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
+    {
+        $qp = $this->load_sql($sc, 'ids');
+        $sc->add_where(result_db::FLD_ID, $ids);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
+    }
+
+
+    /*
+     * to review
+     */
 
     /**
      * the common query parameter to get a list of results
@@ -414,14 +441,14 @@ class result_list extends sandbox_value_list
         $qp = new sql_par(self::class, new sql_type_list([$tbl_typ]));
         $qp->name .= $query_name;
 
-        $sc->set_class(result::class, new sql_type_list([]), $tbl_typ->extension());
+        $sc->set_class(result::class, new sql_type_list(), $tbl_typ->extension());
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $res = new result($this->user());
         $sc->set_id_field($res->id_field_list($tbl_typ));
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(result::FLD_NAMES);
+        $sc->set_fields(result_db::FLD_NAMES);
         return $qp;
     }
 
@@ -465,11 +492,11 @@ class result_list extends sandbox_value_list
     {
         $qp = $this->load_sql($sc, 'src_grp');
         if ($grp->is_prime()) {
-            $sc->add_where(result::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
+            $sc->add_where(result_db::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
         } elseif ($grp->is_big()) {
-            $sc->add_where(result::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
+            $sc->add_where(result_db::FLD_SOURCE_GRP, $grp->id(), sql_par_type::TEXT);
         } else {
-            $sc->add_where(result::FLD_SOURCE_GRP, $grp->id());
+            $sc->add_where(result_db::FLD_SOURCE_GRP, $grp->id());
         }
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -489,7 +516,7 @@ class result_list extends sandbox_value_list
         $lib = new library();
         // TODO shorten the code
         $ext_lst = array();
-        foreach (result::TBL_EXT_LST as $ext) {
+        foreach (result_db::TBL_EXT_LST as $ext) {
             $ext_lst[] = $ext->extension();
         }
         $qp->name =
@@ -519,19 +546,18 @@ class result_list extends sandbox_value_list
         $qp = new sql_par(self::class);
         $sql_by = '';
         if ($obj->id() > 0) {
-            if (get_class($obj) == formula::class
-                or get_class($obj) == formula_dsp::class) {
-                $sql_by .= formula::FLD_ID;
+            if (get_class($obj) == formula::class) {
+                $sql_by .= formula_db::FLD_ID;
             } elseif (get_class($obj) == group::class) {
                 if ($by_source) {
-                    $sql_by .= result::FLD_SOURCE_GRP;
+                    $sql_by .= result_db::FLD_SOURCE_GRP;
                 } else {
                     $sql_by .= group::FLD_ID;
                 }
-            } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
-                $sql_by .= word::FLD_ID;
+            } elseif (get_class($obj) == word::class) {
+                $sql_by .= word_db::FLD_ID;
             } elseif (get_class($obj) == triple::class) {
-                $sql_by .= triple::FLD_ID;
+                $sql_by .= triple_db::FLD_ID;
             }
         }
         if ($sql_by == '') {
@@ -545,31 +571,31 @@ class result_list extends sandbox_value_list
             $db_con->set_id_field($res->id_field());
             $qp->name .= $sql_by;
             $db_con->set_name($qp->name);
-            $db_con->set_fields(result::FLD_NAMES);
+            $db_con->set_fields(result_db::FLD_NAMES);
             $db_con->set_usr($this->user()->id());
             if ($obj->id() > 0) {
                 if (get_class($obj) == formula::class) {
                     $db_con->add_par(sql_par_type::INT, $obj->id());
-                    $qp->sql = $db_con->select_by_field_list(array(formula::FLD_ID));
+                    $qp->sql = $db_con->select_by_field_list(array(formula_db::FLD_ID));
                 } elseif (get_class($obj) == group::class) {
                     $db_con->add_par(sql_par_type::INT, $obj->id());
                     $link_fields = array();
                     if ($by_source) {
-                        $link_fields[] = result::FLD_SOURCE_GRP;
+                        $link_fields[] = result_db::FLD_SOURCE_GRP;
                     } else {
                         $link_fields[] = group::FLD_ID;
                     }
                     $qp->sql = $db_con->select_by_field_list($link_fields);
-                } elseif (get_class($obj) == word::class or get_class($obj) == word_dsp::class) {
+                } elseif (get_class($obj) == word::class) {
                     // TODO check if the results are still correct if the user has excluded the word
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
-                    // $db_con->set_join_fields(                        array(result::FLD_GRP),                        sql_db::TBL_GROUP_LINK,                        result::FLD_GRP,                        result::FLD_GRP);
-                    $qp->sql = $db_con->select_by_field_list(array(word::FLD_ID));
+                    // $db_con->set_join_fields(                        array(result_db::FLD_GRP),                        sql_db::TBL_GROUP_LINK,                        result_db::FLD_GRP,                        result_db::FLD_GRP);
+                    $qp->sql = $db_con->select_by_field_list(array(word_db::FLD_ID));
                 } elseif (get_class($obj) == triple::class) {
                     // TODO check if the results are still correct if the user has excluded the triple
                     $db_con->add_par(sql_par_type::INT, $obj->id(), false, true);
-                    //$db_con->set_join_fields( array(result::FLD_GRP),sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,   result::FLD_GRP,         result::FLD_GRP);
-                    $qp->sql = $db_con->select_by_field_list(array(triple::FLD_ID));
+                    //$db_con->set_join_fields( array(result_db::FLD_GRP),sql_db::TBL_PHRASE_GROUP_TRIPLE_LINK,   result_db::FLD_GRP,         result_db::FLD_GRP);
+                    $qp->sql = $db_con->select_by_field_list(array(triple_db::FLD_ID));
                 }
             }
             $qp->par = $db_con->get_par();
@@ -645,19 +671,49 @@ class result_list extends sandbox_value_list
      * import a list of results from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $res_json) {
             $res = new result($this->user());
-            $usr_msg->add($res->import_obj($res_json, $test_obj));
+            $usr_msg->add($res->import_obj($res_json, $usr_req, $dto, $test_obj));
             $this->add($res);
         }
 
         return $usr_msg;
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * reports the difference to the given result list as a human-readable messages
+     * @param sandbox_value_list $val_lst the list of the object to compare with
+     * @param msg_id $msg_missing the message id for a missing result
+     * @param msg_id $msg_additional the message id for an additional result
+     * @return user_message
+     */
+    function diff_msg(
+        sandbox_value_list $val_lst,
+        msg_id             $msg_missing = msg_id::RESULT_MISSING,
+        msg_id             $msg_additional = msg_id::RESULT_ADDITIONAL,
+    ): user_message
+    {
+        return parent::diff_msg($val_lst,
+            msg_id::RESULT_MISSING,
+            msg_id::RESULT_ADDITIONAL);
     }
 
 
@@ -694,32 +750,15 @@ class result_list extends sandbox_value_list
     }
 
     /**
-     * return a list of the formula result ids
-     */
-    function ids(int $limit = null): array
-    {
-        $result = array();
-        if (!$this->is_empty()) {
-            foreach ($this->lst() as $res) {
-                // use only valid ids
-                if ($res->id() <> 0) {
-                    $result[] = $res->id();
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
      * return a list of the formula result names
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = array();
         $lib = new library();
         if (!$this->is_empty()) {
             foreach ($this->lst() as $res) {
-                $result[] = $res->name();
+                $result[] = $res->name($ignore_excluded);
 
                 // check user consistency (can be switched off once the program ist stable)
                 if (!isset($res->usr)) {
@@ -733,47 +772,6 @@ class result_list extends sandbox_value_list
         return $result;
     }
 
-    /**
-     * create the html code to show the formula results to the user
-     * TODO move to result_list_min_display
-     */
-    function display(string $back = ''): string
-    {
-        $lib = new library();
-        $html = new html_base();
-
-        log_debug("res_lst->display (" . $lib->dsp_count($this->lst()) . ")");
-        $result = ''; // reset the html code var
-
-        // prepare to show where the user uses different word than a normal viewer
-        //$row_nbr = 0;
-        $result .= $html->dsp_tbl_start_half();
-        if (!$this->is_empty()) {
-            foreach ($this->lst() as $res) {
-                //$row_nbr++;
-                $result .= '<tr>';
-                /*if ($row_nbr == 1) {
-                  $result .= '<th>words</th>';
-                  $result .= '<th>value</th>';
-                } */
-                $res->load_phrases(); // load any missing objects if needed
-                $phr_lst = clone $res->grp->phr_lst;
-                if (isset($res->time_phr)) {
-                    log_debug("add time " . $res->time_phr->name() . ".");
-                    $phr_lst->add($res->time_phr);
-                }
-                $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
-                $result .= '</tr><tr>';
-                $result .= '<td>' . $phr_lst_dsp->display_linked() . '</td>';
-                $result .= '<td>' . $res->display_linked($back) . '</td>';
-                $result .= '</tr>';
-            }
-        }
-        $result .= $html->dsp_tbl_end();
-
-        log_debug("done");
-        return $result;
-    }
 
     /*
      * create functions - build new results
@@ -788,8 +786,8 @@ class result_list extends sandbox_value_list
      * - the user ($this->user()->id) to filter the results
      * and request on formula result for each word group
      * e.g. the formula is assigned to Company ($phr_id) and the "operating income" formula result should be calculated
-     *      so Sales and Cost are words of the formula
-     *      if Sales and Cost for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. ABB)
+     *      so sales and Cost are words of the formula
+     *      if sales and Cost for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. ABB)
      *      the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
      *      so the result would be to add 4 results to the list:
      *      1. calculate "operating income" for "ABB", "EUR" and "2016"
@@ -839,9 +837,9 @@ class result_list extends sandbox_value_list
             // build the single calculation request
             $calc_row = array();
             $calc_row['usr_id'] = $this->user()->id();
-            $calc_row['frm_id'] = $frm_row[formula::FLD_ID];
-            $calc_row['frm_name'] = $frm_row[formula::FLD_NAME];
-            $calc_row['frm_text'] = $frm_row[formula::FLD_FORMULA_TEXT];
+            $calc_row['frm_id'] = $frm_row[formula_db::FLD_ID];
+            $calc_row['frm_name'] = $frm_row[formula_db::FLD_NAME];
+            $calc_row['frm_text'] = $frm_row[formula_db::FLD_FORMULA_TEXT];
             $calc_row['trm_ids'] = $phr_ids;
             $result[] = $calc_row;
         }
@@ -928,19 +926,19 @@ class result_list extends sandbox_value_list
         foreach ($used_word_ids AS $phr_id) {
           $special_frm_phr_ids = array();
 
-          if (zuf_has_verb($frm_row['formula_text'], $this->user()->id)) {
+          if (zuf_has_verb($frm_row[api::URL_VAR_USER_EXPRESSION], $this->user()->id)) {
             // special case
-            zu_debug('res_lst->frm_upd_lst_usr -> formula has verb ('.$frm_row['formula_text'].')');
+            zu_debug('res_lst->frm_upd_lst_usr -> formula has verb ('.$frm_row[api::URL_VAR_USER_EXPRESSION].')');
           } else {
 
             // include all results of the underlying formulas
-            $all_frm_ids = zuf_frm_ids ($frm_row['formula_text'], $this->user()->id());
+            $all_frm_ids = zuf_frm_ids ($frm_row[api::URL_VAR_USER_EXPRESSION], $this->user()->id());
 
             // get fixed / special formulas
             $frm_ids = array();
             foreach ($all_frm_ids as $chk_frm_id) {
               if (zuf_is_special ($chk_frm_id, $this->user()->id)) {
-                $special_frm_phr_ids = $frm_upd_lst_frm_special ($chk_frm_id, $frm_row['formula_text'], $this->user()->id, $phr_id);
+                $special_frm_phr_ids = $frm_upd_lst_frm_special ($chk_frm_id, $frm_row[api::URL_VAR_USER_EXPRESSION], $this->user()->id, $phr_id);
 
                 //get all values related to the words
               } else {
@@ -954,9 +952,9 @@ class result_list extends sandbox_value_list
 
             // get all values related to assigned word and to the formula words
             // and based on this value get the unique word list
-            // e.g. if the formula text contains the word "Sales" all values that are related to Sales should be taken into account
-            //      $frm_phr_ids is the list of words for the value selection, so in this case it would contain "Sales"
-            $frm_phr_ids = zuf_phr_ids ($frm_row['formula_text'], $this->user()->id());
+            // e.g. if the formula text contains the word "sales" all values that are related to sales should be taken into account
+            //      $frm_phr_ids is the list of words for the value selection, so in this case it would contain "sales"
+            $frm_phr_ids = zuf_phr_ids ($frm_row[api::URL_VAR_USER_EXPRESSION], $this->user()->id());
             zu_debug('res_lst->frm_upd_lst_usr -> frm_phr_ids1 ('.implode(",",$frm_phr_ids).')');
 
             // add word words for the special formulas
@@ -975,18 +973,18 @@ class result_list extends sandbox_value_list
             $collect_pos++;
 
             Sample:
-            update "Sales" "water" "annual growth rate"
+            update "sales" "water" "annual growth rate"
             -> get the formulas where any of the value words is used (zuv_frm_lst )
             -> formula "yearly forecast "estimate" "next" = "this" * (1 + "annual growth rate")" because "water" OR "annual growth rate" used
-            -> get the list of words of the updated value not used in the formula e.g. "Sales" "Water" ($val_wrd_ids_ex_frm_wrd)
-            -> get all values linked to the word list e.g. "Sales" AND "Water" (zuv_lst_of_wrd_ids -> $val_lst_of_wrd_ids)
-            -> get the word list for each value excluding the word used in the formula e.g. "Nestlé" "Sales" "Water" "2016" and  "Nestlé" "Sales" "Water" "2017" ($val_wrd_lst_ex_frm_wrd)
+            -> get the list of words of the updated value not used in the formula e.g. "sales" "Water" ($val_wrd_ids_ex_frm_wrd)
+            -> get all values linked to the word list e.g. "sales" AND "Water" (zuv_lst_of_wrd_ids -> $val_lst_of_wrd_ids)
+            -> get the word list for each value excluding the word used in the formula e.g. "Nestlé" "sales" "Water" "2016" and  "Nestlé" "sales" "Water" "2017" ($val_wrd_lst_ex_frm_wrd)
             -> calculate the formula result for each word list (zuc_frm)
-            -> return the list of formula results e.g. "Nestlé" "Sales" "Water" "2018" "estimate" that have been updated or created ($frm_result_upd_lst)
+            -> return the list of formula results e.g. "Nestlé" "sales" "Water" "2018" "estimate" that have been updated or created ($frm_result_upd_lst)
             -> r) check in which formula the formula results are used
             -> formula "yearly forecast "estimate" "next" = "this" * (1 + "annual growth rate"), because the formula is linked to year and 2018 is a Year
             -> calculate the formula result for each word list of the formula result
-            -> return the list of formula results e.g. "Nestlé" "Sales" "Water" "2019" "estimate"
+            -> return the list of formula results e.g. "Nestlé" "sales" "Water" "2019" "estimate"
             -> repeat at r)
 
           }
@@ -1023,7 +1021,7 @@ class result_list extends sandbox_value_list
         log_debug('formula "' . $frm->name() . '" is assigned to ' . $phr_lst_frm_assigned->dsp_name() . ' for user ' . $phr_lst_frm_assigned->user()->name . '');
 
         // get a list of all words, triples, formulas and verbs used in the formula
-        // e.g. for the formula "net profit" the word "Sales" & "cost of sales" is used
+        // e.g. for the formula "net profit" the word "sales" & "cost of sales" is used
         // for formulas the formula word is used
         $exp = $frm->expression();
         $phr_lst_frm_used = $exp->phr_verb_lst($back);
@@ -1063,7 +1061,7 @@ class result_list extends sandbox_value_list
         }
 
         // get the formula phrase name and the formula result phrases to exclude them already in the result phrase selection to avoid loops
-        // e.g. to calculate the "increase" of "ABB,Sales" the formula results for "ABB,Sales,increase" should not be used
+        // e.g. to calculate the "increase" of "ABB,sales" the formula results for "ABB,sales,increase" should not be used
         //      because the "increase" of an "increase" is a gradient not an "increase"
 
         /*
@@ -1077,7 +1075,7 @@ class result_list extends sandbox_value_list
 
         // get the phrase name of the formula e.g. "percent"
         $exp = $frm->expression();
-        $phr_lst_res = $exp->res_phr_lst();
+        $phr_lst_res = $exp->result_phrases();
         if (isset($phr_lst_res)) {
             log_debug('For ' . $frm->usr_text . ' formula results with the result phrases ' . $phr_lst_res->dsp_name() . ' should not be used for calculation to avoid loops');
         }
@@ -1147,44 +1145,31 @@ class result_list extends sandbox_value_list
      * TODO review: split the backend and frontend part
      *              target is: if a value is changed, what needs to be updated?
      */
-    function load_by_val(value $val): string
+    function load_by_val(value_base $val): string
     {
         $phr_lst = $val->phr_lst();
         return $this->load_by_phr_lst($phr_lst);
     }
 
     /**
-     * create the pure html (5) code for all formula links related to this value list
-     * @param back_trace|null $back list of past url calls of the session user
-     * @return string the html code part with the formula links
-     */
-    function frm_links_html(?back_trace $back = null): string
-    {
-        $result = '';
-        $formula_links = '';
-        foreach ($this->lst() as $res) {
-            $formula_links .= ' <a href="/http/formula_edit.php?id=' . $res->frm->id . '&back=' . $back->url_encode() . '">' . $res->number . '</a> ';
-        }
-        if ($formula_links <> '') {
-            $result .= ' (or ' . $formula_links . ')';
-        }
-        return $result;
-    }
-
-    /**
      * add one result to the result list, but only if it is not yet part of the phrase list
-     * @param result $res_to_add the calculation result that should be added to the list
+     * @param result|value_base|null $val_to_add the calculation result that should be added to the list
+     * @param bool $allow_duplicates true if e.g. the group id is not yet set but the value should nevertheless be added
+     * @returns bool true the result has been added
      */
-    function add(result $res_to_add): void
+    function add(result|value_base|null $val_to_add, bool $allow_duplicates = false): bool
     {
-        log_debug($res_to_add->dsp_id());
-        if (!in_array($res_to_add->id(), $this->ids())) {
-            if ($res_to_add->id() <> 0) {
-                $this->add_obj($res_to_add);
+        $result = false;
+        log_debug($val_to_add->dsp_id());
+        if (!in_array($val_to_add->id(), $this->ids())) {
+            if ($val_to_add->id() <> 0) {
+                $this->add_obj($val_to_add);
+                $result = true;
             }
         } else {
-            log_debug($res_to_add->dsp_id() . ' not added, because it is already in the list');
+            log_debug($val_to_add->dsp_id() . ' not added, because it is already in the list');
         }
+        return $result;
     }
 
     /**

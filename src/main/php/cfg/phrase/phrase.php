@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/phrase/phrase.php - either a word or a triple
+    model/phrase/phrase.php - either a word or a triple
     ---------------------
 
     this object is not stored in the database in a separate table
@@ -36,7 +36,7 @@
     - load related:      load related objects from the database
     - data retrieval:    load related lists from the database
     - classification:    information what
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - save:              manage to update the database
 
 
@@ -66,41 +66,45 @@
 
 namespace cfg\phrase;
 
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once API_PHRASE_PATH . 'phrase.php';
-include_once API_WORD_PATH . 'word.php';
-include_once API_WORD_PATH . 'triple.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_link.php';
-include_once MODEL_GROUP_PATH . 'group_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_VALUE_PATH . 'value_list.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_VERB_PATH . 'verb_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'word_list.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once SHARED_ENUM_PATH . 'foaf_direction.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
 
-use api\phrase\phrase as phrase_api;
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_db.php';
+include_once paths::MODEL_WORD . 'word_list.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
+use cfg\db\sql;
+use cfg\formula\formula_db;
 use cfg\helper\combine_named;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -114,18 +118,19 @@ use cfg\group\group_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
 use cfg\value\value_list;
-use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\verb\verb_list;
 use cfg\user\user;
 use cfg\user\user_message;
+use cfg\word\triple_db;
 use cfg\word\word;
+use cfg\word\word_db;
 use cfg\word\word_list;
 use cfg\word\triple;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
 use shared\enum\foaf_direction;
+use shared\enum\messages as msg_id;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 use shared\json_fields;
 use shared\library;
 use shared\types\phrase_type as phrase_type_shared;
@@ -154,21 +159,21 @@ class phrase extends combine_named
     );
     // list of the common user specific database field names of phrases excluding the standard name field
     const FLD_NAMES_USR_EX = array(
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the common user specific database field names of phrases
     const FLD_NAMES_USR = array(
         phrase::FLD_NAME,
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the common user specific database field names of phrases
     const FLD_NAMES_USR_NO_NAME = array(
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the common user specific numeric database field names of phrases
     const FLD_NAMES_NUM_USR = array(
         self::FLD_VALUES,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -187,27 +192,27 @@ class phrase extends combine_named
     // with fields used in the view
     const TBL_FLD_LST_VIEW = [
         [word::class, [
-            [word::FLD_ID, phrase::FLD_ID],
+            [word_db::FLD_ID, phrase::FLD_ID],
             [user::FLD_ID],
-            [word::FLD_NAME, phrase::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
-            [word::FLD_VALUES],
+            [word_db::FLD_NAME, phrase::FLD_NAME],
+            [sql_db::FLD_DESCRIPTION],
+            [word_db::FLD_VALUES],
             [phrase::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT]
-        ], word::FLD_ID],
+        ], word_db::FLD_ID],
         [triple::class, [
-            [triple::FLD_ID, phrase::FLD_ID, '* -1'],
+            [triple_db::FLD_ID, phrase::FLD_ID, '* -1'],
             [user::FLD_ID],
-            [[triple::FLD_NAME, triple::FLD_NAME_GIVEN, triple::FLD_NAME_AUTO], phrase::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
-            [triple::FLD_VALUES],
+            [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], phrase::FLD_NAME],
+            [sql_db::FLD_DESCRIPTION],
+            [triple_db::FLD_VALUES],
             [phrase::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT]
-        ], triple::FLD_ID]
+        ], triple_db::FLD_ID]
     ];
 
 
@@ -222,11 +227,16 @@ class phrase extends combine_named
      */
     function __construct(user|word|triple|null $obj = null, int|null $id = null)
     {
-        if ($obj::class == user::class) {
+        if ($obj == null) {
             // create a dummy word object to remember the user
-            parent::__construct(new word($obj));
+            parent::__construct(new word($this->user()));
         } else {
-            parent::__construct($obj);
+            if ($obj::class == user::class) {
+                // create a dummy word object to remember the user
+                parent::__construct(new word($obj));
+            } else {
+                parent::__construct($obj);
+            }
         }
         if ($id != null) {
             $this->set_obj_from_id($id);
@@ -267,50 +277,53 @@ class phrase extends combine_named
                 $wrd = new word($this->user());
                 $wrd->set_id($db_row[$id_fld]);
                 $wrd->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
-                if (array_key_exists(sandbox_named::FLD_DESCRIPTION . $fld_ext, $db_row)) {
-                    $wrd->description = $db_row[sandbox_named::FLD_DESCRIPTION . $fld_ext];
+                if (array_key_exists(sql_db::FLD_DESCRIPTION . $fld_ext, $db_row)) {
+                    $wrd->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 }
                 if (array_key_exists(phrase::FLD_TYPE . $fld_ext, $db_row)) {
                     $wrd->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
                 }
-                if (array_key_exists(sandbox::FLD_EXCLUDED . $fld_ext, $db_row)) {
-                    $wrd->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
+                if (array_key_exists(sql_db::FLD_EXCLUDED . $fld_ext, $db_row)) {
+                    $wrd->set_excluded($db_row[sql_db::FLD_EXCLUDED . $fld_ext]);
                 }
                 if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
-                    $wrd->share_id = $db_row[sandbox::FLD_SHARE . $fld_ext];
+                    $wrd->set_share_id($db_row[sandbox::FLD_SHARE . $fld_ext]);
                 }
                 if (array_key_exists(sandbox::FLD_PROTECT . $fld_ext, $db_row)) {
-                    $wrd->protection_id = $db_row[sandbox::FLD_PROTECT . $fld_ext];
+                    $wrd->set_protection_id($db_row[sandbox::FLD_PROTECT . $fld_ext]);
                 }
-                //$wrd->owner_id = $db_row[_user::FLD_ID . $fld_ext];
+                //$wrd->set_owner_id($db_row[_user::FLD_ID . $fld_ext]);
                 $this->obj = $wrd;
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
                 // map a triple
                 $trp = new triple($this->user());
                 $trp->set_id($db_row[$id_fld] * -1);
-                $trp->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
-                if (array_key_exists(sandbox_named::FLD_DESCRIPTION . $fld_ext, $db_row)) {
-                    $trp->description = $db_row[sandbox_named::FLD_DESCRIPTION . $fld_ext];
+                $name = $db_row[phrase::FLD_NAME . $fld_ext];
+                if ($name != null) {
+                    $trp->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
+                }
+                if (array_key_exists(sql_db::FLD_DESCRIPTION . $fld_ext, $db_row)) {
+                    $trp->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
                 }
                 if (array_key_exists(phrase::FLD_TYPE . $fld_ext, $db_row)) {
                     $trp->type_id = $db_row[phrase::FLD_TYPE . $fld_ext];
                 }
-                if (array_key_exists(sandbox::FLD_EXCLUDED . $fld_ext, $db_row)) {
-                    $trp->set_excluded($db_row[sandbox::FLD_EXCLUDED . $fld_ext]);
+                if (array_key_exists(sql_db::FLD_EXCLUDED . $fld_ext, $db_row)) {
+                    $trp->set_excluded($db_row[sql_db::FLD_EXCLUDED . $fld_ext]);
                 }
                 if (array_key_exists(sandbox::FLD_SHARE . $fld_ext, $db_row)) {
-                    $trp->share_id = $db_row[sandbox::FLD_SHARE . $fld_ext];
+                    $trp->set_share_id($db_row[sandbox::FLD_SHARE . $fld_ext]);
                 }
                 if (array_key_exists(sandbox::FLD_PROTECT . $fld_ext, $db_row)) {
-                    $trp->protection_id = $db_row[sandbox::FLD_PROTECT . $fld_ext];
+                    $trp->set_protection_id($db_row[sandbox::FLD_PROTECT . $fld_ext]);
                 }
                 // not yet loaded with initial load
-                // $trp->name = $db_row[triple::FLD_NAME_GIVEN . $fld_ext];
-                // $trp->owner_id = $db_row[_user::FLD_ID . $fld_ext];
-                // $trp->from->set_id($db_row[triple::FLD_FROM]);
-                // $trp->to->set_id($db_row[triple::FLD_TO]);
-                // $trp->verb->set_id($db_row[verb::FLD_ID]);
+                // $trp->name = $db_row[triple_db::FLD_NAME_GIVEN . $fld_ext];
+                // $trp->set_owner_id($db_row[_user::FLD_ID . $fld_ext]);
+                // $trp->from->set_id($db_row[triple_db::FLD_FROM]);
+                // $trp->to->set_id($db_row[triple_db::FLD_TO]);
+                // $trp->verb->set_id($db_row[verb_db::FLD_ID]);
                 $this->obj = $trp;
                 $result = true;
             }
@@ -318,10 +331,44 @@ class phrase extends combine_named
         return $result;
     }
 
+    /**
+     * map a phrase api json to this model phrase object
+     * @param array $api_json the api array with the phrase values that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        if (!array_key_exists(json_fields::ID, $api_json)) {
+            log_warning('Missing id in api_json');
+        } else {
+            if ($api_json[json_fields::ID] > 0) {
+                $wrd = new word($this->user());
+                $usr_msg->add($wrd->api_mapper($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $wrd;
+                }
+            } else {
+                $trp = new triple($this->user());
+                $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
+                $usr_msg->add($trp->api_mapper($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $trp;
+                }
+            }
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * set and get
      */
+
+    function obj(): word|triple|IdObject|TextIdObject|null
+    {
+        return $this->obj;
+    }
 
     /**
      * set the object id based on the given term id
@@ -368,7 +415,7 @@ class phrase extends combine_named
             $this->obj = new triple($this->user());
             $this->set_obj_id($id);
         }
-        $this->obj->set_id($id);
+        $this->obj()->set_id($id);
     }
 
     /**
@@ -399,7 +446,7 @@ class phrase extends combine_named
         if ($class != '' and $this->obj == null) {
             $this->set_obj_from_class($class);
         }
-        $this->obj->set_name($name);
+        $this->obj()->set_name($name);
     }
 
     /**
@@ -414,6 +461,32 @@ class phrase extends combine_named
     }
 
     /**
+     * @return int the id of the user or 0 if the user is not set
+     */
+    function user_id(): int
+    {
+        return $this->obj()->user_id();
+    }
+
+    /**
+     * @return int|null the id of the owner if the user is not set
+     */
+    function owner_id(): ?int
+    {
+        return $this->obj()->owner_id();
+    }
+
+    function share_id(): ?int
+    {
+        return $this->obj()->share_id();
+    }
+
+    function protection_id(): ?int
+    {
+        return $this->obj()->protection_id();
+    }
+
+    /**
      * set the value to rank the words by usage
      *
      * @param int|null $usage a higher value moves the word to the top of the selection list
@@ -425,10 +498,10 @@ class phrase extends combine_named
     }
 
     /**
-     * @return int|null the id of the phrase witch is (corresponding to id_obj())
+     * @return int the id of the phrase witch is (corresponding to id_obj())
      * e.g 1 for a word, -1 for a triple
      */
-    function id(): ?int
+    function id(): int
     {
         if ($this->is_word()) {
             return $this->obj_id();
@@ -447,11 +520,12 @@ class phrase extends combine_named
         if ($this->obj == null) {
             return 0;
         } else {
-            return $this->obj->id();
+            return $this->obj()->id();
         }
     }
 
     /**
+     * @param bool $ignore_excluded force to include also the excluded names e.g. for import
      * @return string the name of the phrase
      */
     function name(bool $ignore_excluded = false): string
@@ -459,7 +533,7 @@ class phrase extends combine_named
         if ($this->obj == null) {
             return '';
         } else {
-            return $this->obj->name($ignore_excluded);
+            return $this->obj()->name($ignore_excluded);
         }
     }
 
@@ -479,6 +553,30 @@ class phrase extends combine_named
         return $this->obj()->usage();
     }
 
+    /**
+     * @return user_message ok message if this word or triple might be read to be added to the database
+     */
+    function can_be_ready(): user_message
+    {
+        return $this->obj()->can_be_ready();
+    }
+
+    /**
+     * @return user_message ok message if this word or triple can be added to the database
+     */
+    function db_ready(): user_message
+    {
+        return $this->obj()->db_ready();
+    }
+
+    /**
+     * @return bool true if it has a valid id and name and the phrase is expected to be stored in the database
+     */
+    function is_valid(): bool
+    {
+        return $this->obj()->is_valid();
+    }
+
 
     /*
      * modify
@@ -487,16 +585,55 @@ class phrase extends combine_named
     /**
      * fill this word or triple based on the given phrase
      *
-     * @param phrase|db_object_seq_id $phr word with the values that should been updated e.g. based on the import
+     * @param phrase|db_object_seq_id $phr word with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(phrase|db_object_seq_id $phr): user_message
+    function fill(phrase|db_object_seq_id $phr, user $usr_req): user_message
     {
+        $usr_msg = new user_message();
         if ($this->is_word()) {
-            return $this->obj()->fill($phr->word());
+            if ($phr::class == phrase::class) {
+                if ($phr->is_word()) {
+                    $usr_msg->add($this->obj()->fill($phr->word(), $usr_req));
+                } else {
+                    $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
+                        [
+                            msg_id::VAR_WORD_NAME => $this->dsp_id(),
+                            msg_id::VAR_NAME => $phr->dsp_id(),
+                        ]);
+                }
+            } elseif ($phr::class == word::class) {
+                $usr_msg->add($this->obj()->fill($phr, $usr_req));
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
+                    [
+                        msg_id::VAR_WORD_NAME => $this->dsp_id(),
+                        msg_id::VAR_NAME => $phr->dsp_id(),
+                    ]);
+            }
         } else {
-            return $this->obj()->fill($phr->triple());
+            if ($phr::class == phrase::class) {
+                if ($phr->is_triple()) {
+                    $usr_msg->add($this->obj()->fill($phr->triple(), $usr_req));
+                } else {
+                    $usr_msg->add_id_with_vars(msg_id::FILL_TRIPLE_WITH_OTHER,
+                        [
+                            msg_id::VAR_TRIPLE_NAME => $this->dsp_id(),
+                            msg_id::VAR_NAME => $phr->dsp_id(),
+                        ]);
+                }
+            } elseif ($phr::class == triple::class) {
+                $usr_msg->add($this->obj()->fill($phr, $usr_req));
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::FILL_WORD_WITH_OTHER,
+                    [
+                        msg_id::VAR_TRIPLE_NAME => $this->dsp_id(),
+                        msg_id::VAR_NAME => $phr->dsp_id(),
+                    ]);
+            }
         }
+        return $usr_msg;
     }
 
 
@@ -505,40 +642,9 @@ class phrase extends combine_named
      */
 
     /**
-     * @return phrase_api the phrase frontend api object
+     * @return word|IdObject|TextIdObject|null the word object or null
      */
-    function api_obj(): phrase_api
-    {
-        return $this->obj()->api_obj()->phrase();
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * TODO base this on the api message
-     * @return phrase_dsp the phrase object with the display interface functions
-     */
-    function dsp_obj(): phrase_dsp
-    {
-        if ($this->obj()::class == word::class) {
-            $wrd_dsp = new word_dsp($this->obj()->api_json());
-            $dsp_obj = $wrd_dsp->phrase();
-        } else {
-            $dsp_obj = $this->obj()->dsp_obj()->phrase();
-        }
-        return $dsp_obj;
-    }
-
-    /**
-     * @return word|null
-     */
-    function word(): word|null
+    function word(): word|IdObject|TextIdObject|null
     {
         if ($this->is_word()) {
             return $this->obj();
@@ -548,9 +654,9 @@ class phrase extends combine_named
     }
 
     /**
-     * @return triple|null
+     * @return triple|IdObject|TextIdObject|null the triple object or null
      */
-    function triple(): triple|null
+    function triple(): triple|IdObject|TextIdObject|null
     {
         if ($this->is_word()) {
             return null;
@@ -569,35 +675,6 @@ class phrase extends combine_named
         return $trm;
     }
 
-    /**
-     * map a phrase api json to this model phrase object
-     * @param array $api_json the api array with the phrase values that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $usr_msg = new user_message();
-
-        if (!array_key_exists(json_fields::ID, $api_json)) {
-            log_warning('Missing id in api_json');
-        } else {
-            if ($api_json[json_fields::ID] > 0) {
-                $wrd = new word($this->user());
-                $usr_msg->add($wrd->set_by_api_json($api_json));
-                if ($usr_msg->is_ok()) {
-                    $this->obj = $wrd;
-                }
-            } else {
-                $trp = new triple($this->user());
-                $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
-                $usr_msg->add($trp->set_by_api_json($api_json));
-                if ($usr_msg->is_ok()) {
-                    $this->obj = $trp;
-                }
-            }
-        }
-        return $usr_msg;
-    }
-
 
     /*
      * im- and export
@@ -605,7 +682,7 @@ class phrase extends combine_named
 
     function export_json(): array
     {
-        return $this->obj->export_json();
+        return $this->obj()->export_json();
     }
 
 
@@ -737,7 +814,7 @@ class phrase extends combine_named
             $trp = new triple($this->user());
             $result = $trp->load_by_id($this->obj_id());
             $this->obj = $trp;
-            // TODO check: $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj->name
+            // TODO check: $this->set_name($trp->name()); // is this really useful? better save execution time and have longer code using ->obj()->name
             log_debug('triple ' . $this->dsp_id());
         } elseif ($this->is_word()) {
             $wrd = new word($this->user());
@@ -772,7 +849,7 @@ class phrase extends combine_named
             $this->load_by_name($this->name());
         }
         if ($this->id() < 0) {
-            $lnk = $this->obj;
+            $lnk = $this->obj();
             $lnk->load_objects(); // try to be on the save side, and it is anyway checked if loading is really needed
             $result = $lnk->fob();
         } elseif ($this->id() > 0) {
@@ -812,9 +889,7 @@ class phrase extends combine_named
     function type_id(): ?int
     {
         $result = null;
-        if ($this->obj != null) {
-            $result = $this->obj->type_id();
-        }
+        $result = $this->obj()?->type_id();
         if ($result == null or $result == 0) {
             $wrd = $this->main_word();
             $result = $wrd->type_id;
@@ -822,6 +897,12 @@ class phrase extends combine_named
 
         log_debug('for ' . $this->dsp_id() . ' is ' . $result);
         return $result;
+    }
+
+    function type_code_id(): string
+    {
+        global $phr_typ_cac;
+        return $phr_typ_cac->code_id($this->type_id());
     }
 
     /**
@@ -838,15 +919,15 @@ class phrase extends combine_named
         $qp = new sql_par(self::class);
         $qp->name = 'phrase_formula_by_id';
         $db_con->set_name($qp->name);
-        $db_con->set_link_fields(formula::FLD_ID, phrase::FLD_ID);
+        $db_con->set_link_fields(formula_db::FLD_ID, phrase::FLD_ID);
         $db_con->set_where_link_no_fld(0, 0, $this->id());
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
         $db_row = $db_con->get1($qp);
         $frm = new formula($this->user());
         if ($db_row !== false) {
-            if ($db_row[formula::FLD_ID] > 0) {
-                $frm->load_by_id($db_row[formula::FLD_ID]);
+            if ($db_row[formula_db::FLD_ID] > 0) {
+                $frm->load_by_id($db_row[formula_db::FLD_ID]);
             }
         }
 
@@ -976,7 +1057,7 @@ class phrase extends combine_named
     {
         $result = false;
         if ($this->obj() !== null) {
-            if ($this->obj()::class == word::class or $this->obj()::class == word_dsp::class) {
+            if ($this->obj()::class == word::class) {
                 $result = true;
             }
         } else {
@@ -1026,25 +1107,25 @@ class phrase extends combine_named
 
 
     /*
-     * information
+     * info
      */
 
     /**
-     * check if the word in the database needs to be updated
-     * e.g. for import  if this word has only the name set, the protection should not be updated in the database
+     * check if the word or triple in the database needs to be updated
+     * e.g. for import if this word has only the name set, the protection should not be updated in the database
      *
-     * @param phrase $db_phr the word as saved in the database
+     * @param phrase $db_phr the word or triple as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
     function needs_db_update(phrase $db_phr): bool
     {
         if ($this->is_word() and $db_phr->is_word()) {
             $wrd = $this->obj();
-            $db_wrd = $this->obj();
+            $db_wrd = $db_phr->obj();
             return $wrd->needs_db_update($db_wrd);
         } elseif ($this->is_triple() and $db_phr->is_triple()) {
             $trp = $this->obj();
-            $db_trp = $this->obj();
+            $db_trp = $db_phr->obj();
             return $trp->needs_db_update($db_trp);
         } else {
             return true;
@@ -1068,10 +1149,34 @@ class phrase extends combine_named
         }
     }
 
+    function no_id_but_name(): bool
+    {
+        if ($this->is_word()) {
+            $wrd = $this->obj();
+            return $wrd->no_id_but_name();
+        } elseif ($this->is_triple()) {
+            $trp = $this->obj();
+            return $trp->no_id_but_name();
+        } else {
+            return false;
+        }
+    }
+
+    function is_excluded(): bool
+    {
+        if ($this->is_word()) {
+            $wrd = $this->obj();
+            return $wrd->is_excluded();
+        } elseif ($this->is_triple()) {
+            $trp = $this->obj();
+            return $trp->is_excluded();
+        } else {
+            return false;
+        }
+    }
 
 
-    public
-    static function cmp($a, $b): string
+    public static function cmp($a, $b): string
     {
         return strcmp($a->name(), $b->name());
     }
@@ -1218,7 +1323,7 @@ class phrase extends combine_named
         }
         $sql_avoid_code_check_prefix = "SELECT";
         $sql = $sql_avoid_code_check_prefix . ' DISTINCT id, name
-              FROM ( ' . $sql_words . ' UNION ' . $sql_triples . ' ) AS p
+              FROM ( ' . $sql_words . ' ' . sql::UNION . ' ' . $sql_triples . ' ) AS p
              WHERE excluded = 0
           ORDER BY p.name;';
         log_debug($sql);
@@ -1230,43 +1335,8 @@ class phrase extends combine_named
      * display functions
      */
 
-    // create a selector that contains the words and triples
-    // if one form contains more than one selector, $pos is used for identification
-    // $type is a word to preselect the list to only those phrases matching this type
-    function dsp_selector(?phrase_dsp $type, $form_name, $pos, string $class, $back): string
-    {
-        // TODO include pattern in the call
-        $phr_lst = new phrase_list_dsp();
-        if ($type != null) {
-            $phr_lst->load_related($type, foaf_direction::DOWN);
-        } else {
-            $pattern = '';
-            $phr_lst->load_like($pattern);
-        }
 
-
-        if ($pos > 0) {
-            $field_name = "phrase" . $pos;
-        } else {
-            $field_name = "phrase";
-        }
-        $label = "";
-        if ($form_name != "value_add" and $form_name != "value_edit") {
-            if ($pos == 1) {
-                $label = "From:";
-            } elseif ($pos == 2) {
-                $label = "To:";
-            } else {
-                $label = "Word:";
-            }
-        }
-        // TODO activate Prio 3
-        // $sel->bs_class = $class;
-        // $sel->dummy_text = '... please select';
-        return $phr_lst->selector($form_name, $this->id(), $field_name, $label, '');
-    }
-
-// returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
+    // returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
     function is_mainly()
     {
         $result = null;
@@ -1314,7 +1384,7 @@ class phrase extends combine_named
 
         $result = false;
         if ($this->obj != null) {
-            if ($this->obj->type_id == $phr_typ_cac->id(phrase_type_shared::PERCENT)) {
+            if ($this->obj()->type_id == $phr_typ_cac->id(phrase_type_shared::PERCENT)) {
                 $result = true;
             }
         } else {
@@ -1344,7 +1414,7 @@ class phrase extends combine_named
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple::FLD_FROM, triple::FLD_TO, $this->id(), verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple_db::FLD_FROM, triple_db::FLD_TO, $this->id(), verb_db::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1373,7 +1443,7 @@ class phrase extends combine_named
         //$db_con = new mysql;
         $db_con->usr_id = $this->user()->id();
         $db_con->set_class(triple::class);
-        $key_result = $db_con->get_value_2key(triple::FLD_TO, triple::FLD_FROM, $this->id(), verb::FLD_ID, $link_id);
+        $key_result = $db_con->get_value_2key(triple_db::FLD_TO, triple_db::FLD_FROM, $this->id(), verb_db::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
             $id = intval($key_result);
             if ($id > 0) {
@@ -1399,7 +1469,7 @@ class phrase extends combine_named
 
         /*
         if (isset($this->obj)) {
-            $usr_msg = $this->obj->save();
+            $usr_msg = $this->obj()->save();
         }
         */
 
@@ -1496,60 +1566,6 @@ class phrase extends combine_named
     }
 
     /*
-     * display cast
-     */
-
-    /**
-     * TODO dismiss or base on the api message
-     * @return word_dsp
-     */
-    protected
-    function get_word_dsp(): word_dsp
-    {
-        $wrd_dsp = new word($this->user());
-        if (get_class($this->obj) == word_dsp::class) {
-            $wrd_dsp = $this->obj;
-        } elseif (get_class($this->obj) == word::class) {
-            $wrd_dsp = new word_dsp($this->obj()->api_json());
-        }
-        return $wrd_dsp;
-    }
-
-    /**
-     * TODO dismiss
-     * @return word_dsp
-     */
-    protected
-    function get_triple_dsp(): triple_dsp
-    {
-        $lnk_dsp = new triple_dsp();
-        if (get_class($this->obj) == triple_dsp::class) {
-            $lnk_dsp = $this->obj;
-        } elseif (get_class($this->obj) == triple::class) {
-            $lnk_dsp = $this->obj()->dsp_obj();
-        }
-        return $lnk_dsp;
-    }
-
-    /**
-     * get the related display object
-     * so either the word display object
-     * or the triple display object
-     */
-    function get_dsp_obj(): ?phrase_dsp
-    {
-        if ($this->is_word()) {
-            $wrd = $this->get_word_dsp();
-            return $wrd->phrase();
-        } elseif ($this->is_triple()) {
-            $trp = $this->get_triple_dsp();
-            return $trp->phrase();
-        } else {
-            return null;
-        }
-    }
-
-    /*
      * display functions
      */
 
@@ -1562,37 +1578,7 @@ class phrase extends combine_named
 
     function name_linked(): string
     {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
-    }
-
-    function dsp_tbl(int $intent = 0): string
-    {
-        $result = '';
-        if ($this != null) {
-            if ($this->obj != null) {
-                // the function dsp_tbl should exist for words and triples
-                if (get_class($this->obj) == word::class) {
-                    $dsp_obj = new word_dsp($this->obj->api_json());
-                    $result = $dsp_obj->td('', '', $intent);
-                } else {
-                    $result = $this->obj->dsp_tbl($intent);
-                }
-            }
-        }
-        log_debug('for ' . $this->dsp_id());
-        return $result;
-    }
-
-    function dsp_tbl_row(): string
-    {
-        $result = '';
-        // the function dsp_tbl_row should exist for words and triples
-        if (isset($this->obj)) {
-            $result = $this->obj->dsp_tbl_row();
-        } else {
-            log_err('The phrase object is missing for ' . $this->dsp_id() . '.', "result->load");
-        }
-        return $result;
+        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
     }
 
     /**
@@ -1617,14 +1603,6 @@ class phrase extends combine_named
         return $phr_lst;
     }
 
-    function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
-    {
-        $phr_lst = $this->phrases($direction, $link_types);
-        $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
-        $phr_dsp = new phrase_dsp($this->api_json());
-        return $phr_lst_dsp->dsp_graph($phr_dsp, $back);
-    }
-
     /**
      * return the html code to display a word
      */
@@ -1638,7 +1616,7 @@ class phrase extends combine_named
      */
     function display_linked(): string
     {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '">' . $this->name() . '</a>';
+        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '">' . $this->name() . '</a>';
     }
 
     /**
@@ -1649,7 +1627,7 @@ class phrase extends combine_named
      */
     function dsp_link_style($style): string
     {
-        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj->description . '" class="' . $style . '">' . $this->name() . '</a>';
+        return '<a href="/http/view.php?words=' . $this->id() . '" title="' . $this->obj()->description . '" class="' . $style . '">' . $this->name() . '</a>';
     }
 
     // create a selector that contains the time words
@@ -1661,13 +1639,6 @@ class phrase extends combine_named
 
         $wrd = $this->main_word();
         return $wrd->dsp_time_selector($type, $form_name, $pos, $back);
-    }
-
-    // button to add a new word similar to this phrase
-    function btn_add($back)
-    {
-        $wrd = $this->main_word();
-        return $wrd->btn_add($back);
     }
 
 }

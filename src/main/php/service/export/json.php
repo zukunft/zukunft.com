@@ -10,7 +10,6 @@
 
     add the instance id, user id and time stamp to the export file
 
-    The base object for the components is model/sandbox/sandbox_exp.php
 
 
     This file is part of zukunft.com - calc with words
@@ -37,11 +36,8 @@
 
 */
 
-namespace im_export;
+namespace cfg\export;
 
-include_once SERVICE_EXPORT_PATH . 'json.php';
-
-use cfg\export\export;
 use cfg\phrase\phrase_list;
 use cfg\user\user;
 
@@ -61,7 +57,7 @@ class json_io
     }
 
     // export zukunft.com data as json
-    function export()
+    function export(): string
     {
         log_debug('json_io->export');
         $result = '';
@@ -77,7 +73,7 @@ class json_io
     }
 
     // import zukunft.com data from json
-    function import()
+    function import(): string
     {
         $result = '';
 

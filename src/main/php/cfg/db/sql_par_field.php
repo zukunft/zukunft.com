@@ -2,10 +2,11 @@
 
 /*
 
-    cfg/db/sql_field_value.php - combine a sql parameter field name with the value and the parameter type
+    model/db/sql_field_value.php - combine a sql parameter field name with the value and the parameter type
     --------------------------
 
     TODO split to a sql_par_field_log and a sql_par_field object
+
 
     This file is part of zukunft.com - calc with words
 

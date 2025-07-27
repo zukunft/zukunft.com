@@ -31,22 +31,91 @@
 
 namespace html\log;
 
-include_once API_SANDBOX_PATH . 'user_config.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
 
-use api\log\change_log_named as change_log_named_api;
-use api\sandbox\user_config;
-use cfg\log\change_action;
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+//include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::LOG . 'change_log.php';
+//include_once html_paths::HELPER . 'config.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use html\formula\formula;
+use html\helper\config;
 use html\rest_ctrl;
 use html\button;
 use html\html_base;
 use html\system\back_trace;
-use cfg\log\change_table_list;
-use cfg\formula\formula;
-use html\system\messages;
+use html\user\user_message;
+use shared\enum\change_actions;
+use shared\enum\change_fields;
+use shared\enum\change_tables;
+use shared\enum\messages as msg_id;
+use shared\json_fields;
 
-class change_log_named extends change_log_named_api
+class change_log_named extends change_log
 {
 
+    /*
+     * object vars
+     */
+
+    public ?string $old_value = null;      // the field value before the user change
+    public ?int $old_id = null;            // the reference id before the user change e.g. for fields using a sub table such as status
+    public ?string $new_value = null;      // the field value after the user change
+    public ?int $new_id = null;            // the reference id after the user change e.g. for fields using a sub table such as status
+    public ?string $std_value = null;  // the standard field value for all users that does not have changed it
+    public ?int $std_id = null;        // the standard reference id for all users that does not have changed it
+
+
+    /*
+     * api
+     */
+
+    /**
+     * set the vars of this object bases on the api json array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $json_array an api json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function api_mapper(array $json_array): user_message
+    {
+        $usr_msg = parent::api_mapper($json_array);
+        if (array_key_exists(json_fields::OLD_VALUE, $json_array)) {
+            $this->old_value = $json_array[json_fields::OLD_VALUE];
+        } else {
+            $this->old_value = null;
+        }
+        if (array_key_exists(json_fields::OLD_ID, $json_array)) {
+            $this->old_id = $json_array[json_fields::OLD_ID];
+        } else {
+            $this->old_id = null;
+        }
+        if (array_key_exists(json_fields::NEW_VALUE, $json_array)) {
+            $this->new_value = $json_array[json_fields::NEW_VALUE];
+        } else {
+            $this->new_value = null;
+        }
+        if (array_key_exists(json_fields::NEW_ID, $json_array)) {
+            $this->new_id = $json_array[json_fields::NEW_ID];
+        } else {
+            $this->new_id = null;
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * table
+     */
 
     /**
      * @return string with the html code to show one row of the changes of sandbox objects e.g. a words
@@ -59,25 +128,25 @@ class change_log_named extends change_log_named_api
 
         // pick the useful field name
         $txt_fld = '';
-        if ($this->table_name() == change_table_list::VALUE) {
+        if ($this->table_name() == change_tables::VALUE) {
             $txt_fld .= $this->action_name() . ' value';
             // because changing the words creates a new value there is no need to display the words here
-        /*
-            if ($db_row['row_id'] > 0) {
-              $val = New value;
-              $val->id = $db_row['row_id'];
-              $val->usr = $this;
-              $val->load();
-              $val->load_phrases();
-              $txt_fld .= '<td>';
-              if (isset($val->wrd_lst)) {
-                $txt_fld .= implode(",",$val->wrd_lst->names_linked());
-              }
-              $txt_fld .= '</td>';
-            } else {
-              $txt_fld .= '<td>'.$db_row['type'].' value</td>';
-            }
-        */
+            /*
+                if ($db_row['row_id'] > 0) {
+                  $val = New value;
+                  $val->id = $db_row['row_id'];
+                  $val->usr = $this;
+                  $val->load();
+                  $val->load_phrases();
+                  $txt_fld .= '<td>';
+                  if (isset($val->wrd_lst)) {
+                    $txt_fld .= implode(",",$val->wrd_lst->names_linked());
+                  }
+                  $txt_fld .= '</td>';
+                } else {
+                  $txt_fld .= '<td>'.$db_row['type'].' value</td>';
+                }
+            */
         } elseif (!$user_changes) {
             $txt_fld .= $this->field_description();
             // probably not needed to display the action, because this can be seen by the change itself
@@ -90,7 +159,7 @@ class change_log_named extends change_log_named_api
         $txt_old = $this->old_value;
         $txt_new = $this->new_value;
         // encode of text
-        if ($this->field_code_id() == formula::FLD_ALL_NEEDED) {
+        if ($this->field_code_id() == change_fields::FLD_ALL_NEEDED) {
             if ($txt_old == "1") {
                 $txt_old = "all values needed for calculation";
             } else {
@@ -109,7 +178,7 @@ class change_log_named extends change_log_named_api
         }
         */
 
-        $usr_cfg = new user_config();
+        $usr_cfg = new config();
         $time_text = date_format($this->change_time, $usr_cfg->date_time_format());
         if (!$user_changes) {
             $time_text .= ' by ' . $this->usr->name;
@@ -132,37 +201,29 @@ class change_log_named extends change_log_named_api
         // $undo_text = '';
         $undo_call = '';
         $undo_btn = '';
-        if ($this->table_name() == change_table_list::WORD) {
-            if ($this->action_code_id() == change_action::ADD) {
+        if ($this->table_name() == change_tables::WORD) {
+            if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
-                $undo_btn = (new button($undo_call))->undo(messages::UNDO_ADD);
+                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_ADD);
             }
-        } elseif ($this->table_name() == change_table_list::VIEW) {
-            if ($this->action_code_id() == change_action::ADD) {
+        } elseif ($this->table_name() == change_tables::VIEW) {
+            if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
-                $undo_btn = (new button($undo_call))->undo(messages::UNDO_EDIT);
+                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_EDIT);
             }
-        } elseif ($this->table_name() == change_table_list::FORMULA) {
-            if ($this->action_code_id() == change_action::UPDATE) {
+        } elseif ($this->table_name() == change_tables::FORMULA) {
+            if ($this->action_code_id() == change_actions::UPDATE) {
                 $undo_call = $html->url(
                     formula::class . rest_ctrl::UPDATE, $this->row_id,
                     $back->url_encode() . '&undo_change=' . $this->id());
-                $undo_btn = (new button($undo_call))->undo(messages::UNDO_DEL);
+                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_DEL);
             }
         }
         // display the undo button
-        if ($condensed) {
-            if ($undo_call <> '') {
-                $html_text .= ' ' . $undo_btn;
-            } else {
-                $html_text .= '';
-            }
+        if ($undo_call <> '') {
+            $html_text .= $html->td($undo_btn);
         } else {
-            if ($undo_call <> '') {
-                $html_text .= $html->td($undo_btn);
-            } else {
-                $html_text .= $html->td();
-            }
+            $html_text .= $html->td();
         }
 
         return $html->tr($html_text);
@@ -226,6 +287,36 @@ class change_log_named extends change_log_named_api
 
         $table = $cng_tbl_cac->get($this->table_id);
         return $table->name;
+    }
+
+    /**
+     * @return string the current change as a human-readable text
+     *                optional without time for automatic testing
+     */
+    public function dsp(bool $ex_time = false): string
+    {
+        global $mtr;
+        $result = '';
+        $usr_cfg = new config();
+
+        if (!$ex_time) {
+            $result .= date_format($this->change_time, $usr_cfg->date_time_format()) . ' ';
+        }
+        if ($this->usr != null) {
+            if ($this->usr->name() <> '') {
+                $result .= $this->usr->name() . ' ';
+            }
+        }
+        if ($this->old_value <> '') {
+            if ($this->new_value <> '') {
+                $result .= $mtr->txt(msg_id::LOG_UPDATE) . ' "' . $this->old_value . '" ' . $mtr->txt(msg_id::LOG_TO) . ' "' . $this->new_value . '"';
+            } else {
+                $result .= $mtr->txt(msg_id::LOG_DEL) . ' "' . $this->old_value . '"';;
+            }
+        } else {
+            $result .= $mtr->txt(msg_id::LOG_ADD) . ' "' . $this->new_value . '"';;
+        }
+        return $result;
     }
 
 }

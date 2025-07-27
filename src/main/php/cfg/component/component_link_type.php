@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/formula/component_link_type.php - db based ENUM of the component view link types
-    ---------------------------------
+    model/formula/component_link_type.php - db based ENUM of the component view link types
+    -----------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -31,7 +31,9 @@
 
 namespace cfg\component;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
 
 use cfg\helper\type_object;
 

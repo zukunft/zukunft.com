@@ -47,7 +47,7 @@ SELECT triple_update_log_000022400000002
         (1::bigint,
          2::smallint,
          18::smallint,
-         'Mathematical constant'::text,
+         'mathematical constant'::text,
          'System Test Word Renamed'::text,
          1::bigint,
          68::smallint,

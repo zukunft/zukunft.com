@@ -32,16 +32,15 @@
 
 namespace unit;
 
-include_once API_RESULT_PATH . 'result.php';
-include_once API_VALUE_PATH . 'value.php';
-include_once WEB_FIGURE_PATH . 'figure.php';
+use html\const\paths as html_paths;
 
-use api\result\result as result_api;
-use api\value\value as value_api;
+include_once html_paths::FIGURE . 'figure.php';
+
+use cfg\result\results;
 use html\figure\figure as figure_dsp;
-use html\value\value as value_dsp;
-use html\result\result as result_dsp;
 use html\rest_ctrl;
+use shared\const\values;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class figure_tests
@@ -49,12 +48,11 @@ class figure_tests
     function run(test_cleanup $t): void
     {
 
-        global $usr;
+        // start the test section (ts)
+        $ts = 'unit figure ';
+        $t->header($ts);
 
-        $t->header('Unit tests of the formula class (src/main/php/model/formula/figure.php)');
-
-
-        $t->subheader('SQL statement tests');
+        $t->subheader($ts . 'sql statement');
 
         // if the user has changed the formula, that related figure is not standard anymore
         /*
@@ -67,16 +65,16 @@ class figure_tests
         */
 
 
-        $t->subheader('set and get unit tests');
+        $t->subheader($ts . 'set and get');
 
         $fig = $t->figure_value();
-        $t->assert('figure value id', $fig->id(), 32770);
-        $t->assert('figure value obj id', $fig->obj_id(), 32770);
-        $t->assert('figure value number', $fig->number(), value_api::TV_READ_SHORTEST);
+        $t->assert('figure value id', $fig->id(), values::PI_ID);
+        $t->assert('figure value obj id', $fig->obj_id(), values::PI_ID);
+        $t->assert('figure value number', $fig->number(), values::PI_SHORT);
         $fig = $t->figure_result();
         $t->assert('figure result id', $fig->id(), -1);
         $t->assert('figure result obj id', $fig->obj_id(), 1);
-        $t->assert('figure result number', $fig->number(), result_api::TV_INT);
+        $t->assert('figure result number', $fig->number(), results::TV_INT);
 
         $fig = $t->figure_value();
         $t->assert('figure value symbol', $fig->symbol(), "");
@@ -85,16 +83,18 @@ class figure_tests
         //$t->assert('figure result symbol', $fig->symbol(), "{f1}");
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $fig = $t->figure_value();
-        $t->assert_api($fig);
+        $t->assert_api($fig, 'figure_value_without_phrases');
+        $t->assert_api($fig, 'figure_value_with_phrases', [api_type::INCL_PHRASES]);
 
         $fig = $t->figure_result();
-        $t->assert_api($fig, 'figure_result');
+        $t->assert_api($fig, 'figure_result_without_phrases');
+        $t->assert_api($fig, 'figure_result_with_phrases', [api_type::INCL_PHRASES]);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $fig = $t->figure_value();
         $t->assert_api_to_dsp($fig, new figure_dsp());

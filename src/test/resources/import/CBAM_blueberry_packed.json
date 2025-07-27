@@ -1,0 +1,170 @@
+{
+  "version": "0.0.3",
+  "time": "2025-01-31 17:42:00",
+  "user": "tageloehner",
+  "selection": [
+    "CBAM blueberry sample"
+  ],
+  "words": [
+    {
+      "name": "blueberry",
+      "refs": [
+        {
+          "name": "Blueberry",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "porringer",
+      "refs": [
+        {
+          "name": "Porringer",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "plastic",
+      "refs": [
+        {
+          "name": "Plastic",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "fuel",
+      "refs": [
+        {
+          "name": "Motor_fuel",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "diesel",
+      "refs": [
+        {
+          "name": "Diesel",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "jet",
+      "refs": [
+        {
+          "name": "Jet_airliner",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Euro",
+      "refs": [
+        {
+          "name": "Euro",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cent",
+      "refs": [
+        {
+          "name": "Cent (currency)",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "€",
+      "refs": [
+        {
+          "name": "Euro_sign",
+          "type": "wikipedia"
+        }
+      ]
+    }
+  ],
+  "triples": [
+    {
+      "from": "Euro",
+      "verb": "is a",
+      "to": "Currency"
+    },
+    {
+      "from": "cent",
+      "verb": "is used by",
+      "to": "Euro"
+    },
+    {
+      "from": "€",
+      "verb": "is symbol for",
+      "to": "Euro"
+    },
+    {
+      "name": "plastic porringer",
+      "from": "porringer",
+      "verb": "can be made of",
+      "to": "plastic"
+    },
+    {
+      "name": "blueberry porringer",
+      "from": "blueberry",
+      "verb": "can be packed in",
+      "to": "plastic porringer"
+    },
+    {
+      "name": "diesel fuel",
+      "from": "diesel",
+      "verb": "is a",
+      "to": "fuel"
+    },
+    {
+      "name": "jet fuel",
+      "from": "fuel",
+      "verb": "used for",
+      "to": "jet"
+    }
+  ],
+  "sources": [
+    {
+      "name": "Umweltbundesamt CO2-Emissionsfaktoren für fossile Brennstoffe Aktualisierung 2022",
+      "url": "https://www.umweltbundesamt.de/sites/default/files/medien/479/publikationen/cc_28-2022_emissionsfaktoren-brennstoffe_bf.pdf"
+    }
+  ],
+  "values": [
+    {
+      "words": [
+        "diesel fuel",
+        "t CO2 / t"
+      ],
+      "number": 3.179,
+      "source": "Umweltbundesamt CO2-Emissionsfaktoren für fossile Brennstoffe Aktualisierung 2022"
+    },
+    {
+      "words": [
+        "blueberry porringer",
+        "g"
+      ],
+      "number": 250
+    },
+    {
+      "words": [
+        "blueberry porringer",
+        "Diesel fuel",
+        "g"
+      ],
+      "number": 250
+    }
+  ],
+  "formulas": [
+    {
+      "name": "scale cent to Euro",
+      "expression": "\"Euro\" = \"cent\" * 100",
+      "assigned_word": "cent"
+    }
+  ]
+}

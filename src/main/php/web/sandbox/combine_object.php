@@ -39,20 +39,20 @@
 
 namespace html\sandbox;
 
-include_once HTML_PATH . 'rest_ctrl.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
 
 use html\rest_ctrl as api_dsp;
 use html\user\user_message;
+use html\word\word;
+use shared\helper\CombineObject;
 
-class combine_object
+class combine_object extends CombineObject
 {
-
-    /*
-     * object vars
-     */
-
-    protected ?object $obj = null;
-
 
     /*
      * construct and map
@@ -64,8 +64,11 @@ class combine_object
      */
     function __construct(?string $api_json = null)
     {
+        parent::__construct(new word());
         if ($api_json != null) {
             $this->set_from_json($api_json);
+        } else {
+            $this->set_obj(new word());
         }
     }
 
@@ -81,7 +84,7 @@ class combine_object
      */
     function set_from_json(string $json_api_msg): user_message
     {
-        return $this->set_from_json_array(json_decode($json_api_msg, true));
+        return $this->api_mapper(json_decode($json_api_msg, true));
     }
 
     /**
@@ -90,21 +93,11 @@ class combine_object
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
         $usr_msg = new user_message();
         $usr_msg->add_err('This set_from_json_array function should have been overwritten by the child object');
         return $usr_msg;
-    }
-
-    function set_obj(object $obj): void
-    {
-        $this->obj = $obj;
-    }
-
-    function obj(): object|null
-    {
-        return $this->obj;
     }
 
 
@@ -124,10 +117,27 @@ class combine_object
         $api = new api_dsp();
         $json_body = $api->api_call_id($this::class, $id);
         if ($json_body) {
-            $this->set_from_json_array($json_body);
+            $this->api_mapper($json_body);
             $result = true;
         }
         return $result;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string the unique id fields
+     */
+    function dsp_id(): string
+    {
+        if ($this->obj() != null) {
+            return $this->obj()->dsp_id() . ' as term';
+        } else {
+            return 'term with null object';
+        }
     }
 
 }

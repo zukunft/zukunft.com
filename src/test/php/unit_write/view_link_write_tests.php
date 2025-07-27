@@ -32,7 +32,7 @@
 
 namespace unit_write;
 
-use api\view\view as view_api;
+use shared\const\views;
 use test\test_cleanup;
 
 class view_link_write_tests
@@ -43,7 +43,7 @@ class view_link_write_tests
 
         $t->header('view link db write tests');
 
-        $t->subheader('view link write sandbox tests for ' . view_api::TN_ADD);
+        $t->subheader('view link write sandbox tests for ' . views::TEST_ADD_NAME);
         // TODO activate (set object id instead of id)
         //$t->assert_write_link($t->view_link_filled_add());
 

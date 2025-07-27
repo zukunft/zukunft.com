@@ -5,6 +5,7 @@
     model/view/view_link_type_list.php - to defined how a term is linked to a view
     ----------------------------------
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -31,9 +32,11 @@
 
 namespace cfg\view;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once SHARED_TYPES_PATH . 'view_type.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_TYPES . 'view_type.php';
 
 use cfg\helper\type_list;
 

@@ -32,7 +32,9 @@
 
 namespace unit_ui;
 
-include_once WEB_VIEW_PATH . 'view_list.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::VIEW . 'view_list.php';
 
 use html\html_base;
 use html\view\view_list as view_list_dsp;
@@ -45,13 +47,15 @@ class view_list_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('view list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html view list ';
+        $t->header($ts);
 
         // test the view list display functions
         $lst = new view_list_dsp($t->view_list()->api_json());
         $test_page = $html->text_h2('view list display test');
-        $test_page .= 'view list with tooltip: ' . $lst->display() . '<br>';
-        $test_page .= 'view list with link: ' . $lst->display_linked() . '<br>';
+        $test_page .= 'view list with tooltip: ' . $lst->name_tip() . '<br>';
+        $test_page .= 'view list with link: ' . $lst->name_link() . '<br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst->selector('', 0, 'test_selector', 'No view selected') . '<br>';

@@ -2,15 +2,18 @@
 
 namespace unit;
 
-include_once API_WORD_PATH . 'triple.php';
+use cfg\const\paths;
 
-use api\word\triple as triple_api;
-use api\word\word as word_api;
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+
 use cfg\db\sql_creator;
-use cfg\db\sql_type;
-use html\word\triple as triple_dsp;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
 use cfg\word\triple;
+use html\word\triple as triple_dsp;
+use shared\const\triples;
+use shared\const\words;
 use test\test_cleanup;
 
 class triple_tests
@@ -19,39 +22,42 @@ class triple_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init
         $sc = new sql_creator();
         $t->name = 'triple->';
         $t->resource_path = 'db/triple/';
 
-        $t->header('triple unit tests');
+        // start the test section (ts)
+        $ts = 'unit triple ';
+        $t->header($ts);
 
-        $t->subheader('triple sql setup');
+        $t->subheader($ts . 'sql setup');
         $trp = $t->triple();
         $t->assert_sql_table_create($trp);
         $t->assert_sql_index_create($trp);
         $t->assert_sql_foreign_key_create($trp);
 
-        $t->subheader('triple sql read');
+        $t->subheader($ts . 'sql read');
         $trp = new triple($usr);
         $t->assert_sql_by_id($sc, $trp);
         $t->assert_sql_by_name($sc, $trp);
         $t->assert_sql_by_link($sc, $trp);
         $this->assert_sql_by_name_generated($sc, $trp, $t);
 
-        $t->subheader('triple sql read standard and user changes by id');
+        $t->subheader($ts . 'sql read standard and user changes by id');
         $trp = new triple($usr);
         $trp->set_id(2);
         $t->assert_sql_standard($sc, $trp);
         $t->assert_sql_user_changes($sc, $trp);
 
-        $t->subheader('triple sql read standard by name');
+        $t->subheader($ts . 'sql read standard by name');
         $trp = new triple($usr);
-        $trp->set_name(triple_api::TN_PI);
+        $trp->set_name(triples::PI);
         $t->assert_sql_standard($sc, $trp);
 
-        $t->subheader('triple sql write insert');
+        $t->subheader($ts . 'sql write insert');
         $trp = $t->triple();
         $t->assert_sql_insert($sc, $trp);
         $t->assert_sql_insert($sc, $trp, [sql_type::USER]);
@@ -64,15 +70,15 @@ class triple_tests
         $trp_excl->set_type('');
         $t->assert_sql_insert($sc, $trp_excl, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('triple sql write update');
-        $trp_renamed = $trp->cloned_named(word_api::TN_RENAMED);
+        $t->subheader($ts . 'sql write update');
+        $trp_renamed = $trp->cloned_named(words::TEST_RENAMED);
         $t->assert_sql_update($sc, $trp_renamed, $trp);
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::USER]);
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG]);
         $t->assert_sql_update($sc, $trp_renamed, $trp, [sql_type::LOG, sql_type::USER]);
         $t->assert_sql_update($sc, $trp_excl, $trp, [sql_type::LOG]);
 
-        $t->subheader('triple sql delete');
+        $t->subheader($ts . 'sql delete');
         // TODO activate db write
         $t->assert_sql_delete($sc, $trp);
         $t->assert_sql_delete($sc, $trp, [sql_type::USER]);
@@ -81,18 +87,22 @@ class triple_tests
         $t->assert_sql_delete($sc, $trp, [sql_type::EXCLUDE]);
         $t->assert_sql_delete($sc, $trp, [sql_type::USER, sql_type::EXCLUDE]);
 
-        $t->subheader('triple api unit tests');
+        $t->subheader($ts . 'view base object handling');
+        $trp = $t->triple_filled_add();
+        $t->assert_reset($trp);
+
+        $t->subheader($ts . 'api');
         $trp = $t->triple();
         $t->assert_api_json($trp);
         $t->assert_api($trp);
 
-        $t->subheader('triple frontend unit tests');
+        $t->subheader($ts . 'frontend');
         $trp = $t->triple_pi();
         $t->assert_api_to_dsp($trp, new triple_dsp());
 
-        $t->subheader('triple import and export tests');
-        $t->assert_ex_and_import($t->triple());
-        $t->assert_ex_and_import($t->triple_filled_add());
+        $t->subheader($ts . 'import and export');
+        $t->assert_ex_and_import($t->triple(), $usr_sys);
+        $t->assert_ex_and_import($t->triple_filled_add(), $usr_sys);
         $json_file = 'unit/triple/pi.json';
         $t->assert_json_file(new triple($usr), $json_file);
 

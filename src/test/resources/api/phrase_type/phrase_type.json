@@ -1,5 +1,6 @@
 {
   "id": 1,
   "name": "standard",
-  "code_id": "default"
+  "code_id": "default",
+  "description": "for words that have need no special behaviour"
 }

@@ -32,15 +32,19 @@
 
 namespace unit;
 
-include_once MODEL_IMPORT_PATH . 'import.php';
-include_once MODEL_IMPORT_PATH . 'convert_wikipedia_table.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\db\sql_creator;
 use cfg\import\convert_wikipedia_table;
 use cfg\import\import;
-use html\html_base;
 use test\test_base;
 use test\test_cleanup;
+use const\files as test_files;
 
 class import_tests
 {
@@ -48,35 +52,73 @@ class import_tests
     {
         global $usr;
         $sc = new sql_creator();
+        $imp = new import(test_files::SYSTEM_CONFIG_SAMPLE);
+        $imp->usr = $usr;
 
-        $t->subheader('Import unit tests');
+        // start the test section (ts)
+        $ts = 'unit import ';
+        $t->header($ts);
 
         $test_name = 'YAML import word count';
-        $yaml_str = file_get_contents(SYSTEM_CONFIG_FILE_YAML);
+        $yaml_str = file_get_contents(test_files::SYSTEM_CONFIG_SAMPLE);
         $json_array = yaml_parse($yaml_str);
-        $imp = new import;
-        $dto = $imp->yaml_data_object($json_array, $usr);
-        $t->assert($test_name, $dto->word_list()->count(), 55);
+        $dto = $imp->get_data_object_yaml($json_array);
+        $t->assert($test_name, $dto->word_list()->count(), 79);
         $test_name = 'YAML import triple count';
-        $t->assert($test_name, $dto->triple_list()->count(), 17);
+        $t->assert($test_name, $dto->triple_list()->count(), 24);
         $test_name = 'YAML import value count';
-        $t->assert($test_name, $dto->value_list()->count(), 24);
+        $t->assert($test_name, $dto->value_list()->count(), 47);
         $test_name = 'YAML import sql function count';
-        $t->assert($test_name, $dto->word_list()->sql_call_with_par($sc)->count(), 2);
+        $t->assert($test_name, $dto->word_list()->sql_insert_call_with_par($sc)->count(), 1);
 
+        $test_name = 'JSON import word count';
+        $json_str = file_get_contents(test_files::IMPORT_WORDS . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array);
+        $t->assert($test_name, $dto->word_list()->count(), 4);
+
+        $test_name = 'JSON import verbs count';
+        $json_str = file_get_contents(test_files::IMPORT_VERBS . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array);
+        $t->assert($test_name, $dto->verb_list()->count(), 1);
+
+        $test_name = 'JSON import triple count';
+        $json_str = file_get_contents(test_files::IMPORT_TRIPLES . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array);
+        $t->assert($test_name, $dto->triple_list()->count(), 6);
+
+        $test_name = 'JSON import source count';
+        $json_str = file_get_contents(test_files::IMPORT_SOURCES . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array);
+        $t->assert($test_name, $dto->source_list()->count(), 3);
+
+        $test_name = 'JSON import value count';
+        $json_str = file_get_contents(test_files::IMPORT_VALUES . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array);
+        $t->assert($test_name, $dto->value_list()->count(), 4);
+
+        $test_name = 'JSON import formula count';
+        $json_str = file_get_contents(test_files::IMPORT_FORMULAS . test_files::JSON);
+        $json_array = json_decode($json_str, true);
+        $dto = $imp->get_data_object($json_array);
+        $t->assert($test_name, $dto->formula_list()->count(), 4);
 
         $test_name = 'JSON import warning creation';
-        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'warning_and_error_test.json');
-        $imp = new import;
-        $result = $imp->put_json($json_str, $usr);
-        $target = 'Unknown element test';
-        $t->assert($test_name, $result->get_last_message(), $target);
+        $json_str = file_get_contents(test_files::IMPORT_PATH . 'warning_and_error_test.json');
+        $imp = new import(test_files::IMPORT_PATH . 'warning_and_error_test.json');
+        $result = $imp->put_json_direct($json_str, $usr, test_files::IMPORT_PATH . 'warning_and_error_test.json');
+        $target = 'Unknown element "test"';
+        $t->assert($test_name, $result->get_last_message_translated(), $target);
 
-        $t->subheader('Convert unit tests');
+        $t->subheader($ts . 'convert');
 
         $test_name = 'wikipedia table to zukunft.com JSON string';
-        $in_table = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/democratie_index_table.txt');
-        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/democratie_index_table.json');
+        $in_table = file_get_contents(test_files::IMPORT_DEMOCRACY_INDEX_TXT);
+        $json_str = file_get_contents(test_files::IMPORT_DEMOCRACY_INDEX);
         $conv_wiki = new convert_wikipedia_table;
         $conv_str = $conv_wiki->convert($in_table, $usr, test_base::TEST_TIMESTAMP,
             ['Democracy Index'],
@@ -87,9 +129,9 @@ class import_tests
         $t->assert_json($test_name, $result, $target);
 
         $test_name = 'wikipedia table json to zukunft.com JSON';
-        $in_table = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/country-ISO-3166-wiki.json');
-        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/country-ISO-3166.json');
-        $context_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/country-ISO-3166-context.json');
+        $in_table = file_get_contents(test_files::IMPORT_COUNTRY_ISO_WIKI);
+        $json_str = file_get_contents(test_files::IMPORT_COUNTRY_ISO);
+        $context_str = file_get_contents(test_files::IMPORT_COUNTRY_ISO_CONTEXT);
         $conv_wiki = new convert_wikipedia_table;
         // TODO review the parameter context
         $conv_str = $conv_wiki->convert_wiki_json($in_table, $usr, test_base::TEST_TIMESTAMP, $context_str,
@@ -101,9 +143,9 @@ class import_tests
         $t->assert_json($test_name, $result, $target);
 
         $test_name = 'wikipedia data table json to zukunft.com JSON';
-        $in_table = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/currency-wiki.json');
-        $json_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/currency.json');
-        $context_str = file_get_contents(PATH_TEST_IMPORT_FILES . 'wikipedia/currency-context.json');
+        $in_table = file_get_contents(test_files::IMPORT_CURRENCY_WIKI);
+        $json_str = file_get_contents(test_files::IMPORT_CURRENCY_CONVERT);
+        $context_str = file_get_contents(test_files::IMPORT_CURRENCY_CONTEXT);
         $conv_wiki = new convert_wikipedia_table;
         $conv_str = $conv_wiki->convert_wiki_json(
             $in_table, $usr, test_base::TEST_TIMESTAMP, $context_str);

@@ -1,0 +1,47 @@
+{
+  "version": "0.0.3",
+  "time": "2024-03-26 19:58:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message for data_object based import by counting the words"
+  ],
+  "words": [
+    {
+      "name": "problem",
+      "comment": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
+      "refs": [
+        {
+          "name": "Problem_solving",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "global",
+      "comment": "here more a something that effects all people on earth (wikipedia does not really match)",
+      "refs": [
+        {
+          "name": "Globalization",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "solution",
+      "refs": [
+        {
+          "name": "Problem solving",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q730920",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "System Test Word"
+    }
+  ]
+}
+

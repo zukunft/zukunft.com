@@ -32,11 +32,8 @@
 
 namespace unit_ui;
 
-use api\phrase\term as term_api;
-use api\word\word as word_api;
 use html\html_base;
 use html\phrase\term_list as term_list_dsp;
-use cfg\verb\verb;
 use test\test_cleanup;
 
 class term_list_ui_tests
@@ -46,13 +43,15 @@ class term_list_ui_tests
 
         $html = new html_base();
 
-        $t->subheader('term list tests');
+        // start the test section (ts)
+        $ts = 'unit ui html term list ';
+        $t->header($ts);
 
         // test the term list display functions
         $lst = new term_list_dsp($t->term_list()->api_json());
         $test_page = $html->text_h2('term list display test');
-        $test_page .= 'term list with tooltip: ' . $lst->display() . '<br>';
-        $test_page .= 'term list with link: ' . $lst->display_linked() . '<br>';
+        $test_page .= 'term list with tooltip: ' . $lst->name_tip() . '<br>';
+        $test_page .= 'term list with link: ' . $lst->name_link() . '<br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
         $test_page .= $lst->selector('', 0, 'test_selector', 'No term selected') . '<br>';

@@ -7,6 +7,17 @@
 
     This links list object is used to update or delete a list of links with one SQL statement
 
+    The main sections of this object are
+    - construct and map: including the mapping of the db row to this component link list object
+    - load:              database access object (DAO) functions
+    - load sql:          create the sql statements for loading from the db
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
+    - im- and export:    create an export object and set the vars from an import object
+    - modify:            change potentially all variables of this list object
+    - info:              functions to make code easier to read
+    - internal:          private functions to make code easier to read
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -24,7 +35,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -33,27 +44,28 @@
 
 namespace cfg\component;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once API_VIEW_PATH . 'component_link_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
+use cfg\const\paths;
 
-use api\view\component_link_list as component_link_list_api;
+include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
-use cfg\sandbox\sandbox_list;
+use cfg\sandbox\sandbox_link;
+use cfg\sandbox\sandbox_link_list;
 use cfg\user\user_message;
 use cfg\view\view;
+use cfg\view\view_db;
 
-class component_link_list extends sandbox_list
+class component_link_list extends sandbox_link_list
 {
 
     /*
@@ -74,93 +86,8 @@ class component_link_list extends sandbox_list
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return component_link_list_api the component list object with the display interface functions
-     */
-    function api_obj(): component_link_list_api
-    {
-        $api_obj = new component_link_list_api(array());
-        foreach ($this->lst() as $lnk) {
-            $api_obj->add($lnk->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-
-    /*
      * load
      */
-
-    /**
-     * set the common part of the SQL query component links
-     * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name of the selection fields to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(sql_creator $sc, string $query_name): sql_par
-    {
-        $qp = new sql_par(self::class);
-        $qp->name .= $query_name;
-
-        $sc->set_class(component_link::class);
-        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(component_link::FLD_NAMES);
-        $sc->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
-        return $qp;
-    }
-
-    /**
-     * set the SQL query parameters to load all components linked to a view
-     * @param sql_creator $sc with the target db_type set
-     * @param view $msk the id of the view to which the components should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_view(sql_creator $sc, view $msk): sql_par
-    {
-        $qp = $this->load_sql($sc, view::FLD_ID);
-        if ($msk->id() > 0) {
-            $sc->add_where(view::FLD_ID, $msk->id());
-            $sc->set_order(component_link::FLD_ORDER_NBR);
-            $sc = (new component($this->user()))->set_join($sc);
-            $qp->sql = $sc->sql();
-        } else {
-            $qp->name = '';
-        }
-        $qp->par = $sc->get_par();
-        return $qp;
-    }
-
-    /**
-     * set the SQL query parameters to load all views linked to a component
-     * @param sql_creator $sc with the target db_type set
-     * @param component $cmp the id of the component to which the views should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_component(sql_creator $sc, component $cmp): sql_par
-    {
-        $qp = $this->load_sql($sc, component::FLD_ID);
-        if ($cmp->id() > 0) {
-            $sc->add_where(component::FLD_ID, $cmp->id());
-            $sc = (new view($this->user()))->set_join($sc);
-            $qp->sql = $sc->sql();
-        } else {
-            $qp->name = '';
-        }
-        $qp->par = $sc->get_par();
-        return $qp;
-    }
 
     /**
      * interface function to load all component links of the given view
@@ -235,69 +162,67 @@ class component_link_list extends sandbox_list
 
 
     /*
-     * modify
+     * load sql
      */
 
     /**
-     * add a view component link based on parts to the list without saving it to the database
-     * @return true if the link has been added
+     * set the common part of the SQL query component links
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name of the selection fields to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function add(int $id, view $msk, component $cmp, int $pos): bool
+    function load_sql(sql_creator $sc, string $query_name): sql_par
     {
-        $new_lnk = new component_link($this->user());
-        $new_lnk->set($id, $msk, $cmp, $pos);
-        return $this->add_link($new_lnk);
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
+
+        $sc->set_class(component_link::class);
+        $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(component_link::FLD_NAMES);
+        $sc->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
+        return $qp;
     }
 
     /**
-     * add a view component link to the list without saving it to the database
-     * @return true if the link has been added
+     * set the SQL query parameters to load all components linked to a view
+     * @param sql_creator $sc with the target db_type set
+     * @param view $msk the id of the view to which the components should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function add_link(component_link $lnk_to_add): bool
+    function load_sql_by_view(sql_creator $sc, view $msk): sql_par
     {
-        $added = false;
-        if ($this->can_add($lnk_to_add)) {
-            $this->add_obj($lnk_to_add);
-            $added = true;
+        $qp = $this->load_sql($sc, view_db::FLD_ID);
+        if ($msk->id() > 0) {
+            $sc->add_where(view_db::FLD_ID, $msk->id());
+            $sc->set_order(component_link::FLD_ORDER_NBR);
+            $sc = (new component($this->user()))->set_join($sc);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
         }
-        return $added;
+        $qp->par = $sc->get_par();
+        return $qp;
     }
 
     /**
-     * delete all loaded view component links e.g. to delete all the links linked to a view
-     * @return user_message
+     * set the SQL query parameters to load all views linked to a component
+     * @param sql_creator $sc with the target db_type set
+     * @param component $cmp the id of the component to which the views should be loaded
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function del(): user_message
+    function load_sql_by_component(sql_creator $sc, component $cmp): sql_par
     {
-        $usr_msg = new user_message();
-
-        if (!$this->is_empty()) {
-            foreach ($this->lst() as $dsp_cmp_lnk) {
-                $usr_msg->add($dsp_cmp_lnk->del());
-            }
+        $qp = $this->load_sql($sc, component::FLD_ID);
+        if ($cmp->id() > 0) {
+            $sc->add_where(component::FLD_ID, $cmp->id());
+            $sc = (new view($this->user()))->set_join($sc);
+            $qp->sql = $sc->sql();
+        } else {
+            $qp->name = '';
         }
-        return new user_message();
-    }
-
-
-    /*
-     * check
-     */
-
-    private function can_add(component_link $lnk_to_add): bool
-    {
-        $can_add = true;
-
-        if (!$this->is_empty()) {
-            foreach ($this->lst() as $lnk) {
-                if ($lnk->view()->id() == $lnk_to_add->view()->id()
-                    and $lnk->component()->id() == $lnk_to_add->component()->id()
-                    and $lnk->pos() == $lnk_to_add->pos()) {
-                    $can_add = false;
-                }
-            }
-        }
-        return $can_add;
+        $qp->par = $sc->get_par();
+        return $qp;
     }
 
 
@@ -321,7 +246,42 @@ class component_link_list extends sandbox_list
 
 
     /*
-     * extract
+     * modify
+     */
+
+    /**
+     * add a view component link to the list without saving it to the database
+     * @return true if the link has been added
+     */
+    function add_by_name(component_link $lnk_to_add): bool
+    {
+        $added = false;
+        if ($this->can_add($lnk_to_add)) {
+            $this->add_link_by_key($lnk_to_add);
+            $added = true;
+        }
+        return $added;
+    }
+
+    /**
+     * delete all loaded view component links e.g. to delete all the links assigned to a view
+     * @return user_message
+     */
+    function del(): user_message
+    {
+        $usr_msg = new user_message();
+
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $dsp_cmp_lnk) {
+                $usr_msg->add($dsp_cmp_lnk->del());
+            }
+        }
+        return new user_message();
+    }
+
+
+    /*
+     * info
      */
 
     /**
@@ -361,12 +321,12 @@ class component_link_list extends sandbox_list
     /**
      * @return array with all component names linked usually to one view
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
             if ($lnk->component() != null) {
-                $name = $lnk->component()->name();
+                $name = $lnk->component()->name($ignore_excluded);
                 if ($name <> '') {
                     if (!in_array($name, $result)) {
                         $result[] = $name;
@@ -375,6 +335,69 @@ class component_link_list extends sandbox_list
             }
         }
         return $result;
+    }
+
+
+    /*
+    * save
+    */
+
+    /**
+     * simple but slow function to add of update all list items in the database
+     * TODO faster mass db update
+     *
+     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     */
+    function save(): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($this->lst() as $sbx) {
+            // save upfront and missing components
+            $cmp = $sbx->component();
+            if (!$cmp->is_valid()) {
+                if ($cmp->db_ready()) {
+                    $usr_msg->add($cmp->save());
+                }
+            }
+            // save the link of the view to the component
+            $usr_msg->add($sbx->save());
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+      * internal
+      */
+
+    /**
+     * test if the link at the same position already exists and if yes return false to prevent duplicates
+     * overwrites the parent because the same component can be used in a view at different positions
+     * but not at the same position
+     * @param component_link|sandbox_link $lnk_to_add the link that should be added to the list
+     * @return bool true if the link can be added
+     */
+    protected function can_add(component_link|sandbox_link $lnk_to_add): bool
+    {
+        $can_add = true;
+
+        if (!$this->is_empty()) {
+            foreach ($this->lst() as $lnk) {
+                if ($can_add) {
+                    if ($lnk->from_id() == $lnk_to_add->from_id()
+                        and $lnk->to_id() == $lnk_to_add->to_id()
+                        and $lnk->pos() == $lnk_to_add->pos()) {
+                        $can_add = false;
+                    }
+                    if ($lnk->id() == $lnk_to_add->id()
+                        and $lnk->id() != 0 and $lnk_to_add->id() != 0
+                        and $lnk->id() !== null and $lnk_to_add->id() !== null) {
+                        $can_add = false;
+                    }
+                }
+            }
+        }
+        return $can_add;
     }
 
 }

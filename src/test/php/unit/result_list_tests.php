@@ -59,10 +59,11 @@ class result_list_tests
         $t->resource_path = 'db/result/';
         $res_lst = new result_list($usr);
 
+        // start the test section (ts)
+        $ts = 'unit result list ';
+        $t->header($ts);
 
-        $t->header('Unit tests of the result list class (src/main/php/model/formula/result_list.php)');
-
-        $t->subheader('SQL creation tests');
+        $t->subheader($ts . 'sql creation');
 
         $test_name = 'load a list of results that are a related to all phrases of a list '
             . 'e.g. the yearly increase of inhabitants of Canton Zurich over time';
@@ -108,13 +109,13 @@ class result_list_tests
         //$t->assert_sql_list_by_ref($db_con, $res_lst, $trp);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
 
         $json_file = 'unit/result/result_list_import_part.json';
         $t->assert_json_file(new result_list($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $trp_lst = $t->result_list();
         $t->assert_api_to_dsp($trp_lst, new result_list_dsp());

@@ -32,19 +32,21 @@
 
 namespace unit;
 
-include_once API_RESULT_PATH . 'result.php';
+use cfg\const\paths;
 
-use api\result\result as result_api;
-use api\word\word as word_api;
+include_once paths::SHARED_CONST . 'words.php';
+
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\formula\formula;
 use cfg\group\group;
 use cfg\group\group_list;
 use cfg\phrase\phrase_list;
-use cfg\db\sql_db;
 use cfg\result\result;
+use cfg\result\results;
 use html\result\result as result_dsp;
+use shared\const\words;
 use test\test_cleanup;
 
 class result_tests
@@ -54,6 +56,7 @@ class result_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init
         $db_con = new sql_db();
@@ -61,11 +64,12 @@ class result_tests
         $t->name = 'result->';
         $t->resource_path = 'db/result/';
 
+        // start the test section (ts)
+        $ts = 'unit result ';
+        $t->header($ts);
 
-        $t->header('Unit tests of the result class (src/main/php/model/formula/result.php)');
-
-        $t->subheader('SQL creation tests');
-        $res = $t->result_simple();
+        $t->subheader($ts . 'sql creation');
+        $res = $t->result_simple_1();
         $t->assert_sql_table_create($res);
         $t->assert_sql_index_create($res);
         $t->assert_sql_foreign_key_create($res);
@@ -86,13 +90,13 @@ class result_tests
         $this->assert_sql_load_std_by_group_id($t, $db_con, $res);
 
 
-        $t->subheader('SQL load default statement tests');
+        $t->subheader($ts . 'sql load default statement');
 
         // sql to load the standard result by id
         $t->assert_sql_standard($sc, $res_prime);
         $t->assert_sql_user_changes($sc, $res_prime);
 
-        $t->subheader('result sql write');
+        $t->subheader($ts . 'result sql write');
         // result changes are not logged because potentially they can be reproduced
         // TODO check the move from prime and main if the source group does not fit the prime or main criterias (same for the formula id)
         $res_prime = $t->result_prime();
@@ -116,12 +120,12 @@ class result_tests
         $t->assert_sql_insert($sc, $res_big);
         // TODO activate db write
         // TODO add tests for text, time and geo values
-        $db_res_prime = $res_prime->cloned(result_api::TV_FLOAT);
-        $db_res_prime_max = $res_prime_max->cloned(result_api::TV_FLOAT);
-        $db_res_main = $res_main->cloned(result_api::TV_FLOAT);
-        $db_res_filled = $res_filled->cloned(result_api::TV_FLOAT);
-        $db_res = $res->cloned(result_api::TV_FLOAT);
-        $db_res_big = $res_big->cloned(result_api::TV_FLOAT);
+        $db_res_prime = $res_prime->cloned(results::TV_FLOAT);
+        $db_res_prime_max = $res_prime_max->cloned(results::TV_FLOAT);
+        $db_res_main = $res_main->cloned(results::TV_FLOAT);
+        $db_res_filled = $res_filled->cloned(results::TV_FLOAT);
+        $db_res = $res->cloned(results::TV_FLOAT);
+        $db_res_big = $res_big->cloned(results::TV_FLOAT);
         // TODO activate db write
         $t->assert_sql_update($sc, $res_prime, $db_res_prime, [sql_type::STANDARD]);
         $t->assert_sql_update($sc, $res_prime, $db_res_prime);
@@ -139,19 +143,24 @@ class result_tests
         $t->assert_sql_delete($sc, $res);
         $t->assert_sql_delete($sc, $res, [sql_type::USER]);
 
-        $t->subheader('Display tests');
+        $t->subheader($ts . 'result base object handling');
+        $res = $t->result_main_filled();
+        $t->assert_reset($res);
+
+
+        $t->subheader($ts . 'display');
 
         // test phrase based default formatter
         // ... for big values
-        $wrd_const = $t->new_word(word_api::TN_READ);
+        $wrd_const = $t->new_word(words::MATH);
         $phr_lst = new phrase_list($usr);
         $phr_lst->add($wrd_const->phrase());
-        $res->grp->set_phrase_list($phr_lst);
-        $res->set_number(result_api::TV_INT);
+        $res->grp()->set_phrase_list($phr_lst);
+        $res->set_number(results::TV_INT);
         $t->assert('result->val_formatted test big numbers', $res->val_formatted(), "123'456");
 
         // ... for small values 12.35 instead of 12.34 due to rounding
-        $res->set_number(result_api::TV_FLOAT);
+        $res->set_number(results::TV_FLOAT);
         $t->assert('result->val_formatted test small numbers', $res->val_formatted(), "12.35");
 
         // ... for percent values
@@ -159,16 +168,16 @@ class result_tests
         $t->assert('result->val_formatted test percent formatting', $res->val_formatted(), '1.23 %');
 
 
-        $t->subheader('Im- and Export tests');
-        $t->assert_ex_and_import($t->result());
-        $t->assert_ex_and_import($t->result_main_filled());
+        $t->subheader($ts . 'im- and export');
+        $t->assert_ex_and_import($t->result(), $usr_sys);
+        $t->assert_ex_and_import($t->result_main_filled(), $usr_sys);
         $json_file = 'unit/result/result_import_part.json';
         $t->assert_json_file(new result($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
-        $res = $t->result_simple();
+        $res = $t->result_simple_1();
         $t->assert_api_to_dsp($res, new result_dsp());
 
     }

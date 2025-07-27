@@ -34,15 +34,16 @@
 
 namespace html;
 
-include_once SHARED_PATH . 'library.php';
-include_once PHRASE_PATH . 'phrase_list.php';
-include_once SYSTEM_PATH . 'messages.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+//include_once html_paths::PHRASE . 'phrase_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
 
 use shared\library;
 use html\phrase\phrase_list;
-use html\system\messages;
-//use http\Message;
+use shared\enum\messages as msg_id;
 
 class button
 {
@@ -50,10 +51,10 @@ class button
     const IMG_ADD_FA = "fa-plus-square";
     const IMG_EDIT_FA = "fa-edit";
     const IMG_DEL_FA = "fa-times-circle";
-    const IMG_UNDO = REL_IMAGE_PATH . 'button_undo.svg';
-    const IMG_FIND = REL_IMAGE_PATH . 'button_find.svg';
-    const IMG_UN_FILTER = REL_IMAGE_PATH . 'button_filter_off.svg';
-    const IMG_BACK = REL_IMAGE_PATH . 'button_back.svg';
+    const IMG_UNDO = paths::REL_IMAGE . 'button_undo.svg';
+    const IMG_FIND = paths::REL_IMAGE . 'button_find.svg';
+    const IMG_UN_FILTER = paths::REL_IMAGE . 'button_filter_off.svg';
+    const IMG_BACK = paths::REL_IMAGE . 'button_back.svg';
 
     // parameters for the simple buttons
     public string $title = ''; // title to display on mouse over
@@ -81,10 +82,10 @@ class button
 
     /**
      * set the button user test
-     * @param string $ui_msg_id the const message id that indicates what should be shown to the user in the language that he has selected
+     * @param msg_id $ui_msg_id the const message id that indicates what should be shown to the user in the language that he has selected
      * @param string $explain additional information that should be shown to the user
      */
-    function set(string $ui_msg_id = '', string $explain = ''): void
+    function set(msg_id $ui_msg_id, string $explain = ''): void
     {
         $this->set_ui_msg($ui_msg_id, $explain);
     }
@@ -109,11 +110,11 @@ class button
         return '<a href="' . $this->call . '" title="' . $this->title . '"><i class="far ' . $icon . '"></i></a>';
     }
 
-    private function set_ui_msg(string $ui_msg_id = '', string $explain = ''): void
+    private function set_ui_msg(msg_id $ui_msg_id, string $explain = ''): void
     {
+        global $mtr;
         if ($ui_msg_id != '') {
-            $ui_msg = new messages();
-            $this->title = $ui_msg->txt($ui_msg_id);
+            $this->title = $mtr->txt($ui_msg_id);
         }
         if ($explain != '') {
             $this->title .= $explain;
@@ -121,37 +122,37 @@ class button
     }
 
     // button function to keep the image call on one place
-    function add(string $ui_msg_id = '', string $explain = ''): string
+    function add(msg_id $ui_msg_id, string $explain = ''): string
     {
         $this->set_ui_msg($ui_msg_id, $explain);
         return $this->html_fa(self::IMG_ADD_FA);
     } // an add button to create a new entry
 
-    function edit(string $ui_msg_id = '', string $explain = ''): string
+    function edit(msg_id $ui_msg_id, string $explain = ''): string
     {
         $this->set_ui_msg($ui_msg_id, $explain);
         return $this->html_fa(self::IMG_EDIT_FA);
     } // an edit button to adjust an entry
 
-    function del(string $ui_msg_id = '', string $explain = ''): string
+    function del(msg_id $ui_msg_id, string $explain = ''): string
     {
         $this->set_ui_msg($ui_msg_id, $explain);
         return $this->html_fa(self::IMG_DEL_FA);
     } // an delete button to remove an entry
 
-    function undo(string $ui_msg_id = '', string $explain = ''): string
+    function undo(msg_id $ui_msg_id, string $explain = ''): string
     {
         $this->set_ui_msg($ui_msg_id, $explain);
         return $this->html(self::IMG_UNDO);
     } // an undo button to undo a change (not only the last)
 
-    function find(string $ui_msg_id = '', string $explain = ''): string
+    function find(msg_id $ui_msg_id, string $explain = ''): string
     {
         $this->set_ui_msg($ui_msg_id, $explain);
         return $this->html(self::IMG_FIND);
     } // a find button to search for a word
 
-    function un_filter(string $ui_msg_id = '', string $explain = ''): string
+    function un_filter(msg_id $ui_msg_id, string $explain = ''): string
     {
         $this->set_ui_msg($ui_msg_id, $explain);
         return $this->html(self::IMG_UN_FILTER);
@@ -356,7 +357,7 @@ class button
             $this->title = "delete this value";
         }
         $this->call = '/http/value_del.php?id=' . $group_id . '&back=' . $back;
-        $result = $this->del();
+        $result = $this->del(msg_id::DEL);
         log_debug($result);
         return $result;
     }

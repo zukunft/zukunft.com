@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/element/element_group_list.php - simply a list of formula element groups to place the name function
+    model/element/element_group_list.php - simply a list of formula element groups to place the name function
     ----------------------------------
 
     This file is part of zukunft.com - calc with words
@@ -31,8 +31,10 @@
 
 namespace cfg\element;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
 
 use cfg\sandbox\sandbox_list;
 use cfg\phrase\term_list;

@@ -32,7 +32,9 @@
 
 namespace unit_ui;
 
-include_once WEB_USER_PATH . 'user.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::USER . 'user.php';
 
 use html\html_base;
 use html\user\user as user_dsp;
@@ -42,10 +44,10 @@ class user_ui_tests
 {
     function run(test_cleanup $t): void
     {
-        global $usr;
-        $html = new html_base();
 
-        $t->subheader('User tests');
+        // start the test section (ts)
+        $ts = 'unit ui html user ';
+        $t->header($ts);
 
         $usr_dsp = new user_dsp();
         $usr_dsp->id = 1;

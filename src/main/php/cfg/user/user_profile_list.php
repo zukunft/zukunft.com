@@ -32,9 +32,13 @@
 
 namespace cfg\user;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
 
 use cfg\helper\type_list;
+use shared\enum\user_profiles;
 
 class user_profile_list extends type_list
 {
@@ -54,7 +58,7 @@ class user_profile_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(user_profile::NORMAL);
+        return parent::id(user_profiles::NORMAL);
     }
 
 }

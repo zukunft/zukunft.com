@@ -2,8 +2,8 @@
 
 /*
 
-    /web/log/sys_log.php - create the html code to display on system log entry
-    --------------------
+    web/log/sys_log.php - create the html code to display on system log entry
+    -------------------
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -31,15 +31,25 @@
 
 namespace html\system;
 
-include_once WEB_LOG_PATH . 'log.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::LOG . 'log.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
 
-use shared\api;
-use DateTimeInterface;
 use html\html_base;
 use html\log\log as log_dsp;
+use html\rest_ctrl;
+use html\user\user;
 use html\user\user_message;
+use shared\enum\sys_log_statuus;
 use shared\json_fields;
+use DateTimeInterface;
 
 class sys_log extends log_dsp
 {
@@ -52,7 +62,7 @@ class sys_log extends log_dsp
     public ?string $prg_part;
     // the user or user group who is supposed to fix the issue
     // TODO use a simple user object instead of the id
-    public string $owner_id;
+    public ?int $owner_id = null;
     public ?string $description;
 
 
@@ -65,9 +75,9 @@ class sys_log extends log_dsp
      * @param array $json_array an api json message including the api message header
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        $usr_msg = parent::set_from_json_array($json_array);
+        $usr_msg = parent::api_mapper($json_array);
         if (array_key_exists(json_fields::TRACE, $json_array)) {
             $this->set_trace($json_array[json_fields::TRACE]);
         } else {
@@ -115,12 +125,12 @@ class sys_log extends log_dsp
         return $this->prg_part;
     }
 
-    function set_owner_id(int $owner_id): void
+    function set_owner_id(int|null $owner_id): void
     {
         $this->owner_id = $owner_id;
     }
 
-    function owner_id(): int
+    function owner_id(): int|null
     {
         return $this->owner_id;
     }
@@ -138,17 +148,17 @@ class sys_log extends log_dsp
     function display(): string
     {
         $html = new html_base();
-        $result = '';
+        $row = '';
         // TODO replace with the user date format setting,
         //      which can also be the local system setting
         //      or the pod setting
-        $result .= $html->td($this->time()->format(DateTimeInterface::ATOM));
+        $row .= $html->td($this->time()->format('Y-m-d H:i:s'));
         // TODO show the username instead of the id
-        $result .= $html->td($this->user_id());
-        $result .= $html->td($this->text());
-        $result .= $html->td($this->owner_id());
-        $result .= $html->td($this->status());
-        return $result;
+        $row .= $html->td($this->user_id());
+        $row .= $html->td($this->text());
+        $row .= $html->td($this->owner_id());
+        $row .= $html->td($this->status());
+        return $html->tr($row);
     }
 
     /**
@@ -181,22 +191,29 @@ class sys_log extends log_dsp
      * @param string $style the CSS style that should be used
      * @returns string the html code to show one system log entry for admin users
      */
-    function display_admin(?string $back = '', string $style = ''): string
+    function display_admin(user $usr, ?string $back = '', string $style = ''): string
     {
+        global $sys_log_sta_cac;
+
         $html = new html_base();
-        $result = '';
+        $row = '';
         // TODO replace with the user date format setting,
         //      which can also be the local system setting
         //      or the pod setting
-        $result .= $html->td($this->time()->format(DateTimeInterface::ATOM));
+        $row .= $html->td($this->time()->format(DateTimeInterface::ATOM));
         // TODO show the user name instead of the id
-        $result .= $html->td($this->user_id());
-        $result .= $html->td($this->text());
-        $result .= $html->td($this->trace());
-        $result .= $html->td($this->prg_part());
-        $result .= $html->td($this->owner_id());
-        $result .= $html->td($this->status());
-        return $result;
+        $row .= $html->td($this->user_name());
+        $row .= $html->td($this->text());
+        $row .= $html->td($this->trace());
+        $row .= $html->td($this->prg_part());
+        $row .= $html->td($this->owner_id());
+        $row .= $html->td($this->status());
+        if ($usr->is_admin() or $usr->is_system()) {
+            $par_status = rest_ctrl::PAR_LOG_STATUS . '=' . $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
+            $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
+            $row .= $html->td($html->ref($url, 'close'));
+        }
+        return $html->tr($row);
     }
 
     /**
@@ -231,6 +248,58 @@ class sys_log extends log_dsp
         return $html->tr($result);
     }
 
+    function get_html(user $usr = null, string $back = ''): string
+    {
+        global $sys_log_sta_cac;
+
+        $html = new html_base();
+        $row_text = $html->td($this->time->format(DateTimeInterface::ATOM));
+        if ($this->user_id() > 0) {
+            $row_text .= $html->td($this->user()->name());
+        } else {
+            $row_text .= $html->td();
+        }
+        $row_text .= $html->td($this->text);
+        $row_text .= $html->td($this->description);
+        $row_text .= $html->td($this->trace);
+        $row_text .= $html->td($this->prg_part);
+        if ($this->owner_id() > 0) {
+            $row_text .= $html->td($this->owner()->name());
+        } else {
+            $row_text .= $html->td();
+        }
+        $row_text .= $html->td($this->status_name());
+        if ($usr != null) {
+            if ($usr->is_admin() or $usr->is_system()) {
+                $par_status = rest_ctrl::PAR_LOG_STATUS. '=' . $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
+                $url = $html->url(rest_ctrl::ERROR_UPDATE, $this->id, $back, '', $par_status);
+                $row_text .= $html->td($html->ref($url, 'close'));
+            }
+        }
+
+        return $html->tr($row_text);
+    }
+
+    function user(): user
+    {
+        $usr = new user();
+        $usr->load_by_id($this->user_id);
+        return $usr;
+    }
+
+    function owner(): user
+    {
+        $usr = new user();
+        $usr->load_by_id($this->owner_id());
+        return $usr;
+    }
+
+    // TODO review
+    function status_name(): string
+    {
+        return '"'. $this->status . '"';
+    }
+
 
     /*
      * interface
@@ -245,7 +314,9 @@ class sys_log extends log_dsp
         $vars = parent::api_array();
         $vars[json_fields::TRACE] = $this->trace();
         $vars[json_fields::PRG_PART] = $this->prg_part();
-        $vars[json_fields::OWNER] = $this->owner_id();
+        if ($this->owner_id() != null) {
+            $vars[json_fields::OWNER] = $this->owner_id();
+        }
         return $vars;
     }
 

@@ -35,15 +35,17 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
 
-use html\ref\source as source_dsp;
-use html\view\view as view_dsp;
+include_once paths::SHARED_CONST . 'views.php';
+
 use cfg\ref\source;
 use cfg\user\user;
 use cfg\view\view;
+use html\ref\source as source_dsp;
+use html\view\view as view_dsp;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("source_edit");
@@ -66,7 +68,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys_msk_cac->id(view_shared::MC_SOURCE_EDIT));
+    $msk->load_by_id($sys_msk_cac->id(view_shared::SOURCE_EDIT));
     $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change if finished
 
     // create the source object to have an place to update the parameters
@@ -84,8 +86,8 @@ if ($usr->id() > 0) {
             if (isset($_GET[api::URL_VAR_NAME])) {
                 $src->set_name($_GET[api::URL_VAR_NAME]);
             }
-            if (isset($_GET['url'])) {
-                $src->url = $_GET['url'];
+            if (isset($_GET[api::URL_VAR_URL])) {
+                $src->set_url($_GET[api::URL_VAR_URL]);
             }
             if (isset($_GET[api::URL_VAR_COMMENT])) {
                 $src->description = $_GET[api::URL_VAR_COMMENT];

@@ -30,7 +30,7 @@
 
 */
 
-use im_export\json_io;
+use cfg\export\json_io;
 use cfg\phrase\phrase_list;
 use cfg\user\user;
 use shared\api;

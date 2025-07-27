@@ -32,9 +32,9 @@
 
 namespace unit_ui;
 
-use api\component\component as component_api;
-use html\component\component as component_dsp;
+use html\component\component_exe as component_dsp;
 use html\html_base;
+use shared\const\components;
 use test\test_cleanup;
 
 class component_ui_tests
@@ -44,9 +44,11 @@ class component_ui_tests
         global $usr;
         $html = new html_base();
 
-        $t->subheader('Component tests');
+        // start the test section (ts)
+        $ts = 'unit ui html component ';
+        $t->header($ts);
 
-        //$wrd_pi = new word_dsp(2, word_api::TN_CONST);
+        //$wrd_pi = new word_dsp(2, words::TN_CONST);
         $test_page = $html->text_h2('Component display test');
         /*
         $test_page .= 'with tooltip: ' . $wrd->display() . '<br>';
@@ -65,8 +67,8 @@ class component_ui_tests
         $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
         $cmp = new component_dsp();
         $cmp->set_id(1);
-        $cmp->set_name(component_api::TN_READ);
-        $cmp->description = component_api::TD_READ;
+        $cmp->set_name(components::WORD_NAME);
+        $cmp->description = components::WORD_COM;
         $test_page .= 'edit mask<br>';
         $test_page .= $cmp->form_edit('', '', '', '', '') . '<br>';
         $t->html_test($test_page, 'component', 'component', $t);

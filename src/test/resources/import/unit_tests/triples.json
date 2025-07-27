@@ -1,0 +1,181 @@
+{
+  "version": "0.0.3",
+  "time": "2024-03-26 19:58:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message for data_object based import by counting the triples"
+  ],
+  "words": [
+    {
+      "name": "second",
+      "description": "The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.",
+      "plural": "seconds",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Second",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "hertz",
+      "description": "The hertz (symbol: Hz) is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Hertz",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "problem",
+      "comment": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
+      "refs": [
+        {
+          "name": "Problem_solving",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "global",
+      "comment": "here more a something that effects all people on earth (wikipedia does not really match)",
+      "refs": [
+        {
+          "name": "Globalization",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "solution",
+      "refs": [
+        {
+          "name": "Problem solving",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q730920",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "climate",
+      "refs": [
+        {
+          "name": "Climate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7937",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "warm",
+      "refs": [
+        {
+          "name": "heating",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4311765",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "warming"
+    },
+    {
+      "name": "warmer"
+    },
+    {
+      "name": "climate",
+      "refs": [
+        {
+          "name": "Climate",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7937",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "System Test Word"
+    },
+    {
+      "name": "System Test Word To"
+    }
+  ],
+  "triples": [
+    {
+      "name": "global problem",
+      "from": "problem",
+      "verb": "can be",
+      "to": "global",
+      "comment": "here more a personal issue (wikipedia does not really match)",
+      "refs": [
+        {
+          "name": "List_of_global_issues",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q65117122",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "from": "warming",
+      "verb": "is a",
+      "to": "warm"
+    },
+    {
+      "name": "global warming",
+      "from": "climate",
+      "verb": "can get",
+      "to": "warmer",
+      "refs": [
+        {
+          "name": "Climate_change",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7942",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "hertz per second",
+      "from": "hertz",
+      "verb": "per",
+      "to": "second",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Hz/s",
+      "verb": "is alias of",
+      "to": "hertz per second",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "System Test Triple",
+      "from": "System Test Word",
+      "verb": "is a",
+      "to": "System Test Word To"
+    }
+  ]
+}
+

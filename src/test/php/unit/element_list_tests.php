@@ -32,7 +32,9 @@
 
 namespace unit;
 
-include_once MODEL_ELEMENT_PATH . 'element_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_ELEMENT . 'element_list.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -53,10 +55,11 @@ class element_list_tests
         $t->resource_path = 'db/element/';
         $elm_lst = new element_list($t->usr1);
 
+        // start the test section (ts)
+        $ts = 'unit element list ';
+        $t->header($ts);
 
-        $t->header('element list unit tests');
-
-        $t->subheader('load tests');
+        $t->subheader($ts . 'load');
 
         $test_name = 'sql to load all elements of one formula';
         $frm = $t->formula();

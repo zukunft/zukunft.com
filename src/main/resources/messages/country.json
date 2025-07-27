@@ -16,6 +16,9 @@
     { "name": "Geneva"},
     { "name": "Germany", "refs": [ { "name": "Germany", "type": "wikipedia" } ] },
     { "name": "inhabitants"},
+    { "name": "Company"},
+    { "name": "2013", "type": "time"},
+    { "name": "2014", "type": "time"},
     { "name": "2015", "type": "time"},
     { "name": "2016", "type": "time"},
     { "name": "2017", "type": "time"},
@@ -23,6 +26,24 @@
     { "name": "2019", "type": "time"},
     { "name": "2020", "type": "time"},
     { "name": "Year", "type": "time"},
+    {
+      "name": "one",
+      "description": "1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit",
+      "type": "scaling_hidden",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "1",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "percent",
+      "comment": "to specify numbers in percent",
+      "type": "percent",
+      "protection": "admin_protection"
+    },
     {
       "name": "thousand",
       "comment": "to specify numbers in thousand",
@@ -39,7 +60,9 @@
       "name": "ranking",
       "comment": "relationship between a set of items, often recorded in a list, such that, for any two items, the first is either 'higher than', 'lower than', or 'equal to' the second. The default criteria is here 'good' and 'bad'."
     },
-    { "name": "k" }
+    { "name": "k" },
+    { "name": "Now" },
+    { "name": "ZU" }
   ],
   "triples": [
     {"from": "Country", "verb": "can use", "to": "ranking"},
@@ -58,19 +81,24 @@
     },
     {"from": "Zurich (Canton)", "verb": "is part of", "to": "Switzerland"},
     {"from": "Zurich (City)", "verb": "is part of", "to": "Zurich (Canton)"},
+    {"name": "Zurich Insurance", "from": "Zurich", "verb": "is a", "to": "Company"},
     {"from": "ZU", "verb": "is an acronym for", "to": "Zurich"},
+    {"from": "2013", "verb": "is a", "to": "Year"},
+    {"from": "2014", "verb": "is a", "to": "Year"},
     {"from": "2015", "verb": "is a", "to": "Year"},
     {"from": "2016", "verb": "is a", "to": "Year"},
     {"from": "2017", "verb": "is a", "to": "Year"},
     {"from": "2018", "verb": "is a", "to": "Year"},
     {"from": "2019", "verb": "is a", "to": "Year"},
     {"from": "2020", "verb": "is a", "to": "Year"},
+    {"from": "2014", "verb": "is follower of", "to": "2013"},
+    {"from": "2015", "verb": "is follower of", "to": "2014"},
     {"from": "2016", "verb": "is follower of", "to": "2015"},
     {"from": "2017", "verb": "is follower of", "to": "2016"},
     {"from": "2018", "verb": "is follower of", "to": "2017"},
     {"from": "2019", "verb": "is follower of", "to": "2018"},
     {"from": "2020", "verb": "is follower of", "to": "2019"},
-    {"from": "k", "verb": "is a shortcut of", "to": "thousand", "type": "scaling"}
+    {"from": "k", "verb": "is symbol for", "to": "thousand", "type": "scaling"}
   ],
   "values": [
     {
@@ -101,6 +129,30 @@
     }
   ],
   "formulas": [
+    {
+      "name": "this",
+      "expression": "=\"Now\"",
+      "type": "time_this",
+      "description": "hardcoded formula to select now, today, this year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "next",
+      "expression": "=value[\"time jump\"->,\"follower\"->\"Now\"]",
+      "type": "time_next",
+      "description": "hardcoded formula to select tomorrow, next week, next year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "prior",
+      "expression": "=value[\"time jump\"->,\"Now\"->\"follower\"]",
+      "type": "time_prior",
+      "description": "hardcoded formula to select yesterday, previous week, last year, ...",
+      "assigned_word": "year",
+      "protection": "admin_protection"
+    },
     {
       "name": "scale thousand to one",
       "expression": "\"one\" = \"thousand\" * 1000",

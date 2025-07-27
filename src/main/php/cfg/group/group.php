@@ -28,6 +28,13 @@
     phrase groups are not part of the user sandbox, because this is a kind of hidden layer
     The main intention for word groups is to save space and execution time
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
+
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -54,34 +61,35 @@
 
 namespace cfg\group;
 
-include_once API_SYSTEM_PATH . 'messages.php';
-include_once API_PHRASE_PATH . 'group.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'message_translator.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
 
-use api\system\messages as msg_enum;
-use api\phrase\group as group_api;
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'groups.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -92,7 +100,6 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\system\message_translator;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
@@ -103,14 +110,17 @@ use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\word\word;
+use shared\const\groups;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
+use shared\types\api_type_list;
 
 class group extends sandbox_multi
 {
 
-    /*f
-     * database link
+    /*
+     * db const
      */
 
     // object specific database and JSON object field names
@@ -122,9 +132,6 @@ class group extends sandbox_multi
     const FLD_NAME_COM = 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
     const FLD_NAME = 'group_name';
     const FLD_NAME_SQL_TYP = sql_field_type::TEXT;
-    const FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
-    const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
     // comments used for the database creation
     const TBL_COMMENT = 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
@@ -143,15 +150,15 @@ class group extends sandbox_multi
     );
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_NAME, self::FLD_NAME_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NAME_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_DESCRIPTION_COM],
     );
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        self::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of fixed tables where a group name overwrite might be stored
-    // TODO check if this can be used somewhere else means if there are unwanted repeatings
+    // TODO check if this can be used somewhere else means if there are unwanted repeating
     const TBL_LIST = array(
         [sql_type::MOST],
         [sql_type::PRIME],
@@ -225,10 +232,70 @@ class group extends sandbox_multi
         }
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
-            $this->description = $db_row[self::FLD_DESCRIPTION];
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->is_saved = true;
         }
         return $result;
+    }
+
+    /**
+     * map a group api json to this model group object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the group values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        if (array_key_exists(json_fields::ID, $api_json)) {
+            $this->set_id($api_json[json_fields::ID]);
+        }
+        if (array_key_exists(json_fields::NAME, $api_json)) {
+            $this->set_name($api_json[json_fields::NAME]);
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            $this->set_description($api_json[json_fields::DESCRIPTION]);
+        }
+
+        return $msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json message
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        if ($this->is_excluded() and !$typ_lst->test_mode()) {
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars[json_fields::ID] = $this->id();
+            if ($this->name != null or !$typ_lst->include_phrases()) {
+                $vars[json_fields::NAME] = $this->name();
+            }
+            if ($this->description() != null) {
+                $vars[json_fields::DESCRIPTION] = $this->description();
+            }
+            if ($typ_lst->include_phrases()) {
+                $phr_lst = $this->phrase_list();
+                $vars[json_fields::PHRASES] = $phr_lst->api_json_array($typ_lst);
+            }
+
+        }
+
+        return $vars;
     }
 
 
@@ -295,6 +362,20 @@ class group extends sandbox_multi
         }
     }
 
+    function set_description(string $description): void
+    {
+        $this->description = $description;
+        $this->is_saved = false;
+    }
+
+    /**
+     * @return string|null the description of the value, which is the description of the phrase group
+     */
+    function description(): ?string
+    {
+        return $this->description;
+    }
+
     function phrase_list(): phrase_list
     {
         return $this->phr_lst;
@@ -314,15 +395,26 @@ class group extends sandbox_multi
 
 
     /**
+     * @param bool $no_fill if true the id is not filled up to the complete key size e.g. for the api messages
      * @return int|string either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
      * the internal null value is used to detect if database saving has been tried
      */
-    function id(): int|string
+    function id(bool $no_fill = false): int|string
     {
         if (is_numeric($this->id)) {
             return (int)$this->id;
         } else {
-            return $this->id;
+            if ($no_fill) {
+                $id = $this->id;
+                $grp_id = new id();
+                $zero_id = $grp_id->int2alpha_num(0);
+                while (str_ends_with($id, $zero_id)) {
+                    $id = str_replace($zero_id, '', $id);
+                }
+                return $id;
+            } else {
+                return $this->id;
+            }
         }
     }
 
@@ -422,7 +514,7 @@ class group extends sandbox_multi
      * @param phrase_list $phr_lst sorted list of phrases for this group
      * @return int|string $id either a 62-bit int, a 512-bit id with 16 phrase ids or a text with more than 16 +/- separated 6 char alpha_num coded phrase ids
      */
-    private function set_id_from_phrase_list(phrase_list $phr_lst): int|string
+    function set_id_from_phrase_list(phrase_list $phr_lst): int|string
     {
         $grp_id = new group_id();
         $this->set_id($grp_id->get_id($phr_lst));
@@ -473,7 +565,7 @@ class group extends sandbox_multi
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -485,39 +577,11 @@ class group extends sandbox_multi
     }
 
     /**
-     * mark that the groud has been saved
+     * mark that the group has been saved and that the object matches the db entry
      */
     function set_saved(): void
     {
         $this->is_saved = true;
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return group_api the phrase group frontend API object
-     */
-    function api_obj(): group_api
-    {
-        $api_obj = new group_api();
-        $api_obj->reset_lst();
-        foreach ($this->phrase_list()->lst() as $phr) {
-            $api_obj->add($phr->api_obj());
-        }
-        $api_obj->set_id($this->id());
-        $api_obj->set_name($this->name());
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
     }
 
 
@@ -633,9 +697,13 @@ class group extends sandbox_multi
      * just set the class name for the user sandbox function
      * load a word object by database id
      * @param int|string $id the id of the group
+     * @param ?sql_type $typ for group this field is not used
      * @return int|string the id of the object found and zero if nothing is found
      */
-    function load_by_id(int|string $id): int|string
+    function load_by_id(
+        int|string $id,
+        ?sql_type  $typ = null
+    ): int|string
     {
         global $db_con;
 
@@ -749,7 +817,12 @@ class group extends sandbox_multi
      * @param string $class the name of the child class from where the call has been triggered
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_id(sql_creator $sc, int|string $id, string $class = self::class): sql_par
+    function load_sql_by_id(
+        sql_creator $sc,
+        int|string  $id,
+        ?sql_type   $typ = null,
+        string      $class = self::class
+    ): sql_par
     {
         $this->set_id($id);
         // for the group the number of phrases are not relevant for the queries
@@ -852,7 +925,7 @@ class group extends sandbox_multi
      */
     function load_standard_by_name_sql(sql_creator $sc, string $name): sql_par
     {
-        $sc_par_lst = new sql_type_list([]);
+        $sc_par_lst = new sql_type_list();
         $sc_par_lst->add($this->table_type());
         $sc_par_lst->add(sql_type::NORM);
         $qp = new sql_par($this::class, $sc_par_lst);
@@ -966,13 +1039,26 @@ class group extends sandbox_multi
     /**
      * load the phrase names based on the group id
      */
-    function load_phrase_list(): void
+    function load_phrase_names(): void
     {
         $grp_id = new group_id();
         $ids = $grp_id->get_array($this->id());
         $phr_ids = (new phr_ids($ids));
         $phr_lst = new phrase_list($this->user());
         $phr_lst->load_names_by_ids($phr_ids);
+        $this->set_phrase_list($phr_lst);
+    }
+
+    /**
+     * load the phrases with all parameters based on the group id
+     */
+    function load_phrases(): void
+    {
+        $grp_id = new group_id();
+        $ids = $grp_id->get_array($this->id());
+        $phr_ids = (new phr_ids($ids));
+        $phr_lst = new phrase_list($this->user());
+        $phr_lst->load_by_ids($phr_ids);
         $this->set_phrase_list($phr_lst);
     }
 
@@ -1141,12 +1227,12 @@ class group extends sandbox_multi
     protected function check_preserved(): user_message
     {
         global $usr;
+        global $mtr;
 
         // init
         $usr_msg = new user_message();
-        $mtr = new message_translator();
-        $msg_res = $mtr->txt(msg_enum::IS_RESERVED);
-        $msg_for = $mtr->txt(msg_enum::RESERVED_NAME);
+        $msg_res = $mtr->txt(msg_id::IS_RESERVED);
+        $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
@@ -1154,7 +1240,10 @@ class group extends sandbox_multi
             // the admin user needs to add the read test group name during initial load
             // so for admin do not create a message
             if (!$usr->is_admin() and !$usr->is_system()) {
-                $usr_msg->add_message('"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for);
+                $usr_msg->add_id_with_vars(msg_id::GROUP_IS_RESERVED, [
+                    msg_id::VAR_NAME => $this->name(),
+                    msg_id::VAR_JSON_TEXT => $msg_res . ' ' . $class_name . ' ' . $msg_for
+                ]);
             }
         }
         return $usr_msg;
@@ -1165,7 +1254,7 @@ class group extends sandbox_multi
      */
     protected function reserved_names(): array
     {
-        return group_api::RESERVED_GROUP_NAMES;
+        return groups::RESERVED_GROUP_NAMES;
     }
 
     /*
@@ -1271,7 +1360,7 @@ class group extends sandbox_multi
 
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -1395,11 +1484,11 @@ class group extends sandbox_multi
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
                     if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_message('Updating the reference in the log failed');
+                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
                     }
 
                 } else {
-                    $usr_msg->add_message('Adding ' . $this::class . ' ' . $this->dsp_id() . ' failed (missing save maker).');
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_GROUP, [msg_id::VAR_ID => $this->dsp_id()]);
                 }
             }
         }
@@ -1421,7 +1510,7 @@ class group extends sandbox_multi
         $val = new value($this->user());
         $val->load_by_grp($this);
 
-        log_debug($val->grp->dsp_id() . ' for "' . $this->user()->name . '" is ' . $val->number());
+        log_debug($val->grp()->dsp_id() . ' for "' . $this->user()->name . '" is ' . $val->number());
         return $val;
     }
 
@@ -1489,7 +1578,6 @@ class group extends sandbox_multi
     {
         log_debug();
 
-        global $db_con;
         $result = '';
 
         // if not yet done, load, the words and triple list
@@ -1509,7 +1597,7 @@ class group extends sandbox_multi
                 $db_con->set_class(group::class);
                 // TODO activate Prio 2
                 /*
-                if ($db_con->update_old($this->id(), self::FLD_DESCRIPTION, $group_name)) {
+                if ($db_con->update_old($this->id(), sql_db::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
                 }
                 log_debug('updated to ' . $group_name);
@@ -1567,15 +1655,12 @@ class group extends sandbox_multi
         log_debug();
         $usr_msg = new user_message();
 
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::NAME) {
-                $this->name = $value;
-            }
+        if (array_key_exists(json_fields::NAME, $api_json)) {
+            $this->name = $api_json[json_fields::NAME];
         }
 
         if ($usr_msg->is_ok() and $do_save) {
-            $usr_msg->add_message($this->save_id());
+            $usr_msg->add_message_text($this->save_id());
         }
 
         return $usr_msg;
@@ -1588,8 +1673,6 @@ class group extends sandbox_multi
     private function save_id(): ?int
     {
         log_debug($this->dsp_id());
-
-        global $db_con;
 
         if ($this->id() <= 0) {
             $this->generic_name();
@@ -1658,7 +1741,7 @@ class group extends sandbox_multi
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_insert(sql_creator $sc, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    function sql_insert(sql_creator $sc, sql_type_list $sc_par_lst = new sql_type_list()): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
         $sc_par_lst_used = clone $sc_par_lst;
@@ -1674,7 +1757,7 @@ class group extends sandbox_multi
             [group::FLD_ID, $this->id(), $sc->get_sql_par_type($this->id())],
             [user::FLD_ID, $this->user()->id(), sql_par_type::INT],
             [self::FLD_NAME, $this->name, sql_par_type::TEXT],
-            [self::FLD_DESCRIPTION, $this->description, sql_par_type::TEXT]
+            [sql_db::FLD_DESCRIPTION, $this->description, sql_par_type::TEXT]
         ]);
         $qp->sql = $sc->create_sql_insert($fvt_lst);
         $qp->par = $fvt_lst->values();
@@ -1702,7 +1785,7 @@ class group extends sandbox_multi
         if (count($fld_val_typ_lst) == 0) {
             $fld_val_typ_lst = [
                 [self::FLD_NAME, $this->name, self::FLD_NAME_SQL_TYP],
-                [self::FLD_DESCRIPTION, $this->description, self::FLD_DESCRIPTION_SQL_TYP]
+                [sql_db::FLD_DESCRIPTION, $this->description, sql_db::FLD_DESCRIPTION_SQL_TYP]
             ];
         }
         $fields = $sc->get_fields($fld_val_typ_lst);
@@ -1743,9 +1826,9 @@ class group extends sandbox_multi
      *
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
-        return array_merge([self::FLD_NAME, self::FLD_DESCRIPTION]);
+        return array_merge([self::FLD_NAME, sql_db::FLD_DESCRIPTION]);
     }
 
     /**
@@ -1766,9 +1849,9 @@ class group extends sandbox_multi
         }
         if ($grp->description <> $this->description) {
             $lst[] = [
-                self::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
                 $this->description,
-                self::FLD_DESCRIPTION_SQL_TYP
+                sql_db::FLD_DESCRIPTION_SQL_TYP
             ];
         }
         return $lst;

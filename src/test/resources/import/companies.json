@@ -27,7 +27,18 @@
       ]
     },
     {
-      "name": "Danone"
+      "name": "Danone",
+      "description": "Danone S.A. is a French multinational food-products corporation based in Paris. It was founded in 1919 in Barcelona, Spain.",
+      "refs": [
+        {
+          "name": "Danone",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q329426",
+          "type": "wikidata"
+        }
+      ]
     },
     {
       "name": "Nestlé"
@@ -37,6 +48,39 @@
     },
     {
       "name": "Zurich"
+    },
+    {
+      "name": "City"
+    },
+    {
+      "name": "Canton"
+    },
+    {
+      "name": "Migros"
+    },
+    {
+      "name": "Cooperative"
+    },
+    {
+      "name": "Currency"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "thousand"
+    },
+    {
+      "name": "Year"
+    },
+    {
+      "name": "2019"
+    },
+    {
+      "name": "2012"
     },
     {
       "name": "CHF",
@@ -58,6 +102,39 @@
       "name": "Revenues"
     },
     {
+      "name": "balance sheet"
+    },
+    {
+      "name": "cash"
+    },
+    {
+      "name": "flow"
+    },
+    {
+      "name": "statement"
+    },
+    {
+      "name": "forecast"
+    },
+    {
+      "name": "sales"
+    },
+    {
+      "name": "sector"
+    },
+    {
+      "name": "employee"
+    },
+    {
+      "name": "Energy"
+    },
+    {
+      "name": "Brand"
+    },
+    {
+      "name": "Nestle"
+    },
+    {
       "name": "Other revenues"
     },
     {
@@ -67,13 +144,16 @@
       "name": "General administrative expenses"
     },
     {
+      "name": "sales of sustainable labels"
+    },
+    {
       "name": "Other operating expense"
     },
     {
       "name": "Other trading expense"
     },
     {
-      "name": "Sales"
+      "name": "sales"
     },
     {
       "name": "Other trading income"
@@ -85,7 +165,7 @@
       "name": "Other operating net"
     },
     {
-      "name": "Cost of Sales (reported)"
+      "name": "Cost of sales (reported)"
     },
     {
       "name": "Cost of goods sold"
@@ -115,7 +195,10 @@
       "name": "Interest expense"
     },
     {
-      "name": "Income taxes"
+      "name": "income"
+    },
+    {
+      "name": "tax"
     },
     {
       "name": "Share price"
@@ -131,6 +214,9 @@
     },
     {
       "name": "Profit attributable to non-controlling interests"
+    },
+    {
+      "name": "Prepared dishes"
     },
     {
       "name": "Operating profit (reported)",
@@ -385,22 +471,46 @@
       "to": "2012"
     },
     {
-      "name": "Income taxes is part of cash flow statement",
-      "from": "Income taxes",
+      "name": "income taxes",
+      "from": "tax",
+      "verb": "on",
+      "to": "income"
+    },
+    {
+      "name": "cash flow",
+      "from": "cash",
+      "verb": "can",
+      "to": "flow"
+    },
+    {
+      "name": "cash flow statement",
+      "from": "cash flow",
+      "verb": "can use",
+      "to": "statement"
+    },
+    {
+      "name": "income taxes is part of cash flow statement",
+      "from": "income taxes",
       "verb": "is part of",
       "to": "cash flow statement"
     },
     {
-      "name": "Sales of sustainable labels is part of Sales",
-      "from": "Sales of sustainable labels",
+      "name": "income taxes is part of cash flow statement",
+      "from": "income taxes",
       "verb": "is part of",
-      "to": "Sales"
+      "to": "cash flow statement"
     },
     {
-      "name": "Sales can be used as a differentiator for Sector",
-      "from": "Sales",
+      "name": "sales of sustainable labels is part of sales",
+      "from": "sales of sustainable labels",
+      "verb": "is part of",
+      "to": "sales"
+    },
+    {
+      "name": "sales can be used as a differentiator for sector",
+      "from": "sales",
       "verb": "can be used as a differentiator for",
-      "to": "Sector"
+      "to": "sector"
     },
     {
       "name": "Company uses employee",
@@ -431,7 +541,7 @@
     {
       "name": "yearly increase",
       "expression": "\"percent\" = ( \"is a\" \"Year\" - \"prior\" \"Year\" ) / \"prior\" \"Year\"",
-      "assigned_word": "\"Sales\""
+      "assigned_word": "\"sales\""
     },
     {
       "name": "Operating income",
@@ -449,13 +559,13 @@
       "assigned_word": "\"Company\""
     },
     {
-      "name": "Cost of Sales",
-      "expression": "= \"Cost of Sales (reported)\" + \"Cost of goods sold\"",
+      "name": "Cost of sales",
+      "expression": "= \"Cost of sales (reported)\" + \"Cost of goods sold\"",
       "assigned_word": "\"Company\""
     },
     {
       "name": "Operating Profit",
-      "expression": "= \"Sales\" + \"Other trading net\" + \"Other operating net\" + \"Cost of Sales\" + \"Distribution costs\" + \"Research costs\"",
+      "expression": "= \"sales\" + \"Other trading net\" + \"Other operating net\" + \"Cost of sales\" + \"Distribution costs\" + \"Research costs\"",
       "assigned_word": "\"Company\""
     },
     {
@@ -475,7 +585,7 @@
     },
     {
       "name": "Net profit",
-      "expression": "=\"Profit before income taxes\" + \"Income taxes\" + \"Income from associates and joint ventures\"",
+      "expression": "=\"Profit before income taxes\" + \"income taxes\" + \"Income from associates and joint ventures\"",
       "assigned_word": "\"Company\""
     },
     {
@@ -518,6 +628,10 @@
       "url": "https://www.nestle.com/asset-library/documents/library/documents/financial_statements/2016-financial-statements-en.pdf"
     },
     {
+      "name": "Nestlé Financial Statement 2016",
+      "url": "https://www.nestle.com/asset-library/documents/library/documents/financial_statements/2016-financial-statements-en.pdf"
+    },
+    {
       "name": "Migros Facts & figures 2016",
       "url": "https://www.migros.ch/dam/jcr...9877.../EN_MGB_Zahlen_und_Fakten_2016.pdf"
     }
@@ -526,7 +640,7 @@
     {
       "words": [
         "Nestlé",
-        "Sales",
+        "sales",
         "2014"
       ],
       "number": "-1678",
@@ -535,7 +649,7 @@
     {
       "words": [
         "Nestlé",
-        "Prepared dishes ",
+        "Prepared dishes",
         "2016"
       ],
       "number": "6512"
@@ -561,8 +675,7 @@
         },
         {
           "position": "3",
-          "name": "JSON Export",
-          "type": "json_export"
+          "name": "JSON Export"
         }
       ]
     },
@@ -583,13 +696,11 @@
         },
         {
           "position": "3",
-          "name": "JSON Export",
-          "type": "json_export"
+          "name": "JSON Export"
         },
         {
           "position": "4",
-          "name": "XML Export",
-          "type": "xml_export"
+          "name": "XML Export"
         }
       ]
     },

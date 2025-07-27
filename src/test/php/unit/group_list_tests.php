@@ -32,7 +32,9 @@
 
 namespace unit;
 
-include_once MODEL_GROUP_PATH . 'group_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_GROUP . 'group_list.php';
 
 use cfg\db\sql_creator;
 use cfg\group\group_list;
@@ -51,13 +53,16 @@ class group_list_tests
         $t->name = 'group_list->';
         $t->resource_path = 'db/group/';
 
-        $t->header('Unit tests of the phrase group list class (src/main/php/model/group/group_list.php)');
+        // start the test section (ts)
+        $ts = 'unit group list ';
+        $t->header($ts);
 
-        $t->subheader('Database query creation tests');
+        $t->subheader($ts . 'database query creation');
 
         // load by triple ids
         $grp_lst = new group_list($usr);
-        $t->assert_sql_by_ids($sc, $grp_lst, array(3,2,4));
+        $test_name = 'load formulas by ids';
+        $t->assert_sql_by_ids($test_name, $sc, $grp_lst, array(3,2,4));
         $t->assert_sql_names_by_ids($sc, $grp_lst, array(3,2,4));
         $t->assert_sql_by_phrase($sc, $grp_lst, $t->word()->phrase());
 

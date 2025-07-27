@@ -32,15 +32,18 @@
 
 namespace unit_read;
 
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
+use cfg\const\paths;
 
-use api\word\word as word_api;
-use api\word\triple as triple_api;
-use api\phrase\phrase as phrase_api;
-use cfg\phrase\phrase_type;
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+
 use cfg\phrase\phrase;
-use test\test_cleanup;
+use cfg\phrase\phrase_type;
+use shared\const\triples;
+use shared\const\words;
 use shared\types\phrase_type as phrase_type_shared;
+use test\test_cleanup;
 
 class phrase_read_tests
 {
@@ -51,25 +54,25 @@ class phrase_read_tests
         global $usr;
 
         // init
-        $t->header('Unit database tests of the phrase class (src/main/php/model/phrase/phrase.php)');
+        $t->header('phrase database read tests');
         $t->name = 'phrase read db->';
         $t->resource_path = 'db/phrase/';
 
         $t->subheader('Phrase db read tests');
 
-        $test_name = 'load phrase ' . word_api::TN_READ . ' by word name and id';
+        $test_name = 'load phrase ' . words::MATH . ' by word name and id';
         $phr = new phrase($t->usr1);
-        $phr->load_by_name(word_api::TN_READ);
+        $phr->load_by_name(words::MATH);
         $wrd_by_id = new phrase($t->usr1);
         $wrd_by_id->load_by_id($phr->id(), phrase::class);
-        $t->assert($test_name, $wrd_by_id->name(), word_api::TN_READ);
+        $t->assert($test_name, $wrd_by_id->name(), words::MATH);
 
-        $test_name = 'load phrase ' . triple_api::TN_PI . ' by triple name and id';
+        $test_name = 'load phrase ' . triples::PI . ' by triple name and id';
         $phr = new phrase($t->usr1);
-        $phr->load_by_name(triple_api::TN_PI);
+        $phr->load_by_name(triples::PI);
         $wrd_by_id = new phrase($t->usr1);
         $wrd_by_id->load_by_id($phr->id(), phrase::class);
-        $t->assert($test_name, $wrd_by_id->name(), triple_api::TN_PI);
+        $t->assert($test_name, $wrd_by_id->name(), triples::PI);
 
 
         $t->subheader('Phrase type db read tests');

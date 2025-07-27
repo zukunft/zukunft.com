@@ -1,19 +1,36 @@
 {
   "pod": "zukunft.com",
-  "type": "sys_log",
-  "user_id": 2,
+  "type": "sys_log_list",
+  "user_id": 3,
   "user": "zukunft.com system test",
   "version": "0.0.3",
-  "sys_log": [
+  "body": [
+    {
+      "id": 3,
+      "user": "zukunft.com system test",
+      "text": "'test setup'",
+      "description": "'import of the pod test setup'",
+      "trace": "'import_test_config'",
+      "prg_part": "import_test_config",
+      "status": 1
+    },
+    {
+      "id": 2,
+      "user": "zukunft.com system test",
+      "text": "'pod setup'",
+      "description": "'import of the pod base setup'",
+      "trace": "'import_pod_config'",
+      "prg_part": "import_pod_config",
+      "status": 1
+    },
     {
       "id": 1,
-      "time": "2023-01-03 20:59:59",
       "user": "zukunft.com system test",
       "text": "'base setup'",
+      "description": "'import of the base setup'",
       "trace": "'import_base_config'",
       "prg_part": "import_base_config",
-      "owner": "",
-      "status": "new"
+      "status": 1
     }
   ]
 }

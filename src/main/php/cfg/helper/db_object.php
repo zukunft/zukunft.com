@@ -32,18 +32,22 @@
 
 namespace cfg\helper;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-//include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_RESULT_PATH . 'result.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+//include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -56,9 +60,10 @@ use cfg\result\result;
 use cfg\sandbox\sandbox;
 use cfg\user\user;
 use cfg\value\value;
+use shared\helper\IdObject;
 use shared\library;
 
-class db_object
+class db_object extends IdObject
 {
 
     // dummy const to be overwritten by the child objects
@@ -113,7 +118,7 @@ class db_object
      */
     function sql_table_create(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([]),
+        sql_type_list $sc_par_lst = new sql_type_list(),
         array         $fields = [],
         string        $tbl_comment = ''
     ): string
@@ -158,7 +163,7 @@ class db_object
      */
     function sql_index_create(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([]),
+        sql_type_list $sc_par_lst = new sql_type_list(),
         array         $fields = []
     ): string
     {
@@ -181,7 +186,7 @@ class db_object
      */
     function sql_foreign_key_create(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([]),
+        sql_type_list $sc_par_lst = new sql_type_list(),
         array         $fields = []
     ): string
     {
@@ -329,7 +334,7 @@ class db_object
 
 
     /*
-     * information
+     * info
      */
 
     /**

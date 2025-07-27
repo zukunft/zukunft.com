@@ -34,6 +34,7 @@ namespace unit_ui;
 
 use html\html_base;
 use html\view\view as view_dsp;
+use shared\const\views;
 use test\test_cleanup;
 
 class view_ui_tests
@@ -42,12 +43,22 @@ class view_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('view tests');
+        // start the test section (ts)
+        $ts = 'unit ui html view ';
+        $t->header($ts);
 
-        $vrb = new view_dsp($t->view()->api_json());
+        $msk = new view_dsp($t->view()->api_json());
         $test_page = $html->text_h2('view display test');
-        $test_page .= 'with tooltip: ' . $vrb->display() . '<br>';
-        $test_page .= 'with link: ' . $vrb->display_linked() . '<br>';
+        $test_page .= 'with tooltip: ' . $msk->name_tip() . '<br>';
+        $test_page .= 'with link: ' . $msk->name_link() . '<br>';
+        $test_page .= $html->text_h2('buttons');
+        $test_page .= 'add button: ' . $msk->btn_add() . '<br>';
+        $test_page .= 'edit button: ' . $msk->btn_edit() . '<br>';
+        $test_page .= 'del button: ' . $msk->btn_del() . '<br>';
+        $test_page .= $html->text_h2('select');
+        $from_rows = $msk->type_selector(views::VIEW_EDIT) . '<br>';
+        //$from_rows .= $msk->component_selector(views::VIEW_EDIT, '', 1) . '<br>';
+        $test_page .= $html->form(views::VIEW_EDIT, $from_rows);
         $t->html_test($test_page, 'view', 'view', $t);
     }
 

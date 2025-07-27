@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/system/sys_log_type.php - to link coded functionality to a system log status
+    model/system/sys_log_type.php - to link coded functionality to a system log status
     ---------------------------
 
     TODO to be combined with sys_log_level
@@ -33,7 +33,9 @@
 
 namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
 
 use cfg\helper\type_object;
 

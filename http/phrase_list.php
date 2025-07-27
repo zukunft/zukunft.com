@@ -35,18 +35,21 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
 
+include_once paths::SHARED_CONST . 'views.php';
+
+use cfg\phrase\term;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\triple;
+use cfg\word\word;
 use html\html_base;
 use html\view\view as view_dsp;
 use html\word\word as word_dsp;
-use cfg\phrase\term;
-use cfg\word\triple;
-use cfg\user\user;
-use cfg\view\view;
-use cfg\word\word;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views;
+use shared\const\views as view_shared;
 
 /* open database */
 $db_con = prg_start("phrase_list");
@@ -66,7 +69,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk_db = new view($usr);
-    $msk_db->load_by_code_id(view_shared::MC_WORD_ADD);
+    $msk_db->load_by_code_id(view_shared::WORD_ADD);
     $msk = new view_dsp($msk_db->api_json());
     $back = $_GET[api::URL_VAR_BACK] = ''; // the calling page which should be displayed after saving
 
@@ -114,14 +117,14 @@ if ($usr->id() > 0) {
             if ($trm->id_obj() > 0) {
                 /*
                 // TODO: if a formula exists, suggest to create a word as a formula link, so that the formula results can be shown in parallel to the entered values
-                if (substr($id_txt, 0, strlen(expression::MAKER_FORMULA_START)) == expression::MAKER_FORMULA_START) {
+                if (substr($id_txt, 0, strlen(chars::MAKER_FORMULA_START)) == chars::MAKER_FORMULA_START) {
                   // maybe ask for confirmation
                   // change the link type to "formula link"
                   $wrd->type_id = cl(SQL_WORD_TYPE_FORMULA_LINK);
                   zu_debug('word_add -> changed type to ('.$wrd->type_id.')');
                 } else {
                 */
-                $msg .= $trm->id_used_msg($this);
+                $msg .= $html->dsp_err($trm->id_used_msg_text($this));
                 log_debug();
                 //}
             }
@@ -185,6 +188,8 @@ if ($usr->id() > 0) {
         $result .= $html->dsp_err($msg);
 
         $wrd_dsp = new word_dsp($wrd->api_json());
+        //$msk_dsp = new view_dsp();
+        //$msk_dsp->load_by_id_with(views::WORD_ADD_ID);
         $result .= $wrd_dsp->dsp_add($phr_id, $phr_to, $vrb_id, $back);
     }
 }

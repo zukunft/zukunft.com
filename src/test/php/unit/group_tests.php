@@ -32,23 +32,24 @@
 
 namespace unit;
 
-include_once API_PHRASE_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_GROUP_PATH . 'group_link.php';
-include_once MODEL_GROUP_PATH . 'group_list.php';
-include_once MODEL_GROUP_PATH . 'result_id.php';
+use cfg\const\paths;
 
-use api\phrase\group as group_api;
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_GROUP . 'group_link.php';
+include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_GROUP . 'result_id.php';
+include_once paths::SHARED_CONST . 'groups.php';
+
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
-use cfg\db\sql_type_list;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_link;
 use cfg\group\result_id;
 use cfg\phrase\phrase_list;
-use shared\library;
+use shared\const\groups;
+use shared\const\values;
 use test\test_cleanup;
 
 class group_tests
@@ -64,18 +65,20 @@ class group_tests
         $t->name = 'group->';
         $t->resource_path = 'db/group/';
 
-        $t->header('Unit tests of the phrase group class (src/main/php/model/group/group.php)');
+        // start the test section (ts)
+        $ts = 'unit group ';
+        $t->header($ts);
 
-        $t->subheader('Group id tests');
+        $t->subheader($ts . 'id');
         $grp_id = new group_id();
-        $t->assert('64 bit group_id short word list', $grp_id->get_id($t->word_list_short()->phrase_lst()),
-            262145);
-        $t->assert('phrase ids of 64 bit group_id short', $grp_id->get_array(262145),
-            $t->word_list_short()->phrase_lst()->ids());
-        $t->assert('64 bit group_id word list', $grp_id->get_id($t->word_list()->phrase_lst()),
-            1688867040264193);
-        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(1688867040264193),
-            $t->word_list()->phrase_lst()->ids());
+        $t->assert('64 bit group_id short word list', $grp_id->get_id($t->word_list_short()->phrase_list()),
+            1114113);
+        $t->assert('phrase ids of 64 bit group_id short', $grp_id->get_array(1114113),
+            $t->word_list_short()->phrase_list()->ids());
+        $t->assert('64 bit group_id word list', $grp_id->get_id($t->word_list()->phrase_list()),
+            1688871335231489);
+        $t->assert('phrase ids of 64 bit group_id', $grp_id->get_array(1688871335231489),
+            $t->word_list()->phrase_list()->ids());
 
         //$this->check_64_bit_key($t, [0,0,0,0], 0);
         $this->check_64_bit_key($t, [1], 1);
@@ -84,6 +87,8 @@ class group_tests
         $this->check_64_bit_key($t, [4], 4);
         $this->check_64_bit_key($t, [7], 7);
         $this->check_64_bit_key($t, [-2], 32770);
+        $this->check_64_bit_key($t, [-3], 32771);
+        $this->check_64_bit_key($t, [-51], 32819);
         $this->check_64_bit_key($t, [32767], 32767);
         $this->check_64_bit_key($t, [-32767], 65535);
         $this->check_64_bit_key($t, [1,32767], 2147418113);
@@ -130,15 +135,15 @@ class group_tests
         $this->check_int2alpha($t, -12, '.....A(', true, );
         $this->check_int2alpha($t, -12, '.....A)', false, true);
 
-        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list()->phrase_lst()),32770);
-        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(32770), $t->triple_list()->phrase_lst()->ids());
+        $t->assert('group_id triple list', $grp_id->get_id($t->triple_list()->phrase_list()),values::PI_SYMBOL_ID);
+        $t->assert('triple ids 64 bit group_id ', $grp_id->get_array(values::PI_SYMBOL_ID), $t->triple_list()->phrase_list()->ids());
         $phr_lst = new phrase_list($usr);
-        $phr_lst->merge($t->word_list()->phrase_lst());
-        $phr_lst->merge($t->triple_list()->phrase_lst());
+        $phr_lst->merge($t->word_list()->phrase_list());
+        $phr_lst->merge($t->triple_list()->phrase_list());
         $t->assert('group_id combine phrase list', $grp_id->get_id($phr_lst),
-            '.....0-...../+.....0+.....2+.....4+......+......+......+......+......+......+......+......+......+......+......+');
+            '.....0-...../+.....0+.....3+.....4+......+......+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list', $grp_id->get_id($t->phrase_list()),
-            '.....0-...../-...../+.....0+.....2+......+......+......+......+......+......+......+......+......+......+......+');
+            '.....0-...../-...../+.....0+.....3+......+......+......+......+......+......+......+......+......+......+......+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t->phrase_list_16()),
             '1FajJ2-.4LYK3-..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+.ZSahL+');
         $t->assert('group_id phrase list 16', $grp_id->get_id($t->phrase_list_17_plus()),
@@ -148,7 +153,7 @@ class group_tests
             '1,-11,12,-37,38,-64,376,-2367,13108,-82124,505294,-2815273,17192845,-106841477,628779863,-3516593476');
         $grp_id = 0;
 
-        $t->subheader('Result id tests');
+        $t->subheader($ts . 'result id');
         // TODO assign the formula "increase" to the word inhabitants
         // TODO based on the formula the name of the formula and the phrases on the left side
         //      are always added to the result, so they do not need to be included in the phrase lists
@@ -158,11 +163,11 @@ class group_tests
         $t->assert('64 bit result_id for the formula increase, '
             . 'the phrases Zurich (City) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t->zh_inhabitants_2020(), $t->zh_inhabitants_2020(), $t->formula_increase()),
-            6051875221405905);
+            6052266059235599);
         $t->assert('128 bit result_id for the formula increase, '
             . 'the phrases Zurich (City), Geneva (City) and inhabitants and the result only phrase 2023 (year)',
             $res_id->get_id($t->zh_ge_inhabitants_2020(), $t->zh_ge_inhabitants_2020(), $t->formula_increase()),
-            '9234445111013697024');
+            '9235041497717760256');
         $t->assert('512 bit result_id ',
             $res_id->get_id($t->phrase_list_14(), $t->phrase_list_14b(), $t->formula_increase()),
             '.....J=..8jId-...I1A-....Yz-..../.-.....Z-.....9-...../+.....A+.....a+....3s+...1Ao+../vLC+.//ZSB+1FajJ2(.4LYK3)1FajJ2)');
@@ -170,27 +175,27 @@ class group_tests
             $res_id->get_id($t->phrase_list_17_plus(), $t->phrase_list_17_plus(), $t->formula_increase()),
             '...../+.....9-.....A+.....Z-.....a+..../.-....3s+....Yz-...1Ao+...I1A-../vLC+..8jId-.//ZSB+.4LYK3-.ZSahL+1FajJ2-.uraWl+');
 
-        $t->subheader('SQL statements - setup');
+        $t->subheader($ts . 'sql statements - setup');
         $grp = new group($usr);
         $t->assert_sql_table_create($grp);
         $t->assert_sql_index_create($grp);
         $t->assert_sql_foreign_key_create($grp);
         $t->assert_sql_truncate($sc, $grp);
 
-        $t->subheader('SQL statements - read');
+        $t->subheader($ts . 'sql statements - read');
         $grp = $t->group();
         $t->assert_sql_by_name($sc, $grp); // by name is always for all tables: prime, most and big
         $t->assert_sql_standard($sc, $grp);
         $t->assert_sql_standard_by_name($sc, $grp);
         $this->assert_sql_by_phrase_list($t, $db_con);
 
-        $t->subheader('SQL statements - write');
+        $t->subheader($ts . 'sql statements - write');
         $grp = new group($usr);
         $grp->set_phrase_list($t->phrase_list_prime());
         $t->assert_sql_insert($sc, $grp);
         $t->assert_sql_insert($sc, $grp, [sql_type::USER]);
         $db_grp = $t->group();
-        $grp = $grp->renamed(group_api::TN_RENAMED);
+        $grp = $grp->renamed(groups::TN_RENAMED);
         $t->assert_sql_update($sc, $grp, $db_grp);
         $t->assert_sql_update($sc, $grp, $db_grp, [sql_type::USER]);
         $grp->set_phrase_list($t->phrase_list_16());
@@ -209,9 +214,11 @@ class group_tests
         $t->assert_sql_delete($sc, $grp, [sql_type::LOG, sql_type::USER]);
 
 
-        $t->header('Unit tests of the phrase group link class (src/main/php/model/group/group_link.php)');
+        // start the test section (ts)
+        $ts = 'unit phrase group list ';
+        $t->header($ts);
 
-        $t->subheader('SQL statement tests');
+        $t->subheader($ts . 'sql statement');
 
         // load the group by the phrase ids
 

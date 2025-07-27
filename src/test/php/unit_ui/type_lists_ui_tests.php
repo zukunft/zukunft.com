@@ -32,14 +32,15 @@
 
 namespace unit_ui;
 
-include_once TYPES_PATH . 'type_list.php';
-include_once TYPES_PATH . 'type_lists.php';
-include_once TYPES_PATH . 'formula_type_list.php';
-include_once TYPES_PATH . 'phrase_types.php';
-include_once TYPES_PATH . 'view_style_list.php';
-include_once TYPES_PATH . 'protection.php';
+use html\const\paths as html_paths;
 
-use api\view\view as view_api;
+include_once html_paths::TYPES . 'type_list.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'formula_type_list.php';
+include_once html_paths::TYPES . 'phrase_types.php';
+include_once html_paths::TYPES . 'view_style_list.php';
+include_once html_paths::TYPES . 'protection.php';
+
 use html\html_base;
 use html\types\component_type_list;
 use html\types\formula_link_type_list;
@@ -50,10 +51,12 @@ use html\types\ref_type_list;
 use html\types\share;
 use html\types\source_type_list;
 use html\types\type_lists as type_list_dsp;
-use html\types\user_profiles;
+use html\types\user_profile;
+use html\types\verbs;
 use html\types\view_style_list;
 use html\types\view_type_list;
-use html\types\verbs;
+use shared\api;
+use shared\const\views;
 use test\test_cleanup;
 
 class type_lists_ui_tests
@@ -63,15 +66,17 @@ class type_lists_ui_tests
 
         $html = new html_base();
 
-        $t->Header('Test the HTML functions for the list preloaded in the Frontend');
+        // start the test section (ts)
+        $ts = 'unit ui html preloaded lists ';
+        $t->header($ts);
 
         // load the types from the api message
-        $api_msg = $t->type_lists_api($t->usr1)->get_json();
+        $api_msg = $t->type_lists_api($t->usr1);
         new type_list_dsp($api_msg);
 
         // use the system view to start the HTML test page
         global $html_system_views;
-        $msk = $html_system_views->get(view_api::TC_READ);
+        $msk = $html_system_views->get_by_code_id(views::START_CODE);
         $wrd = $t->word_dsp();
         $wrd->set_name('All type selectors');
         $test_page = $msk->show($wrd, null, '') . '<br><br>';
@@ -81,7 +86,7 @@ class type_lists_ui_tests
         $test_page .= $html->form_start($form_name);
 
         global $html_user_profiles;
-        $test_page .= $html->label(user_profiles::NAME, user_profiles::NAME);
+        $test_page .= $html->label(user_profile::NAME, user_profile::NAME);
         $test_page .= $html_user_profiles->selector($form_name) . '<br>';
 
         global $html_verbs;
@@ -89,7 +94,7 @@ class type_lists_ui_tests
         $test_page .= $html_verbs->selector($form_name) . '<br>';
 
         global $html_phrase_types;
-        $test_page .= $html->label(phrase_types::NAME, phrase_types::NAME);
+        $test_page .= $html->label(phrase_types::NAME, api::URL_VAR_PHRASE_TYPE);
         $test_page .= $html_phrase_types->selector($form_name) . '<br>';
 
         global $html_formula_types;

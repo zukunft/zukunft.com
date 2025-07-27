@@ -31,8 +31,21 @@
 
 namespace html\view;
 
-include_once SANDBOX_PATH . 'list_dsp.php';
-include_once VIEW_PATH . 'view.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use html\ref\source;
 use html\rest_ctrl;
@@ -44,8 +57,8 @@ use html\view\view as view_dsp;
 use html\word\triple;
 use html\word\word;
 use shared\api;
+use shared\const\views;
 use shared\types\view_styles;
-use shared\views;
 
 class view_list extends list_dsp
 {
@@ -59,16 +72,16 @@ class view_list extends list_dsp
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new view_dsp());
+        return parent::api_mapper_list($json_array, new view_dsp());
     }
 
-    function get(string $code_id): view_dsp
+    function get_by_code_id(string $code_id): view_dsp
     {
         // TODO use a hash list
         $result = new view_dsp();
-        foreach ($this->lst as $dsp) {
+        foreach ($this->lst() as $dsp) {
             if ($dsp->code_id() == $code_id) {
                 $result = $dsp;
             }
@@ -76,17 +89,6 @@ class view_list extends list_dsp
         return $result;
     }
 
-    function get_by_id(int $id): view_dsp
-    {
-        // TODO use a hash list
-        $result = new view_dsp();
-        foreach ($this->lst as $msk) {
-            if ($msk->id() == $id) {
-                $result = $msk;
-            }
-        }
-        return $result;
-    }
 
     /*
      * load
@@ -99,7 +101,7 @@ class view_list extends list_dsp
         $data = array(api::URL_VAR_PATTERN => $pattern);
         $rest = new rest_ctrl();
         $json_body = $rest->api_get(view_list::class, $data);
-        $this->set_from_json_array($json_body);
+        $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
         }
@@ -118,8 +120,8 @@ class view_list extends list_dsp
 
         $data = array(api::URL_VAR_CMP_ID => $id);
         $rest = new rest_ctrl();
-        $json_body = $rest->api_get(view::class, $data);
-        $this->set_from_json_array($json_body);
+        $json_body = $rest->api_get(view_base::class, $data);
+        $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
         }
@@ -128,32 +130,18 @@ class view_list extends list_dsp
 
 
     /*
-     * modify
-     */
-
-    /**
-     * add a view to the list
-     * @returns bool true if the view has been added
-     */
-    function add(view_dsp $dsp): bool
-    {
-        return parent::add_obj($dsp);
-    }
-
-
-    /*
-     * display
+     * base
      */
 
     /**
      * @return string with a list of the view names with html links
      * ex. names_linked
      */
-    function display(): string
+    function name_tip(): string
     {
         $views = array();
-        foreach ($this->lst as $fig) {
-            $views[] = $fig->display();
+        foreach ($this->lst() as $msk) {
+            $views[] = $msk->name_tip();
         }
         return implode(', ', $views);
     }
@@ -163,7 +151,7 @@ class view_list extends list_dsp
      * @return string with a list of the view names with html links
      * ex. names_linked
      */
-    function display_linked(string $back = ''): string
+    function name_link(string $back = ''): string
     {
         return implode(', ', $this->names_linked($back));
     }
@@ -172,14 +160,19 @@ class view_list extends list_dsp
      * @param string $back the back trace url for the undo functionality
      * @return array with a list of the view names with html links
      */
-    function names_linked(string $back = ''): array
+    private function names_linked(string $back = ''): array
     {
         $views = array();
-        foreach ($this->lst as $fig) {
-            $views[] = $fig->display_linked();
+        foreach ($this->lst() as $msk) {
+            $views[] = $msk->name_link();
         }
         return $views;
     }
+
+
+    /*
+     * info
+     */
 
     /**
      * get the default view
@@ -190,14 +183,18 @@ class view_list extends list_dsp
     function default_id(sandbox $sbx): int
     {
         return match ($sbx::class) {
-            word::class => views::MI_WORD,
-            verb::class => views::MI_VERB,
-            triple::class => views::MI_TRIPLE,
-            source::class => views::MI_SOURCE,
-            default => views::MI_START
+            word::class => views::WORD_ID,
+            verb::class => views::VERB_ID,
+            triple::class => views::TRIPLE_ID,
+            source::class => views::SOURCE_ID,
+            default => views::START_ID
         };
     }
 
+
+    /*
+     * select
+     */
 
     /**
      * HTML code of a view selector

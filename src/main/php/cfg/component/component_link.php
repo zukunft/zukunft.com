@@ -9,6 +9,7 @@
     - db const:          const for the database link
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache
     - cast:              create an api object and set the vars from an api json
@@ -49,29 +50,34 @@
 
 namespace cfg\component;
 
-include_once API_VIEW_PATH . 'component_link.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
 
-use api\view\component_link as component_link_api;
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'position_types.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -82,6 +88,7 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
+use cfg\helper\data_object;
 use cfg\log\change;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
@@ -90,8 +97,12 @@ use cfg\helper\type_object;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\view\view;
+use cfg\view\view_db;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
+use shared\types\api_type_list;
+use shared\types\position_types;
 
 class component_link extends sandbox_link
 {
@@ -113,12 +124,12 @@ class component_link extends sandbox_link
 
     // all database field names excluding the user specific fields and the id
     const FLD_NAMES = array(
-        view::FLD_ID,
+        view_db::FLD_ID,
         component::FLD_ID
     );
     // list of the link database field names
     const FLD_NAMES_LINK = array(
-        view::FLD_ID,
+        view_db::FLD_ID,
         component::FLD_ID
     );
     // list of the user specific database field names
@@ -126,7 +137,7 @@ class component_link extends sandbox_link
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
         self::FLD_STYLE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -135,13 +146,13 @@ class component_link extends sandbox_link
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
         self::FLD_STYLE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
     // list of fields that select the objects that should be linked
     const FLD_LST_LINK = array(
-        [view::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
+        [view_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
         [component::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, component::class, ''],
     );
     // list of MANDATORY fields that CAN be CHANGED by the user
@@ -160,6 +171,10 @@ class component_link extends sandbox_link
     );
 
 
+    // default const
+    const START_ORDER_NBR = 1;
+
+
     /*
      * object vars
      */
@@ -172,6 +187,7 @@ class component_link extends sandbox_link
 
     // the default display style for this component which can be overwritten by the link
     private ?type_object $style = null;
+
 
     /*
      * construct and map
@@ -197,8 +213,10 @@ class component_link extends sandbox_link
 
         $this->reset_objects($this->user());
 
+        // set the default values
         $this->set_predicate(component_link_type::ALWAYS);
-        $this->set_pos_type(position_type::BELOW);
+        $this->set_pos(null);
+        $this->set_pos_type(position_types::BELOW);
         $this->set_style(null);
 
         $this->order_nbr = null;
@@ -234,7 +252,7 @@ class component_link extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->set_view(new view($this->user()));
-            $this->view()->set_id($db_row[view::FLD_ID]);
+            $this->view()->set_id($db_row[view_db::FLD_ID]);
             $this->set_component(new component($this->user()));
             $this->component()->set_id($db_row[component::FLD_ID]);
             $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
@@ -242,6 +260,144 @@ class component_link extends sandbox_link
             $this->set_style_by_id($db_row[self::FLD_STYLE]);
         }
         return $result;
+    }
+
+    /**
+     * map a component api json to this model component link object
+     * @param array $api_json the api array with the values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        if (array_key_exists(json_fields::POS, $api_json)) {
+            $this->order_nbr = $api_json[json_fields::POS];
+        }
+        if (array_key_exists(json_fields::TYPE, $api_json)) {
+            $this->set_predicate_id($api_json[json_fields::TYPE]);
+        }
+        if (array_key_exists(json_fields::POS_TYPE, $api_json)) {
+            $this->set_pos_type_by_id($api_json[json_fields::POS_TYPE]);
+        }
+        if (array_key_exists(json_fields::STYLE, $api_json)) {
+            $this->set_style_by_id($api_json[json_fields::STYLE]);
+        }
+
+        return $msg;
+    }
+
+    /**
+     * set the vars of this component link object based on the given json without writing to the database
+     * the code_id is not expected to be included in the im- and export because the internal views are not expected to be included in the ex- and import
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto the data object that contains the already imported components
+     * @param object|null $test_obj if not null the unit testing object
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        log_debug();
+
+        // reset the all parameters for the view object but keep the user
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+
+        // if for the component only the position and name is defined
+        // do not overwrite an existing component
+        // instead just add the existing component
+        if ((count($in_ex_json) == 2
+                and array_key_exists(json_fields::POSITION, $in_ex_json)
+                and array_key_exists(json_fields::NAME, $in_ex_json))
+            or (count($in_ex_json) == 3
+                and array_key_exists(json_fields::POSITION, $in_ex_json)
+                and array_key_exists(json_fields::NAME, $in_ex_json)
+                and array_key_exists(json_fields::POS_TYPE, $in_ex_json))
+            or (count($in_ex_json) == 3
+                and array_key_exists(json_fields::POSITION, $in_ex_json)
+                and array_key_exists(json_fields::NAME, $in_ex_json)
+                and array_key_exists(json_fields::STYLE, $in_ex_json))
+            or (count($in_ex_json) == 4
+                and array_key_exists(json_fields::POSITION, $in_ex_json)
+                and array_key_exists(json_fields::NAME, $in_ex_json)
+                and array_key_exists(json_fields::POS_TYPE, $in_ex_json)
+                and array_key_exists(json_fields::STYLE, $in_ex_json))) {
+
+            // get component from dto by name
+            $cmp = $dto?->get_component_by_name($in_ex_json[json_fields::NAME]);
+            if ($cmp == null) {
+                $usr_msg->add_id_with_vars(msg_id::COMPONENT_MISSING, [
+                    msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME],
+                    msg_id::VAR_JSON_TEXT => json_encode($in_ex_json)
+                ]);
+                $cmp = new component($usr);
+                $cmp->set_name($in_ex_json[json_fields::NAME]);
+            }
+            $this->set_component($cmp);
+
+        } else {
+            $usr_msg->add_id_with_vars(msg_id::COMPONENT_CREATED, [
+                msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME]
+            ]);
+            $cmp = new component($usr);
+            $cmp->import_obj($in_ex_json, $usr, $dto, $test_obj);
+        }
+
+        // set the link position and type
+        if (array_key_exists(json_fields::POSITION, $in_ex_json)) {
+            $this->set_pos($in_ex_json[json_fields::POSITION]);
+        }
+        if (array_key_exists(json_fields::POS_TYPE, $in_ex_json)) {
+            $this->set_pos_type($in_ex_json[json_fields::POS_TYPE]);
+        }
+        if (array_key_exists(json_fields::STYLE, $in_ex_json)) {
+            $this->set_style($in_ex_json[json_fields::STYLE]);
+        }
+
+        return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = [];
+        if ($this->id() != 0) {
+            $vars[json_fields::LINK_ID] = $this->id();
+        }
+        if ($this->is_excluded() and !$typ_lst->test_mode()) {
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            if ($this->component() != null) {
+                $vars = array_merge($vars, $this->component()->api_json_array($typ_lst, $usr));
+            }
+            if ($this->order_nbr != component_link::START_ORDER_NBR or $this->id() != 0) {
+                $vars[json_fields::POS] = $this->order_nbr;
+            }
+            // TODO Prio 2 activate
+            //$vars[json_fields::TYPE] = $this->type_id();
+            if ($this->pos_type_code_id() != position_types::BELOW or $this->id() != 0) {
+                $vars[json_fields::POS_TYPE] = $this->pos_type_id();
+            }
+            if ($this->style != null) {
+                $vars[json_fields::STYLE] = $this->style_id();
+            }
+        }
+
+        return $vars;
     }
 
 
@@ -297,10 +453,19 @@ class component_link extends sandbox_link
     }
 
     /**
-     * set the position of this link
-     * @param int $pos
+     * rename to standard link to object to component
+     * @param int $id
      */
-    function set_pos(int $pos): void
+    function set_component_id(int $id): void
+    {
+        $this->component()->set_id($id);
+    }
+
+    /**
+     * set the position of this link
+     * @param int|null $pos
+     */
+    function set_pos(int|null $pos): void
     {
         $this->order_nbr = $pos;
     }
@@ -351,6 +516,14 @@ class component_link extends sandbox_link
     function pos_type(): type_object
     {
         return $this->pos_type;
+    }
+
+    /**
+     * @return string the code id of the position type for the component in the linked view by the database id
+     */
+    function pos_type_code_id(): ?string
+    {
+        return $this->pos_type->code_id();
     }
 
     /**
@@ -451,6 +624,17 @@ class component_link extends sandbox_link
         return $lnk;
     }
 
+    /**
+     * @return string a unique key including the position of the component link based on the names of the view and component
+     */
+    function key(): string
+    {
+        $from_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->from_name());
+        $link_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->predicate_name());
+        $to_name = str_replace(self::KEY_SEP, self::KEY_SEP_ESC, $this->to_name());
+        return $from_name . self::KEY_SEP . $link_name . self::KEY_SEP . $to_name . self::KEY_SEP . strval($this->pos());
+    }
+
 
     /*
      * preloaded
@@ -463,46 +647,6 @@ class component_link extends sandbox_link
     {
         global $cmp_lnk_typ_cac;
         return $cmp_lnk_typ_cac->name($this->predicate_id);
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @param object $api_obj minimal component link object that vars should be set based on this object vars
-     */
-    function fill_api_obj(object $api_obj): void
-    {
-        $api_obj->set_id($this->id());
-        if ($this->tob() != null) {
-            $api_obj->set_component($this->tob()->api_obj());
-        }
-        $api_obj->set_pos($this->order_nbr);
-        //$api_obj->set_type_id($this->type_id());
-        $api_obj->set_pos_type($this->pos_type_id());
-        if ($this->style != null) {
-            $api_obj->set_style($this->style_id());
-        }
-    }
-
-    /**
-     * @return component_link_api the view component frontend api object
-     */
-    function api_obj(): component_link_api
-    {
-        $api_obj = new component_link_api();
-        $this->fill_api_obj($api_obj);
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
     }
 
 
@@ -570,7 +714,7 @@ class component_link extends sandbox_link
         global $db_con;
         $result = false;
 
-        $qp = $this->load_standard_sql($db_con->sql_creator(), $this::class);
+        $qp = $this->load_standard_sql($db_con->sql_creator());
 
         if ($qp->has_par()) {
             $db_dsl = $db_con->get1($qp);
@@ -612,7 +756,7 @@ class component_link extends sandbox_link
         if ($this->id() > 0) {
             $sc->add_where($this->id_field(), $this->id());
         } elseif ($this->view()->id() > 0 and $this->component()->id() > 0) {
-            $sc->add_where(view::FLD_ID, $this->view()->id());
+            $sc->add_where(view_db::FLD_ID, $this->view()->id());
             $sc->add_where(component::FLD_ID, $this->component()->id());
         } else {
             log_err('Cannot load default component link because id is missing');
@@ -622,6 +766,10 @@ class component_link extends sandbox_link
 
         return $qp;
     }
+
+    /*
+     * load sql
+     */
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of a view component link from the database
@@ -696,7 +844,7 @@ class component_link extends sandbox_link
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->add_usr_grp_field(self::FLD_ORDER_NBR, sql_par_type::MAX);
-        $sc->add_where(view::FLD_ID, $id, sql_par_type::INT_SUB);
+        $sc->add_where(view_db::FLD_ID, $id, sql_par_type::INT_SUB);
         $qp->sql = $sc->sql(1, false);
         $qp->par = $sc->get_par();
 
@@ -761,7 +909,7 @@ class component_link extends sandbox_link
 
     function from_field(): string
     {
-        return view::FLD_ID;
+        return view_db::FLD_ID;
     }
 
     function to_field(): string
@@ -838,7 +986,7 @@ class component_link extends sandbox_link
                 $order_number_corrected = false;
                 log_debug('component_link->move check order numbers for ' . $this->view()->dsp_id());
                 // TODO define the common sorting start number, which is 1 and not 0
-                $order_nbr = 1;
+                $order_nbr = component_link::START_ORDER_NBR;
                 if ($this->view()->cmp_lnk_lst != null) {
                     foreach ($this->view()->cmp_lnk_lst->lst() as $cmp_lnk) {
                         // fix any wrong order numbers
@@ -964,7 +1112,7 @@ class component_link extends sandbox_link
      */
     function load_sql_user_changes(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
@@ -1057,7 +1205,7 @@ class component_link extends sandbox_link
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         return array_merge(
             parent::db_all_fields_link($sc_par_lst),
@@ -1080,7 +1228,7 @@ class component_link extends sandbox_link
      */
     function db_fields_changed(
         sandbox|component_link $sbx,
-        sql_type_list          $sc_par_lst = new sql_type_list([])
+        sql_type_list          $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $cng_fld_cac;

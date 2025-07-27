@@ -2,7 +2,7 @@
 
 /*
 
-  cfg/system/sys_log_list.php - a list of system error objects
+  model/system/sys_log_list.php - a list of system error objects
   ---------------------------
   
   This file is part of zukunft.com - calc with words
@@ -31,31 +31,26 @@
 
 namespace cfg;
 
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log.php';
-include_once API_SYSTEM_PATH . 'sys_log.php';
-include_once API_SYSTEM_PATH . 'sys_log_list.php';
-include_once WEB_SYSTEM_PATH . 'sys_log_list.php';
-include_once WEB_SYSTEM_PATH . 'sys_log_list_dsp_old.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once html_paths::SYSTEM . 'sys_log_list.php';
+
 use cfg\user\user_message;
-use DateTime;
 
 class system_time_list
 {
@@ -88,7 +83,7 @@ class system_time_list
         if ($typ == '') {
             // stop current time measurement
             $this->stop();
-            // continue with previuos time measurement
+            // continue with previous time measurement
             $this->continue();
         } else {
             if ($typ != $this->cur_cat) {
@@ -117,7 +112,7 @@ class system_time_list
             $time_report .= $cat . ': ' .  round($time, 4) . ' sec';
             $total = $total + $time;
         }
-        $time_report .= ' -> mesured ' .  round($total, 4) . ' / unmesured ' .  round($expectd - $total, 4);
+        $time_report .= ' -> measured ' .  round($total, 4) . ' / unmeasured ' .  round($expectd - $total, 4);
         return $time_report;
     }
 

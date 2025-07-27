@@ -32,52 +32,55 @@
 
 namespace cfg\helper;
 
-include_once API_SYSTEM_PATH . 'type_object.php';
-include_once API_SYSTEM_PATH . 'type_lists.php';
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
-include_once MODEL_USER_PATH . 'user_list.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once MODEL_PHRASE_PATH . 'phrase_types.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
-include_once MODEL_VERB_PATH . 'verb_list.php';
-include_once MODEL_ELEMENT_PATH . 'element_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_sys_list.php';
-include_once MODEL_VIEW_PATH . 'view_sys_list.php';
-include_once MODEL_VIEW_PATH . 'view_type.php';
-include_once MODEL_VIEW_PATH . 'view_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'view_style.php';
-include_once MODEL_COMPONENT_PATH . 'view_style_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_REF_PATH . 'ref_type_list.php';
-include_once MODEL_REF_PATH . 'source_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_action_list.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_profile_list.php';
-include_once MODEL_USER_PATH . 'user_list.php';
-include_once API_PATH . 'controller.php';
+use cfg\const\paths;
 
-use api\system\type_lists as type_lists_api;
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::MODEL_PHRASE . 'phrase_types.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
+include_once paths::MODEL_ELEMENT . 'element_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_type.php';
+include_once paths::MODEL_FORMULA . 'formula_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type_list.php';
+include_once paths::MODEL_VIEW . 'view_sys_list.php';
+include_once paths::MODEL_VIEW . 'view_sys_list.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::MODEL_VIEW . 'view_type_list.php';
+include_once paths::MODEL_VIEW . 'view_link_type_list.php';
+include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::MODEL_COMPONENT . 'view_style_list.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
+include_once paths::MODEL_COMPONENT . 'component_type_list.php';
+include_once paths::MODEL_COMPONENT . 'position_type_list.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_REF . 'ref_type_list.php';
+include_once paths::MODEL_REF . 'source_type_list.php';
+include_once paths::MODEL_SANDBOX . 'share_type_list.php';
+include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
+include_once paths::MODEL_LANGUAGE . 'language_list.php';
+include_once paths::MODEL_LANGUAGE . 'language_form_list.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_action_list.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use cfg\component\component_link_type_list;
 use cfg\component\position_type_list;
 use cfg\component\component_type_list;
 use cfg\component\view_style_list;
@@ -104,78 +107,40 @@ use cfg\verb\verb_list;
 use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
 use cfg\view\view_type_list;
-use controller\controller;
+use controller\api_message;
+use shared\json_fields;
+use shared\types\api_type_list;
 
 class type_lists
 {
 
-    /*
-     * cast
-     */
-
-    function api_obj(user $usr): type_lists_api
-    {
-        global $db_con;
-        global $usr_pro_cac;
-        global $phr_typ_cac;
-        global $frm_typ_cac;
-        global $frm_lnk_typ_cac;
-        global $elm_typ_cac;
-        global $msk_typ_cac;
-        global $msk_sty_cac;
-        global $msk_lnk_typ_cac;
-        global $cmp_typ_cac;
-        global $cmp_lnk_typ_cac;
-        global $pos_typ_cac;
-        global $ref_typ_cac;
-        global $src_typ_cac;
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-        global $lan_cac;
-        global $lan_for_cac;
-        global $vrb_cac;
-        global $sys_msk_cac;
-        global $sys_log_sta_cac;
-        global $job_typ_cac;
-        global $cng_act_cac;
-        global $cng_tbl_cac;
-        global $cng_fld_cac;
-
-        log_debug();
-        $lst = new type_lists_api($db_con, $usr);
-        $lst->add($usr_pro_cac->api_obj(), controller::API_LIST_USER_PROFILES);
-        $lst->add($phr_typ_cac->api_obj(), controller::API_LIST_PHRASE_TYPES);
-        $lst->add($frm_typ_cac->api_obj(), controller::API_LIST_FORMULA_TYPES);
-        $lst->add($frm_lnk_typ_cac->api_obj(), controller::API_LIST_FORMULA_LINK_TYPES);
-        $lst->add($elm_typ_cac->api_obj(), controller::API_LIST_ELEMENT_TYPES);
-        $lst->add($msk_typ_cac->api_obj(), controller::API_LIST_VIEW_TYPES);
-        $lst->add($msk_sty_cac->api_obj(), controller::API_LIST_VIEW_STYLES);
-        $lst->add($msk_lnk_typ_cac->api_obj(), controller::API_LIST_VIEW_LINK_TYPES);
-        $lst->add($cmp_typ_cac->api_obj(), controller::API_LIST_COMPONENT_TYPES);
-        //$lst->add($cmp_lnk_typ_cac->api_obj(), controller::API_LIST_VIEW_COMPONENT_LINK_TYPES);
-        $lst->add($pos_typ_cac->api_obj(), controller::API_LIST_COMPONENT_POSITION_TYPES);
-        $lst->add($ref_typ_cac->api_obj(), controller::API_LIST_REF_TYPES);
-        $lst->add($src_typ_cac->api_obj(), controller::API_LIST_SOURCE_TYPES);
-        $lst->add($shr_typ_cac->api_obj(), controller::API_LIST_SHARE_TYPES);
-        $lst->add($ptc_typ_cac->api_obj(), controller::API_LIST_PROTECTION_TYPES);
-        $lst->add($lan_cac->api_obj(), controller::API_LIST_LANGUAGES);
-        $lst->add($lan_for_cac->api_obj(), controller::API_LIST_LANGUAGE_FORMS);
-        $lst->add($sys_log_sta_cac->api_obj(), controller::API_LIST_SYS_LOG_STATI);
-        $lst->add($job_typ_cac->api_obj(), controller::API_LIST_JOB_TYPES);
-        $lst->add($cng_act_cac->api_obj(), controller::API_LIST_CHANGE_LOG_ACTIONS);
-        $lst->add($cng_tbl_cac->api_obj(), controller::API_LIST_CHANGE_LOG_TABLES);
-        $lst->add($cng_fld_cac->api_obj(), controller::API_LIST_CHANGE_LOG_FIELDS);
-        $lst->add($vrb_cac->api_obj(), controller::API_LIST_VERBS);
-        if ($sys_msk_cac != null) {
-            $lst->add($sys_msk_cac->api_obj(), controller::API_LIST_SYSTEM_VIEWS);
-        }
-        log_debug('done');
-        return $lst;
-    }
 
     /*
      * load
      */
+
+    /**
+     * reload the cache used for logging the changes
+     * @param sql_db $db_con
+     * @return bool
+     */
+    function load_log(sql_db $db_con): bool
+    {
+        global $cng_act_cac;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
+
+        $result = true;
+
+        $cng_act_cac = new change_action_list();
+        $cng_act_cac->load($db_con);
+        $cng_tbl_cac = new change_table_list();
+        $cng_tbl_cac->load($db_con);
+        $cng_fld_cac = new change_field_list();
+        $cng_fld_cac->load($db_con);
+
+        return $result;
+    }
 
     function load(sql_db $db_con, ?user $usr): bool
     {
@@ -234,9 +199,8 @@ class type_lists
         $msk_lnk_typ_cac->load($db_con);
         $cmp_typ_cac = new component_type_list();
         $cmp_typ_cac->load($db_con);
-        // TODO review: not yet needed?
-        //$cmp_lnk_typ_cac = new component_link_type_list();
-        //$cmp_lnk_typ_cac->load($db_con);
+        $cmp_lnk_typ_cac = new component_link_type_list();
+        $cmp_lnk_typ_cac->load($db_con);
         $pos_typ_cac = new position_type_list();
         $pos_typ_cac->load($db_con);
         $ref_typ_cac = new ref_type_list();
@@ -270,4 +234,94 @@ class type_lists
 
         return $result;
     }
+
+    /*
+     * api
+     */
+
+    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        // null values are not needed in the api message to the frontend
+        // but in the api message to the backend null values are relevant
+        // e.g. to remove empty string overwrites
+        $vars = $this->api_json_array();
+        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+
+        // add header if requested
+        if ($typ_lst->use_header()) {
+            global $db_con;
+            $api_msg = new api_message();
+            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+        } else {
+            $msg = $vars;
+        }
+
+        return json_encode($msg);
+    }
+
+    /**
+     * @return array with all preloaded types
+     */
+    function api_json_array(): array
+    {
+
+        log_debug();
+        $vars = [];
+        global $usr_pro_cac;
+        $vars[json_fields::LIST_USER_PROFILES] = $usr_pro_cac->api_json_array();
+        global $phr_typ_cac;
+        $vars[json_fields::LIST_PHRASE_TYPES] = $phr_typ_cac->api_json_array();
+        global $frm_typ_cac;
+        $vars[json_fields::LIST_FORMULA_TYPES] = $frm_typ_cac->api_json_array();
+        global $frm_lnk_typ_cac;
+        $vars[json_fields::LIST_FORMULA_LINK_TYPES] = $frm_lnk_typ_cac->api_json_array();
+        global $elm_typ_cac;
+        $vars[json_fields::LIST_ELEMENT_TYPES] = $elm_typ_cac->api_json_array();
+        global $msk_typ_cac;
+        $vars[json_fields::LIST_VIEW_TYPES] = $msk_typ_cac->api_json_array();
+        global $msk_sty_cac;
+        $vars[json_fields::LIST_VIEW_STYLES] = $msk_sty_cac->api_json_array();
+        global $msk_lnk_typ_cac;
+        $vars[json_fields::LIST_VIEW_LINK_TYPES] = $msk_lnk_typ_cac->api_json_array();
+        global $cmp_typ_cac;
+        $vars[json_fields::LIST_COMPONENT_TYPES] = $cmp_typ_cac->api_json_array();
+        global $cmp_lnk_typ_cac;
+        $vars[json_fields::LIST_COMPONENT_LINK_TYPES] = $cmp_lnk_typ_cac->api_json_array();
+        global $pos_typ_cac;
+        $vars[json_fields::LIST_COMPONENT_POSITION_TYPES] = $pos_typ_cac->api_json_array();
+        global $ref_typ_cac;
+        $vars[json_fields::LIST_REF_TYPES] = $ref_typ_cac->api_json_array();
+        global $src_typ_cac;
+        $vars[json_fields::LIST_SOURCE_TYPES] = $src_typ_cac->api_json_array();
+        global $shr_typ_cac;
+        $vars[json_fields::LIST_SHARE_TYPES] = $shr_typ_cac->api_json_array();
+        global $ptc_typ_cac;
+        $vars[json_fields::LIST_PROTECTION_TYPES] = $ptc_typ_cac->api_json_array();
+        global $lan_cac;
+        $vars[json_fields::LIST_LANGUAGES] = $lan_cac->api_json_array();
+        global $lan_for_cac;
+        $vars[json_fields::LIST_LANGUAGE_FORMS] = $lan_for_cac->api_json_array();
+        global $sys_log_sta_cac;
+        $vars[json_fields::LIST_SYS_LOG_STATI] = $sys_log_sta_cac->api_json_array();
+        global $job_typ_cac;
+        $vars[json_fields::LIST_JOB_TYPES] = $job_typ_cac->api_json_array();
+        global $cng_act_cac;
+        $vars[json_fields::LIST_CHANGE_LOG_ACTIONS] = $cng_act_cac->api_json_array();
+        global $cng_tbl_cac;
+        $vars[json_fields::LIST_CHANGE_LOG_TABLES] = $cng_tbl_cac->api_json_array();
+        global $cng_fld_cac;
+        $vars[json_fields::LIST_CHANGE_LOG_FIELDS] = $cng_fld_cac->api_json_array();
+        global $vrb_cac;
+        $vars[json_fields::LIST_VERBS] = $vrb_cac->api_json_array();
+        global $sys_msk_cac;
+        if ($sys_msk_cac != null) {
+            $vars[json_fields::LIST_SYSTEM_VIEWS] = $sys_msk_cac->api_json_array();
+        }
+        return $vars;
+    }
+
 }

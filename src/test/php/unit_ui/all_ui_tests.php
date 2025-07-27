@@ -32,6 +32,8 @@
 
 namespace unit_ui;
 
+use cfg\word\triple;
+use shared\api;
 use const test\TEST_UNIT_UI_PATH;
 
 include_once TEST_UNIT_UI_PATH . 'base_ui_tests.php';
@@ -44,7 +46,7 @@ include_once TEST_UNIT_UI_PATH . 'triple_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'triple_list_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'phrase_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'phrase_list_ui_tests.php';
-include_once TEST_UNIT_UI_PATH . 'phrase_group_ui_tests.php';
+include_once TEST_UNIT_UI_PATH . 'group_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'term_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'term_list_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'value_ui_tests.php';
@@ -66,6 +68,7 @@ include_once TEST_UNIT_UI_PATH . 'change_log_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'sys_log_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'job_ui_tests.php';
 include_once TEST_UNIT_UI_PATH . 'system_views_ui_tests.php';
+include_once TEST_UNIT_UI_PATH . 'start_ui_tests.php';
 
 use test\test_cleanup;
 use unit\all_unit_tests;
@@ -76,14 +79,16 @@ class all_ui_tests extends all_unit_tests
     function run(test_cleanup $t): void
     {
 
-        $t->header('html ui unit tests');
+        // start the test section (ts)
+        $ts = 'unit ui html ';
+        $t->header($ts);
 
-        $t->subheader('html ui unit base tests');
+        $t->subheader($ts . 'base');
         (new base_ui_tests)->run($t);
         (new type_lists_ui_tests)->run($t);
         (new user_ui_tests)->run($t);
 
-        $t->subheader('html ui unit page tests');
+        $t->subheader($ts . 'page');
         (new word_ui_tests)->run($t);
         (new word_list_ui_tests)->run($t);
         (new verb_ui_tests())->run($t);
@@ -91,7 +96,7 @@ class all_ui_tests extends all_unit_tests
         (new triple_list_ui_tests)->run($t);
         (new phrase_ui_tests)->run($t);
         (new phrase_list_ui_tests)->run($t);
-        (new phrase_group_ui_tests)->run($t);
+        (new group_ui_tests)->run($t);
         (new term_ui_tests)->run($t);
         (new term_list_ui_tests)->run($t);
         (new value_ui_tests)->run($t);
@@ -112,12 +117,15 @@ class all_ui_tests extends all_unit_tests
         (new change_log_ui_tests)->run($t);
         (new sys_log_ui_tests)->run($t);
         (new job_ui_tests)->run($t);
+
+        // TODO compare with run_ui_test in all_unit_read_tests
+        (new start_ui_tests)->run($t);
         (new system_views_ui_tests)->run($t);
 
-        $t->subheader('check about page e.g. to check the library');
+        $t->subheader($ts . 'check about page e.g. to check the library');
 
         $test_name = 'check about page e.g. to check the library';
-        $result = file_get_contents('http://localhost/http/about.php');
+        $result = file_get_contents(api::HOST_TESTING .  'http/about.php');
         $target = 'zukunft.com AG';
         $t->assert_text_contains($test_name, $result, $target);
 

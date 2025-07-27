@@ -32,12 +32,12 @@
 
 namespace unit;
 
-use api\view\view as view_api;
 use cfg\db\sql_creator;
-use cfg\view\view;
-use cfg\view\view_sys_list;
 use cfg\db\sql_db;
+use cfg\view\view;
 use cfg\view\view_list;
+use cfg\view\view_sys_list;
+use shared\const\views;
 use test\test_cleanup;
 
 class view_list_tests
@@ -48,29 +48,30 @@ class view_list_tests
         global $usr;
 
         // init
-        $db_con = new sql_db();
         $sc = new sql_creator();
         $t->name = 'view_list->';
         $t->resource_path = 'db/view/';
 
-        $t->header('Unit tests of the view list class (src/main/php/model/view/view_list.php)');
+        // start the test section (ts)
+        $ts = 'unit view list ';
+        $t->header($ts);
 
-        $t->subheader('Database query creation tests');
+        $t->subheader($ts . 'database query creation');
 
         // load the system views
         $sys_dsp_lst = new view_sys_list($usr);
-        $this->assert_sql_sys_views($t, $db_con, $sys_dsp_lst);
+        $this->assert_sql_sys_views($t, $sc, $sys_dsp_lst);
 
         // load of non system view
         $msk_lst = new view_list($usr);
         $t->assert_sql_names($sc, $msk_lst, new view($usr));
-        $t->assert_sql_names($sc, $msk_lst, new view($usr), view_api::TN_READ);
+        $t->assert_sql_names($sc, $msk_lst, new view($usr), views::START_NAME);
 
         $msk_lst = new view_list($usr);
-        $this->assert_sql_by_component_id($t, $db_con, $msk_lst);
+        $this->assert_sql_by_component_id($t, $sc, $msk_lst);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
         $json_file = 'unit/view/view_list.json';
         $t->assert_json_file(new view_list($usr), $json_file);
 
@@ -81,21 +82,21 @@ class view_list_tests
      * and check if the statement name is unique
      *
      * @param test_cleanup $t the test environment
-     * @param sql_db $db_con the test database connection
+     * @param sql_creator $sc the test database connection
      * @param view_sys_list $lst
      * @return void
      */
-    private function assert_sql_sys_views(test_cleanup $t, sql_db $db_con, view_sys_list $lst): void
+    private function assert_sql_sys_views(test_cleanup $t, sql_creator $sc, view_sys_list $lst): void
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_list($db_con);
-        $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_list($sc);
+        $t->assert_qp($qp, $sc->db_type);
 
         // check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_list($db_con);
-        $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_list($sc);
+        $t->assert_qp($qp, $sc->db_type);
     }
 
     /**
@@ -103,21 +104,21 @@ class view_list_tests
      * and check if the statement name is unique
      *
      * @param test_cleanup $t the test environment
-     * @param sql_db $db_con the test database connection
+     * @param sql_creator $sc the test database connection
      * @param view_list $lst the view list object for the sql creation
      * @return void
      */
-    private function assert_sql_by_component_id(test_cleanup $t, sql_db $db_con, view_list $lst): void
+    private function assert_sql_by_component_id(test_cleanup $t, sql_creator $sc, view_list $lst): void
     {
         // check the Postgres query syntax
-        $db_con->db_type = sql_db::POSTGRES;
-        $qp = $lst->load_sql_by_component_id($db_con, 1);
-        $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::POSTGRES;
+        $qp = $lst->load_sql_by_component_id($sc, 1);
+        $t->assert_qp($qp, $sc->db_type);
 
         // check the MySQL query syntax
-        $db_con->db_type = sql_db::MYSQL;
-        $qp = $lst->load_sql_by_component_id($db_con, 1);
-        $t->assert_qp($qp, $db_con->db_type);
+        $sc->db_type = sql_db::MYSQL;
+        $qp = $lst->load_sql_by_component_id($sc, 1);
+        $t->assert_qp($qp, $sc->db_type);
     }
 
 }

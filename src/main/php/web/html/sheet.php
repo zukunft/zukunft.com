@@ -32,10 +32,17 @@
 
 namespace html;
 
-use cfg\component\sheet\position_list;
-use cfg\data_object;
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::SHEET . 'position_list.php';
+
+use html\helper\data_object;
 use html\word\triple;
 use html\word\word;
+use html\component\sheet\position_list;
 
 class sheet
 {
@@ -58,24 +65,24 @@ class sheet
         // temp code
         $wrd = new word();
         $wrd->load_by_name('trillion');
-        $result .= $wrd->display_linked();
+        $result .= $wrd->name_link();
         $result .= ' ';
         // temp code
         $wrd = new word();
         $wrd->load_by_name('USD');
-        $result .= $wrd->display_linked();
+        $result .= $wrd->name_link();
         $result .= '</th>
       <th scope="col">Solution</th>
       <th class="text-right" scope="col">Gain in ';
         // temp code
         $wrd = new word();
         $wrd->load_by_name('billion');
-        $result .= $wrd->display_linked();
+        $result .= $wrd->name_link();
         $result .= ' ';
         // temp code
         $wrd = new word();
         $wrd->load_by_name('htp');
-        $result .= $wrd->display_linked();
+        $result .= $wrd->name_link();
         $result .= '</th>
     </tr>
   </thead>
@@ -83,11 +90,11 @@ class sheet
     <tr>
       <th scope="row">1</th>
       <td>';
-          // temp code
-          $wrd = new triple();
-          $wrd->load_by_name('climate warming');
-          $result .= $wrd->display_linked();
-          $result .= '</td>
+        // temp code
+        $trp = new triple();
+        $trp->load_by_name('global warming');
+        $result .= $trp->name_link();
+        $result .= '</td>
       <td class="text-right">31.5</td>
       <td>reduce climate gas emissions</td>
       <td class="text-right">35.2</td>
@@ -95,11 +102,11 @@ class sheet
     <tr>
       <th scope="row">2</th>
       <td>';
-          // temp code
-          $wrd = new word();
-          $wrd->load_by_name('populism');
-          $result .= $wrd->display_linked();
-          $result .= '</td>
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('populism');
+        $result .= $wrd->name_link();
+        $result .= '</td>
       <td class="text-right">23.8</td>
       <td>avoid wrong decisions</td>
       <td class="text-right">34.1</td>
@@ -107,11 +114,11 @@ class sheet
     <tr>
       <th scope="row">3</th>
       <td>';
-          // temp code
-          $wrd = new word();
-          $wrd->load_by_name('health');
-          $result .= $wrd->display_linked();
-          $result .= '</td>
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('health');
+        $result .= $wrd->name_link();
+        $result .= '</td>
       <td class="text-right">20.4</td>
       <td>research</td>
       <td class="text-right">34.1</td>
@@ -119,11 +126,11 @@ class sheet
     <tr>
       <th scope="row">4</th>
       <td>';
-          // temp code
-          $wrd = new word();
-          $wrd->load_by_name('poverty');
-          $result .= $wrd->display_linked();
-          $result .= '</td>
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('poverty');
+        $result .= $wrd->name_link();
+        $result .= '</td>
       <td class="text-right">13.6</td>
       <td>taxes</td>
       <td class="text-right">8.8</td>
@@ -131,11 +138,11 @@ class sheet
     <tr>
       <th scope="row">5</th>
       <td>';
-          // temp code
-          $wrd = new word();
-          $wrd->load_by_name('education');
-          $result .= $wrd->display_linked();
-          $result .= '</td>
+        // temp code
+        $wrd = new word();
+        $wrd->load_by_name('education');
+        $result .= $wrd->name_link();
+        $result .= '</td>
       <td class="text-right">9.4</td>
       <td>spending</td>
       <td class="text-right">14.3</td>

@@ -2,8 +2,8 @@
 
 /*
 
-    /web/system/job.php - the extension of the batch task API objects to create job base html code
-    -------------------
+    web/system/job.php - the extension of the batch task API objects to create job base html code
+    ------------------
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -31,10 +31,14 @@
 
 namespace html\system;
 
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once SHARED_PATH . 'api.php';
-include_once API_PATH . 'controller.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use DateTime;
 use DateTimeInterface;
@@ -70,9 +74,9 @@ class job extends db_object_dsp
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        $usr_msg = parent::set_from_json_array($json_array);
+        $usr_msg = parent::api_mapper($json_array);
         // TODO use empty date instead?
         $request_timestamp = new DateTime();
         if (array_key_exists(json_fields::TIME_REQUEST, $json_array)) {
@@ -297,7 +301,7 @@ class job extends db_object_dsp
     function td(string $back = '', string $style = '', int $intent = 0): string
     {
         $cell_text = $this->display_linked($back, $style);
-        return (new html_base)->td($cell_text, $intent);
+        return (new html_base)->td($cell_text, '', $intent);
     }
 
     /**

@@ -39,10 +39,6 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-// set the test base path
-const TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR;
-// the test code path
-const TEST_PHP_PATH = TEST_PATH . 'php' . DIRECTORY_SEPARATOR;
 // path for the general tests and test setup
 const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
 
@@ -52,6 +48,7 @@ include_once TEST_PHP_UTIL_PATH . 'test_base.php';
 // load the main test control class
 include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
 
+use cfg\log_text\text_log_format;
 use cfg\user\user;
 use test\all_tests;
 
@@ -59,34 +56,41 @@ use test\all_tests;
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("unit tests");
+$db_con = prg_start("unit tests", '', false);
 
-// load the session user parameters
-$start_usr = new user;
-$result = $start_usr->get();
+if ($db_con->is_open()) {
 
-// check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($start_usr->id() > 0) {
-    if ($start_usr->is_admin()) {
+    // load the session user parameters
+    $start_usr = new user;
+    $result = $start_usr->get();
 
-        global $errors;
+    // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
+    if ($start_usr->id() > 0) {
+        if ($start_usr->is_admin()) {
 
-        // init tests
-        $errors = 0;
-        $t = new all_tests();
-        $t->header('Run selected zukunft.com tests');
+            global $errors;
 
-        // run a list of selected tests
-        $t->run_unit();
+            // init tests
+            $errors = 0;
+            $t = new all_tests();
+            $t->header('Start zukunft.com unit tests');
 
-        // display the test results
-        $t->dsp_result_html();
-        $t->dsp_result();
+            // run a list of selected tests
+            $t->run_unit();
 
-    } else {
-        echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.';
+            // display the test results
+            if ($t->format == text_log_format::HTML) {
+                $t->dsp_result_html();
+            } else {
+                $t->dsp_result();
+            }
+
+        } else {
+            echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.' . "\n";
+        }
     }
-}
 
-// Closing connection
-prg_end($db_con);
+    // Closing connection
+    prg_end($db_con, false);
+
+}

@@ -7,6 +7,10 @@
 
     either a value of a formula result object or a value if a user has overwritten a formula result
 
+    The main sections of this object are
+    - db const:          const for the database link
+    - construct and map: including the mapping of the db row to this word object
+
 
     This file is part of zukunft.com - calc with words
 
@@ -34,23 +38,25 @@
 
 namespace cfg\formula;
 
-include_once API_FORMULA_PATH . 'figure.php';
-include_once MODEL_HELPER_PATH . 'combine_object.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
 
-use api\formula\figure as figure_api;
+include_once paths::MODEL_HELPER . 'combine_object.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::SHARED . 'json_fields.php';
+
 use cfg\helper\combine_object;
 use cfg\group\group;
 use cfg\result\result;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\value\value;
+use cfg\value\value_base;
 use shared\json_fields;
 use DateTime;
 
@@ -58,7 +64,7 @@ class figure extends combine_object
 {
 
     /*
-     * database link
+     * db const
      */
 
     // the database and JSON object duplicate field names for combined value and result mainly to link figures
@@ -76,9 +82,9 @@ class figure extends combine_object
 
     /**
      * a figure is either created based on a user value or formula result
-     * @param user|value|result|null $obj
+     * @param user|value_base|result|null $obj
      */
-    function __construct(user|value|result|null $obj)
+    function __construct(user|value_base|result|null $obj)
     {
         if ($obj::class == user::class) {
             // create a dummy value object to remember the user
@@ -119,6 +125,31 @@ class figure extends combine_object
             }
         }
         return $result;
+    }
+
+    /**
+     * map a figure api json to this model figure object
+     * @param array $api_json the api array with the figure values that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        if ($api_json[json_fields::ID] > 0) {
+            $val = new value($this->user());
+            $usr_msg->add($val->api_mapper($api_json));
+            if ($usr_msg->is_ok()) {
+                $this->obj = $val;
+            }
+        } else {
+            $res = new result($this->user());
+            $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
+            $usr_msg->add($res->api_mapper($api_json));
+            if ($usr_msg->is_ok()) {
+                $this->obj = $res;
+            }
+        }
+        return $usr_msg;
     }
 
 
@@ -232,53 +263,6 @@ class figure extends combine_object
             return false;
         }
     }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @returns figure_api the cast object for the api
-     */
-    function api_obj(bool $do_save = true): figure_api
-    {
-        return new figure_api($this->obj->api_obj($do_save));
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * map a figure api json to this model figure object
-     * @param array $api_json the api array with the figure values that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $usr_msg = new user_message();
-
-        if ($api_json[json_fields::ID] > 0) {
-            $val = new value($this->user());
-            $usr_msg->add($val->set_by_api_json($api_json));
-            if ($usr_msg->is_ok()) {
-                $this->obj = $val;
-            }
-        } else {
-            $res = new result($this->user());
-            $api_json[json_fields::ID] = $api_json[json_fields::ID] * -1;
-            $usr_msg->add($res->set_by_api_json($api_json));
-            if ($usr_msg->is_ok()) {
-                $this->obj = $res;
-            }
-        }
-        return $usr_msg;
-    }
-
 
 
     /*

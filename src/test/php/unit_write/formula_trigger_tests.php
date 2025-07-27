@@ -32,11 +32,13 @@
 
 namespace unit_write;
 
-use api\formula\formula as formula_api;
-use api\value\value as value_api;
-use api\word\word as word_api;
 use cfg\phrase\phrase_list;
 use cfg\value\value;
+use html\result\result;
+use shared\const\formulas;
+use shared\const\values;
+use shared\const\words;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class formula_trigger_tests
@@ -50,56 +52,56 @@ class formula_trigger_tests
         $t->header('Test the formula calculation triggers');
 
         // prepare the calculation trigger test
-        $phr_names_ch_19 = [word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2019];
+        $phr_names_ch_19 = [words::CH, words::INHABITANTS, words::MIO, words::YEAR_2019];
         $phr_ch_19 = new phrase_list($usr);
         $phr_ch_19->load_by_names($phr_names_ch_19);
-        $phr_names_ch_20 = [word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020];
+        $phr_names_ch_20 = [words::CH, words::INHABITANTS, words::MIO, words::YEAR_2020];
         $phr_ch_20 = new phrase_list($usr);
         $phr_ch_20->load_by_names($phr_names_ch_20);
         $phr_lst1 = new phrase_list($usr);
-        $phr_lst1->add_name(word_api::TN_CH);
-        $phr_lst1->add_name(word_api::TN_INHABITANTS);
-        $phr_lst1->add_name(word_api::TN_MIO);
+        $phr_lst1->add_name(words::CH);
+        $phr_lst1->add_name(words::INHABITANTS);
+        $phr_lst1->add_name(words::MIO);
         $phr_lst2 = clone $phr_lst1;
-        $phr_lst1->add_name(word_api::TN_2019);
-        $phr_lst2->add_name(word_api::TN_2020);
-        $frm = $t->load_formula(formula_api::TN_INCREASE);
+        $phr_lst1->add_name(words::YEAR_2019);
+        $phr_lst2->add_name(words::YEAR_2020);
+        $frm = $t->load_formula(formulas::INCREASE);
 
         // add a number to the test word
         $val_add1 = new value($usr);
-        $val_add1->grp = $phr_lst1->get_grp_id();
-        $val_add1->set_number(value_api::TV_CH_INHABITANTS_2019_IN_MIO);
+        $val_add1->set_grp($phr_lst1->get_grp_id());
+        $val_add1->set_number(values::CH_INHABITANTS_2019_IN_MIO);
         $result = $val_add1->save()->get_last_message();
         // add a second number to the test word
         $val_add2 = new value($usr);
-        $val_add2->grp = $phr_lst2->get_grp_id();
-        $val_add2->set_number(value_api::TV_CH_INHABITANTS_2020_IN_MIO);
+        $val_add2->set_grp($phr_lst2->get_grp_id());
+        $val_add2->set_number(values::CH_INHABITANTS_2020_IN_MIO);
         $result = $val_add2->save()->get_last_message();
 
         // check if the first number have been saved correctly
         $added_val = new value($usr);
         $added_val->load_by_grp($phr_lst1->get_grp_id());
         $result = $added_val->number();
-        $target = value_api::TV_CH_INHABITANTS_2019_IN_MIO;
+        $target = values::CH_INHABITANTS_2019_IN_MIO;
         $t->display('value->check added test value for "' . $phr_lst1->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         // check if the second number have been saved correctly
         $added_val2 = new value($usr);
         $added_val2->load_by_grp($phr_lst2->get_grp_id());
         $result = $added_val2->number();
-        $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
+        $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->display('value->check added test value for "' . $phr_lst2->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // check if requesting the best number for the first number returns a useful value
         $best_val = new value($usr);
         $best_val->load_best($phr_ch_19);
         $result = $best_val->number();
-        $target = value_api::TV_CH_INHABITANTS_2019_IN_MIO;
+        $target = values::CH_INHABITANTS_2019_IN_MIO;
         $t->display('value->check best value for "' . $phr_lst1->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
         // check if requesting the best number for the second number returns a useful value
         $best_val2 = new value($usr);
         $best_val2->load_best($phr_ch_20);
         $result = $best_val2->number();
-        $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
+        $target = values::CH_INHABITANTS_2020_IN_MIO;
         $t->display('value->check best value for "' . $phr_lst2->dsp_id() . '"', $target, $result, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         // calculate the increase and check the result
@@ -107,7 +109,8 @@ class formula_trigger_tests
         if ($res_lst != null) {
             if (count($res_lst) > 0) {
                 $res = $res_lst[0];
-                $result = trim($res->display(0));
+                $res_dsp = new result($res->api_json([api_type::INCL_PHRASES]));
+                $result = trim($res_dsp->val_formatted());
             } else {
                 $result = '';
             }
@@ -115,10 +118,10 @@ class formula_trigger_tests
             $result = '';
         }
         // TODO check why the data in PROD is strange
-        if ($result == value_api::TV_SALES_INCREASE_2017_FORMATTED) {
-            $target = value_api::TV_SALES_INCREASE_2017_FORMATTED;
+        if ($result == values::SALES_INCREASE_2017_FORM) {
+            $target = values::SALES_INCREASE_2017_FORM;
         } else {
-            $target = "0.79 %";
+            $target = "0.79%";
         }
         $t->display('formula result for ' . $frm->dsp_id() . ' from ' . $phr_lst1->dsp_id() . ' to ' . $phr_lst2->dsp_id() . '', $target, $result, $t::TIMEOUT_LIMIT_LONG);
 

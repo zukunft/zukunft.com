@@ -2,7 +2,7 @@
 
 /*
 
-    /web/value_list.php - the display extension of the api value list object
+    web/value_list.php - the display extension of the api value list object
     ------------------
 
     to creat the HTML code to display a list of values
@@ -34,26 +34,44 @@
 
 namespace html\value;
 
-include_once WEB_PHRASE_PATH . 'phrase_group_list.php';
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'styles.php';
+include_once html_paths::GROUP . 'group.php';
+include_once html_paths::GROUP . 'group_list.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::WORD . 'word_list.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'library.php';
 
-use cfg\group\group;
-use cfg\phrase\phr_ids;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\result\result_list;
-use cfg\word\word_list;
-use html\rest_ctrl;
 use html\button;
+use html\group\group;
 use html\html_base;
+use html\group\group_list;
+use html\phrase\phrase_list;
+use html\rest_ctrl;
 use html\sandbox\list_dsp;
-use html\phrase\phrase_group_list as phrase_group_list_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
+use html\styles;
 use html\user\user_message;
-use html\value\value as value_dsp;
-use html\word\word as word_dsp;
+use html\word\word;
+use html\word\word_list;
+use shared\api;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
 use shared\library;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 class value_list extends list_dsp
 {
@@ -67,9 +85,53 @@ class value_list extends list_dsp
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new value_dsp());
+        return parent::api_mapper_list($json_array, new value());
+    }
+
+
+    /*
+     * load
+     */
+
+    function load_by_phr_lst(phrase_list $phr_lst): bool
+    {
+        $result = false;
+        $rest = new rest_ctrl();
+
+        $data = array();
+        $data[api::JSON_LIST_PHRASE_IDS] = $phr_lst->ids();
+        $json_body = $rest->api_get(self::class, $data);
+        $this->api_mapper($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
+        }
+        return $result;
+    }
+
+
+    /*
+     * select
+     */
+
+    /**
+     * get the first value of the list that is related to all given phrase names
+     * TODO use a memory db
+     * @param array $names list of phrase names
+     * @return value|null this first matching value or null if no value is found
+     */
+    function get_by_names(array $names): ?value
+    {
+        $result = null;
+        foreach ($this->lst() as $val) {
+            if ($result == null) {
+                if ($val->match_all($names)) {
+                    $result = $val;
+                }
+            }
+        }
+        return $result;
     }
 
 
@@ -81,11 +143,11 @@ class value_list extends list_dsp
      * add a value to the list
      * @returns bool true if the value has been added
      */
-    function add(value_dsp $val): bool
+    function add(value|IdObject|TextIdObject|CombineObject|null $to_add): bool
     {
         $result = false;
-        if (!in_array($val->id(), $this->id_lst())) {
-            $this->lst[] = $val;
+        if (!in_array($to_add->id(), $this->id_lst())) {
+            $this->add_direct($to_add);
             $this->set_lst_dirty();
             $result = true;
         }
@@ -98,11 +160,11 @@ class value_list extends list_dsp
      */
 
     /**
-     * @param phrase_list_dsp|null $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again
+     * @param phrase_list|null $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again
      * @param string $back
      * @return string the html code to show the values as a table to the user
      */
-    function table(phrase_list_dsp $context_phr_lst = null, string $back = ''): string
+    function table(phrase_list $context_phr_lst = null, string $back = ''): string
     {
         $html = new html_base();
 
@@ -123,7 +185,7 @@ class value_list extends list_dsp
         if ($header_phrases->count() <= 0) {
             $head_text = 'description';
         } else {
-            $head_text = $header_phrases->display_linked();
+            $head_text = $header_phrases->name_link();
         }
 
         // TODO add a button to add a new value using
@@ -140,8 +202,8 @@ class value_list extends list_dsp
                 $header .= $html->th('value');
                 $header_rows = $html->tr($header);
             }
-            $row = $html->td($val->name_linked($common_phrases));
-            $row .= $html->td($val->value_linked($back));
+            $row = $html->td($val->grp()->name_link_list($common_phrases));
+            $row .= $html->td($val->value_edit($back));
             $rows .= $html->tr($row);
             // TODO add button to delete a value or add a similar value
             //$btn_del = $val->btn_del();
@@ -157,10 +219,10 @@ class value_list extends list_dsp
      */
 
     /**
-     * @return phrase_list_dsp a list of phrases used for each value
+     * @return phrase_list a list of phrases used for each value
      * similar to the model function with the same name
      */
-    function common_phrases(): phrase_list_dsp
+    function common_phrases(): phrase_list
     {
         $lib = new library();
         $grp_lst = $this->phrase_groups();
@@ -172,12 +234,12 @@ class value_list extends list_dsp
     /**
      * return a list of phrase groups for all values of this list
      */
-    function phrase_groups(): phrase_group_list_dsp
+    function phrase_groups(): group_list
     {
         log_debug();
         $lib = new library();
-        $grp_lst = new phrase_group_list_dsp();
-        foreach ($this->lst as $val) {
+        $grp_lst = new group_list();
+        foreach ($this->lst() as $val) {
             $grp = $val->grp();
             if ($grp != null) {
                 $grp_lst->lst[] = $grp;
@@ -214,7 +276,7 @@ class value_list extends list_dsp
         if (!isset($phr_row)) {
             $result = log_warning('The row type is not set.', "value_list_dsp->dsp_table");
         }
-        if (get_class($phr_row) <> word_dsp::class) {
+        if (get_class($phr_row) <> word::class) {
             $result = log_err('The row is of type ' . get_class($phr_row) . ' but should be a phrase.', "value_list_dsp->dsp_table");
         }
         // if (get_class($phr_row) <> phrase::class) { $result = zu_err('The row is of type '.get_class($phr_row).' but should be a phrase.', "value_list_dsp->dsp_table"); }
@@ -320,7 +382,7 @@ class value_list extends list_dsp
             $result .= '  <tr>' . "\n";
             $result .= '    <th></th>' . "\n";
             foreach ($time_lst->lst() as $time_word) {
-                $result .= $time_word->dsp_obj()->dsp_th($back, rest_ctrl::STYLE_RIGHT);
+                $result .= $time_word->dsp_obj()->dsp_th($back, styles::STYLE_RIGHT);
             }
             $result .= '  </tr>' . "\n";
 
@@ -370,7 +432,7 @@ class value_list extends list_dsp
 
                         $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                         if ($tbl_value->number() == "") {
-                            $result .= '      <td class="right_ref">' . "\n";
+                            $result .= '      <td class="' . styles::STYLE_RIGHT . '">' . "\n";
 
                             // to review
                             $add_phr_lst = clone $common_lst;
@@ -472,7 +534,7 @@ class value_list extends list_dsp
 
                                 $tbl_value = $used_value_lst->get_by_grp($grp, $time_wrd);
                                 if ($tbl_value->number() == "") {
-                                    $result .= '      <td class="right_ref">' . "\n";
+                                    $result .= '      <td class="' . styles::STYLE_RIGHT . '">' . "\n";
 
                                     // to review
                                     $add_phr_lst = $common_lst;
@@ -512,7 +574,7 @@ class value_list extends list_dsp
                     // add a new part value for the sub_word
                     if (!empty($differentiator_phrases)) {
                         $result .= '  <tr>' . "\n";
-                        $result .= '      <td class="right_ref">' . "\n";
+                        $result .= '      <td class="' . styles::STYLE_RIGHT . '">' . "\n";
 
                         // to review
                         $add_phr_ids = $common_lst->id_lst();
@@ -557,7 +619,7 @@ class value_list extends list_dsp
             // this extra adds value button is needed for the case that all values are filled and due to that there is no other plus sign on the table
             if (isset($val_main)) {
                 foreach ($time_lst->lst() as $time_wrd) {
-                    $result .= '      <td class="right_ref">' . "\n";
+                    $result .= '      <td class="' . styles::STYLE_RIGHT . '">' . "\n";
                     $result .= $val_main->btn_add($back);
                     $result .= '      </td>' . "\n";
                 }
@@ -612,13 +674,13 @@ class value_list extends list_dsp
         }
 
         log_debug('common ');
-        $common_phr_ids = array_diff($common_phr_ids, array($this->phr->id()));  // exclude the list word
+        $common_phr_ids = array_diff($common_phr_ids, array($this->ids()));  // exclude the list word
         $common_phr_ids = array_values($common_phr_ids);            // cleanup the array
 
         // display the common words
         log_debug('common dsp');
         if (!empty($common_phr_ids)) {
-            $common_phr_lst = new word_list($this->user());
+            $common_phr_lst = new word_list();
             $common_phr_lst->load_by_ids($common_phr_ids);
             $common_phr_lst_dsp = $common_phr_lst->dsp_obj();
             $result .= ' in (' . implode(",", $common_phr_lst_dsp->names_linked()) . ')<br>';
@@ -687,19 +749,19 @@ class value_list extends list_dsp
                 if ($last_phr_lst != $val_phr_lst) {
                     $last_phr_lst = $val_phr_lst;
                     $result .= '    <td>';
-                    $url = $html->url(view_shared::MC_VALUE_ADD, $val->id(), $back);
+                    $url = $html->url(view_shared::VALUE_ADD, $val->id(), $back);
                     $btn = new button($url, $back);
                     $result .= \html\btn_add_value($val_phr_lst, Null, $this->phr->id());
 
                     $result .= '    </td>';
                 }
                 $result .= '    <td>';
-                $url = $html->url(view_shared::MC_VALUE_EDIT, $val->id(), $back);
+                $url = $html->url(view_shared::VALUE_EDIT, $val->id(), $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->edit_value($val_phr_lst, $val->id, $this->phr->id());
                 $result .= '    </td>';
                 $result .= '    <td>';
-                $url = $html->url(view_shared::MC_VALUE_DEL, $val->id(), $back);
+                $url = $html->url(view_shared::VALUE_DEL, $val->id(), $back);
                 $btn = new button($url, $back);
                 $result .= '      ' . $btn->del_value($val_phr_lst, $val->id, $this->phr->id());
                 $result .= '    </td>';
@@ -720,16 +782,16 @@ class value_list extends list_dsp
 
         $common_phr_lst = $common_phr_lst->phrase_lst();
 
-        // TODO review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): component_dsp->all(Object(word_dsp), 291, 17
+        // TODO review probably wrong call from /var/www/default/src/main/php/model/view/view.php(267): component_dsp->all(Object(word), 291, 17
         /*
-        if (get_class($this->phr) == word::class or get_class($this->phr) == word_dsp::class) {
+        if (get_class($this->phr) == word::class or get_class($this->phr) == word::class) {
             $this->phr = $this->phr->phrase();
         }
         */
         if ($common_phr_lst->is_valid()) {
             if (!empty($common_phr_lst->lst())) {
                 $common_phr_lst->add($this->phr);
-                $phr_lst_dsp = new phrase_list_dsp($common_phr_lst->api_json());
+                $phr_lst_dsp = new phrase_list($common_phr_lst->api_json());
                 $result .= $phr_lst_dsp->btn_add_value($back);
             }
         }

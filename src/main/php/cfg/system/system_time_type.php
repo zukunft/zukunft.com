@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/system/system_time_type.php - the areas of execution times
+    model/system/system_time_type.php - the areas of execution times
     -------------------------------
 
     This file is part of zukunft.com - calc with words
@@ -31,7 +31,9 @@
 
 namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
 
 use cfg\helper\type_object;
 

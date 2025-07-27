@@ -35,16 +35,18 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
 
-use html\html_base;
-use html\view\view as view_dsp;
-use html\word\word as word_dsp;
+include_once paths::SHARED_CONST . 'views.php';
+
 use cfg\user\user;
 use cfg\view\view;
 use cfg\word\word;
+use html\html_base;
+use html\view\view as view_dsp;
+use html\word\word as word_dsp;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("word_edit");
@@ -64,7 +66,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_WORD_EDIT);
+    $msk->load_by_code_id(view_shared::WORD_EDIT);
     $back = $_GET[api::URL_VAR_BACK] = ''; // the word id from which this value change has been called (maybe later any page)
 
     // create the word object to have a place to update the parameters
@@ -79,8 +81,8 @@ if ($usr->id() > 0) {
         if (isset($_GET[api::URL_VAR_NAME])) {
             $wrd->set_name($_GET[api::URL_VAR_NAME]);
         } //
-        if (isset($_GET['plural'])) {
-            $wrd->plural = $_GET['plural'];
+        if (isset($_GET[api::URL_VAR_PLURAL])) {
+            $wrd->set_plural($_GET[api::URL_VAR_PLURAL]);
         } //
         if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
             $wrd->description = $_GET[api::URL_VAR_DESCRIPTION];

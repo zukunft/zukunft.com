@@ -32,10 +32,12 @@
 
 namespace html\sandbox;
 
-use html\html_selector;
-use cfg\sandbox\sandbox_value;
+use html\const\paths as html_paths;
 
-class user_sandbox_display extends sandbox_value
+include_once html_paths::HTML . 'html_selector.php';
+
+
+class user_sandbox_display
 {
 
     /**

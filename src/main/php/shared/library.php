@@ -32,19 +32,42 @@
 
 namespace shared;
 
-include_once SERVICE_PATH . 'config.php';
+use cfg\const\paths;
+
+include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_VALUE . 'value_db.php';
 
 use cfg\component\view_style;
+use cfg\const\def;
+use cfg\log\change_values_geo_big;
+use cfg\log\change_values_geo_norm;
+use cfg\log\change_values_geo_prime;
+use cfg\log\change_values_text_big;
+use cfg\log\change_values_text_norm;
+use cfg\log\change_values_text_prime;
+use cfg\log\change_values_time_big;
+use cfg\log\change_values_time_norm;
+use cfg\log\change_values_time_prime;
 use cfg\ref\source_type;
+use cfg\sandbox\sandbox_multi;
+use cfg\ref\source_db;
 use cfg\system\session;
 use cfg\system\sys_log_status;
 use cfg\system\sys_log_status_list;
 use cfg\system\sys_log_type;
 use cfg\system\system_time;
 use cfg\user\user_official_type;
+use cfg\value\value;
+use cfg\value\value_db;
+use cfg\value\value_geo;
+use cfg\value\value_text;
+use cfg\value\value_time;
+use cfg\verb\verb;
 use cfg\view\view_link_type;
-use shared\api;
-use api\sandbox\combine_object as combine_object_api;
+use cfg\word\triple;
+use cfg\word\word_db;
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_type;
@@ -94,16 +117,20 @@ use cfg\system\system_time_type;
 use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\user\user_type;
-use cfg\value\value;
+use cfg\value\value_base;
 use cfg\value\value_ts_data;
 use cfg\view\view;
-use cfg\view\view_term_link;
+use cfg\view\term_view;
 use cfg\word\word;
+use html\verb\verb as verb_dsp;
 use DateTime;
 use Exception;
+use shared\const\words;
+use shared\enum\messages as msg_id;
 use shared\types\protection_type;
 use shared\types\share_type;
 use shared\types\view_type;
+use test\test_api;
 
 class library
 {
@@ -185,6 +212,38 @@ class library
         } else {
             return false;
         }
+    }
+
+    /**
+     * recreate the term id for testing
+     * @return int the id of the term witch is  (corresponding to id_obj())
+     * must have the same logic as the database view and the frontend
+     *
+     * e.g.  1 for a word with id 1
+     *  and  3 for a word with id 2
+     *  and -1 for a triple with id 1
+     *  and -3 for a triple with id 2
+     *  and  2 for a formula with id 1
+     *  and  4 for a formula with id 2
+     *  and -2 for a verb with id 1
+     *  and -4 for a verb with id 2
+     * , -1 for a triple, 2 for a formula and -2 for a verb
+     */
+    function term_id(int $obj_id, string $class): int
+    {
+        $id = 0;
+        if ($class == word::class) {
+            $id = ($obj_id * 2) - 1;
+        } elseif ($class == triple::class) {
+            $id = ($obj_id * -2) + 1;
+        } elseif ($class == verb::class) {
+            $id = ($obj_id * -2);
+        } elseif ($class == formula::class) {
+            $id = ($obj_id * 2);
+        } else {
+            log_err('Unexpected class ' . $class . ' for ' . $obj_id . ' in lib.term_id()');
+        }
+        return $id;
     }
 
 
@@ -277,6 +336,18 @@ class library
         $result = preg_replace('/ >/', '>', $result);
         $result = preg_replace('/ </', '<', $result);
         return preg_replace('/> </', '><', $result);
+    }
+
+    function escape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
+    {
+        // avoid using escaped var makers (probably not 100% correct)
+        return str_replace($chr_to_esc, $esc_chr . $chr_to_esc, $txt_to_esc);
+    }
+
+    function unescape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
+    {
+        // undo escaped vars
+        return str_replace($esc_chr . $chr_to_esc, $chr_to_esc, $txt_to_esc);
     }
 
 
@@ -449,6 +520,26 @@ class library
     }
 
     /**
+     * merge two array and ignore if the key is numeric
+     * @param array $array1
+     * @param array $array2
+     * @return array
+     */
+    function array_merge_by_key(array $array1, array $array2): array
+    {
+        $result = [];
+        foreach ($array1 as $key => $value) {
+            $result[$key] = $value;
+        }
+        foreach ($array2 as $key => $value) {
+            if (!array_key_exists($key, $result)) {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * recursive count of the number of elements in an array but limited to a given level
      * @param array $json_array the array that should be analysed
      * @param int $levels the number of levels that should be taken into account (-1 or empty for unlimited levels)
@@ -575,6 +666,18 @@ class library
             }
         }
         return $result;
+    }
+
+    function not_msg(
+        string|array|null $result,
+        string|array|null $target
+    ): string
+    {
+        $msg = '';
+        if ($result == $target) {
+            $msg = $result . ' should not be' . $target;
+        }
+        return $msg;
     }
 
 
@@ -795,6 +898,18 @@ class library
         return array_merge($num_array, $str_array);
     }
 
+    function implode_recursive(string $sep, array $array): string
+    {
+        $ret = '';
+        foreach ($array as $item) {
+            if (is_array($item)) {
+                $ret .= $this->implode_recursive($sep, $item) . $sep;
+            } else {
+                $ret .= $item . $sep;
+            }
+        }
+        return substr($ret, 0, 0 - strlen($sep));
+    }
 
     /*
      * file
@@ -852,9 +967,45 @@ class library
                 $path = $this->str_left_of_last($class_with_path, '\\' . $class);
                 $class = $this->str_left_of_or_all($class, ' as ');
                 $use = [];
-                $use[] = $class;;
-                $use[] = $path;;
+                $use[] = $class;
+                $use[] = $path;
                 if ($class != '') {
+                    $result[] = $use;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get a list of functions used in a class with the corresponding class section
+     * @param array $lines
+     * @return array
+     */
+    function php_code_function(array $lines): array
+    {
+        $result = [];
+        $in_comment_part = false;
+        $section_name = '';
+        foreach ($lines as $line) {
+            if (str_starts_with(trim($line), '/*') and !str_starts_with(trim($line), '/**')) {
+                $in_comment_part = true;
+            }
+            if (str_starts_with(trim($line), '*/')) {
+                $in_comment_part = false;
+            }
+            if ($in_comment_part) {
+                if (str_starts_with(trim($line), '*')) {
+                    $section_name = trim($this->str_right_of($line, '* '));
+                    $in_comment_part = false;
+                }
+            }
+            if (str_starts_with(trim($line), 'function ')) {
+                $function_name = trim($this->str_between($line, 'function ', '('));
+                $use = [];
+                $use[] = $function_name;
+                $use[] = $section_name;
+                if ($function_name != '') {
                     $result[] = $use;
                 }
             }
@@ -901,8 +1052,8 @@ class library
                 $path = trim($this->str_left_of_or_all($class, '.'));
                 $class = $this->str_right_of_or_all($class, " . '");
                 $include = [];
-                $include[] = $class;;
-                $include[] = $path;;
+                $include[] = $class;
+                $include[] = $path;
                 if ($class != '') {
                     $result[] = $include;
                 }
@@ -925,43 +1076,8 @@ class library
     function php_path_convert(string $use_path): string
     {
         return match ($use_path) {
-            'cfg' => 'SERVICE_PATH',
-            'cfg\db' => 'DB_PATH',
-            'cfg\log' => 'MODEL_LOG_PATH',
-            'cfg\system' => 'MODEL_SYSTEM_PATH',
-            'cfg\formula' => 'MODEL_FORMULA_PATH',
-            'cfg\element' => 'MODEL_ELEMENT_PATH',
-            'cfg\result' => 'MODEL_RESULT_PATH',
-            'cfg\phrase' => 'MODEL_PHRASE_PATH',
-            'cfg\sandbox' => 'MODEL_SANDBOX_PATH',
-            'cfg\helper' => 'MODEL_HELPER_PATH',
-            'cfg\group' => 'MODEL_GROUP_PATH',
-            'cfg\user' => 'MODEL_USER_PATH',
-            'cfg\word' => 'MODEL_WORD_PATH',
-            'cfg\ref' => 'MODEL_REF_PATH',
-            'cfg\view' => 'MODEL_VIEW_PATH',
-            'cfg\value' => 'MODEL_VALUE_PATH',
-            'cfg\import' => 'MODEL_IMPORT_PATH',
-            'cfg\language' => 'MODEL_LANGUAGE_PATH',
-            'cfg\verb' => 'MODEL_VERB_PATH',
-            'cfg\component' => 'MODEL_COMPONENT_PATH',
-            'cfg\export' => 'EXPORT_PATH',
-            'shared' => 'SHARED_PATH',
-            'html' => 'HTML_PATH',
-            'html\log' => 'WEB_LOG_PATH',
-            'html\user' => 'WEB_USER_PATH',
-            'html\formula' => 'WEB_FORMULA_PATH',
-            'html\word' => 'WEB_WORD_PATH',
-            'html\figure' => 'WEB_FIGURE_PATH',
-            'html\phrase' => 'WEB_PHRASE_PATH',
-            'html\value' => 'WEB_VALUE_PATH',
-            'html\system' => 'WEB_SYSTEM_PATH',
-            'shared\types' => 'SHARED_TYPES_PATH',
-            'shared\enum' => 'SHARED_ENUM_PATH',
-            'controller' => 'API_PATH',
-            'controller\system', 'api\system' => 'API_SYSTEM_PATH',
-            'api\result' => 'API_RESULT_PATH',
-            'api\word' => 'API_WORD_PATH',
+            'api\result' => 'paths::API_RESULT',
+            'api\word' => 'paths::API_WORD',
             'api\phrase' => 'API_PHRASE_PATH',
             'api\value' => 'API_VALUE_PATH',
             'api\ref' => 'API_REF_PATH',
@@ -972,8 +1088,97 @@ class library
             'api\verb' => 'API_VERB_PATH',
             'api\view' => 'API_VIEW_PATH',
             'api\log' => 'API_LOG_PATH',
+            'controller', 'api' => 'paths::API_OBJECT',
+            'controller\system', 'api\system' => 'API_SYSTEM_PATH',
+            'cfg' => 'paths::SERVICE',
+            'cfg\db' => 'paths::DB',
+            'cfg\log' => 'paths::MODEL_LOG',
+            'cfg\const' => 'paths::MODEL_CONST',
+            'cfg\component' => 'paths::MODEL_COMPONENT',
+            'cfg\component\sheet' => 'MODEL_SHEET_PATH',
+            'cfg\system' => 'paths::MODEL_SYSTEM',
+            'cfg\formula' => 'paths::MODEL_FORMULA',
+            'cfg\element' => 'paths::MODEL_ELEMENT',
+            'cfg\result' => 'paths::MODEL_RESULT',
+            'cfg\phrase' => 'paths::MODEL_PHRASE',
+            'cfg\sandbox' => 'paths::MODEL_SANDBOX',
+            'cfg\helper' => 'paths::MODEL_HELPER',
+            'cfg\group' => 'paths::MODEL_GROUP',
+            'cfg\user' => 'paths::MODEL_USER',
+            'cfg\word' => 'paths::MODEL_WORD',
+            'cfg\ref' => 'paths::MODEL_REF',
+            'cfg\view' => 'paths::MODEL_VIEW',
+            'cfg\value' => 'paths::MODEL_VALUE',
+            'cfg\import' => 'paths::MODEL_IMPORT',
+            'cfg\language' => 'paths::MODEL_LANGUAGE',
+            'cfg\verb' => 'paths::MODEL_VERB',
+            'cfg\export' => 'paths::EXPORT',
+            'const' => 'TEST_CONST_PATH',
+            'html' => 'html_paths::HTML',
+            'html\log' => 'html_paths::LOG',
+            'html\user' => 'html_paths::USER',
+            'html\element' => 'html_paths::ELEMENT',
+            'html\formula' => 'html_paths::FORMULA',
+            'html\result' => 'html_paths::RESULT',
+            'html\word' => 'html_paths::WORD',
+            'html\figure' => 'html_paths::FIGURE',
+            'html\group' => 'html_paths::GROUP',
+            'html\phrase' => 'html_paths::PHRASE',
+            'html\verb' => 'html_paths::VERB',
+            'html\value' => 'html_paths::VALUE',
+            'html\ref' => 'html_paths::REF',
+            'html\system' => 'html_paths::SYSTEM',
+            'html\types' => 'html_paths::TYPES',
+            'html\helper' => 'html_paths::HELPER',
+            'html\sandbox' => 'html_paths::SANDBOX',
+            'html\view' => 'html_paths::VIEW',
+            'html\component' => 'html_paths::COMPONENT',
+            'html\component\sheet' => 'html_paths::SHEET',
+            'html\component\form' => 'html_paths::FORM',
+            'shared' => 'paths::SHARED',
+            'shared\calc' => 'paths::SHARED_CALC',
+            'shared\const' => 'paths::SHARED_CONST',
+            'shared\enum' => 'paths::SHARED_ENUM',
+            'shared\helper' => 'paths::SHARED_HELPER',
+            'shared\types' => 'paths::SHARED_TYPES',
             default => 'missing path for ' . $use_path,
         };
+    }
+
+    /**
+     * get the expected class section name for a function
+     * @param string $fnc_name the name of the function
+     * @return string name of the expected class section
+     */
+    function php_expected_function_section(string $fnc_name): string
+    {
+        $result = match ($fnc_name) {
+            '__construct', 'reset', 'row_mapper_sandbox' => 'construct and map',
+            'load_standard' => 'load',
+            'api_json_array', 'set_by_api_json' => 'api',
+            'import_obj', 'export_json' => 'im- and export',
+            'db_fields_all', 'db_fields_changed' => 'sql write fields',
+            'dsp_id' => 'debug',
+            default => '',
+        };
+
+        if ($result == '') {
+            if (str_starts_with($fnc_name, 'set_')) {
+                $result = 'set and get';
+            } elseif (str_starts_with($fnc_name, 'load_by_')) {
+                $result = 'load';
+            } elseif (str_starts_with($fnc_name, 'load_sql')
+                and !(str_starts_with($fnc_name, 'load_sql_user_changes'))) {
+                $result = 'load sql';
+            } elseif (str_starts_with($fnc_name, 'log_')) {
+                $result = 'log';
+            } elseif (str_starts_with($fnc_name, 'save_')) {
+                $result = 'save';
+            } elseif (str_starts_with($fnc_name, 'del_')) {
+                $result = 'del';
+            }
+        }
+        return $result;
     }
 
 
@@ -1115,6 +1320,19 @@ class library
             }
         }
         return $a;
+    }
+
+    function is_value(string $class): bool
+    {
+        if ($class == value::class
+            or $class == value_text::class
+            or $class == value_time::class
+            or $class == value_geo::class) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     /**
@@ -1373,7 +1591,7 @@ class library
             if ($long_text) {
                 if ($type != self::STR_DIFF_UNCHANGED) {
                     if (is_array($diff_val[$i])) {
-                        $msg .= implode(',', $diff_val[$i]);
+                        $msg .= $this->implode_recursive(',', $diff_val[$i]);
                     } else {
                         $msg .= $diff_val[$i];
                     }
@@ -1424,7 +1642,7 @@ class library
         array  $to,
         ?array $from_sep = null,
         ?array $to_sep = null,
-        int    $str_type): array
+        int    $str_type = self::STR_TYPE_CODE): array
     {
         if ($from_sep == null
             or count($from_sep) != count($from)
@@ -1589,22 +1807,24 @@ class library
     }
 
     /**
-     * @param string $from the part of the target string that should be found in the $to string array
+     * @param string|null $from the part of the target string that should be found in the $to string array
      * @param array $to the result string converted to an array
      * @param array $to_keys the array keys to the to array for the case they are not integer
      * @param int $start_pos the staring position in the to string array
      * @return int the position of the next match in the to array or -1 if nothing found
      */
     private
-    function str_diff_list_next_match(string $from, array $to, array $to_keys, int $start_pos): int
+    function str_diff_list_next_match(string|null $from, array $to, array $to_keys, int $start_pos): int
     {
         $check_pos = $start_pos;
         $found_pos = -1;
-        while ($check_pos < count($to) and $found_pos == -1) {
-            if ($from == $to[$to_keys[$check_pos]]) {
-                $found_pos = $check_pos;
+        if ($from != null) {
+            while ($check_pos < count($to) and $found_pos == -1) {
+                if ($from == $to[$to_keys[$check_pos]]) {
+                    $found_pos = $check_pos;
+                }
+                $check_pos++;
             }
-            $check_pos++;
         }
         return $found_pos;
     }
@@ -1895,6 +2115,7 @@ class library
     /**
      * remove the namespace from the class name
      * same as class_to_name but without backend exceptions
+     * TODO make it static
      * @param string $class including the namespace
      * @return string class name without the namespace
      */
@@ -1925,8 +2146,171 @@ class library
         return $result;
     }
 
+    function class_to_resource_path(string $class): string
+    {
+        // TODO avoid and remove exception
+        if ($class == source::class) {
+            $class = ref::class;
+        }
+        $name = $this->class_to_name($class);
+        return 'db/' . $name . '/';
+    }
+
     /**
-     * remove the namespace from the class name and adds the name extention for the table
+     * get the id field related to a class
+     * TODO avoid these exception
+     *
+     * @param string $class including the namespace
+     * @return string the name of the id field
+     */
+    function class_to_id_field(string $class): string
+    {
+        $id_fld = $this->class_to_name($class) . sql_db::FLD_EXT_ID;
+        // for some lists and exceptions
+        switch ($class) {
+            case user_profile::class;
+                $id_fld = user_profile::FLD_ID;
+                break;
+            case sys_log::class;
+                $id_fld = sys_log::FLD_ID;
+                break;
+        }
+        return $id_fld;
+    }
+
+    /**
+     * get the predefined word e.g. used to select the system configuration values based on the given class
+     *
+     * @param string $class including the namespace
+     * @return string the predefined word as defined in the shared words class
+     */
+    function class_to_word(string $class): string
+    {
+        $result = '';
+        switch ($class) {
+            case word::class;
+                $result = words::WORDS;
+                break;
+            case triple::class;
+                $result = words::TRIPLES;
+                break;
+            case source::class;
+                $result = words::SOURCES;
+                break;
+            case formula::class;
+                $result = words::FORMULAS;
+                break;
+            case view::class;
+                $result = words::VIEWS;
+                break;
+            case component::class;
+                $result = words::COMPONENTS;
+                break;
+        }
+        return $result;
+    }
+
+    /**
+     * get the add message id for the given class
+     *
+     * @param string $class including the namespace
+     * @return msg_id class name without the namespace
+     */
+    function class_to_add_msg_id(string $class): msg_id
+    {
+        $msg_id = msg_id::ADD;
+        switch ($class) {
+            case verb_dsp::class;
+                $msg_id = msg_id::VERB_ADD;
+                break;
+        }
+        return $msg_id;
+    }
+
+    /**
+     * get the fixed api name of an object class
+     * to allow changing the internal object name without changing the api
+     *
+     * @param string $class including the namespace
+     * @return string class name without the namespace
+     */
+    function class_to_api_name(string $class): string
+    {
+        // activate to add api exceptions
+        /*
+        switch ($class) {
+            case phrase_types::class;
+                $class = json_fields::CLASS_PHRASE_TYPE;
+                break;
+            case sys_log_status_list::class;
+                $class = json_fields::CLASS_LOG_STATUS;
+                break;
+        }
+        */
+        return $this->class_to_name_pur($class);
+    }
+
+    /**
+     * get the fixed api name of an object class
+     * to allow changing the internal object name without changing the api
+     *
+     * @param string $class including the namespace
+     * @return bool true if the class is using the user sandbox
+     */
+    function class_is_sandbox(string $class): bool
+    {
+        $result = false;
+        if (in_array($class, def::SANDBOX_CLASSES)) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * get the filled test object related to the given class
+     * @param string $class the given main class name
+     * @return string witt the empty json for the class
+     */
+    function class_to_empty_json(string $class): string
+    {
+        switch ($class) {
+            case verb::class:
+            case triple::class:
+            case ref::class;
+                $json = test_api::JSON_ARRAY_ONLY;
+                break;
+            default:
+                $json = test_api::JSON_NAME_ONLY;
+        }
+        return $json;
+    }
+
+    /**
+     * get the object class name from the fixed api name
+     * to allow changing the internal object name without changing the api
+     *
+     * @param string $class_name the fixed class name without the namespace as used in the api
+     * @return string class name without the namespace
+     */
+    function api_name_to_class(string $class_name): string
+    {
+        $result = 'api class name match missing';
+        $i = 0;
+        $found = false;
+        while ($i < count(def::API_CLASSES) and !$found) {
+            $class = def::API_CLASSES[$i];
+            $api_name = $this->class_to_api_name($class);
+            if ($api_name == $class_name) {
+                $result = $class;
+                $found = true;
+            }
+            $i++;
+        }
+        return $result;
+    }
+
+    /**
+     * remove the namespace from the class name and adds the name extension for the table
      * @param string $class including the namespace
      * @return string class name without the namespace
      */
@@ -1941,6 +2325,25 @@ class library
             and $class != change_values_big::class
             and $class != sys_log_status::class) {
             $result .= sql_db::TABLE_EXTENSION;
+        }
+        // TODO remove these exception
+        if ($result == 'values_primes') {
+            $result = 'values_prime';
+        }
+        if ($result == 'values_bigs') {
+            $result = 'values_big';
+        }
+        if ($result == 'values_norms') {
+            $result = 'values_norm';
+        }
+        if ($result == 'value_times') {
+            $result = 'values_time';
+        }
+        if ($result == 'value_texts') {
+            $result = 'values_text';
+        }
+        if ($result == 'value_geos') {
+            $result = 'values_geo';
         }
         return $result;
     }
@@ -1975,6 +2378,15 @@ class library
             case $this->class_to_name(change_values_prime::class):
             case $this->class_to_name(change_values_norm::class):
             case $this->class_to_name(change_values_big::class):
+            case $this->class_to_name(change_values_time_prime::class):
+            case $this->class_to_name(change_values_time_norm::class):
+            case $this->class_to_name(change_values_time_big::class):
+            case $this->class_to_name(change_values_text_prime::class):
+            case $this->class_to_name(change_values_text_norm::class):
+            case $this->class_to_name(change_values_text_big::class):
+            case $this->class_to_name(change_values_geo_prime::class):
+            case $this->class_to_name(change_values_geo_norm::class):
+            case $this->class_to_name(change_values_geo_big::class):
             case $this->class_to_name(change_link::class):
             case $this->class_to_name(change_table_field::class):
                 $result = 'log';
@@ -2003,7 +2415,7 @@ class library
             case $this->class_to_name(formula_link::class):
                 $result = $this->class_to_name(formula::class);
                 break;
-            case $this->class_to_name(view_term_link::class):
+            case $this->class_to_name(term_view::class):
                 $result = $this->class_to_name(view::class);
                 break;
             case $this->class_to_name(component_link_type::class):
@@ -2098,18 +2510,18 @@ class library
         $result = [];
         foreach ($sql_names as $name) {
             $result[] = match ($name) {
-                word::FLD_NAME => 'wrd',
-                sandbox_named::FLD_DESCRIPTION => 'des',
+                word_db::FLD_NAME => 'wrd',
+                sql_db::FLD_DESCRIPTION => 'des',
                 phrase::FLD_TYPE => 'pty',
-                value::FLD_ID => 'grp',
+                value_db::FLD_ID => 'grp',
                 user::FLD_ID => 'usr',
-                source::FLD_ID => 'src',
-                value::FLD_VALUE => 'val',
-                value::FLD_LAST_UPDATE => 'upd',
-                phrase::FLD_ID . '_1' => '',
-                phrase::FLD_ID . '_2' => '',
-                phrase::FLD_ID . '_3' => '',
-                phrase::FLD_ID . '_4' => '',
+                source_db::FLD_ID => 'src',
+                sandbox_multi::FLD_VALUE => 'val',
+                sandbox_multi::FLD_LAST_UPDATE => 'upd',
+                phrase::FLD_ID . '_1',
+                    phrase::FLD_ID . '_2',
+                    phrase::FLD_ID . '_3',
+                    phrase::FLD_ID . '_4' => '',
                 default => $name
             };
         }

@@ -5,6 +5,7 @@
     model/ref/ref_types.php - to link coded functionality to a reference
     -----------------------
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -31,12 +32,14 @@
 
 namespace cfg\ref;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_REF_PATH . 'ref_type.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_REF . 'ref_type.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -67,9 +70,9 @@ class ref_type_list extends type_list
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
-                $type_code_id = strval($db_entry[sql::FLD_CODE_ID]);
-                $type_name = strval($db_entry[sql::FLD_TYPE_NAME]);
-                $type_comment = strval($db_entry[sandbox_named::FLD_DESCRIPTION]);
+                $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
+                $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
+                $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new ref_type($type_code_id, $type_name, $type_comment);
                 $type_obj->set_id($db_entry[self::FLD_ID]);
                 $type_obj->url = $db_entry[self::FLD_URL];

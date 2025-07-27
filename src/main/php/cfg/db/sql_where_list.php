@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/db/sql_where_list.php - list to create the sql where condition
+    model/db/sql_where_list.php - list to create the sql where condition
     -------------------------
 
 

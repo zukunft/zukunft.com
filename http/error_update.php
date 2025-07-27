@@ -36,17 +36,20 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
 
 use cfg\system\sys_log;
-use cfg\sys_log_list;
+use cfg\system\sys_log_list;
 use cfg\user\user;
-use cfg\user\user_profile;
 use cfg\view\view;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
+use shared\enum\user_profiles;
 
 $db_con = prg_start("error_update");
 $html = new html_base();
@@ -71,11 +74,11 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     $msk = new view($usr);
-    $msk->set_id($sys_msk_cac->id(view_shared::MC_ERR_UPD));
+    $msk->set_id($sys_msk_cac->id(view_shared::ERR_UPD));
     $msk_dsp = new view_dsp($msk->api_json());
     $result .= $msk_dsp->dsp_navbar($back);
 
-    if ($usr->id() > 0 and $usr->profile_id == $usr_pro_cac->id(user_profile::ADMIN)) {
+    if ($usr->id() > 0 and $usr->is_admin()) {
         // update the error if requested
         if ($log_id > 0 and $status_id > 0) {
             $err_entry = new sys_log;
@@ -94,7 +97,8 @@ if ($usr->id() > 0) {
         $err_lst->size = 20;
         $err_lst->back = $back;
         if ($err_lst->load()) {
-            $errors_all = $err_lst->dsp_obj()->get_html();
+            $err_lst_dsp = new sys_log_list($err_lst->api_json());
+            $errors_all = $err_lst_dsp->get_html();
         }
         //$errors_all .= dsp_errors  ($usr->id(), $usr->profile_id, "all", $back);
         if ($errors_all <> "") {

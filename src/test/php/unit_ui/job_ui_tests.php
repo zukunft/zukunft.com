@@ -32,7 +32,9 @@
 
 namespace unit_ui;
 
-include_once WEB_SYSTEM_PATH . 'job_list.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::SYSTEM . 'job_list.php';
 
 use html\html_base;
 use html\system\job_list as job_list_dsp;
@@ -44,7 +46,9 @@ class job_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('batch job display unit tests');
+        // start the test section (ts)
+        $ts = 'unit ui html batch job ';
+        $t->header($ts);
 
         // test the batch job html display functions
         $test_page = $html->text_h2('batch job display test');

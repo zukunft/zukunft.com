@@ -36,16 +36,18 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
 
-use html\html_base;
-use html\view\view as view_dsp;
-use html\word\word_list as word_list_dsp;
+include_once paths::SHARED_CONST . 'views.php';
+
 use cfg\user\user;
 use cfg\view\view;
 use cfg\word\word_list;
+use html\html_base;
+use html\view\view as view_dsp;
+use html\word\word_list as word_list_dsp;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 global $sys_msk_cac;
 
@@ -73,7 +75,7 @@ if (!$db_con->connected()) {
         $usr->load_usr_data();
 
         // show view header
-        $view_id = $sys_msk_cac->id(view_shared::MC_WORD_FIND);
+        $view_id = $sys_msk_cac->id(view_shared::WORD_FIND);
         $msk = new view($usr);
         $msk->load_by_id($view_id);
         $msk->load_components();
@@ -96,7 +98,7 @@ if (!$db_con->connected()) {
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_like($find_str);
         $dsp_lst = new word_list_dsp($wrd_lst->api_json());
-        $result .= $dsp_lst->display();
+        $result .= $dsp_lst->name_link();
 
         // show the matching terms to select
         // TODO create a term list object

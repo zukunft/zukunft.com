@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/value/value_ts_data.php - for a single time series value data entry
+    model/value/value_ts_data.php - for a single time series value data entry
     ---------------------------
 
 
@@ -32,25 +32,27 @@
 
 namespace cfg\value;
 
-include_once MODEL_HELPER_PATH . 'db_object.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_type_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_no_id.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_type_list.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_type_list;
-use cfg\helper\db_object;
+use cfg\helper\db_object_no_id;
 use DateTime;
 
-class value_ts_data extends db_object
+class value_ts_data extends db_object_no_id
 {
 
     /*
@@ -123,7 +125,7 @@ class value_ts_data extends db_object
      */
     function sql_foreign_key(sql_creator $sc): string
     {
-        return $this->sql_foreign_key_create($sc, new sql_type_list([]), [],false);
+        return $this->sql_foreign_key_create($sc, new sql_type_list(), [],false);
     }
 
 }

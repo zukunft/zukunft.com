@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/component/view_styles.php - db based ENUM of the view and component styles
-    -----------------------------
+    shared/types/view_styles.php - db based ENUM of the view and component styles
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,8 +30,6 @@
 */
 
 namespace shared\types;
-
-use html\html_base;
 
 class view_styles
 {

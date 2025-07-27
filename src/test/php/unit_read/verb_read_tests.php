@@ -32,18 +32,18 @@
 
 namespace unit_read;
 
-include_once API_WORD_PATH . 'word.php';
-include_once API_WORD_PATH . 'triple.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
 
-use api\verb\verb as verb_api;
-use api\word\word as word_api;
-use api\word\triple as triple_api;
-use cfg\word\word;
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'triples.php';
+
 use cfg\verb\verb;
 use cfg\verb\verb_list;
-use test\test_cleanup;
+use cfg\word\word;
+use shared\const\triples;
+use shared\const\words;
 use shared\types\verbs;
+use test\test_cleanup;
 
 class verb_read_tests
 {
@@ -57,7 +57,7 @@ class verb_read_tests
         // init
         $t->name = 'verb read db->';
 
-        $t->header('Unit database tests of the verb class (src/main/php/model/verb/verb.php)');
+        $t->header('verb database read tests');
 
         $t->subheader('Verb tests');
 
@@ -70,35 +70,35 @@ class verb_read_tests
 
         // prepare the words for testing
         $country = new word($t->usr1);
-        $country->load_by_name(word_api::TN_COUNTRY);
+        $country->load_by_name(words::COUNTRY);
         $switzerland = new word($t->usr1);
-        $switzerland->load_by_name(word_api::TN_CH);
+        $switzerland->load_by_name(words::CH);
 
         // 'is a' - test the selection of the members via 'is a' verb
         $countries = $country->children();
-        $t->assert_contains('is a based on ' . word_api::TN_COUNTRY,
+        $t->assert_contains('is a based on ' . words::COUNTRY,
             $countries->names(),
-            array(word_api::TN_CH, word_api::TN_DE)
+            array(words::CH, words::GERMANY)
         );
 
         // 'is part of' - test the direct selection of the members via 'is part of' verb
         //                e.g. for Switzerland get at least 'Zurich (Canton)' but not 'Zurich (City)'
         $parts = $switzerland->direct_parts();
-        $t->assert_contains('direct parts of ' . word_api::TN_CH,
+        $t->assert_contains('direct parts of ' . words::CH,
             $parts->names(),
-            array(triple_api::TN_ZH_CANTON)
+            array(triples::CANTON_ZURICH)
         );
-        $t->assert_contains_not('direct parts of ' . word_api::TN_CH,
+        $t->assert_contains_not('direct parts of ' . words::CH,
             $parts->names(),
-            array(triple_api::TN_ZH_CITY)
+            array(triples::CITY_ZH)
         );
 
         // 'is part of' - test the recursive selection of the members via 'is part of' verb
         //                e.g. for Switzerland get at least 'Zurich (Canton)' and 'Zurich (City)'
         $parts = $switzerland->parts();
-        $t->assert_contains('parts of ' . word_api::TN_CH . ' and parts of the parts',
+        $t->assert_contains('parts of ' . words::CH . ' and parts of the parts',
             $parts->names(),
-            array(triple_api::TN_ZH_CANTON, triple_api::TN_ZH_CITY)
+            array(triples::CANTON_ZURICH, triples::CITY_ZH)
         );
 
 
@@ -130,8 +130,8 @@ class verb_read_tests
         // TODO check why this differs depending on the database used
         if ($result == 'is an acronym for') {
             $target = 'is an acronym for';
-        } elseif ($result == verb_api::TN_IS) {
-            $target = verb_api::TN_IS;
+        } elseif ($result == verbs::IS_NAME) {
+            $target = verbs::IS_NAME;
         } elseif ($result == 'uses') {
             $target = 'uses';
         } elseif ($result == 'is measure type for') {

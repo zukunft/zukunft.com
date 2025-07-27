@@ -32,15 +32,19 @@
 
 namespace unit;
 
-include_once DB_PATH . 'sql_creator.php';
-include_once MODEL_FORMULA_PATH . 'fig_ids.php';
-include_once MODEL_FORMULA_PATH . 'figure_list.php';
-include_once WEB_FIGURE_PATH . 'figure_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::DB . 'sql_creator.php';
+include_once paths::MODEL_FORMULA . 'fig_ids.php';
+include_once paths::MODEL_FORMULA . 'figure_list.php';
+include_once html_paths::FIGURE . 'figure_list.php';
 
 use cfg\db\sql_creator;
 use cfg\formula\fig_ids;
 use cfg\formula\figure_list;
 use html\figure\figure_list as figure_list_dsp;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class figure_list_tests
@@ -57,23 +61,26 @@ class figure_list_tests
         $t->resource_path = 'db/figure/';
         $json_file = 'unit/figure/figure_list_import.json';
 
+        // start the test section (ts)
+        $ts = 'unit figure list ';
+        $t->header($ts);
 
-        $t->header('Unit tests of the figure list class (src/main/php/model/figure/figure_list.php)');
-
-        $t->subheader('SQL statement creation tests');
+        $t->subheader($ts . 'sql statement');
 
         // load by figure ids
+        $test_name = 'load figures by ids';
         $fig_lst = new figure_list($usr);
-        $t->assert_sql_by_ids($sc, $fig_lst, new fig_ids([1, -1]));
+        $t->assert_sql_by_ids($test_name, $sc, $fig_lst, new fig_ids([1, -1]));
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $fig_lst = $t->figure_list();
-        $t->assert_api($fig_lst);
+        $t->assert_api($fig_lst, 'figure_list_without_phrases');
+        $t->assert_api($fig_lst, 'figure_list_with_phrases', [api_type::INCL_PHRASES]);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $fig_lst = $t->figure_list();
         $t->assert_api_to_dsp($fig_lst, new figure_list_dsp());

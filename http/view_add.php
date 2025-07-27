@@ -35,15 +35,17 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
 
-use html\html_base;
-use html\view\view as view_dsp;
+include_once paths::SHARED_CONST . 'views.php';
+
 use cfg\user\user;
 use cfg\view\view;
 use cfg\word\word;
+use html\html_base;
+use html\view\view as view_dsp;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("view_add");
@@ -65,7 +67,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_id($sys_msk_cac->id(view_shared::MC_VIEW_ADD));
+    $msk->load_by_id($sys_msk_cac->id(view_shared::VIEW_ADD));
     $back = $_GET[api::URL_VAR_BACK] = ''; //
 
     // create the object to store the parameters so that if the add form is shown again it is already filled

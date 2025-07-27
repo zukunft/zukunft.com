@@ -32,23 +32,22 @@
 
 namespace cfg\phrase;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once API_PHRASE_PATH . 'term_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once WEB_PHRASE_PATH . 'term_list.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
 
-use api\phrase\term_list as term_list_api;
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::SHARED . 'library.php';
+
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
@@ -58,7 +57,6 @@ use cfg\sandbox\sandbox_list_named;
 use cfg\word\triple;
 use cfg\verb\verb;
 use cfg\word\word;
-use html\phrase\term_list as term_list_dsp;
 use shared\library;
 
 class term_list extends sandbox_list_named
@@ -87,58 +85,6 @@ class term_list extends sandbox_list_named
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return term_list_api the word list object with the display interface functions
-     */
-    function api_obj(): term_list_api
-    {
-        $api_obj = new term_list_api();
-        foreach ($this->lst() as $trm) {
-            $api_obj->add($trm->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * @return term_list_dsp the word object with the display interface functions
-     */
-    function dsp_obj(): term_list_dsp
-    {
-        $dsp_obj = new term_list_dsp();
-        foreach ($this->lst() as $trm) {
-            $dsp_obj->add($trm->dsp_obj());
-        }
-        return $dsp_obj;
-    }
-
-    /**
-     * get the phrases out of a term list
-     * @return phrase_list the list of phrases picked from the term list
-     */
-    function phrase_list(): phrase_list
-    {
-        $phr_lst = new phrase_list($this->user());
-        foreach ($this->lst() as $trm) {
-            if ($trm->is_word() or $trm->is_triple()) {
-                $phr_lst->add($trm->phrase());
-            }
-        }
-        return $phr_lst;
-    }
-
-
-    /*
      * load
      */
 
@@ -150,7 +96,7 @@ class term_list extends sandbox_list_named
      * @param string $query_name the name of the query use to prepare and call the query
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    private function load_sql(sql_creator $sc, string $query_name): sql_par
+    protected function load_sql(sql_creator $sc, string $query_name): sql_par
     {
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
@@ -169,9 +115,17 @@ class term_list extends sandbox_list_named
      * create an SQL statement to retrieve a list of terms from the database
      *
      * @param sql_creator $sc with the target db_type set
+     * @param trm_ids $ids term ids that should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, trm_ids $ids): sql_par
+    function load_sql_by_ids(
+        sql_creator $sc,
+        trm_ids     $ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
         $sc->add_where(term::FLD_ID, $ids->lst);
@@ -322,6 +276,21 @@ class term_list extends sandbox_list_named
     }
 
     /**
+     * get the terms of the list selected by the given ids
+     * @param trm_ids $ids list of term ids to select the terms of this list
+     * @return term_list the terms that have been found
+     */
+    function get_by_ids(trm_ids $ids): term_list
+    {
+        $trm_lst = new term_list($this->user());
+        foreach ($ids->lst as $id) {
+            $trm = $trm_lst->get_by_id($id);
+            $trm_lst->add($trm);
+        }
+        return $trm_lst;
+    }
+
+    /**
      * get a word from the term list selected by the word id
      *
      * @param int $id the word id (not the term id!)
@@ -407,6 +376,110 @@ class term_list extends sandbox_list_named
 
 
     /*
+     * cast
+     */
+
+    /**
+     * get the phrases out of a term list
+     * @return phrase_list the list of phrases picked from the term list
+     */
+    function phrase_list(): phrase_list
+    {
+        $phr_lst = new phrase_list($this->user());
+        foreach ($this->lst() as $trm) {
+            if ($trm->is_word() or $trm->is_triple()) {
+                $phr_lst->add($trm->phrase());
+            }
+        }
+        return $phr_lst;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * removes all terms from this list that are not in the given list
+     * @param term_list $new_lst the terms that should remain in this list
+     * @returns term_list with the terms of this list and the new list
+     */
+    function intersect(term_list $new_lst): term_list
+    {
+        if (!$new_lst->is_empty()) {
+            if ($this->is_empty()) {
+                $this->set_lst($new_lst->lst());
+            } else {
+                // next line would work if array_intersect could handle objects
+                // $this->lst() = array_intersect($this->lst(), $new_lst->lst());
+                $found_lst = new term_list($this->user());
+                foreach ($new_lst->lst() as $trm) {
+                    if (in_array($trm->id(), $this->id_lst())) {
+                        $found_lst->add($trm);
+                    }
+                }
+                $this->set_lst($found_lst->lst());
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * remove all terms from the given list from this list
+     * @param term_list $del_lst the terms that should be removed
+     * @return term_list this
+     */
+    function remove(term_list $del_lst): term_list
+    {
+        if (!$del_lst->is_empty()) {
+            // next line would work if array_intersect could handle objects
+            // $this->lst() = array_intersect($this->lst(), $new_lst->lst());
+            $remain_lst = new term_list($this->user());
+            foreach ($this->lst() as $trm) {
+                if (!in_array($trm->id(), $del_lst->id_lst())) {
+                    $remain_lst->add($trm);
+                }
+            }
+            $this->set_lst($remain_lst->lst());
+        }
+        return $this;
+    }
+
+    /**
+     * add the terms of the given list to this list
+     * but avoid duplicates by the name
+     * merge as a function, because the array_merge does not create an object
+     * @param term_list $lst_to_add with the terms to be added by the name
+     * @return term_list with all terms of this list and the given list
+     */
+    function merge_by_name(term_list $lst_to_add): term_list
+    {
+        if (!$lst_to_add->is_empty()) {
+            foreach ($lst_to_add->lst() as $trm_to_add) {
+                $this->add_by_name($trm_to_add);
+            }
+        }
+        return $this;
+    }
+
+    /**
+     * leave only the valid words, triples, verbs and formulas in this list
+     * @return void
+     */
+    function filter_valid(): void
+    {
+        $lst = [];
+        foreach ($this->lst() as $trm) {
+            if ($trm->is_valid()) {
+                $lst[] = $trm;
+            }
+        }
+        $this->set_lst($lst);
+    }
+
+
+
+    /*
      * display functions
      */
 
@@ -461,7 +534,7 @@ class term_list extends sandbox_list_named
      * this function is called from dsp_id, so no call of another function is allowed
      * TODO move to a parent object for phrase list and term list
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $name_lst = array();
         foreach ($this->lst() as $trm) {

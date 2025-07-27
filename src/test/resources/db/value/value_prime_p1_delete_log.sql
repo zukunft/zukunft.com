@@ -27,8 +27,8 @@ SELECT value_prime_p1_delete_log
        (1::bigint,
         3::smallint,
         1::smallint,
-        32770::bigint,
-        -2::smallint,
-        null::smallint,
-        null::smallint,
-        null::smallint);
+        32819::bigint,
+        -51::smallint,
+        0::smallint,
+        0::smallint,
+        0::smallint);

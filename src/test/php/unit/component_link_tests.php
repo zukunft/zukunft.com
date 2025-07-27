@@ -32,10 +32,12 @@
 
 namespace unit;
 
-include_once MODEL_COMPONENT_PATH . 'position_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_COMPONENT . 'position_type.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_COMPONENT . 'component_link_list.php';
 
 use cfg\component\component_link;
 use cfg\component\component_link_type;
@@ -58,10 +60,11 @@ class component_link_tests
         $t->name = 'component_link->';
         $t->resource_path = 'db/component/';
 
-        $t->header('Unit tests of the view component link class (src/main/php/model/view/component_link.php)');
+        // start the test section (ts)
+        $ts = 'unit component link ';
+        $t->header($ts);
 
-
-        $t->subheader('SQL setup statements');
+        $t->subheader($ts . 'sql setup statements');
         $cmp_lnk_typ = new component_link_type('');
         $t->assert_sql_table_create($cmp_lnk_typ);
         $t->assert_sql_index_create($cmp_lnk_typ);
@@ -73,7 +76,7 @@ class component_link_tests
         $t->assert_sql_index_create($cmp_lnk);
         $t->assert_sql_foreign_key_create($cmp_lnk);
 
-        $t->subheader('SQL user sandbox statement tests');
+        $t->subheader($ts . 'sql user sandbox statement');
 
         // SQL creation tests (mainly to use the IDE check for the generated SQL statements)
         $vcl = new component_link($usr);
@@ -83,14 +86,14 @@ class component_link_tests
         $this->assert_sql_max_pos($t, $db_con, $vcl);
 
 
-        $t->subheader('SQL statement tests');
+        $t->subheader($ts . 'sql statement');
 
         // sql to load a view component link by the id
         $lnk = new component_link($usr);
         $lnk->set_id(1);
         $t->assert_sql_user_changes($sc, $lnk);
 
-        $t->subheader('component link sql write');
+        $t->subheader($ts . 'component link sql write');
         $lnk = $t->component_link();
         $t->assert_sql_insert($sc, $lnk);
         $t->assert_sql_insert($sc, $lnk, [sql_type::USER]);
@@ -108,6 +111,10 @@ class component_link_tests
         $t->assert_sql_delete($sc, $lnk);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG]);
         $t->assert_sql_delete($sc, $lnk, [sql_type::LOG, sql_type::USER]);
+
+        $t->subheader($ts . 'component link base object handling');
+        $lnk = $t->component_link_filled();
+        $t->assert_reset($lnk);
 
     }
 

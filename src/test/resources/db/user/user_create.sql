@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS users
     code_id            varchar(100) DEFAULT NULL,
     user_profile_id    bigint       DEFAULT NULL,
     user_type_id       bigint       DEFAULT NULL,
+    excluded           smallint     DEFAULT NULL,
     right_level        smallint     DEFAULT NULL,
     email              varchar(255) DEFAULT NULL,
     email_status       smallint     DEFAULT NULL,
@@ -44,11 +45,12 @@ COMMENT ON COLUMN users.user_id IS 'the internal unique primary index';
 COMMENT ON COLUMN users.user_name IS 'the user name unique for this pod';
 COMMENT ON COLUMN users.ip_address IS 'all users a first identified with the ip address';
 COMMENT ON COLUMN users.password IS 'the hash value of the password';
-COMMENT ON COLUMN users.description IS 'for system users the description to expain the profile to human users';
+COMMENT ON COLUMN users.description IS 'for system users the description to explain the profile to human users';
 COMMENT ON COLUMN users.code_id IS 'to select e.g. the system batch user';
 COMMENT ON COLUMN users.user_profile_id IS 'to define the user roles and read and write rights';
 COMMENT ON COLUMN users.user_type_id IS 'to set the confirmation level of a user';
-COMMENT ON COLUMN users.right_level IS 'the access right level to prevent unpermitted right gaining';
+COMMENT ON COLUMN users.excluded IS 'true if the user is deactivated but cannot be deleted due to log entries';
+COMMENT ON COLUMN users.right_level IS 'the access right level to prevent not permitted right gaining';
 COMMENT ON COLUMN users.email IS 'the primary email for verification';
 COMMENT ON COLUMN users.email_status IS 'if the email has been verified or if a password reset has been send';
 COMMENT ON COLUMN users.email_alternative IS 'an alternative email for account recovery';

@@ -32,8 +32,11 @@
 
 namespace unit;
 
-include_once WEB_VALUE_PATH . 'value_list.php';
-include_once MODEL_VALUE_PATH . 'value_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once html_paths::VALUE . 'value_list.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -41,6 +44,7 @@ use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\value\value_list;
 use html\value\value_list as value_list_dsp;
+use shared\enum\value_types;
 use shared\library;
 use test\test_cleanup;
 
@@ -62,40 +66,64 @@ class value_list_tests
         $t->name = 'value_list->';
         $t->resource_path = 'db/value/';
 
-        $t->header('Unit tests of the value list class (src/main/php/model/value/value_list.php)');
+        // start the test section (ts)
+        $ts = 'unit value list ';
+        $t->header($ts);
 
-        /*
-         * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
-         */
+        $t->subheader($ts . 'info value list');
+        $test_name = 'test the grp_ids function';
+        $val_ids = $t->value_list()->grp_ids()->dsp_id();
+        $t->assert($test_name, $val_ids, 'Pi (math) / Zurich City inhabitants (2019)');
 
-        // sql to load a list of value by ...
+        $t->subheader($ts . 'modify value list');
+        $time_val_lst = $t->value_list()->filter_by_time($t->phrase_list());
+
+        $t->subheader($ts . 'api value list');
+        $test_name = 'test the api_json';
+        $api_json = $t->value_list()->api_json();
+        $val_lst_dsp = new value_list_dsp($api_json);
+        $t->assert_json_string($test_name, $val_lst_dsp->api_json(), $api_json);
+
+        $t->subheader($ts . 'sql creation value list');
+        $test_names = 'sql to load a list of value by ... ';
         $val_lst = new value_list($usr);
-        // ... a related to a phrase e.g. all value related to the City of Zurich
-        $phr = $t->phrase_zh();
-        $this->assert_sql_by_phr($t, $db_con, $val_lst, $phr);
-        // ... a list of ids
+        $test_name = $test_names . 'a related to a phrase e.g. all value related to the City of Zurich';
+        $phr = $t->phrase_zh_city();
+        $this->assert_sql_by_phr($test_name, $t, $db_con, $val_lst, $phr);
+        $test_name = $test_names . 'a related to a phrase e.g. all value related to the City of Zurich but only text values';
+        $phr = $t->phrase_zh_city();
+        $this->assert_sql_by_phr($test_name, $t, $db_con, $val_lst, $phr, value_types::TEXT);
+        $test_name = $test_names . 'a list of ids';
         $val_ids = $t->value_list()->id_lst();
-        $t->assert_sql_by_ids($sc, $val_lst, $val_ids);
-        // ... a list of groups
+        $t->assert_sql_by_ids($test_name, $sc, $val_lst, $val_ids);
+        $test_name = 'a list of ids including text values';
+        $t->assert_sql_by_ids($test_name, $sc, $val_lst, $val_ids, value_types::TEXT);
+        $test_name = 'a list of ids including time values';
+        $t->assert_sql_by_ids($test_name, $sc, $val_lst, $val_ids, value_types::TIME);
+        $test_name = 'a list of ids including geo values';
+        $t->assert_sql_by_ids($test_name, $sc, $val_lst, $val_ids, value_types::GEO);
+        $test_name = $test_names . 'a list of groups';
         $grp_lst = $t->phrase_list_small();
-        $this->assert_sql_by_grp_lst($t, $db_con, $val_lst, $grp_lst);
+        $this->assert_sql_by_grp_lst($test_name, $t, $db_con, $val_lst, $grp_lst);
         $test_name = 'load values related to all phrases of a list '
             . 'e.g. the inhabitants of Canton Zurich over time';
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->canton_zh_phrase_list());
         $test_name = 'load values related to any phrase of a list '
             . 'e.g. the match const pi and e';
+        // temp line until the function usage is checked correctly by the ide
+        $sql = $t->value_list()->load_sql_by_phr_lst($sc, $t->phrase_list_math_const());
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->phrase_list_math_const(), true);
         $test_name = 'load values related to any phrase of a longer word and triple list '
             . 'e.g. all phrase related to the math number pi';
         $t->assert_sql_by_phr_lst($test_name, $val_lst, $t->phrase_list(), true);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
         $json_file = 'unit/value/travel_scoring_value_list.json';
         $t->assert_json_file(new value_list($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $trp_lst = $t->value_list();
         $t->assert_api_to_dsp($trp_lst, new value_list_dsp());
@@ -138,49 +166,65 @@ class value_list_tests
      * test the SQL statement creation for a value list
      * similar to assert_load_sql but for a group list
      *
+     * @param string $test_name the description of the test
      * @param test_cleanup $t the forwarded testing object
      * @param sql_db $db_con does not need to be connected to a real database
      * @param object $usr_obj the user sandbox object e.g. a word
      * @param phrase_list $phr_lst the phrase list that should be used for the sql creation
      */
-    private function assert_sql_by_grp_lst(test_cleanup $t, sql_db $db_con, object $usr_obj, phrase_list $phr_lst): void
+    private function assert_sql_by_grp_lst(
+        string       $test_name,
+        test_cleanup $t,
+        sql_db       $db_con,
+        object       $usr_obj,
+        phrase_list  $phr_lst
+    ): void
     {
         // check the Postgres query syntax
         $sc = $db_con->sql_creator();
         $sc->reset(sql_db::POSTGRES);
         $qp = $usr_obj->load_sql_by_grp_lst($sc, $phr_lst);
-        $result = $t->assert_qp($qp, $sc->db_type);
+        $result = $t->assert_qp($qp, $sc->db_type, $test_name);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
             $qp = $usr_obj->load_sql_by_grp_lst($sc, $phr_lst);
-            $t->assert_qp($qp, $sc->db_type);
+            $t->assert_qp($qp, $sc->db_type, $test_name);
         }
     }
 
     /**
      * test the SQL statement creation for a value list
      *
+     * @param string $test_name the description of the test
      * @param test_cleanup $t the forwarded testing object
      * @param sql_db $db_con does not need to be connected to a real database
      * @param value_list $val_lst the value list object that should ve filled
      * @param phrase $phr filled with an id to be able to load
+     * @param value_types|null $val_types if not null load only the types of this list
      * @return void
      */
-    private function assert_sql_by_phr(test_cleanup $t, sql_db $db_con, value_list $val_lst, phrase $phr): void
+    private function assert_sql_by_phr(
+        string           $test_name,
+        test_cleanup     $t,
+        sql_db           $db_con,
+        value_list       $val_lst,
+        phrase           $phr,
+        value_types|null $val_types = null
+    ): void
     {
         // check the Postgres query syntax
         $sc = $db_con->sql_creator();
         $sc->reset(sql_db::POSTGRES);
-        $qp = $val_lst->load_sql_by_phr($sc, $phr);
-        $result = $t->assert_qp($qp, $sc->db_type);
+        $qp = $val_lst->load_sql_by_phr($sc, $phr, 0, 0, $val_types);
+        $result = $t->assert_qp($qp, $sc->db_type, $test_name);
 
         // ... and check the MySQL query syntax
         if ($result) {
             $sc->reset(sql_db::MYSQL);
-            $qp = $val_lst->load_sql_by_phr($sc, $phr);
-            $t->assert_qp($qp, $sc->db_type);
+            $qp = $val_lst->load_sql_by_phr($sc, $phr, 0, 0, $val_types);
+            $t->assert_qp($qp, $sc->db_type, $test_name);
         }
     }
 

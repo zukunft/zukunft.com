@@ -32,16 +32,19 @@
 
 namespace unit_read;
 
-include_once MODEL_SYSTEM_PATH . 'sys_log.php';
-include_once DB_PATH . 'db_check.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::DB . 'db_check.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 
 use cfg\formula\formula;
 use cfg\system\job_type_list;
-use cfg\db\db_check;
-use cfg\system\sys_log_status;
 use cfg\system\sys_log_status_list;
 use cfg\helper\type_lists;
-use cfg\db\sql_db;
+use shared\enum\sys_log_statuus;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class system_read_tests
@@ -66,8 +69,8 @@ class system_read_tests
         $t->assert('load status', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $sys_log_sta_cac->id(sys_log_status::OPEN);
-        $t->assert('check status ' . sys_log_status::OPEN, $result, 1);
+        $result = $sys_log_sta_cac->id(sys_log_statuus::OPEN);
+        $t->assert('check status ' . sys_log_statuus::OPEN, $result, 1);
 
         $t->subheader('System batch job type tests');
 
@@ -101,7 +104,7 @@ class system_read_tests
         $t->subheader('API unit db tests of preloaded types');
         $sys_typ_lst = new type_lists();
         $sys_typ_lst->load($db_con, $t->usr1);
-        $t->assert_api($sys_typ_lst);
+        $t->assert_api($sys_typ_lst, '', [api_type::HEADER]);
 
     }
 

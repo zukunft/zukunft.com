@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/view/view_type.php - db based ENUM of the view types
-    ----------------------
+    shared/types/view_type.php - db based ENUM of the view types
+    --------------------------
 
     This file is part of zukunft.com - calc with words
 

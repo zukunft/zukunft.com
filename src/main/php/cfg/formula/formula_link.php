@@ -43,28 +43,32 @@
 
 namespace cfg\formula;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -79,14 +83,14 @@ use cfg\db\sql_type_list;
 use cfg\helper\combine_named;
 use cfg\helper\type_object;
 use cfg\log\change;
-use cfg\log\change_action;
-use cfg\log\change_table_list;
 use cfg\phrase\phrase;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\change_actions;
+use shared\enum\change_tables;
 use shared\library;
 
 class formula_link extends sandbox_link
@@ -106,25 +110,25 @@ class formula_link extends sandbox_link
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        formula::FLD_ID,
+        formula_db::FLD_ID,
         phrase::FLD_ID,
         user::FLD_ID,
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
     // list of the link database field names
     const FLD_NAMES_LINK = array(
-        formula::FLD_ID,
+        formula_db::FLD_ID,
         phrase::FLD_ID
     );
     // all database field names excluding the id
     const FLD_NAMES_NUM_USR = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -132,7 +136,7 @@ class formula_link extends sandbox_link
     const ALL_SANDBOX_FLD_NAMES = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -143,7 +147,7 @@ class formula_link extends sandbox_link
     );
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
-        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, ''],
+        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, ''],
         [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
     );
 
@@ -212,7 +216,7 @@ class formula_link extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             // TODO load by if from cache?
-            $this->formula()->set_id($db_row[formula::FLD_ID]);
+            $this->formula()->set_id($db_row[formula_db::FLD_ID]);
             $this->phrase()->set_id($db_row[phrase::FLD_ID]);
             $this->predicate_id = $db_row[formula_link_type::FLD_ID];
             $this->order_nbr = $db_row[formula_link::FLD_ORDER];
@@ -293,7 +297,7 @@ class formula_link extends sandbox_link
     {
         $result = 0;
         if ($this->tob() != null) {
-            if ($this->tob()->id() > 0) {
+            if ($this->tob()->id() != 0) {
                 $result = $this->tob()->id();
             }
         }
@@ -338,7 +342,7 @@ class formula_link extends sandbox_link
      */
     function load_sql_user_changes(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
@@ -399,7 +403,7 @@ class formula_link extends sandbox_link
         if ($this->id() != 0) {
             $sc->add_where($this->id_field(), $this->id());
         } elseif ($this->formula_id() != 0 and $this->phrase_id() != 0) {
-            $sc->add_where(formula::FLD_ID, $this->formula_id());
+            $sc->add_where(formula_db::FLD_ID, $this->formula_id());
             $sc->add_where(phrase::FLD_ID, $this->phrase_id());
         } else {
             log_err('Cannot load default formula link because no unique field is set');
@@ -486,7 +490,7 @@ class formula_link extends sandbox_link
 
     function from_field(): string
     {
-        return formula::FLD_ID;
+        return formula_db::FLD_ID;
     }
 
     function to_field(): string
@@ -522,7 +526,7 @@ class formula_link extends sandbox_link
     function not_changed_sql(sql_creator $sc): sql_par
     {
         $sc->set_class(formula_link::class);
-        return $sc->load_sql_not_changed($this->id(), $this->owner_id);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
     }
 
     /**
@@ -530,7 +534,7 @@ class formula_link extends sandbox_link
      */
     function not_changed(): bool
     {
-        log_debug($this->id() . ' by someone else than the owner (' . $this->owner_id . ')');
+        log_debug($this->id() . ' by someone else than the owner (' . $this->owner_id() . ')');
 
         global $db_con;
         $result = true;
@@ -554,11 +558,11 @@ class formula_link extends sandbox_link
     function log_upd_field(): change
     {
         $log = new change($this->user());
-        $log->set_action(change_action::UPDATE);
+        $log->set_action(change_actions::UPDATE);
         if ($this->can_change()) {
             $log->set_class(formula_link::class);
         } else {
-            $log->set_table(change_table_list::FORMULA_LINK_USR);
+            $log->set_table(change_tables::FORMULA_LINK_USR);
         }
 
         return $log;
@@ -639,9 +643,9 @@ class formula_link extends sandbox_link
         }
 
         if ($this->id() <= 0) {
-            if ($this->is_valid()) {
+            if ($this->db_ready()) {
                 log_debug('new formula link from "' . $this->formula()->name() . '" to "' . $this->phrase()->name() . '"');
-                $usr_msg->add_message($this->add($use_func)->get_last_message());
+                $usr_msg->add_message_text($this->add($use_func)->get_last_message());
             }
         } else {
             log_debug('update "' . $this->id() . '"');
@@ -651,6 +655,12 @@ class formula_link extends sandbox_link
             $db_rec->load_by_id($this->id());
             $db_rec->load_objects();
             $db_con->set_class(formula_link::class);
+            // relevant is if there is a user config in the database
+            // so use this information to prevent
+            // the need to forward the db_rec to all functions
+            if ($db_rec->has_usr_cfg() and !$this->has_usr_cfg()) {
+                $this->usr_cfg_id = $db_rec->usr_cfg_id;
+            }
             log_debug("database formula loaded (" . $db_rec->id() . ")");
             $std_rec = new formula_link($this->user()); // must also be set to allow to take the ownership
             $std_rec->set_id($this->id());
@@ -658,8 +668,8 @@ class formula_link extends sandbox_link
             log_debug("standard formula settings loaded (" . $std_rec->id() . ")");
 
             // for a correct user formula link detection (function can_change) set the owner even if the formula link has not been loaded before the save
-            if ($this->owner_id <= 0) {
-                $this->owner_id = $std_rec->owner_id;
+            if ($this->owner_id() <= 0) {
+                $this->set_owner_id($std_rec->owner_id());
             }
 
             // it should not be possible to change the formula or the word, but nevertheless check
@@ -668,7 +678,7 @@ class formula_link extends sandbox_link
                 if ($db_rec->formula()->id() <> $this->formula()->id()
                     or $db_rec->phrase()->id() <> $this->phrase()->id()) {
                     log_debug("update link settings for id " . $this->id() . ": change formula " . $db_rec->formula_id() . " to " . $this->formula_id() . " and " . $db_rec->phrase_id() . " to " . $this->phrase_id());
-                    $usr_msg->add_message(log_info('The formula link "' . $db_rec->formula()->name() . '" with "' . $db_rec->phrase()->name() . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->formula()->name() . '" with "' . $this->phrase()->name() . '" (id ' . $this->formula()->id() . ',' . $this->phrase()->id() . '). Instead the program should have created a new link.', "formula_link->save"));
+                    $usr_msg->add_message_text(log_info('The formula link "' . $db_rec->formula()->name() . '" with "' . $db_rec->phrase()->name() . '" (id ' . $db_rec->formula_id() . ',' . $db_rec->phrase_id() . ') " cannot be changed to "' . $this->formula()->name() . '" with "' . $this->phrase()->name() . '" (id ' . $this->formula()->id() . ',' . $this->phrase()->id() . '). Instead the program should have created a new link.', "formula_link->save"));
                 }
             }
 
@@ -682,7 +692,7 @@ class formula_link extends sandbox_link
             // the problem is shown to the user by the calling interactive script
             if ($usr_msg->is_ok()) {
                 if ($use_func) {
-                    $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
+                    $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
                 } else {
                     $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }
@@ -715,7 +725,7 @@ class formula_link extends sandbox_link
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         return array_merge(
             parent::db_all_fields_link($sc_par_lst),
@@ -735,7 +745,7 @@ class formula_link extends sandbox_link
      */
     function db_fields_changed(
         sandbox|formula_link $sbx,
-        sql_type_list        $sc_par_lst = new sql_type_list([])
+        sql_type_list        $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $cng_fld_cac;

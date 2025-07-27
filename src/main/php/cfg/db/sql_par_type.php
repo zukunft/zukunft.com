@@ -2,8 +2,9 @@
 
 /*
 
-    /cfg/db/sql_par_type.php - enum of the sql where parameter types
+    model/db/sql_par_type.php - enum of the sql where parameter types
     ------------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -66,6 +67,7 @@ enum sql_par_type: string
     case IS_NULL = 'is_null';
     case NOT_NULL = 'not_null';
     case TIME = 'timestamp'; // e.g. for now()
+    case POINT = 'point'; // e.g. for geolocations
 
     // parameter types to calculate the result for a group
     case MIN = 'min';

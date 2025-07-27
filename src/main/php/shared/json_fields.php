@@ -41,6 +41,13 @@ class json_fields
      * shared - fields used for api and im- and export json messages
      */
 
+    // message header
+    const POD = 'pod';
+    const VERSION = 'version';
+    const TIMESTAMP = 'timestamp';
+    const SELECTION = 'selection';
+    const BODY = 'body';
+
     // the unique name of the object which is also a database index
     const NAME = 'name';
 
@@ -62,8 +69,16 @@ class json_fields
     const PHRASES = 'phrases';
     const COMPONENTS = 'components';
 
+    // single objects
+    const REFERENCE = 'reference';
+
     // object specific fields
     const NUMBER = 'number'; // a float number used for values and results
+    const TIME_VALUE = 'time_value'; // a date and time value or result
+    const TEXT_VALUE = 'text_value'; // a text value that should not be used for searching
+    const GEO_VALUE = 'geo_value'; // a geolocation value or result
+
+    const LAST_UPDATE = 'last_update';
 
     // the code id of the view style of a view, component or component_link
     const STYLE = 'style';
@@ -79,11 +94,17 @@ class json_fields
     // the order number e.g. of the component within the view
     const POSITION = 'position';
 
-    // languange forms
+    // language forms
     const PLURAL = 'plural';
     const NAME_PLURAL = 'name_plural';
     const NAME_REVERSE = 'name_reverse';
     const NAME_PLURAL_REVERSE = 'name_plural_reverse';
+
+    // verbs
+    const REVERSE = 'reverse';
+    const REV_PLURAL = 'rev_plural';
+    const FRM_NAME = 'frm_name';
+    const USAGE = 'usage';
 
 
     /*
@@ -102,11 +123,15 @@ class json_fields
     const PHRASE = 'phrase_id';
     const SOURCE = 'source_id';
     const USER_ID = 'user_id';
+    //const GROUP_ID = 'group_id';
+    const FORMULA_ID = 'formula_id';
 
     // for link api objects the id of the preloaded link type
     const PREDICATE = 'predicate_id';
     const FROM = 'from_id';
+    const FROM_PHRASE = 'from_phrase';
     const TO = 'to_id';
+    const TO_PHRASE = 'to_phrase';
     const VERB = 'verb_id';
     // the json field names in the api json message which is supposed to be the same as the var $id
     const PARENT = 'parent';
@@ -114,6 +139,7 @@ class json_fields
     const USR_TEXT = 'user_text'; // the formula expression in the user readable format
     const SHARE = 'share'; // the field name used for the JSON im- and export
     const PROTECTION = 'protection'; // the field name used for the JSON im- and export
+    const EXCLUDED = 'excluded'; // true if the object has been excluded by the user
 
     // fields for external ref
     const EXTERNAL_KEY = 'external_key'; // the unique key of the reference
@@ -124,6 +150,7 @@ class json_fields
     const REF_TEXT = 'ref_text'; // the formula expression in a database reference format
     const NEED_ALL_VAL = 'need_all_val'; // calculate and save the result only if all used values are not null
     const FORMULA_NAME_PHRASE = 'name_phrase'; // the phrase object for the formula name
+    const FORMULA_NAME = 'formula'; // the name of the formula for im- and export
 
     // batch job fields
     const TIME_REQUEST = 'request_time'; // e.g. the timestamp when a batch job has been requested
@@ -162,15 +189,89 @@ class json_fields
     // the json field name in the api json message to identify if the term is a word, triple, verb or formula
     const OBJECT_CLASS = 'class';
 
+    // the json field name in the api json message to identify if the
+    // phrase, term or figure is a word, triple, verb, formula, value or result
+    // to allow renaming the class in backend and frontend without changing the api
+    const CLASS_WORD = 'word';
+    const CLASS_TRIPLE = 'triple';
+    const CLASS_VERB = 'verb';
+    const CLASS_FORMULA = 'formula';
+    const CLASS_VALUE = 'value';
+    const CLASS_RESULT = 'result';
+
+    // activate to handle differences between the api class name and the code class name
+    //const CLASS_PHRASE_TYPE = 'phrase_type';
+    //const CLASS_LOG_STATUS = 'sys_log_status';
+
+    // view to component link
+    //const POS_TYPE_CMP = 'pos_type';
+
+    // change log
+    const USR = 'usr';
+    const ACTION_ID = 'action_id';
+    const TABLE_ID = 'table_id';
+    const FIELD_ID = 'field_id';
+    const ROW_ID = 'row_id';
+    const CHANGE_TIME = 'change_time';
+    const OLD_VALUE = 'old_value';
+    const OLD_ID = 'old_id';
+    const NEW_VALUE = 'new_value';
+    const NEW_ID = 'new_id';
+    const STD_VALUE = 'std_value';
+    const STD_ID = 'std_id';
+
+    // to review
+    const USER_NAME = 'user';
+
+
+    /*
+     * api type list
+     */
+
+    //const TYPE_LISTS = 'type_lists';
+    const LIST_USER_PROFILES = 'user_profiles';
+    const LIST_PHRASE_TYPES = 'phrase_types';
+    const LIST_FORMULA_TYPES = 'formula_types';
+    const LIST_FORMULA_LINK_TYPES = 'formula_link_types';
+    const LIST_ELEMENT_TYPES = 'element_types';
+    const LIST_VIEW_TYPES = 'view_types';
+    const LIST_VIEW_STYLES = 'view_styles';
+    const LIST_VIEW_LINK_TYPES = 'view_link_types';
+    const LIST_COMPONENT_TYPES = 'component_types';
+    const LIST_COMPONENT_LINK_TYPES = 'component_link_types';
+    const LIST_COMPONENT_POSITION_TYPES = 'position_types';
+    const LIST_REF_TYPES = 'ref_types';
+    const LIST_SOURCE_TYPES = 'source_types';
+    const LIST_SHARE_TYPES = 'share_types';
+    const LIST_PROTECTION_TYPES = 'protection_types';
+    const LIST_LANGUAGES = 'languages';
+    const LIST_LANGUAGE_FORMS = 'language_forms';
+    const LIST_SYS_LOG_STATI = 'sys_log_stati';
+    const LIST_JOB_TYPES = 'job_types';
+    const LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
+    const LIST_CHANGE_LOG_TABLES = 'change_table_list';
+    const LIST_CHANGE_LOG_FIELDS = 'change_field_list';
+    const LIST_VERBS = 'verbs';
+    const LIST_SYSTEM_VIEWS = 'system_views';
 
     /*
      * im- and export - fields used only for the im- and export json messages
      */
 
-    const TIMESTAMP = 'timestamp';
 
     // name of the view to show a word, triple or formula
     const VIEW = 'view';
+    // list of views
+    const VIEWS = 'views';
+
+    // a list of users
+    const USERS = 'users';
+
+    const VALUE_LIST = 'value-list';
+    const CALC_VALIDATION = 'calc-validation';
+    const VIEW_VALIDATION = 'view-validation';
+    const IP_BLACKLIST = 'ip-blacklist';
+
 
     // the name of the value source
     const SOURCE_NAME = 'source';
@@ -179,10 +280,21 @@ class json_fields
     const ASSIGNED = 'assigned';
 
     // for the user object
+    const IP_ADDR = 'ip_address';
     const EMAIL = 'email';
     const FIRST_NAME = 'first_name';
     const LAST_NAME = 'last_name';
     const PROFILE = 'profile';
+    const PROFILE_ID = 'profile_id';
+
+    const PHRASE_VALUES = 'phrase-values';
+    const SOURCES = 'sources';
+    const REFERENCES = 'references';
+    // the alpha key to select the internal phrase (or later the term)
+    const REF_INTERN = 'phrase';
+    // the external unique key for this reference
+    const REF_EXTERN = 'name';
+
 
     // the phrase to select the row name of a view component
     const ROW = 'row';
@@ -193,15 +305,21 @@ class json_fields
     const REFS = 'refs';
 
     // for value lists
-    const CONTEXT = 'context';
     const VALUES = 'values';
+
+    // a list of the word names without further parameters
+    const WORD_LIST = 'word-list';
+
 
     // for formulas
     const EXPRESSION = 'expression';
     const ASSIGNED_WORD = 'assigned_word';
+    const FORMULAS = 'formulas';
+
 
     // for results
     const WORDS = 'words';
+    const VERBS = 'verbs';
     const TRIPLES = 'triples';
 
     // for ip ranges
@@ -210,4 +328,9 @@ class json_fields
     const REASON = 'reason';
     const IS_ACTIVE = 'is_active';
 
+    // list of phrases
+    // for results to select the input values
+    // and for value lists to reduce the number of phrase for each value
+    // also used to select the phrases used to filter the values for calculating this result
+    const CONTEXT = 'context';
 }

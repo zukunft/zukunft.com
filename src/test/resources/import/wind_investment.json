@@ -23,6 +23,111 @@
       "name": "Power"
     },
     {
+      "name": "energy"
+    },
+    {
+      "name": "product"
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "variable"
+    },
+    {
+      "name": "constant"
+    },
+    {
+      "name": "lifetime"
+    },
+    {
+      "name": "savings"
+    },
+    {
+      "name": "investment"
+    },
+    {
+      "name": "maintenance"
+    },
+    {
+      "name": "replacement"
+    },
+    {
+      "name": "mix"
+    },
+    {
+      "name": "climate"
+    },
+    {
+      "name": "warming"
+    },
+    {
+      "name": "gas"
+    },
+    {
+      "name": "investor"
+    },
+    {
+      "name": "Equity"
+    },
+    {
+      "name": "Outstanding"
+    },
+    {
+      "name": "Investment"
+    },
+    {
+      "name": "duration"
+    },
+    {
+      "name": "Production"
+    },
+    {
+      "name": "GWh"
+    },
+    {
+      "name": "year"
+    },
+    {
+      "name": "years"
+    },
+    {
+      "name": "North"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "CO2-eq"
+    },
+    {
+      "name": "kilowatt"
+    },
+    {
+      "name": "per kWh"
+    },
+    {
+      "name": "Share"
+    },
+    {
+      "name": "proportion"
+    },
+    {
+      "name": "Price"
+    },
+    {
+      "name": "Euro"
+    },
+    {
+      "name": "gramm"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "DKK"
+    },
+    {
       "name": "Turbine",
       "refs": [
         {
@@ -144,6 +249,12 @@
       "name": "costs"
     },
     {
+      "name": "emissions"
+    },
+    {
+      "name": "plant"
+    },
+    {
       "name": "production"
     },
     {
@@ -158,6 +269,12 @@
       "to": "Wind"
     },
     {
+      "name": "North Sea Coast",
+      "from": "North Sea",
+      "verb": "has a",
+      "to": "Coast"
+    },
+    {
       "name": "Wind Turbine (Power Plant)",
       "from": "Wind Turbine",
       "verb": "is a",
@@ -168,6 +285,12 @@
       "from": "Watt",
       "verb": "scaled by",
       "to": "Kilo"
+    },
+    {
+      "name": "kilowatt hour",
+      "from": "kilowatt",
+      "verb": "per",
+      "to": "hour"
     },
     {
       "name": "MW",
@@ -242,6 +365,18 @@
       "to": "product"
     },
     {
+      "name": "time variable",
+      "from": "time",
+      "verb": "can be",
+      "to": "variable"
+    },
+    {
+      "name": "time constant",
+      "from": "time",
+      "verb": "can be",
+      "to": "constant"
+    },
+    {
       "name": "production per time",
       "from": "product",
       "verb": "per",
@@ -276,6 +411,42 @@
       "from": "second",
       "verb": "is a",
       "to": "time constant"
+    },
+    {
+      "name": "per year",
+      "from": "time",
+      "verb": "can be",
+      "to": "year"
+    },
+    {
+      "name": "replacement mix",
+      "from": "replacement",
+      "verb": "can be",
+      "to": "mix"
+    },
+    {
+      "name": "climate gas",
+      "from": "climate",
+      "verb": "can cause",
+      "to": "warming"
+    },
+    {
+      "name": "North Germany",
+      "from": "North",
+      "verb": "is part of",
+      "to": "Germany"
+    },
+    {
+      "name": "Production per year",
+      "from": "Production",
+      "verb": "per",
+      "to": "year"
+    },
+    {
+      "name": "Investment duration",
+      "from": "Investment",
+      "verb": "has a",
+      "to": "duration"
     }
   ],
   "formulas": [
@@ -422,7 +593,7 @@
       "words": [
         "Wind Turbine",
         "Top Seller",
-        "maintanance",
+        "maintenance",
         "costs",
         "per year",
         "million",
@@ -456,7 +627,7 @@
         "North Germany",
         "CO2-eq",
         "gramm",
-        "kilowatthour"
+        "kilowatt hour"
       ],
       "number": "600"
     },
@@ -487,7 +658,7 @@
     {
       "words": [
         "Vestas",
-        "Equity ",
+        "Equity",
         "Price",
         "DKK"
       ],
@@ -496,7 +667,7 @@
     {
       "words": [
         "Vestas",
-        "Outstanding ",
+        "Outstanding",
         "Share"
       ],
       "number": "3.03"

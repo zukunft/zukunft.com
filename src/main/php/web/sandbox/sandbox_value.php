@@ -34,22 +34,29 @@
 
 namespace html\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_SANDBOX_PATH . 'sandbox.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::GROUP . 'group.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'json_fields.php';
 
-use shared\api;
-use api\sandbox\sandbox_value as sandbox_value_api;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\phrase\phrase_group as phrase_group_dsp;
+use DateTime;
+use html\group\group;
+use html\phrase\phrase_list;
 use html\user\user_message;
 use shared\json_fields;
 
 class sandbox_value extends sandbox
 {
 
-    private phrase_group_dsp $grp; // the phrase group with the list of words and triples (not the source words and triples)
-    private ?float $number; // the number calculated by the system
+    private group $grp; // the phrase group with the list of words and triples (not the source words and triples)
+    private ?float $number = null; // the number calculated by the system
+    private ?string $text_value = null; // a text value that is not expected to be included in selections
+    private ?DateTime $time_value = null; // a time value
+    // TODO add geo points
 
     // true if the user has done no personal overwrites which is the default case
     public bool $is_std;
@@ -65,7 +72,7 @@ class sandbox_value extends sandbox
      */
     function __construct(?string $api_json = null)
     {
-        $this->set_grp(new phrase_group_dsp());
+        $this->set_grp(new group());
         parent::__construct($api_json);
     }
 
@@ -74,7 +81,7 @@ class sandbox_value extends sandbox
      * set and get
      */
 
-    function set_grp(phrase_group_dsp $grp): void
+    function set_grp(group $grp): void
     {
         $this->grp = $grp;
     }
@@ -84,19 +91,53 @@ class sandbox_value extends sandbox
         $this->number = $number;
     }
 
+    function set_text_value(?string $text_value): void
+    {
+        $this->text_value = $text_value;
+    }
+
+    function set_time_value(?DateTime $time_value): void
+    {
+        $this->time_value = $time_value;
+    }
+
     function set_is_std(bool $is_std = true): void
     {
         $this->is_std = $is_std;
     }
 
-    function grp(): phrase_group_dsp
+    function grp(): group
     {
         return $this->grp;
+    }
+
+    // TODO review (split value objects?)
+    function value(): float|string|DateTime|null
+    {
+        if ($this->number() != null) {
+            return $this->number();
+        } elseif ($this->text_value() != null) {
+            return $this->text_value();
+        } elseif ($this->time_value() != null) {
+            return $this->time_value();
+        } else {
+            return null;
+        }
     }
 
     function number(): ?float
     {
         return $this->number;
+    }
+
+    function text_value(): ?string
+    {
+        return $this->text_value;
+    }
+
+    function time_value(): ?DateTime
+    {
+        return $this->time_value;
     }
 
     /**
@@ -108,9 +149,9 @@ class sandbox_value extends sandbox
     }
 
     /**
-     * @returns phrase_list_dsp the list of phrases as an object
+     * @returns phrase_list the list of phrases as an object
      */
-    function phr_lst(): phrase_list_dsp
+    function phr_lst(): phrase_list
     {
         return $this->grp()->phr_lst();
     }
@@ -121,9 +162,10 @@ class sandbox_value extends sandbox
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        $usr_msg = new user_message();
+        $usr_msg = parent::api_mapper($json_array);
+
         if (array_key_exists(json_fields::ID, $json_array)) {
             $this->set_id($json_array[json_fields::ID]);
         } else {
@@ -132,6 +174,11 @@ class sandbox_value extends sandbox
         }
         if (array_key_exists(json_fields::NUMBER, $json_array)) {
             $this->set_number($json_array[json_fields::NUMBER]);
+        } elseif (array_key_exists(json_fields::TEXT_VALUE, $json_array)) {
+            $this->set_text_value($json_array[json_fields::TEXT_VALUE]);
+        } elseif (array_key_exists(json_fields::TIME_VALUE, $json_array)) {
+            $this->set_time_value($json_array[json_fields::TIME_VALUE]);
+            // TODO add geo point
         } else {
             $this->set_number(null);
         }
@@ -140,9 +187,9 @@ class sandbox_value extends sandbox
         } else {
             $this->set_is_std();
         }
-        $this->set_grp(new phrase_group_dsp());
+        $this->set_grp(new group());
         if (array_key_exists(json_fields::PHRASES, $json_array)) {
-            $this->grp()->set_from_json_array($json_array[json_fields::PHRASES]);
+            $this->grp()->api_mapper($json_array[json_fields::PHRASES]);
         } else {
             $usr_msg->add_err('Mandatory field phrase group missing in API JSON ' . json_encode($json_array));
         }

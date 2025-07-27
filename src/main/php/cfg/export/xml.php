@@ -37,10 +37,12 @@
 
 namespace cfg\export;
 
-include_once MODEL_SANDBOX_PATH . 'user_service.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once EXPORT_PATH . 'xml_serializer.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'user_service.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::EXPORT . 'xml_serializer.php';
 
 use cfg\phrase\phrase_list;
 use cfg\sandbox\user_service;

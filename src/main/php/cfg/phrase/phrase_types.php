@@ -7,6 +7,7 @@
 
     TODO rename to phrase type
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -33,11 +34,13 @@
 
 namespace cfg\phrase;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
 
 use cfg\helper\type_list;
 use cfg\helper\type_object;

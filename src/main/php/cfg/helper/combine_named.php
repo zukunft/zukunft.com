@@ -34,17 +34,25 @@
 
 namespace cfg\helper;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_type.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once SHARED_PATH . 'library.php';
-include_once MODEL_DB_PATH . 'sql_where_type.php';
-include_once MODEL_HELPER_PATH . 'combine_object.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_where_type.php';
+include_once paths::MODEL_HELPER . 'combine_object.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_type;
+use cfg\user\user;
+use cfg\user\user_message;
 use cfg\verb\verb;
 use shared\library;
 
@@ -76,14 +84,7 @@ class combine_named extends combine_object
      */
     function reset(): void
     {
-        $this->set_obj_id(0);
-        $this->set_name('');
-        $this->set_description(null);
-        $this->set_type_id(null);
-        $this->set_share(null);
-        $this->set_protection(null);
-        // TODO review
-        $this->set_plural(null);
+        $this->obj?->reset();
     }
 
 
@@ -150,11 +151,12 @@ class combine_named extends combine_object
 
     /**
      * @param int|null $type_id the type id of the word, triple, formula or verb
-     * @return void
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message warning message for the user if the permissions are missing
      */
-    function set_type_id(?int $type_id): void
+    function set_type_id(?int $type_id, user $usr_req = new user()): user_message
     {
-        $this->obj()?->set_type_id($type_id);
+        return $this->obj()?->set_type_id($type_id, $usr_req);
     }
 
     /**
@@ -209,7 +211,15 @@ class combine_named extends combine_object
      */
     function is_excluded(): bool
     {
-        return $this->obj()?->excluded();
+        return $this->obj()?->is_excluded();
+    }
+
+    /**
+     * @return bool true if the excluded field is set
+     */
+    function is_exclusion_set(): bool
+    {
+        return $this->obj()->is_exclusion_set();
     }
 
     /**
@@ -283,7 +293,7 @@ class combine_named extends combine_object
                     $sql_fld .= $this->sql_when($sc, $fld_name, $tbl_chr);
                 } else {
                     if (count($fld) > 2) {
-                        if ($fld[2] == sql::FLD_CONST) {
+                        if ($fld[2] == sql_db::FLD_CONST) {
                             if ($fld_name == '') {
                                 $sql_fld .= "''";
                             } else {
@@ -306,7 +316,7 @@ class combine_named extends combine_object
                 }
                 if (count($fld) > 1) {
                     if (count($fld) > 2) {
-                        if ($fld[2] != sql::FLD_CONST) {
+                        if ($fld[2] != sql_db::FLD_CONST) {
                             $sql_fld .= ' ' . $fld[2] . ' ' . sql::AS . ' ' . $sc->name_sql_esc($fld[1]);
                         } else {
                             $sql_fld .= ' ' . sql::AS . ' ' . $sc->name_sql_esc($fld[1]);

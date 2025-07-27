@@ -34,8 +34,10 @@
 
 namespace html;
 
-include_once HTML_PATH . 'html_base.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::HTML . 'html_base.php';
+include_once paths::SHARED . 'library.php';
 
 use shared\library;
 
@@ -81,7 +83,7 @@ class display_list extends html_base
                 $result .= '</td><td>';
             }
             $result .= ' ';
-            $result .= \html\btn_del('Delete ' . $lib->str_left_of($this->id_field, "_id"), $this->script_name . '?id=' . $this->script_parameter . '&del=' . $entry->id);
+            $result .= \html\btn_del('Delete component', $this->script_name . '?id=' . $this->script_parameter . '&del=' . $entry->id);
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '</td></tr>';
             }

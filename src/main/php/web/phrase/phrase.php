@@ -32,63 +32,62 @@
 
 namespace html\phrase;
 
-include_once SANDBOX_PATH . 'combine_named.php';
-include_once API_SANDBOX_PATH . 'combine_object.php';
-include_once API_PHRASE_PATH . 'phrase.php';
-include_once WORD_PATH . 'word.php';
-include_once WORD_PATH . 'triple.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'combine_named.php';
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VERB . 'verb_list.php';
+//include_once html_paths::WORD . 'word.php';
+//include_once html_paths::WORD . 'word_list.php';
+include_once html_paths::WORD . 'triple.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'json_fields.php';
 
-
-use shared\api;
-use api\phrase\phrase as phrase_api;
-use api\sandbox\combine_object as combine_object_api;
-use cfg\verb\verb_list;
 use html\button;
 use html\html_base;
-use html\phrase\phrase_list as phrase_list_dsp;
 use html\rest_ctrl as api_dsp;
-use html\sandbox\combine_named as combine_named_dsp;
-use html\system\messages;
+use html\sandbox\combine_named;
 use html\user\user_message;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
+use html\verb\verb;
+use html\verb\verb_list;
+use html\word\triple;
+use html\word\word;
+use html\word\word_list;
 use shared\enum\foaf_direction;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
+use shared\types\verbs;
 
-class phrase extends combine_named_dsp
+class phrase extends combine_named
 {
 
     /*
-     * set and get
+     * construct and map
      */
-
-    /**
-     * set the vars of this phrase html display object bases on the api message
-     * @param string $json_api_msg an api json message as a string
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function set_from_json(string $json_api_msg): user_message
-    {
-        return $this->set_from_json_array(json_decode($json_api_msg, true));
-    }
 
     /**
      * set the vars of this phrase frontend object bases on the api json array
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
         $usr_msg = new user_message();
         if (array_key_exists(json_fields::OBJECT_CLASS, $json_array)) {
-            if ($json_array[json_fields::OBJECT_CLASS] == phrase_api::CLASS_WORD) {
-                $wrd_dsp = new word_dsp();
-                $wrd_dsp->set_from_json_array($json_array);
+            if ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
+                $wrd_dsp = new word();
+                $wrd_dsp->api_mapper($json_array);
                 $this->set_obj($wrd_dsp);
-            } elseif ($json_array[json_fields::OBJECT_CLASS] == phrase_api::CLASS_TRIPLE) {
-                $trp_dsp = new triple_dsp();
-                $trp_dsp->set_from_json_array($json_array);
+            } elseif ($json_array[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
+                $trp_dsp = new triple();
+                $trp_dsp->api_mapper($json_array);
                 $this->set_obj($trp_dsp);
                 // switch the phrase id to the object id
                 $this->set_id($trp_dsp->id());
@@ -101,10 +100,57 @@ class phrase extends combine_named_dsp
         return $usr_msg;
     }
 
-    function set_phrase_obj(word_dsp|triple_dsp|null $obj = null): void
+
+    /*
+     * api
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     */
+    function api_array(): array
     {
-        $this->obj = $obj;
+        $vars = array();
+        if ($this->is_word()) {
+            $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
+        } else {
+            $trp = $this->obj();
+            if ($trp != null) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
+                $vars[json_fields::FROM] = $trp->from()->id();
+                $vars[json_fields::VERB] = $trp->verb()->id();
+                $vars[json_fields::TO] = $trp->to()->id();
+            }
+        }
+        $vars[json_fields::ID] = $this->obj_id();
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::TYPE] = $this->type_id();
+        $vars[json_fields::PLURAL] = $this->plural();
+        // TODO add exclude field and move to a parent object?
+        if ($this->obj()?->share_id() != null) {
+            $vars[json_fields::SHARE] = $this->obj()?->share_id();
+        }
+        if ($this->obj()?->protection_id() != null) {
+            $vars[json_fields::PROTECTION] = $this->obj()?->protection_id();
+        }
+        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
+
+    /**
+     * set the vars of this phrase html display object bases on the api message
+     * @param string $json_api_msg an api json message as a string
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function set_from_json(string $json_api_msg): user_message
+    {
+        return $this->api_mapper(json_decode($json_api_msg, true));
+    }
+
+
+    /*
+     * set and get
+     */
 
     /**
      * set the object id based on the given phrase id
@@ -139,41 +185,31 @@ class phrase extends combine_named_dsp
         return $this->obj()?->id();
     }
 
-
-    /*
-     * interface
-     */
-
-    /**
-     * @return array the json message array to send the updated data to the backend
-     */
-    function api_array(): array
+    function verb(): ?verb
     {
-        $vars = array();
-        if ($this->is_word()) {
-            $vars[json_fields::OBJECT_CLASS] = phrase_api::CLASS_WORD;
+        if ($this->is_triple()) {
+            return $this->obj()->verb();
         } else {
-            $trp = $this->obj();
-            if ($trp != null) {
-                $vars[json_fields::OBJECT_CLASS] = phrase_api::CLASS_TRIPLE;
-                $vars[json_fields::FROM] = $trp->from()->id();
-                $vars[json_fields::VERB] = $trp->verb()->id();
-                $vars[json_fields::TO] = $trp->to()->id();
-            }
+            return null;
         }
-        $vars[json_fields::ID] = $this->obj_id();
-        $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
-        $vars[json_fields::TYPE] = $this->type_id();
-        $vars[json_fields::PLURAL] = $this->plural();
-        // TODO add exclude field and move to a parent object?
-        if ($this->obj()?->share_id != null) {
-            $vars[json_fields::SHARE] = $this->obj()?->share_id;
+    }
+
+    function from(): ?phrase
+    {
+        if ($this->is_triple()) {
+            return $this->obj()->from();
+        } else {
+            return null;
         }
-        if ($this->obj()?->protection_id != null) {
-            $vars[json_fields::PROTECTION] = $this->obj()?->protection_id;
+    }
+
+    function to(): ?phrase
+    {
+        if ($this->is_triple()) {
+            return $this->obj()->to();
+        } else {
+            return null;
         }
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
 
@@ -187,7 +223,7 @@ class phrase extends combine_named_dsp
     function is_word(): bool
     {
         if ($this->obj() != null) {
-            if ($this->obj()::class == word_dsp::class) {
+            if ($this->obj()::class == word::class) {
                 return true;
             } else {
                 return false;
@@ -195,6 +231,11 @@ class phrase extends combine_named_dsp
         } else {
             return false;
         }
+    }
+
+    function is_triple(): bool
+    {
+        return !$this->is_word();
     }
 
 
@@ -212,23 +253,23 @@ class phrase extends combine_named_dsp
 
 
     /*
-     * display
+     * base
      */
 
     /**
      * @returns string the html code to display with mouse over that shows the description
      */
-    function display(): string
+    function name_tip(): string
     {
-        return $this->obj()->display();
+        return $this->obj()->name_tip();
     }
 
     /**
      * @returns string the html code to display the phrase with reference links
      */
-    function display_linked(): string
+    function name_link(): string
     {
-        return $this->obj()->name();
+        return $this->obj()->name_link();
     }
 
     /**
@@ -268,14 +309,37 @@ class phrase extends combine_named_dsp
     {
         if ($this->is_word()) {
             $obj_name = api_dsp::WORD;
-            $ui_msg_id = messages::WORD_DEL;
+            $ui_msg_id = msg_id::WORD_DEL;
         } else {
             $obj_name = api_dsp::TRIPLE;
-            $ui_msg_id = messages::TRIPLE_DEL;
+            $ui_msg_id = msg_id::TRIPLE_DEL;
         }
         $url = (new html_base())->url($obj_name . api_dsp::REMOVE, $this->id(), $this->id());
         return (new button($url))->del($ui_msg_id);
     }
+
+
+    /*
+     * select
+     */
+
+    /**
+     * get the phrases that are related to this phrase be the verbs "is" of "can be"
+     * if a phrase list id given only this cache is used for the selection
+     * @param phrase_list|null $phr_lst_cac
+     * @return phrase_list
+     */
+    function is_or_can_be(phrase_list $phr_lst_cac = null): phrase_list
+    {
+        global $html_verbs;
+        $result = new phrase_list();
+        if ($phr_lst_cac != null) {
+            $result->merge($phr_lst_cac->parents($this, $html_verbs->get_by_code_id(verbs::IS)));
+            $result->merge($phr_lst_cac->parents($this, $html_verbs->get_by_code_id(verbs::CAN_BE)));
+        }
+        return $result;
+    }
+
 
     /*
      * to review
@@ -285,14 +349,14 @@ class phrase extends combine_named_dsp
      * create a selector that contains the words and triples
      * if one form contains more than one selector, $pos is used for identification
      *
-     * @param phrase_api $type is a word to preselect the list to only those phrases matching this type
+     * @param phrase $type is a word to preselect the list to only those phrases matching this type
      * @param string $form_name
      * @param int $pos
      * @param string $class
      * @param string $back
      * @return string
      */
-    function dsp_selector(phrase_api $type, string $form_name, int $pos, string $class, string $back = ''): string
+    function dsp_selector(phrase $type, string $form_name, int $pos, string $class, string $back = ''): string
     {
         // TODO include pattern in the call
         $pattern = '';
@@ -322,7 +386,7 @@ class phrase extends combine_named_dsp
 
     function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
     {
-        $phr_lst = new phrase_list_dsp();
+        $phr_lst = new phrase_list();
         if ($phr_lst->load_related($this, $direction, $link_types)) {
             return $phr_lst->dsp_graph($this, $back);
         } else {
@@ -331,9 +395,9 @@ class phrase extends combine_named_dsp
     }
 
     /**
-     * @return word_dsp the most relevant
+     * @return word the most relevant
      */
-    function main_word(): word_dsp
+    function main_word(): word
     {
         if ($this->is_word()) {
             return $this->obj()->word();
@@ -351,4 +415,52 @@ class phrase extends combine_named_dsp
         return $wrd->btn_add($back);
     }
 
+    /**
+     * add or select a word of triple and create an "is a" triple linked to this phrase
+     * html code for a button to add a new phrase similar to this phrase
+     * @return string the html to add the word or triple
+     **/
+    function button_add_triple($back): string
+    {
+        $wrd = new word();
+        return $wrd->btn_add($back);
+    }
+
+    /**
+     * to enable the recursive function in work_link
+     * TODO add a list of triple already split to detect endless loops
+     */
+    function wrd_lst(): word_list
+    {
+        $wrd_lst = new word_list();
+        if (!$this->is_word()) {
+            $trp = $this->obj();
+            $sub_wrd_lst = $trp->wrd_lst();
+            foreach ($sub_wrd_lst->lst() as $wrd) {
+                $wrd_lst->add($wrd);
+            }
+        } else {
+            $wrd = $this->obj();
+            $wrd_lst->add($wrd);
+        }
+        return $wrd_lst;
+    }
+
+    function dsp_tbl(int $intent = 0): string
+    {
+        $result = '';
+        if ($this != null) {
+            if ($this->obj != null) {
+                // the function dsp_tbl should exist for words and triples
+                $dsp_obj = $this->obj();
+                if ($this->is_word() == word::class) {
+                    $result = $dsp_obj->td('', '', $intent);
+                } else {
+                    $result = $dsp_obj->tr('', '', $intent);
+                }
+            }
+        }
+        log_debug('for ' . $this->dsp_id());
+        return $result;
+    }
 }

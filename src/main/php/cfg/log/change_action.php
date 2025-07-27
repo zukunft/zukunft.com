@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/log/change_action.php - the change type done by a user
+    model/log/change_action.php - the change type done by a user
     -------------------------
 
 
@@ -32,29 +32,30 @@
 
 namespace cfg\log;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\helper\type_object;
+use shared\enum\change_actions;
 
 class change_action extends type_object
 {
 
-    // the basic change types that are logged
-    const ADD = 'add';
-    const UPDATE = 'update';
-    const DELETE = 'del';
-
     // list of all log actions allowed in this program version
     const ACTION_LIST = array(
-        self::ADD,
-        self::UPDATE,
-        self::DELETE
+        change_actions::ADD,
+        change_actions::UPDATE,
+        change_actions::DELETE
     );
 
 
@@ -72,8 +73,8 @@ class change_action extends type_object
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
     );
     const FLD_LST_ALL = array(
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, '', '', ''],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, '', '', ''],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
 
 }

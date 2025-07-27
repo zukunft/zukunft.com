@@ -13,6 +13,9 @@
     table that can be in memory for the pod
     to select the tables where the value might be stored
 
+    The main sections of this object are
+    - info:              functions to make code easier to read
+
 
     This file is part of zukunft.com - calc with words
 
@@ -31,7 +34,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2023 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -40,40 +43,43 @@
 
 namespace cfg\value;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
-include_once API_VALUE_PATH . 'value_list.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_list.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_GROUP_PATH . 'group_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'word_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
+use cfg\const\paths;
 
+include_once paths::MODEL_SANDBOX . 'sandbox_value_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_list.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'value_type_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'value_types.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
+use cfg\db\sql;
 use cfg\db\sql_field_list;
 use cfg\db\sql_type_list;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_value_list;
-use cfg\user\user;
-use shared\json_fields;
-use shared\types\protection_type as protect_type_shared;
-use shared\types\share_type as share_type_shared;
-use api\value\value_list as value_list_api;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
@@ -82,12 +88,23 @@ use cfg\db\sql_type;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\group_list;
+use cfg\helper\data_object;
+use cfg\helper\value_type_list;
+use cfg\import\import;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\ref\source;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_value_list;
+use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\word;
 use cfg\word\word_list;
+use shared\enum\messages as msg_id;
+use shared\enum\value_types;
+use shared\types\protection_type as protect_type_shared;
+use shared\types\share_type as share_type_shared;
+use shared\json_fields;
 use shared\library;
 
 class value_list extends sandbox_value_list
@@ -110,12 +127,31 @@ class value_list extends sandbox_value_list
         $result = false;
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
+                // TODO remove temp
+                if (array_key_exists(group::FLD_ID, $db_row)) {
+                    if ($db_row[group::FLD_ID] == '....0/-....2t+....39+....3o+....3p+......+......+......+......+......+......+......+......+......+......+......+') {
+                        log_info('got value');
+                    }
+                } else {
+                    log_info('group id missing');
+                }
                 $excluded = null;
-                if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
-                    $excluded = $db_row[sandbox::FLD_EXCLUDED];
+                if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
+                    $excluded = $db_row[sql_db::FLD_EXCLUDED];
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
-                    $obj_to_add = new value($this->user());
+                    if (array_key_exists(value_db::FLD_VALUE, $db_row)) {
+                        $obj_to_add = new value($this->user());
+                    } elseif (array_key_exists(value_text::FLD_VALUE, $db_row)) {
+                        $obj_to_add = new value_text($this->user());
+                    } elseif (array_key_exists(value_time::FLD_VALUE, $db_row)) {
+                        $obj_to_add = new value_time($this->user());
+                    } elseif (array_key_exists(value_geo::FLD_VALUE, $db_row)) {
+                        $obj_to_add = new value_geo($this->user());
+                    } else {
+                        $obj_to_add = new value($this->user());
+                        log_err('Value type of value db_row cannot be detected');
+                    }
                     $obj_to_add->row_mapper_sandbox_multi($db_row, $ext);
                     $this->add_obj($obj_to_add);
                     $result = true;
@@ -136,10 +172,14 @@ class value_list extends sandbox_value_list
 
         foreach ($this->lst() as $val) {
             $phr_lst = $val->phrase_list();
-            $val->set_grp($phr_lst->get_grp_id(false));
-            //$usr_msg->add_message('');
+            if ($phr_lst->is_empty()) {
+                log_err('phrase list is empty for value ' . $val->dsp_id());
+            } else {
+                $val->set_grp($phr_lst->get_grp_id(false));
+                //$usr_msg->add_message_text('');
+            }
         }
-        return new user_message();
+        return $usr_msg;
 
     }
 
@@ -154,26 +194,28 @@ class value_list extends sandbox_value_list
 
     }
 
+
     /*
-     * cast
+     * select
      */
 
     /**
-     * @return value_list_api frontend API object filled with the relevant data of this object
+     * get the first value of the list that is related to all given phrase names
+     * TODO use a memory db
+     * @param array $names list of phrase names
+     * @return value_base|null this first matching value or null if no value is found
      */
-    function api_obj(): value_list_api
+    function get_by_names(array $names): ?value_base
     {
-        $api_obj = new value_list_api();
-        $api_obj->set_lst($this->api_lst());
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
+        $result = null;
+        foreach ($this->lst() as $val) {
+            if ($result == null) {
+                if ($val->match_all($names)) {
+                    $result = $val;
+                }
+            }
+        }
+        return $result;
     }
 
 
@@ -225,19 +267,31 @@ class value_list extends sandbox_value_list
         global $db_con;
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_by_phr($sc, $phr, $limit, $page);
-        return $this->load($qp);
+        if ($this->load($qp)) {
+            // load additional the text config values
+            $sc->reset();
+            $qp = $this->load_sql_by_phr($sc, $phr, $limit, $page, value_types::TEXT);
+            return $this->load($qp);
+        } else {
+            return false;
+        }
     }
 
     /**
      * load a list of values by the given value ids
      *
      * @param array $val_ids an array of value ids which should be loaded
+     * @param value_types|null $val_typ if not null load only the values of this type
      * @return bool true if at least one value found
      */
-    function load_by_ids(array $val_ids): bool
+    function load_by_ids(array $val_ids = [], value_types|null $val_typ = null): bool
     {
         global $db_con;
-        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $val_ids);
+        if (count($val_ids) === 0) {
+            $val_ids = $this->ids();
+        }
+        $sc = $db_con->sql_creator();
+        $qp = $this->load_sql_by_ids($sc, $val_ids, 0, 0, false, $val_typ);
         return $this->load($qp);
     }
 
@@ -247,11 +301,12 @@ class value_list extends sandbox_value_list
      * load a list of values by the given value ids
      *
      * @param string|int $id the value / group id
+     * @param value_types|null $val_typ if not null load only the types of this list
      * @return bool true if at least one value found
      */
-    function load_by_id(string|int $id): bool
+    function load_by_id(string|int $id, value_types|null $val_typ = null): bool
     {
-        return $this->load_by_ids([$id]);
+        return $this->load_by_ids([$id], $val_typ);
     }
 
     // internal load
@@ -263,7 +318,11 @@ class value_list extends sandbox_value_list
      * @param sql_db|null $db_con_given the database connection as a parameter for the initial load of the system views
      * @return bool true if at least one object has been loaded
      */
-    protected function load(sql_par $qp, bool $load_all = false, ?sql_db $db_con_given = null): bool
+    protected function load(
+        sql_par $qp,
+        bool    $load_all = false,
+        ?sql_db $db_con_given = null
+    ): bool
     {
 
         global $db_con;
@@ -320,15 +379,27 @@ class value_list extends sandbox_value_list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr(
-        sql_creator $sc,
-        phrase      $phr,
-        int         $limit = 0,
-        int         $page = 0
+        sql_creator      $sc,
+        phrase           $phr,
+        int              $limit = 0,
+        int              $page = 0,
+        value_types|null $val_typ = null
     ): sql_par
     {
         $lib = new library();
-        $qp = new sql_par(value::class);
-        $qp->name = $lib->class_to_name(value_list::class) . '_by_phr';
+
+        // set the default value type
+        if ($val_typ === null) {
+            $val_typ = value_types::NUMBER;
+        }
+        $sc_par_lst = new sql_type_list();
+        $sc_par_lst->add($val_typ->sql_type());
+        $val = $sc_par_lst->value_object($this->user());
+        $val_typ_lst = new value_type_list([$val_typ]);
+        $val_ext = $val_typ_lst->query_extension();
+
+        $qp = new sql_par($val::class);
+        $qp->name = $lib->class_to_name(value_list::class) . $val_ext . '_by_phr';
         $par_types = array();
 
         // prepare adding the parameters in order of expected usage
@@ -357,10 +428,10 @@ class value_list extends sandbox_value_list
         $par_lst = clone $sc->par_list();
 
         // loop over the possible tables where the value might be stored in this pod
-        foreach (value::TBL_LIST as $tbl_typ) {
+        foreach (value_db::TBL_LIST as $tbl_typ) {
             // reset but keep the parameter list
             $sc->reset();
-            $qp_tbl = $this->load_sql_by_phr_single($sc, $pos_phr, $pos_grp, $pos_usr, $tbl_typ, $par_lst);
+            $qp_tbl = $this->load_sql_by_phr_single($sc, $pos_phr, $pos_grp, $pos_usr, $tbl_typ, $par_lst, $sc_par_lst);
             if ($sc->db_type() != sql_db::MYSQL) {
                 $qp->merge($qp_tbl, true);
             } else {
@@ -398,20 +469,21 @@ class value_list extends sandbox_value_list
         sql_type_list $sc_par_lst
     ): sql_par
     {
-        $qp = new sql_par(value::class, new sql_type_list([]), $sc_par_lst->ext_ex_user());
+        $val = $sc_par_lst->value_object($this->user());
+
+        $qp = new sql_par($val::class, new sql_type_list(), $sc_par_lst->ext_ex_user());
         $qp->name .= $query_name;
 
-        $sc->set_class(value::class, $sc_par_lst);
+        $sc->set_class($val::class, $sc_par_lst);
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
-        $val = new value($this->user());
         $sc->set_id_field($val->id_field());
         $sc->set_name($qp->name);
 
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(value::FLD_NAMES);
-        //$sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
-        //$sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
-        //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word::FLD_VALUES) . ' DESC, ' . word::FLD_NAME);
+        $sc->set_fields(value_db::FLD_NAMES);
+        //$sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
+        //$sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
+        //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(word_db::FLD_VALUES) . ' DESC, ' . word_db::FLD_NAME);
         return $qp;
     }
 
@@ -501,11 +573,17 @@ class value_list extends sandbox_value_list
      * create a query parameter object with a unique name
      *
      * @param array $ids array with the ids used to select the result
-     * @param string $query_name the "by" name extension to make the query name unique e.g. phr_lst
+     * @param string $select_ext the "by" name extension to make the query name unique e.g. phr_lst
+     * @param string $type_ext the value type list name extension to make the query name unique e.g. phr_lst
      * @param bool $count_phrases true if the number of phrases are relevant for the query name
      * @return sql_par
      */
-    private function load_sql_init_query_par(array $ids, string $query_name, bool $count_phrases = true): sql_par
+    private function load_sql_init_query_par(
+        array  $ids,
+        string $select_ext,
+        string $type_ext = '',
+        bool   $count_phrases = true
+    ): sql_par
     {
         $qp = new sql_par(value::class);
         $lib = new library();
@@ -515,13 +593,17 @@ class value_list extends sandbox_value_list
             $tbl_ext_uni[] = $tbl_typ->extension();
         }
         $phr_id_uni = $this->phrase_id_list_unique($ids);
+        $count_ext = sql::NAME_SEP . sql::NAME_PHRASE_COUNT;
         if ($count_phrases) {
-            $count_ext = '_r' . count($phr_id_uni);
+            $count_ext .= count($phr_id_uni);
         } else {
-            $count_ext = '_r' . count($ids);
+            $count_ext .= count($ids);
         }
-        $qp->name = $lib->class_to_name(value_list::class) .
-            '_by_' . $query_name . implode("", $tbl_ext_uni) . $count_ext;
+        $qp->name = $lib->class_to_name(value_list::class)
+            . $type_ext . sql::NAME_SEP
+            . sql::NAME_BY . sql::NAME_SEP
+            . $select_ext . implode("", $tbl_ext_uni)
+            . $count_ext;
         return $qp;
     }
 
@@ -531,25 +613,43 @@ class value_list extends sandbox_value_list
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $ids value ids that should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @param value_types|null $val_typ if not null load only the types of this list
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $ids, bool $usr_tbl = false): sql_par
+    function load_sql_by_ids(
+        sql_creator      $sc,
+        array            $ids,
+        int              $limit = 0,
+        int              $offset = 0,
+        bool             $usr_tbl = false,
+        value_types|null $val_typ = null
+    ): sql_par
     {
         /*
          * 1. collect the potential source tables (maybe all)
          * 2. set the names based on the tables and
          */
 
+        // set the default value type
+        if ($val_typ === null) {
+            $val_typ = value_types::NUMBER;
+        }
+
         // get the matrix of the potential tables, the number of phrases of the table and the phrase id list
         $tbl_id_matrix = $this->extension_id_matrix($ids);
-        $qp = $this->load_sql_init_query_par($ids, 'ids', false);
+        $val_typ_lst = new value_type_list([$val_typ]);
+        $val_ext = $val_typ_lst->query_extension();
+        $qp = $this->load_sql_init_query_par($ids, 'ids', $val_ext, false);
 
         $par_offset = 0;
         $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
-            $sc_par_lst = new sql_type_list([]);
+            $sc_par_lst = new sql_type_list();
             $tbl_typ = array_shift($matrix_row);
             $sc_par_lst->add($tbl_typ);
+            $sc_par_lst->add($val_typ->sql_type());
             // TODO add the union query creation for the other table types
             // combine the select statements with and instead of union if possible
             if ($tbl_typ == sql_type::PRIME) {
@@ -561,12 +661,19 @@ class value_list extends sandbox_value_list
                     $sc_par_lst->add(sql_type::USER);
                 }
                 $qp_tbl = $this->load_sql_multi($sc, '', $sc_par_lst);
+                $txt_fld_lst = $sc_par_lst->txt_user_fields();
+                $num_fld_lst = $sc_par_lst->num_user_fields();
+                $geo_fld_lst = $sc_par_lst->geo_user_fields();
                 if ($par_offset == 0) {
-                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+                    $sc->set_usr_fields($txt_fld_lst);
+                    $sc->set_usr_num_fields($num_fld_lst);
+                    $sc->set_usr_geo_fields($geo_fld_lst);
                 } else {
-                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR, false);
+                    $sc->set_usr_fields($txt_fld_lst, false);
+                    $sc->set_usr_num_fields($num_fld_lst, false);
+                    $sc->set_usr_geo_fields($geo_fld_lst, false);
                 }
-                $sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
+                $sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
                 for ($pos = 1; $pos <= $max_row_ids; $pos++) {
                     // the array of the phrase ids starts with 0 whereas the phrase id fields start with 1
                     $id_pos = $pos - 1;
@@ -586,7 +693,7 @@ class value_list extends sandbox_value_list
                 $par_offset = $par_offset + count($qp_tbl->par);
                 $par_types = array_merge($par_types, $sc->get_par_types());
 
-                $qp->merge($qp_tbl);
+                $qp->merge($qp_tbl, false, $sc_par_lst);
             }
         }
 
@@ -613,7 +720,7 @@ class value_list extends sandbox_value_list
         $par_offset = 0;
         $par_types = array();
         foreach ($tbl_id_matrix as $matrix_row) {
-            $sc_par_lst = new sql_type_list([]);
+            $sc_par_lst = new sql_type_list();
             $tbl_typ = array_shift($matrix_row);
             $sc_par_lst->add($tbl_typ);
             if ($tbl_typ == sql_type::PRIME) {
@@ -626,11 +733,11 @@ class value_list extends sandbox_value_list
                 }
                 $qp_tbl = $this->load_sql_multi($sc, 'grp_lst', $sc_par_lst);
                 if ($par_offset == 0) {
-                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR);
+                    $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
                 } else {
-                    $sc->set_usr_num_fields(value::FLD_NAMES_NUM_USR, false);
+                    $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR, false);
                 }
-                $sc->set_usr_only_fields(value::FLD_NAMES_USR_ONLY);
+                $sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
                 for ($pos = 1; $pos <= $max_row_ids; $pos++) {
                     // the array of the phrase ids starts with o whereas the phrase id fields start with 1
                     $id_pos = $pos - 1;
@@ -665,6 +772,7 @@ class value_list extends sandbox_value_list
      * @param int $usr_pos the array key of the query parameter for the user id
      * @param array $sc_par_lst the parameters for the sql statement creation
      * @param sql_field_list $par_lst list of parameters use for all table types
+     * @param sql_type_list $sc_typ_lst
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     function load_sql_by_phr_single(
@@ -673,12 +781,20 @@ class value_list extends sandbox_value_list
         int            $grp_pos,
         int            $usr_pos,
         array          $sc_par_lst,
-        sql_field_list $par_lst
+        sql_field_list $par_lst,
+        sql_type_list  $sc_typ_lst
     ): sql_par
     {
+        $val = $sc_typ_lst->value_object($this->user());
+
         $qp = $this->load_sql_init(
-            $sc, value::class, 'phr',
-            $sc_par_lst, $par_lst, $usr_pos);
+            $sc,
+            $val::class,
+            'phr',
+            $sc_par_lst,
+            $par_lst,
+            $sc_typ_lst,
+            $usr_pos);
         if ($this->is_prime($sc_par_lst)) {
             for ($i = 1; $i <= group_id::PRIME_PHRASES_STD; $i++) {
                 $sc->add_where_no_par('',
@@ -711,35 +827,30 @@ class value_list extends sandbox_value_list
      */
 
     /**
-     * add one value to the value list, but only if it is not yet part of the list
-     * @param value|null $val_to_add the value object to be added to the list
-     * @param bool $allow_duplicates true if e.g. the group id is not yet set but the value should nevertheless be added
-     * @returns bool true the value has been added
+     * add a value to the list without checking for duplicates
+     * @param value_base|null $val_to_add the value object to be added to the list
      */
-    function add(?value $val_to_add, bool $allow_duplicates = false): bool
+    function add_value_direct(?value_base $val_to_add): void
     {
-        $result = false;
         // check parameters
         if ($val_to_add != null) {
-            if (get_class($val_to_add) <> value::class) {
-                log_err("Object to add must be of type value, but it is " . get_class($val_to_add), "value_list->add");
-            } else {
-                if ($allow_duplicates) {
-                    parent::add_obj($val_to_add, $allow_duplicates);
-                } else {
-                    if ($val_to_add->is_id_set() or $val_to_add->grp->name() != '') {
-                        if (count($this->id_lst()) > 0) {
-                            if (!in_array($val_to_add->id(), $this->id_lst())) {
-                                parent::add_obj($val_to_add);
-                                $result = true;
-                            }
-                        } else {
-                            parent::add_obj($val_to_add);
-                            $result = true;
-                        }
-                    }
-                }
-            }
+            $lst = $this->lst();
+            $lst[] = $val_to_add;
+            $this->set_lst($lst);
+        }
+    }
+
+    /**
+     * remove a value from the list
+     * @param value|null $val the value that should be removed from this list
+     * @return bool true if the value has been removed
+     */
+    function remove(?value $val): bool
+    {
+        $result = false;
+        if ($this->get($val->id() != null)) {
+            $this->unset($val->id());
+            $result = true;
         }
         return $result;
     }
@@ -753,10 +864,17 @@ class value_list extends sandbox_value_list
      * import a value from an external object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         global $shr_typ_cac;
         global $ptc_typ_cac;
@@ -779,23 +897,26 @@ class value_list extends sandbox_value_list
             if ($key == json_fields::CONTEXT) {
                 $phr_lst = new phrase_list($this->user());
                 $usr_msg->add($phr_lst->import_lst($value, $test_obj));
-                $val->grp = $phr_lst->get_grp_id($do_save);
+                $val->set_grp($phr_lst->get_grp_id($do_save));
             }
 
             if ($key == json_fields::TIMESTAMP) {
                 if (strtotime($value)) {
                     $val->time_stamp = $lib->get_datetime($value, $val->dsp_id(), 'JSON import');
                 } else {
-                    $usr_msg->add_message('Cannot add timestamp "' . $value . '" when importing ' . $val->dsp_id());
+                    $usr_msg->add_id_with_vars(msg_id::CANNOT_ADD_TIMESTAMP, [
+                        msg_id::VAR_VALUE => $value,
+                        msg_id::VAR_ID => $val->dsp_id()
+                    ]);
                 }
             }
 
             if ($key == json_fields::SHARE) {
-                $val->share_id = $shr_typ_cac->id($value);
+                $val->set_share_id($shr_typ_cac->id($value));
             }
 
             if ($key == json_fields::PROTECTION) {
-                $val->protection_id = $ptc_typ_cac->id($value);
+                $val->set_protection_id($ptc_typ_cac->id($value));
             }
 
             if ($key == json_fields::SOURCE_NAME) {
@@ -865,7 +986,7 @@ class value_list extends sandbox_value_list
         }
         $phr_lst_to_add->add($val_phr);
         $val_to_add->set_number($val_number);
-        $val_to_add->grp = $phr_lst_to_add->get_grp_id($do_save);
+        $val_to_add->set_grp($phr_lst_to_add->get_grp_id($do_save));
         if ($test_obj) {
             $val_to_add->set_id($test_obj->seq_id());
         } else {
@@ -913,12 +1034,12 @@ class value_list extends sandbox_value_list
             }
 
             // add the share type
-            if ($val0->share_id > 0 and $val0->share_id <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
+            if ($val0->share_id() > 0 and $val0->share_id() <> $shr_typ_cac->id(share_type_shared::PUBLIC)) {
                 $vars[json_fields::SHARE] = $val0->share_type_code_id();
             }
 
             // add the protection type
-            if ($val0->protection_id > 0 and $val0->protection_id <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
+            if ($val0->protection_id() > 0 and $val0->protection_id() <> $ptc_typ_cac->id(protect_type_shared::NO_PROTECT)) {
                 $vars[json_fields::PROTECTION] = $val0->protection_type_code_id();
             }
 
@@ -985,7 +1106,7 @@ class value_list extends sandbox_value_list
     }
 
     /**
-     * @return phrase_list  list with all unique phrase including the time phrase
+     * @return phrase_list list with all unique phrase including the time phrase
      */
     function phr_lst_all(): phrase_list
     {
@@ -1062,22 +1183,13 @@ class value_list extends sandbox_value_list
         return $result;
     }
 
-    /**
-     * @return array with the sorted value ids
-     */
-    function id_lst(): array
+    function fill_phrase_ids_by_names(phrase_list $phr_lst): user_message
     {
-        $lst = array();
-        if ($this->count() > 0) {
-            foreach ($this->lst() as $val) {
-                // use only valid ids
-                if ($val->id() <> 0) {
-                    $lst[] = $val->id();
-                }
-            }
+        $usr_msg = new user_message();
+        foreach ($this->lst() as $val) {
+            $usr_msg->add($val->set_group_id_by_phrase_list($phr_lst));
         }
-        asort($lst);
-        return $lst;
+        return $usr_msg;
     }
 
 
@@ -1086,22 +1198,26 @@ class value_list extends sandbox_value_list
     */
 
     /**
+     * @param phrase_list|null $time_lst list of time phrases to filter only by these times
      * @returns value_list that contains only values that match the time word list
      */
-    function filter_by_time($time_lst): value_list
+    function filter_by_time(?phrase_list $time_lst): value_list
     {
         log_debug();
         $lib = new library();
         $val_lst = array();
         foreach ($this->lst() as $val) {
             // only include time specific value
-            if ($val->time_id > 0) {
-                // only include values within the specific time periods
-                if (in_array($val->time_id, $time_lst->ids)) {
-                    $val_lst[] = $val;
-                    log_debug('include ' . $val->name());
-                } else {
-                    log_debug('excluded ' . $val->name() . ' because outside the specified time periods');
+            $time_list = $val->phrase_list()->time_list();
+            if ($time_list->count() > 0) {
+                foreach ($time_list->lst() as $phr) {
+                    // only include values within the specific time periods
+                    if (in_array($phr->id(), $time_lst->ids())) {
+                        $val_lst[] = $val;
+                        log_debug('include ' . $val->name());
+                    } else {
+                        log_debug('excluded ' . $val->name() . ' because outside the specified time periods');
+                    }
                 }
             } else {
                 log_debug('excluded ' . $val->name() . ' because this is not time specific');
@@ -1115,9 +1231,9 @@ class value_list extends sandbox_value_list
     }
 
     /**
-     * return a value list object that contains only values that match at least one phrase from the phrase list
+     * @returns value_list that contains only values that match at least one phrase from the phrase list
      */
-    function filter_by_phrase_lst($phr_lst): value_list
+    function filter_by_phrase_lst(phrase_list $phr_lst): value_list
     {
         $lib = new library();
         log_debug($lib->dsp_count($this->lst()) . ' values by ' . $phr_lst->name());
@@ -1150,6 +1266,19 @@ class value_list extends sandbox_value_list
 
         log_debug($lib->dsp_count($this->lst()));
         return $this;
+    }
+
+    /**
+     * select only the values
+     *
+     * @param phrase $phr
+     * @return $this
+     */
+    function filter_by_phrase(phrase $phr): value_list
+    {
+        $phr_lst = new phrase_list($this->user());
+        $phr_lst->add($phr);
+        return $this->filter_by_phrase_lst($phr_lst);
     }
 
     /**
@@ -1194,45 +1323,20 @@ class value_list extends sandbox_value_list
      * best matching means that all words from word_ids must be matching and the least additional words, because this would be a more specific value
      * used by value_list_dsp->dsp_table
      */
-    function get_by_grp($grp, $time)
+    function get_by_grp(group $grp)
     {
-        log_debug("value_list->get_by_grp " . $grp->auto_name . ".");
 
         $found = false;
         $result = null;
-        $row = 0;
         foreach ($this->lst() as $val) {
             if (!$found) {
-                // show only a few debug messages for a useful result
-                if ($row < 6) {
-                    log_debug("value_list->get_by_grp check if " . $val->grp_id . " = " . $grp->id() . " and " . $val->time_id . " = " . $time->id() . ".");
-                }
-                if ($val->grp_id == $grp->id
-                    and $val->time_id == $time->id) {
+                if ($val->grp()->id() == $grp->id()) {
                     $found = true;
                     $result = $val;
-                } else {
-                    if (!isset($val->grp)) {
-                        log_debug("load group");
-                        $val->load_phrases();
-                    }
-                    if (isset($val->grp)) {
-                        if ($row < 6) {
-                            log_debug('check if all of ' . $grp->name() . ' are in ' . $val->grp->name() . ' and value should be used');
-                        }
-                        if ($val->grp->has_all_phrases_of($grp)
-                            and $val->time_id == $time->id) {
-                            log_debug('all of ' . $grp->name() . ' are in ' . $val->grp->name() . ' so value is used');
-                            $found = true;
-                            $result = $val;
-                        }
-                    }
                 }
             }
-            $row++;
         }
 
-        log_debug("done " . $result->number);
         return $result;
     }
 
@@ -1244,6 +1348,22 @@ class value_list extends sandbox_value_list
         $result = false;
         if ($this->count() > 0) {
             $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * get the values missing in the given list
+     * @param value_list $val_lst
+     * @return value_list
+     */
+    function diff(value_list $val_lst): value_list
+    {
+        $result = new value_list($this->user());
+        foreach ($this->lst() as $val) {
+            if ($val_lst->get_by_grp($val->grp()) == null) {
+                $result->add($val);
+            }
         }
         return $result;
     }
@@ -1312,7 +1432,7 @@ class value_list extends sandbox_value_list
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {
             $val = new value($this->user());
-            $val->load_by_id($db_val[value::FLD_ID]);
+            $val->load_by_id($db_val[value_db::FLD_ID]);
             if (!$val->check()) {
                 $result = false;
             }
@@ -1333,32 +1453,52 @@ class value_list extends sandbox_value_list
      * save
      */
 
-    function save(): user_message
+    function save(import $imp, float $est_per_sec = 0.0): user_message
     {
         $usr_msg = new user_message();
 
-        // if the group id is not yet set
-        $this->set_grp_ids();
+        $lib = new library();
+        $name = $lib->class_to_table(value::class);
 
-        // load the values already in the database
-        $grp_lst = $this->grp_ids();
-        $db_lst = new value_list($this->user());
-        $db_lst->load_by_ids($grp_lst->ids());
+        if ($this->is_empty()) {
+            log_info('no values to save');
+        } else {
+            // if the group id is not yet set
+            $imp->step_start(msg_id::PREPARE, value::class);
+            $this->set_grp_ids();
 
-        // insert the new values
-        foreach ($this->lst() as $val) {
-            if ($val->number() == null) {
-                log_warning('numeric value missing fpr ' . $val->dsp_id());
-            } else {
-                $usr_msg->add($val->save());
+            // load the values already in the database
+            $grp_lst = $this->grp_ids();
+            $db_lst = new value_list($this->user());
+            foreach (value_types::cases() as $val_typ) {
+                $db_lst->load_by_ids($grp_lst->ids(), $val_typ);
             }
+            $imp->step_end($db_lst->count());
+
+            // insert the new values
+            $i = 0;
+            $imp->step_start(msg_id::SAVE, value::class);
+            foreach ($this->lst() as $val) {
+                if ($val->value() === null) {
+                    $usr_msg->add_id_with_vars(msg_id::NULL_VALUE_NOT_SAVED, [msg_id::VAR_ID => $val->dsp_id()]);
+                } else {
+                    if ($val->id() == 0) {
+                        $usr_msg->add_id_with_vars(msg_id::CANNOT_SAVE_ZERO_ID, [msg_id::VAR_ID => $val->dsp_id()]);
+                    } else {
+                        $usr_msg->add($val->save());
+                    }
+                }
+                $i++;
+                $imp->display_progress($i, $est_per_sec, $val->dsp_id());
+            }
+            $imp->step_end($i);
+
+            // update the existing values
+
+            // TODO loop over the values and check if all needed functions exist
+            //      create the missing functions
+            //      create blocks of update function calls
         }
-
-        // update the existing values
-
-        // TODO loop over the values and check if all needed functions exist
-        //      create the missing functions
-        //      create blocks of update function calls
 
         return $usr_msg;
     }

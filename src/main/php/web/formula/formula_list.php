@@ -31,11 +31,18 @@
 
 namespace html\formula;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::USER . 'user_message.php';
 
 use html\html_base;
 use html\sandbox\list_dsp;
 use html\formula\formula as formula_dsp;
+use html\styles;
 use html\user\user_message;
 
 class formula_list extends list_dsp
@@ -50,23 +57,9 @@ class formula_list extends list_dsp
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new formula_dsp());
-    }
-
-
-    /*
-     * modify
-     */
-
-    /**
-     * add a formula to the list
-     * @returns bool true if the formula has been added
-     */
-    function add(formula_dsp $wrd): bool
-    {
-        return parent::add_obj($wrd);
+        return parent::api_mapper_list($json_array, new formula_dsp());
     }
 
 
@@ -78,11 +71,11 @@ class formula_list extends list_dsp
      * @return string with a list of the formula names with html links
      * ex. names_linked
      */
-    function display(): string
+    function name_tip(): string
     {
         $names = array();
-        foreach ($this->lst as $frm) {
-            $names[] = $frm->display();
+        foreach ($this->lst() as $frm) {
+            $names[] = $frm->name_tip();
         }
         return implode(', ', $names);
     }
@@ -92,20 +85,20 @@ class formula_list extends list_dsp
      * @return string with a list of the formula names with html links
      * ex. names_linked
      */
-    function display_linked(string $back = ''): string
+    function name_link(string $back = ''): string
     {
-        return implode(', ', $this->names_linked($back));
+        return implode(', ', $this->names_link($back));
     }
 
     /**
      * @param string $back the back trace url for the undo functionality
      * @return array with a list of the formula names with html links
      */
-    function names_linked(string $back = ''): array
+    private function names_link(string $back = ''): array
     {
         $result = array();
-        foreach ($this->lst as $frm) {
-            $result[] = $frm->display_linked($back);
+        foreach ($this->lst() as $frm) {
+            $result[] = $frm->name_link($back);
         }
         return $result;
     }
@@ -121,11 +114,60 @@ class formula_list extends list_dsp
         $cols = '';
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             $lnk = $wrd->dsp_obj()->display_linked($back);
             $cols .= $html->td($lnk);
         }
-        return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
+        return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);
+    }
+
+    /**
+     * lists all formulas with results related to a word
+     */
+    function display_old($type = 'short'): string
+    {
+        log_debug('formula_list->display ' . $this->dsp_id());
+        $result = '';
+        $back = '';
+
+        // list all related formula results
+        if ($this->lst() != null) {
+            // TODO add usort to base_list
+            $lst = $this->lst();
+            usort($lst, array(formula::class, "cmp"));
+            $this->set_lst($lst);
+            if ($this->lst() != null) {
+                foreach ($this->lst() as $frm) {
+                    // formatting should be moved
+                    //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
+                    //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($back));
+                    $frm_dsp = $frm->dsp_obj_old();
+                    $frm_html = new formula_dsp($frm->api_json());
+                    $result = '';
+                    if ($frm->name_wrd != null) {
+                        $result = $frm_dsp->dsp_result($frm->name_wrd->phrase(), $back);
+                    }
+                    // if the result is empty use the id to be able to select the formula
+                    if ($result == '') {
+                        $result .= $frm_dsp->id();
+                    } else {
+                        $result .= ' value ' . $result;
+                    }
+                    $result .= ' ' . $frm_html->edit_link($back);
+                    if ($type == 'short') {
+                        $result .= ' ' . $frm_dsp->btn_del($back);
+                        $result .= ', ';
+                    } else {
+                        $result .= ' (' . $frm_dsp->dsp_text($back) . ')';
+                        $result .= ' ' . $frm_dsp->btn_del($back);
+                        $result .= ' <br> ';
+                    }
+                }
+            }
+        }
+
+        log_debug("formula_list->display ... done (" . $result . ")");
+        return $result;
     }
 
 }

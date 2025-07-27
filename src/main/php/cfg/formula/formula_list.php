@@ -31,45 +31,61 @@
 
 namespace cfg\formula;
 
-include_once API_FORMULA_PATH . 'formula_list.php';
-include_once SERVICE_PATH . 'config.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_ELEMENT_PATH . 'element.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_FORMULA_PATH . 'formula_list.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
 
-use api\formula\formula_list as formula_list_api;
-use cfg\config;
+include_once paths::SERVICE . 'config.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_ELEMENT . 'element.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_list.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::SHARED_CALC . 'parameter_type.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
+
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\element\element;
+use cfg\helper\data_object;
+use cfg\import\import;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_list;
+use cfg\phrase\term;
+use cfg\phrase\term_list;
+use cfg\sandbox\sandbox_list_named;
+use cfg\sandbox\sandbox_named;
+use cfg\user\user;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\word\triple;
 use cfg\word\word;
-use html\formula\formula as formula_dsp;
-use html\formula\formula_list as formula_list_dsp;
+use cfg\word\word_list;
+use shared\calc\parameter_type;
+use shared\const\triples;
+use shared\const\words;
+use shared\enum\messages as msg_id;
 use shared\library;
 
-class formula_list extends sandbox_list
+class formula_list extends sandbox_list_named
 {
     // the number of formulas that should be updated with one commit if no dependency calculations are expected
     const UPDATE_BLOCK_SIZE = 100;
@@ -97,11 +113,11 @@ class formula_list extends sandbox_list
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 $excluded = null;
-                if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
-                    $excluded = $db_row[sandbox::FLD_EXCLUDED];
+                if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
+                    $excluded = $db_row[sql_db::FLD_EXCLUDED];
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
-                    $frm_id = $db_row[formula::FLD_ID];
+                    $frm_id = $db_row[formula_db::FLD_ID];
                     if ($frm_id > 0 and !in_array($frm_id, $this->ids())) {
                         $frm = new formula($this->user());
                         $frm->row_mapper_sandbox($db_row);
@@ -135,43 +151,6 @@ class formula_list extends sandbox_list
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return formula_list_api the formula list object with the display interface functions
-     */
-    function api_obj(): formula_list_api
-    {
-        $api_obj = new formula_list_api();
-        foreach ($this->lst() as $frm) {
-            $api_obj->add($frm->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * @return formula_list_dsp the formula list object with the display interface functions
-     */
-    function dsp_obj(): formula_list_dsp
-    {
-        $dsp_obj = new formula_list_dsp();
-        foreach ($this->lst() as $wrd) {
-            $dsp_obj->add($wrd->dsp_obj());
-        }
-        return $dsp_obj;
-    }
-
-
-    /*
      * load
      */
 
@@ -188,8 +167,8 @@ class formula_list extends sandbox_list
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
-        $sc->set_usr_fields(formula::FLD_NAMES_USR);
-        $sc->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
+        $sc->set_usr_fields(formula_db::FLD_NAMES_USR);
+        $sc->set_usr_num_fields(formula_db::FLD_NAMES_NUM_USR);
         return $qp;
     }
 
@@ -197,13 +176,20 @@ class formula_list extends sandbox_list
      * set the SQL query parameters to load a list of formulas by an array of formula ids
      * @param sql_creator $sc with the target db_type set
      * @param array $frm_ids an array of formula ids which should be loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_ids(sql_creator $sc, array $frm_ids): sql_par
+    function load_sql_by_ids(
+        sql_creator $sc,
+        array       $frm_ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
         $qp = $this->load_sql($sc, 'frm_ids');
         if (count($frm_ids) > 0) {
-            $sc->add_where(formula::FLD_ID, $frm_ids, sql_par_type::INT_LIST);
+            $sc->add_where(formula_db::FLD_ID, $frm_ids, sql_par_type::INT_LIST);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -216,19 +202,16 @@ class formula_list extends sandbox_list
      * set the SQL query parameters to load a list of formulas by an array of formula names
      * @param sql_creator $sc with the target db_type set
      * @param array $names an array of formula names which should be loaded
+     * @param string $fld the name of the name field
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_sql_by_names(sql_creator $sc, array $names): sql_par
+    function load_sql_by_names(
+        sql_creator $sc,
+        array       $names,
+        string      $fld = formula_db::FLD_NAME
+    ): sql_par
     {
-        $qp = $this->load_sql($sc, 'names');
-        if (count($names) > 0) {
-            $sc->add_where(formula::FLD_NAME, $names, sql_par_type::TEXT_LIST);
-            $qp->sql = $sc->sql();
-        } else {
-            $qp->name = '';
-        }
-        $qp->par = $sc->get_par();
-        return $qp;
+        return parent::load_sql_by_names($sc, $names, $fld);
     }
 
     /**
@@ -240,7 +223,7 @@ class formula_list extends sandbox_list
     function load_sql_like(sql_creator $sc, string $pattern = ''): sql_par
     {
         $qp = $this->load_sql($sc, 'name_like');
-        $sc->add_where(formula::FLD_NAME, $pattern, sql_par_type::LIKE_R);
+        $sc->add_where(formula_db::FLD_NAME, $pattern, sql_par_type::LIKE_R);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -259,8 +242,8 @@ class formula_list extends sandbox_list
             $sc->set_join_fields(
                 array(phrase::FLD_ID),
                 formula_link::class,
-                formula::FLD_ID,
-                formula::FLD_ID
+                formula_db::FLD_ID,
+                formula_db::FLD_ID
             );
             $sc->add_where(phrase::FLD_ID, $phr->id(), null, sql_db::LNK_TBL);
             $qp->sql = $sc->sql();
@@ -284,8 +267,8 @@ class formula_list extends sandbox_list
             $sc->set_join_fields(
                 array(phrase::FLD_ID),
                 formula_link::class,
-                formula::FLD_ID,
-                formula::FLD_ID
+                formula_db::FLD_ID,
+                formula_db::FLD_ID
             );
             $sc->add_where(phrase::FLD_ID, $phr_lst->id_lst(), null, sql_db::LNK_TBL);
             $qp->sql = $sc->sql();
@@ -314,10 +297,10 @@ class formula_list extends sandbox_list
         $qp = $this->load_sql($sc, $type_query_name . '_ref');
         if ($ref_id > 0) {
             $sc->set_join_fields(
-                array(formula::FLD_ID),
+                array(formula_db::FLD_ID),
                 element::class,
-                formula::FLD_ID,
-                formula::FLD_ID
+                formula_db::FLD_ID,
+                formula_db::FLD_ID
             );
             $sc->add_where(element::FLD_REF_ID, $ref_id, null, sql_db::LNK_TBL);
             $sc->add_where(element::FLD_TYPE, $par_type_id, null, sql_db::LNK_TBL);
@@ -410,10 +393,10 @@ class formula_list extends sandbox_list
         $db_con->set_all();
         $qp->name = $class . '_all';
         $db_con->set_name($qp->name);
-        $db_con->set_usr_fields(formula::FLD_NAMES_USR);
-        $db_con->set_usr_num_fields(formula::FLD_NAMES_NUM_USR);
+        $db_con->set_usr_fields(formula_db::FLD_NAMES_USR);
+        $db_con->set_usr_num_fields(formula_db::FLD_NAMES_NUM_USR);
         if ($limit > 0) {
-            $db_con->set_order(formula::FLD_ID);
+            $db_con->set_order(formula_db::FLD_ID);
             $db_con->set_page_par($limit, $page);
             $qp->sql = $db_con->select_all();
         } else {
@@ -444,18 +427,6 @@ class formula_list extends sandbox_list
     {
         global $db_con;
         $qp = $this->load_sql_by_ids($db_con->sql_creator(), $frm_ids);
-        return $this->load($qp);
-    }
-
-    /**
-     * load a list of formulas by the given formula names
-     * @param array $names an array of formula ids which should be loaded
-     * @return bool true if at least one formula found
-     */
-    function load_by_names(array $names): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
         return $this->load($qp);
     }
 
@@ -566,15 +537,22 @@ class formula_list extends sandbox_list
      * import a list of formulas from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $json_obj, object $test_obj = null): user_message
+    function import_obj(
+        array        $json_obj,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_obj as $value) {
             $frm = new formula($this->user());
-            $usr_msg->add($frm->import_obj($value, $test_obj));
+            $usr_msg->add($frm->import_obj($value, $usr_req, $dto, $test_obj));
             // add a dummy id for unit testing
             if ($test_obj) {
                 $frm->set_id($test_obj->seq_id());
@@ -611,17 +589,60 @@ class formula_list extends sandbox_list
 
     /**
      * add one formula to the formula list, but only if it is not yet part of the list
-     * @param formula|null $frm_to_add the formula backend object that should be added
+     * @param formula|sandbox_named|triple|phrase|term|null $to_add the formula backend object that should be added
      * @returns bool true the formula has been added
      */
-    function add(?formula $frm_to_add): bool
+    function add(formula|sandbox_named|triple|phrase|term|null $to_add): bool
     {
-        return parent::add_obj($frm_to_add);
+        return parent::add_obj($to_add)->is_ok();
     }
 
 
     /*
-     * information
+     * select
+     */
+
+    /**
+     * @param string $type the ENUM string of the fixed type
+     * @return formula_list with the all formulas of the give type
+     */
+    private function filter(string $type): formula_list
+    {
+        $result = new formula_list($this->user());
+        foreach ($this->lst() as $frm) {
+            if ($frm->is_type($type)) {
+                $result->add($frm);
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * diff as a function, because the array_diff does not seem to work for an object list
+     *
+     * e.g. for "2014", "2015", "2016", "2017"
+     * and delete list of "2016", "2017","2018"
+     * the result is "2014", "2015"
+     *
+     * @param formula_list $del_lst is the list of phrases that should be removed from this list object
+     */
+    private function diff(formula_list $del_lst): void
+    {
+        if (!$this->is_empty()) {
+            $result = array();
+            $lst_ids = $del_lst->ids();
+            foreach ($this->lst() as $frm) {
+                if (!in_array($frm->id(), $lst_ids)) {
+                    $result[] = $frm;
+                }
+            }
+            $this->set_lst($result);
+        }
+    }
+
+
+    /*
+     * info
      */
 
     /**
@@ -631,6 +652,25 @@ class formula_list extends sandbox_list
     function count_db(sql_db $db_con): ?int
     {
         return $db_con->count(formula::class);
+    }
+
+    /**
+     * convert this formula list object into a term list object
+     * and use the name as the unique key instead of the database id
+     * used for the data_object based import
+     * @return term_list with all formulas of this list as a term
+     */
+    function term_lst_of_names(): term_list
+    {
+        $trm_lst = new term_list($this->user());
+        foreach ($this->lst() as $frm) {
+            if ($frm::class != formula::class) {
+                log_err('unexpected class ' . $frm::class . ' in formula list');
+            } else {
+                $trm_lst->add_by_name($frm->term());
+            }
+        }
+        return $trm_lst;
     }
 
 
@@ -650,7 +690,10 @@ class formula_list extends sandbox_list
             foreach ($this->lst() as $frm) {
                 $frm->set_ref_text();
             }
-            $msg = $this->save()->get_last_message();
+            // TODO Prio 2 review
+            $cache = new term_list($this->user());
+            $imp = new import();
+            $msg = $this->save_with_cache_slow($imp, $cache)->get_last_message();
             if ($msg != '') {
                 $result = false;
             }
@@ -672,63 +715,18 @@ class formula_list extends sandbox_list
 
     /**
      * this function is called from dsp_id, so no other call is allowed
+     * @param bool $ignore_excluded if true also the excluded names are included
+     * @param ?int $limit the max number of ids to show
+     * @return array with all names of the list
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = array();
         if ($this->lst() != null) {
             foreach ($this->lst() as $frm) {
-                $result[] = $frm->name();
+                $result[] = $frm->name($ignore_excluded);
             }
         }
-        return $result;
-    }
-
-    /**
-     * lists all formulas with results related to a word
-     */
-    function display($type = 'short'): string
-    {
-        log_debug('formula_list->display ' . $this->dsp_id());
-        $result = '';
-
-        // list all related formula results
-        if ($this->lst() != null) {
-            // TODO add usort to base_list
-            $lst = $this->lst();
-            usort($lst, array(formula::class, "cmp"));
-            $this->set_lst($lst);
-            if ($this->lst() != null) {
-                foreach ($this->lst() as $frm) {
-                    // formatting should be moved
-                    //$resolved_text = str_replace('"','&quot;', $frm->usr_text);
-                    //$resolved_text = str_replace('"','&quot;', $frm->dsp_text($this->back));
-                    $frm_dsp = $frm->dsp_obj_old();
-                    $frm_html = new formula_dsp($frm->api_json());
-                    $result = '';
-                    if ($frm->name_wrd != null) {
-                        $result = $frm_dsp->dsp_result($frm->name_wrd->phrase(), $this->back);
-                    }
-                    // if the result is empty use the id to be able to select the formula
-                    if ($result == '') {
-                        $result .= $frm_dsp->id();
-                    } else {
-                        $result .= ' value ' . $result;
-                    }
-                    $result .= ' ' . $frm_html->edit_link($this->back);
-                    if ($type == 'short') {
-                        $result .= ' ' . $frm_dsp->btn_del($this->back);
-                        $result .= ', ';
-                    } else {
-                        $result .= ' (' . $frm_dsp->dsp_text($this->back) . ')';
-                        $result .= ' ' . $frm_dsp->btn_del($this->back);
-                        $result .= ' <br> ';
-                    }
-                }
-            }
-        }
-
-        log_debug("formula_list->display ... done (" . $result . ")");
         return $result;
     }
 
@@ -737,28 +735,335 @@ class formula_list extends sandbox_list
      */
     function calc_blocks(sql_db $db_con, int $total_formulas = 0): int
     {
-        $cfg = new config();
+        global $cfg;
+
+        // get the configuration
+        $avg_calc_time = $cfg->get_by([words::CALCULATION, triples::BLOCK_SIZE, triples::AVERAGE_DELAY]);
+        $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR], 1);
+
         if ($total_formulas == 0) {
             $total_formulas = $db_con->count(formula::class);
         }
-        $avg_calc_time = $cfg->get_db(config::AVG_CALC_TIME, $db_con);
         $total_expected_time = $total_formulas * $avg_calc_time;
-        return max(1, round($total_expected_time / (UI_MIN_RESPONSE_TIME * 1000)));
+        return max(1, round($total_expected_time / ($ui_response_time * 1000)));
+    }
+
+    /**
+     * add or update all formulas to the database
+     * starting with the $cache that contains the words, triples, verbs
+     * add the formulas that does not yet have a database id
+     * similar to triple_list->save_with_cache but using the term_list
+     *
+     * @param import $imp the import object with the filename and the estimated time of arrival
+     * @param term_list $cache the cached phrases that does not need to be loaded from the db again
+     * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
+     */
+    function save_with_cache(import $imp, term_list $cache): user_message
+    {
+        global $cfg;
+
+        $usr_msg = new user_message();
+
+        $load_per_sec = $cfg->get_by([words::FORMULAS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $save_per_sec = $cfg->get_by([words::FORMULAS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $upd_per_sec = $cfg->get_by([words::FORMULAS, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $del_per_sec = $cfg->get_by([words::FORMULAS, words::DELETE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $max_frm_levels = $cfg->get_by([words::FORMULAS, triples::MAX_LEVELS, words::IMPORT], 99);
+
+        if ($this->is_empty()) {
+            log_info('no formulas to save');
+        } else {
+
+            // repeat filling the database id to the formula list
+            // and adding missing formulas to the database
+            // until it is clear that a formula is missing
+            $frm_added = true;
+            $level = 0;
+            $db_lst_all = new formula_list($this->user());
+            $add_lst = new formula_list($this->user());
+            while ($frm_added and $level < $max_frm_levels) {
+                $frm_added = false;
+                $usr_msg->unset_added_depending();
+
+                // collect the formulas used in the expressions
+                $chk_lst = clone $this;
+                foreach ($this->lst() as $frm) {
+                    $exp = $frm->expression($cache);
+                    if ($exp->is_valid() or $frm->is_special()) {
+                        $frm_trm_lst = $exp->terms($cache);
+                        foreach ($frm_trm_lst->lst() as $trm) {
+                            $frm_trm = $cache->get_by_name($trm->name());
+                            if ($frm_trm == null) {
+                                $chk_lst->add_by_name($frm_trm);
+                            }
+                        }
+                    }
+                }
+
+                // add the database id to the formula list of words and formulas used until now
+                $chk_lst->fill_by_name($cache, true, false);
+
+                // get the formulas that needs to be added
+                // TODO check if other list save function are using the cache instead of this here
+                $load_lst = $chk_lst->missing_ids();
+
+                // load the formulas by name from the database that does not yet have a database id
+                $step_time = $load_lst->count() / $load_per_sec;
+                $imp->step_start(msg_id::LOAD, formula::class, $load_lst->count(), $step_time);
+                $db_lst = new formula_list($this->user());
+                // force to load all names including the formulas excluded by the user to potential include the formulas due to the import
+                // TODO add load_all = true also to the other objects
+                $db_lst->load_by_names($load_lst->names(true), true);
+                $imp->step_end($load_lst->count(), $load_per_sec);
+
+                // fill up the cache to prevent loading the same formula again in the next level
+                // TODO increase speed!
+                $cache = $cache->merge($db_lst->term_list());
+
+                // fill up the overall db list with db value for later detection of the formulas that needs to be updated
+                $db_lst_all->merge($db_lst);
+
+                // fill up the loaded list with db value to select only the formulas that really needs to be inserted
+                $load_lst->fill_by_name($db_lst, true, false);
+
+                // select the formulas that are ready to be added to the database
+                $load_lst = $load_lst->get_ready($usr_msg, $imp->file_name);
+
+                // get the formulas that still needs to be added
+                // TODO check if other list save function are using the cache instead of this here
+                $add_lst = $load_lst->missing_ids();
+
+                // create any missing sql insert functions and insert the missing formulas
+                if (!$add_lst->is_empty()) {
+
+                    // refresh reference text
+                    $this->refresh_ref_text($cache, $usr_msg);
+
+                    $step_time = $add_lst->count() / $save_per_sec;
+                    $imp->step_start(msg_id::SAVE, formula::class, $add_lst->count(), $step_time);
+                    $usr_msg->add($add_lst->insert($cache, true, $imp, formula::class));
+                    if ($add_lst->count() > 0) {
+                        $usr_msg->set_added_depending();
+                        $frm_added = true;
+                    }
+                    $imp->step_end($add_lst->count(), $save_per_sec);
+                }
+
+                // create the related words
+                $this->save_formulas_words($imp, $usr_msg);
+
+                $cache->filter_valid();
+
+                $level++;
+            }
+
+            // reload the id of the formulas added with the last run
+            // TODO use the insert message instead to increase speed
+            $db_lst = new formula_list($this->user());
+            if (!$add_lst->is_empty()) {
+                $db_lst->load_by_names($add_lst->names(true), true);
+            }
+
+            // fill up the overall db list with db value for later detection of the formulas that needs to be updated
+            $db_lst_all->merge($db_lst);
+
+
+            // create any missing sql update functions and update the formulas
+            $usr_msg->add($this->update($db_lst_all, true, $imp, formula::class, $upd_per_sec));
+
+
+            // fill up the main list with the words
+            $this->fill_by_name($cache, true);
+            // fill up the main list with the formulas to check if anything is missing
+            $this->fill_by_name($db_lst_all, true);
+
+            // report missing formulas
+            $this->report_missing($usr_msg, $cache);
+
+
+            // create any missing sql delete functions and delete unused sandbox objects
+            $usr_msg->add($this->delete($db_lst_all, true, $imp, formula::class, $del_per_sec));
+
+        }
+
+        return $usr_msg;
+    }
+
+
+    private function refresh_ref_text(term_list $trm_lst, user_message $usr_msg): void
+    {
+        foreach ($this->lst() as $frm) {
+            $frm->generate_ref_text($trm_lst, $usr_msg);
+        }
+    }
+
+    private function save_formulas_words(import $imp, user_message $usr_msg): void
+    {
+        $wrd_lst = new word_list($this->user());
+        foreach ($this->lst() as $frm) {
+            $wrd = $frm->formula_word();
+            $wrd_lst->add_by_name($wrd);
+        }
+        $wrd_lst->save($imp);
+        foreach ($this->lst() as $frm) {
+            $name_wrd = $wrd_lst->get_by_name($frm->name());
+            if ($name_wrd->id() > 0) {
+                $frm->name_wrd = $name_wrd;
+            } else {
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
+                    msg_id::VAR_WORD_NAME => $frm->name(),
+                    msg_id::VAR_FORMULA => $frm->id(),
+                ]);
+            }
+        }
+    }
+
+    protected function delete_depending(user_message $usr_msg): void
+    {
+        foreach ($this->lst() as $frm) {
+            $usr_msg->add($frm->del_links());
+        }
+    }
+
+
+    /*
+     * convert
+     */
+
+    /**
+     * convert this formula list object into a phrase list object
+     * @return term_list with all formulas of this list as a phrase
+     */
+    function term_list(): term_list
+    {
+        $trm_lst = new term_list($this->user());
+        foreach ($this->lst() as $frm) {
+            $trm_lst->add($frm->term());
+        }
+        return $trm_lst;
+    }
+
+    /**
+     * @return formula_list with all formulas that does not yet have a database id
+     */
+    function missing_ids(): formula_list
+    {
+        $frm_lst = new formula_list($this->user());
+        foreach ($this->lst() as $frm) {
+            if ($frm->id() == 0) {
+                $frm_lst->add_by_name_direct($frm);
+            }
+        }
+        return $frm_lst;
     }
 
     /**
      * save all formulas of this list
      * TODO create one SQL and commit statement for faster execution
      *
+     * @param import $imp the import object with the filename and the estimated time of arrival
+     * @param term_list $cache the cached phrases that does not need to be loaded from the db again
      * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(): user_message
+    function save_with_cache_slow(import $imp, term_list $cache): user_message
     {
-        $result = new user_message();
+        $usr_msg = new user_message();
         foreach ($this->lst() as $frm) {
-            $result->add($frm->save());
+            $usr_msg->add($frm->save());
+            $cache->add($frm->term());
         }
-        return $result;
+        return $usr_msg;
+    }
+
+    /**
+     * get a list of formulas that are ready to be added to the database
+     * @return formula_list list of the formulas that have an id or a name
+     */
+    function get_ready(user_message $usr_msg, string $file_name = ''): formula_list
+    {
+        $frm_lst = new formula_list($this->user());
+        foreach ($this->lst() as $frm) {
+            $frm_msg = $frm->db_ready();
+            if ($frm_msg->is_ok()) {
+                $frm_lst->add_by_name($frm);
+            } else {
+                $usr_msg->add($frm_msg);
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
+                    msg_id::VAR_FILE_NAME => $file_name,
+                    msg_id::VAR_FORMULA => $frm->dsp_id(),
+                ]);
+            }
+        }
+        return $frm_lst;
+    }
+
+    /**
+     * add the ids and other variables from the given list and add missing words, triples, ...
+     * select the related object by the name
+     *
+     * @param formula_list|sandbox_list_named $db_lst a list of sandbox objects that might have more vars set e.g. the db id
+     * @param bool $fill_all force to include also the excluded names e.g. for import
+     * @param bool $report_missing if true it is expected that all triples are in the given $db_lst
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill_by_name(
+        formula_list|sandbox_list_named $db_lst,
+        bool                            $fill_all = false,
+        bool                            $report_missing = true
+    ): user_message
+    {
+        $usr_msg = new user_message();
+
+        // loop over the objects of theis list because it is expected to be smaller than tha cache list
+        foreach ($this->lst() as $frm) {
+            $this->fill_triple_by_name($db_lst, $frm, $usr_msg, $fill_all, $report_missing);
+
+        }
+        return $usr_msg;
+    }
+
+    private function fill_triple_by_name(
+        formula_list|sandbox_list_named $db_lst,
+        formula                         $frm,
+        user_message                    $usr_msg,
+        bool                            $fill_all = false,
+        bool                            $report_missing = true
+    ): void
+    {
+        global $usr;
+        if ($frm->id() == 0 and $frm->name($fill_all) != '') {
+            $db_obj = $db_lst->get_by_name($frm->name($fill_all), $fill_all);
+            if ($db_obj != null) {
+                $frm->fill($db_obj, $usr);
+            } else {
+                if ($report_missing and !$frm->is_excluded()) {
+                    $lib = new library();
+                    $usr_msg->add_id_with_vars(msg_id::ADDED_OBJECT_NOT_FOUND, [
+                        msg_id::VAR_CLASS_NAME => $lib->class_to_name($frm::class),
+                        msg_id::VAR_NAME => $frm->dsp_id()
+                    ]);
+                }
+            }
+        }
+    }
+
+    private function report_missing(user_message $usr_msg, term_list $cache): void
+    {
+        foreach ($this->lst() as $frm) {
+            $exp = $frm->expression($cache);
+            $frm_trm_lst = $exp->terms($cache);
+            foreach ($frm_trm_lst->lst() as $trm) {
+                if ($trm->id() == 0) {
+                    $frm_trm = $cache->get_by_name($trm->name());
+                    if ($frm_trm == null) {
+                        $usr_msg->add_id_with_vars(msg_id::IMPORT_TERM_NOT_FOUND, [
+                            msg_id::VAR_NAME => $trm->name(),
+                            msg_id::VAR_ID => $frm->dsp_id()
+                        ]);
+                    }
+                }
+            }
+        }
     }
 
 }

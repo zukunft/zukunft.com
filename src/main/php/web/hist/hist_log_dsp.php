@@ -31,9 +31,13 @@
 
 namespace html\hist;
 
+use html\const\paths as html_paths;
+
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::WORD . 'word.php';
+
 use html\html_base;
-use html\word\word as word_dsp;
-use cfg\word\word;
+use html\word\word;
 
 class hist_log_dsp
 {
@@ -54,7 +58,7 @@ class hist_log_dsp
                 $wrd->load_by_id($wrd->id());
             }
 
-            $wrd_dsp = new word_dsp($wrd->api_json());
+            $wrd_dsp = new word($wrd->api_json());
             $changes = $wrd_dsp->dsp_hist(1, 20, '', $back);
             if (trim($changes) <> "") {
                 $result .= $html->dsp_text_h3("Latest view changes related to this word", "change_hist");

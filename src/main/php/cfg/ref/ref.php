@@ -22,17 +22,19 @@
     - db const:          const for the database link
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
+    - im- and export:    create an export object and set the vars from an import object
     - set and get:       to capsule the vars from unexpected changes
     - cast:              create an api object and set the vars from an api json
     - preloaded:         select e.g. types from cache
     - load:              database access object (DAO) functions
-    - im- and export:    create an export object and set the vars from an import object
     - log:               write the changes to the log
     - save:              manage to update the database
     - del:               manage to remove from the database
     - debug:             internal support functions for debugging
 
     TODO add to UI; add unit tests
+    TODO allow to reference terms instead of phrases so that also formulas can be referenced
 
 
     This file is part of zukunft.com - calc with words
@@ -61,62 +63,76 @@
 
 namespace cfg\ref;
 
+use cfg\const\paths;
+
 // include should also contain the files not shown by use to enable automatic java and rust translation
 // the order is first the extends and then in alphabetic order except word before triple
 // the order should in any case match the use order but with the additional files which does not need to be used
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once API_REF_PATH . 'ref.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_link.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_REF_PATH . 'ref_type.php';
-include_once MODEL_REF_PATH . 'ref_type_list.php';
-include_once WEB_REF_PATH . 'ref.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once SHARED_PATH . 'json_fields.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_REF . 'ref_type.php';
+include_once paths::MODEL_REF . 'ref_type_list.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 
-use api\ref\ref as ref_api;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
 use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\combine_named;
+use cfg\helper\data_object;
+use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
 use cfg\log\change;
-use cfg\log\change_action;
 use cfg\log\change_link;
-use cfg\log\change_table_list;
 use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\change_actions;
+use shared\enum\change_tables;
+use shared\helper\CombineObject;
 use shared\json_fields;
+use shared\library;
+use shared\types\api_type_list;
+use shared\enum\messages as msg_id;
 
 class ref extends sandbox_link
 {
@@ -129,63 +145,22 @@ class ref extends sandbox_link
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
     const TBL_COMMENT = 'to link external data to internal for synchronisation';
-    const FLD_ID = 'ref_id';
-    const FLD_USER_COM = 'the user who has created or adjusted the reference';
-    const FLD_EX_KEY_COM = 'the unique external key used in the other system';
-    const FLD_EX_KEY = 'external_key';
-    const FLD_EX_KEY_SQL_TYP = sql_field_type::NAME;
-    const FLD_TYPE = 'ref_type_id';
-    const FLD_URL_COM = 'the concrete url for the entry including the item id';
-    const FLD_URL = 'url';
-    const FLD_URL_SQL_TYP = sql_field_type::TEXT;
-    const FLD_SOURCE_COM = 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid';
-    const FLD_SOURCE = 'source_id';
-    const FLD_PHRASE_COM = 'the phrase for which the external data should be synchronised';
 
-    // field names that cannot be user specific
-    const FLD_NAMES = array(
-        phrase::FLD_ID,
-        self::FLD_TYPE
-    );
-    // list of user specific text field names
-    const FLD_NAMES_USR = array(
-        self::FLD_EX_KEY,
-        self::FLD_URL,
-        sandbox_named::FLD_DESCRIPTION
-    );
-    // list of user specific numeric field names
-    const FLD_NAMES_NUM_USR = array(
-        source::FLD_ID,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
-    );
-    // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
-        self::FLD_EX_KEY,
-        self::FLD_URL,
-        sandbox_named::FLD_DESCRIPTION,
-        sandbox::FLD_EXCLUDED
-    );
-    // list of fields that must be set
-    const FLD_LST_MUST_BUT_STD_ONLY = array(
-        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
-    );
-    // list of fields that must be set, but CAN be changed by the user
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [self::FLD_EX_KEY, self::FLD_EX_KEY_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_EX_KEY_COM],
-    );
-    // list of fields that CAN be changed by the user
-    const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_URL, self::FLD_URL_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_URL_COM],
-        [source::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_SOURCE_COM],
-        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
-    );
-    // list of fields that CANNOT be changed by the user
-    const FLD_LST_NON_CHANGEABLE = array(
-        [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PHRASE_COM],
-        [ref_type::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, ref_type::class, ref_type::TBL_COMMENT],
-    );
+    // forward the const to enable usage of $this::CONST_NAME
+    const FLD_ID = ref_db::FLD_ID;
+    const FLD_NAMES = ref_db::FLD_NAMES;
+    const FLD_NAMES_USR = ref_db::FLD_NAMES_USR;
+    const FLD_NAMES_NUM_USR = ref_db::FLD_NAMES_NUM_USR;
+    const ALL_SANDBOX_FLD_NAMES = ref_db::ALL_SANDBOX_FLD_NAMES;
+    const FLD_LST_MUST_BUT_STD_ONLY = ref_db::FLD_LST_MUST_BUT_STD_ONLY;
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = ref_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
+    const FLD_LST_USER_CAN_CHANGE = ref_db::FLD_LST_USER_CAN_CHANGE;
+    const FLD_LST_NON_CHANGEABLE = ref_db::FLD_LST_NON_CHANGEABLE;
+
+    // char used to create one unique key string for the reference
+    private const SEP = '|';
+    private const ESC_CHR = '|';
+
 
     // persevered reference names for unit and integration tests
     const TEST_REF_NAME = 'System Test Reference Name';
@@ -196,12 +171,12 @@ class ref extends sandbox_link
      */
 
     // database fields
-    public ?string $external_key = null;  // the unique key in the external system
-    public ?source $source = null;        // if the reference does not allow a full automatic bidirectional update
+    private ?string $external_key = null;  // the unique key in the external system
+    private ?source $source = null;        // if the reference does not allow a full automatic bidirectional update
     //                                       use the source to define an as good as possible import
     //                                       or at least a check if the reference is still valid
-    public ?string $url;
-    public ?string $code_id = null;
+    private ?string $url;
+    private ?string $code_id = null;
     public ?string $description = null;
 
     // TODO deprecate
@@ -255,17 +230,201 @@ class ref extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_phrase_by_id($db_row[phrase::FLD_ID]);
-            $this->external_key = $db_row[self::FLD_EX_KEY];
-            $this->set_predicate_id($db_row[self::FLD_TYPE]);
-            $this->url = $db_row[self::FLD_URL];
-            $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
-            $this->set_source_by_id($db_row[source::FLD_ID]);
+            $this->set_external_key($db_row[ref_db::FLD_EX_KEY]);
+            $this->set_predicate_id($db_row[ref_db::FLD_TYPE]);
+            $this->set_url($db_row[ref_db::FLD_URL]);
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            $this->set_source_by_id($db_row[source_db::FLD_ID]);
             if ($this->load_objects()) {
                 $result = true;
                 log_debug('done ' . $this->dsp_id());
             }
         }
         return $result;
+    }
+
+    /**
+     * map a ref api json to this model ref object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the triple values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        if (array_key_exists(json_fields::PHRASE, $api_json)) {
+            if ($api_json[json_fields::PHRASE] != '' and $api_json[json_fields::PHRASE] != 0) {
+                $phr = new phrase($this->user());
+                $phr->set_id($api_json[json_fields::PHRASE]);
+                $this->set_phrase($phr);
+            }
+        }
+        if (array_key_exists(json_fields::EXTERNAL_KEY, $api_json)) {
+            if ($api_json[json_fields::EXTERNAL_KEY] != '') {
+                $this->set_external_key($api_json[json_fields::EXTERNAL_KEY]);
+            }
+        }
+        if (array_key_exists(json_fields::URL, $api_json)) {
+            if ($api_json[json_fields::URL] != '') {
+                $this->set_url($api_json[json_fields::URL]);
+            }
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            if ($api_json[json_fields::DESCRIPTION] != '') {
+                $this->description = $api_json[json_fields::DESCRIPTION];
+            }
+        }
+
+        return $msg;
+    }
+
+    /**
+     * set the vars of this reference object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        $usr_msg = parent::import_mapper($in_ex_json, null, $test_obj);
+
+        global $ref_typ_cac;
+
+        // reset of object not needed, because the calling function has just created the object
+        if (key_exists(json_fields::SOURCE_NAME, $in_ex_json)) {
+            $src_name = $in_ex_json[json_fields::SOURCE_NAME];
+            if ($dto != null) {
+                $src = $dto->get_source_by_name($src_name);
+            } else {
+                $src = null;
+            }
+            if ($src == null) {
+                $src = new source($this->user());
+                if (!$test_obj) {
+                    $src->load_by_name($src_name);
+                    if ($src->id() == 0) {
+                        $usr_msg->add_id_with_vars(msg_id::IMPORT_SOURCE_NOT_FOUND, [
+                            msg_id::VAR_NAME => $src_name,
+                            msg_id::VAR_ID => $this->dsp_id()
+                        ]);
+                    }
+                } else {
+                    $src->set_name($src_name);
+                }
+            }
+            $this->set_source($src);
+        }
+        if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
+            $this->set_predicate_id($ref_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]));
+
+            if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
+                $usr_msg->add_id_with_vars(msg_id::REFERENCE_TYPE_NOT_FOUND, [
+                    msg_id::VAR_TYPE_NAME->value => $in_ex_json[json_fields::TYPE_NAME],
+                ]);
+
+            }
+        }
+        if (key_exists(json_fields::NAME, $in_ex_json)) {
+            $this->set_external_key($in_ex_json[json_fields::NAME]);
+        }
+        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            $this->description = $in_ex_json[json_fields::DESCRIPTION];
+        }
+        if (key_exists(json_fields::URL, $in_ex_json)) {
+            $this->set_url($in_ex_json[json_fields::URL]);
+        }
+        if (key_exists(json_fields::FROM_PHRASE, $in_ex_json)) {
+            $phr_name = $in_ex_json[json_fields::FROM_PHRASE];
+            if ($dto != null) {
+                $phr = $dto->get_phrase_by_name($phr_name);
+            } else {
+                $phr = null;
+            }
+            if ($phr == null) {
+                $phr = new phrase($this->user());
+                if (!$test_obj) {
+                    $phr->load_by_name($phr_name);
+                    if ($phr->id() == 0) {
+                        $usr_msg->add_id_with_vars(msg_id::IMPORT_PHRASE_NOT_FOUND, [
+                            msg_id::VAR_NAME => $phr_name,
+                            msg_id::VAR_ID => $this->dsp_id()
+                        ]);
+                    }
+                } else {
+                    $phr->set_name($phr_name);
+                }
+            }
+            $this->set_phrase($phr);
+        }
+
+        return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars[json_fields::URL] = $this->url();
+        $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
+        if ($this->phrase()->id() != 0) {
+            $vars[json_fields::PHRASE] = $this->phrase()->id();
+        }
+        $vars[json_fields::SOURCE] = $this->source()?->id();
+        if ($this->predicate_id() != 0) {
+            $vars[json_fields::PREDICATE] = $this->predicate_id();
+        }
+        $vars[json_fields::DESCRIPTION] = $this->description;
+        return $vars;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields of this reference excluding e.g. the database id
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = [];
+
+        if ($this->source() != null) {
+            $vars[json_fields::SOURCE_NAME] = $this->source()->name();
+        }
+        if ($this->predicate_id > 0) {
+            $vars[json_fields::TYPE_NAME] = $this->predicate_code_id();
+        }
+        if ($this->external_key() <> '') {
+            $vars[json_fields::NAME] = $this->external_key();
+        }
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        if ($this->url() <> '') {
+            $vars[json_fields::URL] = $this->url();
+        }
+        // TODO on export check always by the name not the id
+        if ($this->phrase_name() != '' and $this->phrase_name() != null) {
+            $vars[json_fields::FROM_PHRASE] = $this->phrase_name();
+        }
+        return $vars;
     }
 
 
@@ -302,7 +461,15 @@ class ref extends sandbox_link
         $this->set_fob($phr);
     }
 
-    function set_phrase_by_id(?int $id): void
+    /**
+     * set the phrase by the id
+     * TODO use a cache to reduce db requests
+     *
+     * @param int|null $id
+     * @param phrase_list|null $phr_lst cache of phrases
+     * @return void
+     */
+    function set_phrase_by_id(?int $id, phrase_list $phr_lst = null): void
     {
         if ($id != null) {
             if ($id != 0) {
@@ -335,12 +502,25 @@ class ref extends sandbox_link
     }
 
     /**
+     * @return string the phrase name or an empty string phrase name is not set
+     */
+    function phrase_name(): string
+    {
+        $name = '';
+        $phr = $this->phrase();
+        if ($phr != null) {
+            $name = $phr->name();
+        }
+        return $name;
+    }
+
+    /**
      * interface function to overwrite the corresponding parent function
      * @return int the id of the linked object with is in this case the phrase id (or maybe later the group_id)
      */
     function from_id(): int
     {
-            return $this->phrase_id();
+        return $this->phrase_id();
     }
 
     /**
@@ -357,7 +537,7 @@ class ref extends sandbox_link
      */
     function to_id(): int|string
     {
-        return $this->external_key;
+        return $this->external_key();
     }
 
     /**
@@ -365,7 +545,7 @@ class ref extends sandbox_link
      */
     function to_name(): string
     {
-        return $this->external_key;
+        return $this->external_key();
     }
 
     /**
@@ -386,9 +566,79 @@ class ref extends sandbox_link
         }
     }
 
+    function type_name(): string
+    {
+        if ($this->predicate_id() >= 0) {
+            return $this->predicate_code_id();
+        } else {
+            return '';
+        }
+    }
+
+    function set_external_key(?string $external_key): void
+    {
+        $this->external_key = $external_key;
+    }
+
+    function external_key(): ?string
+    {
+        return $this->external_key;
+    }
+
+    function set_source(?source $source): void
+    {
+        $this->source = $source;
+    }
+
+    function source(): ?source
+    {
+        return $this->source;
+    }
+
+    function set_code_id(?string $code_id, user $usr): user_message
+    {
+        $usr_msg = new user_message();
+        if ($usr->can_set_code_id()) {
+            $this->code_id = $code_id;
+        } else {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $usr->name(),
+                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the code id without check
+     * should only be called by the database mapper function
+     */
+    function set_code_id_db(?string $code_id): void
+    {
+        $this->code_id = $code_id;
+    }
+
+    function code_id(): ?string
+    {
+        return $this->code_id;
+    }
+
+    function set_url(?string $url): void
+    {
+        $this->url = $url;
+    }
+
+    function url(): ?string
+    {
+        return $this->url;
+    }
+
     /**
      * TODO use always a function like this to set an object
-     * TODO use a cache to reducte database access because an id will necer change and due to that no database refresh is needed
+     * TODO use a cache to reduce database access because an id will never change and due to that no database refresh is needed
      * @param int|null $id
      * @return void
      */
@@ -398,7 +648,7 @@ class ref extends sandbox_link
             if ($id != 0) {
                 $src = new source($this->user());
                 $src->load_by_id($id);
-                $this->source = $src;
+                $this->set_source($src);
             }
         }
     }
@@ -409,8 +659,8 @@ class ref extends sandbox_link
     function source_id(): int
     {
         $result = 0;
-        if ($this->source != null) {
-            $result = $this->source->id();
+        if ($this->source() != null) {
+            $result = $this->source()->id();
         }
         return $result;
     }
@@ -421,8 +671,8 @@ class ref extends sandbox_link
     function source_name(): string
     {
         $result = '';
-        if ($this->source != null) {
-            $result = $this->source->name();
+        if ($this->source() != null) {
+            $result = $this->source()->name();
         }
         return $result;
     }
@@ -438,8 +688,29 @@ class ref extends sandbox_link
 
         $obj_cpy = parent::cloned();
         $obj_cpy->set_predicate_id($this->predicate_id());
-        $obj_cpy->external_key = $external_key;
+        $obj_cpy->set_external_key($external_key);
         return $obj_cpy;
+    }
+
+    /**
+     * @return string with the unique key of this reference
+     */
+    function key(): string
+    {
+        return
+            $this->escape_key_part($this->phrase_name()) .
+            $this->escape_key_part($this->type_name()) .
+            $this->escape_key_part($this->external_key());
+    }
+
+    /**
+     * @param string $key the original key part
+     * @return string the key with the separator char escaped
+     */
+    private function escape_key_part(string $key): string
+    {
+        $lib = new library();
+        return $lib->escape($key, self::SEP, self::ESC_CHR);
     }
 
 
@@ -474,75 +745,6 @@ class ref extends sandbox_link
     {
         global $ref_typ_cac;
         return $ref_typ_cac->get($this->predicate_id);
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return ref_api the ref frontend api object
-     */
-    function api_obj(): ref_api
-    {
-        $api_obj = new ref_api();
-        if ($this->is_excluded()) {
-            $api_obj->set_id($this->id());
-            $api_obj->excluded = true;
-        } else {
-            parent::fill_api_obj($api_obj);
-            if ($this->phrase_id() != 0) {
-                $api_obj->phrase_id = $this->phrase_id();
-            }
-            $api_obj->external_key = $this->external_key;
-            if ($this->source != null) {
-                $api_obj->source_id = $this->source->id();
-            }
-            $api_obj->url = $this->url;
-            $api_obj->description = $this->description;
-        }
-        return $api_obj;
-    }
-
-    /**
-     * map a ref api json to this model ref object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * @param array $api_json the api array with the triple values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-
-            if ($key == json_fields::PHRASE) {
-                if ($value != '' and $value != 0) {
-                    $phr = new phrase($this->user());
-                    $phr->set_id($value);
-                    $this->set_phrase($phr);
-                }
-            }
-            if ($key == json_fields::EXTERNAL_KEY) {
-                if ($value <> '') {
-                    $this->external_key = $value;
-                }
-            }
-            if ($key == json_fields::URL) {
-                if ($value <> '') {
-                    $this->url = $value;
-                }
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
-            }
-
-        }
-
-        return $msg;
     }
 
 
@@ -608,9 +810,9 @@ class ref extends sandbox_link
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR,
+            ref_db::FLD_NAMES,
+            ref_db::FLD_NAMES_USR,
+            ref_db::FLD_NAMES_NUM_USR,
             array(user::FLD_ID)
         ));
 
@@ -659,7 +861,7 @@ class ref extends sandbox_link
     {
         $qp = $this->load_sql($sc, 'link_ids');
         $sc->add_where(phrase::FLD_ID, $phr_id);
-        $sc->add_where(self::FLD_TYPE, $type_id);
+        $sc->add_where(ref_db::FLD_TYPE, $type_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -682,7 +884,7 @@ class ref extends sandbox_link
 
     function all_sandbox_fields(): array
     {
-        return self::ALL_SANDBOX_FLD_NAMES;
+        return ref_db::ALL_SANDBOX_FLD_NAMES;
     }
 
     /**
@@ -724,12 +926,12 @@ class ref extends sandbox_link
      */
     function to_field(): string
     {
-        return self::FLD_EX_KEY;
+        return ref_db::FLD_EX_KEY;
     }
 
     function to_value(): string
     {
-        return $this->external_key;
+        return $this->external_key();
     }
 
     function type_field(): string
@@ -739,91 +941,54 @@ class ref extends sandbox_link
 
 
     /*
-     * im- and export
+     * info
      */
 
     /**
-     * import a link to external database from an imported json object
+     * check if the reference in the database needs to be updated
+     * e.g. for import  if this reference has only the name set, the protection should not be updated in the database
      *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * @param ref|CombineObject|db_object_seq_id $db_obj the reference as saved in the database
+     * @return bool true if this reference has infos that should be saved in the database
      */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    function needs_db_update(ref|CombineObject|db_object_seq_id $db_obj): bool
     {
-        $result = parent::import_obj($in_ex_json, $test_obj);
-
-        global $ref_typ_cac;
-        // reset of object not needed, because the calling function has just created the object
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::SOURCE_NAME) {
-                $src = new source($this->user());
-                if (!$test_obj) {
-                    $src->load_by_name($value);
-                    if ($src->id() == 0) {
-                        $result->add_message('Cannot find source "' . $value . '" when importing ' . $this->dsp_id());
-                    }
-                } else {
-                    $src->set_name($value);
-                }
-                $this->source = $src;
-            }
-            if ($key == json_fields::TYPE_NAME) {
-                $this->set_predicate_id($ref_typ_cac->id($value));
-
-                if ($this->predicate_id() == null or $this->predicate_id() <= 0) {
-                    $result->add_message('Reference type for ' . $value . ' not found');
-                }
-            }
-            if ($key == json_fields::NAME) {
-                $this->external_key = $value;
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                $this->description = $value;
-            }
-            if ($key == self::FLD_URL) {
-                $this->url = $value;
+        $result = parent::needs_db_update($db_obj);
+        if ($this->external_key() != null) {
+            if ($this->external_key() != $db_obj->external_key()) {
+                $result = true;
             }
         }
-        // to be able to log the object names
-        if (!$test_obj) {
-            if ($this->load_objects()) {
-                if ($result->is_ok()) {
-                    $result->add($this->save());
-                }
+        if ($this->source() != null) {
+            if ($this->source_id() != $db_obj->source_id()) {
+                $result = true;
+            }
+            if ($this->source_name() != $db_obj->source_name()) {
+                $result = true;
             }
         }
-
+        if ($this->url() != null) {
+            if ($this->url() != $db_obj->url()) {
+                $result = true;
+            }
+        }
+        if ($this->code_id() != null) {
+            if ($this->code_id() != $db_obj->code_id()) {
+                $result = true;
+            }
+        }
+        if ($this->description != null) {
+            if ($this->description != $db_obj->description) {
+                $result = true;
+            }
+        }
         return $result;
     }
 
-    /**
-     * create an array with the export json fields of this reference excluding e.g. the database id
-     * @param bool $do_load true if any missing data should be loaded while creating the array
-     * @return array with the json fields
-     */
-    function export_json(bool $do_load = true): array
+    function needs_to(): bool
     {
-        $vars = [];
-
-        if ($this->source != null) {
-            $vars[json_fields::SOURCE_NAME] = $this->source->name();
-        }
-        if ($this->predicate_id > 0) {
-            $vars[json_fields::TYPE_NAME] = $this->predicate_code_id();
-        }
-        if ($this->external_key <> '') {
-            $vars[json_fields::NAME] = $this->external_key;
-        }
-        if ($this->description <> '') {
-            $vars[json_fields::DESCRIPTION] = $this->description;
-        }
-        if ($this->url <> '') {
-            $vars[json_fields::URL] = $this->url;
-        }
-        return $vars;
+        return false;
     }
-
 
     /*
      * log
@@ -845,8 +1010,8 @@ class ref extends sandbox_link
         }
 
         $log = new change_link($this->user());
-        $log->set_action(change_action::ADD);
-        $log->set_table(change_table_list::REF);
+        $log->set_action(change_actions::ADD);
+        $log->set_table(change_tables::REF);
         // TODO review in log_link
         // TODO object must be loaded before it can be logged
         $log->new_from = $this->phrase();
@@ -865,8 +1030,8 @@ class ref extends sandbox_link
     {
         log_debug('ref->log_upd ' . $this->dsp_id());
         $log = new change_link($this->user());
-        $log->set_action(change_action::UPDATE);
-        $log->set_table(change_table_list::REF);
+        $log->set_action(change_actions::UPDATE);
+        $log->set_table(change_tables::REF);
         $log->old_from = $db_rec->phrase();
         $log->old_link = $db_rec->type();
         $log->old_to = $db_rec;
@@ -895,8 +1060,8 @@ class ref extends sandbox_link
         }
 
         $log = new change_link($this->user());
-        $log->set_action(change_action::DELETE);
-        $log->set_table(change_table_list::REF);
+        $log->set_action(change_actions::DELETE);
+        $log->set_table(change_tables::REF);
         $log->old_from = $this->phrase();
         $log->old_link = $this->type();
         $log->old_to = $this;
@@ -904,6 +1069,44 @@ class ref extends sandbox_link
         $log->add();
 
         return $log;
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * fill this reference based on the given reference
+     *
+     * @param ref|CombineObject|db_object_seq_id $obj word with the values that should have been updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(ref|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->url() != null) {
+            $this->set_url($obj->url());
+        }
+        if ($obj->external_key() != null) {
+            $this->set_external_key($obj->external_key());
+        }
+        if ($obj->phrase() != null) {
+            if ($obj->phrase()->id() != 0) {
+                $this->set_phrase($obj->phrase());
+            }
+        }
+        if ($obj->source() != null) {
+            $this->set_source($obj->source());
+        }
+        if ($obj->predicate_id() != 0) {
+            $this->set_predicate_id($obj->predicate_id());
+        }
+        if ($obj->description != null) {
+            $this->description = $obj->description;
+        }
+        return $usr_msg;
     }
 
 
@@ -929,7 +1132,7 @@ class ref extends sandbox_link
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id();
-                $log->set_field(sandbox_named::FLD_DESCRIPTION);
+                $log->set_field(sql_db::FLD_DESCRIPTION);
                 $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
@@ -947,14 +1150,14 @@ class ref extends sandbox_link
     {
         $usr_msg = new user_message();
         // if the plural is not set, don't overwrite any db entry
-        if ($this->url <> Null) {
-            if ($this->url <> $db_rec->url) {
+        if ($this->url() <> Null) {
+            if ($this->url() <> $db_rec->url()) {
                 $log = $this->log_upd_field();
-                $log->old_value = $db_rec->url;
-                $log->new_value = $this->url;
-                $log->std_value = $std_rec->url;
+                $log->old_value = $db_rec->url();
+                $log->new_value = $this->url();
+                $log->std_value = $std_rec->url();
                 $log->row_id = $this->id();
-                $log->set_field(self::FLD_URL);
+                $log->set_field(ref_db::FLD_URL);
                 $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
@@ -980,7 +1183,7 @@ class ref extends sandbox_link
             $log->std_value = $std_rec->source_name();
             $log->std_id = $std_rec->source_id();
             $log->row_id = $this->id();
-            $log->set_field(self::FLD_SOURCE);
+            $log->set_field(ref_db::FLD_SOURCE);
             $usr_msg->add($this->save_field_user($db_con, $log));
         }
         return $usr_msg;
@@ -1032,12 +1235,14 @@ class ref extends sandbox_link
                 $db_con->set_usr($this->user()->id());
 
                 $this->set_id($db_con->insert_old(
-                    array(phrase::FLD_ID, self::FLD_EX_KEY, self::FLD_TYPE),
-                    array($this->phrase_id(), $this->external_key, $this->predicate_id)));
+                    array(phrase::FLD_ID, ref_db::FLD_EX_KEY, ref_db::FLD_TYPE),
+                    array($this->phrase_id(), $this->external_key(), $this->predicate_id)));
                 if ($this->id() > 0) {
                     // update the id in the log for the correct reference
                     if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_message('Adding reference ' . $this->dsp_id() . ' in the log failed.');
+                        $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE_LOG, [
+                            msg_id::VAR_ID => $this->dsp_id()
+                        ]);
                         log_err($usr_msg->get_message(), 'ref->add');
                     } else {
                         // create an empty db_rec element to force saving of all set fields
@@ -1051,7 +1256,9 @@ class ref extends sandbox_link
                         $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                     }
                 } else {
-                    $usr_msg->add_message('Adding reference ' . $this->dsp_id() . ' failed.');
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_REFERENCE, [
+                        msg_id::VAR_ID => $this->dsp_id()
+                    ]);
                     log_err($usr_msg->get_message(), 'ref->add');
                 }
             }
@@ -1134,11 +1341,11 @@ class ref extends sandbox_link
             log_debug("standard reference settings loaded (" . $std_rec->id() . ")");
 
             // if needed log the change and update the database
-            if ($this->external_key <> $db_rec->external_key) {
+            if ($this->external_key() <> $db_rec->external_key()) {
                 $log = $this->log_link_upd($db_rec);
                 if ($log->id() > 0) {
                     $db_con->set_class(ref::class);
-                    if ($db_con->update_old($this->id(), self::FLD_EX_KEY, $this->external_key)) {
+                    if ($db_con->update_old($this->id(), ref_db::FLD_EX_KEY, $this->external_key())) {
                         log_debug('ref->save update ... done.');
                     }
                 }
@@ -1148,7 +1355,7 @@ class ref extends sandbox_link
             // update the
             if ($usr_msg->is_ok()) {
                 if ($use_func) {
-                    $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
+                    $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
                 } else {
                     $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }
@@ -1171,17 +1378,17 @@ class ref extends sandbox_link
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         return array_merge(
             parent::db_all_fields_link($sc_par_lst),
             [
-                self::FLD_TYPE,
+                ref_db::FLD_TYPE,
                 phrase::FLD_ID,
-                self::FLD_EX_KEY,
-                self::FLD_URL,
-                source::FLD_ID,
-                sandbox_named::FLD_DESCRIPTION,
+                ref_db::FLD_EX_KEY,
+                ref_db::FLD_URL,
+                source_db::FLD_ID,
+                sql_db::FLD_DESCRIPTION,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1196,7 +1403,7 @@ class ref extends sandbox_link
      */
     function db_fields_changed(
         sandbox|ref   $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -1246,67 +1453,67 @@ class ref extends sandbox_link
                 );
             }
         }
-        if ($sbx->external_key <> $this->external_key) {
+        if ($sbx->external_key() <> $this->external_key()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_EX_KEY,
-                    $cng_fld_cac->id($table_id . self::FLD_EX_KEY),
+                    sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_EX_KEY,
+                    $cng_fld_cac->id($table_id . ref_db::FLD_EX_KEY),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            $old_key = $sbx->external_key;
+            $old_key = $sbx->external_key();
             if ($sc_par_lst->is_insert() and $old_key == '') {
                 $old_key = null;
             }
             $lst->add_field(
-                self::FLD_EX_KEY,
-                $this->external_key,
-                self::FLD_EX_KEY_SQL_TYP,
+                ref_db::FLD_EX_KEY,
+                $this->external_key(),
+                ref_db::FLD_EX_KEY_SQL_TYP,
                 $old_key
             );
         }
-        if ($sbx->url <> $this->url) {
+        if ($sbx->url() <> $this->url()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_URL,
-                    $cng_fld_cac->id($table_id . self::FLD_URL),
+                    sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_URL,
+                    $cng_fld_cac->id($table_id . ref_db::FLD_URL),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                self::FLD_URL,
-                $this->url,
-                self::FLD_URL_SQL_TYP,
-                $sbx->url
+                ref_db::FLD_URL,
+                $this->url(),
+                ref_db::FLD_URL_SQL_TYP,
+                $sbx->url()
             );
         }
-        if ($sbx->source?->id() <> $this->source?->id()) {
+        if ($sbx->source()?->id() <> $this->source()?->id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . source::FLD_ID,
-                    $cng_fld_cac->id($table_id . source::FLD_ID),
+                    sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
+                    $cng_fld_cac->id($table_id . source_db::FLD_ID),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
-                source::FLD_ID,
-                source::FLD_NAME,
-                $this->source,
-                $sbx->source
+                source_db::FLD_ID,
+                source_db::FLD_NAME,
+                $this->source(),
+                $sbx->source()
             );
         }
         if ($sbx->description <> $this->description) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sandbox_named::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
                 $this->description,
-                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $sbx->description
             );
         }

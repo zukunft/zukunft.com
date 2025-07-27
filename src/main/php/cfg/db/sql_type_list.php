@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/db/sql_type_list.php - a list of parameters to define which sql statement should be created
+    model/db/sql_type_list.php - a list of parameters to define which sql statement should be created
     ------------------------
 
 
@@ -32,6 +32,22 @@
 
 namespace cfg\db;
 
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_db.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+
+use cfg\user\user;
+use cfg\value\value;
+use cfg\value\value_base;
+use cfg\value\value_db;
+use cfg\value\value_geo;
+use cfg\value\value_text;
+use cfg\value\value_time;
+
 class sql_type_list
 {
 
@@ -40,7 +56,7 @@ class sql_type_list
     /**
      * @param array $lst with the initial sql create parameter
      */
-    function __construct(array $lst)
+    function __construct(array $lst = [])
     {
         $this->lst = $lst;
     }
@@ -255,6 +271,14 @@ class sql_type_list
     }
 
     /**
+     * @return bool true if sql uses geo point values
+     */
+    function is_geo(): bool
+    {
+        return in_array(sql_type::GEO, $this->lst);
+    }
+
+    /**
      * @return bool true if sql is supposed to be part of another sql statement
      */
     function is_sub_tbl(): bool
@@ -319,6 +343,14 @@ class sql_type_list
     }
 
     /**
+     * @return bool true if a chance requesting user is part of the parameters
+     */
+    public function has_requesting_user(): bool
+    {
+        return in_array(sql_type::REQUESTING_USER, $this->lst);
+    }
+
+    /**
      * @return bool true if the standard sandbox fields should be added to the sql statement
      */
     public function use_sandbox_fields(): bool
@@ -369,12 +401,14 @@ class sql_type_list
 
     /**
      * @return string the table name extension excluding the user sandbox indication
+     *                but starting with the value type
      */
     public function ext_ex_user(): string
     {
-        $ext = '';
+        $ext = $this->ext_value_type();
         foreach ($this->lst as $sc_par) {
-            if ($sc_par != sql_type::USER) {
+            if ($sc_par != sql_type::USER
+                and !$sc_par->is_val_type()) {
                 $ext .= $sc_par->extension();
             }
         }
@@ -390,15 +424,34 @@ class sql_type_list
     {
         $ext = '';
         foreach ($this->lst as $sc_par) {
-            if ($sc_par != sql_type::USER
-                and $sc_par != sql_type::INSERT
-                and $sc_par != sql_type::UPDATE
-                and $sc_par != sql_type::DELETE
+            if (!$sc_par->is_sql_change()
+                and !$sc_par->is_val_type()
+                and $sc_par != sql_type::USER
                 and $sc_par != sql_type::EXCLUDE
                 and $sc_par != sql_type::LOG
                 and $sc_par != sql_type::SUB
                 and $sc_par != sql_type::LIST
-                and $sc_par != sql_type::NORM) {
+                and $sc_par != sql_type::NORM
+                and $sc_par != sql_type::NUMERIC
+                and $sc_par != sql_type::TIME
+                and $sc_par != sql_type::TEXT
+                and $sc_par != sql_type::GEO) {
+                $ext .= $sc_par->extension();
+            }
+        }
+        return $ext;
+    }
+
+    /**
+     * the extension of the query name excluding the sql type e.g. insert, update and delete query name extension
+     *
+     * @return string the table name extension excluding the user sandbox indication
+     */
+    public function ext_value_type(): string
+    {
+        $ext = '';
+        foreach ($this->lst as $sc_par) {
+            if ($sc_par->is_val_type()) {
                 $ext .= $sc_par->extension();
             }
         }
@@ -412,12 +465,11 @@ class sql_type_list
      */
     public function ext_select(): string
     {
-        $ext = '';
+        $ext = $this->ext_value_type();
         foreach ($this->lst as $sc_par) {
-            if ($sc_par != sql_type::USER
-                and $sc_par != sql_type::INSERT
-                and $sc_par != sql_type::UPDATE
-                and $sc_par != sql_type::DELETE
+            if (!$sc_par->is_sql_change()
+                and !$sc_par->is_val_type()
+                and $sc_par != sql_type::USER
                 and $sc_par != sql_type::EXCLUDE
                 and $sc_par != sql_type::LOG
                 and $sc_par != sql_type::SUB
@@ -491,6 +543,53 @@ class sql_type_list
             }
         }
         return $ext;
+    }
+
+    public function value_object(user $usr): value|value_text|value_time|value_geo
+    {
+        if (in_array(sql_type::TEXT, $this->lst)) {
+            return new value_text($usr);
+        } elseif (in_array(sql_type::TIME, $this->lst)) {
+            return new value_time($usr);
+        } elseif (in_array(sql_type::GEO, $this->lst)) {
+            return new value_geo($usr);
+        } else {
+            return new value($usr);
+        }
+    }
+
+    // TODO use const overwrites
+    public function num_user_fields(): array
+    {
+        if (in_array(sql_type::TEXT, $this->lst)) {
+            return value_db::FLD_NAMES_NUM_USR_TEXT;
+        } elseif (in_array(sql_type::TIME, $this->lst)) {
+            return value_db::FLD_NAMES_NUM_USR_TIME;
+        } elseif (in_array(sql_type::GEO, $this->lst)) {
+            return value_db::FLD_NAMES_NUM_USR_GEO;
+        } else {
+            return value_db::FLD_NAMES_NUM_USR;
+        }
+    }
+
+    // TODO use const overwrites
+    public function txt_user_fields(): array
+    {
+        if (in_array(sql_type::TEXT, $this->lst)) {
+            return value_db::FLD_NAMES_USR_TEXT;
+        } else {
+            return [];
+        }
+    }
+
+    // TODO use const overwrites
+    public function geo_user_fields(): array
+    {
+        if (in_array(sql_type::GEO, $this->lst)) {
+            return value_db::FLD_NAMES_USR_GEO;
+        } else {
+            return [];
+        }
     }
 
 

@@ -28,7 +28,7 @@ SELECT formula_link_delete_log_user (
                12,
                'scale minute to sec',
                'time period based',
-               'Mathematics',
+               'mathematics',
                1,
                2,
                1,

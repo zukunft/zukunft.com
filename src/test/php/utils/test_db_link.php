@@ -30,7 +30,11 @@
 
 */
 
-use cfg\log\change_table_list;
+use cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'change_tables.php';
+
+use shared\enum\change_tables;
 use test\all_tests;
 
 function run_db_link_test(all_tests $t): void
@@ -40,7 +44,7 @@ function run_db_link_test(all_tests $t): void
     $t->header('Test database link functions');
 
     // test code link
-    $id = change_table_list::WORD;
+    $id = change_tables::WORD;
     $target = 5;
     $result = $cng_tbl_cac->id($id);
     $t->display(", sql_code_link " . $id, $target, $result);

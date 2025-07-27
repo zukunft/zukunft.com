@@ -51,24 +51,26 @@ Delete a word (check if nothing is depending on the word to delete)
 
 */
 
+use cfg\const\paths;
+
 
 /* standard zukunft header for callable php files to allow debugging and lib loading */
 
-include_once SHARED_PATH . 'views.php';
+include_once paths::SHARED_CONST . 'views.php';
 
+use cfg\phrase\term;
+use cfg\user\user;
+use cfg\view\view;
+use cfg\word\triple;
+use cfg\word\word;
 use html\html_base;
 use html\view\view as view_dsp;
 use html\word\word as word_dsp;
-use cfg\phrase\term;
-use cfg\word\triple;
-use cfg\user\user;
-use cfg\view\view;
-use cfg\word\word;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 /* open database */
-$db_con = prg_start(view_shared::MC_WORD_ADD);
+$db_con = prg_start(view_shared::WORD_ADD);
 $html = new html_base();
 
 $result = ''; // reset the html code var
@@ -85,7 +87,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_WORD_ADD);
+    $msk->load_by_code_id(view_shared::WORD_ADD);
     $back = $_GET[api::URL_VAR_BACK] = ''; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
@@ -132,13 +134,13 @@ if ($usr->id() > 0) {
             if ($trm->id_obj() > 0) {
                 /*
                 // TODO: if a formula exists, suggest to create a word as a formula link, so that the formula results can be shown in parallel to the entered values
-                if (substr($id_txt, 0, strlen(expression::MAKER_FORMULA_START)) == expression::MAKER_FORMULA_START) {
+                if (substr($id_txt, 0, strlen(chars::MAKER_FORMULA_START)) == chars::MAKER_FORMULA_START) {
                   // maybe ask for confirmation
                   // change the link type to "formula link"
                   $wrd->type_id = cl(SQL_WORD_TYPE_FORMULA_LINK);
                 } else {
                 */
-                $msg .= $trm->id_used_msg($this);
+                $msg .= $html->dsp_err($trm->id_used_msg_text($this));
                 log_debug();
                 //}
             }

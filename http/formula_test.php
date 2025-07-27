@@ -44,19 +44,23 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 use cfg\formula\formula_list;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase_list;
-use cfg\result_list;
+use cfg\result\result_list;
 use cfg\user\user;
 use cfg\view\view;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\api;
+use shared\const\triples;
+use shared\const\words;
 use shared\library;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("start formula_test.php");
@@ -76,7 +80,7 @@ if ($session_usr->id() > 0) {
 
     // show the header even if all parameters are wrong
     $msk = new view($session_usr);
-    $msk->set_id($sys_msk_cac->id(view_shared::MC_FORMULA_TEST));
+    $msk->set_id($sys_msk_cac->id(view_shared::FORMULA_TEST));
     $back = $_GET[api::URL_VAR_BACK] = ''; // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_dsp($msk->api_json());
     echo $msk_dsp->dsp_navbar($back);
@@ -96,6 +100,10 @@ if ($session_usr->id() > 0) {
         $usr->set_id($usr_id);
         $usr->get();
     }
+
+    // get the configuration
+    global $cfg;
+    $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR]);
 
     if ($frm_id == '') {
         echo $html->dsp_text_h2("Please select a formula");
@@ -217,7 +225,7 @@ if ($session_usr->id() > 0) {
                         }
 
                         // show the user the progress every two seconds
-                        if ($last_msg_time + UI_MIN_RESPONSE_TIME < time()) {
+                        if ($last_msg_time + $ui_response_time < time()) {
                             $calc_pct = ($calc_pos / sizeof($calc_lst->lst())) * 100;
                             if ($res->is_updated) {
                                 echo "" . round($calc_pct, 2) . "% processed (calculate " . $r->frm->name_linked($back) . " for " . $r->phr_lst->name_linked() . " = " . $res->display_linked($back) . ")<br>";

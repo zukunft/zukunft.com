@@ -35,119 +35,148 @@
 
 namespace cfg\db;
 
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_DB_PATH . 'sql_creator.php';
-include_once MODEL_SYSTEM_PATH . 'log.php';
-include_once MODEL_IMPORT_PATH . 'import_file.php';
-include_once MODEL_HELPER_PATH . 'config_numbers.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'position_type.php';
-include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'view_style.php';
-include_once MODEL_COMPONENT_PATH . 'view_style_list.php';
-include_once SERVICE_PATH . 'config.php';
-include_once MODEL_HELPER_PATH . 'config_numbers.php';
-include_once MODEL_ELEMENT_PATH . 'element.php';
-include_once MODEL_ELEMENT_PATH . 'element_type.php';
-include_once MODEL_ELEMENT_PATH . 'element_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_link.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_IMPORT_PATH . 'import_file.php';
-include_once MODEL_SANDBOX_PATH . 'protection_type.php';
-include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'share_type.php';
-include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once MODEL_SYSTEM_PATH . 'job_time.php';
-include_once MODEL_SYSTEM_PATH . 'job_type.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language.php';
-include_once MODEL_LANGUAGE_PATH . 'language_form.php';
-include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language_list.php';
-include_once MODEL_SYSTEM_PATH . 'log.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_action_list.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_values_big.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_link.php';
-include_once MODEL_LOG_PATH . 'change_values_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_prime.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-include_once MODEL_LOG_PATH . 'change_table_field.php';
-include_once MODEL_LOG_PATH . 'changes_big.php';
-include_once MODEL_LOG_PATH . 'changes_norm.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_table.php';
-include_once MODEL_PHRASE_PATH . 'phrase_table_status.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
-include_once MODEL_PHRASE_PATH . 'phrase_types.php';
-include_once MODEL_SYSTEM_PATH . 'pod.php';
-include_once MODEL_SYSTEM_PATH . 'pod_status.php';
-include_once MODEL_SYSTEM_PATH . 'pod_type.php';
-include_once MODEL_REF_PATH . 'ref.php';
-include_once MODEL_REF_PATH . 'ref_type.php';
-include_once MODEL_REF_PATH . 'ref_type_list.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_SYSTEM_PATH . 'session.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_REF_PATH . 'source_type.php';
-include_once MODEL_REF_PATH . 'source_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
-include_once MODEL_SYSTEM_PATH . 'system_time.php';
-include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_HELPER_PATH . 'type_lists.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
-include_once MODEL_USER_PATH . 'user_type.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_USER_PATH . 'user_official_type.php';
-include_once MODEL_USER_PATH . 'user_profile_list.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_time_series.php';
-include_once MODEL_VALUE_PATH . 'value_ts_data.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_VERB_PATH . 'verb_list.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_link_type.php';
-include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_sys_list.php';
-include_once MODEL_VIEW_PATH . 'view_term_link.php';
-include_once MODEL_VIEW_PATH . 'view_type.php';
-include_once MODEL_VIEW_PATH . 'view_type_list.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once HTML_PATH . 'html_base.php';
-include_once SHARED_PATH . 'library.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_sync_sequences.php';
+include_once paths::MODEL_SYSTEM . 'log.php';
+include_once paths::MODEL_IMPORT . 'import_file.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::MODEL_COMPONENT . 'component_type.php';
+include_once paths::MODEL_COMPONENT . 'component_type_list.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
+include_once paths::MODEL_COMPONENT . 'position_type.php';
+include_once paths::MODEL_COMPONENT . 'position_type_list.php';
+include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::MODEL_COMPONENT . 'view_style_list.php';
+include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_ELEMENT . 'element.php';
+include_once paths::MODEL_ELEMENT . 'element_type.php';
+include_once paths::MODEL_ELEMENT . 'element_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_type.php';
+include_once paths::MODEL_FORMULA . 'formula_type_list.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_IMPORT . 'import_file.php';
+include_once paths::MODEL_SANDBOX . 'protection_type.php';
+include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'share_type.php';
+include_once paths::MODEL_SANDBOX . 'share_type_list.php';
+include_once paths::MODEL_SYSTEM . 'ip_range.php';
+include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_SYSTEM . 'job_time.php';
+include_once paths::MODEL_SYSTEM . 'job_type.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_LANGUAGE . 'language.php';
+include_once paths::MODEL_LANGUAGE . 'language_form.php';
+include_once paths::MODEL_LANGUAGE . 'language_form_list.php';
+include_once paths::MODEL_LANGUAGE . 'language_list.php';
+include_once paths::MODEL_SYSTEM . 'log.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_action_list.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_LOG . 'change_values_big.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_LOG . 'change_values_big.php';
+include_once paths::MODEL_LOG . 'change_values_norm.php';
+include_once paths::MODEL_LOG . 'change_values_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_big.php';
+include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+include_once paths::MODEL_LOG . 'change_values_text_norm.php';
+include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+include_once paths::MODEL_LOG . 'change_values_text_big.php';
+include_once paths::MODEL_LOG . 'change_values_text_prime.php';
+include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
+include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'change_table_field.php';
+include_once paths::MODEL_LOG . 'changes_big.php';
+include_once paths::MODEL_LOG . 'changes_norm.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_table.php';
+include_once paths::MODEL_PHRASE . 'phrase_table_status.php';
+include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::MODEL_PHRASE . 'phrase_types.php';
+include_once paths::MODEL_SYSTEM . 'pod.php';
+include_once paths::MODEL_SYSTEM . 'pod_status.php';
+include_once paths::MODEL_SYSTEM . 'pod_type.php';
+include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'ref_type.php';
+include_once paths::MODEL_REF . 'ref_type_list.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SYSTEM . 'session.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_type.php';
+include_once paths::MODEL_REF . 'source_type_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'system_time.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_HELPER . 'type_lists.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+include_once paths::MODEL_USER . 'user_type.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_USER . 'user_official_type.php';
+include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_time.php';
+include_once paths::MODEL_VALUE . 'value_text.php';
+include_once paths::MODEL_VALUE . 'value_geo.php';
+include_once paths::MODEL_VALUE . 'value_time_series.php';
+include_once paths::MODEL_VALUE . 'value_ts_data.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
+include_once paths::MODEL_VIEW . 'view_link_type.php';
+include_once paths::MODEL_VIEW . 'view_link_type_list.php';
+include_once paths::MODEL_VIEW . 'view_sys_list.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::MODEL_VIEW . 'view_type_list.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'language_codes.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_HELPER . 'Translator.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
 use cfg\component\component_link_type;
+use cfg\component\component_link_type_list;
 use cfg\component\component_type;
 use cfg\component\component_type_list;
 use cfg\component\position_type;
@@ -155,6 +184,8 @@ use cfg\component\position_type_list;
 use cfg\component\view_style;
 use cfg\component\view_style_list;
 use cfg\config;
+use cfg\const\def;
+use cfg\const\files;
 use cfg\helper\config_numbers;
 use cfg\element\element;
 use cfg\element\element_type;
@@ -167,6 +198,15 @@ use cfg\formula\formula_type;
 use cfg\formula\formula_type_list;
 use cfg\group\group;
 use cfg\import\import_file;
+use cfg\log\change_values_geo_big;
+use cfg\log\change_values_geo_norm;
+use cfg\log\change_values_geo_prime;
+use cfg\log\change_values_text_big;
+use cfg\log\change_values_text_norm;
+use cfg\log\change_values_text_prime;
+use cfg\log\change_values_time_big;
+use cfg\log\change_values_time_norm;
+use cfg\log\change_values_time_prime;
 use cfg\sandbox\protection_type;
 use cfg\sandbox\protection_type_list;
 use cfg\sandbox\sandbox;
@@ -217,10 +257,16 @@ use cfg\system\sys_log;
 use cfg\system\sys_log_function;
 use cfg\system\sys_log_level;
 use cfg\system\sys_log_status;
+use cfg\system\sys_log_status_list;
 use cfg\system\sys_log_type;
 use cfg\system\system_time;
 use cfg\system\system_time_type;
 use cfg\phrase\term;
+use cfg\value\value;
+use cfg\value\value_geo;
+use cfg\value\value_text;
+use cfg\value\value_time;
+use cfg\view\view_list;
 use cfg\word\triple;
 use cfg\helper\type_lists;
 use cfg\user\user;
@@ -229,7 +275,6 @@ use cfg\user\user_type;
 use cfg\user\user_message;
 use cfg\user\user_official_type;
 use cfg\user\user_profile_list;
-use cfg\value\value;
 use cfg\value\value_time_series;
 use cfg\value\value_ts_data;
 use cfg\verb\verb;
@@ -238,15 +283,21 @@ use cfg\view\view;
 use cfg\view\view_link_type;
 use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
-use cfg\view\view_term_link;
+use cfg\view\term_view;
 use cfg\view\view_type;
 use cfg\view\view_type_list;
 use cfg\word\word;
 use Exception;
-use html\html_base;
 use mysqli;
 use mysqli_result;
 use PDOException;
+use PgSql\Connection;
+use shared\const\triples;
+use shared\const\users;
+use shared\const\words;
+use shared\enum\language_codes;
+use shared\enum\user_profiles;
+use shared\helper\Translator;
 use shared\library;
 use shared\types\protection_type as protect_type_shared;
 use shared\types\phrase_type as phrase_type_shared;
@@ -256,7 +307,7 @@ class sql_db
 {
 
     // these databases can be used at the moment (must be the same as in zu_lib)
-    const POSTGRES = "Postgres";
+    const POSTGRES = "postgres";
     const MYSQL = "MySQL";
     const DB_LIST = [POSTGRES, MYSQL];
 
@@ -304,6 +355,19 @@ class sql_db
     const SETUP_INDEX_COM = 'remark: no index needed for preloaded tables such as phrase types';
     const SETUP_FOREIGN_KEY = 'foreign key constraints and auto_increment for tables';
 
+    // db field names that are used in many classes
+    const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
+    const FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
+    const FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
+    const FLD_DESCRIPTION = 'description';
+    const FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
+    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
+    const FLD_CODE_ID = 'code_id';     // field name for the code link e.g. for words used for the system configuration
+    const FLD_CODE_ID_SQL_TYP = sql_field_type::CODE_ID;
+    const FLD_VALUE = 'value';         // field name e.g. for the configuration value
+    const FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
+    const FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const
+
     // classes that have a database table in order of suggested table creation so that depending on tables are created later
     const DB_TABLE_CLASSES = [
         config::class,
@@ -331,6 +395,15 @@ class sql_db
         change_values_prime::class,
         change_values_norm::class,
         change_values_big::class,
+        change_values_time_prime::class,
+        change_values_time_norm::class,
+        change_values_time_big::class,
+        change_values_text_norm::class,
+        change_values_text_prime::class,
+        change_values_text_big::class,
+        change_values_geo_prime::class,
+        change_values_geo_norm::class,
+        change_values_geo_big::class,
         change_link::class,
         pod_type::class,
         pod_status::class,
@@ -363,7 +436,7 @@ class sql_db
         view_style::class,
         view::class,
         view_link_type::class,
-        view_term_link::class,
+        term_view::class,
         component_link_type::class,
         position_type::class,
         component_type::class,
@@ -452,10 +525,14 @@ class sql_db
         source::class,
         ref::class,
         group::class,
+        value::class,
+        value_text::class,
+        value_time::class,
+        value_geo::class,
         formula::class,
         formula_link::class,
         view::class,
-        view_term_link::class,
+        term_view::class,
         component::class,
         component_link::class
     ];
@@ -470,7 +547,7 @@ class sql_db
         formula::class,
         formula_link::class,
         view::class,
-        view_term_link::class,
+        term_view::class,
         component::class,
         component_link::class
     ];
@@ -482,18 +559,24 @@ class sql_db
     const DB_TYPES_NOT_NAMED = [
         triple::class,
         value::class,
+        value_time::class,
+        value_text::class,
+        value_geo::class,
         value_time_series::class,
         formula_link::class,
         result::class,
         element::class,
         component_link::class,
-        view_term_link::class,
+        term_view::class,
         ref::class,
         ip_range::class,
         ip_range_list::class,
         change::class,
         changes_norm::class,
         changes_big::class,
+        change_values_prime::class,
+        change_values_norm::class,
+        change_values_big::class,
         change_link::class,
         sys_log::class,
         job::class,
@@ -539,6 +622,7 @@ class sql_db
     // formats to force the formatting of a value for an SQL statement e.g. convert true to 1 when using tinyint to save boolean values
     const FLD_FORMAT_TEXT = 'text';               // to force the text formatting of a value for the SQL statement formatting
     const FLD_FORMAT_VAL = 'number';              // to force the numeric formatting of a value for the SQL statement formatting
+    const FLD_FORMAT_GEO = 'geo';                 // to force the geo point formatting of a value for the SQL statement formatting
     const FLD_FORMAT_BOOL = 'boolean';            // to force the boolean formatting of a value for the SQL statement formatting
 
     const VAL_BOOL_TRUE = '1';
@@ -548,9 +632,8 @@ class sql_db
      */
 
     public ?string $db_type = null;                 // the database type which should be used for this connection e.g. Postgres or MYSQL
-    // TODO change type to PgSql\Connection with php 8.1
-    public $postgres_link;                          // the link object to the database
-    public mysqli $mysql;                           // the MySQL object to the database
+    public connection|bool $postgres_link;          // the link object to the database
+    public mysqli|bool $mysql;                      // the MySQL object to the database
 
     private int $reconnect_delay = 0;               // number of seconds of the last reconnect retry delay
 
@@ -643,6 +726,8 @@ class sql_db
     function __construct()
     {
         $this->db_type = sql_db::POSTGRES;
+        $this->postgres_link = false;
+        $this->mysql = false;
     }
 
     /*
@@ -734,11 +819,11 @@ class sql_db
 
     function retry_delay(): int
     {
-        $cfg = new config();
+        global $cfg;
         if ($this->reconnect_delay = 0) {
-            $this->reconnect_delay = $cfg->get(config::DB_RETRY_MIN);
+            $this->reconnect_delay = $cfg->get_by([words::DATABASE, words::RETRY, triples::START_DELAY]);
         } else {
-            $max_delay = $cfg->get(config::DB_RETRY_MAX);
+            $max_delay = $cfg->get_by([words::DATABASE, words::RETRY, triples::MAX_DELAY]);
             if ($this->reconnect_delay * 2 < $max_delay) {
                 $this->reconnect_delay = $this->reconnect_delay * 2;
             }
@@ -755,26 +840,173 @@ class sql_db
      * open the database link
      * @return bool true if the database has successfully been connected
      */
-    function open(): bool
+    function open(string $db_name = SQL_DB_NAME): bool
     {
         log_debug();
 
         $result = false;
         if ($this->db_type == sql_db::POSTGRES) {
             try {
-                $this->postgres_link = pg_connect('host=localhost dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD);
-                $result = true;
+                $conn_str = $this->pg_conn_str($db_name);
+                $this->postgres_link = pg_connect($conn_str);
+                if ($this->postgres_link !== false) {
+                    $result = true;
+                } else {
+                    log_fatal('Cannot connect ' . $this->pg_conn_desc(), 'sql_db->open');
+                }
             } catch (Exception $e) {
-                log_fatal('Cannot connect to database due to ' . $e->getMessage(), 'sql_db open');
+                log_fatal('Cannot connect ' . $this->pg_conn_desc() .
+                    ' due to ' . $e->getMessage(), 'sql_db->open');
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $this->mysql = mysqli_connect('localhost', SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, 'zukunft') or die('Could not connect: ' . mysqli_error($this->mysql));
-            $result = true;
+            $this->mysql = mysqli_connect(SQL_DB_HOST,
+                SQL_DB_USER_MYSQL, SQL_DB_PASSWD_MYSQL, SQL_DB_NAME_MYSQL)
+            or die('Could not connect ' . $this->mysql_conn_desc() .
+                ' ' . mysqli_error($this->mysql));
+            if ($this->mysql !== false) {
+                $result = true;
+            } else {
+                log_fatal('Cannot connect ' . $this->mysql_conn_desc(), 'sql_db->open');
+            }
         } else {
             log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
         }
 
         return $result;
+    }
+
+    /**
+     * open the database link using general database admin user
+     * @return bool true if the database has successfully been connected
+     */
+    function open_via_db_admin(): bool
+    {
+        log_debug();
+
+        $result = false;
+        if ($this->db_type == sql_db::POSTGRES) {
+            try {
+                $this->postgres_link = pg_connect($this->pg_conn_str_admin());
+                if ($this->postgres_link !== false) {
+                    $result = true;
+                } else {
+                    log_fatal('Cannot connect ' . $this->pg_conn_desc_admin(), 'sql_db->open');
+                }
+            } catch (Exception $e) {
+                log_fatal('Cannot connect ' . $this->pg_conn_desc_admin() .
+                    ' due to ' . $e->getMessage(), 'sql_db open');
+            }
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $this->mysql = mysqli_connect(SQL_DB_HOST,
+                SQL_DB_ADMIN_USER_MYSQL, SQL_DB_ADMIN_PASSWD_MYSQL, SQL_DB_ADMIN_DB_MYSQL)
+            or die('Could not connect ' . $this->mysql_conn_desc_admin() .
+                ' ' . mysqli_error($this->mysql));
+            if ($this->mysql !== false) {
+                $result = true;
+            } else {
+                log_fatal('Cannot connect ' . $this->mysql_conn_desc_admin(), 'sql_db->open');
+            }
+        } else {
+            log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return bool true if the database connection is open
+     */
+    function is_open(): bool
+    {
+        $result = false;
+        if ($this->db_type == sql_db::POSTGRES) {
+            if ($this->postgres_link !== false) {
+                $result = true;
+            }
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            if ($this->mysql !== false) {
+                $result = true;
+            }
+        } else {
+            log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
+        }
+        return $result;
+    }
+
+    /**
+     * @return string the postgres connection string for the technical zukunft user
+     */
+    private function pg_conn_str(string $db_name = SQL_DB_NAME): string
+    {
+        return
+            'host=' . SQL_DB_HOST .
+            ' dbname=' . $db_name .
+            ' user=' . SQL_DB_USER .
+            ' password=' . SQL_DB_PASSWD;
+    }
+
+    /**
+     * @return string the postgres connection description for the technical zukunft user
+     *                without the full password for logging
+     */
+    private function pg_conn_desc(string $db_name = SQL_DB_NAME): string
+    {
+        return
+            'user ' . SQL_DB_USER .
+            ' (' . substr(SQL_DB_PASSWD, 0, 1) . '...)' .
+            ' to database ' . $db_name .
+            '@' . SQL_DB_HOST;
+    }
+
+    /**
+     * @return string the postgres admin connection description for the technical zukunft user
+     *                without the full password for logging
+     */
+    private function pg_conn_desc_admin(): string
+    {
+        return
+            'user ' . SQL_DB_ADMIN_USER .
+            ' (' . substr(SQL_DB_ADMIN_PASSWD, 0, 1) . '...) ' .
+            ' to database ' . SQL_DB_ADMIN_DB .
+            '@' . SQL_DB_HOST;
+    }
+
+    /**
+     * @return string the MySQL connection description for the technical zukunft user
+     *                without the full password for logging
+     */
+    private function mysql_conn_desc(): string
+    {
+        return
+            'user ' . SQL_DB_USER_MYSQL .
+            ' (' . substr(SQL_DB_PASSWD_MYSQL, 0, 1) . '...) ' .
+            ' to database ' . SQL_DB_NAME_MYSQL .
+            '@' . SQL_DB_HOST;
+    }
+
+    /**
+     * @return string the MySQL connection description for the technical zukunft user
+     *                without the full password for logging
+     */
+    private function mysql_conn_desc_admin(): string
+    {
+        return
+            'user ' . SQL_DB_ADMIN_USER_MYSQL .
+            ' (' . substr(SQL_DB_ADMIN_PASSWD_MYSQL, 0, 1) . '...) ' .
+            ' to database ' . SQL_DB_ADMIN_DB_MYSQL .
+            '@' . SQL_DB_HOST;
+    }
+
+    /**
+     * @return string the postgres connection string for the postgres admin user
+     */
+    private function pg_conn_str_admin(): string
+    {
+        return
+            'host=' . SQL_DB_HOST .
+            ' dbname=' . SQL_DB_ADMIN_DB .
+            ' user=' . SQL_DB_ADMIN_USER .
+            ' password=' . SQL_DB_ADMIN_PASSWD;
     }
 
     /**
@@ -813,9 +1045,9 @@ class sql_db
     {
         if ($this->db_type == sql_db::POSTGRES) {
             // TODO null check can be removed once the type declaration is set to PgSql\Connection using php 8.1
-            if ($this->postgres_link != null) {
+            if ($this->postgres_link !== false) {
                 pg_close($this->postgres_link);
-                $this->postgres_link = null;
+                $this->postgres_link = false;
             }
         } elseif ($this->db_type == sql_db::MYSQL) {
             mysqli_close($this->mysql);
@@ -823,12 +1055,12 @@ class sql_db
             log_err('Database type ' . $this->db_type . ' not yet implemented');
         }
 
-
         log_debug("done");
     }
 
     /**
-     * create the technical database user and the database structure for the zukunft.com pod
+     * create the technical database user
+     * and the database structure for the zukunft.com pod
      *
      * @return bool true if the pod setup has been successful
      */
@@ -839,70 +1071,78 @@ class sql_db
         $result = false;
         $sys_times->switch(system_time_type::DB_WRITE);
 
-        // ask the user for the database server, admin user and pw
-        $db_server = 'localhost';
-        $db_admin_user = 'postgres';
-        $db_admin_password = 'xxx';
-        // connect with db admin user
-        $this->postgres_link = pg_connect('host=' . $db_server . ' user=' . $db_admin_user . ' password=' . $db_admin_password);
-        // create zukunft user
-        $sql_name = 'db_setup_create_role';
-        $sql = resource_file('db/setup/postgres/db_create_user.sql');
-        try {
-            $sql_result = $this->exe($sql);
-            if (!$sql_result) {
-                // show the error message direct to the setup user because database does not yet exist
-                echo 'ERROR: creation of the technical pod user failed ';
-                echo 'due to ' . pg_last_error();
+        // try to connect with the db admin user to recreate the zukunft user
+        // that should have been created by the installation script
+        if ($this->setup_db_zukunft_user_via_db_admin()) {
+            // retry to connect with zukunft user but with the standard database
+            if ($this->open($this->database_name_of_the_db_admin_user())) {
+                log_warning('database user has unexpected been recreated');
+            } else {
+                log_fatal('database user cannot be created', 'sql_db->setup');
             }
-        } catch (Exception $e) {
-            // show the error message direct to the setup user because database does not yet exist
-            echo 'FATAL ERROR: creation of the technical pod user failed ';
-            echo 'due to ' . $e->getMessage();
         }
-        $this->close();
-        // connect with zukunft user
-        $conn_str = 'host=' . $db_server . ' dbname=postgres user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
-        $this->postgres_link = pg_connect($conn_str);
-        if ($this->postgres_link !== false) {
-            $sql = resource_file('db/setup/postgres/db_create_database.sql');
+
+        // try to create the database
+        // that should have been created by the installation script
+        if (!$this->is_open()) {
+            log_fatal('cannot create database with the zukunft user because reopen failed', 'sql_db->setup');
+        } else {
+            $sql = $this->sql_to_create_database();
             try {
                 $sql_result = $this->exe($sql);
                 if (!$sql_result) {
                     // show the error message direct to the setup user because database does not yet exist
-                    echo 'ERROR: creation of the database failed ';
-                    echo 'due to ' . pg_last_error();
+                    log_fatal('creation of the database failed due to ' . pg_last_error(),
+                        'sql_db->setup');
                 }
             } catch (Exception $e) {
                 // show the error message direct to the setup user because database does not yet exist
-                echo 'FATAL ERROR: creation of the database failed ';
-                echo 'due to ' . $e->getMessage();
+                log_fatal('creation of the database failed due to ' . $e->getMessage(),
+                    'sql_db->setup');
             }
+            $this->close();
         }
-        $this->close();
-        // connect with zukunft user
-        $conn_str = 'host=' . $db_server . ' dbname=zukunft user=' . SQL_DB_USER . ' password=' . SQL_DB_PASSWD;
-        $this->postgres_link = pg_connect($conn_str);
-        $db_tmp = new sql_db();
-        if ($this->postgres_link !== false) {
-            $sql = resource_file(DB_RES_SUB_PATH . DB_SETUP_SUB_PATH . $db_tmp->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
-            try {
-                $sql_result = $this->exe($sql);
-                if (!$sql_result) {
-                    // show the error message direct to the setup user because database does not yet exist
-                    echo 'ERROR: creation of the database failed ';
-                    echo 'due to ' . pg_last_error();
-                }
-            } catch (Exception $e) {
-                // show the error message direct to the setup user because database does not yet exist
-                echo 'FATAL ERROR: creation of the database failed ';
-                echo 'due to ' . $e->getMessage();
+
+        // reopen the database connection with the zukunft user and the zukunft database
+        // and try to create the database structure
+        if (!$this->open()) {
+            log_fatal('reopening of the database connection with the zukunft user failed', 'sql_db->setup');
+        } else {
+            $usr_msg = $this->setup_db();
+            if ($usr_msg->is_ok()) {
+                $result = true;
             }
-            $result = true;
         }
         $sys_times->switch();
 
-        // create the tables and view
+        return $result;
+    }
+
+    function setup_db_zukunft_user_via_db_admin(): bool
+    {
+        // ask the user for the database server admin user and pw as a fallback
+        $result = false;
+        // connect with general db admin user
+        if ($this->open_via_db_admin()) {
+
+            // create zukunft user
+            $sql = $this->sql_to_create_database_role();
+            try {
+                $sql_result = $this->exe($sql);
+                if (!$sql_result) {
+                    // show the error message direct to the setup user because database does not yet exist
+                    echo 'ERROR: creation of the technical pod user failed ';
+                    echo 'due to ' . pg_last_error();
+                } else {
+                    $result = true;
+                }
+            } catch (Exception $e) {
+                // show the error message direct to the setup user because database does not yet exist
+                echo 'FATAL ERROR: creation of the technical pod user failed ';
+                echo 'due to ' . $e->getMessage();
+            }
+            $this->close();
+        }
         return $result;
     }
 
@@ -915,14 +1155,15 @@ class sql_db
     function setup_db(): user_message
     {
         global $sys_times;
+        global $log_txt;
 
-        $html = new html_base();
         $usr_msg = new user_message();
 
         // create the tables, db indexes and foreign keys
-        $sql = resource_file(DB_RES_SUB_PATH . DB_SETUP_SUB_PATH . $this->path(sql_db::POSTGRES) . DB_SETUP_SQL_FILE);
+        $sql = $this->sql_to_create_database_structure();
         try {
-            $html->echo('Run db setup sql script');
+            // because no log yet exists here echo instead of log_echo() is used
+            $log_txt->echo_log('Run db setup sql script');
             $sys_times->switch(system_time_type::DB_SETUP);
             $sql_msg = $this->exe_script($sql);
             $sys_times->switch();
@@ -941,25 +1182,29 @@ class sql_db
         } catch (Exception $e) {
             $msg = ' creation of the database failed due to ' . $e->getMessage();
             log_fatal($msg, 'setup_db');
-            $usr_msg->add_message($msg);
+            $usr_msg->add_message_text($msg);
         }
 
         // fill the tables with the essential data
         if ($usr_msg->is_ok()) {
-            $html->echo('Create system users');
+            // because no user yet exists here echo instead of log_echo() is used
+            $log_txt->echo_log('Create system users');
             $this->reset_config();
             $this->import_system_users();
 
             // use the system user for the database updates
             global $usr;
             $usr = new user;
-            $usr->load_by_id(SYSTEM_USER_ID);
+            $usr->load_by_id(users::SYSTEM_ID);
 
             // recreate the code link database rows
-            $html->echo('Create the code links');
+            $log_txt->echo_log('Create the code links');
             $this->db_fill_code_links();
             $sys_typ_lst = new type_lists();
             $sys_typ_lst->load($this, $usr);
+
+            // update the sql sequences
+            $this->check_sequences();
 
             // reload the base configuration
             $job = new job($usr);
@@ -969,8 +1214,9 @@ class sql_db
             $this->import_verbs($usr);
             $import->import_base_config($usr);
             $this->create_internal_words($usr);
-            $import->import_config($usr);
             $import->import_config_yaml($usr);
+            $import->import_pod_config($usr);
+            $import->import_test_config($usr);
             $this->db_check_missing_owner();
 
             // create the test dataset to check the basic write functions
@@ -1003,6 +1249,16 @@ class sql_db
     }
 
     /**
+     * check and fix the sql sequences
+     * @return user_message
+     */
+    public function check_sequences(): user_message
+    {
+        $sql_seq = new sql_sync_sequences();
+        return $sql_seq->sync($this);
+    }
+
+    /**
      * force to drop any remaining tables of the database
      * only used for testing to reset the db after a broken db update script
      * TODO remove or deactivate this before prod deployment
@@ -1030,16 +1286,15 @@ class sql_db
     function run_db_truncate(user $sys_usr): void
     {
         global $sys_times;
+        global $log_txt;
 
         $lib = new library();
         $sys_times->switch(system_time_type::DB_WRITE);
 
         // the tables in order to avoid the usage of CASCADE
         $table_names = sql_db::DB_TABLE_CLASSES_DESC_DEPENDING;
-        $html = new html_base();
-        $html->echo("\n");
-        $html->echo('truncate ');
-        $html->echo("\n");
+
+        $log_txt->echo_log('truncate ');
 
         // truncate tables that have already a build in truncate statement creation
         $sql = '';
@@ -1079,6 +1334,12 @@ class sql_db
 
     function run_preloaded_truncate(): void
     {
+
+        // log cache
+        global $cng_act_cac;
+        global $cng_tbl_cac;
+        global $cng_fld_cac;
+
         // TODO use system user cache
         global $system_users;
         // TODO use user profile cache
@@ -1091,7 +1352,6 @@ class sql_db
         global $msk_sty_cac;
         global $msk_lnk_typ_cac;
         global $cmp_typ_cac;
-        // TODO use component link type cache
         global $cmp_lnk_typ_cac;
         global $pos_typ_cac;
         global $ref_typ_cac;
@@ -1104,9 +1364,6 @@ class sql_db
         global $sys_msk_cac;
         global $sys_log_sta_cac;
         global $job_typ_cac;
-        global $cng_act_cac;
-        global $cng_tbl_cac;
-        global $cng_fld_cac;
 
         // TODO activate or remove
         //$system_users =[];
@@ -1119,8 +1376,7 @@ class sql_db
         $msk_sty_cac = new view_style_list();
         $msk_lnk_typ_cac = new view_link_type_list();
         $cmp_typ_cac = new component_type_list();
-        // not yet needed?
-        //$cmp_lnk_typ_cac = new component_link_type_list();
+        $cmp_lnk_typ_cac = new component_link_type_list();
         $pos_typ_cac = new position_type_list();
         $ref_typ_cac = new ref_type_list();
         $src_typ_cac = new source_type_list();
@@ -1129,6 +1385,7 @@ class sql_db
         $lan_cac = new language_list();
         $lan_for_cac = new language_form_list();
         $job_typ_cac = new job_type_list();
+        $sys_log_sta_cac = new sys_log_status_list();
         $cng_act_cac = new change_action_list();
         $cng_tbl_cac = new change_table_list();
         $cng_fld_cac = new change_field_list();
@@ -1183,24 +1440,48 @@ class sql_db
         $cfg->check(config::VERSION_DB, PRG_VERSION, $this);
 
         // get the list of CSV and loop
-        foreach (BASE_CODE_LINK_FILES as $csv_file_name) {
-            $this->load_db_code_link_file($csv_file_name, $this);
+        foreach (def::BASE_CODE_LINK_FILES as $csv_file_name) {
+            $this->load_db_code_link_file($csv_file_name);
         }
 
         // set the seq number if needed
+        // TODO check why this is needed and combine with the other sequence reset
         $this->seq_reset(change_table::class);
         $this->seq_reset(change_field::class);
         $this->seq_reset(change_action::class);
     }
 
-    function load_db_code_link_file(string $class): void
+    /**
+     * fill the database with the rows needed for change logging
+     */
+    function db_log_code_links(): void
+    {
+        // first of all set the database version if not yet done
+        $cfg = new config();
+        $cfg->check(config::VERSION_DB, PRG_VERSION, $this);
+
+        // get the list of CSV and loop
+        foreach (def::LOG_CODE_LINK_FILES as $csv_file_name) {
+            $this->load_db_code_link_file($csv_file_name);
+        }
+
+        // set the seq number if needed
+        // TODO check why this is needed and combine with the other sequence reset
+        $this->seq_reset(change_table::class);
+        $this->seq_reset(change_field::class);
+        $this->seq_reset(change_action::class);
+    }
+
+    function load_db_code_link_file(string $class): bool
     {
         global $debug;
+
+        $result = false;
         $lib = new library();
         $table_name = $lib->class_to_table($class);
 
         // load the csv
-        $csv_path = PATH_BASE_CODE_LINK_FILES . $table_name . BASE_CODE_LINK_FILE_TYPE;
+        $csv_path = files::CODE_LINK_PATH . $table_name . files::CODE_LINK_TYPE;
 
         $row = 1;
         // TODO ignore empty rows
@@ -1266,8 +1547,12 @@ class sql_db
                 }
                 $row++;
             }
+            if ($continue) {
+                $result = true;
+            }
             fclose($handle);
         }
+        return $result;
     }
 
     function db_fill_code_link_sql(string $table_name, string $id_col_name, int $id): sql_par
@@ -1304,7 +1589,7 @@ class sql_db
         $this->reset();
         $this->class = $class;
         if ($usr == null) {
-            $this->set_usr(SYSTEM_USER_ID); // if the session user is not yet set, use the system user id to test the database compatibility
+            $this->set_usr(users::SYSTEM_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
             if ($usr->id() == null) {
                 $this->set_usr(0); // fallback for special cases
@@ -2223,61 +2508,64 @@ class sql_db
         $result = $type . '_name';
         // exceptions to be adjusted
         if ($result == 'link_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'system_time_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_types_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'component_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
+        }
+        if ($result == 'component_link_type_name') {
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'position_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'element_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'formula_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'formula_link_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'ref_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'source_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'share_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'protection_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'profile_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'job_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
         if ($result == 'triple_name') {
@@ -2417,7 +2705,7 @@ class sql_db
             log_fatal('Unknown database type "' . $this->db_type . '"', 'exe_script');
         }
         if ($result === false) {
-            $usr_msg->add_message(pg_last_error($this->postgres_link));
+            $usr_msg->add_message_text(pg_last_error($this->postgres_link));
         }
         return $usr_msg;
     }
@@ -2551,16 +2839,16 @@ class sql_db
      * write a database exception to the log table if still possible
      *
      * @param string $msg a text from the calling function that adds an indication what might have caused the issue
-     * @param Exception $e the execption created by the db call
+     * @param Exception $e the exception created by the db call
      * @param string $sql the sql statement that have caused the issue from this code point of view
      * @param int $log_level to prevent further messages in case of fatal errors
      * @return string the message that should be shown to the user
      */
-    private function log_db_exception(
-        string $msg,
+    public function log_db_exception(
+        string    $msg,
         Exception $e,
-        string $sql = '',
-        int $log_level = sys_log_level::ERROR
+        string    $sql = '',
+        int       $log_level = sys_log_level::ERROR
     ): string
     {
         return $this->log_db_error_message($msg, $e->getMessage(), $sql, $log_level);
@@ -2580,7 +2868,7 @@ class sql_db
         string $msg,
         string $err,
         string $sql = '',
-        int $log_level = sys_log_level::ERROR
+        int    $log_level = sys_log_level::ERROR
     ): string
     {
         $msg .= ' ' . log::MSG_ERR_USING . $sql . log::MSG_ERR_BECAUSE . $err;
@@ -3316,13 +3604,13 @@ class sql_db
                 $result .= sql_db::STD_TBL . '.';
             }
             $this->add_par(sql_par_type::TEXT, $code_id);
-            $result .= sql::FLD_CODE_ID . " = " . $this->par_name();
+            $result .= sql_db::FLD_CODE_ID . " = " . $this->par_name();
             if ($this->db_type == sql_db::POSTGRES) {
                 $result .= ' AND ';
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $result .= sql::FLD_CODE_ID . ' IS NOT NULL';
+                $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
             }
         } elseif ($name <> '' and !is_null($this->usr_id)) {
             $result .= $this->set_where_name($name, $this->name_field);
@@ -3430,14 +3718,14 @@ class sql_db
                             }
                         }
 
-                        if ($par_type == sql_par_type::TEXT OR $par_type == sql_par_type::KEY_512) {
-                            if ($id_fields[$used_fields] == sql::FLD_CODE_ID) {
+                        if ($par_type == sql_par_type::TEXT or $par_type == sql_par_type::KEY_512) {
+                            if ($id_fields[$used_fields] == sql_db::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $this->where .= ' AND ';
                                     if ($this->usr_query or $this->join <> '') {
                                         $this->where .= sql_db::STD_TBL . '.';
                                     }
-                                    $this->where .= sql::FLD_CODE_ID . ' IS NOT NULL';
+                                    $this->where .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
                                 }
                             }
                         }
@@ -3836,7 +4124,7 @@ class sql_db
      */
     function select_by_code_id(bool $has_id = true): string
     {
-        return $this->select_by(array(sql::FLD_CODE_ID), $has_id);
+        return $this->select_by(array(sql_db::FLD_CODE_ID), $has_id);
     }
 
     /**
@@ -3848,20 +4136,6 @@ class sql_db
     function select_by_field(string $id_field, bool $has_id = true): string
     {
         return $this->select_by(array($id_field), $has_id);
-    }
-
-    /**
-     * create a SQL select statement for the connected database and force to use the ids of the linked objects instead of the id
-     * and select by a given field
-     * @param string $field_name the field name of the database index field that should be used for the selection
-     * @param int $id the database id of the row that should be selected
-     * @return string the created SQL statement in the previous set dialect
-     */
-    function select_by_join_field(string $field_name, int $id): string
-    {
-        $this->join_select_field = $field_name;
-        $this->join_select_id = $id;
-        return $this->select_by();
     }
 
     /**
@@ -3958,47 +4232,11 @@ class sql_db
      */
     function count(string $class = '', string $id_fld = ''): ?int
     {
+        $sc = $this->sql_creator();
         if ($class != '') {
-            $this->set_class($class);
+            $sc->set_class($class);
         }
-        return $this->get1_int($this->count_qp());
-    }
-
-    /**
-     * create the SQL parameters to count the number of rows related to a database table type
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function count_qp(string $class_name = '', string $id_fld = ''): sql_par
-    {
-        $lib = new library();
-        if ($class_name == '') {
-            $class_name = $lib->class_to_name($this->class);
-        }
-        $qp = new sql_par($class_name);
-        $qp->name = $class_name . '_count';
-        $qp->sql = $this->count_sql($qp->name, $id_fld);
-        return $qp;
-    }
-
-    /**
-     * create a SQL select statement to count the number of rows related to a database table type
-     * the table type includes the table for the standard parameters and the user sandbox exceptions
-     * @return string the created SQL statement in the previous set dialect
-     */
-    function count_sql(string $sql_name = '', string $id_fld = ''): string
-    {
-        $lib = new library();
-        $class = $lib->class_to_name($this->class);
-        if ($id_fld == '') {
-            $id_fld = $class . self::FLD_EXT_ID;
-        }
-        if ($sql_name == '') {
-            $sql_name = $class . '_count';
-        }
-        return sql::PREPARE . ' ' . $sql_name . ' AS
-                    SELECT count(' . self::STD_TBL . '.' . $id_fld . ') + count(' . self::USR_TBL . '.' . $id_fld . ') AS count
-                      FROM ' . $this->table . ' ' . self::STD_TBL . '
-                 LEFT JOIN ' . sql_db::USER_PREFIX . $this->table . '  ' . self::USR_TBL . ' ON ' . self::STD_TBL . '.' . $id_fld . ' = ' . self::USR_TBL . '.' . $id_fld . ';';
+        return $this->get1_int($sc->count_qp('', $id_fld));
     }
 
     /**
@@ -4152,7 +4390,7 @@ class sql_db
 
         // get the system user id
         $sys_usr = new user();
-        $sys_usr->load_by_name(user::SYSTEM_NAME);
+        $sys_usr->load_by_name(users::SYSTEM_NAME);
 
         if ($sys_usr->id() <= 0) {
             log_err('Cannot load system used in set_default_owner');
@@ -4196,9 +4434,10 @@ class sql_db
      * @param sql_par $qp the sql statement with the name of the prepare query and parameter for this execution
      * @param string $description for the user to identify the statement
      * @param bool $usr_tbl true if a row in the user table is added which implies that no new id is returned
+     * @param bool $is_val if true the row to be added to the database is a value or result and is using the group id, so no database id needs to be returned
      * @return user_message
      */
-    function insert(sql_par $qp, string $description, bool $usr_tbl = false): user_message
+    function insert(sql_par $qp, string $description, bool $usr_tbl = false, bool $is_val = false): user_message
     {
         global $sys_times;
 
@@ -4212,7 +4451,7 @@ class sql_db
                 $sql_error = pg_result_error($sql_result);
                 if ($sql_error != '') {
                     log_err($sql_error . ' while executing ' . $qp->sql);
-                    $usr_msg->add_message($err_msg);
+                    $usr_msg->add_message_text($err_msg);
                 } else {
                     if (!$usr_tbl) {
                         $db_id = pg_fetch_array($sql_result)[0];
@@ -4224,16 +4463,19 @@ class sql_db
                 }
             }
             if (!$usr_tbl) {
+
                 if ($db_id == 0 or $db_id == '') {
-                    log_err($err_msg);
-                    $usr_msg->add_message($err_msg);
+                    if (!$is_val) {
+                        log_err($err_msg);
+                        $usr_msg->add_message_text($err_msg);
+                    }
                 } else {
                     $usr_msg->set_db_row_id($db_id);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $usr_msg->add_message($trace_link);
+            $usr_msg->add_message_text($trace_link);
         }
         $sys_times->switch();
 
@@ -4265,12 +4507,12 @@ class sql_db
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
                     log_err($err_msg);
-                    $usr_msg->add_message($err_msg);
+                    $usr_msg->add_message_text($err_msg);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $usr_msg->add_message($trace_link);
+            $usr_msg->add_message_text($trace_link);
         }
         $sys_times->switch();
 
@@ -4302,12 +4544,12 @@ class sql_db
                 if ($sql_error != '') {
                     $err_msg .= ' due to ' . $sql_error;
                     log_err($err_msg);
-                    $usr_msg->add_message($err_msg);
+                    $usr_msg->add_message_text($err_msg);
                 }
             }
         } catch (Exception $e) {
             $trace_link = log_err($err_msg . log::MSG_ERR_USING . $qp->sql . log::MSG_ERR_BECAUSE . $e->getMessage());
-            $usr_msg->add_message($trace_link);
+            $usr_msg->add_message_text($trace_link);
         }
         $sys_times->switch();
 
@@ -4704,11 +4946,14 @@ class sql_db
     function postgres_format($field_value, $forced_format)
     {
         global $debug;
+        global $db_con;
 
         $result = $field_value;
 
         // add the formatting for the sql statement
-        if (trim($result) == "" or trim($result) == sql::NULL_VALUE) {
+        if (is_null($result)) {
+            $result = sql::NULL_VALUE;
+        } elseif (trim($result) == "" || trim($result) == sql::NULL_VALUE) {
             $result = sql::NULL_VALUE;
         } else {
             if ($forced_format == sql_db::FLD_FORMAT_VAL) {
@@ -4718,7 +4963,13 @@ class sql_db
             } elseif ($forced_format == sql_db::FLD_FORMAT_TEXT or !is_numeric($result)) {
 
                 // escape the text value for Postgres
-                $result = pg_escape_string($result);
+                if ($db_con->postgres_link == null) {
+                    // TODO review
+                    log_warning('deprecated call of the pg_escape_string function');
+                    $result = pg_escape_string($result);
+                } else {
+                    $result = pg_escape_string($db_con->postgres_link, $result);
+                }
                 //$result = pg_real_escape_string($result);
 
                 // undo the double high quote escape char, because this is not needed if the string is capsuled by single high quote
@@ -4754,7 +5005,8 @@ class sql_db
                 if (!isset($this->mysql)) {
                     $result = $this->sql_escape($result);
                 } else {
-                    $result = mysqli_real_escape_string($this->mysql, $result);
+                    //$result = mysqli_real_escape_string($this->mysql, $result);
+                    $result = str_replace("'", "\'", $result);
                 }
 
                 // undo the double high quote escape char, because this is not needed if the string is capsuled by single high quote
@@ -4838,7 +5090,7 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $sql_check .= "TABLE_NAME = '" . $table_name . "';";
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $sql_check .= "TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $table_name . "';";
+            $sql_check .= "TABLE_SCHEMA = '" . SQL_DB_NAME_MYSQL . "' AND TABLE_NAME = '" . $table_name . "';";
         } else {
             $msg = 'Unknown database type "' . $this->db_type . '"';
             log_err($msg, 'sql_db->has_column');
@@ -4866,7 +5118,7 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $sql_check = "SELECT TRUE FROM pg_attribute WHERE attrelid = '" . $table_name . "'::regclass AND  attname = '" . $column_name . "' AND NOT attisdropped ";
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $sql_check = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $table_name . "' AND COLUMN_NAME = '" . $column_name . "';";
+            $sql_check = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" . SQL_DB_NAME_MYSQL . "' AND TABLE_NAME = '" . $table_name . "' AND COLUMN_NAME = '" . $column_name . "';";
         } else {
             $msg = 'Unknown database type "' . $this->db_type . '"';
             log_err($msg, 'sql_db->has_column');
@@ -4910,9 +5162,9 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $sql = "SELECT column_name FROM information_schema.columns WHERE table_name   = '" . $tbl_name . "';";
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $tbl_name . "';";
+            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" . SQL_DB_NAME_MYSQL . "' AND TABLE_NAME = '" . $tbl_name . "';";
         } else {
-            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $tbl_name . "';";
+            $sql = "SELECT TRUE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = '" . SQL_DB_NAME_MYSQL . "' AND TABLE_NAME = '" . $tbl_name . "';";
         }
         $sql_result = $this->get_internal($sql);
         foreach ($sql_result as $row) {
@@ -4954,12 +5206,12 @@ class sql_db
         if ($this->db_type == sql_db::POSTGRES) {
             $sql_check = "SELECT" . " TRUE 
                             FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS 
-                           WHERE CONSTRAINT_CATALOG = 'zukunft' 
+                           WHERE CONSTRAINT_CATALOG = '" . SQL_DB_NAME . "' 
                              AND CONSTRAINT_NAME = '" . $key_name . "';";
         } elseif ($this->db_type == sql_db::MYSQL) {
             $sql_check = "SELECT" . " TRUE 
                             FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS 
-                           WHERE CONSTRAINT_SCHEMA = 'zukunft' 
+                           WHERE CONSTRAINT_SCHEMA = '" . SQL_DB_NAME_MYSQL . "' 
                              AND TABLE_NAME = '" . $table_name . "' 
                              AND CONSTRAINT_NAME = '" . $key_name . "';";
         } else {
@@ -5068,7 +5320,7 @@ class sql_db
             // actually add the column
             $sql = 'ALTER TABLE IF EXISTS ' . $this->name_sql_esc($table_name) .
                 ' DROP COLUMN IF EXISTS ' . $this->name_sql_esc($field_name) . ';';
-            $usr_msg->add_message($this->exe_try('Deleting column ' . $field_name . ' of ' . $table_name, $sql));
+            $usr_msg->add_message_text($this->exe_try('Deleting column ' . $field_name . ' of ' . $table_name, $sql));
         }
 
         return $usr_msg;
@@ -5304,7 +5556,7 @@ class sql_db
             $qp->sql .= " table_name = '" . $table_name . "';";
             $qp->name .= $table_name;
         } elseif ($this->db_type == sql_db::MYSQL) {
-            $qp->sql .= " TABLE_SCHEMA = 'zukunft' AND TABLE_NAME = '" . $table_name . "';";
+            $qp->sql .= " TABLE_SCHEMA = '" . SQL_DB_NAME_MYSQL . "' AND TABLE_NAME = '" . $table_name . "';";
             $qp->name .= $table_name;
         } else {
             $qp->sql = '';
@@ -5438,9 +5690,10 @@ class sql_db
 
     function truncate_table_all(): void
     {
+        global $log_txt;
+
         // the sequence names of the tables to reset
-        $html = new html_base();
-        $html->echo('truncate all tables ');
+        $log_txt->echo_log('truncate all tables ');
         foreach (DB_SEQ_LIST as $seq_name) {
             $this->reset_seq($seq_name);
         }
@@ -5448,8 +5701,9 @@ class sql_db
 
     function truncate_table(string $table_name): void
     {
-        $html = new html_base();
-        $html->echo('truncate table ' . $table_name);
+        global $log_txt;
+
+        $log_txt->echo_log('truncate table ' . $table_name);
         $sql = sql::TRUNCATE . ' ' . $this->get_table_name_esc($table_name) . ' ' . sql::CASCADE . '; ';
         try {
             $this->exe($sql);
@@ -5461,10 +5715,11 @@ class sql_db
     function drop_table(string $table_name): void
     {
         global $sys_times;
+        global $log_txt;
+
         $sys_times->switch(system_time_type::DB_WRITE);
 
-        $html = new html_base();
-        $html->echo('DROP TABLE ' . $table_name);
+        $log_txt->echo_log('DROP TABLE ' . $table_name);
         if ($this->has_table($table_name)) {
             $sql = 'drop table ' . $table_name . ' cascade;';
             try {
@@ -5487,10 +5742,11 @@ class sql_db
     function reset_seq(string $seq_name, int $start_id = 1): void
     {
         global $sys_times;
+        global $log_txt;
+
         $sys_times->switch(system_time_type::DB_WRITE);
 
-        $html = new html_base();
-        $html->echo('RESET SEQUENCE ' . $seq_name);
+        $log_txt->echo_log('RESET SEQUENCE ' . $seq_name);
         $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART ' . $start_id . ';';
         try {
             $this->exe($sql);
@@ -5501,17 +5757,27 @@ class sql_db
     }
 
     /**
-     * fill the user profiled with the default values for this program version
-     * @return void
+     * fixed code to load into the database the user profiled with the default values for this program version
+     * but only if the user profile or type table is empty
+     * @return bool true if the profiles have been created
      */
-    function load_user_profiles(): void
+    function load_user_profiles(): bool
     {
-        foreach (USER_CODE_LINK_FILES as $csv_file_name) {
-            $this->load_db_code_link_file($csv_file_name, $this);
+        $result = true;
+        foreach (def::CLASS_WITH_USER_CODE_LINK_CSV as $class_for_csv) {
+            if ($this->count($class_for_csv) <= 0 and $result) {
+                $save_result = $this->load_db_code_link_file($class_for_csv);
+                if (!$save_result) {
+                    log_fatal($class_for_csv . ' code link csv file cannot be loaded into the database',
+                        'sql_db->load_user_profiles');
+                    $result = false;
+                }
+            }
         }
         global $usr_pro_cac;
         $usr_pro_cac = new user_profile_list();
         $usr_pro_cac->load($this);
+        return $result;
     }
 
     /**
@@ -5525,7 +5791,8 @@ class sql_db
     }
 
     /**
-     * @return bool true if the user has actuelly been imported
+     * import the system users
+     * @return bool true if the system users has actually been imported
      */
     function import_system_users(): bool
     {
@@ -5533,19 +5800,39 @@ class sql_db
 
         // allow adding only if there is not yet any system user in the database
         $usr = new user;
-        $usr->load_by_id(SYSTEM_USER_ID);
+        $usr->load_by_id(users::SYSTEM_ID);
 
         if ($usr->id() <= 0) {
 
             // check if there is really no user in the database with a system profile
             $check_usr = new user();
-            if (!$check_usr->has_any_user_this_profile(user_profile::SYSTEM)) {
+            if (!$check_usr->has_any_user_this_profile(user_profiles::SYSTEM)) {
                 // if the system users are missing always reset all users as a double line of defence to prevent system
+                // create the main system user profiles
+                // but only if needed and allowed which is only the case directly after the database structure creation
                 $this->load_user_profiles();
-                $usr->set_profile(user_profile::SYSTEM);
+
+                // create the main system user upfront direct from the code
+                // but only if needed and allowed which is only the case directly after the database structure creation
+                $init_usr = new user();
+                if ($init_usr->create_system_user()) {
+                    // reload the system user if adding has been successful
+                    $usr->load_by_id(users::SYSTEM_ID);
+                }
+
+                // translate the system setup messages only to the system base language which is english
+                global $mtr;
+                $mtr = new Translator(language_codes::SYS);
+
+                // prepare logging of the import
+                $this->db_log_code_links();
+                $sys_typ_lst = new type_lists();
+                $sys_typ_lst->load_log($this);
+
+                // create the other system users from the json and add e.g. the description fields
                 $imf = new import_file();
-                $import_result = $imf->json_file(SYSTEM_USER_CONFIG_FILE, $usr);
-                if (str_starts_with($import_result, ' done ')) {
+                $import_result = $imf->json_file(files::SYSTEM_USERS, $usr);
+                if (str_starts_with($import_result->get_last_message(), ' done ')) {
                     $result = true;
                 }
             }
@@ -5563,8 +5850,8 @@ class sql_db
 
         if ($usr->is_admin() or $usr->is_system()) {
             $imf = new import_file();
-            $import_result = $imf->json_file(SYSTEM_VERB_CONFIG_FILE, $usr);
-            if (str_starts_with($import_result, ' done ')) {
+            $import_result = $imf->json_file(files::VERBS, $usr);
+            if (str_starts_with($import_result->get_last_message(), ' done ')) {
                 $result = true;
             }
         }
@@ -5591,15 +5878,15 @@ class sql_db
             foreach (config_numbers::ADMIN_KEYWORDS as $name) {
                 $wrd = new word($usr);
                 $wrd->set_name($name);
-                $wrd->set_code_id($name);
-                $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $wrd->set_code_id($name, $usr);
+                $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
                 $usr_msg->add($wrd->save());
             }
             foreach (config_numbers::HIDDEN_KEYWORDS as $name) {
                 $wrd = new word($usr);
                 $wrd->set_name($name);
-                $wrd->set_code_id($name);
-                $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $wrd->set_code_id($name, $usr);
+                $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
                 $wrd->set_type(phrase_type_shared::SYSTEM_HIDDEN);
                 $usr_msg->add($wrd->save());
             }
@@ -5610,9 +5897,9 @@ class sql_db
                 if (!$wrd->load_by_name($name)) {
                     $wrd->set_name($name);
                 }
-                $wrd->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
                 $wrd->description = $com;
-                $wrd->set_code_id($name);
+                $wrd->set_code_id($name, $usr);
                 $usr_msg->add($wrd->save());
             }
             foreach (config_numbers::HIDDEN_KEY_TRIPLES as $trp_lst) {
@@ -5628,7 +5915,7 @@ class sql_db
                 $trp->set_verb($vrb);
                 $trp->set_to($to);
                 $trp->set_name($from_name . ' ' . $to_name);
-                $trp->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $trp->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
                 $trp->set_type(phrase_type_shared::SYSTEM_HIDDEN);
                 //$trp->set_code_id($from_name . ' ' . $to_name);
                 $usr_msg->add($trp->save());
@@ -5646,7 +5933,7 @@ class sql_db
                 $trp->set_verb($vrb);
                 $trp->set_to($to);
                 $trp->set_name($from_name . ' ' . $to_name);
-                $trp->protection_id = $ptc_typ_cac->id(protect_type_shared::ADMIN);
+                $trp->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
                 //$trp->set_code_id($from_name . ' ' . $to_name);
                 $usr_msg->add($trp->save());
             }
@@ -5664,8 +5951,8 @@ class sql_db
 
         if ($usr->is_admin() or $usr->is_system()) {
             $imf = new import_file();
-            $import_result = $imf->json_file(SYSTEM_VIEW_CONFIG_PATH, $usr);
-            if (str_starts_with($import_result, ' done ')) {
+            $import_result = $imf->json_file(files::SYSTEM_VIEWS, $usr);
+            if (str_starts_with($import_result->get_last_message(), ' done ')) {
                 $result = true;
             }
         }
@@ -5676,5 +5963,75 @@ class sql_db
         return $result;
     }
 
+
+    /*
+     * db type const
+     */
+
+    /**
+     * depending on the used database type
+     * the name of the database that is always been expected in the database
+     * @return string with the database name e.g. postgres for postgres
+     */
+    private function database_name_of_the_db_admin_user(): string
+    {
+        if ($this->db_type == sql_db::POSTGRES) {
+            $db_name = SQL_DB_ADMIN_DB;
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $db_name = SQL_DB_ADMIN_DB_MYSQL;
+        } else {
+            $db_name = SQL_DB_ADMIN_DB;
+            log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
+        }
+        return $db_name;
+    }
+
+    /**
+     * depending on the used database type
+     * the sql statement to create a database role
+     * @return string with the sql e.g. CREATE ROLE zukunft
+     */
+    private function sql_to_create_database_role(): string
+    {
+        return $this->sql_setup_file(files::DB_ROLE_FILE);
+    }
+
+    /**
+     * depending on the used database type
+     * the sql statement to create a database itself
+     * @return string with the sql e.g. CREATE ROLE zukunft
+     */
+    private function sql_to_create_database(): string
+    {
+        return $this->sql_setup_file(files::DB_CREATE_FILE);
+    }
+
+    /**
+     * depending on the used database type
+     * the sql statement to create a database structure
+     * @return string with the sql e.g. CREATE ROLE zukunft
+     */
+    public function sql_to_create_database_structure(): string
+    {
+        return $this->sql_setup_file(files::DB_STRUCTURE_FILE);
+    }
+
+    /**
+     * depending on the used database type
+     * a sql setup statement
+     * @return string with the sql e.g. CREATE ROLE zukunft
+     */
+    private function sql_setup_file(string $file_name): string
+    {
+        if ($this->db_type == sql_db::POSTGRES) {
+            $sql = file_get_contents(files::DB_SETUP_PG_PATH . $file_name);
+        } elseif ($this->db_type == sql_db::MYSQL) {
+            $sql = file_get_contents(files::DB_SETUP_MYSQL_PATH . $file_name);
+        } else {
+            $sql = file_get_contents(files::DB_SETUP_PG_PATH . $file_name);
+            log_fatal('Database type ' . $this->db_type . ' not yet implemented', 'sql_db open');
+        }
+        return $sql;
+    }
 
 }

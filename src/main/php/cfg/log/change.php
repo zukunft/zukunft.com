@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/log/change.php - for logging changes in named objects such as words and formulas
+    model/log/change.php - for logging changes in named objects such as words and formulas
     ------------------
 
     The main sections of this object are
@@ -43,30 +43,35 @@
 
 namespace cfg\log;
 
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once API_LOG_PATH . 'change_log_named.php';
-include_once API_SANDBOX_PATH . 'user_config.php';
-//include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once WEB_LOG_PATH . 'change_log_named.php';
+use cfg\const\paths;
 
-use api\log\change_log_named as change_log_named_api;
-use api\sandbox\user_config;
+include_once paths::MODEL_LOG . 'change_log.php';
+//include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+
 use cfg\component\component;
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -81,26 +86,21 @@ use cfg\db\sql_type_list;
 use cfg\formula\formula;
 use cfg\group\group;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\value\value;
 use cfg\view\view;
 use cfg\word\word;
-use html\log\change_log_named as change_log_named_dsp;
+use shared\enum\change_fields;
+use shared\enum\change_tables;
+use shared\enum\messages as msg_id;
+use shared\json_fields;
+use shared\types\api_type_list;
 use DateTime;
 use DateTimeInterface;
 use Exception;
 
 class change extends change_log
 {
-
-    /*
-     * messages
-     */
-
-    // TODO replace by a language specific message id
-    const MSG_ADD = 'added';
-    const MSG_UPDATE = 'changed';
-    const MSG_DEL = 'deleted';
-    const MSG_LINK = 'linked';
 
     /*
      * db const
@@ -111,7 +111,6 @@ class change extends change_log
     // *_SQL_TYP is the sql data type used for the field
     const FLD_FIELD_ID = 'change_field_id';
     const FLD_FIELD_ID_SQL_TYP = sql_field_type::INT_SMALL;
-    const FLD_ROW_ID = 'row_id';
     const FLD_OLD_VALUE = 'old_value';
     const FLD_OLD_VALUE_SQL_TYP = sql_field_type::TEXT;
     const FLD_OLD_ID_COM = 'old value id';
@@ -126,6 +125,9 @@ class change extends change_log
     const FLD_NEW_ID_SQL_TYP = sql_field_type::INT;
     const FLD_OLD_EXT = '_old';
 
+    // TODO move to config
+    const DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
+
     // all database field names
     const FLD_NAMES = array(
         user::FLD_ID,
@@ -133,17 +135,17 @@ class change extends change_log
         self::FLD_ACTION,
         self::FLD_FIELD_ID,
         self::FLD_ROW_ID,
-        self::FLD_OLD_VALUE,
+        change::FLD_OLD_VALUE,
         self::FLD_OLD_ID,
-        self::FLD_NEW_VALUE,
+        change::FLD_NEW_VALUE,
         self::FLD_NEW_ID
     );
 
     // field list to log the actual change of the named user sandbox object
     const FLD_LST_CHANGE = array(
         [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
-        [self::FLD_OLD_VALUE, self::FLD_OLD_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
-        [self::FLD_NEW_VALUE, self::FLD_NEW_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [change::FLD_OLD_VALUE, change::FLD_OLD_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [change::FLD_NEW_VALUE, change::FLD_NEW_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [self::FLD_OLD_ID, self::FLD_OLD_ID_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
         [self::FLD_NEW_ID, self::FLD_NEW_ID_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
     );
@@ -171,9 +173,10 @@ class change extends change_log
      *
      * @param array|null $db_row with the data directly from the database
      * @param string $id_fld the name of the id field as set in the child class
+     * @param user|null $usr the user who wants to see the changes e.g. to check the permission
      * @return bool true if a change log entry is found
      */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
+    function row_mapper(?array $db_row, string $id_fld = '', ?user $usr = null): bool
     {
         global $debug;
         global $cng_fld_cac;
@@ -187,11 +190,11 @@ class change extends change_log
                 $this->row_id = $db_row[group::FLD_ID];
             }
             $this->set_time_str($db_row[self::FLD_TIME]);
-            $this->old_value = $db_row[self::FLD_OLD_VALUE];
+            $this->old_value = $db_row[change::FLD_OLD_VALUE];
             if (array_key_exists(self::FLD_OLD_ID, $db_row)) {
                 $this->old_id = $db_row[self::FLD_OLD_ID];
             }
-            $this->new_value = $db_row[self::FLD_NEW_VALUE];
+            $this->new_value = $db_row[change::FLD_NEW_VALUE];
             if (array_key_exists(self::FLD_NEW_ID, $db_row)) {
                 $this->new_id = $db_row[self::FLD_NEW_ID];
             }
@@ -199,10 +202,19 @@ class change extends change_log
             $fld_tbl = $cng_fld_cac->get($this->field_id);
             $this->table_id = preg_replace("/[^0-9]/", '', $fld_tbl->name);
             // TODO check if not the complete user should be loaded
-            $usr = new user();
-            $usr->set_id($db_row[user::FLD_ID]);
-            $usr->name = $db_row[user::FLD_NAME];
-            $this->set_user($usr);
+            $usr_set = false;
+            if ($usr != null) {
+                if ($db_row[user::FLD_ID] == $usr->id()) {
+                    $this->set_user($usr);
+                    $usr_set = true;
+                }
+            }
+            if (!$usr_set) {
+                $row_usr = new user();
+                $row_usr->set_id($db_row[user::FLD_ID]);
+                $row_usr->name = $db_row[user_db::FLD_NAME];
+                $this->set_user($row_usr);
+            }
             log_debug('Change ' . $this->id() . ' loaded', $debug - 8);
         }
         return $result;
@@ -210,48 +222,28 @@ class change extends change_log
 
 
     /*
-     * cast
-     */
-
-    function api_obj(): change_log_named_api
-    {
-        $api_obj = new change_log_named_api();
-        $this->fill_obj($api_obj);
-        return $api_obj;
-
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    function dsp_obj(): change_log_named_dsp
-    {
-        $dsp_obj = new change_log_named_dsp();
-        $this->fill_obj($dsp_obj);
-        return $dsp_obj;
-
-    }
-
-    private function fill_obj(change_log_named_api|change_log_named_dsp $log_obj): void
-    {
-        parent::fill_api_obj($log_obj);
-        $log_obj->old_value = $this->old_value;
-        $log_obj->old_id = $this->old_id;
-        $log_obj->new_value = $this->new_value;
-        $log_obj->new_id = $this->new_id;
-        $log_obj->std_value = $this->std_value;
-        $log_obj->std_id = $this->std_id;
-    }
-
-
-    /*
      * load
      */
+
+    /**
+     * load the last change of given user
+     * @return bool true is a change is found
+     */
+    function load_by_user(?user $usr = null): bool
+    {
+
+        global $db_con;
+
+        $result = false;
+        $qp = $this->load_sql_by_user($db_con->sql_creator(), $usr);
+        $db_row = $db_con->get1($qp);
+        if ($db_row != null) {
+            $this->row_mapper($db_row);
+            $result = true;
+        }
+
+        return $result;
+    }
 
     /**
      * create the common part of an SQL statement to retrieve the parameters of the change log
@@ -273,8 +265,8 @@ class change extends change_log
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), user::class);
-        $sc->set_join_fields(array(change_field_list::FLD_TABLE), change_field::class);
+        $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
+        $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
         $sc->set_order(self::FLD_TIME, sql::ORDER_DESC);
 
         return $qp;
@@ -298,32 +290,6 @@ class change extends change_log
         $sc->add_where(user::FLD_ID, $usr->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
-        return $qp;
-    }
-
-    /**
-     * create the SQL statement to retrieve the parameters of the change log by field and row id
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param int|null $field_id the database id of the database field (and table) of the changes that the user wants to see
-     * @param int|null $row_id the database id of the database row of the changes that the user wants to see
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql_by_field_row(sql_creator $sc, ?int $field_id = null, ?int $row_id = null): sql_par
-    {
-        $qp = $this->load_sql($sc, 'field_row', self::class);
-        if ($field_id != null) {
-            $sc->add_where(change::FLD_FIELD_ID, $field_id);
-        }
-        if ($field_id != null) {
-            $sc->add_where(change::FLD_ROW_ID, $row_id);
-        }
-        // TODO check!
-        //$fields[] = user::FLD_ID;
-        $sc->set_page();
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
         return $qp;
     }
 
@@ -369,27 +335,27 @@ class change extends change_log
         $sql_row = ' s.row_id  = $2 ';
         // the class specific settings
         if ($type == user::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::WORD) . " 
-                   OR f.table_id = " . $cng_tbl_cac->id(change_table_list::WORD_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::WORD) . " 
+                   OR f.table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 's.user_id = u.user_id
                 AND s.user_id = ' . $this->user()->id() . ' ';
         } elseif ($type == word::class) {
-            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_table_list::WORD));
-            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_table_list::WORD_USR));
+            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_tables::WORD));
+            //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_tables::WORD_USR));
             $sql_where = " s.change_field_id = $1 ";
         } elseif ($type == value::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::VALUE) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::VALUE_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VALUE_USR) . ") AND ";
         } elseif ($type == formula::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::FORMULA) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::FORMULA_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::FORMULA_USR) . ") AND ";
         } elseif ($type == view::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_USR) . ") AND ";
         } elseif ($type == component::class) {
-            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_COMPONENT) . " 
-                     OR f.table_id = " . $cng_tbl_cac->id(change_table_list::VIEW_COMPONENT_USR) . ") AND ";
+            $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT) . " 
+                     OR f.table_id = " . $cng_tbl_cac->id(change_tables::VIEW_COMPONENT_USR) . ") AND ";
         }
 
         if ($sql_where == '') {
@@ -418,6 +384,32 @@ class change extends change_log
             $db_con->usr_id = $this->user()->id();
         }
         return $qp;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the json api message
+     *
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+        $vars[json_fields::OLD_VALUE] = $this->old_value;
+        $vars[json_fields::OLD_ID] = $this->old_id;
+        $vars[json_fields::NEW_VALUE] = $this->new_value;
+        $vars[json_fields::NEW_ID] = $this->new_id;
+        $vars[json_fields::STD_VALUE] = $this->std_value;
+        $vars[json_fields::STD_ID] = $this->std_id;
+
+        return $vars;
     }
 
 
@@ -509,17 +501,29 @@ class change extends change_log
      * get a list of all database fields
      * list must be corresponding to the db_values fields
      *
+     * @param sql_creator $sc the sql creation script with preset parameters
+     * @param sql_type_list $sc_par_lst the internal parameters to create the sql
+     * @param sql_par_type $val_typ the type of the value field
      * @return sql_par_field_list list of the database field names
      */
-    function db_field_values_types(sql_creator $sc, sql_type_list $sc_par_lst): sql_par_field_list
+    function db_field_values_types(
+        sql_creator   $sc,
+        sql_type_list $sc_par_lst,
+        sql_par_type  $val_typ = sql_par_type::TEXT
+    ): sql_par_field_list
     {
-        $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst);
+        $fvt_lst = parent::db_field_values_types($sc, $sc_par_lst, $val_typ);
 
-        if ($this->old_value !== null or ($sc_par_lst->is_update_part() and $this->new_value !== null)) {
-            $fvt_lst->add_field(self::FLD_OLD_VALUE, $this->old_value, $sc->get_sql_par_type($this->old_value));
+        // if the id is used always include the name even if it null
+        if ($this->old_value !== null
+            or $this->old_id > 0
+            or ($sc_par_lst->is_update_part() and $this->new_value !== null)) {
+            $fvt_lst->add_field(change::FLD_OLD_VALUE, $this->old_value, $sc->get_sql_par_type($this->old_value));
         }
-        if ($this->new_value !== null or ($sc_par_lst->is_update_part() and !$sc_par_lst->exclude_name_only() and $this->old_value !== null)) {
-            $fvt_lst->add_field(self::FLD_NEW_VALUE, $this->new_value, $sc->get_sql_par_type($this->new_value));
+        if ($this->new_value !== null
+            or $this->new_id > 0
+            or ($sc_par_lst->is_update_part() and !$sc_par_lst->exclude_name_only() and $this->old_value !== null)) {
+            $fvt_lst->add_field(change::FLD_NEW_VALUE, $this->new_value, $sc->get_sql_par_type($this->new_value));
         }
 
         if ($this->old_id > 0 or ($sc_par_lst->is_update_part() and $this->new_id > 0)) {
@@ -551,10 +555,10 @@ class change extends change_log
         $sql_fields = parent::db_fields();
 
         if ($this->old_value !== null) {
-            $sql_fields[] = self::FLD_OLD_VALUE;
+            $sql_fields[] = change::FLD_OLD_VALUE;
         }
         if ($this->new_value !== null) {
-            $sql_fields[] = self::FLD_NEW_VALUE;
+            $sql_fields[] = change::FLD_NEW_VALUE;
         }
 
         if ($this->old_id > 0) {
@@ -597,83 +601,41 @@ class change extends change_log
 
 
     /*
-     * display
+     * format
      */
-
-    // TODO to be move to frontend
-
-    /**
-     * @return string the last change of given user
-     *                optional without time for automatic testing
-     */
-    function dsp_last_user(bool $ex_time = false, ?user $usr = null): string
-    {
-
-        global $db_con;
-
-        $db_type = $db_con->get_class();
-        $qp = $this->load_sql_by_user($db_con->sql_creator(), $usr);
-        $db_row = $db_con->get1($qp);
-
-        $this->row_mapper($db_row);
-        $result = $this->dsp($db_row, $ex_time);
-
-        // restore the type before saving the log
-        $db_con->set_class($db_type);
-        return $result;
-    }
-
-    /**
-     * display the last change related to one object (word, formula, value, verb, ...)
-     * mainly used for testing
-     * TODO if changes on table values are requested include also the table "user_values"
-     */
-    function dsp_last(bool $ex_time = false): string
-    {
-
-        global $db_con;
-
-        $db_type = $db_con->get_class();
-        $qp = $this->load_sql_by_field_row($db_con->sql_creator(), $this->field_id, $this->row_id);
-        $db_row = $db_con->get1($qp);
-
-        $this->row_mapper($db_row);
-        $result = $this->dsp($db_row, $ex_time);
-
-        // restore the type before saving the log
-        $db_con->set_class($db_type);
-        return $result;
-    }
 
     /**
      * @return string the current change as a human-readable text
      *                optional without time for automatic testing
      */
-    private function dsp(array $db_row, bool $ex_time = false): string
+    function dsp(): string
     {
-        $result = '';
-        $usr_cfg = new user_config();
-
-        if ($db_row) {
-            if (!$ex_time) {
-                $result .= date_format($this->time(), $usr_cfg->date_time_format()) . ' ';
-            }
-            if ($this->user() != null) {
-                if ($this->user()->name() <> '') {
-                    $result .= $this->user()->name() . ' ';
-                }
-            }
-            if ($this->old_value <> '') {
-                if ($this->new_value <> '') {
-                    $result .= self::MSG_UPDATE . ' "' . $this->old_value . '" to "' . $this->new_value . '"';
-                } else {
-                    $result .= self::MSG_DEL . ' "' . $this->old_value . '"';;
-                }
-            } else {
-                $result .= self::MSG_ADD . ' "' . $this->new_value . '"';;
+        global $mtr;
+        $result = date_format($this->time(), $this->date_time_format()) . ' ';
+        if ($this->user() != null) {
+            if ($this->user()->name() <> '') {
+                $result .= $this->user()->name() . ' ';
             }
         }
+        if ($this->old_value <> '') {
+            if ($this->new_value <> '') {
+                $result .= $mtr->txt(msg_id::LOG_UPDATE) . ' "' . $this->old_value . '" to "' . $this->new_value . '"';
+            } else {
+                $result .= $mtr->txt(msg_id::LOG_DEL) . ' "' . $this->old_value . '"';;
+            }
+        } else {
+            $result .= $mtr->txt(msg_id::LOG_ADD) . ' "' . $this->new_value . '"';;
+        }
         return $result;
+    }
+
+    /**
+     * TODO move to the backend config class
+     * @return string with the date format as requested by the user
+     */
+    function date_time_format(): string
+    {
+        return self::DEFAULT_DATE_TIME_FORMAT;
     }
 
 

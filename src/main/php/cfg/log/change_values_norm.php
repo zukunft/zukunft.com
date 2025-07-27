@@ -2,8 +2,9 @@
 
 /*
 
-    cfg/log/change_values_norm.php - log object for changes of values with a standard group id
+    model/log/change_values_norm.php - log object for changes of values with a standard group id
     ------------------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -31,9 +32,11 @@
 
 namespace cfg\log;
 
-include_once MODEL_LOG_PATH . 'change_value.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_LOG . 'change_value.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
 
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;

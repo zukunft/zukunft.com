@@ -41,6 +41,15 @@
 
 namespace cfg\user;
 
+use cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'messages.php';
+
+//include_once paths::SHARED . 'library.php';
+
+use shared\enum\messages as msg_id;
+use shared\library;
+
 class user_message
 {
     // the message types that defines what needs to be done next
@@ -51,11 +60,37 @@ class user_message
     //const CONFIRM_CANCEL = 5;
 
     private int $msg_status;
+    private int|null $checksum = null;
 
-    // array of the messages that should be shown to the user to explain the result of a process
+    // array of the information only messages that should be shown to the user
+    // to explain the result of a process
+    private array $info_text;
+
+    // array of the messages that should be shown to the user
+    // to explain the result of a process
     private array $msg_text;
+
+    // array of the messages types that might have more than one entry
+    // so each array entry is an array with the message keys
+    // e.g. "missing phrase" is the type and "energy" is the entry if the phrase with the name "energy" is missing
+    private array $typ_lst;
+
+    // array of the messages id that should be shown to the user
+    // in the language of the user frontend
+    // to explain the result of a process
+    private array $msg_id_lst;
+    // array of an array of a message id
+    // and a list of vars that should be added at the translated messages text
+    // at the predefined and language specific place
+    private array $msg_var_lst;
+
     // the prime database row that has caused the user message
     private int|string $db_row_id;
+    // list of database names and id used for inserting a list
+    private array $db_row_id_lst;
+    // true an object has been added that might have objects depending on this object
+    // e.g. if a triple has been added more word or triples needs to be added
+    private bool $added_depending = false;
     // to trace to progress
     private string $url;
 
@@ -69,6 +104,7 @@ class user_message
      */
     function __construct(string $msg_text = '')
     {
+        $this->info_text = [];
         $this->msg_text = [];
         if ($msg_text == '') {
             $this->msg_status = self::OK;
@@ -77,11 +113,16 @@ class user_message
             $this->msg_status = self::NOK;
         }
         $this->db_row_id = 0;
+        $this->db_row_id_lst = [];
+        $this->added_depending = false;
+        $this->msg_id_lst = [];
+        $this->msg_var_lst = [];
+        $this->typ_lst = [];
     }
 
 
     /*
-     * set
+     * set and get
      */
 
     /**
@@ -91,6 +132,16 @@ class user_message
     function set_not_ok(): void
     {
         $this->msg_status = self::NOK;
+
+    }
+
+    /**
+     * set the status to ok
+     * @return void
+     */
+    function set_ok(): void
+    {
+        $this->msg_status = self::OK;
 
     }
 
@@ -128,19 +179,169 @@ class user_message
         return $this->url;
     }
 
+    /**
+     * set a simple checksum e.g. for a fast import validation
+     * @param int $checksum a simple checksum for fast validation
+     * @return void
+     */
+    function set_checksum(int $checksum): void
+    {
+        $this->checksum = $checksum;
+    }
+
+    /**
+     * @return int|null the number of values that have been expected to be imported
+     */
+    function checksum(): int|null
+    {
+        return $this->checksum;
+    }
+
+    function db_row_id_lst(): array
+    {
+        return $this->db_row_id_lst;
+    }
+
+    function added_depending(): bool
+    {
+        return $this->added_depending;
+    }
+
 
     /*
      * add
      */
 
     /**
+     * add a message id
+     * to offer the user to see more details without retry
+     * more than one message id can be added to a user message result
+     * the message id is translated to the user interface language at the latest possible moment
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_id(?msg_id $msg_id): void
+    {
+        if ($msg_id != null) {
+            // do not repeat the same text more than once
+            if (!in_array($msg_id, $this->msg_id_lst)) {
+                $this->msg_id_lst[] = $msg_id;
+            }
+            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            if ($this->is_ok()) {
+                $this->set_not_ok();
+            }
+        }
+    }
+
+    /**
+     * add a message id for info only
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_info_id(?msg_id $msg_id): void
+    {
+        if ($msg_id != null) {
+            // do not repeat the same text more than once
+            if (!in_array($msg_id, $this->msg_id_lst)) {
+                $this->msg_id_lst[] = $msg_id;
+            }
+        }
+    }
+
+    /**
+     * add an info message id and a list of related variables
+     * to offer the user to see more details without retry
+     * more than one message id can be added to a user message result
+     * the message id is translated to the user interface language at the latest possible moment
+     * the vars are expected to be in the target language already
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_info_with_vars(?msg_id $msg_id, array $var_lst): void
+    {
+        $this->add_id_with_vars($msg_id, $var_lst, true);
+    }
+
+    /**
+     * add a message id and a list of related variables
+     * to offer the user to see more details without retry
+     * more than one message id can be added to a user message result
+     * the message id is translated to the user interface language at the latest possible moment
+     * the vars are expected to be in the target language already
+     *
+     * @param msg_id|null $msg_id the message text to add
+     * @return void is never expected to fail
+     */
+    function add_id_with_vars(?msg_id $msg_id, array $var_lst, bool $ok = false): void
+    {
+        if ($msg_id != null) {
+            $key_lst = [];
+            foreach ($this->msg_var_lst as $msg_row) {
+
+                $key_lst[] = $msg_row[0]->name . ':' . implode(",", $msg_row[1]);
+            }
+
+            // check the var list
+            foreach ($var_lst as $var) {
+                if (is_array($var)) {
+                    log_warning('var ' . implode(",", $var) . 'is an array');
+                }
+            }
+
+            // do not repeat the same text more than once
+            if (!in_array($msg_id->name . ':' . implode(",", $var_lst),
+                $key_lst)) {
+                $this->msg_var_lst[] = [$msg_id, $var_lst];
+            }
+            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            if ($this->is_ok() and !$ok) {
+                $this->set_not_ok();
+            }
+        }
+    }
+
+    /**
      * to offer the user to see more details without retry
      * more than one message text can be added to a user message result
      *
      * @param string $msg_text the message text to add
+     * @param string $type the message type to group the messages
      * @return void is never expected to fail
      */
-    function add_message(string $msg_text): void
+    function add_type_message(string $msg_text, string $type): void
+    {
+        if ($msg_text != '') {
+            // find the next key
+            if (in_array($type, array_keys($this->typ_lst))) {
+                $sub_lst = $this->typ_lst[$type];
+                // do not repeat the same text more than once
+                if (!in_array($msg_text, $sub_lst)) {
+                    $sub_lst[] = $msg_text;
+                    $this->typ_lst[$type] = $sub_lst;
+                }
+            } else {
+                $this->typ_lst[$type] = [$msg_text];
+            }
+            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            if ($this->is_ok()) {
+                $this->set_not_ok();
+            }
+        }
+    }
+
+    /**
+     * to offer the user to see more details without retry
+     * more than one message text can be added to a user message result
+     * TODO replace with add_id add_id_with_vars
+     *
+     * @param string $msg_text the message text to add
+     * @return void is never expected to fail
+     */
+    function add_message_text(string $msg_text): void
     {
         if ($msg_text != '') {
             // do not repeat the same text more than once
@@ -160,7 +361,7 @@ class user_message
      * @param string $msg_text the warning text to add
      * @return void is never expected to fail
      */
-    function add_warning(string $msg_text): void
+    function add_warning_text(string $msg_text): void
     {
         if ($msg_text != '') {
             // do not repeat the same text more than once
@@ -177,15 +378,15 @@ class user_message
     /**
      * show the info message to the user without interrupting the process
      *
-     * @param string $msg_text the warning text to add
+     * @param string $info_text the warning text to add
      * @return void is never expected to fail
      */
-    function add_info(string $msg_text): void
+    function add_info_text(string $info_text): void
     {
-        if ($msg_text != '') {
+        if ($info_text != '') {
             // do not repeat the same text more than once
-            if (!in_array($msg_text, $this->msg_text)) {
-                $this->msg_text[] = $msg_text;
+            if (!in_array($info_text, $this->info_text)) {
+                $this->info_text[] = $info_text;
             }
         }
     }
@@ -198,10 +399,61 @@ class user_message
      */
     function add(user_message $msg_to_add): void
     {
+        foreach ($msg_to_add->get_all_info() as $msg_text) {
+            $this->add_info_text($msg_text);
+        }
         foreach ($msg_to_add->get_all_messages() as $msg_text) {
-            $this->add_message($msg_text);
+            $this->add_message_text($msg_text);
+        }
+        foreach ($msg_to_add->get_all_id_messages() as $msg_id) {
+            $this->add_id($msg_id);
+        }
+        foreach ($msg_to_add->get_all_var_messages() as $msg_var) {
+            $this->add_id_with_vars($msg_var[0], $msg_var[1], $msg_to_add->is_ok());
+        }
+        foreach ($msg_to_add->get_all_type_messages() as $key => $lst) {
+            foreach ($lst as $entry) {
+                $this->add_type_message($entry, $key);
+            }
         }
         $this->combine_status($msg_to_add);
+        if ($msg_to_add->checksum() != null) {
+            if ($this->checksum == null) {
+                $this->set_checksum($msg_to_add->checksum());
+            } else {
+                $this->set_checksum($this->checksum() + $msg_to_add->checksum());
+            }
+        }
+
+        $lib = new library();
+        $this->db_row_id_lst = $lib->array_merge_by_key($this->db_row_id_lst, $msg_to_add->db_row_id_lst);
+        if ($msg_to_add->added_depending()) {
+            $this->added_depending = true;
+        }
+    }
+
+    /**
+     * add the database id and the related name to the id list of the user message
+     * @param user_message $msg_to_add the user message that contains the db id of an object just added to the db
+     * @param string $name the name of the object that is related to the id
+     * @return void
+     */
+    function add_list_name_id(user_message $msg_to_add, string $name = ''): void
+    {
+        $id = $msg_to_add->get_row_id();
+        if ($id != 0 and $name != '') {
+            $this->db_row_id_lst[$name] = $id;
+        }
+    }
+
+    function set_added_depending(): void
+    {
+        $this->added_depending = true;
+    }
+
+    function unset_added_depending(): void
+    {
+        $this->added_depending = false;
     }
 
 
@@ -222,12 +474,90 @@ class user_message
     }
 
     /**
-     * return the message text with all messages
+     * return the info only message text with all messages
      * @return string simple the message text
+     */
+    function all_info_text(): string
+    {
+        return implode(", ", $this->info_text);
+    }
+
+    /**
+     * return the translated message text with all messages
+     * @return string the message text in the ui language
      */
     function all_message_text(): string
     {
-        return implode(", ", $this->msg_text);
+        global $mtr;
+        $msg = implode(", ", $this->msg_text);
+        $part = '';
+        foreach ($this->typ_lst as $key => $sub_lst) {
+            $part .= $key . ': ' . implode(", ", $sub_lst) . '; ';
+        }
+        if ($msg != '' and $part <> '') {
+            $msg .= $msg . '; ' . $part;
+        } else {
+            $msg .= $part;
+        }
+        $part = '';
+        foreach ($this->msg_id_lst as $msg_id) {
+            if ($part != '') {
+                $part .= ', ';
+            }
+            $part .= $mtr->txt($msg_id);
+        }
+        if ($msg != '' and $part <> '') {
+            $msg .= $msg . '; ' . $part;
+        } else {
+            $msg .= $part;
+        }
+
+        // get the text for all messages with vars
+        $part = $this->var_message_text();
+
+        if ($msg != '' and $part <> '') {
+            $msg .= $msg . '; ' . $part;
+        } else {
+            $msg .= $part;
+        }
+        return $msg;
+    }
+
+    /**
+     * TODO review
+     * @return string the translated text for all messages with vars
+     */
+    function var_message_text(): string
+    {
+        global $mtr;
+
+        $part = '';
+        foreach ($this->msg_var_lst as $msg_var) {
+            if ($part != '') {
+                $part .= ', ';
+            }
+            $msg_txt = $mtr->txt($msg_var[0]);
+            foreach ($msg_var[1] as $key => $var) {
+                // TODO use a library function for this
+                // avoid using escaped var makers (probably not 100% correct)
+                $msg_txt = str_replace(
+                    msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END,
+                    msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END, $msg_txt);
+                // replace the var
+                $msg_txt = str_replace(
+                    msg_id::VAR_START . $key . msg_id::VAR_END,
+                    $var, $msg_txt);
+                // undo escaped vars
+                $msg_txt = str_replace(
+                    msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END,
+                    msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END, $msg_txt);
+            }
+            // replace the escaped var makers
+            $msg_txt = str_replace(msg_id::VAR_ESC_START, msg_id::VAR_START, $msg_txt);
+            $msg_txt = str_replace(msg_id::VAR_ESC_END, msg_id::VAR_END, $msg_txt);
+            $part .= $msg_txt;
+        }
+        return $part;
     }
 
     /**
@@ -247,11 +577,38 @@ class user_message
     }
 
     /**
-     * @return string with latest added message
+     * simple return a translated message text with vars
+     * TODO review
+     * @param int $pos used to get other message than the main message
+     * @return string simple the message text
+     */
+    function get_message_translated(int $pos = 1): string
+    {
+        // the first message should have the position 1 not 0 like in php array
+        $pos = $pos - 1;
+        if (count($this->msg_var_lst) > $pos and $pos >= 0) {
+            return $this->var_message_text();
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * TODO should be deprecated once the msg_id is used for all messages
+     * @return string with latest added message text
      */
     function get_last_message(): string
     {
         return $this->get_message(count($this->msg_text));
+    }
+
+    /**
+     * TODO should pick the last either from msg_var_lst or msg_id_lst
+     * @return string with latest added message translated to the user language
+     */
+    function get_last_message_translated(): string
+    {
+        return $this->get_message_translated(count($this->msg_var_lst));
     }
 
     /**
@@ -265,7 +622,7 @@ class user_message
     /**
      * @return bool true if the message is linked to a valid database row of just a database row has been created
      */
-    function has_row():bool
+    function has_row(): bool
     {
         if ($this->db_row_id == 0 or $this->db_row_id == '') {
             return false;
@@ -281,11 +638,43 @@ class user_message
      */
 
     /**
+     * @return array with all the information only text messages
+     */
+    protected function get_all_info(): array
+    {
+        return $this->info_text;
+    }
+
+    /**
      * @return array with all the text messages
      */
     protected function get_all_messages(): array
     {
         return $this->msg_text;
+    }
+
+    /**
+     * @return array with all the translatable messages
+     */
+    protected function get_all_id_messages(): array
+    {
+        return $this->msg_id_lst;
+    }
+
+    /**
+     * @return array with all the translatable messages with vars
+     */
+    protected function get_all_var_messages(): array
+    {
+        return $this->msg_var_lst;
+    }
+
+    /**
+     * @return array with all the text messages
+     */
+    protected function get_all_type_messages(): array
+    {
+        return $this->typ_lst;
     }
 
     /**

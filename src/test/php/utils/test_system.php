@@ -30,10 +30,14 @@
 
 */
 
-use api\word\word as word_api;
-use api\user\user as user_api;
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'users.php';
+
 use cfg\user\user;
 use cfg\user\user_list;
+use shared\const\users;
+use shared\const\words;
 use test\all_tests;
 
 function run_system_test(all_tests $t): void
@@ -44,7 +48,7 @@ function run_system_test(all_tests $t): void
     $t->header('Consistency check of the \"zukunft.com\" code');
 
     // load the main test word
-    $wrd_company = $t->test_word(word_api::TN_COMPANY);
+    $wrd_company = $t->test_word(words::COMPANY);
 
     if ($t::TEST_EMAIL) {
         $t->header('est mail sending');
@@ -68,7 +72,7 @@ function run_system_test(all_tests $t): void
     // check the first predefined word "Company"
     // load by id
     $usr_test = new user;
-    $usr_test->ip_addr = user_api::TD_READ_IP;
+    $usr_test->ip_addr = users::TEST_IP;
     $target = 'Your IP ' . $usr_test->ip_addr . ' is blocked at the moment because too much damage from this IP. If you think, this should not be the case, please request the unblocking with an email to admin@zukunft.com.';
     $result = $usr_test->get();
     if ($usr_test->id() > 0) {
@@ -76,14 +80,14 @@ function run_system_test(all_tests $t): void
     }
     $t->display('IP blocking for ' . $usr_test->ip_addr, $target, $result);
 
-
-    $t->header('Test the user class (classes/user.php)');
+    // TODO combine with the other user unit tests
+    $t->header('user unit tests');
 
     // load by name
     $usr_by_id = new user;
-    $usr_by_id->load_by_id(user::SYSTEM_TEST_ID);
+    $usr_by_id->load_by_id(users::SYSTEM_TEST_ID);
     $usr_test = new user;
-    $usr_test->load_by_name(user::SYSTEM_TEST_NAME);
+    $usr_test->load_by_name(users::SYSTEM_TEST_NAME);
     $target = '<a href="/http/user.php?id=' . $usr_test->id() . '">zukunft.com system test</a>';
     $result = $usr_by_id->display();
     $t->display('user->load for id ' . $wrd_company->id(), $target, $result);
@@ -94,7 +98,7 @@ function run_system_test(all_tests $t): void
     $usr_lst = new user_list($usr);
     $usr_lst->load_active();
     $result = $usr_lst->name_lst();
-    $target = user_api::TD_READ;
+    $target = users::TEST_NAME;
     $t->dsp_contains(', user_list->load_active', $target, $result);
 
 }

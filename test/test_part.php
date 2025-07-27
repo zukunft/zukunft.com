@@ -39,10 +39,6 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-// set the test base path
-const TEST_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'test' . DIRECTORY_SEPARATOR;
-// the test code path
-const TEST_PHP_PATH = TEST_PATH . 'php' . DIRECTORY_SEPARATOR;
 // path for the general tests and test setup
 const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
 
@@ -52,6 +48,7 @@ include_once TEST_PHP_UTIL_PATH . 'test_base.php';
 // load the main test control class
 include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
 
+use cfg\log_text\text_log_format;
 use cfg\user\user;
 use test\all_tests;
 
@@ -59,7 +56,7 @@ use test\all_tests;
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("selected tests");
+$db_con = prg_start("selected tests", '', false);
 
 // load the session user parameters
 $start_usr = new user;
@@ -77,16 +74,19 @@ if ($start_usr->id() > 0) {
         $t->header('Run selected zukunft.com tests');
 
         // run a list of selected tests
-        $t->run_single();
+        $t->run_single($t);
 
         // display the test results
-        $t->dsp_result_html();
-        $t->dsp_result();
+        if ($t->format == text_log_format::HTML) {
+            $t->dsp_result_html();
+        } else {
+            $t->dsp_result();
+        }
 
     } else {
-        echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.';
+        echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.' . "\n";
     }
 }
 
 // Closing connection
-prg_end($db_con);
+prg_end($db_con, false);

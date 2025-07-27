@@ -34,8 +34,11 @@
 
 namespace html\sandbox;
 
-include_once SANDBOX_PATH . 'combine_object.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'combine_object.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\rest_ctrl as api_dsp;
 use shared\json_fields;
@@ -113,6 +116,7 @@ class combine_named extends combine_object
     }
 
     /**
+     * TODO review and use only frontend objects
      * @param int|null $type_id the type id of the word, triple, formula or verb
      * @return void
      */
@@ -149,7 +153,7 @@ class combine_named extends combine_object
         $api = new api_dsp();
         $json_body = $api->api_call_name($this::class, $name);
         if ($json_body) {
-            $this->set_from_json_array($json_body);
+            $this->api_mapper($json_body);
             if ($this->obj_id() != 0) {
                 $result = true;
             }
@@ -174,5 +178,10 @@ class combine_named extends combine_object
         $vars[json_fields::TYPE] = $this->type_id();
         return $vars;
     }
+
+
+    /*
+     * debug
+     */
 
 }

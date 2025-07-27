@@ -32,13 +32,15 @@
 
 namespace unit_read;
 
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
+use cfg\const\paths;
 
-use api\ref\ref as ref_api;
-use cfg\phrase\phrase_type;
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_CONST . 'refs.php';
+
 use cfg\ref\ref;
 use cfg\ref\ref_type_list;
 use shared\library;
+use shared\const\refs;
 use shared\types\phrase_type as phrase_type_shared;
 use test\test_cleanup;
 
@@ -55,7 +57,7 @@ class ref_read_tests
         $lib = new library();
         $t->name = 'ref db read->';
 
-        $t->header('Rrference db read tests');
+        $t->header('Reference db read tests');
 
         $t->subheader('Reference types tests');
 
@@ -72,7 +74,7 @@ class ref_read_tests
         $t->subheader('API unit db tests');
 
         $ref = new ref($t->usr1);
-        $ref->load_by_id(ref_api::TI_PI);
+        $ref->load_by_id(refs::PI_ID);
         $t->assert_api($ref);
 
     }

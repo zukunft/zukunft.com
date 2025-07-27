@@ -27,8 +27,8 @@ SELECT value_prime_p1_delete_log
        (1,
         3,
         1,
-        32770,
-        -2,
-        null,
-        null,
-        null);
+        32819,
+        -51,
+        0,
+        0,
+        0);

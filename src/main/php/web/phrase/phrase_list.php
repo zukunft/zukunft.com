@@ -2,8 +2,8 @@
 
 /*
 
-    /web/phrase/phrase_list.php - create the html code to display a phrase list
-    ---------------------------
+    web/phrase/phrase_list.php - create the html code to display a phrase list
+    --------------------------
 
     TODO create a value matrix based on this phrase list
 
@@ -34,26 +34,45 @@
 
 namespace html\phrase;
 
-include_once SERVICE_PATH . 'config.php';
-include_once SANDBOX_PATH . 'list_dsp.php';
-include_once PHRASE_PATH . 'phrase.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
 
-use cfg\config;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list as phrase_list_db;
-use cfg\user\user;
-use cfg\verb\verb_list;
+//include_once html_paths::SANDBOX . 'sandbox_list_named.php';
+//include_once html_paths::HELPER . 'config.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+//include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VERB . 'verb_list.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::WORD . 'word_list.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'library.php';
+
+use html\formula\formula;
+use html\helper\config;
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\rest_ctrl as api_dsp;
-use html\sandbox\list_dsp;
+use html\sandbox\sandbox_list_named;
 use html\user\user_message;
+use html\verb\verb;
+use html\verb\verb_list;
+use html\word\triple;
+use html\word\word;
+use html\word\word_list;
 use shared\api;
 use shared\enum\foaf_direction;
 use shared\library;
 
-class phrase_list extends list_dsp
+class phrase_list extends sandbox_list_named
 {
 
     /*
@@ -65,27 +84,9 @@ class phrase_list extends list_dsp
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new phrase_dsp());
-    }
-
-    /**
-     * get a phrase from the list selected by the id
-     * @param int $id the id of the phrase that should be selected
-     * @return phrase|null the phrase with the given id or null if nothing is found
-     */
-    function get_by_id(int $id): ?phrase_dsp
-    {
-        $result = null;
-        foreach ($this->lst() as $phr) {
-            if ($result == null) {
-                if ($phr->id() == $id) {
-                    $result = $phr;
-                }
-            }
-        }
-        return $result;
+        return parent::api_mapper_list($json_array, new phrase_dsp());
     }
 
 
@@ -108,14 +109,166 @@ class phrase_list extends list_dsp
         $api = new api_dsp();
         $data = array();
         $data[api::URL_VAR_PHRASE] = $phr->id();
-        $data[api::URL_VAR_DIRECTION] = $direction;
+        $data[api::URL_VAR_DIRECTION] = $direction->value;
         $data[api::URL_VAR_LEVELS] = 1;
         $json_body = $api->api_get(self::class, $data);
-        $this->set_from_json_array($json_body);
+        $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * add the phrases related to the given formula to the list
+     * @param formula $frm
+     * @return bool
+     */
+    function load_by_formula(formula $frm): bool
+    {
+        $result = false;
+
+        // TODO move the
+        $api = new api_dsp();
+        $data = array();
+        $data[api::URL_VAR_FORMULAS] = $frm->id();
+        $json_body = $api->api_get(self::class, $data);
+        $this->api_mapper($json_body);
+        if (!$this->is_empty()) {
+            $result = true;
+        }
+        return $result;
+    }
+
+
+    /*
+     * related
+     */
+
+    /**
+     * get the phrase of the most relevant result
+     * e.g. "happy time points" for "global problems"
+     * @return phrase the main phrase of the most relevant result
+     */
+    function result_phrases_most_relevant(): phrase_list
+    {
+        $phr = new phrase_list();
+        // TODO review temp solution
+        //$phr->load_by_name();
+        return $phr;
+    }
+
+
+    /*
+     * select
+     */
+
+    /**
+     * get all phrases that are connected to the given phrase
+     * selected by the given verb
+     * @param phrase $phr the parent phrase
+     * @param verb|null $vrb the verb to filter the child phrases
+     * @return phrase_list the filtered children
+     */
+    function children(phrase $phr, verb|null $vrb = null): phrase_list
+    {
+        $result = new phrase_list;
+        foreach ($this->lst() as $trp) {
+            if ($trp->is_triple()) {
+                if ($trp->verb()->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->from()->id() == $phr->id()) {
+                        $result->add($trp);
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get all phrases that are connected to the given phrase
+     * selected by the given verb
+     * @param phrase $phr the parent phrase
+     * @param verb|null $vrb the verb to filter the child phrases
+     * @return phrase_list the filtered children
+     */
+    function parents(phrase $phr, verb|null $vrb = null): phrase_list
+    {
+        $result = new phrase_list;
+        foreach ($this->lst() as $trp) {
+            if ($trp->is_triple()) {
+                if ($trp->verb()->id() == $vrb?->id() or $vrb == null) {
+                    if ($trp->to()->id() == $phr->id()) {
+                        $result->add($trp->from());
+                    }
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * get the most useful time for the given phrases
+     * similar to the backend function with the same name
+     * TODO: review
+     * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @return phrase|null with the most useful time phrase
+     */
+    function assume_time(?term_list $trm_lst = null): ?phrase
+    {
+        $time_phr = null;
+        $wrd_lst = $this->wrd_lst_all();
+        $time_wrd = $wrd_lst->assume_time($trm_lst);
+        if (isset($time_wrd)) {
+            $time_phr = $time_wrd;
+        }
+        return $time_phr;
+    }
+
+    /**
+     * build a word list including the triple words or in other words flatten the list e.g. for parent inclusions
+     * @return word_list with all words of the phrases split into single words
+     */
+    function wrd_lst_all(): word_list
+    {
+        log_debug('phrase_list->wrd_lst_all for ' . $this->dsp_id());
+
+        $wrd_lst = new word_list();
+
+        // fill the word list
+        foreach ($this->lst() as $phr) {
+            if ($phr->obj() == null) {
+                log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
+            } else {
+                if ($phr->obj()->id() == 0) {
+                    log_err('Phrase ' . $phr->dsp_id() . ' could not be loaded', 'phrase_list->wrd_lst_all');
+                } else {
+                    if ($phr->name() == '') {
+                        $phr->load();
+                        log_warning('Phrase ' . $phr->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
+                    }
+                    // TODO check if old can ge removed: if ($phr->id() > 0) {
+                    if (get_class($phr->obj()) == word::class) {
+                        $wrd_lst->add($phr->obj());
+                    } elseif (get_class($phr->obj()) == triple::class) {
+                        // use the recursive triple function to include the foaf words
+                        $sub_wrd_lst = $phr->obj()->wrd_lst();
+                        foreach ($sub_wrd_lst->lst() as $wrd) {
+                            if ($wrd->name() == '') {
+                                $wrd->load_by_id($wrd->id());
+                                log_warning('Word ' . $wrd->dsp_id() . ' needs unexpected reload', 'phrase_list->wrd_lst_all');
+                            }
+                            $wrd_lst->add($wrd);
+                        }
+                    } else {
+                        log_err('The phrase list ' . $this->dsp_id() . ' contains ' . $phr->obj()->dsp_id() . ', which is neither a word nor a phrase, but it is a ' . get_class($phr->obj), 'phrase_list->wrd_lst_all');
+                    }
+                }
+            }
+        }
+
+        log_debug($wrd_lst->dsp_id());
+        return $wrd_lst;
     }
 
 
@@ -126,14 +279,15 @@ class phrase_list extends list_dsp
     /**
      * @returns string the html code to display the phrases with the most useful link
      */
-    function display_linked(): string
+    function name_link(): string
     {
         $result = '';
-        foreach ($this->lst as $phr) {
-            if ($result != '' and $phr->display_linked() != '') {
+        $this->sort_by_name();
+        foreach ($this->lst() as $phr) {
+            if ($result != '' and $phr->name_link() != '') {
                 $result .= ', ';
             }
-            $result .= $phr->display_linked();
+            $result .= $phr->name_link();
         }
         return $result;
     }
@@ -144,7 +298,7 @@ class phrase_list extends list_dsp
      */
     private function plural(): string
     {
-        return $this->display_linked() . 's';
+        return $this->name_link() . 's';
     }
 
     /**
@@ -185,7 +339,7 @@ class phrase_list extends list_dsp
     function has_percent(): bool
     {
         $result = false;
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr->is_percent()) {
                 $result = true;
             }
@@ -207,17 +361,19 @@ class phrase_list extends list_dsp
     {
         if (!$new_lst->is_empty()) {
             if ($this->is_empty()) {
-                $this->set_lst($new_lst->lst);
+                $this->set_lst($new_lst->lst());
             } else {
                 // next line would work if array_intersect could handle objects
                 // $this->lst = array_intersect($this->lst, $new_lst->lst());
                 $found_lst = new phrase_list();
                 foreach ($new_lst->lst() as $phr) {
-                    if (in_array($phr->id(), $this->id_lst())) {
+                    $id = $phr->id();
+                    $id_lst = $this->id_lst();
+                    if (in_array($id, $id_lst)) {
                         $found_lst->add_phrase($phr);
                     }
                 }
-                $this->set_lst($found_lst->lst);
+                $this->set_lst($found_lst->lst());
             }
         }
         return $this;
@@ -230,7 +386,7 @@ class phrase_list extends list_dsp
     {
         // get common words
         $common_phr_lst = new phrase_list();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             if ($val != null) {
                 if ($val->phr_lst() != null) {
                     if ($val->phr_lst()->lst != null) {
@@ -272,15 +428,7 @@ class phrase_list extends list_dsp
      */
     function add_phrase(phrase_dsp $phr): bool
     {
-        return parent::add_obj($phr);
-    }
-
-    /**
-     * add a phrase or ... to the list also if it is already part of the list
-     */
-    function add(phrase_dsp $phr): void
-    {
-        parent::add_always($phr);
+        return parent::add_obj($phr)->is_ok();
     }
 
     /**
@@ -299,7 +447,7 @@ class phrase_list extends list_dsp
                     $remain_lst->add_phrase($phr);
                 }
             }
-            $this->set_lst($remain_lst->lst);
+            $this->set_lst($remain_lst->lst());
         }
         return $this;
     }
@@ -319,43 +467,12 @@ class phrase_list extends list_dsp
         } else {
             $result = '"' . implode('","', array_slice($name_lst, 0, 7));
             if (count($name_lst) > 8) {
-                $result .= ' ... total ' . $lib->dsp_count($this->lst);
+                $result .= ' ... total ' . $lib->dsp_count($this->lst());
             }
             $result .= '"';
         }
 
         return $result;
-    }
-
-    /**
-     * return one string with all names of the list without high quotes for the user, but not necessary as a unique text
-     * e.g. >Company Zurich< can be either >"Company Zurich"< or >"Company" "Zurich"<, means either a triple or two words
-     *      but this "short" form probably confuses the user less and
-     *      if the user cannot change the tags anyway the saving of a related value is possible
-     * @return string one string with all names of the list
-     */
-    function name(): string
-    {
-        $name_lst = $this->names();
-        return '"' . implode('","', $name_lst) . '"';
-    }
-
-    /**
-     * @return array with all phrase names in alphabetic order
-     * this function is called from dsp_id, so no call of another function is allowed
-     * TODO move to a parent object for phrase list and term list
-     */
-    function names(): array
-    {
-        $name_lst = array();
-        foreach ($this->lst as $phr) {
-            if ($phr != null) {
-                $name_lst[] = $phr->name();
-            }
-        }
-        // TODO allow to fix the order
-        asort($name_lst);
-        return $name_lst;
     }
 
     /**
@@ -365,18 +482,18 @@ class phrase_list extends list_dsp
     {
         $result = array();
         $lib = new library();
-        if (count($this->lst) > 0) {
-            foreach ($this->lst as $phr) {
+        if (count($this->lst()) > 0) {
+            foreach ($this->lst() as $phr) {
                 if (isset($phr)) {
                     if (in_array($phr, $filter_lst)) {
                         $result[] = $phr;
                     }
                 }
             }
-            $this->lst = $result;
+            $this->set_lst($result);
             $this->id_lst();
         }
-        log_debug($lib->dsp_count($this->lst));
+        log_debug($lib->dsp_count($this->lst()));
         return $result;
     }
 
@@ -418,15 +535,14 @@ class phrase_list extends list_dsp
         $result = '';
 
         // loop over the link types
-        if ($this->lst == null) {
+        if ($this->lst() == null) {
             $result .= 'Nothing linked to ' . $root_phr->name() . ' until now. Click here to link it.';
         } else {
-            $phr_lst = new phrase_list_db(new user());
-            $phr_lst->set_by_api_json($this->api_array());
+            $phr_lst = new phrase_list();
+            $phr_lst->set_from_json($this->api_json());
             $wrd_lst = $phr_lst->wrd_lst_all();
-            $wrd_lst_dsp = $wrd_lst->dsp_obj();
-            $result .= $wrd_lst_dsp->tbl($back);
-            foreach ($this->lst as $phr) {
+            $result .= $wrd_lst->tbl($back);
+            foreach ($this->lst() as $phr) {
                 // show the RDF graph for this verb
                 $phr->name();
             }

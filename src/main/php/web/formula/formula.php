@@ -2,10 +2,19 @@
 
 /*
 
-    /web/formula/formula.php - the display extension of the api formula object
+    web/formula/formula.php - the display extension of the api formula object
     -----------------------
 
     to creat the HTML code to display a formula
+
+    The main sections of this object are
+    - object vars:       the variables of this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - api:               set the object vars based on the api json message and create a json for the backend
+    - cast:              create related frontend objects e.g. the phrase of a triple
+    - base:              html code for the single object vars
+    - buttons:           html code for the buttons e.g. to add, edit, del, link or unlink
+    - select:            html code to select parameter like the type
 
 
     This file is part of zukunft.com - calc with words
@@ -34,39 +43,58 @@
 
 namespace html\formula;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once SHARED_PATH . 'views.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_typed.php';
+include_once paths::DB . 'sql_db.php';
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::FORMULA . 'expression.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::PHRASE . 'term_list.php';
+include_once html_paths::RESULT . 'result.php';
+include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::ELEMENT . 'element.php';
+include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::RESULT . 'result.php';
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
-use shared\api;
 use cfg\db\sql_db;
-use cfg\formula\expression;
-use cfg\formula\formula_link_list;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\result\result;
-use cfg\result\result_list;
-use cfg\phrase\term_list;
-use html\rest_ctrl as api_dsp;
+use html\phrase\phrase;
+use html\phrase\phrase_list;
+use html\phrase\term_list;
+use html\result\result_list;
 use html\button;
 use html\html_base;
 use html\html_selector;
 use html\log\user_log_display;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\phrase\term as term_dsp;
-use html\result\result as result_dsp;
-use html\sandbox\sandbox_typed;
-use html\system\messages;
+use html\phrase\term;
+use html\rest_ctrl as api_dsp;
+use html\sandbox\sandbox_code_id;
+use html\system\back_trace;
 use html\user\user_message;
-use html\word\word as word_dsp;
+use shared\api;
+use shared\const\views;
 use shared\json_fields;
-use shared\library;
 use shared\types\view_styles;
-use shared\views as view_shared;
+use shared\enum\messages as msg_id;
 
-class formula extends sandbox_typed
+class formula extends sandbox_code_id
 {
 
     /*
@@ -77,44 +105,12 @@ class formula extends sandbox_typed
     private string $usr_text = '';
     private string $ref_text = '';
     public ?bool $need_all_val = false;    // calculate and save the result only if all used values are not null
-    public ?phrase_dsp $name_wrd = null;         // the triple object for the formula name:
+    public ?phrase $name_wrd = null;         // the triple object for the formula name:
 
 
     /*
      * set and get
      */
-
-    /**
-     * set the vars this formula bases on the api json array
-     * public because it is reused e.g. by the phrase group display object
-     * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function set_from_json_array(array $json_array): user_message
-    {
-        $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
-            $this->set_usr_text($json_array[json_fields::USER_TEXT]);
-        } else {
-            $this->set_usr_text(null);
-        }
-        if (array_key_exists(json_fields::REF_TEXT, $json_array)) {
-            $this->set_ref_text($json_array[json_fields::REF_TEXT]);
-        } else {
-            $this->set_ref_text(null);
-        }
-        if (array_key_exists(json_fields::NEED_ALL_VAL, $json_array)) {
-            $this->need_all_val = $json_array[json_fields::NEED_ALL_VAL];
-        } else {
-            $this->need_all_val = false;
-        }
-        if (array_key_exists(json_fields::FORMULA_NAME_PHRASE, $json_array)) {
-            $this->name_wrd = new phrase_dsp($json_array[json_fields::FORMULA_NAME_PHRASE]);
-        } else {
-            $this->name_wrd = null;
-        }
-        return $usr_msg;
-    }
 
     function set_usr_text(?string $usr_text): void
     {
@@ -142,8 +138,40 @@ class formula extends sandbox_typed
 
 
     /*
-     * interface
+     * api
      */
+
+    /**
+     * set the vars this formula bases on the api json array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $json_array an api json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function api_mapper(array $json_array): user_message
+    {
+        $usr_msg = parent::api_mapper($json_array);
+        if (array_key_exists(json_fields::USER_TEXT, $json_array)) {
+            $this->set_usr_text($json_array[json_fields::USER_TEXT]);
+        } else {
+            $this->set_usr_text(null);
+        }
+        if (array_key_exists(json_fields::REF_TEXT, $json_array)) {
+            $this->set_ref_text($json_array[json_fields::REF_TEXT]);
+        } else {
+            $this->set_ref_text(null);
+        }
+        if (array_key_exists(json_fields::NEED_ALL_VAL, $json_array)) {
+            $this->need_all_val = $json_array[json_fields::NEED_ALL_VAL];
+        } else {
+            $this->need_all_val = false;
+        }
+        if (array_key_exists(json_fields::FORMULA_NAME_PHRASE, $json_array)) {
+            $this->name_wrd = new phrase($json_array[json_fields::FORMULA_NAME_PHRASE]);
+        } else {
+            $this->name_wrd = null;
+        }
+        return $usr_msg;
+    }
 
     /**
      * @return array the json message array to send the updated data to the backend
@@ -162,26 +190,17 @@ class formula extends sandbox_typed
      * cast
      */
 
-    function term(): term_dsp
+    function term(): term
     {
-        $trm = new term_dsp();
+        $trm = new term();
         $trm->set_obj($this);
         return $trm;
     }
 
 
     /*
-     * display
+     * base
      */
-
-    /**
-     * display the formula name with the tooltip
-     * @returns string the html code
-     */
-    function display(): string
-    {
-        return $this->name();
-    }
 
     /**
      * display the formula name with a link to the main page for the formula
@@ -189,14 +208,9 @@ class formula extends sandbox_typed
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function display_linked(?string $back = '', string $style = ''): string
+    function name_link(?string $back = '', string $style = '', int $msk_id = views::FORMULA_ID): string
     {
-        //$html = new html_base();
-        //$url = $html->url_new(view_shared::MI_WORD, $this->id(), api_shared::URL_VAR_FORMULAS, $back);
-        //return $html->ref($url, $this->name(), $this->description(), $style);
-        $html = new html_base();
-        $url = $html->url(api_dsp::FORMULA, $this->id(), $back, api::URL_VAR_FORMULAS);
-        return $html->ref($url, $this->name(), $this->name(), $style);
+        return parent::name_link($back, $style, $msk_id);
     }
 
     /**
@@ -206,9 +220,14 @@ class formula extends sandbox_typed
      */
     function edit_link(?string $back = ''): string
     {
-        $url = $this->obj_url(view_shared::MC_FORMULA_EDIT, $back);
+        $url = $this->obj_url(views::FORMULA_EDIT, $back);
         return (new html_base())->ref($url, $this->name(), $this->name());
     }
+
+
+    /*
+     * buttons
+     */
 
     /**
      * create the HTML code for a button to create a new formula
@@ -217,8 +236,10 @@ class formula extends sandbox_typed
      */
     function btn_add(string $back = ''): string
     {
-        $url = $this->obj_url(view_shared::MC_FORMULA_ADD);
-        return (new button($url, $back))->add(messages::FORMULA_ADD, $this->name);
+        return parent::btn_add_sbx(
+            views::VALUE_ADD,
+            msg_id::FORMULA_ADD,
+            $back);
     }
 
     /**
@@ -228,8 +249,11 @@ class formula extends sandbox_typed
      */
     function btn_edit(string $back = ''): string
     {
-        $url = $this->obj_url(view_shared::MC_FORMULA_EDIT);
-        return (new button($url, $back))->edit(messages::FORMULA_EDIT, messages::FOR . $this->name);
+        global $mtr;
+        return parent::btn_edit_sbx(
+            views::FORMULA_EDIT,
+            msg_id::FORMULA_EDIT,
+            $back, $mtr->txt(msg_id::FOR) . $this->name);
     }
 
     /**
@@ -239,13 +263,16 @@ class formula extends sandbox_typed
      */
     function btn_del(string $back = ''): string
     {
-        $url = $this->obj_url(view_shared::MC_FORMULA_DEL);
-        return (new button($url, $back))->del(messages::FORMULA_DEL, messages::OF . $this->name);
+        global $mtr;
+        return parent::btn_del_sbx(
+            views::FORMULA_DEL,
+            msg_id::FORMULA_DEL,
+            $back, $mtr->txt(msg_id::OF) . $this->name);
     }
 
 
     /*
-     * internal
+     * select
      */
 
     /**
@@ -258,39 +285,71 @@ class formula extends sandbox_typed
         return $html_formula_types->selector($form_name);
     }
 
+    public function formula_type_selector(string $form_name): string
+    {
+        global $html_formula_types;
+        $used_formula_type_id = $this->type_id();
+        if ($used_formula_type_id == null) {
+            $used_formula_type_id = $html_formula_types->default_id();
+        }
+        return $html_formula_types->selector($form_name, $used_formula_type_id);
+    }
+
+
+    /*
+     * overwrites
+     */
+
+    /**
+     * @returns string the formula expression in the user readable format and including user formatting
+     */
+    function user_expression(): string
+    {
+        return str_replace('"', '&quot;', $this->usr_text);
+    }
+
+    /**
+     * @returns bool true e.g. if all term of the formula expression needs to be set for calculation the result
+     */
+    function need_all(): bool
+    {
+        return $this->need_all_val;
+    }
+
 
     /*
      * to review
      */
 
     // create the HTML code to display the formula text in the human-readable format including links to the formula elements
-    function dsp_text(string $back = ''): string
+    function dsp_text(string $back = '', term_list|null $trm_lst = null): string
     {
         log_debug();
         $result = $this->usr_text;
 
-        $exp = $this->expression();
-        $elm_lst = $exp->element_list();
+        $exp = $this->expression($trm_lst);
+        $elm_lst = $exp->element_list($trm_lst);
         foreach ($elm_lst->lst() as $elm) {
-            log_debug("replace " . $elm->name() . " with " . $elm->name_linked($back) . ".");
-            $result = str_replace('"' . $elm->name() . '"', $elm->name_linked($back), $result);
+            log_debug("replace " . $elm->name() . " with " . $elm->link($back) . ".");
+            $result = str_replace('"' . $elm->name() . '"', $elm->link($back), $result);
         }
 
         log_debug($result);
         return $result;
     }
 
-    // display the history of a formula
-    function dsp_hist($page, $size, $call, $back): string
+    /**
+     * display the history of a formula
+     */
+    function dsp_hist(
+        int        $page,
+        int        $size,
+        string     $call = '',
+        back_trace $back = null
+    ): string
     {
-        log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
-        $result = ''; // reset the html code var
-
-        $log_dsp = $this->dsp_hist_log($page, $size, $call, $back);
-        $result .= $log_dsp->dsp_hist();
-
-        log_debug("done");
-        return $result;
+        $log_dsp = new user_log_display();
+        return $log_dsp->dsp_hist(formula::class, $this->id(), $size, $page, $call, $back);
     }
 
     // display the history of a formula
@@ -306,7 +365,9 @@ class formula extends sandbox_typed
         return $log_dsp;
     }
 
-    // display the link history of a formula
+    /**
+     * display the link history of a formula
+     */
     function dsp_hist_links($page, $size, $call, $back): string
     {
         log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
@@ -363,9 +424,9 @@ class formula extends sandbox_typed
         // predefined formulas like "this" or "next" should only be changed by an admin
         // TODO check if formula user or login user should be used
         if (!$this->is_special() or $usr->is_admin()) {
-            $result .= $html->dsp_form_fld("formula_text", $resolved_text, "Expression:", view_styles::COL_SM_12);
+            $result .= $html->dsp_form_fld(api::URL_VAR_USER_EXPRESSION, $resolved_text, "Expression:", view_styles::COL_SM_12);
         }
-        $result .= $html->dsp_form_fld_checkbox("need_all_val", $this->need_all_val, "calculate only if all values used in the formula exist");
+        $result .= $html->dsp_form_fld_checkbox(api::URL_VAR_NEED_ALL, $this->need_all_val, "calculate only if all values used in the formula exist");
         $result .= '<br><br>';
         $result .= $html->dsp_form_end('', $back);
 
@@ -417,16 +478,17 @@ class formula extends sandbox_typed
         return $result;
     }
 
-    // list all words linked to the formula and allow to unlink or add new words
+    /**
+     * list all words linked to the formula and allow to unlink or add new words
+     */
     function dsp_used4words($add, $wrd, $back): string
     {
-        global $usr;
         log_debug($this->ref_text . " for " . $wrd->name() . ",back:" . $back);
         $result = '';
 
         $html = new html_base();
 
-        $phr_lst = $this->assign_phr_ulst_direct();
+        $phr_lst = $this->direct_assigned_phrases();
         log_debug("words linked loaded");
 
         // list all linked words
@@ -451,13 +513,13 @@ class formula extends sandbox_typed
             } else {
                 $selected = 0;
             }
-            $result .= $this->phrase_selector('link_phrase', "formula_edit",
+            $result .= $this->phrase_selector_old('link_phrase', "formula_edit",
                     '', $selected) . ' ';
         } else {
             if ($this->id() > 0) {
-                $url = $this->obj_url(view_shared::MC_FORMULA_ADD);
+                $url = $this->obj_url(views::FORMULA_ADD);
                 // TODO check if 'add_link=1' is needed
-                $result .= (new button($url, $back))->add(messages::FORMULA_ADD);
+                $result .= (new button($url, $back))->add(msg_id::FORMULA_ADD);
             }
         }
         $result .= '    </td>';
@@ -479,20 +541,20 @@ class formula extends sandbox_typed
      * @param string $col_class the formatting code to adjust the formatting
      * @param int $selected the id of the preselected phrase
      * @param string $pattern the pattern to filter the phrases
-     * @param phrase_dsp|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
+     * @param phrase|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
      * @return string with the HTML code to show the phrase selector
      */
-    protected function phrase_selector(
+    public function phrase_selector_old(
         string      $name,
         string      $form,
         string      $label = '',
         string      $col_class = '',
         int         $selected = 0,
         string      $pattern = '',
-        ?phrase_dsp $phr = null
+        ?phrase $phr = null
     ): string
     {
-        $phr_lst = new phrase_list_dsp();
+        $phr_lst = new phrase_list();
         $phr_lst->load_like($pattern);
         return $phr_lst->selector($form, $selected, $name, $label, '', html_selector::TYPE_DATALIST);
     }
@@ -515,11 +577,11 @@ class formula extends sandbox_typed
         log_debug("value list");
         $res_lst = new result_list($usr);
         $res_lst->load_by_obj($this);
-        $sample_val = $res_lst->display($back);
+        $sample_val = $res_lst->display();
         if (trim($sample_val) <> "") {
             if ($this->name_wrd != null) {
-                $name_wrd_dsp = new word_dsp($this->name_wrd->api_json());
-                $result .= $html->dsp_text_h3("Results for " . $name_wrd_dsp->display_linked($back), "change_hist");
+                $name_wrd_dsp = $this->name_wrd;
+                $result .= $html->dsp_text_h3("Results for " . $name_wrd_dsp->name_link(), "change_hist");
             }
             $result .= $sample_val;
         }
@@ -535,76 +597,33 @@ class formula extends sandbox_typed
      */
     function expression(?term_list $trm_lst = null): expression
     {
-        global $usr;
-        $exp = new expression($usr);
+        $exp = new expression();
         $exp->set_ref_text($this->ref_text(), $trm_lst);
         $exp->set_user_text($this->usr_text(), $trm_lst);
-        log_debug('->expression ' . $exp->ref_text() . ' for user ' . $exp->usr->name);
+        log_debug('->expression ' . $exp->ref_text());
         return $exp;
     }
 
     /**
      * the user specific list of a phrases assigned to a formula
      */
-    function assign_phr_ulst_direct(): ?phrase_list
+    function direct_assigned_phrases(): ?phrase_list
     {
-        return $this->assign_phr_glst_direct(true);
-    }
-
-    /**
-     * lists of all words directly assigned to a formula and where the formula should be used
-     */
-    function assign_phr_glst_direct($sbx): ?phrase_list
-    {
-        global $usr;
-        $phr_lst = null;
-        $lib = new library();
-
-        if ($this->id() > 0 and $usr != null) {
-            log_debug('for formula ' . $this->dsp_id() . ' and user "' . $usr->name . '"');
-            $frm_lnk_lst = new formula_link_list($usr);
-            $frm_lnk_lst->load_by_frm_id($this->id());
-            $phr_ids = $frm_lnk_lst->phrase_ids($sbx);
-
-            if (count($phr_ids->lst) > 0) {
-                $phr_lst = new phrase_list($usr);
-                $phr_lst->load_names_by_ids($phr_ids);
-                log_debug("number of words " . $lib->dsp_count($phr_lst->lst()));
-            }
-        } else {
-            log_err("The user id must be set to list the formula links.", "formula->assign_phr_glst_direct");
-        }
-
+        $phr_lst = new phrase_list();
+        $phr_lst->load_by_formula($this);
         return $phr_lst;
     }
+
 
     // allow the user to unlink a word
     function dsp_unlink_phr($phr_id, $back): string
     {
         log_debug($phr_id);
         $result = '    <td>' . "\n";
-        $url = \html\rest_ctrl::PATH_FIXED . self::class . api_dsp::UPDATE . api_dsp::EXT . '?id=' . $this->id() . '&unlink_phrase=' . $phr_id . '&back=' . $back;
-        $result .= (new button($url, $back))->del(messages::FORMULA_UNLINK);
+        $url = api_dsp::PATH_FIXED . self::class . api_dsp::UPDATE . api_dsp::EXT . '?id=' . $this->id() . '&unlink_phrase=' . $phr_id . '&back=' . $back;
+        $result .= (new button($url, $back))->del(msg_id::FORMULA_UNLINK);
         $result .= '    </td>' . "\n";
         return $result;
     }
-
-    /*
-     * to review
-     */
-
-    /**
-     * display the most interesting formula result for one word
-     * TODO define the criteria and review the result loading
-     */
-    function dsp_result(phrase $phr, $back): string
-    {
-        log_debug('for "' . $phr->name() . '" and formula ' . $this->dsp_id());
-        $res = new result($this->user());
-        $res->load_by_formula_and_group_list($this, $phr->groups());
-        $dsp_res = new result_dsp($res->api_json());
-        return $dsp_res->display($back);
-    }
-
 
 }

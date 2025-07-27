@@ -2,8 +2,8 @@
 
 /*
 
-    /web/ref/ref.php - the extension of the reference API objects to create ref base html code
-    ----------------
+    web/ref/ref.php - the extension of the reference API objects to create ref base html code
+    ---------------
 
     extends db_object_dsp because this is the only display object that does not have an explicit name but has a type
 
@@ -34,9 +34,17 @@
 
 namespace html\ref;
 
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED . 'json_fields.php';
 
-use shared\api;
+include_once paths::SHARED . 'json_fields.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::REF . 'source.php';
+
 use html\sandbox\db_object as db_object_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\user\user_message;
@@ -86,9 +94,9 @@ class ref extends db_object_dsp
      * @param array $json_array an api json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        $usr_msg = parent::set_from_json_array($json_array);
+        $usr_msg = parent::api_mapper($json_array);
         if (array_key_exists(json_fields::PHRASE, $json_array)) {
             $phr = new phrase_dsp();
             $wrd = new word_dsp();
@@ -206,27 +214,7 @@ class ref extends db_object_dsp
 
 
     /*
-     * display
-     */
-
-    /**
-     * @returns string simply the ref name, but later with mouse over that shows the description
-     */
-    function display(): string
-    {
-        return $this->type_name() . ' ' . $this->external_key;
-    }
-
-    /**
-     * @returns string simply the ref name, but later with mouse over that shows the description
-     */
-    function display_linked(): string
-    {
-        return $this->type_name() . ' ' . $this->external_key;
-    }
-
-    /*
-     * interface
+     * api
      */
 
     /**
@@ -238,11 +226,47 @@ class ref extends db_object_dsp
         $vars = parent::api_array();
         $vars[json_fields::URL] = $this->url();
         $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
-        $vars[json_fields::PHRASE] = $this->phr->id();
+        $vars[json_fields::PHRASE] = $this->phr?->id();
         $vars[json_fields::SOURCE] = $this->source?->id();
         $vars[json_fields::PREDICATE] = $this->predicate_id();
         $vars[json_fields::DESCRIPTION] = $this->description();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
+    /*
+     * base
+     */
+
+    /**
+     * @returns string simply the ref name, but later with mouse over that shows the description
+     */
+    function name_tip(): string
+    {
+        return $this->type_name() . ' ' . $this->external_key();
+    }
+
+    /**
+     * @returns string simply the ref name, but later with mouse over that shows the description
+     */
+    function name_link(): string
+    {
+        return $this->type_name() . ' ' . $this->external_key();
+    }
+
+
+    /*
+     * select
+     */
+
+    public function ref_type_selector(string $form_name): string
+    {
+        global $html_ref_types;
+        $used_ref_type_id = $this->predicate_id();
+        if ($used_ref_type_id == null) {
+            $used_ref_type_id = $html_ref_types->default_id();
+        }
+        return $html_ref_types->selector($form_name, $used_ref_type_id);
     }
 
 }

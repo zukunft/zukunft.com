@@ -37,19 +37,23 @@
 
 namespace cfg\value;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -61,8 +65,10 @@ use cfg\group\group;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_value;
 use cfg\ref\source;
+use cfg\ref\source_db;
 use cfg\user\user;
 use cfg\user\user_message;
+use shared\enum\messages as msg_id;
 use shared\library;
 
 class value_time_series extends sandbox_value
@@ -87,8 +93,8 @@ class value_time_series extends sandbox_value
 
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
-        source::FLD_ID,
-        sandbox::FLD_EXCLUDED,
+        source_db::FLD_ID,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
 
@@ -111,7 +117,6 @@ class value_time_series extends sandbox_value
      */
 
     // related objects used also for database mapping
-    public group $grp;  // phrases (word or triple) group object for this value
     public ?source $source;    // the source object
 
     /*
@@ -135,7 +140,7 @@ class value_time_series extends sandbox_value
     {
         parent::reset();
 
-        $this->grp = new group($this->user());
+        $this->set_grp(new group($this->user()));
         $this->source = null;
     }
 
@@ -161,10 +166,10 @@ class value_time_series extends sandbox_value
         $lib = new library();
         $result = parent::row_mapper_multi($db_row, '', self::FLD_ID);
         if ($result) {
-            $this->grp->set_id($db_row[group::FLD_ID]);
-            if ($db_row[source::FLD_ID] > 0) {
+            $this->grp()->set_id($db_row[group::FLD_ID]);
+            if ($db_row[source_db::FLD_ID] > 0) {
                 $this->source = new source($this->user());
-                $this->source->set_id($db_row[source::FLD_ID]);
+                $this->source->set_id($db_row[source_db::FLD_ID]);
             }
             $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id()));
         }
@@ -233,7 +238,7 @@ class value_time_series extends sandbox_value
         sql_creator   $sc,
         string        $query_name,
         string        $class = self::class,
-        sql_type_list $sc_par_lst = new sql_type_list([]),
+        sql_type_list $sc_par_lst = new sql_type_list(),
         string        $ext = '',
         string        $id_ext = ''
     ): sql_par
@@ -274,9 +279,13 @@ class value_time_series extends sandbox_value
      * load a reference object by database id
      * TODO load the related time series data
      * @param int|string $id the id of the reference
+     * @param ?sql_type $typ if known the value data type to preselect the table
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_id(int|string $id): int
+    function load_by_id(
+        int|string $id,
+        ?sql_type $typ = null
+    ): int
     {
         return parent::load_by_id($id);
     }
@@ -317,18 +326,18 @@ class value_time_series extends sandbox_value
             $db_con->set_class(value_time_series::class);
             $this->id = $db_con->insert_old(
                 array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
-                array($this->grp->id(), $this->user()->id(), sql::NOW));
+                array($this->grp()->id(), $this->user()->id(), sql::NOW));
             if ($this->id() > 0) {
                 // update the reference in the log
                 if (!$log->add_ref($this->id())) {
-                    $usr_msg->add_message('adding the value time series reference in the system log failed');
+                    $usr_msg->add_id(msg_id::VALUE_TIME_SERIES_LOG_REF_FAILED);
                 }
 
                 // update the phrase links for fast searching
                 /*
                 $upd_result = $this->upd_phr_links();
                 if ($upd_result != '') {
-                    $result->add_message('Adding the phrase links of the value time series failed because ' . $upd_result);
+                    $result->add_message_text('Adding the phrase links of the value time series failed because ' . $upd_result);
                     $this->set_id(0);
                 }
                 */
@@ -344,7 +353,7 @@ class value_time_series extends sandbox_value
     }
 
     /*
-     * information
+     * info
      */
 
     /**
@@ -353,7 +362,7 @@ class value_time_series extends sandbox_value
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return string|array the field name(s) of the prime database index of the object
      */
-    function id_field(sql_type_list $sc_par_lst = new sql_type_list([])): string|array
+    function id_field(sql_type_list $sc_par_lst = new sql_type_list()): string|array
     {
         $lib = new library();
         return $lib->class_to_name($this::class) . sql_db::FLD_EXT_ID;
@@ -384,7 +393,7 @@ class value_time_series extends sandbox_value
         if ($this->id() <= 0) {
             // check if a time series for the phrase group is already in the database
             $db_chk = new value_time_series($this->user());
-            $db_chk->load_by_grp($this->grp);
+            $db_chk->load_by_grp($this->grp());
             if ($db_chk->id() > 0) {
                 $this->set_id($db_chk->id());
             }
@@ -405,19 +414,19 @@ class value_time_series extends sandbox_value
             $std_rec->load_standard();
 
             // for a correct user value detection (function can_change) set the owner even if the value has not been loaded before the save
-            if ($this->owner_id <= 0) {
-                $this->owner_id = $std_rec->owner_id;
+            if ($this->owner_id() <= 0) {
+                $this->set_owner_id($std_rec->owner_id());
             }
 
             // check if the id parameters are supposed to be changed
-            $usr_msg->add_message($this->save_id_if_updated($db_con, $db_rec, $std_rec));
+            $usr_msg->add_message_text($this->save_id_if_updated($db_con, $db_rec, $std_rec));
 
             // if a problem has appeared up to here, don't try to save the values
             // the problem is shown to the user by the calling interactive script
             // TODO add function based db saving
             if ($usr_msg->is_ok()) {
                 // if the user is the owner and no other user has adjusted the value, really delete the value in the database
-                $usr_msg->add_message($this->save_fields($db_con, $db_rec, $std_rec));
+                $usr_msg->add_message_text($this->save_fields($db_con, $db_rec, $std_rec));
             }
 
         }

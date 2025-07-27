@@ -32,9 +32,13 @@
 
 namespace html\types;
 
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'api.php';
 
-use html\html_base;
+use shared\api;
 use shared\types\phrase_type;
 use shared\types\view_styles;
 
@@ -57,7 +61,7 @@ class phrase_types extends type_list
         int    $selected = 1,
         string $label = 'type:',
         string $bs_class = view_styles::COL_SM_4,
-        string $name = self::NAME
+        string $name = api::URL_VAR_PHRASE_TYPE
     ): string
     {
         global $html_phrase_types;

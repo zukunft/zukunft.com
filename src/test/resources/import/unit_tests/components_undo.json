@@ -1,0 +1,15 @@
+{
+  "version": "0.0.3",
+  "time": "2025-07-17 14:07:38",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message to remove the added test component via data_object based import"
+  ],
+  "components": [
+    {
+      "name": "System Test View Component",
+      "excluded": true
+    }
+  ]
+}
+

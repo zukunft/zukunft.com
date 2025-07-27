@@ -2,8 +2,14 @@
 
 /*
 
-    /web/system/language.php - the extension of the language API objects to create language base html code
-    ------------------------
+    web/system/language.php - the extension of the language API objects to create language base html code
+    -----------------------
+
+    The main sections of this object are
+    - object vars:       the variables of this word object
+    - set and get:       to capsule the vars from unexpected changes
+    - api:               set the object vars based on the api json message and create a json for the backend
+
 
     This file is part of the frontend of zukunft.com - calc with words
 
@@ -22,7 +28,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -31,38 +37,35 @@
 
 namespace html\system;
 
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_typed.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\rest_ctrl as api_dsp;
 use html\html_base;
 use html\sandbox\sandbox_typed;
 use html\user\user_message;
+use shared\const\views;
 use shared\json_fields;
 
 class language extends sandbox_typed
 {
 
+    /*
+     * object vars
+     */
+
     private ?string $url;
+
 
     /*
      * set and get
      */
-
-    /**
-     * set the vars of this language frontend object bases on the api json array
-     * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function set_from_json_array(array $json_array): user_message
-    {
-        $usr_msg = parent::set_from_json_array($json_array);
-        if (array_key_exists(json_fields::URL, $json_array)) {
-            $this->set_url($json_array[json_fields::URL]);
-        } else {
-            $this->set_url(null);
-        }
-        return $usr_msg;
-    }
 
     function set_url(?string $url): void
     {
@@ -76,8 +79,24 @@ class language extends sandbox_typed
 
 
     /*
-     * interface
+     * api
      */
+
+    /**
+     * set the vars of this language frontend object bases on the api json array
+     * @param array $json_array an api json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function api_mapper(array $json_array): user_message
+    {
+        $usr_msg = parent::api_mapper($json_array);
+        if (array_key_exists(json_fields::URL, $json_array)) {
+            $this->set_url($json_array[json_fields::URL]);
+        } else {
+            $this->set_url(null);
+        }
+        return $usr_msg;
+    }
 
     /**
      * @return array the json message array to send the updated data to the backend
@@ -91,14 +110,14 @@ class language extends sandbox_typed
     }
 
     /*
-     * display
+     * base
      */
 
     /**
      * display the language name with the tooltip
      * @returns string the html code
      */
-    function display(): string
+    function name_tip(): string
     {
         return $this->name();
     }
@@ -109,11 +128,9 @@ class language extends sandbox_typed
      * @param string $style the CSS style that should be used
      * @returns string the html code
      */
-    function display_linked(?string $back = '', string $style = ''): string
+    function name_link(?string $back = '', string $style = '', int $msk_id = views::LANGUAGE_ID): string
     {
-        $html = new html_base();
-        $url = $html->url(api_dsp::LANGUAGE, $this->id(), $back, api_dsp::PAR_VIEW_LANGUAGES);
-        return $html->ref($url, $this->name(), $this->name(), $style);
+        return parent::name_link($back, $style, $msk_id);
     }
 
 }

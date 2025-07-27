@@ -1,0 +1,93 @@
+{
+  "version": "0.0.3",
+  "time": "2024-03-26 19:58:00",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message for data_object based import by counting the formulas"
+  ],
+  "words": [
+    {
+      "name": "one"
+    },
+    {
+      "name": "million"
+    },
+    {
+      "name": "billion"
+    },
+    {
+      "name": "happy"
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "point"
+    },
+    {
+      "name": "global"
+    },
+    {
+      "name": "human"
+    },
+    {
+      "name": "population"
+    },
+    {
+      "name": "percent"
+    },
+    {
+      "name": "this"
+    },
+    {
+      "name": "prior"
+    },
+    {
+      "name": "year"
+    }
+  ],
+  "triples": [
+    {
+      "name": "time points",
+      "from": "points",
+      "verb": "is measure type for",
+      "to": "time",
+      "description": "a value multiplied by the time e.g. used for the UN Disability-adjusted life year (DALYs)"
+    },
+    {
+      "name": "happy time points",
+      "from": "happy",
+      "verb": "and",
+      "to": "time points",
+      "description": "To measure the \"happy points\" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the \"happy time points\". "
+    },
+    {
+      "name": "htp",
+      "verb": "is symbol for",
+      "to": "happy time points"
+    }
+  ],
+  "formulas": [
+    {
+      "name": "scale million to one",
+      "expression": "\"one\" = \"million\" * 1000000",
+      "assigned_word": "million"
+    },
+    {
+      "name": "scale billion to one",
+      "expression": "\"one\" = \"billion\" * 1000000000",
+      "assigned_word": "billion"
+    },
+    {
+      "name": "global happy time points",
+      "expression": "\"htp\" = \"htp\",\"percent\" * \"global\",\"human\",\"population\"",
+      "assigned_word": "htp"
+    },
+    {
+      "name": "System Test Formula",
+      "expression": "\"percent\" = ( \"this\" -  \"prior\" ) / \"prior\"",
+      "assigned_word": "year"
+    }
+  ]
+}
+

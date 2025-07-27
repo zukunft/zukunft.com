@@ -32,10 +32,15 @@
 
 namespace unit_read;
 
-use api\formula\formula as formula_api;
-use api\word\word as word_api;
-use cfg\formula\formula;
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'words.php';
+
+use cfg\word\word;
 use cfg\word\word_list;
+use shared\const\formulas;
+use shared\const\words;
 use test\test_cleanup;
 
 class word_list_read_tests
@@ -47,26 +52,26 @@ class word_list_read_tests
         // TODO change in all other tests and later here (like in element_list_tests):
         // TODO move the main object to init for all unit an read db tests
         // TODO start the test always with the test name
-        // TODO create const whereever possible
+        // TODO create const wherever possible
         // TODO use the test user instead of the global user
 
         global $usr;
 
         // init
-        $t->name = 'word list read db->';
+        $t->name = 'word list read db';
 
-        $t->header('Test the word list class (classes/word_list.php)');
+        $t->header('word list database read unit tests');
 
         // test loading word names
         $wrd_lst = new word_list($t->usr1);
         $test_name = 'loading word names without pattern return more than two words';
         $wrd_lst->load_names();
-        $t->assert_greater($test_name, 2, $wrd_lst->count());
+        $t->assert_greater($test_name, 2, $wrd_lst->count(), $t::TIMEOUT_LIMIT_DB);
         $test_name = 'loading word names with pattern return the expected word';
-        $pattern = substr(word_api::TN_READ, 0, -1);
+        $pattern = substr(words::MATH, 0, -1);
         $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_names($pattern);
-        $t->assert_contains($test_name, $wrd_lst->names(), word_api::TN_READ);
+        $t->assert_contains($test_name, $wrd_lst->names(), words::MATH);
         $test_name = 'loading word names with page size one return only one word';
         $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_names($pattern, 1, 0);
@@ -74,27 +79,30 @@ class word_list_read_tests
         $test_name = 'next page with page size one does not return the pattern word';
         $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_names($pattern, 1, 1);
-        $t->assert_contains_not($test_name, $wrd_lst->names(), word_api::TN_READ);
+        $t->assert_contains_not($test_name, $wrd_lst->names(), words::MATH);
         $test_name = 'formula names are not included in the normal word list';
         $wrd_lst = new word_list($t->usr1);
-        $wrd_lst->load_names(formula_api::TN_READ);
-        $t->assert_contains_not($test_name, $wrd_lst->names(), formula_api::TN_READ);
+        $wrd_lst->load_names(formulas::SCALE_TO_SEC);
+        $t->assert_contains_not($test_name, $wrd_lst->names(), formulas::SCALE_TO_SEC);
 
 
         // test load by word list by ids
         $test_name = 'load words by ids';
         $wrd_lst = new word_list($t->usr1);
-        $wrd_lst->load_by_ids(array(1,word_api::TI_PI));
-        $target = '"' . word_api::TN_READ . '","' . word_api::TN_PI . '"'; // order adjusted based on the number of usage
+        $wrd_lst->load_by_ids(array(1,words::PI_ID));
+        $target = '"' . words::MATH . '","' . words::PI . '"'; // order adjusted based on the number of usage
         $t->assert($test_name, $wrd_lst->name(), $target);
         $test_name = 'load words by names';
         $wrd_lst = new word_list($t->usr1);
-        $wrd_lst->load_by_names(array(word_api::TN_READ,word_api::TN_PI));
-        $t->assert_contains($test_name, $wrd_lst->ids(), array(1,word_api::TI_PI));
+        $wrd_lst->load_by_names(array(words::MATH,words::PI));
+        $t->assert_contains($test_name, $wrd_lst->ids(), array(1,words::PI_ID));
         $test_name = 'load words staring with P';
         $wrd_lst = new word_list($t->usr1);
         $wrd_lst->load_like('P');
-        $t->assert_contains($test_name, $wrd_lst->names(), word_api::TN_PI);
+        $t->assert_contains($test_name, $wrd_lst->names(), words::PI);
+
+        $test_name = 'all expected test words are in the database';
+        $t->assert_db_test_id_list($test_name, words::TEST_WORD_IDS, new word($t->usr1), new word_list($t->usr1));
 
     }
 

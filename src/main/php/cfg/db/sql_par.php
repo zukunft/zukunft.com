@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/db/sql_par.php - combine the query name, the sql statement and the parameters in one object
+    model/db/sql_par.php - combine the query name, the sql statement and the parameters in one object
     ------------------
 
 
@@ -37,7 +37,9 @@
 
 namespace cfg\db;
 
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::SHARED . 'library.php';
 
 use shared\library;
 
@@ -67,7 +69,7 @@ class sql_par
      */
     function __construct(
         string        $class,
-        sql_type_list $sc_par_lst = new sql_type_list([]),
+        sql_type_list $sc_par_lst = new sql_type_list(),
         string        $ext = '',
         string        $id_ext = '')
     {
@@ -82,6 +84,9 @@ class sql_par
         if ($sc_par_lst->is_sub_tbl()) {
             $name .= sql_type::SUB->extension();
         }
+
+        // add the table extension for select queries e.g. "_text"
+        $name .= $sc_par_lst->ext_value_type();
 
         // add the table extension for select queries e.g. "_prime"
         $name .= $sc_par_lst->ext_query();
@@ -139,12 +144,20 @@ class sql_par
      * @param bool $unique true if the parameters should be unique
      * @return sql_par
      */
-    function merge(sql_par $qp, bool $unique = false): sql_par
+    function merge(
+        sql_par $qp,
+        bool $unique = false,
+        sql_type_list $sc_par_typ = new sql_type_list()
+    ): sql_par
     {
         if ($this->sql == '') {
             $this->sql = $qp->sql;
         } else {
-            $this->sql .= ' UNION ' . $qp->sql;
+            if ($sc_par_typ->is_geo()) {
+                $this->sql .= ' ' . sql::UNION_ALL . ' ' . $qp->sql;
+            } else {
+                $this->sql .= ' ' . sql::UNION . ' ' . $qp->sql;
+            }
         }
         if ($unique) {
             $this->par = array_unique(array_merge($this->par, $qp->par));

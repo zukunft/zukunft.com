@@ -31,41 +31,67 @@
 
 namespace unit;
 
-include_once SERVICE_PATH . 'config.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
-include_once MODEL_SYSTEM_PATH . 'session.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
-include_once API_SYSTEM_PATH . 'sys_log.php';
+use cfg\const\paths;
 
-use api\word\word as word_api;
-use api\ref\ref as ref_api;
+include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_SYSTEM . 'ip_range.php';
+include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+include_once paths::MODEL_SYSTEM . 'session.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once TEST_CONST_PATH . 'files.php';
+
 use cfg\config;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
 use cfg\formula\formula;
-use cfg\sys_log_list;
+use cfg\helper\data_object;
 use cfg\system\ip_range;
 use cfg\system\ip_range_list;
 use cfg\system\session;
 use cfg\system\sys_log;
-use cfg\system\sys_log_status;
+use cfg\system\sys_log_list;
 use cfg\system\sys_log_status_list;
+use cfg\user\user_message;
 use cfg\verb\verb;
-use controller\system\sys_log as sys_log_api;
+use cfg\word\word;
 use DateTime;
+use html\system\sys_log as sys_log_dsp;
+use html\system\sys_log_list as sys_log_list_dsp;
+use html\user\user;
+use shared\enum\language_codes;
+use shared\enum\messages as msg_id;
+use shared\enum\sys_log_statuus;
 use shared\library;
+use shared\const\refs;
+use shared\const\words;
+use shared\types\api_type;
 use test\test_cleanup;
+use const\files as test_files;
 
 class system_tests
 {
+
+    // use path that does not need to be included
+    const PATH_NO_INCLUDE = [
+        'PgSql\Connection',
+        'cfg\const\paths',
+        'html\const\paths'
+    ];
+
     function run(test_cleanup $t): void
     {
 
         global $usr;
+        // TODO move system user to a test object vars
         global $usr_sys;
         global $sql_names;
         global $sys_log_sta_cac;
+        global $mtr;
 
         // init
         $lib = new library();
@@ -73,57 +99,59 @@ class system_tests
         $sc = new sql_creator();
         $t->name = 'system->';
         $t->resource_path = 'db/system/';
+        $t->usr_system = $t->user_system();
 
+        // start the test section (ts)
+        $ts = 'unit objects ';
+        $t->header($ts);
 
-        $t->header('Unit tests of objects');
-
-
-        $t->subheader('Config SQL setup statements');
+        $t->subheader($ts . 'config SQL setup');
         $cfg = new config();
         $t->assert_sql_table_create($cfg);
         $t->assert_sql_index_create($cfg);
 
-        $t->subheader('IP range SQL setup statements');
+        $t->subheader($ts . 'ip range SQL setup');
         $ipr = new ip_range();
         $t->assert_sql_table_create($ipr);
         $t->assert_sql_index_create($ipr);
 
-        $t->subheader('Session SQL setup statements');
+        $t->subheader($ts . 'session SQL setup');
         $ses = new session();
         $t->assert_sql_table_create($ses);
         $t->assert_sql_index_create($ses);
 
 
-        $t->subheader('Debug function tests');
+        $t->subheader($ts . 'debug functions');
 
         // create a dummy object of each object and test that the dsp_id debug function does not cause an infinite loop
         // TODO check that all objects are included in this list
-        $t->assert_dsp_id($t->word(), '"Mathematics" (word_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->word_list(), '"Mathematics","constant","Pi","Euler\'s constant" (word_id 1,2,4,6) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->word(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->word_list(), '"mathematics","constant","π","𝑒" (word_id 1,2,5,6) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->verb(), 'not set/not_set (verb_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->triple(), '"constant" "is part of" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->triple_list(), '"Pi (math)" (triple_id 2) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->triple()->phrase(), '"constant" "is part of" "Mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase');
-        $t->assert_dsp_id($t->phrase_list_prime(), '"Mathematical constant","Mathematics","Pi (math)","constant" (phrase_id 1,2,-1,-2) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->phrase_list_long(), '"2019","Bern (City)","Euler\'s constant" ... total 13 (phrase_id 1,2,4,6,142,3,170,172,-1,-2,-38,-39,-40) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->group(), '"Pi (math)" (group_id 32770) as "Pi (math)" for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->group_list(), ' ... total 1');
-        $t->assert_dsp_id($t->term(), '"Mathematics" (word_id 1) for user 1 (zukunft.com system test) as term');
-        $t->assert_dsp_id($t->term_list(), '"Mathematical constant","Mathematics","not set","scale minute to sec" (-2,-1,1,2)');
-        $t->assert_dsp_id($t->value(), '"Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->value_list(), '"Pi (math)" 3.1415926535898 / "inhabitant in the city of Zurich (2019)" 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,, / ' . word_api::TI_INHABITANT . ',' . word_api::TI_ZH . ',' . word_api::TI_2019 . ',) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->triple(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->triple_list(), '"π (unit symbol)" (triple_id 2) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->triple()->phrase(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase');
+        $t->assert_dsp_id($t->phrase_list_prime(), '"mathematics","constant","mathematical constant","π (unit symbol)" (phrase_id 1,2,-1,-2) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id 1,2,5,18,139,4,157,159,-1,-51,-128,-130,-131) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->group(), '"Pi (math)" (group_id 32819) as "Pi (math)" for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->group_list(), 'Pi (math)');
+        $t->assert_dsp_id($t->group_list_long(), 'Pi (math) / Zurich City inhabitants (2019) / Zurich City inhabitants (2019) in million / System Test Word Increase in Switzerland\'s inhabitants from 2019 to 2020 in percent ... total 6');
+        $t->assert_dsp_id($t->term(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test) as term');
+        $t->assert_dsp_id($t->term_list(), '"mathematical constant","mathematics","not set","scale minute to sec" (-2,-1,1,2)');
+        $t->assert_dsp_id($t->value(), 'Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,,) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->value_list(), 'Pi (math): 3.1415926535898 / Zurich City inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,, / 271,267,139,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->source(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->reference(), 'ref of "Pi" to "wikidata" (' . ref_api::TI_PI . ')');
+        $t->assert_dsp_id($t->reference(), 'ref of "Pi" to "wikidata" (' . refs::PI_ID . ')');
         $t->assert_dsp_id($t->formula(), '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->formula_list(), 'scale minute to sec (formula_id 1) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->formula_link(), 'from "scale minute to sec" (formula_id 1) to "Mathematics" (word_id 1) as phrase as  (formula_link_id 1)');
-        $t->assert_dsp_id($t->element(), 'word "minute" (' . word_api::TI_MINUTE . ') for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->element_list(), '"minute" (element_id ' . word_api::TI_MINUTE . ') for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->expression(), '""second" = "minute" * 60" ({w' . word_api::TI_SECOND . '}={w' . word_api::TI_MINUTE . '}*60)');
-        $t->assert_dsp_id($t->result_simple(), '"Mathematics" 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->result_list(), '"Mathematics" 123456 / "percent" 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / 2,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->figure_value(), 'value figure "Pi (math)" 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -2,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');
-        $t->assert_dsp_id($t->figure_list(), ' 3.1415926535898 Pi (math)  123456 "Mathematics"  (32770,-1)');
+        $t->assert_dsp_id($t->formula_link(), 'from "scale minute to sec" (formula_id 1) to "mathematics" (word_id 1) as phrase as  (formula_link_id 1)');
+        $t->assert_dsp_id($t->element(), 'word "minute" (' . words::MINUTE_ID . ') for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->element_list(), '"minute" (element_id ' . words::MINUTE_ID . ') for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->expression(), '""second" = "minute" * 60" ({w' . words::SECOND_ID . '}={w' . words::MINUTE_ID . '}*60)');
+        $t->assert_dsp_id($t->result_simple_1(), 'mathematics: 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->result_list(), 'mathematics: 123456 / ' . words::PERCENT . ': 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / 2,,,) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->figure_value(), 'value figure Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');
+        $t->assert_dsp_id($t->figure_list(), ' 3.1415926535898 Pi (math)  123456 "mathematics"  (32819,-1)');
         $t->assert_dsp_id($t->view(), '"Start view" (view_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->view_list(), '"Start view","Add word" (view_id 1,3) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->component(), '"Word" (component_id 1) for user 1 (zukunft.com system test)');
@@ -131,26 +159,45 @@ class system_tests
         $t->assert_dsp_id($t->component_link(), 'from "Start view" (view_id 1) to "Word" (component_id 1) as (component_link_id 1) at pos 1');
         $t->assert_dsp_id($t->component_link_list(), '"Word","spreadsheet" (component_link_id 1,2) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->language(), 'English/english (language_id 1)');
-        $t->assert_dsp_id($t->change_log_named(), 'log add words,word_name Mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
-        $t->assert_dsp_id($t->change_log_norm(), 'log add words,word_name Mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
-        $t->assert_dsp_id($t->change_log_big(), 'log add words,word_name Mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
-        $t->assert_dsp_id($t->change_log_list_named(), 'log add words,word_name Mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
+        $t->assert_dsp_id($t->change_log_named(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
+        $t->assert_dsp_id($t->change_log_norm(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
+        $t->assert_dsp_id($t->change_log_big(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
+        $t->assert_dsp_id($t->change_log_list_named(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t->change_log_link(), 'user_log_link for user zukunft.com system (1) action add (1) table triples (7)');
-        $t->assert_dsp_id($t->change_log_value(), 'log add values,numeric_value (-2,,,) 3.1415927');
+        $t->assert_dsp_id($t->change_log_value(), 'log add values,numeric_value (-51,,,) 3.1415927');
         $t->assert_dsp_id($t->change_log_value_prime(), 'log add words,word_name  3.1415927');
         $t->assert_dsp_id($t->change_log_value_big(), 'log add words,word_name  3.1415927');
         $t->assert_dsp_id($t->sys_log(), 'system log id 1 at 2023-01-03T20:59:59+01:00 row the log text that describes the problem for the user or system admin');
         $t->assert_dsp_id($t->job(), 'base_import for id 1 (1) for user 1 (zukunft.com system)');
 
 
-        $t->header('Unit tests of the system classes (src/main/php/model/system/ip_range.php)');
+        $ts = 'unit translation ';
+        $t->header($ts);
 
-        $t->subheader('System function tests');
+        $test_name = 'show a message in the system language';
+        $t->assert($test_name, $mtr->txt(msg_id::DONE), msg_id::DONE->value);
+        $test_name = 'translate a message in the system language';
+        $t->assert($test_name, $mtr->txt(msg_id::IS_RESERVED), msg_id::IS_RESERVED_TXT->value);
+        $test_name = 'translate a message';
+        $t->assert($test_name, $mtr->txt(msg_id::DONE, language_codes::DE), "erledigt");
+
+        $t->subheader($ts . 'system function');
+        $t->assert('default log message', log_debug(), 'unit\system_tests->run');
+
+
+        $ts = 'unit system ';
+        $t->header($ts);
+
+        $t->subheader($ts . 'log');
         $t->assert('default log message', log_debug(), 'unit\system_tests->run');
         $t->assert('debug log message', log_debug('additional info'), 'unit\system_tests->run: additional info');
 
+        $t->subheader($ts . 'def');
+        $t->assert_true('word is a sandbox class', $lib->class_is_sandbox(word::class));
+        $t->assert_false('user is not a sandbox class', $lib->class_is_sandbox(user::class));
 
-        $t->subheader('IP filter tests');
+
+        $t->subheader($ts . 'IP filter');
 
         /*
          * SQL creation tests (mainly to use the IDE check for the generated SQL statements)
@@ -185,20 +232,27 @@ class system_tests
         $t->assert('ip_range->load_sql by id for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
 
 
-        $t->subheader('ip list sql tests');
+        $t->subheader($ts . 'ip list sql');
 
         $ip_lst = new ip_range_list();
         $t->assert_sql_by_obj_vars($db_con, $ip_lst);
 
 
-        $t->subheader('user list loading sql tests');
+        $t->subheader($ts . 'user list loading sql');
 
         // check if the sql to load the complete list of all ... types is created as expected
         $sys_log_status = new sys_log_status_list();
         $t->assert_sql_all($sc, $sys_log_status);
 
+        $t->subheader($ts . 'user message');
 
-        $t->subheader('system config sql tests');
+        $usr_msg = new user_message();
+        $test_name = 'message is translated';
+        $usr_msg->add_id(msg_id::CHECK);
+        $t->assert($test_name, $usr_msg->all_message_text(), msg_id::CHECK->value);
+
+
+        $t->subheader($ts . 'system config sql');
 
         $db_con->db_type = sql_db::POSTGRES;
         $cfg = new config();
@@ -210,6 +264,17 @@ class system_tests
         $created_sql = $cfg->get_sql($db_con, config::VERSION_DB)->sql;
         $expected_sql = $t->file('db/system/cfg_get_mysql.sql');
         $t->assert('config->get_sql for MySQL', $lib->trim($created_sql), $lib->trim($expected_sql));
+
+        $test_name = 'sql type unit tests';
+        $val_typ = sql_type::INSERT;
+        $t->assert_false($test_name, $val_typ->is_val_type());
+        $t->assert_true($test_name, $val_typ->is_sql_change());
+        $val_typ = sql_type::NUMERIC;
+        $t->assert_true($test_name, $val_typ->is_val_type());
+        $t->assert_false($test_name, $val_typ->is_sql_change());
+        $val_typ = sql_type::LOG;
+        $t->assert_false($test_name, $val_typ->is_val_type());
+        $t->assert_false($test_name, $val_typ->is_sql_change());
 
         /*
          * these tests are probably not needed because not problem is expected
@@ -248,12 +313,12 @@ class system_tests
          * im- and export tests
          */
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
 
-        $json_in = json_decode(file_get_contents(PATH_TEST_FILES . 'unit/system/ip_blacklist.json'), true);
+        $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
-        $ip_range->import_obj($json_in, $t);
+        $ip_range->import_obj($json_in, $usr_sys, new data_object($usr), $t);
         $json_ex = $ip_range->export_json();
         $result = $lib->json_is_similar($json_in, $json_ex);
         $t->assert_true('ip_range->import check', $result);
@@ -263,12 +328,12 @@ class system_tests
          * ip range tests
          */
 
-        $t->subheader('ip range tests');
+        $t->subheader($ts . 'ip range');
 
-        $json_in = json_decode(file_get_contents(PATH_TEST_FILES . 'unit/system/ip_blacklist.json'), true);
+        $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
-        $ip_range->import_obj($json_in, $t);
+        $ip_range->import_obj($json_in, $usr_sys, new data_object($usr), $t);
         $test_ip = '66.249.64.95';
         $result = $ip_range->includes($test_ip);
         $t->assert_true('ip_range->includes check', $result);
@@ -288,7 +353,7 @@ class system_tests
          * system consistency SQL creation tests
          */
 
-        $t->subheader('System consistency tests');
+        $t->subheader($ts . 'system consistency');
 
         // sql to check the system consistency
         $db_con->set_class(formula::class);
@@ -297,7 +362,10 @@ class system_tests
         $expected_sql = $t->file('db/system/missing_owner_by_formula.sql');
         $t->assert('system_consistency->missing_owner_sql by formula', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
-        $this->php_include_tests($t);
+        $this->php_include_tests($t, paths::MODEL);
+        $this->php_include_tests($t, paths::API);
+        $this->php_include_tests($t, paths::WEB);
+        $this->php_class_section_tests($t, paths::MODEL_COMPONENT);
 
         // ... and check if the prepared sql name is unique
         if (!in_array($qp->name, $sql_names)) {
@@ -316,7 +384,7 @@ class system_tests
          * database upgrade SQL creation tests
          */
 
-        $t->subheader('Database upgrade tests');
+        $t->subheader($ts . 'database upgrade');
 
         // sql to load by id
         $db_con->db_type = sql_db::POSTGRES;
@@ -341,7 +409,7 @@ class system_tests
          * system log SQL creation tests
          */
 
-        $t->subheader('System log list tests');
+        $t->subheader($ts . 'system log list');
 
         $log_lst = new sys_log_list();
         $log_lst->set_user($usr);
@@ -372,75 +440,57 @@ class system_tests
          * system log frontend API tests
          */
 
-        $t->subheader('System log frontend API tests');
+        $t->subheader($ts . 'system log frontend API');
 
-        $log = new sys_log();
-        $log->set_id(1);
-        $log->log_time = new DateTime(sys_log_api::TV_TIME);
-        $log->usr_name = $usr->name;
-        $log->log_text = sys_log_api::TV_LOG_TEXT;
-        //$log->log_trace = (new Exception)->getTraceAsString();
-        $log->log_trace = sys_log_api::TV_LOG_TRACE;
-        $log->function_name = sys_log_api::TV_FUNC_NAME;
-        $log->solver_name = sys_log_api::TV_SOLVE_ID;
-        $log->status_name = $sys_log_sta_cac->id(sys_log_status::OPEN);
-        $log_dsp = $log->get_api_obj();
-        $created = $log_dsp->get_json();
-        $expected = file_get_contents(PATH_TEST_FILES . 'api/system/sys_log.json');
+
+        $log = $t->sys_log();
+        $api_msg = $log->api_json();
+        $log_dsp = new sys_log_dsp($api_msg);
+        $created = $log_dsp->api_json();
+        $expected = file_get_contents(test_files::SYS_LOG);
         $t->assert('sys_log_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
         // html code for the system log entry for normal users
-        $created = $log_dsp->get_html($usr_sys);
-        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log.html');
+        $created = $log_dsp->display();
+        $expected = file_get_contents(test_files::SYS_LOG_HTML);
         $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 
         // ... and the same for admin users
-        $created = $log_dsp->get_html($usr_sys);
-        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log_admin.html');
+        $usr_sys_dsp = new user($usr_sys->api_json());
+        $created = $log_dsp->display_admin($usr_sys_dsp);
+        $expected = file_get_contents(test_files::SYS_LOG_ADMIN);
         $t->assert('sys_log_dsp->get_json', $lib->trim_html($created), $lib->trim_html($expected));
 
         // create a second system log entry to create a list
         $log2 = new sys_log();
         $log2->set_id(2);
-        $log2->log_time = new DateTime(sys_log_api::TV_TIME);
+        $log2->log_time = new DateTime(sys_log_tests::TV_TIME);
         $log2->usr_name = $usr->name;
-        $log2->log_text = sys_log_api::T2_LOG_TEXT;
+        $log2->log_text = sys_log_tests::T2_LOG_TEXT;
         //$log2->log_trace = (new Exception)->getTraceAsString();
-        $log2->log_trace = sys_log_api::T2_LOG_TRACE;
-        $log2->function_name = sys_log_api::T2_FUNC_NAME;
-        $log2->solver_name = sys_log_api::TV_SOLVE_ID;
-        $log2->status_name = $sys_log_sta_cac->id(sys_log_status::CLOSED);
+        $log2->log_trace = sys_log_tests::T2_LOG_TRACE;
+        $log2->function_name = sys_log_tests::T2_FUNC_NAME;
+        $log2->solver_name = sys_log_tests::TV_SOLVE_ID;
+        $log2->status_id = $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
 
         $log_lst = new sys_log_list();
         $log_lst->add($log);
         $log_lst->add($log2);
 
-        $log_lst_dsp = $log_lst->dsp_obj();
-        $created = $log_lst_dsp->get_json();
-        $expected = file_get_contents(PATH_TEST_FILES . 'api/sys_log_list/sys_log_list.json');
+        $log_lst_dsp = new sys_log_list_dsp($log_lst->api_json());
+        $usr1_dsp = new user($t->usr1->api_json());
+        $created = $log_lst_dsp->api_json([api_type::HEADER], $usr1_dsp);
+        $expected = file_get_contents(test_files::RESOURCE_PATH . 'api/sys_log_list/sys_log_list.json');
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
         $t->assert('sys_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
-        $created = $log_lst_dsp->get_html();
-        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log_list.html');
+        $created = $log_lst_dsp->get_html($usr1_dsp);
+        $expected = file_get_contents(test_files::RESOURCE_PATH . 'web/system/sys_log_list.html');
         $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
 
-        $created = $log_lst_dsp->get_html_page();
-        $expected = file_get_contents(PATH_TEST_FILES . 'web/system/sys_log_list_page.html');
+        $created = $log_lst_dsp->get_html_page($usr1_dsp);
+        $expected = file_get_contents(test_files::RESOURCE_PATH . 'web/system/sys_log_list_page.html');
         $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
-
-
-        /*
-         * SQL database link unit tests
-         */
-
-        $t->subheader('SQL database link tests');
-
-        $db_con = new sql_db();
-        $db_con->set_class(formula::class);
-        $created = $db_con->count_sql();
-        $expected = file_get_contents(PATH_TEST_FILES . 'db/formula/formula_count.sql');
-        $t->assert_sql('sql_db->count', $created, $expected);
 
     }
 
@@ -448,19 +498,18 @@ class system_tests
      * check if all used classes are also included once within the same file
      *
      * @param test_cleanup $t
+     * @param string $base_path path name of the folder with the php scripts that should be checked
      * @return void
      */
-    function php_include_tests(test_cleanup $t): void
+    function php_include_tests(test_cleanup $t, string $base_path): void
     {
         $lib = new library();
-        $test_name = 'check if all used classes are loaded in php with include once';
-        $result = '';
-        $file_array = $lib->dir_to_array(MODEL_PATH);
+        $file_array = $lib->dir_to_array($base_path);
         $code_files = $lib->array_to_path($file_array);
         $pos = 1;
         foreach ($code_files as $code_file) {
             log_debug($code_file);
-            $ctrl_code = file(MODEL_PATH . $code_file);
+            $ctrl_code = file($base_path . $code_file);
             $use_classes = $lib->php_code_use($ctrl_code);
             // the use code lines sorted by name for copy and paste to code
             $use_sorted = implode("\n", $lib->php_code_use_sorted($ctrl_code));
@@ -477,23 +526,78 @@ class system_tests
                         $path_incl = $include[1];
                         if ($class == $class_incl) {
                             $path_conv = $lib->php_path_convert($path);
-                            if ($path_conv == $path_incl) {
+                            if ($path_conv == $path_incl or $path_conv == '') {
                                 $found = true;
                             }
                         }
                     }
                     if (!$found) {
-                        $t->assert(
-                            'includes missing in ' . $path . '\\' . $class
-                            . ' in ' . $code_file
-                            . ' (' . $pos . ' of ' .count($code_files) . ')', '',
-                            $class);
+                        if (!in_array($path . '\\' . $class,self::PATH_NO_INCLUDE)) {
+                            $sub_path = $lib->str_right_of($base_path, '../');
+                            $test_name = 'includes missing in ' . $path . '\\' . $class
+                                . ' in ' . $sub_path . $code_file
+                                . ' (' . $pos . ' of ' . count($code_files) . ')';
+                            $t->assert($test_name, '', $class);
+                        }
                     }
                 } else {
                     log_debug($class . ' is expected to be a PHP default library');
                 }
             }
             $pos++;
+        }
+    }
+
+    /**
+     * check if the functions in the classes are grouped by sections
+     * if the sections are in the same order
+     * and if the sections are described in the class header
+     * TODO check that all sections have a description in the header
+     * TODO check that the sections match the order in the header
+     * TODO check that the header section list match the general order
+     * TODO check that no function is in an unexpected section
+     *
+     * @param test_cleanup $t
+     * @param string $base_path path name of the folder with the php scripts that should be checked
+     * @return void
+     */
+    function php_class_section_tests(test_cleanup $t, string $base_path): void
+    {
+        $lib = new library();
+        $file_array = $lib->dir_to_array($base_path);
+        $code_files = $lib->array_to_path($file_array);
+        // loop over the code files
+        foreach ($code_files as $code_file) {
+            log_debug($code_file);
+            $ctrl_code = file($base_path . $code_file);
+            $function_section_names = $lib->php_code_function($ctrl_code);
+            // check the mandatory function are in the correct section
+            foreach ($function_section_names as $function_section_name) {
+                $function_name = $function_section_name[0];
+                $section_name = $function_section_name[1];
+                $section_expected = $lib->php_expected_function_section($function_name);
+                // if a class has more than 100 lines the functions should be grouped in sections
+                if (count($ctrl_code) > 100) {
+                    if ($section_name == '' and $function_name != '') {
+                        log_err('section for function ' . $function_name . ' missing');
+                    }
+                    // check if the function is in the expected section
+                    if ($section_name != $section_expected) {
+                        if ($section_expected == '') {
+                            if ($section_name != '') {
+                                log_warning('section for function ' . $function_name
+                                    . ' not yet defined that it should be ' . $section_name . ' in ' . $code_file);
+                            } else {
+                                log_err('section for function ' . $function_name
+                                    . ' not yet defined' . ' in ' . $code_file);
+                            }
+                        } else {
+                            log_err('section for function ' . $function_name
+                                . ' is expected to be ' . $section_expected . ' in ' . $code_file);
+                        }
+                    }
+                }
+            }
         }
     }
 

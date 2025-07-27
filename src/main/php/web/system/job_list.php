@@ -2,8 +2,8 @@
 
 /*
 
-    /web/system/job_list.php - the display extension of the system error log api object
-    ------------------------
+    web/system/job_list.php - the display extension of the system error log api object
+    -----------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -32,11 +32,18 @@
 
 namespace html\system;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_SYSTEM_PATH . 'job.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SYSTEM . 'job.php';
+include_once html_paths::USER . 'user_message.php';
 
 use html\html_base;
 use html\sandbox\list_dsp;
+use html\styles;
 use html\system\job as job_dsp;
 use html\user\user_message;
 
@@ -53,26 +60,12 @@ class job_list extends list_dsp
      * @param array $json_array an api list json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
         // TODO activate Prio 3
         //$ctrl = new controller();
         //$json_array = $ctrl->check_api_msg($json_array, controller::API_BODY_SYS_LOG);
-        return parent::set_list_from_json($json_array, new job());
-    }
-
-
-    /*
-     * modify
-     */
-
-    /**
-     * add a batch_job to the list
-     * @returns bool true if the batch_job has been added
-     */
-    function add(job_dsp $job): bool
-    {
-        return parent::add_obj($job);
+        return parent::api_mapper_list($json_array, new job());
     }
 
 
@@ -87,7 +80,7 @@ class job_list extends list_dsp
     {
         $html = new html_base();
         $result = '';
-        foreach ($this->lst as $job) {
+        foreach ($this->lst() as $job) {
             if ($result == '') {
                 $result .= $job->header();
             }
@@ -111,11 +104,11 @@ class job_list extends list_dsp
         $cols = '';
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             $lnk = $wrd->dsp_obj()->display_linked($back);
             $cols .= $html->td($lnk);
         }
-        return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
+        return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);
     }
 
 

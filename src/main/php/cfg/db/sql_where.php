@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/db/sql_where.php - structure for one where paramater for a sql statememnt
+    model/db/sql_where.php - structure for one where paramater for a sql statememnt
     --------------------
 
 

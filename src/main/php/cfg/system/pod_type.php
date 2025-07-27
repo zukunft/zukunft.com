@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/system/pod_type.php - to assign predefined code to a some pods
+    model/system/pod_type.php - to assign predefined code to a some pods
     -----------------------
 
     type versus status
@@ -36,7 +36,9 @@
 
 namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
 
 use cfg\helper\type_object;
 

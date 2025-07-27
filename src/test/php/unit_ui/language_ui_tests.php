@@ -37,7 +37,9 @@
 
 namespace unit_ui;
 
-include_once WEB_SYSTEM_PATH . 'language.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::SYSTEM . 'language.php';
 
 use html\html_base;
 use html\system\language as language_dsp;
@@ -50,12 +52,14 @@ class language_ui_tests
         global $usr;
         $html = new html_base();
 
-        $t->subheader('language tests');
+        // start the test section (ts)
+        $ts = 'unit ui html language ';
+        $t->header($ts);
 
         $src = new language_dsp($t->language()->api_json());
         $test_page = $html->text_h2('language display test');
-        $test_page .= 'with tooltip: ' . $src->display() . '<br>';
-        $test_page .= 'with link: ' . $src->display_linked() . '<br>';
+        $test_page .= 'with tooltip: ' . $src->name_tip() . '<br>';
+        $test_page .= 'with link: ' . $src->name_link() . '<br>';
         $t->html_test($test_page, 'language', 'language', $t);
     }
 

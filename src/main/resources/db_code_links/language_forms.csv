@@ -1,2 +1,2 @@
-language_form_id, language_form_name, code_id, language_id
-1, 'plural', 'plural', 1
+language_form_id, language_form_name, code_id, language_id, description
+1, 'plural', 'plural', 1, 'The noun denotes a quantity greater than the default quantity represented by that noun. This default quantity is most commonly one.'

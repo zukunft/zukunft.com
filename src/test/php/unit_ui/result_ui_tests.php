@@ -32,8 +32,13 @@
 
 namespace unit_ui;
 
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'api_type.php';
+
 use html\html_base;
 use html\result\result as result_dsp;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class result_ui_tests
@@ -42,9 +47,12 @@ class result_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('result tests');
+        // start the test section (ts)
+        $ts = 'unit ui html result ';
+        $t->header($ts);
 
-        $res = new result_dsp($t->result_simple()->api_json(false));
+        $api_json = $t->result_simple()->api_json([api_type::TEST_MODE, api_type::INCL_PHRASES]);
+        $res = new result_dsp($api_json);
         $test_page = $html->text_h2('result display test');
         $test_page .= 'with tooltip: ' . $res->display() . '<br>';
         $test_page .= 'with link: ' . $res->display_linked() . '<br>';

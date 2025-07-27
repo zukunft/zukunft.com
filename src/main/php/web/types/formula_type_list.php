@@ -32,7 +32,12 @@
 
 namespace html\types;
 
-include_once TYPES_PATH . 'type_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED_TYPES . 'formula_types.php';
+include_once html_paths::TYPES . 'type_list.php';
+
+use shared\types\formula_types;
 
 class formula_type_list extends type_list
 {
@@ -46,6 +51,16 @@ class formula_type_list extends type_list
     {
         global $html_formula_types;
         return parent::type_selector($html_formula_types->lst_key(), $name, $form, $selected);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function default_id(): int
+    {
+        return parent::id(formula_types::CALC);
     }
 
 }

@@ -35,15 +35,20 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
 
-use html\html_base;
-use html\view\view as view_dsp;
+include_once paths::SHARED_CONST . 'views.php';
+include_once html_paths::VERB . 'verb.php';
+
 use cfg\user\user;
 use cfg\verb\verb;
 use cfg\view\view;
+use html\html_base;
+use html\verb\verb as verb_dsp;
+use html\view\view as view_dsp;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("verb_edit");
@@ -63,7 +68,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_VERB_EDIT);
+    $msk->load_by_code_id(view_shared::VERB_EDIT);
     $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change is finished
 
     // create the verb object to have an place to update the parameters
@@ -82,14 +87,14 @@ if ($usr->id() > 0) {
             if (isset($_GET[api::URL_VAR_NAME])) {
                 $vrb->set_name($_GET[api::URL_VAR_NAME]);
             }
-            if (isset($_GET['plural'])) {
-                $vrb->plural = $_GET['plural'];
+            if (isset($_GET[api::URL_VAR_PLURAL])) {
+                $vrb->set_plural($_GET[api::URL_VAR_PLURAL]);
             }
-            if (isset($_GET['reverse'])) {
-                $vrb->reverse = $_GET['reverse'];
+            if (isset($_GET[api::URL_VAR_REVERSE])) {
+                $vrb->set_reverse($_GET[api::URL_VAR_REVERSE]);
             }
-            if (isset($_GET['plural_reverse'])) {
-                $vrb->rev_plural = $_GET['plural_reverse'];
+            if (isset($_GET[api::URL_VAR_REVERSE_PLURAL])) {
+                $vrb->set_reverse_plural($_GET[api::URL_VAR_REVERSE_PLURAL]);
             }
 
             // save the changes
@@ -117,7 +122,8 @@ if ($usr->id() > 0) {
             $result .= $html->dsp_err($msg);
 
             // show the verb and its relations, so that the user can change it
-            $result .= $vrb->dsp_edit($back);
+            $vrb_dsp = new verb_dsp($vrb->api_json());
+            $result .= $vrb_dsp->dsp_edit($back);
         }
     }
 }

@@ -32,7 +32,6 @@
 
 namespace unit_read;
 
-use api\formula\formula as formula_api;
 use test\test_cleanup;
 
 class expression_read_tests
@@ -50,9 +49,9 @@ class expression_read_tests
 
         /*
         $frm = new formula($usr);
-        $frm->load_by_name(formula_api::TN_SECTOR);
+        $frm->load_by_name(formulas::TN_SECTOR);
         $result = $frm->usr_text;
-        $target = '= "' . word_api::TN_COUNTRY . '" "differentiator" "' . word_api::TN_CANTON . '" / "' . word_api::TN_TOTAL . '"';
+        $target = '= "' . words::TN_COUNTRY . '" "differentiator" "' . words::TN_CANTON . '" / "' . words::TN_TOTAL . '"';
         $t->assert('expression->is_std if formula is changed by the user', $result, $target);
         */
 

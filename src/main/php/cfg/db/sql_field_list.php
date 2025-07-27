@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/db/sql_field_list.php - a list of sql parameter fields
+    model/db/sql_field_list.php - a list of sql parameter fields
     -------------------------
 
     The list of the parameters used for one query or function on order of usage
@@ -15,6 +15,7 @@
         name of the db field
         assign type ( = / in / AND / OR / ... )
         the position of the related parameter
+
 
     This file is part of zukunft.com - calc with words
 
@@ -42,8 +43,10 @@
 
 namespace cfg\db;
 
-include_once DB_PATH . 'sql_field.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_field.php';
+include_once paths::SHARED . 'library.php';
 
 use DateTime;
 use shared\library;
@@ -109,7 +112,7 @@ class sql_field_list
      */
     function add_par_field(
         sql_par_field $fld,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): void
     {
         $sql_fld = new sql_field();

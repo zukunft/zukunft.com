@@ -32,9 +32,9 @@
 
 namespace unit_read;
 
-use api\component\component as component_api;
 use cfg\component\component_list;
 use shared\library;
+use shared\const\components;
 use test\test_cleanup;
 
 class component_list_read_tests
@@ -49,55 +49,55 @@ class component_list_read_tests
         // init
         $t->name = 'component list read db->';
 
-        $t->header('Test the component list class (classes/component_list.php)');
+        $t->header('component list database read tests');
 
         // test loading component names
         $test_name = 'loading component names with pattern return the expected component';
-        $pattern = substr(component_api::TN_READ, 0, -1);
+        $pattern = substr(components::WORD_NAME, 0, -1);
         $cmp_lst = new component_list($t->usr1);
         $cmp_lst->load_names($pattern);
-        $t->assert_contains($test_name, $cmp_lst->names(), component_api::TN_READ);
+        $t->assert_contains($test_name, $cmp_lst->names(), components::WORD_NAME);
         $test_name = 'system component are not included in the normal component list';
         $cmp_lst = new component_list($t->usr1);
-        $cmp_lst->load_names(component_api::TN_FORM_TITLE);
-        $t->assert_contains_not($test_name, $cmp_lst->names(), component_api::TN_FORM_TITLE);
+        $cmp_lst->load_names(components::FORM_TITLE_NAME);
+        $t->assert_contains_not($test_name, $cmp_lst->names(), components::FORM_TITLE_NAME);
 
 
         $test_name = 'loading by component list by view id ';
         $cmp_lst = new component_list($t->usr1);
         $cmp_lst->load_by_view_id(1);
         $result = $cmp_lst->name();
-        $target = '"' . component_api::TN_READ . '"';
+        $target = '"' . components::WORD_NAME . '"';
         $t->assert_text_contains($test_name . '1', $result, $target);
 
         $test_name = 'loading the api message creation of the api index file for ';
         // TODO add this to all db read tests for all API call functions
-        $result = json_decode(json_encode($cmp_lst->api_obj()), true);
+        $result = json_decode($cmp_lst->api_json(), true);
         $class_for_file = $t->class_without_namespace(component_list::class);
         $target = json_decode($t->api_json_expected($class_for_file), true);
         $t->assert_json($test_name . $cmp_lst->dsp_id(), $result, $target);
 
         $test_name = 'loading by component list by pattern ';
         $cmp_lst = new component_list($t->usr1);
-        $pattern = substr(component_api::TN_READ, 0, -1);
+        $pattern = substr(components::WORD_NAME, 0, -1);
         $cmp_lst->load_names($pattern);
-        $t->assert_contains($test_name, $cmp_lst->names(), component_api::TN_READ);
+        $t->assert_contains($test_name, $cmp_lst->names(), components::WORD_NAME);
 
         // test load by component list by ids
         /* TODO activate
         $test_name = 'load components by ids';
         $wrd_lst = new component_list($t->usr1);
         $wrd_lst->load_by_ids(array(1,3));
-        $target = '"' . component_api::TN_READ . '","' . component_api::TN_READ . '"'; // order adjusted based on the number of usage
+        $target = '"' . components::TN_READ . '","' . components::TN_READ . '"'; // order adjusted based on the number of usage
         $t->assert($test_name, $wrd_lst->name(), $target);
         $test_name = 'load components by names';
         $wrd_lst = new component_list($t->usr1);
-        $wrd_lst->load_by_names(array(component_api::TN_READ,component_api::TN_READ_RATIO));
+        $wrd_lst->load_by_names(array(components::TN_READ,components::TN_READ_RATIO));
         $t->assert_contains($test_name, $wrd_lst->ids(), array(1,3));
         $test_name = 'load components staring with P';
         $wrd_lst = new component_list($t->usr1);
         $wrd_lst->load_like('W');
-        $t->assert_contains($test_name, $wrd_lst->names(), component_api::TN_READ);
+        $t->assert_contains($test_name, $wrd_lst->names(), components::TN_READ);
         */
 
     }

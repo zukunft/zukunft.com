@@ -2,47 +2,53 @@
 
 /*
 
-  model/formula/figure_list.php - a list of figures, so either a value of a formula result object
-  -----------------------------
-  
-  This file is part of zukunft.com - calc with words
+    model/formula/figure_list.php - a list of figures, so either a value of a formula result object
+    -----------------------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2022 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    The main sections of this object are
+    - object vars:       the variables of this word object
+    - construct and map: including the mapping of the db row to this word object
+
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
 namespace cfg\formula;
 
-include_once API_FORMULA_PATH . 'figure_list.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once WEB_FIGURE_PATH . 'figure.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
 
-use api\formula\figure_list as figure_list_api;
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'library.php';
+
 use cfg\db\sql_creator;
 use cfg\db\sql_par;
 use cfg\phrase\term_list;
@@ -50,64 +56,36 @@ use cfg\result\result;
 use cfg\sandbox\sandbox_list;
 use cfg\user\user_message;
 use cfg\value\value;
-use html\figure\figure as figure_dsp;
 use shared\library;
 
 class figure_list extends sandbox_list
 {
 
+    /*
+     * object vars
+     */
+
     // array $lst is the list of figures
+    public ?bool $fig_missing = false; // true if at least one of the results is not set which means is NULL (but zero is a value)
+
 
     /*
      * construct and map
      */
 
-    // the rows_mapper is not needed, because the figuresare not saved in the database
-
-
-    public ?bool $fig_missing = false; // true if at least one of the results is not set which means is NULL (but zero is a value)
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return figure_list_api the word list object with the display interface functions
-     */
-    function api_obj(bool $do_save = true): figure_list_api
-    {
-        $api_obj = new figure_list_api();
-        foreach ($this->lst() as $phr) {
-            $api_obj->add($phr->api_obj($do_save));
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(bool $do_save = true): string
-    {
-        return $this->api_obj($do_save)->get_json();
-    }
-
-
-    /*
-     * set and get
-     */
+    // the rows_mapper is not needed, because the figures are not saved in the database
 
     /**
      * map a figure list api json to this model figure list object
      * @param array $api_json the api array with the figures that should be mapped
      */
-    function set_by_api_json(array $api_json): user_message
+    function api_mapper(array $api_json): user_message
     {
         $usr_msg = new user_message();
 
         foreach ($api_json as $json_phr) {
             $fig = new figure($this->user());
-            $usr_msg->add($fig->set_by_api_json($json_phr));
+            $usr_msg->add($fig->api_mapper($json_phr));
             if ($usr_msg->is_ok()) {
                 $this->add($fig);
             }
@@ -122,42 +100,16 @@ class figure_list extends sandbox_list
      */
 
     /**
-     * set the SQL query parameters to load a list of figure objects
-     * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(sql_creator $sc, string $query_name): sql_par
-    {
-        $qp = new sql_par(self::class);
-        $qp->name .= $query_name;
-
-        $sc->set_class(figure::class);
-        $sc->set_name($qp->name);
-
-        $sc->set_usr($this->user()->id());
-        $sc->set_fields(figure::FLD_NAMES);
-        //$db_con->set_usr_fields(figure::FLD_NAMES_USR_NO_NAME);
-        //$db_con->set_usr_num_fields(figure::FLD_NAMES_NUM_USR);
-        //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(figure::FLD_VALUES) . ' DESC, ' . figure::FLD_NAME);
-        return $qp;
-    }
-
-    /**
-     * create an SQL statement to retrieve a list of phrase objects by the id from the database
+     * load the figures including the related value or result object by the given id list from the database
      *
-     * @param sql_creator $sc with the target db_type set
      * @param fig_ids $ids figure ids that should be loaded
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * @return bool true if at least one phrase has been loaded
      */
-    function load_sql_by_ids(sql_creator $sc, fig_ids $ids): sql_par
+    function load_by_ids(fig_ids $ids): bool
     {
-        $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(figure::FLD_ID, $ids->lst);
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-
-        return $qp;
+        global $db_con;
+        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
+        return $this->load($qp);
     }
 
     /**
@@ -195,17 +147,59 @@ class figure_list extends sandbox_list
     }
 
     /**
-     * load the figures including the related value or result object by the given id list from the database
+     * create an SQL statement to retrieve a list of phrase objects by the id from the database
      *
+     * @param sql_creator $sc with the target db_type set
      * @param fig_ids $ids figure ids that should be loaded
-     * @return bool true if at least one phrase has been loaded
+     * @param int $limit the number of rows to return
+     * @param int $offset jump over these number of pages
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
-    function load_by_ids(fig_ids $ids): bool
+    function load_sql_by_ids(
+        sql_creator $sc,
+        fig_ids     $ids,
+        int         $limit = 0,
+        int         $offset = 0
+    ): sql_par
     {
-        global $db_con;
-        $qp = $this->load_sql_by_ids($db_con->sql_creator(), $ids);
-        return $this->load($qp);
+        $qp = $this->load_sql($sc, 'ids');
+        $sc->add_where(figure::FLD_ID, $ids->lst);
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+
+        return $qp;
     }
+
+    /**
+     * set the SQL query parameters to load a list of figure objects
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql(sql_creator $sc, string $query_name): sql_par
+    {
+        $qp = new sql_par(self::class);
+        $qp->name .= $query_name;
+
+        $sc->set_class(figure::class);
+        $sc->set_name($qp->name);
+
+        $sc->set_usr($this->user()->id());
+        $sc->set_fields(figure::FLD_NAMES);
+        //$db_con->set_usr_fields(figure::FLD_NAMES_USR_NO_NAME);
+        //$db_con->set_usr_num_fields(figure::FLD_NAMES_NUM_USR);
+        //$db_con->set_order_text(sql_db::STD_TBL . '.' . $db_con->name_sql_esc(figure::FLD_VALUES) . ' DESC, ' . figure::FLD_NAME);
+        return $qp;
+    }
+
+    // TODO use cache to improve speed
+    function load_phrases(): void
+    {
+        foreach ($this->lst() as $fig) {
+            $fig->obj()->grp()->load_phrases();
+        }
+    }
+
 
     /*
      * modify
@@ -223,7 +217,7 @@ class figure_list extends sandbox_list
         if ($fig_to_add != null) {
             log_debug($fig_to_add->dsp_id());
             if ($fig_to_add->id() <> 0 or $fig_to_add->name() != '') {
-                $result = parent::add_obj($fig_to_add);
+                $result = parent::add_obj($fig_to_add)->is_ok();
             }
         }
         return $result;
@@ -248,26 +242,6 @@ class figure_list extends sandbox_list
                 }
             }
         }
-        return $result;
-    }
-
-    /**
-     * TODO to be moved to the frontend object
-     * return the html code to display a value
-     * this is the opposite of the convert function
-     * this function is called from dsp_id, so no other call is allowed
-     */
-    function display($back = ''): string
-    {
-        $result = '';
-
-        foreach ($this->lst() as $fig) {
-            $fig_dsp = new figure_dsp();
-            $api_json = $fig->api_obj()->get_json();
-            $fig_dsp->set_from_json($api_json);
-            $result .= $fig_dsp->display() . ' ';
-        }
-
         return $result;
     }
 
@@ -313,21 +287,6 @@ class figure_list extends sandbox_list
     {
         $lib = new library();
         return $lib->dsp_array($this->ids());
-    }
-
-    /**
-     * this function is called from dsp_id, so no other call is allowed
-     */
-    function ids(int $limit = null): array
-    {
-        $result = array();
-        foreach ($this->lst() as $fig) {
-            // use only valid ids
-            if ($fig->id() <> 0) {
-                $result[] = $fig->id();
-            }
-        }
-        return $result;
     }
 
 }

@@ -2,6 +2,8 @@ zukunft.com:
   tooltip-comment: "zukunft.com is the keyword to select the global settings for all zukunft.com pods"
   system configuration:
     tooltip-comment: "keyword to separate the internal system configuration"
+    source-name: "config.yaml"
+    source-description: "internal system configuration yaml file"
     database:
       version: 0.0.3
       tooltip-comment: "the version of the database of the master pod"
@@ -18,21 +20,179 @@ zukunft.com:
         update: 100
         delete: 500
       row limit:
-        tooltip-comment: "initial number of page rows "
+        tooltip-comment: "initial number of page rows"
         default: 20
+      import:
+        time percent:
+          tooltip-comment: "the expected execution time for the database import in percent of the total process"
+          file read: 0.4
+          decode: 0.6
+          object creation: 24
+          object storing: 75
+        expected time:
+          tooltip-comment: "the expected times for the database import"
+          bytes second:
+            file read:
+              sys-conf-value: 300
+              tooltip-comment: "the estimated MB per second for pure reading the import file"
+            decode:
+              sys-conf-value: 40
+              tooltip-comment: "the estimated MB per second for decoding the import json file"
+            object storing:
+              sys-conf-value: 5
+              tooltip-comment: "the estimated MB per second for storing the objects in the database"
+            total:
+              sys-conf-value: 16386
+              tooltip-comment: "the estimated bytes per second that can be processed when importing a json"
+          objects second:
+            load:
+              words:
+                sys-conf-value: 800
+                tooltip-comment: "the estimated number of words that can be loaded per second"
+              triples:
+                sys-conf-value: 790
+                tooltip-comment: "the estimated number of triples that can be loaded per second"
+              references:
+                sys-conf-value: 780
+                tooltip-comment: "the estimated number of references that can be loaded per second"
+              sources:
+                sys-conf-value: 780
+                tooltip-comment: "the estimated number of sources that can be loaded per second"
+              values:
+                sys-conf-value: 770
+                tooltip-comment: "the estimated number of values that can be loaded per second"
+              formulas:
+                sys-conf-value: 760
+                tooltip-comment: "the estimated number of formulas that can be loaded per second"
+              views:
+                sys-conf-value: 750
+                tooltip-comment: "the estimated number of views that can be loaded per second"
+              components:
+                sys-conf-value: 740
+                tooltip-comment: "the estimated number of components that can be loaded per second"
+              ip-ranges:
+                sys-conf-value: 730
+                tooltip-comment: "the estimated number of ip-ranges that can be loaded per second"
+            create:
+              words:
+                sys-conf-value: 700
+                tooltip-comment: "the estimated number of words that can be created per second"
+              triples:
+                sys-conf-value: 420
+                tooltip-comment: "the estimated number of triples that can be created per second"
+              sources:
+                sys-conf-value: 600
+                tooltip-comment: "the estimated number of sources that can be created per second"
+              references:
+                sys-conf-value: 610
+                tooltip-comment: "the estimated number of references that can be created per second"
+              values:
+                sys-conf-value: 250
+                tooltip-comment: "the estimated number of values that can be created per second"
+              formulas:
+                sys-conf-value: 150
+                tooltip-comment: "the estimated number of formulas that can be created per second"
+              views:
+                sys-conf-value: 250
+                tooltip-comment: "the estimated number of views that can be created per second"
+              components:
+                sys-conf-value: 280
+                tooltip-comment: "the estimated number of components that can be created per second"
+              ip-ranges:
+                sys-conf-value: 270
+                tooltip-comment: "the estimated number of ip-ranges that can be created per second"
+            update:
+              words:
+                sys-conf-value: 590
+                tooltip-comment: "the estimated number of words that can be updated per second"
+              triples:
+                sys-conf-value: 580
+                tooltip-comment: "the estimated number of triples that can be updated per second"
+              sources:
+                sys-conf-value: 570
+                tooltip-comment: "the estimated number of sources that can be updated per second"
+              references:
+                sys-conf-value: 560
+                tooltip-comment: "the estimated number of references that can be updated per second"
+              values:
+                sys-conf-value: 550
+                tooltip-comment: "the estimated number of values that can be updated per second"
+              formulas:
+                sys-conf-value: 540
+                tooltip-comment: "the estimated number of formulas that can be updated per second"
+              views:
+                sys-conf-value: 530
+                tooltip-comment: "the estimated number of views that can be updated per second"
+              components:
+                sys-conf-value: 520
+                tooltip-comment: "the estimated number of components that can be updated per second"
+              ip-ranges:
+                sys-conf-value: 520
+                tooltip-comment: "the estimated number of ip-ranges that can be updated per second"
+            store:
+              words:
+                sys-conf-value: 800
+                tooltip-comment: "the estimated number of words that can be added or updated in the database per second"
+              triples:
+                sys-conf-value: 450
+                tooltip-comment: "the estimated number of triples that can be added or updated in the database per second"
+              sources:
+                sys-conf-value: 300
+                tooltip-comment: "the estimated number of sources that can be added or updated in the database per second"
+              references:
+                sys-conf-value: 250
+                tooltip-comment: "the estimated number of references that can be added or updated in the database per second"
+              values:
+                sys-conf-value: 95
+                tooltip-comment: "the estimated number of values that can be added or updated in the database per second"
+              formulas:
+                sys-conf-value: 50
+                tooltip-comment: "the estimated number of formulas that can be added or updated in the database per second"
+              views:
+                sys-conf-value: 75
+                tooltip-comment: "the estimated number of views that can be added or updated in the database per second"
+              components:
+                sys-conf-value: 85
+                tooltip-comment: "the estimated number of components that can be added or updated in the database per second"
+              ip-ranges:
+                sys-conf-value: 95
+                tooltip-comment: "the estimated number of ip-ranges that can be added or updated in the database per second"
       value table:
         table name:
           max phrase: 3
           tooltip-comment: "maximal number of phrases that can be included in the table name for a separate value table e.g. if the system detects that a separate table for the inhabitants at the end of the year of a city will increase speed and reduce time the table name can be inhabitants-city-year and each row has the city name and the columns have the year names"
+      triples:
+        max levels: 99
+        tooltip-comment: "the maximal number of levels that are allowed for a triple e.g. if math and const are combined this is level 1, if pi is a math const this is level 2 and so on"
     user:
       tooltip-comment: "settings that each user can set individually"
       default:
         tooltip-comment: "the default settings for normal users"
+        backend:
+          max change:
+            daily:
+              ip user: 1000
+              tooltip-comment: "maximal number of changes that an user without login can do per day"
         frontend:
           tooltip-comment: "the setting for the user interface"
+          language:
+            sys-conf-value: en
+            tooltip-comment: "the language of the user frontend"
           row limit:
             tooltip-comment: "number of rows to be shown"
             word changes: 20
+          behaviour:
+            tooltip-comment: "reaction settings e.g. the expected response time"
+            response time:
+              min:
+                sys-conf-value: 0.5
+                tooltip-comment: "the minimal time in seconds between a screen updates to avoid flickering e.g. during long calculations every 2 sec the user should seen the screen updated"
+              max:
+                sys-conf-value: 2
+                tooltip-comment: "the maximal time in seconds after the last screen update to indicate that the program is still running"
+              target:
+                sys-conf-value: 1
+                tooltip-comment: "seconds after the user should see a screen update e.g. during long calculations every 2 sec the user should seen the screen updated"
           time:
             tooltip-comment: "time related user specific settings"
             min columns:
@@ -69,7 +229,7 @@ zukunft.com:
           tooltip-comment: "used to preselect phrases for the next value: if 30% or more of the phrases of a list are the same, the probability is high that the next phrase is the same"
     year:
       automatic create: 10
-      tooltip-comment: "the number of futures year automatically created by the system"
+      tooltip-comment: "the number of futures years automatically created by the system"
     view:
       freeze: 20
       tooltip-comment: "the number of view by one user to automatically freeze the view for the user"
@@ -84,9 +244,46 @@ zukunft.com:
             tooltip-comment: "the number of phrases shown in a ranked list with the lowest ranking for an indication of the range"
     job:
       tooltip-comment: "keyword to separate the internal system job configuration"
+    test:
+      tooltip-comment: "to configure the internal system test"
+      output format:
+        sys-conf-value: 0
+        tooltip-comment: "the general formatting style of the test results e.g. 0 for pur text or 1 for html code"
+      level:
+        sys-conf-value: 3
+        tooltip-comment: "to define what should be shown: 4: all, 3: timeouts, 2: warnings or 1: only errors"
     pod:
       url: "zukunft.com"
       tooltip-comment: "the url name of this pod"
       database:
         version: 0.0.3
         tooltip-comment: "the version of the database of this pod"
+      phrase distribution:
+        top level:
+          pods: 16380
+          tooltip-comment: "for a fast selection of the prime responding pod the number of pods should start low but mainly the number of levels should be low"
+      launch: 2025-06-07
+      point: 2025-06-07
+      hardware:
+        usage:
+          CPU:
+            target: 50%
+            info: 70%
+            warning: 90%
+          network:
+            target: 30%
+            info: 50%
+            warning: 70%
+          memory:
+            target: 40%
+            info: 60%
+            warning: 80%
+          storage:
+            target: 50%
+            info: 70%
+            warning: 80%
+          response time:
+            millisecond:
+              target: 100
+              info: 500
+              warning: 2000

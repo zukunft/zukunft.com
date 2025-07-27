@@ -34,16 +34,29 @@
 
 namespace html;
 
-include_once SHARED_PATH . 'api.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::HTML . 'styles.php';
+include_once paths::SHARED . 'library.php';
 
 use shared\api;
+use shared\library;
 use shared\types\view_styles;
-use const test\HOST_TESTING;
 
 class html_base
 {
 
     // html const used in zukunft.com
+
+    // html base elements
+    const SPAN = 'span';
+    const HTML_CLASS = 'class';
+    const TITLE = 'title';
+
+    // fixed elements
+    const TOGGLE_TOOLTIP = 'data-toggle="tooltip"';
 
     // the html input types used
     const INPUT_TEXT = 'text';
@@ -69,7 +82,6 @@ class html_base
 
     const SIZE_FULL = 'full';
     const SIZE_HALF = 'half';
-    const STYLE_BORDERLESS = 'borderless';
 
     const WIDTH_FULL = '800px';
     const WIDTH_HALF = '400px';
@@ -103,46 +115,30 @@ class html_base
         }
 
         // set vars to shorten the lines
-        $url_ext_lib = $server_url . api::EXT_LIB_PATH;
+        //$url_ext_lib = $server_url . api::EXT_LIB_PATH;
+        $url_ext_lib = '/' . api::EXT_LIB_PATH;
 
         $result = '<!DOCTYPE html>';
         $result .= '<html lang="en">'; // TODO: to be adjusted depending on the display language
         if ($title <> "") {
             $result .= '<head><title>' . $title . ' (zukunft.com)</title>';
         } else {
-            $result .= '<head><title>zukunft.com</title>';
+            $result .= '<head><title>zukunft.com</title>' . "\n";
         }
         $result .= '  <meta charset="utf-8">';
         if (self::UI_USE_BOOTSTRAP) {
             // include the bootstrap stylesheets
-            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS . '">';
-            // include the jQuery UI stylesheets
-            $result .= '  <link rel="stylesheet" href="' . $server_url . 'lib_external/jQueryUI/1.12.1/jquery-ui.css">';
-            // include the jQuery library
-            $result .= '  <script src="' . $url_ext_lib . 'jQuery/jquery-3.3.1.js"></script>';
-            // include the jQuery UI library
-            $result .= '  <script src="' . $url_ext_lib . 'jQueryUI/1.12.1/jquery-ui.js"></script>';
-            // include the popper.js library
-            $result .= '  <script src="' . $url_ext_lib . 'popper.js/1.14.5/popper.min.js"></script>';
-            // include the tether library
-            //$result .= '  <script src="' . $url_ext_lib . 'tether/dist/js/tether.min.js"></script>';
-            // include the typeahead and Bloodhound JavaScript plugins
-            //$result .= '  <script src="' . $url_ext_lib . 'typeahead/bootstrap3-typeahead.js"></script>';
-            //$result .= '  <script src="' . $url_ext_lib . 'typeahead/typeahead.bundle.js"></script>';
-            // include the bootstrap Tokenfield JavaScript plugins
-            // $result .= '  <script src="' . $url_ext_lib . 'bootstrap-tokenfield/dist/bootstrap-tokenfield.js"></script>';
-            // include the bootstrap Tokenfield stylesheets
-            //$result .= '  <script src="' . $url_ext_lib . 'bootstrap-tokenfield/dist/css/bootstrap-tokenfield.css"></script>';
+            $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . $bs_css_path . api::BS_CSS . '">' . "\n";
             // include the bootstrap JavaScript plugins
-            $result .= '  <script src="' . $url_ext_lib . $bs_path . api::BS_JS . '"></script>';
+            $result .= '  <script src="' . $url_ext_lib . $bs_path . api::BS_JS . '"></script>' . "\n";
             // adjust the styles where needed
-            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css" />';
+            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css" />' . "\n";
             // load the icon font
             $result .= '  <link rel="stylesheet" href="' . $url_ext_lib . 'fontawesome/css/all.css">';
-            $result .= '  <script defer src="' . $url_ext_lib . 'fontawesome/js/all.js"></script>';
+            $result .= '  <script defer src="' . $url_ext_lib . 'fontawesome/js/all.js"></script>' . "\n";
         } else {
             // use a simple stylesheet without Javascript
-            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />';
+            $result .= '  <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style.css" />' . "\n";
         }
         $result .= '</head>';
         if (self::UI_USE_BOOTSTRAP) {
@@ -152,7 +148,7 @@ class html_base
             if ($style <> "") {
                 $result .= '<body class="' . $style . '">';
             } else {
-                $result .= '<body>';
+                $result .= '<body>' . "\n";
             }
         }
 
@@ -266,9 +262,17 @@ class html_base
      * @param string $style the CSS class names
      * @return string the html code
      */
-    function span(string $text, string $style = ''): string
+    function span(string $text, string $style = '', string $title = ''): string
     {
-        return '<span class="' . $style . '">' . $text . '</span>';
+        $result = '<' . self::SPAN;
+        if ($style != '') {
+            $result .= ' ' . self::HTML_CLASS . '="' . $style . '"';
+        }
+        if ($title != '') {
+            $result .= ' ' . self::TITLE . '="' . $title . '" ' . self::TOGGLE_TOOLTIP;
+        }
+        $result .= '>' . $text . '</' . self::SPAN . '>';
+        return $result;
     }
 
     /*
@@ -333,19 +337,15 @@ class html_base
                      string       $id_ext = ''
     ): string
     {
+        $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
+        $result .= api::URL_VAR_MASK . '=' . $view;
         if (is_string($id)) {
-            $result = rest_ctrl::PATH_FIXED . $id . rest_ctrl::EXT . '?';
-        } else {
-            $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
-            $result .= api::URL_VAR_MASK . '=' . $view;
-            if (is_string($id)) {
-                $result .= '&id=' . $id;
-            } elseif ($id <> 0) {
-                $result .= '&id=' . $id;
-            }
-            if ($id_ext != '') {
-                $result .= '&' . $id_ext;
-            }
+            $result .= '&id=' . $id;
+        } elseif ($id <> 0) {
+            $result .= '&id=' . $id;
+        }
+        if ($id_ext != '') {
+            $result .= '&' . $id_ext;
         }
         if ($back != '') {
             $result .= '&back=' . $back;
@@ -448,11 +448,25 @@ class html_base
     /**
      * show a text of link within a table header cell
      * @param string $header_text the text or link that should be shown
+     * @param string $scope the bootstrap formatting scope
+     * @param string $style the bootstrap formatting class
      * @return string the html code of the table header cell
      */
-    function th(string $header_text): string
+    function th(string $header_text, string $scope = '', string $style = ''): string
     {
-        return '<th>' . $header_text . '</th>';
+        if ($scope != '') {
+            if ($style != '') {
+                return '<th class="' . $style . '" scope="' . $scope . '">' . $header_text . '</th>';
+            } else {
+                return '<th scope="' . $scope . '">' . $header_text . '</th>';
+            }
+        } else {
+            if ($style != '') {
+                return '<th class="' . $style . '">' . $header_text . '</th>';
+            } else {
+                return '<th>' . $header_text . '</th>';
+            }
+        }
     }
 
     /**
@@ -482,17 +496,54 @@ class html_base
     /**
      * show a text of link within a table cell
      * @param string|null $cell_text the text or link that should be shown or null to return an empty cell
+     * @param string $style the bootstrap formatting class
      * @param int $intent the number of spaces on the left (or right e.g. for arabic) inside the table cell
      * @return string the html code of the table cell
      */
-    function td(?string $cell_text = '', int $intent = 0): string
+    function td(?string $cell_text = '', string $style = '', int $intent = 0): string
     {
         // just for formatting the html code
         while ($intent > 0) {
             $cell_text .= '&nbsp;';
             $intent = $intent - 1;
         }
-        return '<td>' . $cell_text . '</td>';
+        if ($style != '') {
+            return '<td class="' . $style . '">' . $cell_text . '</td>';
+        } else {
+            return '<td>' . $cell_text . '</td>';
+        }
+    }
+
+    /**
+     * add the table header html maker around the give html code
+     * @param string|null $html_rows the text or link that should be shown or null to return an empty cell
+     * @param int $intent the number of spaces on the left (or right e.g. for arabic) inside the table cell
+     * @return string the html code of the table cell
+     */
+    function thead(?string $html_rows = '', int $intent = 0): string
+    {
+        // just for formatting the html code
+        while ($intent > 0) {
+            $html_rows .= '&nbsp;';
+            $intent = $intent - 1;
+        }
+        return '<thead>' . $html_rows . '</thead>';
+    }
+
+    /**
+     * add the table body html maker around the give html code
+     * @param string|null $html_rows the text or link that should be shown or null to return an empty cell
+     * @param int $intent the number of spaces on the left (or right e.g. for arabic) inside the table cell
+     * @return string the html code of the table cell
+     */
+    function tbody(?string $html_rows = '', int $intent = 0): string
+    {
+        // just for formatting the html code
+        while ($intent > 0) {
+            $html_rows .= '&nbsp;';
+            $intent = $intent - 1;
+        }
+        return '<tbody>' . $html_rows . '</tbody>';
     }
 
     /**
@@ -505,7 +556,8 @@ class html_base
     {
         return match ($tbl_style) {
             self::SIZE_HALF => $this->tbl_start_half() . $tbl_rows . $this->tbl_end(),
-            self::STYLE_BORDERLESS => $this->tbl_start_hist() . $tbl_rows . $this->tbl_end(),
+            styles::STYLE_BORDERLESS => $this->tbl_start_hist() . $tbl_rows . $this->tbl_end(),
+            styles::TABLE_PUR => $this->tbl_start_pur() . $tbl_rows . $this->tbl_end(),
             default => $this->tbl_start() . $tbl_rows . $this->tbl_end(),
         };
     }
@@ -538,6 +590,11 @@ class html_base
             $result = '<table class="change_hist"';
         }
         return $result;
+    }
+
+    function tbl_start_pur(): string
+    {
+        return '<table class="table">';
     }
 
     /**
@@ -786,15 +843,19 @@ class html_base
     {
         $result = "";
 
+        $lib = new library();
+        $class_name = $lib->class_to_name($class);
+
         foreach ($item_lst as $item) {
             if ($item->id() != null) {
-                $url = $this->url($class . rest_ctrl::UPDATE, $item->id(), $back);
+                $url = $this->url($class_name . rest_ctrl::UPDATE, $item->id(), $back);
                 $result .= $this->ref($url, $item->name());
                 $result .= '<br>';
             }
         }
-        $url_add = $this->url($class . rest_ctrl::CREATE, 0, $back);
-        $result .= (new button($url_add, $back))->add($class . rest_ctrl::CREATE);
+        $url_add = $this->url($class_name . rest_ctrl::CREATE, 0, $back);
+        $msg_id = $lib->class_to_add_msg_id($class);
+        $result .= (new button($url_add, $back))->add($msg_id);
         $result .= '<br>';
 
         return $result;
@@ -918,22 +979,6 @@ class html_base
         } else {
             $result .= '<style color="red">' . $err_text . '</style>';
         }
-        return $result;
-    }
-
-// display a list of elements: replaced b html->list
-    function dsp_list($item_lst, $item_type): string
-    {
-        $result = "";
-
-        $edit_script = $item_type . "_edit.php";
-        $add_script = $item_type . "_add.php";
-        foreach ($item_lst as $item) {
-            $result .= '<a href="/http/' . $edit_script . '?id=' . $item->id . '">' . $item->name . '</a><br> ';
-        }
-        $result .= \html\btn_add('Add ' . $item_type, $add_script);
-        $result .= '<br>';
-
         return $result;
     }
 
@@ -1175,7 +1220,9 @@ class html_base
         return $result;
     }
 
-// add the field to a form
+    /**
+     * add the field to a form
+     */
     function dsp_form_fld_checkbox($field, $is_checked, $label): string
     {
         $result = '';

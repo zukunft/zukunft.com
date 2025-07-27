@@ -32,8 +32,6 @@
 
 namespace html\types;
 
-use html\html_selector;
-
 class languages extends type_list
 {
 

@@ -1,5 +1,6 @@
 {
   "id": 1,
   "name": "plural",
-  "code_id": "plural"
+  "code_id": "plural",
+  "description": "The noun denotes a quantity greater than the default quantity represented by that noun. This default quantity is most commonly one."
 }

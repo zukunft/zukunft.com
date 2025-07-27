@@ -32,19 +32,17 @@
 
 namespace unit;
 
-use api\ref\source as source_api;
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'refs.php';
+
 use cfg\db\sql_creator;
-use cfg\db\sql_type;
-use cfg\ref\ref_type;
-use cfg\ref\ref_type_list;
-use cfg\source_list;
-use cfg\ref\source_type_list;
-use api\ref\ref as ref_api;
-use html\ref\ref as ref_dsp;
-use html\ref\source as source_dsp;
-use cfg\ref\ref;
-use cfg\ref\source;
 use cfg\db\sql_db;
+use cfg\db\sql_type;
+use cfg\ref\ref;
+use cfg\ref\ref_type_list;
+use html\ref\ref as ref_dsp;
+use shared\const\refs;
 use test\test_cleanup;
 
 class ref_tests
@@ -53,35 +51,38 @@ class ref_tests
     {
 
         global $usr;
+        global $usr_sys;
 
         // init for reference
         $sc = new sql_creator();
         $t->name = 'ref->';
         $t->resource_path = 'db/ref/';
 
-        $t->header('reference unit tests');
+        // start the test section (ts)
+        $ts = 'unit reference ';
+        $t->header($ts);
 
-        $t->subheader('reference sql setup');
+        $t->subheader($ts . 'sql setup');
         $ref = new ref($usr);
         $t->assert_sql_table_create($ref);
         $t->assert_sql_index_create($ref);
         $t->assert_sql_foreign_key_create($ref);
 
-        $t->subheader('reference sql read');
+        $t->subheader($ts . 'sql read');
         $t->assert_sql_by_id($sc, $ref);
         $t->assert_sql_by_link($sc, $ref);
         $this->assert_sql_link_ids($t, $sc, $ref);
 
-        $t->subheader('reference sql read standard and user changes by id');
+        $t->subheader($ts . 'sql read standard and user changes by id');
         $ref = new ref($usr);
         $ref->set_id(3);
         $t->assert_sql_standard($sc, $ref);
 
-        $t->subheader('reference sql read all type');
+        $t->subheader($ts . 'sql read all type');
         $ref_type_list = new ref_type_list();
         $t->assert_sql_all($sc, $ref_type_list);
 
-        $t->subheader('reference sql write insert');
+        $t->subheader($ts . 'sql write insert');
         $ref = $t->reference();
         $t->assert_sql_insert($sc, $ref);
         $t->assert_sql_insert($sc, $ref, [sql_type::LOG]);
@@ -93,32 +94,36 @@ class ref_tests
         $ref_filled_usr = $t->ref_filled_user();
         $t->assert_sql_insert($sc, $ref_filled_usr, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('reference sql write update');
+        $t->subheader($ts . 'sql write update');
         $ref = $t->reference_change();
-        $ref_changed = $ref->cloned_linked(ref_api::TK_CHANGED);
+        $ref_changed = $ref->cloned_linked(refs::CHANGE_NEW_KEY);
         $t->assert_sql_update($sc, $ref_changed, $ref);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::USER]);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG]);
         $t->assert_sql_update($sc, $ref_changed, $ref, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('reference sql delete');
+        $t->subheader($ts . 'sql delete');
         // TODO log deleting the link by logging the change of the external link to empty
         $t->assert_sql_delete($sc, $ref);
         $t->assert_sql_delete($sc, $ref, [sql_type::LOG, sql_type::USER]);
 
-        $t->subheader('reference api unit tests');
+        $t->subheader($ts . 'base object handling');
+        $ref = $t->ref_filled();
+        $t->assert_reset($ref);
+
+        $t->subheader($ts . 'api');
         $ref = $t->reference1();
         $t->assert_api_json($ref);
         $ref = $t->reference_plus();
         $t->assert_api($ref);
 
-        $t->subheader('reference frontend unit tests');
+        $t->subheader($ts . 'frontend');
         $ref = $t->reference_plus();
         $t->assert_api_to_dsp($ref, new ref_dsp());
 
-        $t->subheader('reference import and export tests');
-        $t->assert_ex_and_import($t->reference());
-        $t->assert_ex_and_import($t->ref_filled());
+        $t->subheader($ts . 'import and export');
+        $t->assert_ex_and_import($t->reference(), $usr_sys);
+        $t->assert_ex_and_import($t->ref_filled(), $usr_sys);
         $json_file = 'unit/ref/wikipedia.json';
         $t->assert_json_file(new ref($usr), $json_file);
 

@@ -2,7 +2,7 @@
 
 /*
 
-  cfg/system/sys_log_list.php - a list of system error objects
+  model/system/sys_log_list.php - a list of system error objects
   ---------------------------
   
   This file is part of zukunft.com - calc with words
@@ -29,25 +29,27 @@
   
 */
 
-namespace cfg;
+namespace cfg\system;
 
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once API_SYSTEM_PATH . 'sys_log_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once WEB_SYSTEM_PATH . 'sys_log_list_dsp_old.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -55,13 +57,8 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\helper\type_object;
 use cfg\sandbox\sandbox;
-use cfg\system\base_list;
-use cfg\system\sys_log;
-use cfg\system\sys_log_function;
-use cfg\system\sys_log_status;
 use cfg\user\user;
-use controller\system\sys_log_list as sys_log_list_api;
-use html\system\sys_log_list_dsp_old;
+use shared\enum\sys_log_statuus;
 
 class sys_log_list extends base_list
 {
@@ -103,48 +100,6 @@ class sys_log_list extends base_list
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return sys_log_list_api a filled frontend api object
-     */
-    function api_obj(user $usr): sys_log_list_api
-    {
-        global $db_con;
-        $api_obj = new sys_log_list_api($db_con, $usr);
-        foreach ($this->lst() as $log) {
-            //$api_obj->add($log->api_obj());
-            $api_obj->sys_log[] = $log->get_api_obj();
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(user $usr): string
-    {
-        return $this->api_obj($usr)->get_json();
-    }
-
-    /**
-     * @return sys_log_list_dsp_old a filled frontend display object
-     */
-    function dsp_obj(): sys_log_list_dsp_old
-    {
-        global $usr;
-        global $db_con;
-        $dsp_obj = new sys_log_list_dsp_old($db_con, $usr);
-        foreach ($this->lst() as $log) {
-            //$dsp_obj->add($log->dsp_obj());
-            $dsp_obj->sys_log[] = $log->get_api_obj();
-        }
-        return $dsp_obj;
-    }
-
-
-    /*
      * loading / database access object (DAO) functions
      */
 
@@ -159,7 +114,7 @@ class sys_log_list extends base_list
         $qp = new sql_par(self::class);
 
         $sql_where = '';
-        $sql_status = '(' . sql_db::STD_TBL . '.' . sys_log_status::FLD_ID . ' <> ' . $sys_log_sta_cac->id(sys_log_status::CLOSED);
+        $sql_status = '(' . sql_db::STD_TBL . '.' . sys_log_status::FLD_ID . ' <> ' . $sys_log_sta_cac->id(sys_log_statuus::CLOSED);
         $sql_status .= ' OR ' . sql_db::STD_TBL . '.' . sys_log_status::FLD_ID . ' IS NULL)';
         if ($this->dsp_type == self::DSP_ALL) {
             $sql_where = $sql_status;

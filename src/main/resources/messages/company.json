@@ -111,6 +111,21 @@
       "name": "Share Price"
     },
     {
+      "name": "sales"
+    },
+    {
+      "name": "balance sheet"
+    },
+    {
+      "name": "cash"
+    },
+    {
+      "name": "flow"
+    },
+    {
+      "name": "statement"
+    },
+    {
       "name": "Earnings"
     },
     {
@@ -118,6 +133,12 @@
     },
     {
       "name": "total"
+    },
+    {
+      "name": "income"
+    },
+    {
+      "name": "tax"
     }
   ],
   "triples": [
@@ -177,6 +198,24 @@
       "from": "p",
       "verb": "is symbol for",
       "to": "pence"
+    },
+    {
+      "name": "cash flow",
+      "from": "cash",
+      "verb": "can",
+      "to": "flow"
+    },
+    {
+      "name": "cash flow statement",
+      "from": "cash flow",
+      "verb": "can use",
+      "to": "statement"
+    },
+    {
+      "name": "income taxes",
+      "from": "tax",
+      "verb": "on",
+      "to": "income"
     }
   ],
   "formulas": [
@@ -186,8 +225,8 @@
       "assigned_word": "Share"
     },
     {
-      "name": "scalte pence to Pound",
-      "expression": "\"Pound\" = \"pence\" * 100",
+      "name": "scale pence to Pound",
+      "expression": "\"Pound sterling\" = \"pence\" * 100",
       "assigned_word": "pence"
     }
   ],

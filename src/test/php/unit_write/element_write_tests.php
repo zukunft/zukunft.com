@@ -32,15 +32,17 @@
 
 namespace unit_write;
 
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
 
-use api\formula\formula as formula_api;
-use api\word\word as word_api;
-use cfg\verb\verb;
+include_once paths::SHARED_TYPES . 'verbs.php';
+
+use html\element\element;
 use shared\api;
-use shared\views;
-use test\test_cleanup;
+use shared\const\formulas;
+use shared\const\views;
+use shared\const\words;
 use shared\types\verbs;
+use test\test_cleanup;
 
 class element_write_tests
 {
@@ -54,17 +56,17 @@ class element_write_tests
         $t->header('Test the formula element class (classes/element.php)');
 
         $t->subheader('prepare formula element write');
-        $wrd_total = $t->test_word(word_api::TN_TOTAL);
-        $frm_sector = $t->test_formula(formula_api::TN_SECTOR, formula_api::TF_SECTOR);
+        $wrd_total = $t->test_word(words::TEST_TOTAL);
+        $frm_sector = $t->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
 
         // load increase formula for testing
-        $frm = $t->load_formula(formula_api::TN_SECTOR);
+        $frm = $t->load_formula(formulas::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
         $elm_lst = $exp->element_list();
 
         // get the test word ids
-        $wrd_country = $t->load_word(word_api::TN_COUNTRY);
-        $wrd_canton = $t->load_word(word_api::TN_CANTON);
+        $wrd_country = $t->load_word(words::COUNTRY);
+        $wrd_canton = $t->load_word(words::CANTON);
         $vrb_id = $vrb_cac->id(verbs::CAN_CONTAIN);
 
         if (isset($elm_lst)) {
@@ -101,8 +103,9 @@ class element_write_tests
                 }
                 $t->display('element->dsp_id', $target, $result);
 
-                $result = $elm->name_linked($back);
-                $url = '<a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::MI_WORD . '&' . api::URL_VAR_ID . '=';
+                $elm_dsp = new element($elm->api_json());
+                $result = $elm_dsp->link($back);
+                $url = '<a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::WORD_ID . '&' . api::URL_VAR_ID . '=';
                 if ($pos == 0) {
                     $target = $url . $wrd_country->id() . '&back=0" title="Country">Country</a>';
                 } elseif ($pos == 1) {
@@ -136,11 +139,11 @@ class element_write_tests
         $t->header('Test the formula element list class (classes/element_list.php)');
 
         $t->subheader('prepare formula element write');
-        $wrd_total = $t->test_word(word_api::TN_TOTAL);
-        $frm_sector = $t->test_formula(formula_api::TN_SECTOR, formula_api::TF_SECTOR);
+        $wrd_total = $t->test_word(words::TEST_TOTAL);
+        $frm_sector = $t->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
 
         // load increase formula for testing
-        $frm = $t->load_formula(formula_api::TN_SECTOR);
+        $frm = $t->load_formula(formulas::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
         $elm_lst = $exp->element_list();
 

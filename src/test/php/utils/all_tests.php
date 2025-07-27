@@ -67,8 +67,8 @@
     triple_list.php
     phrase.php
     phrase_list.php
-    phrase_group.php
-    phrase_group_list.php
+    group.php
+    group_list.php
     verb.php
     verb_list.php
     term.php
@@ -138,18 +138,23 @@ namespace test;
 
 // main test settings
 const ERROR_LIMIT = 0; // increase to 1 or more to detect more than one error message with one run
-const ONLY_UNIT_TESTS = false; // set to true if only the unit tests should be performed
-const RESET_DB = true; // if true the database is completely overwritten for testing; must always be false for UAT and PROD
+const ONLY_UNIT_TESTS = true; // set to true if only the unit tests should be performed
+const ONLY_UNIT_TESTS_DEV = false; // dito for development
+const RESET_DB = false; // if true the database is completely overwritten for testing; must always be false for UAT and PROD
+const RESET_DB_DEV = true; // dito for development
 const RESET_DB_ONLY = false; // true to force resetting the database without any other tests
 const QUICK_TEST_ONLY = false; // true to run only a single test for faster debugging
 const WRITE_TEST = true; // perform also the db write tests
 
+
 include_once TEST_UNIT_WRITE_PATH . 'all_unit_write_tests.php';
 
+use cfg\log_text\text_log_format;
 use unit_write\all_unit_write_tests;
 
 class all_tests extends all_unit_write_tests
 {
+
     function run_all_tests(): void
     {
         global $errors;
@@ -159,7 +164,7 @@ class all_tests extends all_unit_write_tests
         $this->header('Start of all zukunft.com tests');
 
         if (QUICK_TEST_ONLY) {
-            $this->run_single();
+            $this->run_single($this);
         }
 
         // run the unit tests without database connection
@@ -168,21 +173,42 @@ class all_tests extends all_unit_write_tests
         }
 
         // run the database read tests
-        if ($errors <= ERROR_LIMIT and !ONLY_UNIT_TESTS and !RESET_DB_ONLY and !QUICK_TEST_ONLY) {
+        if ($errors <= ERROR_LIMIT and !$this->only_unit_tests() and !RESET_DB_ONLY and !QUICK_TEST_ONLY) {
             $this->run_unit_db_tests($this);
         }
 
-        if (RESET_DB and $errors <= ERROR_LIMIT and !ONLY_UNIT_TESTS and !QUICK_TEST_ONLY) {
+        if ($this->db_reset_allowed() and $errors <= ERROR_LIMIT and !$this->only_unit_tests() and !QUICK_TEST_ONLY) {
             $this->run_db_recreate();
         }
 
-        if ($errors <= ERROR_LIMIT and !ONLY_UNIT_TESTS and !RESET_DB_ONLY and !QUICK_TEST_ONLY AND WRITE_TEST) {
+        if ($errors <= ERROR_LIMIT and !$this->only_unit_tests() and !RESET_DB_ONLY and !QUICK_TEST_ONLY and WRITE_TEST) {
             $this->run_db_write_tests($this);
         }
 
         // display the test results
-        $this->dsp_result_html();
-        $this->dsp_result();
+        if ($this->format == text_log_format::HTML) {
+            $this->dsp_result_html();
+        } else {
+            $this->dsp_result();
+        }
+    }
+
+    private function only_unit_tests(): bool
+    {
+        if (getenv(ENVIRONMENT) == ENV_DEV) {
+            return ONLY_UNIT_TESTS_DEV;
+        } else {
+            return ONLY_UNIT_TESTS;
+        }
+    }
+
+    private function db_reset_allowed(): bool
+    {
+        if (getenv(ENVIRONMENT) == ENV_DEV) {
+            return RESET_DB_DEV;
+        } else {
+            return RESET_DB;
+        }
     }
 
 }

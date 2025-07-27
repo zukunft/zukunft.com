@@ -2,7 +2,7 @@
 
 /*
 
-    cgf/element/element.php - either a word, triple, verb or formula with a link to a formula
+    model/element/element.php - either a word, triple, verb or formula with a link to a formula
     -----------------------
 
     formula elements are terms or expression operators such as add or brackets
@@ -11,6 +11,9 @@
 
     The main sections of this object are
     - db const:          const for the database link
+    - construct and map: including the mapping of the db row to this sandbox object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
+    - forward:           forward functions of the object parts for better code reading only
 
 
     This file is part of zukunft.com - calc with words
@@ -39,27 +42,32 @@
 
 namespace cfg\element;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id_user.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'expression.php';
-include_once MODEL_FORMULA_PATH . 'parameter_type.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_FORMULA . 'expression.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CALC . 'parameter_type.php';
+include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -69,19 +77,21 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_field_list;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\helper\db_object_seq_id_user;
-use cfg\formula\expression;
 use cfg\formula\formula;
-use cfg\formula\parameter_type;
+use cfg\formula\formula_db;
+use cfg\helper\db_object_seq_id_user;
+use cfg\helper\type_object;
 use cfg\phrase\term;
+use cfg\user\user;
+use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\word\triple;
-use cfg\helper\type_object;
-use cfg\user\user;
 use cfg\word\word;
-use html\formula\formula as formula_dsp;
-use html\word\word as word_dsp;
+use shared\calc\parameter_type;
+use shared\const\chars;
+use shared\json_fields;
 use shared\library;
+use shared\types\api_type_list;
 
 class element extends db_object_seq_id_user
 {
@@ -119,7 +129,7 @@ class element extends db_object_seq_id_user
 
     // all database field names excluding the id, standard name and user specific fields
     const FLD_NAMES = array(
-        formula::FLD_ID,
+        formula_db::FLD_ID,
         user::FLD_ID,
         self::FLD_ORDER,
         self::FLD_TYPE,
@@ -128,7 +138,7 @@ class element extends db_object_seq_id_user
 
     // field lists for the table creation
     const FLD_LST_ALL = array(
-        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
+        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
         [element_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, element_type::class, ''],
         [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', user::class, ''],
@@ -182,6 +192,85 @@ class element extends db_object_seq_id_user
         return $result;
     }
 
+    /**
+     * map an element api json to this model element object
+     * @param array $api_json the api array with the element values that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        if (!array_key_exists(json_fields::ID, $api_json)) {
+            log_warning('Missing id in api_json');
+        } elseif (!array_key_exists(json_fields::OBJECT_CLASS, $api_json)) {
+            log_warning('Missing class in api_json');
+        } else {
+            if ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_WORD) {
+                $wrd = new word($this->user());
+                $usr_msg->add($wrd->api_mapper($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $wrd;
+                }
+            } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_TRIPLE) {
+                $trp = new triple($this->user());
+                $usr_msg->add($trp->api_mapper($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $trp;
+                }
+            } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_VERB) {
+                $vrb = new verb();
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $vrb;
+                }
+            } elseif ($api_json[json_fields::OBJECT_CLASS] == json_fields::CLASS_FORMULA) {
+                $frm = new formula($this->user());
+                $usr_msg->add($frm->api_mapper($api_json));
+                if ($usr_msg->is_ok()) {
+                    $this->obj = $frm;
+                }
+            } else {
+                $this->obj = null;
+            }
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        if ($this->is_excluded() and !$typ_lst->test_mode()) {
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            $vars = $this->obj->api_json_array($typ_lst, $usr);
+            if ($this->is_word()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_WORD;
+            } elseif ($this->is_triple()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_TRIPLE;
+            } elseif ($this->is_verb()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_VERB;
+            } elseif ($this->is_formula()) {
+                $vars[json_fields::OBJECT_CLASS] = json_fields::CLASS_FORMULA;
+            } else {
+                $vars[json_fields::OBJECT_CLASS] = '';
+            }
+        }
+
+        return $vars;
+    }
+
 
     /*
      * set and get
@@ -213,6 +302,11 @@ class element extends db_object_seq_id_user
     function trm_id(): int
     {
         return $this->obj?->id();
+    }
+
+    function term(): term
+    {
+        return $this->obj?->term();
     }
 
 
@@ -250,23 +344,23 @@ class element extends db_object_seq_id_user
             if ($this->type == word::class) {
                 $wrd = new word($this->user());
                 $wrd->load_by_id($id);
-                $this->symbol = expression::WORD_START . $wrd->id() . expression::WORD_END;
+                $this->symbol = chars::WORD_START . $wrd->id() . chars::WORD_END;
                 $this->obj = $wrd;
             } elseif ($this->type == triple::class) {
                 $trp = new triple($this->user());
                 $trp->load_by_id($id);
-                $this->symbol = expression::TRIPLE_START . $trp->id() . expression::TRIPLE_END;
+                $this->symbol = chars::TRIPLE_START . $trp->id() . chars::TRIPLE_END;
                 $this->obj = $trp;
             } elseif ($this->type == verb::class) {
                 $vrb = new verb;
                 $vrb->set_user($this->user());
                 $vrb->load_by_id($id);
-                $this->symbol = expression::TRIPLE_START . $vrb->id() . expression::TRIPLE_END;
+                $this->symbol = chars::TRIPLE_START . $vrb->id() . chars::TRIPLE_END;
                 $this->obj = $vrb;
             } elseif ($this->type == formula::class) {
                 $frm = new formula($this->user());
                 $frm->load_by_id($id);
-                $this->symbol = expression::FORMULA_START . $frm->id() . expression::FORMULA_END;
+                $this->symbol = chars::FORMULA_START . $frm->id() . chars::FORMULA_END;
                 $this->obj = $frm;
                 /*
                 // in case of a formula load also the corresponding word
@@ -299,65 +393,72 @@ class element extends db_object_seq_id_user
         return parent::load_sql_by_id($sc, $id);
     }
 
+
     /*
-     * debug
+     * forward
      */
 
-    /**
-     * @return string best possible id for this element mainly used for debugging
-     */
-    function dsp_id(): string
+    function include(): void
     {
-        $lib = new library();
-        $result = '';
-        if ($this->type <> '') {
-            $class_name = $lib->class_to_name($this->type);
-            $result .= $class_name . ' ';
-        }
-        $name = $this->name();
-        if ($name <> '') {
-            $result .= '"' . $name . '" ';
-        }
-        if ($this->id() > 0) {
-            $result .= '(' . $this->id() . ')';
-        } else {
-            if ($this->obj != null) {
-                $result .= '(' . $this->obj->id() . ')';
-            }
-        }
-        $result .= $this->dsp_id_user();
+        $this->obj->include();
+    }
 
-        return $result;
+    function exclude(): void
+    {
+        $this->obj->exclude();
+    }
+
+    function is_excluded(): bool
+    {
+        if ($this->is_verb()) {
+            return false;
+        } else {
+            return $this->obj->is_excluded();
+        }
+    }
+
+    function is_word(): bool
+    {
+        if ($this->obj::class == word::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function is_triple(): bool
+    {
+        if ($this->obj::class == triple::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function is_verb(): bool
+    {
+        if ($this->obj::class == verb::class) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function is_formula(): bool
+    {
+        if ($this->obj::class == formula::class) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
-     * return the HTML code for the element name including a link to inspect the element
-     *
-     * @param string $back
-     * @return string
+     * @return user_message empty if all vars of the underlying object are set and the phrase can be stored in the database
      */
-    function name_linked(string $back = ''): string
+    function db_ready(): user_message
     {
-        $result = '';
-
-        if ($this->obj != null) {
-            if ($this->obj->id() <> 0) {
-                // TODO replace with phrase
-                if ($this->type == word::class) {
-                    $wrd_dsp = new word_dsp($this->obj->api_json());
-                    $result = $wrd_dsp->display_linked($back);
-                }
-                if ($this->type == verb::class) {
-                    $result = $this->name();
-                }
-                if ($this->type == formula::class) {
-                    $frm_dsp = new formula_dsp($this->obj->api_json());
-                    $result = $frm_dsp->edit_link($back);
-                }
-            }
-        }
-
-        return $result;
+        return $this->obj->db_ready();
     }
 
 
@@ -375,7 +476,7 @@ class element extends db_object_seq_id_user
      */
     function sql_insert(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
@@ -406,7 +507,7 @@ class element extends db_object_seq_id_user
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
-    function sql_update(sql_creator $sc, element $db_row, sql_type_list $sc_par_lst = new sql_type_list([])): sql_par
+    function sql_update(sql_creator $sc, element $db_row, sql_type_list $sc_par_lst = new sql_type_list()): sql_par
     {
         // get the field names, values and parameter types that have been changed
         // and that needs to be updated in the database
@@ -461,6 +562,38 @@ class element extends db_object_seq_id_user
             );
         }
         return $lst;
+    }
+
+
+    /*
+     * debug
+     */
+
+    /**
+     * @return string best possible id for this element mainly used for debugging
+     */
+    function dsp_id(): string
+    {
+        $lib = new library();
+        $result = '';
+        if ($this->type <> '') {
+            $class_name = $lib->class_to_name($this->type);
+            $result .= $class_name . ' ';
+        }
+        $name = $this->name();
+        if ($name <> '') {
+            $result .= '"' . $name . '" ';
+        }
+        if ($this->id() > 0) {
+            $result .= '(' . $this->id() . ')';
+        } else {
+            if ($this->obj != null) {
+                $result .= '(' . $this->obj->id() . ')';
+            }
+        }
+        $result .= $this->dsp_id_user();
+
+        return $result;
     }
 
 }

@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/db/sql_par_field_list.php - a list of sql parameter fields
+    model/db/sql_par_field_list.php - a list of sql parameter fields
     -----------------------------
 
     TODO split this list into
@@ -38,23 +38,25 @@
 
 namespace cfg\db;
 
-include_once DB_PATH . 'sql_par_field.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
 
+include_once paths::DB . 'sql_par_field.php';
+//include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+//include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED . 'library.php';
+
+use cfg\formula\formula_db;
 use cfg\helper\combine_named;
 use cfg\helper\db_object_seq_id;
-use cfg\formula\formula;
 use cfg\log\change;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link_named;
@@ -125,14 +127,16 @@ class sql_par_field_list
         }
     }
 
-    function add_id_part(sql_par_field $fld): void
+    function add_id_part(?sql_par_field $fld): void
     {
-        $this->add_field(
-            $fld->name,
-            $fld->id,
-            $fld->type_id,
-            $fld->old_id
-        );
+        if ($fld != null) {
+            $this->add_field(
+                $fld->name,
+                $fld->id,
+                $fld->type_id,
+                $fld->old_id
+            );
+        }
     }
 
     function add_name_part(sql_par_field $fld): void
@@ -181,9 +185,9 @@ class sql_par_field_list
         $fld->value = $value;
         if ($type === null) {
             if (is_string($value)) {
-                $type = sql_par_type::TEXT;
+                $fld->type = sql_par_type::TEXT;
             } else {
-                $type = sql_par_type::INT;
+                $fld->type = sql_par_type::INT;
             }
         } else {
             if ($type::class === sql_field_type::class) {
@@ -193,12 +197,12 @@ class sql_par_field_list
             }
         }
         $fld->old = $old;
-        if ($par_name != '') {
+        if ($par_name !== null) {
             $fld->par_name = $par_name;
         }
         $fld->id = $id;
         $fld->old_id = $old_id;
-        if ($type_id != null) {
+        if ($type_id !== null) {
             if ($type_id::class === sql_field_type::class) {
                 $fld->type_id = $type_id->par_type();
             } else {
@@ -349,7 +353,7 @@ class sql_par_field_list
         global $cng_fld_cac;
 
         // include the name field for the log also if the object is only excluded
-        if ($sbx_db->name() <> $sbx_upd->name()) {
+        if ($sbx_db->name_or_null() <> $sbx_upd->name()) {
             if ($do_log) {
                 $this->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . $sbx_upd->name_field(),
@@ -357,30 +361,25 @@ class sql_par_field_list
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            if ($sbx_db->name() == '') {
-                $old_name = null;
-            } else {
-                $old_name = $sbx_db->name();
-            }
             $this->add_field(
                 $sbx_upd->name_field(),
                 $sbx_upd->name(),
                 sandbox_named::FLD_NAME_SQL_TYP,
-                $old_name
+                $sbx_db->name_or_null()
             );
         }
         if ($sbx_db->description <> $sbx_upd->description) {
             if ($do_log) {
                 $this->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $this->add_field(
-                sandbox_named::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
                 $sbx_upd->description,
-                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $sbx_db->description
             );
         }
@@ -437,7 +436,7 @@ class sql_par_field_list
     function is_empty_except_internal_fields(): bool
     {
         $names = array_diff($this->names(),
-            [sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID, user::FLD_ID, formula::FLD_LAST_UPDATE]);
+            [sql::FLD_LOG_FIELD_PREFIX . user::FLD_ID, user::FLD_ID, formula_db::FLD_LAST_UPDATE]);
         if (count($names) == 0) {
             return true;
         } else {
@@ -479,7 +478,7 @@ class sql_par_field_list
     {
         $result = [];
         foreach ($this->lst as $fld) {
-            if ($fld->id != null) {
+            if ($fld->id !== null) {
                 $result[] = $fld->id;
             } else {
                 if ($fld->value != sql::NOW) {
@@ -530,15 +529,33 @@ class sql_par_field_list
     }
 
     /**
+     * @param array $names_to_select list of field names that should be excluded for the result list
+     * @return sql_par_field_list with the sql parameter fields that matches none of the field names
+     */
+    function get_diff(array $names_to_select): sql_par_field_list
+    {
+        $result = new sql_par_field_list();
+        foreach ($this->lst as $fld) {
+            if (!in_array($fld->name, $names_to_select)) {
+                $result->add($fld);
+            }
+        }
+        return $result;
+    }
+
+    /**
      * get the value for the given field name
      * @param string $name the name of the field to select
+     * @param bool $can_be_missing if true no error log message is created if the field does not exists
      * @return sql_par_field|null the name, value and type selected by the name
      */
-    function get(string $name): ?sql_par_field
+    function get(string $name, bool $can_be_missing = false): ?sql_par_field
     {
         $key = array_search($name, $this->names());
         if ($key === false) {
-            log_err('field "' . $name . '" missing in "' . implode(',', $this->names())) . '"';
+            if (!$can_be_missing) {
+                log_err('field "' . $name . '" missing in "' . implode(',', $this->names())) . '"';
+            }
             return null;
         } else {
             return $this->lst[$key];
@@ -638,6 +655,15 @@ class sql_par_field_list
         }
     }
 
+    function sql_field_list(): sql_field_list
+    {
+        $lst = new sql_field_list();
+        foreach ($this->lst as $par_fld) {
+            $lst->add_par_field($par_fld);
+        }
+        return $lst;
+    }
+
     /**
      * create the sql function call parameter statement
      * @param sql_creator $sc
@@ -657,7 +683,7 @@ class sql_par_field_list
             } else {
                 if ($par_typ == sql_par_type::TEXT
                     or $par_typ == sql_field_type::TEXT
-                    OR $par_typ == sql_par_type::KEY_512
+                    or $par_typ == sql_par_type::KEY_512
                     or $par_typ == sql_field_type::NAME) {
                     $sql .= "'" . $fld->value . "'";
                 } elseif ($fld->value instanceof DateTime) {

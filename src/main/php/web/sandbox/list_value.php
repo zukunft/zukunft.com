@@ -35,9 +35,11 @@
 
 namespace html\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 
-use api\phrase\phrase_list as phrase_list_api;
 use html\phrase\phrase_list as phrase_list_dsp;
 
 class list_value extends list_dsp
@@ -54,16 +56,16 @@ class list_value extends list_dsp
      */
 
     /**
-     * @returns phrase_list_api with the phrases that are used in all values of the list
+     * @returns phrase_list_dsp with the phrases that are used in all values of the list
      */
     protected function common_phrases(): phrase_list_dsp
     {
         // get common words
         $common_phr_lst = new phrase_list_dsp();
-        foreach ($this->lst as $val) {
+        foreach ($this->lst() as $val) {
             if ($val != null) {
                 if ($val->phr_lst() != null) {
-                    if ($val->phr_lst()->lst != null) {
+                    if ($val->phr_lst()->lst() != null) {
                         $common_phr_lst->intersect($val->phr_lst());
                     }
                 }

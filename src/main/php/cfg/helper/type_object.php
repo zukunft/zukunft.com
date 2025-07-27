@@ -2,8 +2,8 @@
 
 /*
 
-    /model/helper/type_object.php - the superclass for word, formula and view types
-    -----------------------------
+    model/helper/type_object.php - the superclass for word, formula and view types
+    ----------------------------
 
     a base type object that can be used to link program code to single objects
     e.g. if a value is classified by a phrase of type percent the value by default is formatted in percent
@@ -41,28 +41,33 @@
 
 namespace cfg\helper;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once API_SANDBOX_PATH . 'type_object.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-// TODO avoid include loops
-//include_once MODEL_LANGUAGE_PATH . 'language.php';
-//include_once MODEL_LANGUAGE_PATH . 'language_form.php';
-//include_once MODEL_LOG_PATH . 'change_action.php';
-//include_once MODEL_LOG_PATH . 'change_table.php';
-//include_once MODEL_LOG_PATH . 'change_table_field.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-//include_once MODEL_SYSTEM_PATH . 'pod.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
 
-use api\sandbox\type_object as type_object_api;
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+// TODO avoid include loops
+//include_once paths::MODEL_LANGUAGE . 'language.php';
+//include_once paths::MODEL_LANGUAGE . 'language_form.php';
+//include_once paths::MODEL_LOG . 'change_action.php';
+//include_once paths::MODEL_LOG . 'change_table.php';
+//include_once paths::MODEL_LOG . 'change_table_field.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+//include_once paths::MODEL_SYSTEM . 'pod.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -78,10 +83,14 @@ use cfg\log\change_table;
 use cfg\log\change_table_field;
 use cfg\sandbox\sandbox_named;
 use cfg\system\pod;
+use cfg\user\user;
+use cfg\user\user_message;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
-use JsonSerializable;
+use shared\library;
+use shared\types\api_type_list;
 
-class type_object extends db_object_seq_id implements JsonSerializable
+class type_object extends db_object_seq_id
 {
 
     /*
@@ -99,8 +108,6 @@ class type_object extends db_object_seq_id implements JsonSerializable
     const FLD_NAME = 'type_name';
     const FLD_CODE_ID_COM = 'this id text is unique for all code links, is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
     const FLD_DESCRIPTION_COM = 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
-    const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
     // type name exceptions
     const FLD_ACTION = 'change_action_name';
@@ -112,8 +119,8 @@ class type_object extends db_object_seq_id implements JsonSerializable
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     const FLD_LST_ALL = array(
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
 
@@ -122,9 +129,13 @@ class type_object extends db_object_seq_id implements JsonSerializable
      */
 
     // the standard fields of a type
-    public string $name; // the unique type name as shown to the user
-    public ?string $code_id; // this id text is unique for all code links and is used for system im- and export
-    public ?string $description = '';  // to explain the type to the user as a tooltip
+
+    // the unique type name as shown to the user
+    public string $name;
+    // this id text is unique for all code links and is used for system im- and export
+    public ?string $code_id;
+    // to explain the type to the user as a tooltip
+    public ?string $description = null;
 
 
     /*
@@ -136,10 +147,8 @@ class type_object extends db_object_seq_id implements JsonSerializable
         parent::__construct();
         $this->set_id($id);
         $this->set_name($name);
-        $this->set_code_id($code_id);
-        if ($description != '') {
-            $this->set_description($description);
-        }
+        $this->set_code_id_db($code_id);
+        $this->set_description($description);
     }
 
     function reset(): void
@@ -160,11 +169,11 @@ class type_object extends db_object_seq_id implements JsonSerializable
     {
         $result = parent::row_mapper($db_row, $this->id_field_typ($class));
         // set the id upfront to allow row mapping
-        if ($class == language::class AND array_key_exists(language::FLD_ID, $db_row)) {
+        if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
             $this->set_id(($db_row[language::FLD_ID]));
         }
         if ($this->id() > 0) {
-            $this->code_id = strval($db_row[sql::FLD_CODE_ID]);
+            $this->code_id = strval($db_row[sql_db::FLD_CODE_ID]);
             $type_name = '';
             if ($class == change_action::class) {
                 $type_name = strval($db_row[self::FLD_ACTION]);
@@ -177,13 +186,51 @@ class type_object extends db_object_seq_id implements JsonSerializable
             } elseif ($class == language::class) {
                 $type_name = strval($db_row[language::FLD_NAME]);
             } else {
-                $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
+                $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
             }
             $this->name = $type_name;
-            $this->description = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
+            $this->description = strval($db_row[sql_db::FLD_DESCRIPTION]);
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * fill the vars with this sandbox object based on the given api json array
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        if (array_key_exists(json_fields::ID, $api_json)) {
+            $this->set_id($api_json[json_fields::ID]);
+        }
+        if (array_key_exists(json_fields::NAME, $api_json)) {
+            $this->set_name($api_json[json_fields::NAME]);
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            if ($api_json[json_fields::DESCRIPTION] <> '') {
+                $this->description = $api_json[json_fields::DESCRIPTION];
+            }
+        }
+
+
+        return $usr_msg;
+    }
+
+    /**
+     * general part to import a database object from a JSON array object
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        return new user_message();
     }
 
 
@@ -191,12 +238,50 @@ class type_object extends db_object_seq_id implements JsonSerializable
      * set and get
      */
 
+    /**
+     * set the vars of this type object based on json string from the frontend object
+     * @param string $api_json with the api message created by the frontend
+     * @return user_message with problems and suggested solutions for the user
+     */
+    function set_from_api(string $api_json): user_message
+    {
+        return $this->api_mapper(json_decode($api_json, true));
+    }
+
     function set_name(string $name): void
     {
         $this->name = $name;
     }
 
-    function set_code_id(?string $code_id): void
+    /**
+     * set the unique id to select a single verb by the program
+     *r
+     * @param string|null $code_id the unique key to select a word used by the system e.g. for the system or configuration
+     * @param user $usr the user who has requested the change
+     * @return user_message warning message for the user if the permissions are missing
+     */
+    function set_code_id(?string $code_id, user $usr): user_message
+    {
+        $usr_msg = new user_message();
+        if ($usr->can_set_code_id()) {
+            $this->code_id = $code_id;
+        } else {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
+                msg_id::VAR_USER_NAME => $usr->name(),
+                msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
+                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
+            ]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the code id without check
+     * should only be called by the database mapper function
+     */
+    function set_code_id_db(?string $code_id): void
     {
         $this->code_id = $code_id;
     }
@@ -216,26 +301,9 @@ class type_object extends db_object_seq_id implements JsonSerializable
         return $this->code_id;
     }
 
-    function description(): string
+    function description(): ?string
     {
         return $this->description;
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @return type_object_api the code link frontend api object
-     */
-    function api_obj(): type_object_api
-    {
-        $api_obj = new type_object_api();
-        $api_obj->id = $this->id();
-        $api_obj->name = $this->name;
-        $api_obj->code_id = $this->code_id;
-        return $api_obj;
     }
 
 
@@ -267,7 +335,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
 
 
     /*
-     * information
+     * info
      */
 
     function is_type(string $type_to_check): bool
@@ -382,7 +450,7 @@ class type_object extends db_object_seq_id implements JsonSerializable
     {
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, 'code_id');
-        $sc->add_where(sql::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -418,28 +486,20 @@ class type_object extends db_object_seq_id implements JsonSerializable
 
 
     /*
-     * interface
+     * api
      */
 
     /**
-     * @return string the json api message as a text string
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
      */
-    function get_json(): string
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
-        return json_encode($this->jsonSerialize());
-    }
-
-    /**
-     * @return array with the sandbox vars without empty values that are not needed
-     * the message from the backend to the frontend does not need to include empty fields
-     * the message from the frontend to the backend on the other side must include empty fields
-     * to be able to unset fields in the backend
-     */
-    function jsonSerialize(): array
-    {
-        $vars = parent::jsonSerialize();
-        $vars = array_merge($vars, get_object_vars($this));
-        return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+        $vars = parent::api_json_array($typ_lst, $usr);
+        return array_merge($vars, get_object_vars($this));
     }
 
 

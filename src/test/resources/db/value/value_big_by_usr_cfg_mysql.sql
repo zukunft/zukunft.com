@@ -7,4 +7,5 @@ PREPARE value_big_by_usr_cfg FROM
             protect_id
        FROM user_values_big
       WHERE group_id = ?
-        AND user_id = ?';
+        AND user_id = ?
+       AND source_id = ?';

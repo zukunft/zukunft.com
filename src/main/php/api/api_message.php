@@ -2,8 +2,8 @@
 
 /*
 
-    api/message_header.php - the JSON header object for the frontend API
-    ----------------------
+    api/api_message.php - the JSON header object for the frontend API
+    -------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,128 +29,74 @@
 
 */
 
-namespace api;
+namespace controller;
 
-include_once SERVICE_PATH . 'config.php';
-include_once SHARED_PATH . 'library.php';
+//include_once paths::SERVICE . 'config.php';
+//include_once paths::SHARED . 'library.php';
 
 use cfg\config;
 use cfg\db\sql_db;
 use cfg\user\user;
+use html\user\user as user_dsp;
 use DateTime;
 use DateTimeInterface;
-use html\html_base;
+use shared\json_fields;
 use shared\library;
 
 class api_message
 {
 
-    /*
-     * message types
-     */
-
-    // the message types for fast format detection
-    const SYS_LOG = 'sys_log';
-
-
-    /*
-     * object vars
-     */
-
-    // field names used for JSON creation
-    public string $pod;       // the pod that has created the message
-    public string $type;      // defines the message formal (just used for testing and easy debugging)
-    public int $user_id;      // to double-check to the session user
-    public string $user;      // for fast debugging
-    public string $version;   // to prevent communication error due to incompatible program versions
-    public string $timestamp; // for automatic delay problem detection
-    public string $config;    // timestamp of the configuration to include the config in the response if needed
-    public object $body;      // the json payload of the message
-
-
-    /*
-     * construct and map
-     */
-
     /**
      * create and set the api message header information
      * @param sql_db $db_con the active database link to get the configuration from the database
      * @param string $class the class of the message
-     * @param user $usr the user view that the api message should contain
+     * @param user|user_dsp|null $usr the user view that the api message should contain
+     * @param array $vars the json array for the message body
+     * @return array the json array including the message header
      */
-    function __construct(sql_db $db_con, string $class, user $usr)
+    function api_header_array(
+        sql_db             $db_con,
+        string             $class,
+        user|user_dsp|null $usr,
+        array              $vars
+    ): array
     {
         $lib = new library();
         $cfg = new config();
+        $class = $lib->class_to_name($class);
+        $msg = [];
         if ($db_con->connected()) {
-            $this->pod = $cfg->get_db(config::SITE_NAME, $db_con);
+            $msg[json_fields::POD] = $cfg->get_db(config::SITE_NAME, $db_con);
         } else {
             // for unit tests use the default pod name
-            $this->pod = POD_NAME;
+            $msg[json_fields::POD] = POD_NAME;
         }
-        $class_name = $lib->class_to_name($class);
-        $this->type = $class_name;
-        $this->set_user($usr);
-        $this->version = PRG_VERSION;
-        $this->timestamp = (new DateTime())->format(DateTimeInterface::ATOM);
-    }
-
-
-    /*
-     * set and get
-     */
-
-    function set_user(?user $usr): void
-    {
+        $msg[json_fields::TYPE_NAME] = $class;
         if ($usr != null) {
-            if ($usr->id() > 0) {
-                $this->user_id = $usr->id();
-                $this->user = $usr->name;
-            }
+            $msg[json_fields::USER_ID] = $usr->id();
+            $msg[json_fields::USER_NAME] = $usr->name();
         }
-    }
+        $msg[json_fields::VERSION] = PRG_VERSION;
+        $msg[json_fields::TIMESTAMP] = (new DateTime())->format(DateTimeInterface::ATOM);
+        $msg[json_fields::BODY] = $vars;
 
-    function add_body(object $api_obj): void
-    {
-        $this->body = $api_obj;
+        return $msg;
+
     }
 
     /**
-     * @return string the frontend API JSON string
+     * validate the message using the header and return the message body json array
+     * @param array $json_array a json message array with or without message header
+     * @return array the body of the json message or a user message if the message is not valid
      */
-    function get_json(): string
+    function validate(array $json_array): array
     {
-        return json_encode($this);
-    }
-
-    /**
-     * @return array the frontend API JSON as an array
-     */
-    function get_json_array(): array
-    {
-        return json_decode(json_encode($this), true);
-    }
-
-
-    /*
-     * to review
-     */
-
-    function get_html_header(string $title): string
-    {
-        if ($title == null) {
-            $title = 'api message';
-        } elseif ($title == '') {
-            $title = 'api message';
+        $body = $json_array;
+        if (key_exists(json_fields::POD, $json_array)
+            and key_exists(json_fields::BODY, $json_array)) {
+            $body = $json_array[json_fields::BODY];
         }
-        $html = new html_base();
-        return $html->header($title);
-    }
-
-    function get_html_footer(): string
-    {
-        $html = new html_base();
-        return $html->footer();
+        return $body;
     }
 
 }

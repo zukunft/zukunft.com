@@ -2,9 +2,9 @@
 <html lang="en">
 <head><title>test (zukunft.com)</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/lib_external/bootstrap-5.3.3-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css"/>
-    <link rel="stylesheet" href="/lib_external/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
 </head>
 <body>
 <div class="container">
@@ -18,9 +18,10 @@
             <ul class="nav navbar-nav">
                 <li class="active"></li>
                 <li class="active"></li>
-                <li class="active"><a href="/http/view_edit.php?id=3" title="adjust the view"><i
-                        class="far fa-edit"></i></a><a href="/http/view_add.php" title="create a new view"><i
-                        class="far fa-plus-square"></i></a></li>
+                <li class="active"><a href="/http/view.php?m=view_edit&id=3" title="adjust the view"><i
+                        class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=3"
+                                                       title="create a new view"><i class="far fa-plus-square"></i></a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -35,11 +36,11 @@
         <div class="row col-md-12">
             <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
                                                                                   name="name" id="name"
-                                                                                  value="Mathematics"></div>
-            <div class="form-group col-md-4"><label for="phrase type">type:</label><select class="form-control"
-                                                                                           name="phrase type"
+                                                                                  value="mathematics"></div>
+            <div class="form-group col-md-4"><label for="phrase_type">type:</label><select class="form-control"
+                                                                                           name="phrase_type"
                                                                                            form="word_edit"
-                                                                                           id="phrase type">
+                                                                                           id="phrase_type">
                 <option value="1" selected>standard</option>
                 <option value="2">time</option>
                 <option value="3">measure type</option>
@@ -78,13 +79,8 @@
             </div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="view">view:</label><select class="form-control" name="view"
-                                                                                    form="word_edit" id="view">
-                <option value="50">Science</option>
-                <option value="51">Historic</option>
-                <option value="53">Education</option>
-                <option value="54">Touristic</option>
-            </select></div>
+            <div class="form-group col-md-4"><label for="plural">plural</label><input class="form-control" type="text"
+                                                                                      name="plural" id="plural"></div>
             <div class="form-group col-md-4"><label for="share">share:</label><select class="form-control" name="share"
                                                                                       form="word_edit" id="share">
                 <option value="1" selected>public</option>
@@ -102,13 +98,22 @@
                 <option value="4">no change</option>
             </select></div>
         </div>
-        <div class="row col-md-12">list of phrases related to Mathematics values related to value list word list of
-            references to Mathematics
+        <div class="row col-md-12">
+            <div class="form-group col-md-4"><label for="view">view:</label><select class="form-control" name="view"
+                                                                                    form="word_edit" id="view">
+                <option value="50">science</option>
+                <option value="51">Historic</option>
+                <option value="53">Education</option>
+                <option value="54">Touristic</option>
+            </select></div>
         </div>
-        <a href="/http/view.php?m=41&id=1" title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
+        <div class="row col-md-12">list of phrases related to mathematics values related to value list word list of
+            references to mathematics
+        </div>
+        <a href="/http/view.php?m=44&id=1" title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
         <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
     </form>
-    usage of Mathematics change log for Mathematics
+    usage of mathematics change log for mathematics
 </div>
 <footer>
     <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot;<a

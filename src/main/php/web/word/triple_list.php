@@ -31,15 +31,24 @@
 
 namespace html\word;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'triple_list.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 
-use cfg\phrase\phrase_type;
-use cfg\verb\verb;
 use html\html_base;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox\list_dsp;
+use html\styles;
 use html\user\user_message;
 use html\word\triple as triple_dsp;
 use html\word\triple_list as triple_list_dsp;
@@ -59,23 +68,9 @@ class triple_list extends list_dsp
      * @param array $json_array an api single object json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function api_mapper(array $json_array): user_message
     {
-        return parent::set_list_from_json($json_array, new triple_dsp());
-    }
-
-
-    /*
-     * modify
-     */
-
-    /**
-     * add a triple to the list
-     * @returns bool true if the triple has been added
-     */
-    function add(triple_dsp $phr): bool
-    {
-        return parent::add_obj($phr);
+        return parent::api_mapper_list($json_array, new triple_dsp());
     }
 
 
@@ -100,9 +95,9 @@ class triple_list extends list_dsp
     function names_linked(string $back = ''): array
     {
         $result = array();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if (!$wrd->is_hidden()) {
-                $result[] = $wrd->display_linked($back);
+                $result[] = $wrd->name_linked($back);
             }
         }
         return $result;
@@ -121,8 +116,8 @@ class triple_list extends list_dsp
         $last_trp = null;
         // TODO check if and why the next line makes sense
         // $cols = $html->td('');
-        foreach ($this->lst as $trp) {
-            $lnk = $trp->display_linked($back);
+        foreach ($this->lst() as $trp) {
+            $lnk = $trp->name_link($back);
             $cols .= $html->td($lnk);
             $last_trp = $trp;
         }
@@ -131,7 +126,7 @@ class triple_list extends list_dsp
             $add_url = $add_trp->btn_add($back);
             $cols .= $html->td($add_url);
         }
-        return $html->tbl($html->tr($cols), html_base::STYLE_BORDERLESS);
+        return $html->tbl($html->tr($cols), styles::STYLE_BORDERLESS);
     }
 
     /**
@@ -148,7 +143,7 @@ class triple_list extends list_dsp
 
         // check the all minimal input parameters
         if (isset($this->wrd)) {
-            log_debug('graph->display for ' . $this->wrd->name() . ' ' . $this->direction->value . ' and user ' . $this->user()->name . ' called from ' . $back);
+            log_debug('graph->display for ' . $this->wrd->name() . ' called from ' . $back);
         }
         $prev_verb_id = 0;
 
@@ -183,17 +178,17 @@ class triple_list extends list_dsp
                     // display the link type
                     if ($lnk->verb()->id() == $next_lnk->verb()->id()) {
                         if ($this->wrd != null) {
-                            $result .= $this->wrd->plural;
+                            $result .= $this->wrd->plural();
                         }
                         if ($this->direction == foaf_direction::DOWN) {
                             $result .= " " . $lnk->verb()->rev_plural;
                         } else {
-                            $result .= " " . $lnk->verb()->plural;
+                            $result .= " " . $lnk->verb()->plural();
                         }
                     } else {
                         $result .= $this->wrd->name();
                         if ($this->direction == foaf_direction::DOWN) {
-                            $result .= " " . $lnk->verb()->reverse;
+                            $result .= " " . $lnk->verb()->reverse();
                         } else {
                             $result .= " " . $lnk->verb()->name;
                         }
@@ -284,23 +279,12 @@ class triple_list extends list_dsp
         if (!$this->is_empty()) {
             $result = array();
             $lst_ids = $del_lst->id_lst();
-            foreach ($this->lst as $wrd) {
+            foreach ($this->lst() as $wrd) {
                 if (!in_array($wrd->id(), $lst_ids)) {
                     $result[] = $wrd;
                 }
             }
-            $this->lst = $result;
-        }
-    }
-
-    /**
-     * merge as a function, because the array_merge does not create an object
-     * @param triple_list_dsp $new_wrd_lst with the triples that should be added
-     */
-    function merge(triple_list_dsp $new_wrd_lst): void
-    {
-        foreach ($new_wrd_lst->lst as $new_wrd) {
-            $this->add($new_wrd);
+            $this->set_lst($result);
         }
     }
 
@@ -311,7 +295,7 @@ class triple_list extends list_dsp
     private function filter(string $type): triple_list_dsp
     {
         $result = new triple_list_dsp();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->is_type($type)) {
                 $result->add($wrd);
             }
@@ -341,7 +325,7 @@ class triple_list extends list_dsp
     function scaling_lst(): triple_list_dsp
     {
         $result = new triple_list_dsp();
-        foreach ($this->lst as $wrd) {
+        foreach ($this->lst() as $wrd) {
             if ($wrd->is_scaling()) {
                 $result->add($wrd);
             }
@@ -466,7 +450,7 @@ class triple_list extends list_dsp
     function names(): array
     {
         $name_lst = array();
-        foreach ($this->lst as $phr) {
+        foreach ($this->lst() as $phr) {
             if ($phr != null) {
                 $name_lst[] = $phr->name();
             }

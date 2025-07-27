@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/helper/config_numbers.php - additional behavior for the system and user config graph value tree
+    model/helper/config_numbers.php - additional behavior for the system and user config graph value tree
     -----------------------------
 
 
@@ -32,24 +32,27 @@
 
 namespace cfg\helper;
 
-include_once API_SYSTEM_PATH . 'type_list.php';
-include_once API_VALUE_PATH . 'value_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VALUE_PATH . 'value_list.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once SHARED_PATH . 'library.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once API_SYSTEM_PATH . 'type_list.php';
-include_once WEB_USER_PATH . 'user_type_list.php';
+use cfg\const\paths;
 
-use api\value\value_list as value_list_api;
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_ENUM . 'language_codes.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
+
 use cfg\phrase\phrase;
 use cfg\user\user;
+use cfg\user\user_message;
 use cfg\value\value_list;
-use cfg\word\word;
+use shared\const\triples;
+use shared\const\words;
+use shared\enum\language_codes;
+use shared\api;
+use shared\enum\messages as msg_id;
 
 
 class config_numbers extends value_list
@@ -57,116 +60,140 @@ class config_numbers extends value_list
 
     // list of word that should be hidden be default for normal selections
     // TODO check on pod start that these words exists and are of hidden type
-    const HIDDEN_KEYWORDS= [
-        word::THIS_SYSTEM,
+    const HIDDEN_KEYWORDS = [
+        words::THIS_SYSTEM,
     ];
 
     // list of triples that should be hidden be default for normal selections
     // TODO check on pod start that these triples exists and are of hidden type
     const HIDDEN_KEY_TRIPLES = [
-        [word::SYSTEM, word::CONFIGURATION],
+        [words::SYSTEM, words::CONFIGURATION],
     ];
 
     // list of words that should be admin protected because they are user for the system configuration
     // TODO check on pod start that these words exists and are admin protected
     const ADMIN_KEYWORDS = [
-        word::AUTOMATIC,
-        word::AVERAGE,
-        word::BLOCK,
-        word::CALCULATION,
-        word::COLUMNS,
-        word::CONFIGURATION,
-        word::CREATE,
-        word::DATABASE,
-        word::DEFAULT,
-        word::DELAY,
-        word::DELETE,
-        word::ENTRY,
-        word::FREEZE,
-        word::FRONTEND,
-        word::FUTURE,
-        word::INITIAL,
-        word::INSERT,
-        word::JOB,
-        word::MAX,
-        word::MILLISECOND,
-        word::MIN,
-        word::MIN,
-        word::NAME,
-        word::PERCENT,
-        word::PHRASE,
-        word::POD,
-        word::PRESELECT,
-        word::RETRY,
-        word::SEC,
-        word::SELECT,
-        word::SIZE,
-        word::START,
-        word::SYS_CONF_VALUE,
-        word::SYSTEM,
-        word::TABLE,
-        word::TIME,
-        word::UPDATE,
-        word::URL,
-        word::USER,
-        word::VALUE,
-        word::VERSION,
-        word::VIEW,
-        word::YEAR,
+        words::AUTOMATIC,
+        words::AVERAGE,
+        words::BACKEND,
+        words::BLOCK,
+        words::CALCULATION,
+        words::COLUMNS,
+        words::CONFIGURATION,
+        words::CHANGE,
+        words::CREATE,
+        words::DATABASE,
+        words::DAILY,
+        words::DEFAULT,
+        words::DELAY,
+        words::DELETE,
+        words::ENTRY,
+        words::EXPECTED,
+        words::FILE,
+        words::FORMULA,
+        words::FREEZE,
+        words::FRONTEND,
+        words::FUTURE,
+        words::INITIAL,
+        words::IMPORT,
+        words::INSERT,
+        words::IP,
+        words::JOB,
+        words::MAX,
+        words::MILLISECOND,
+        words::MIN,
+        words::MIN,
+        words::NAME,
+        words::PERCENT,
+        words::PHRASE,
+        words::POD,
+        words::PRESELECT,
+        words::READ,
+        words::RETRY,
+        words::SEC,
+        words::SELECT,
+        words::SIZE,
+        words::SOURCE,
+        words::START,
+        words::SYS_CONF_VALUE,
+        words::SYSTEM,
+        words::TABLE,
+        words::TIME,
+        words::TRIPLE,
+        words::UPDATE,
+        words::URL,
+        words::USER,
+        words::VALUE,
+        words::VERSION,
+        words::VIEW,
+        words::YEAR,
     ];
 
     // list of triples that should be admin protected because they are user for the system configuration
     // TODO check on pod start that these triples exists and are admin protected
     const ADMIN_KEY_TRIPLES = [
-        [word::START, word::DELAY],
-        [word::MAX, word::DELAY],
-        [word::SYS_CONF_VALUE, word::TABLE],
-        [word::TABLE, word::NAME],
-        [word::MAX, word::PHRASE],
-        [word::BLOCK, word::SIZE],
-        [word::AVERAGE, word::DELAY],
-        [word::INITIAL, word::ENTRY],
-        [word::MIN, word::PERCENT],
-        [word::AUTOMATIC, word::CREATE],
-        [word::MIN, word::COLUMNS],
-        [word::MAX, word::COLUMNS],
-        [word::FUTURE, word::PERCENT],
-        [word::VALUE, word::TABLE],
+        [words::START, words::DELAY],
+        [words::MAX, words::DELAY],
+        [words::SYS_CONF_VALUE, words::TABLE],
+        [words::TABLE, words::NAME],
+        [words::MAX, words::PHRASE],
+        [words::MAX, words::CHANGE],
+        [words::IP, words::USER],
+        [words::BLOCK, words::SIZE],
+        [words::AVERAGE, words::DELAY],
+        [words::INITIAL, words::ENTRY],
+        [words::MIN, words::PERCENT],
+        [words::AUTOMATIC, words::CREATE],
+        [words::MIN, words::COLUMNS],
+        [words::MAX, words::COLUMNS],
+        [words::FUTURE, words::PERCENT],
+        [words::VALUE, words::TABLE],
+        [words::EXPECTED, words::TIME],
+        [words::FILE, words::READ],
     ];
 
     // list of internal tooltips (and the related word) where the default text for new users should not be changed
     // TODO check on pod start that these comments are still normal
     const INTERNAL_COMMENTS = [
-        [word::TOOLTIP_COMMENT_COM, word::TOOLTIP_COMMENT],
-        [word::SYS_CONF_VALUE_COM, word::SYS_CONF_VALUE],
-        [word::TIME_COM, word::TIME],
-        [word::YEAR_COM, word::YEAR],
-        [word::CALCULATION_COM, word::CALCULATION],
-        [word::MIN_COM, word::MIN],
-        [word::MAX_COM, word::MAX],
-        [word::AVERAGE_COM, word::AVERAGE],
-        [word::DEFAULT_COM, word::DEFAULT],
-        [word::DATABASE_COM, word::DATABASE],
+        [words::TOOLTIP_COMMENT_COM, words::TOOLTIP_COMMENT],
+        [words::SYS_CONF_VALUE_COM, words::SYS_CONF_VALUE],
+        [words::SYS_CONF_SOURCE_COM, words::SYS_CONF_SOURCE],
+        [words::SYS_CONF_USER_COM, words::SYS_CONF_USER],
+        [words::TIME_COM, words::TIME],
+        [words::YEAR_COM, words::YEAR],
+        [words::CALCULATION_COM, words::CALCULATION],
+        [words::MIN_COM, words::MIN],
+        [words::MAX_COM, words::MAX],
+        [words::AVERAGE_COM, words::AVERAGE],
+        [words::DEFAULT_COM, words::DEFAULT],
+        [words::DATABASE_COM, words::DATABASE],
     ];
 
+
     /*
-     * cast
+     * set and get
      */
 
     /**
-     * @return value_list_api the object type list frontend api object
+     * get a frontend config value selected by the phrase names
+     *
+     * @param array $names with the phrase names to select the config value
+     * @param int|float|string|null $fallback if not null the fallback value that should be used
+     *                                        if the configuration value is not found
+     * @return int|float|string|null with the user specific config value
      */
-    function api_obj(): value_list_api
+    function get_by(array $names, int|float|string|null $fallback = null): int|float|string|null
     {
-        return parent::api_obj();
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
+        $val = $this->get_by_names($names);
+        $num = $val?->number();
+        if ($num == 0 or $num == null) {
+            if ($fallback != null) {
+                $num = $fallback;
+                log_warning('use fallback configuration value for '
+                    . implode(', ', $names) . ': ' . $fallback);
+            }
+        }
+        return $num;
     }
 
 
@@ -177,39 +204,59 @@ class config_numbers extends value_list
     /**
      * load the system configuration from the database to this object
      *
-     * @return bool true if the values of the system configuration have been loaded
+     * @param user $usr for whom the configuration should be loaded
+     * @param phrase|null $phr to select either the user or frontend configuration values
+     * @return user_message if something strange happened the message code ids and the parameters for humans
      */
-    function load_cfg(user $usr): bool
+    function load_cfg(user $usr, ?phrase $phr = null): user_message
     {
-        $result = false;
+        $usr_msg = new user_message();
         $phr_sys_cfg = new phrase($usr);
-        $phr_sys_cfg->load_by_name(word::SYSTEM_CONFIG);
+        $phr_sys_cfg->load_by_name(triples::SYSTEM_CONFIG);
+        // TODO Prio 3 speed: loading the phrases upfront with $phr_lst = $root_phr->all_children(); may be faster
         $this->load_by_phr($phr_sys_cfg);
-        if (!$this->is_empty()) {
-            $result = true;
+        // TODO Prio 2 speed: it may be faster if the phrase is included in the sql select
+        if ($phr != null) {
+            // TODO Prio 1 activate
+            //$this->filter_by_phrase($phr);
+            log_debug('filter by phrase');
         }
-        return $result;
+        if (!$this->is_empty()) {
+            log_debug($this->count() . ' config values loaded');
+            $this->load_phrases();
+        } else {
+            log_debug('no config values loaded');
+            $usr_msg->add_id(msg_id::CONFIG_EMPTY);
+        }
+        return $usr_msg;
     }
 
     /**
+     * load the system configuration values relevant for the frontend
      *
-     * @return bool true if the values of the user configuration have been loaded
+     * @param user $usr for whom the configuration should be loaded
+     * @return user_message if something strange happened the message code ids and the parameters for humans
      */
-    function load_usr_cfg(user $usr): bool
+    function load_frontend_cfg(user $usr): user_message
     {
-        $result = false;
-        $root_phr = new phrase($usr);
-        $root_phr->load_by_name(word::SYSTEM_CONFIG);
-        $phr_lst = $root_phr->all_children();
-        $this->load_by_phr($root_phr);
-        if (!$this->is_empty()) {
-            $result = true;
-            log_debug($this->count() . ' config values loaded');
-        } else {
-            log_debug('no config values loaded');
-        }
-        return $result;
+        $phr = new phrase($usr);
+        $phr->load_by_name(api::CONFIG_FRONTEND);
+        return $this->load_cfg($usr, $phr);
     }
+
+    /**
+     * load the system configuration values that the user can change
+     *
+     * @param user $usr for whom the configuration should be loaded
+     * @return user_message if something strange happened the message code ids and the parameters for humans
+     */
+    function load_usr_cfg(user $usr): user_message
+    {
+        $phr = new phrase($usr);
+        $phr->load_by_name(api::CONFIG_USER);
+        return $this->load_cfg($usr, $phr);
+    }
+
 
     /*
      * default
@@ -218,6 +265,24 @@ class config_numbers extends value_list
     function default_json(): string
     {
         return '';
+    }
+
+
+    /*
+     * predefined
+     */
+
+    /**
+     * @return string the code_id of the user frontend language
+     */
+    function language(): string
+    {
+        return $this->get_by([
+            words::LANGUAGE,
+            words::USER,
+            words::FRONTEND],
+            language_codes::SYS
+        );
     }
 
 }

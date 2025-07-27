@@ -32,11 +32,15 @@
 
 namespace unit_read;
 
-use api\formula\formula as formula_api;
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'formulas.php';
+
 use cfg\formula\formula;
+use cfg\formula\formula_list;
 use cfg\formula\formula_type;
 use cfg\formula\formula_type_list;
-use cfg\formula\formula_list;
+use shared\const\formulas;
 use test\test_cleanup;
 
 class formula_read_tests
@@ -51,11 +55,14 @@ class formula_read_tests
         // init
         $t->name = 'formula read db->';
 
-        $t->header('formula db read tests');
+        // start the test section (ts)
+        $ts = 'read formula ';
+        $t->header($ts);
 
-        $t->subheader('formula load');
+        $t->subheader($ts . 'load' );
+        $test_name = formulas::SCALE_TO_SEC;
         $frm = new formula($t->usr1);
-        $t->assert_load($frm, formula_api::TN_READ);
+        $t->assert_load($frm, formulas::SCALE_TO_SEC);
 
         $t->subheader('formula tests');
 
@@ -64,9 +71,9 @@ class formula_read_tests
         // ... the second user has excluded the word at this point, so even if the word is linked the word link is nevertheless false
         // TODO check what that the word is linked if the second user activates the word
         $phr = new phrase($t->usr1);
-        $phr->load_by_name(word_api::TN_READ);
+        $phr->load_by_name(words::TN_READ);
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formula_api::TN_RENAMED);
+        $frm->load_by_name(formulas::TN_RENAMED);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
@@ -92,9 +99,12 @@ class formula_read_tests
 
         $t->subheader('Frontend API tests');
 
-        $frm = $t->load_formula(formula_api::TN_INCREASE);
+        $test_name = formulas::INCREASE;
+        $frm = $t->load_formula(formulas::INCREASE);
         if ($frm->name() != '') {
-            $t->assert_api_obj($frm);
+            $t->assert_export_reload($ts . $test_name, $frm);
+        } else {
+            log_err($ts . $test_name . ' failed');
         }
     }
 

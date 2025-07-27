@@ -36,40 +36,47 @@
 
 namespace html\types;
 
-include_once TYPES_PATH . 'type_object.php';
-include_once TYPES_PATH . 'type_list.php';
-include_once TYPES_PATH . 'change_action_list.php';
-include_once TYPES_PATH . 'change_table_list.php';
-include_once TYPES_PATH . 'change_field_list.php';
-include_once TYPES_PATH . 'sys_log_status_list.php';
-include_once TYPES_PATH . 'user_profiles.php';
-include_once TYPES_PATH . 'job_type_list.php';
-include_once TYPES_PATH . 'languages.php';
-include_once TYPES_PATH . 'language_forms.php';
-include_once TYPES_PATH . 'share.php';
-include_once TYPES_PATH . 'protection.php';
-include_once TYPES_PATH . 'verbs.php';
-include_once TYPES_PATH . 'phrase_types.php';
-include_once TYPES_PATH . 'formula_type_list.php';
-include_once TYPES_PATH . 'formula_link_type_list.php';
-include_once TYPES_PATH . 'source_type_list.php';
-include_once TYPES_PATH . 'ref_type_list.php';
-include_once TYPES_PATH . 'view_type_list.php';
-include_once TYPES_PATH . 'view_style_list.php';
-include_once TYPES_PATH . 'view_link_type_list.php';
-include_once TYPES_PATH . 'component_type_list.php';
-include_once TYPES_PATH . 'component_link_type_list.php';
-include_once TYPES_PATH . 'position_type_list.php';
-include_once VIEW_PATH . 'view_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::TYPES . 'type_object.php';
+include_once html_paths::TYPES . 'type_list.php';
+include_once html_paths::TYPES . 'change_action_list.php';
+include_once html_paths::TYPES . 'change_table_list.php';
+include_once html_paths::TYPES . 'change_field_list.php';
+include_once html_paths::TYPES . 'sys_log_status_list.php';
+include_once html_paths::TYPES . 'user_profile.php';
+include_once html_paths::TYPES . 'job_type_list.php';
+include_once html_paths::TYPES . 'languages.php';
+include_once html_paths::TYPES . 'language_forms.php';
+include_once html_paths::TYPES . 'share.php';
+include_once html_paths::TYPES . 'protection.php';
+include_once html_paths::TYPES . 'verbs.php';
+include_once html_paths::TYPES . 'phrase_types.php';
+include_once html_paths::TYPES . 'formula_type_list.php';
+include_once html_paths::TYPES . 'formula_link_type_list.php';
+include_once html_paths::TYPES . 'source_type_list.php';
+include_once html_paths::TYPES . 'ref_type_list.php';
+include_once html_paths::TYPES . 'view_type_list.php';
+include_once html_paths::TYPES . 'view_style_list.php';
+include_once html_paths::TYPES . 'view_link_type_list.php';
+include_once html_paths::TYPES . 'component_type_list.php';
+include_once html_paths::TYPES . 'component_link_type_list.php';
+include_once html_paths::TYPES . 'position_type_list.php';
+//include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'json_fields.php';
 
 // get the api const that are shared between the backend and the html frontend
-include_once SHARED_PATH . 'api.php';
+include_once paths::SHARED . 'api.php';
 
 use html\user\user_message;
+use html\verb\verb;
 use html\view\view_list as view_list_dsp;
 use html\word\word as word_dsp;
 use shared\api;
-use shared\types\view_styles;
+use shared\json_fields;
 
 class type_lists
 {
@@ -97,14 +104,14 @@ class type_lists
     /**
      * set the vars of this frontend object bases on the api message
      * @param string $json_api_msg an api json message as a string
-     * @return void
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json(string $json_api_msg): void
+    function set_from_json(string $json_api_msg): user_message
     {
         $ctrl = new api();
         $json_array = json_decode($json_api_msg, true);
-        $type_lists_json = $ctrl->check_api_msg($json_array, api::JSON_TYPE_LISTS);
-        $this->set_from_json_array($type_lists_json);
+        $type_lists_json = $ctrl->check_api_msg($json_array, json_fields::BODY);
+        return $this->set_from_json_array($type_lists_json);
     }
 
     /**
@@ -261,7 +268,7 @@ class type_lists
     function set_user_profiles(array $json_array = null): void
     {
         global $html_user_profiles;
-        $html_user_profiles = new user_profiles();
+        $html_user_profiles = new user_profile();
         $html_user_profiles->set_from_json_array($json_array);
     }
 
@@ -374,7 +381,7 @@ class type_lists
     {
         global $html_verbs;
         $html_verbs = new verbs();
-        $html_verbs->set_from_json_array($json_array);
+        $html_verbs->set_from_json_array($json_array, verb::class);
     }
 
     function set_sys_log_stati(array $json_array = null): void
@@ -416,7 +423,7 @@ class type_lists
     {
         global $html_system_views;
         $html_system_views = new view_list_dsp();
-        $html_system_views->set_from_json_array($json_array);
+        $html_system_views->api_mapper($json_array);
     }
 
     // TODO add similar functions for all cache types

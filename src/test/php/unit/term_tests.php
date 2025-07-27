@@ -32,26 +32,17 @@
 
 namespace unit;
 
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_PHRASE_PATH . 'term.php';
+use html\const\paths as html_paths;
 
-use api\formula\formula as formula_api;
-use api\word\triple as triple_api;
-use api\word\word as word_api;
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::PHRASE . 'term.php';
+
 use cfg\db\sql_creator;
-use html\formula\formula as formula_dsp;
 use html\phrase\term as term_dsp;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
-use html\verb\verb as verb_dsp;
-use cfg\formula\formula;
-use cfg\db\sql_db;
 use cfg\phrase\term;
-use cfg\word\triple;
-use cfg\verb\verb;
 use test\test_cleanup;
 
 class term_tests
@@ -66,9 +57,11 @@ class term_tests
         $t->name = 'term->';
         $t->resource_path = 'db/term/';
 
-        $t->header('Unit tests of the term class (src/main/php/model/phrase/term.php)');
+        // start the test section (ts)
+        $ts = 'unit term ';
+        $t->header($ts);
 
-        $t->subheader('Set and get of the grouped object tests');
+        $t->subheader($ts . 'set and get of the grouped object');
 
         $wrd = $t->word();
         $trm = $wrd->term();
@@ -91,12 +84,12 @@ class term_tests
         $t->assert($t->name . 'verb name', $trm->name(), $vrb->name());
 
 
-        $t->subheader('Term SQL setup statements');
+        $t->subheader($ts . 'sql setup');
         $trm = $t->term();
         $t->assert_sql_view_create($trm);
 
 
-        $t->subheader('SQL statement tests');
+        $t->subheader($ts . 'sql query');
 
         // check the creation of the prepared sql statements to load a term by id or name
         // TODO use assert_load_sql_id for all objects
@@ -106,7 +99,7 @@ class term_tests
         $t->assert_sql_by_name($sc, $trm);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $trm = $t->term();
         $t->assert_api_to_dsp($trm, new term_dsp());

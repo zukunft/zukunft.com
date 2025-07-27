@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/db/sql_par_list.php - a list of sql parameters and calls
+    model/db/sql_par_list.php - a list of sql parameters and calls
     -----------------------
 
     The list of sql calls with the related parameters are used for block writes to the database
@@ -34,7 +34,9 @@
 
 namespace cfg\db;
 
-include_once MODEL_USER_PATH . 'user_message.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_USER . 'user_message.php';
 
 use cfg\user\user_message;
 
@@ -52,6 +54,19 @@ class sql_par_list
     function add(?sql_par $par): void
     {
         $this->lst[] = $par;
+    }
+
+    /**
+     * add a sql call with the parameters to the list if the call name is not yet in the list
+     *
+     * @param sql_par|null $par the sql call with the parameters for the sql function call
+     * @return void
+     */
+    function add_by_name(?sql_par $par): void
+    {
+        if (!in_array($par->name, $this->names())) {
+            $this->lst[] = $par;
+        }
     }
 
     /**
@@ -93,14 +108,50 @@ class sql_par_list
     /**
      * @return user_message with the parameter names formatted for sql
      */
-    function exe(): user_message
+    function exe(string $class = ''): user_message
     {
         global $db_con;
 
         $usr_msg = new user_message();
 
         foreach ($this->lst as $qp) {
-            $usr_msg->add($db_con->insert($qp, 'add word from list'));
+            $ins_msg = $db_con->insert($qp, 'add ' . $class . ' from list');
+            $usr_msg->add($ins_msg);
+            $usr_msg->add_list_name_id($ins_msg, $qp->obj_name);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return user_message with the parameter names formatted for sql
+     */
+    function exe_update(string $class = ''): user_message
+    {
+        global $db_con;
+
+        $usr_msg = new user_message();
+
+        foreach ($this->lst as $qp) {
+            $upd_msg = $db_con->update($qp, 'update ' . $class . ' from list');
+            $usr_msg->add($upd_msg);
+            $usr_msg->add_list_name_id($upd_msg, $qp->obj_name);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return user_message with the parameter names formatted for sql
+     */
+    function exe_delete(string $class = ''): user_message
+    {
+        global $db_con;
+
+        $usr_msg = new user_message();
+
+        foreach ($this->lst as $qp) {
+            $del_msg = $db_con->delete($qp, 'delete ' . $class . ' from list');
+            $usr_msg->add($del_msg);
+            $usr_msg->add_list_name_id($del_msg, $qp->obj_name);
         }
         return $usr_msg;
     }

@@ -2,8 +2,9 @@
 
 /*
 
-    /model/dp/sql_field_default.php - enum of the sql default value types used
-    -------------------------------
+    model/dp/sql_field_default.php - enum of the sql default value types used
+    ------------------------------
+
 
     This file is part of zukunft.com - calc with words
 

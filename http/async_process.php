@@ -36,15 +36,17 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 use cfg\import\import_file;
-use html\html_base;
-use html\view\view as view_dsp;
 use cfg\user\user;
 use cfg\view\view;
+use html\html_base;
+use html\view\view as view_dsp;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 if ($debug > 1) {
     echo 'lib loaded<br>';
@@ -70,7 +72,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_IMPORT);
+    $msk->load_by_code_id(view_shared::IMPORT);
 
     if ($usr->is_admin()) {
 

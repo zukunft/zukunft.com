@@ -35,12 +35,13 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
 
-use cfg\view\view;
-use html\view\view as view_dsp;
+include_once paths::SHARED_CONST . 'views.php';
+
 use cfg\user\user;
-use shared\views as view_shared;
+use cfg\view\view;
+use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("values_paste");
@@ -58,7 +59,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_VALUE_ADD);
+    $msk->load_by_code_id(view_shared::VALUE_ADD);
     /*
         // get the fixed parameters
         $new_tbl   = $_GET['table'];    // the value table as pasted by the user

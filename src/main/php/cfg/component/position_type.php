@@ -2,7 +2,7 @@
 
 /*
 
-  cfg/component/position_type.php - db based ENUM of the view component position types
+  model/component/position_type.php - db based ENUM of the view component position types
   -------------------------------
   
   This file is part of zukunft.com - calc with words
@@ -31,15 +31,14 @@
 
 namespace cfg\component;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
 
 use cfg\helper\type_object;
 
 class position_type extends type_object
 {
-    // list of the view component position types that have a coded functionality
-    const BELOW = "below";
-    const SIDE = "side";
 
     /*
      * database link

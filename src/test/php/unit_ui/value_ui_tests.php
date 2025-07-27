@@ -32,16 +32,9 @@
 
 namespace unit_ui;
 
-use api\word\word as word_api;
-use api\value\value as value_api;
-use cfg\word\word;
-use cfg\word\word_list;
-use cfg\value\value;
-use cfg\value\value_list;
-use html\value\value_list as value_list_dsp;
-use cfg\phrase\phrase_list;
 use html\html_base;
-use html\value\value as value_dsp;
+use html\value\value;
+use shared\types\api_type;
 use test\test_cleanup;
 
 class value_ui_tests
@@ -50,30 +43,39 @@ class value_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('value tests');
+        $t->subheader('value html ui tests');
 
-        $val = new value_dsp($t->value()->api_json());
+        $val = new value($t->value()->api_json([api_type::INCL_PHRASES]));
         $test_page = $html->text_h2('value display test');
-        $test_page .= 'with tooltip: ' . $val->display() . '<br>';
-        $test_page .= 'with link: ' . $val->display_linked() . '<br>';
-        $t->html_test($test_page, 'value', 'value', $t);
+        $test_page .= 'with name and tooltip: ' . $val->name_tip() . '<br>';
+        $test_page .= 'with name and link: ' . $val->name_link() . '<br>';
+        $test_page .= 'with tooltip: ' . $val->value() . '<br>';
+        $test_page .= 'with detail link: ' . $val->value_link() . '<br>';
+        $test_page .= 'with edit link: ' . $val->value_edit() . '<br>';
+        $test_page .= $html->text_h2('buttons');
+        $test_page .= 'add button: ' . $val->btn_add() . '<br>';
+        $test_page .= 'edit button: ' . $val->btn_edit() . '<br>';
+        $test_page .= 'del button: ' . $val->btn_del() . '<br>';
+        $t->html_test($test_page, 'value html components', 'value', $t);
 
 
         // TODO review
 
         global $usr;
 
-        $t->header('Test the value frontend scripts (e.g. /value_add.php)');
+        // start the test section (ts)
+        $ts = 'unit ui html value ';
+        $t->header($ts);
 
         /*
         // prepare the frontend testing
         $phr_lst_added = new phrase_list($usr);
-        $phr_lst_added->add_name(word_api::TN_INHABITANTS);
-        $phr_lst_added->add_name(word_api::TN_MIO);
-        $phr_lst_added->add_name(word_api::TN_2020);
+        $phr_lst_added->add_name(words::TN_INHABITANTS);
+        $phr_lst_added->add_name(words::TN_MIO);
+        $phr_lst_added->add_name(words::TN_2020);
         $phr_lst_ch = clone $phr_lst_added;
-        $phr_lst_ch->add_name(word_api::TN_CH);
-        $phr_lst_added->add_name(word_api::TN_RENAMED);
+        $phr_lst_ch->add_name(words::TN_CH);
+        $phr_lst_added->add_name(words::TN_RENAMED);
         $val_added = new value($usr);
         $val_added->load_by_grp($phr_lst_added->get_grp_id());
         $val_ch = new value($usr);
@@ -82,30 +84,30 @@ class value_ui_tests
         // call the add value page and check if at least some basic keywords are returned
         $back = 0;
         $result = file_get_contents('https://zukunft.com/http/value_add.php?back=' . $back . $phr_lst_added->id_url_long());
-        $target = word_api::TN_RENAMED;
-        $t->dsp_contains(', frontend value_add.php ' . $result . ' contains at least ' . word_api::TN_RENAMED, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        $target = words::TN_RENAMED;
+        $t->dsp_contains(', frontend value_add.php ' . $result . ' contains at least ' . words::TN_RENAMED, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         $result = file_get_contents('https://zukunft.com/http/value_add.php?back=' . $back . $phr_lst_ch->id_url_long());
-        $target = word_api::TN_CH;
-        $t->dsp_contains(', frontend value_add.php ' . $result . ' contains at least ' . word_api::TN_CH, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        $target = words::TN_CH;
+        $t->dsp_contains(', frontend value_add.php ' . $result . ' contains at least ' . words::TN_CH, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         // test the edit value frontend
         $result = file_get_contents('https://zukunft.com/http/value_edit.php?id=' . $val_added->id() . '&back=' . $back);
-        $target = word_api::TN_RENAMED;
-        $t->dsp_contains(', frontend value_edit.php ' . $result . ' contains at least ' . word_api::TN_RENAMED, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        $target = words::TN_RENAMED;
+        $t->dsp_contains(', frontend value_edit.php ' . $result . ' contains at least ' . words::TN_RENAMED, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         $result = file_get_contents('https://zukunft.com/http/value_edit.php?id=' . $val_ch->id() . '&back=' . $back);
-        $target = word_api::TN_CH;
-        $t->dsp_contains(', frontend value_edit.php ' . $result . ' contains at least ' . word_api::TN_CH, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
+        $target = words::TN_CH;
+        $t->dsp_contains(', frontend value_edit.php ' . $result . ' contains at least ' . words::TN_CH, $target, $result, $t::TIMEOUT_LIMIT_PAGE_SEMI);
 
         // test the del value frontend
         $result = file_get_contents('https://zukunft.com/http/value_del.php?id=' . $val_added->id() . '&back=' . $back);
-        $target = word_api::TN_RENAMED;
-        $t->dsp_contains(', frontend value_del.php ' . $result . ' contains at least ' . word_api::TN_RENAMED, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        $target = words::TN_RENAMED;
+        $t->dsp_contains(', frontend value_del.php ' . $result . ' contains at least ' . words::TN_RENAMED, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
         $result = file_get_contents('https://zukunft.com/http/value_del.php?id=' . $val_ch->id() . '&back=' . $back);
-        $target = word_api::TN_CH;
-        $t->dsp_contains(', frontend value_del.php ' . $result . ' contains at least ' . word_api::TN_CH, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
+        $target = words::TN_CH;
+        $t->dsp_contains(', frontend value_del.php ' . $result . ' contains at least ' . words::TN_CH, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
 
         $t->header('Test the value list class (classes/value_list.php)');
@@ -119,11 +121,11 @@ class value_ui_tests
         // test get a single value from a value list by group and time
         // get all value for Switzerland
         $wrd = new word($usr);
-        $wrd->load_by_name(word_api::TN_CH);
+        $wrd->load_by_name(words::TN_CH);
         $val_lst = $wrd->val_lst();
-        // build the phrase list to select the value Sales for 2014
+        // build the phrase list to select the value sales for 2014
         $wrd_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(word_api::TN_CH, word_api::TN_INHABITANTS, word_api::TN_MIO, word_api::TN_2020));
+        $wrd_lst->load_by_names(array(words::TN_CH, words::TN_INHABITANTS, words::TN_MIO, words::TN_2020));
         $wrd_time = $wrd_lst->assume_time();
         $grp = $wrd_lst->get_grp();
         $result = $grp->id();
@@ -133,13 +135,13 @@ class value_ui_tests
         if ($val != null) {
             $result = $val->number();
         }
-        $target = value_api::TV_CH_INHABITANTS_2020_IN_MIO;
+        $target = values::TV_CH_INHABITANTS_2020_IN_MIO;
         $t->display('value_list->get_by_grp for ' . $wrd_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_DB);
 
         // ... get all times of the Switzerland values
         $time_lst = $val_lst->time_list();
         $wrd_2014 = new word($usr);
-        $wrd_2014->load_by_name(word_api::TN_2014);
+        $wrd_2014->load_by_name(words::TN_2014);
         if ($time_lst->does_contain($wrd_2014)) {
             $result = true;
         } else {
@@ -149,7 +151,7 @@ class value_ui_tests
 
         // ... and filter by times
         $time_lst = new word_list($usr);
-        $wrd_lst->load_by_names(array(word_api::TN_2019, word_api::TN_2021));
+        $wrd_lst->load_by_names(array(words::TN_2019, words::TN_2021));
         $used_value_lst = $val_lst->filter_by_time($time_lst);
         $used_time_lst = $used_value_lst->time_list();
         if ($time_lst->does_contain($wrd_2014)) {
@@ -161,7 +163,7 @@ class value_ui_tests
 
         // ... but not 2020
         $wrd_2020 = new word($usr);
-        $wrd_2020->load_by_name(word_api::TN_2020);
+        $wrd_2020->load_by_name(words::TN_2020);
         if ($time_lst->does_contain($wrd_2020)) {
             $result = true;
         } else {
@@ -201,12 +203,12 @@ class value_ui_tests
         $wrd = new word($usr);
         $wrd->load_by_name('Nestlé');
         $wrd_col = new word($usr);
-        $wrd_col->load_by_name(word_api::TN_CASH_FLOW);
+        $wrd_col->load_by_name(words::TN_CASH_FLOW);
         $val_lst = new value_list_dsp();
         // TODO review
         //$val_lst->set_phr($wrd->phrase());
         $result = $val_lst->dsp_table($wrd_col, $wrd->id());
-        $target = value_api::TV_NESN_SALES_2016_FORMATTED;
+        $target = values::TV_NESN_SALES_2016_FORMATTED;
         $t->dsp_contains(', value_list_dsp->dsp_table for "' . $wrd->name() . '" (' . $result . ') contains ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE_LONG);
         //$result = $val_lst->dsp_table($wrd_col, $wrd->id);
         //$target = zuv_table ($wrd->id, $wrd_col->id, $usr->id());

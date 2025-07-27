@@ -7,7 +7,7 @@
   ],
   "words": [
     {
-      "name": "Mathematics",
+      "name": "mathematics",
       "description": "Mathematics is an area of knowledge that includes the topics of numbers and formulas",
       "protection": "admin_protection",
       "refs": [
@@ -30,8 +30,20 @@
       ]
     },
     {
+      "name": "zero",
+      "description": "0 (zero) is a number representing an empty quantity. Adding (or subtracting) 0 to any number leaves that number unchanged; in mathematical terminology, 0 is the additive identity of the integers, rational numbers, real numbers, and complex numbers, as well as other algebraic structures",
+      "type": "scaling_hidden",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "0",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "one",
-      "comment": "Used to force the scaling to one unit",
+      "description": "1 (one, unit, unity) is a number, numeral, and glyph. It is the first and smallest positive integer of the infinite sequence of natural numbers. Used to force the scaling to one unit",
       "type": "scaling_hidden",
       "protection": "admin_protection",
       "refs": [
@@ -42,21 +54,122 @@
       ]
     },
     {
-      "name": "Pi",
-      "description": "ratio of the circumference of a circle to its diameter",
+      "name": "π",
+      "description": "Symbol for the ratio of the circumference of a circle to its diameter",
       "type": "constant",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "\uD835\uDC52",
+      "description": "Symbol for the Euler's number, which is defined as the limiting difference between the harmonic series and the natural logarithm",
+      "type": "constant",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "physics",
+      "description": "Physics is the natural science of matter",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Pi",
+          "name": "physics",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "science",
+      "description": "Science organizes knowledge in the form of testable explanations and predictions about the universe",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "science",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "natural",
+      "description": "Nature is an inherent character or constitution, particularly of the universe as a whole",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Natural",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "universe",
+      "description": "The universe is all of space and time and their contents. It comprises all of existence, any fundamental interaction, physical process and physical constant, and therefore all forms of matter and energy, and the structures they form, from sub-atomic particles to entire galactic filaments.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Universe",
           "type": "wikipedia"
         },
         {
-          "name": "Q167",
-          "source": "wikidata",
-          "type": "wikidata",
-          "url": "https:\/\/www.wikidata.org\/wiki\/Special:EntityData\/Q167.json",
-          "description": "pi - ratio of the circumference of a circle to its diameter"
+          "name": "Q1",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "earth",
+      "description": "Earth is the third planet from the Sun and the only astronomical object known to harbor life. This is enabled by Earth being an ocean world, the only one in the Solar System sustaining liquid surface water.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Earth",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q2",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "life",
+      "description": "Life, sometimes referred to as biota, is a quality that distinguishes matter that has biological processes, such as signaling and self-sustaining processes, from matter that does not.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "life",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q3",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "death",
+      "description": "Death is the end of life; the irreversible cessation of all biological functions that sustain a living organism.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "death",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q4",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "human",
+      "description": "Humans (Homo sapiens) or modern humans are the most common and widespread species of primate, and the last surviving species of the genus Homo.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Homo",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q5",
+          "type": "wikidata"
         }
       ]
     },
@@ -83,7 +196,45 @@
       ]
     },
     {
+      "name": "Pi",
+      "description": "ratio of the circumference of a circle to its diameter",
+      "type": "constant",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Pi",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q167",
+          "source": "wikidata",
+          "type": "wikidata",
+          "url": "https:\/\/www.wikidata.org\/wiki\/Special:EntityData\/Q167.json",
+          "description": "pi - ratio of the circumference of a circle to its diameter"
+        }
+      ]
+    },
+    {
+      "name": "Euler's number",
+      "description": "The number e is a mathematical constant approximately equal to 2.71828 that is the base of the natural logarithm and exponential function.",
+      "type": "constant",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "E_(mathematical_constant)",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q82435",
+          "source": "wikidata",
+          "type": "wikidata",
+          "description": "limit of (1 + 1/n)^n as n approaches infinity"
+        }
+      ]
+    },
+    {
       "name": "Euler's constant",
+      "description": "Euler's constant (sometimes called the Euler–Mascheroni constant) is a mathematical constant, usually denoted by the lowercase Greek letter gamma (γ), defined as the limiting difference between the harmonic series and the natural logarithm, denoted here by log",
       "type": "constant",
       "protection": "admin_protection",
       "refs": [
@@ -100,131 +251,52 @@
       ]
     },
     {
-      "name": "π",
-      "type": "constant",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "\uD835\uDC52",
-      "type": "constant",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Physics",
-      "description": "Physics is the natural science of matter",
+      "name": "base",
+      "description": "In mathematics, a base for the topology τ of a topological space (X, τ) is a family B of open subsets of X such that every open set of the topology is equal to the union of some sub-family of B.",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Physics",
+          "name": "Base (topology)",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "Science",
-      "description": "Science organizes knowledge in the form of testable explanations and predictions about the universe",
+      "name": "unit",
+      "description": "In mathematics, an identity element or neutral element of a binary operation is an element that leaves unchanged every element when the operation is applied",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Science",
+          "name": "Identity element",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "Natural science",
-      "description": "Natural science is understanding and prediction of natural phenomena, based on empirical evidence",
+      "name": "system",
+      "description": "A system is a group of interacting or interrelated elements that act according to a set of rules to form a unified whole.",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Natural_science",
+          "name": "System",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "Universe",
+      "name": "international",
+      "description": "Internationalism is a political principle that advocates greater political or economic cooperation among states and nations.",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Universe",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "Earth",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Earth",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q2",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "life",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "life",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q3",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "death",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "death",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q4",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "human",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Homo",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q5",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "SI base unit",
-      "type": "measure",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "SI_base_unit",
+          "name": "Internationalism (politics)",
           "type": "wikipedia"
         }
       ]
     },
     {
       "name": "second",
+      "description": "The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.",
       "plural": "seconds",
       "type": "measure",
       "protection": "admin_protection",
@@ -237,12 +309,14 @@
     },
     {
       "name": "s",
+      "description": "The symbol for second is a unit of time derived from the division of the day first into 24 hours, then to 60 minutes and finally to 60 seconds each (24 × 60 × 60 = 86400).",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "millisecond",
       "plural": "milliseconds",
+      "description": "The 1'000 part of a second.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -254,6 +328,7 @@
     },
     {
       "name": "metre",
+      "description": "The metre (or meter in US spelling) has been defined as the length of the path travelled by light in vacuum during a time interval of \u20601/299792458\u2060 of a second, where the second is defined by a hyperfine transition frequency of caesium.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -265,11 +340,13 @@
     },
     {
       "name": "m",
+      "description": "Is a symbol for the metre is the base unit of length in the International System of Units (SI).",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "kilogram",
+      "description": "The kilogram is the SI unit of mass. It is defined by taking the fixed numerical value of the Planck constant h to be 6.62607015×10−34 when expressed in the unit J⋅s, which is equal to kg⋅m2⋅s−1, where the metre and the second are defined in terms of c and ΔνCs.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -281,11 +358,13 @@
     },
     {
       "name": "kg",
+      "description": "The symbol for the kilogram which was originally defined in 1795 during the French Revolution as the mass of one litre of water.",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "ampere",
+      "description": "The ampere is the unit of electric current in the International System of Units (SI). One ampere is equal to 1 coulomb (C) moving past a point per second.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -297,11 +376,13 @@
     },
     {
       "name": "A",
+      "description": "Is a symbol for ampere",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "kelvin",
+      "description": "The kelvin is the base unit for temperature in the International System of Units (SI). The Kelvin scale is an absolute temperature scale that starts at the lowest possible temperature (absolute zero), taken to be 0 K.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -313,11 +394,13 @@
     },
     {
       "name": "K",
+      "description": "Is a symbol for kelvin",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "mole",
+      "description": "The mole (symbol mol) is a unit of measurement, the base unit in the International System of Units (SI) for amount of substance, an SI base quantity proportional to the number of elementary entities of a substance.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -329,11 +412,13 @@
     },
     {
       "name": "mol",
+      "description": "Is a symbol for mole",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "candela",
+      "description": "The candela is the unit of luminous intensity in the International System of Units (SI). It measures luminous power per unit solid angle emitted by a light source in a particular direction.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -345,22 +430,35 @@
     },
     {
       "name": "cd",
+      "description": "Is a symbol for candela",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
-      "name": "named SI derived unit",
-      "type": "measure",
+      "name": "derived",
+      "description": "In phylogenetics, an apomorphy (or derived trait) is a novel character or character state that has evolved from its ancestral form.",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "SI_derived_unit#Derived units with special names",
+          "name": "Apomorphy and synapomorphy",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "named",
+      "description": "A name is a term used for identification by an external observer. They can identify a class or category of things, or a single thing, either uniquely, or within a given context.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Name",
           "type": "wikipedia"
         }
       ]
     },
     {
       "name": "hertz",
+      "description": "The hertz (symbol: Hz) is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -372,11 +470,13 @@
     },
     {
       "name": "Hz",
+      "description": "Is a symbol for hertz",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "radian",
+      "description": "The radian, denoted by the symbol rad, is the unit of angle in the International System of Units (SI) and is the standard unit of angular measure used in many areas of mathematics.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -388,11 +488,13 @@
     },
     {
       "name": "rad",
+      "description": "Is a symbol for radian",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "steradian",
+      "description": "The steradian or square radian[1][2] is the unit of solid angle in the International System of Units (SI). It is used in three dimensional geometry, and is analogous to the radian, which quantifies planar angles.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -404,11 +506,13 @@
     },
     {
       "name": "sr",
+      "description": "Is a symbol for steradian",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "newton",
+      "description": "The newton is the unit of force in the International System of Units (SI). Expressed in terms of SI base units, it is 1 kg⋅m/s2, the force that accelerates a mass of one kilogram at one metre per second squared.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -420,11 +524,13 @@
     },
     {
       "name": "N",
+      "description": "Is a symbol for newton",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "pascal",
+      "description": "The pascal is the unit of pressure in the International System of Units (SI). It is also used to quantify internal pressure, stress, Young's modulus, and ultimate tensile strength.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -436,11 +542,13 @@
     },
     {
       "name": "Pa",
+      "description": "Is a symbol for pascal",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "joule",
+      "description": "One joule is equal to the amount of work done when a force of one newton displaces a body through a distance of one metre in the direction of that force.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -452,11 +560,13 @@
     },
     {
       "name": "J",
+      "description": "Is a symbol for joule",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "watt",
+      "description": "The watt is the unit of power or radiant flux in the International System of Units (SI), equal to 1 joule per second or 1 kg⋅m2⋅s−3",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -468,11 +578,13 @@
     },
     {
       "name": "W",
+      "description": "Is a symbol for watt",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "coulomb",
+      "description": "The SI defines the coulomb as \"the quantity of electricity carried in 1 second by a current of 1 ampere\". Then the value of the elementary charge e is defined to be 1.602176634×10−19 C.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -484,11 +596,13 @@
     },
     {
       "name": "C",
+      "description": "Is a symbol for coulomb",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "volt",
+      "description": "One volt is defined as the electric potential between two points of a conducting wire when an electric current of one ampere dissipates one watt of power between those points.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -500,11 +614,13 @@
     },
     {
       "name": "V",
+      "description": "Is a symbol for volt",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
-      "name": "weber",
+      "name": "Weber",
+      "description": "Is the unit of magnetic flux in the International System of Units (SI). The unit is derived (through Faraday's law of induction) from the relationship 1 Wb = 1 V⋅s (volt-second). A magnetic flux density of 1 Wb/m2 (one weber per square metre) is one tesla.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -516,11 +632,13 @@
     },
     {
       "name": "Wb",
+      "description": "Is a symbol for Weber",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "tesla",
+      "description": "The tesla is the unit of magnetic flux density (also called magnetic B-field strength) in the International System of Units (SI).\n\nOne tesla is equal to one weber per square metre.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -532,11 +650,13 @@
     },
     {
       "name": "T",
+      "description": "Is a symbol for tesla",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "farad",
+      "description": "The farad is the unit of electrical capacitance, the ability of a body to store an electrical charge, in the International System of Units (SI), equivalent to 1 coulomb per volt (C/V).",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -548,11 +668,13 @@
     },
     {
       "name": "F",
+      "description": "Is a symbol for farad",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "ohm",
+      "description": "The ohm is the unit of electrical resistance in the International System of Units (SI).",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -564,11 +686,13 @@
     },
     {
       "name": "Ω",
+      "description": "Is a symbol for ohm",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "siemens",
+      "description": "The siemens is the unit of electric conductance, electric susceptance, and electric admittance in the International System of Units (SI). Conductance, susceptance, and admittance are the reciprocals of resistance, reactance, and impedance respectively; hence one siemens is equal to the reciprocal of one ohm (Ω−1) and is also referred to as the mho.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -580,11 +704,13 @@
     },
     {
       "name": "S",
+      "description": "Is a symbol for siemens",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "henry",
+      "description": "The henry is the unit of electrical inductance in the International System of Units (SI).[1] If a current of 1 ampere flowing through a coil produces flux linkage of 1 weber turn, that coil has a self-inductance of 1 henry.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -596,11 +722,13 @@
     },
     {
       "name": "H",
+      "description": "Is a symbol for henry",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "celsius",
+      "description": "The degree Celsius is the unit of temperature on the Celsius temperature scale one of two temperature scales used in the International System of Units (SI), the other being the closely related Kelvin scale.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -612,11 +740,13 @@
     },
     {
       "name": "°C",
+      "description": "Is a symbol for celsius",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "lumen",
+      "description": "The lumen is the unit of luminous flux, a measure of the perceived power of visible light emitted by a source, in the International System of Units (SI).",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -628,11 +758,13 @@
     },
     {
       "name": "lm",
+      "description": "Is a symbol for lumen",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "lux",
+      "description": "The lux is the unit of illuminance, or luminous flux per unit area, in the International System of Units (SI).",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -644,11 +776,13 @@
     },
     {
       "name": "lx",
+      "description": "Is a symbol for lux",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "becquerel",
+      "description": "The becquerel is the unit of radioactivity in the International System of Units (SI). One becquerel is defined as an activity of one per second, on average, for aperiodic activity events referred to a radionuclide.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -660,11 +794,13 @@
     },
     {
       "name": "Bq",
+      "description": "Is a symbol for becquerel",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "gray",
+      "description": "The gray is the unit of ionizing radiation dose in the International System of Units (SI), defined as the absorption of one joule of radiation energy per kilogram of matter.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -676,11 +812,13 @@
     },
     {
       "name": "Gy",
+      "description": "Is a symbol for gray",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "sievert",
+      "description": "The sievert is a derived unit in the International System of Units (SI) intended to represent the stochastic health risk of ionizing radiation, which is defined as the probability of causing radiation-induced cancer and genetic damage.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -692,11 +830,13 @@
     },
     {
       "name": "Sv",
+      "description": "Is a symbol for sievert",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
       "name": "katal",
+      "description": "The katal is a unit of the International System of Units (SI) used for quantifying the catalytic activity of enzymes (that is, measuring the enzymatic activity level in enzyme catalysis) and other catalysts.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -708,16 +848,37 @@
     },
     {
       "name": "kat",
+      "description": "Is a symbol for katal",
       "type": "measure",
       "protection": "admin_protection"
     },
     {
-      "name": "kinematic SI derived units",
+      "name": "kinematic",
+      "description": "Kinematics is a subfield of physics and mathematics, developed in classical mechanics, that describes the motion of points, bodies (objects), and systems of bodies (groups of objects) without considering the forces that cause them to move.",
       "type": "measure",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Kinematics",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "light",
+      "description": "Light, visible light, or visible radiation is electromagnetic radiation that can be perceived by the human eye.",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Light",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "speed",
+      "description": "In kinematics, the speed (commonly referred to as v) of an object is the magnitude of the change of its position over time or the magnitude of the change of its position per unit of time.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -728,18 +889,8 @@
       ]
     },
     {
-      "name": "metre per second",
-      "type": "measure",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Metre per second",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
       "name": "acceleration",
+      "description": "In mechanics, acceleration is the rate of change of the velocity of an object with respect to time. Acceleration is one of several components of kinematics, the study of motion.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -750,23 +901,74 @@
       ]
     },
     {
-      "name": "metre per second squared",
-      "type": "measure",
+      "name": "square",
+      "description": "In mathematics, a square is the result of multiplying a number by itself. The verb \"to square\" is used to denote this operation. Squaring is the same as raising to the power 2, and is denoted by a superscript 2.",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Metre per second squared",
+          "name": "Square_(algebra)",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "m/s2",
-      "type": "measure",
-      "protection": "admin_protection"
+      "name": "cube",
+      "description": "In geometry, a cube or regular hexahedron is a three-dimensional solid object bounded by six congruent square faces, a type of polyhedron.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Cube",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "elementary",
+      "description": "In particle physics, an elementary particle or fundamental particle is a subatomic particle that is not composed of other particles. The Standard Model presently recognizes seventeen distinct particles—twelve fermions and five bosons.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Elementary particle",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "charge",
+      "description": "Electric charge (symbol q, sometimes Q) is a physical property of matter that causes it to experience a force when placed in an electromagnetic field. Electric charge can be positive or negative.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Electric charge",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "luminous",
+      "description": "Luminosity is an absolute measure of radiated electromagnetic energy per unit time, and is synonymous with the radiant power emitted by a light-emitting object.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Luminosity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "efficacy",
+      "description": "Efficacy is the ability to perform a task to a satisfactory or expected degree.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Efficacy",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "jerk (physics)",
+      "description": "Jerk (also known as Jolt) is the rate of change of an object's acceleration over time.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -777,65 +979,44 @@
       ]
     },
     {
-      "name": "metre per second cubed",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "m/s3",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "angular velocity",
+      "name": "angle",
+      "description": "In Euclidean geometry, an angle or plane angle is the figure formed by two rays, called the sides of the angle, sharing a common endpoint, called the vertex of the angle.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Angular velocity",
+          "name": "Angle",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "radian per second",
+      "name": "velocity",
+      "description": "Velocity is the speed in combination with the direction of motion of an object. It is a fundamental concept in kinematics, the branch of classical mechanics that describes the motion of bodies. ",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Radian per second",
+          "name": "Velocity",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "rad/s ",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "angular acceleration",
+      "name": "frequency",
+      "description": "Frequency most often measured in hertz, is the number of occurrences of a repeating event per unit of time.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Angular acceleration",
+          "name": "Frequency",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "radian per second squared",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "rad/s2",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "frequency drift",
+      "name": "drift",
+      "description": "In electrical engineering, frequency drift is an unintended and generally arbitrary offset of an oscillator from its nominal frequency.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -846,44 +1027,41 @@
       ]
     },
     {
-      "name": "hertz per second",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "Hz/s ",
-      "type": "measure",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "volumetric flow rate",
-      "type": "measure",
+      "name": "volumetric",
+      "description": "Volume is a measure of regions in three-dimensional space.[1] It is often quantified numerically using SI derived units (such as the cubic metre and litre) or by various imperial or US customary units (such as the gallon, quart, cubic inch).",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Volumetric flow rate",
+          "name": "Volume",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "cubic metre per second",
-      "type": "measure",
+      "name": "flow",
+      "description": "In physics, physical chemistry and engineering, fluid dynamics is a subdiscipline of fluid mechanics that describes the flow of fluids – liquids and gases.",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Cubic metre per second",
+          "name": "Fluid dynamics",
           "type": "wikipedia"
         }
       ]
     },
     {
-      "name": "m3/s ",
-      "type": "measure",
-      "protection": "admin_protection"
+      "name": "rate",
+      "description": "In mathematics, a rate is the quotient of two quantities, often represented as a fraction.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Rate (mathematics)",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "time",
+      "description": "Time is the continuous progression of existence that occurs in an apparently irreversible succession from the past, through the present, and into the future.",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
@@ -960,9 +1138,45 @@
       ]
     },
     {
-      "name": "Mechanical SI derived units",
-      "type": "measure",
-      "protection": "admin_protection"
+      "name": "Planck",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Max Planck",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Boltzmann",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Ludwig Boltzmann",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Avogadro",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Amedeo Avogadro",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "mechanics",
+      "description": "Mechanics is the area of physics concerned with the relationships between force, matter, and motion among physical objects.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Mechanics",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "distance",
@@ -997,12 +1211,12 @@
       ]
     },
     {
-      "name": "square metre",
+      "name": "are",
       "type": "measure",
       "protection": "admin_protection",
       "refs": [
         {
-          "name": "Square metre",
+          "name": "Hectare#Are",
           "type": "wikipedia"
         }
       ]
@@ -1035,17 +1249,6 @@
       "refs": [
         {
           "name": "Volume",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "cubic metre",
-      "type": "measure",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Cubic metre",
           "type": "wikipedia"
         }
       ]
@@ -1103,46 +1306,22 @@
       "protection": "admin_protection"
     },
     {
-      "name": "per day",
-      "type": "measure_divisor",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "per km",
-      "type": "measure_divisor",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "per 100 km",
-      "type": "measure_divisor",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "per kWh",
-      "type": "measure_divisor",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "per t",
-      "type": "measure_divisor",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "per l",
-      "type": "measure_divisor",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "per year",
-      "type": "measure_divisor",
-      "protection": "admin_protection"
-    },
-    {
       "name": "hyperfine",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "Hyperfine structure",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "transition",
+      "description": "In atomic physics and chemistry, an atomic electron transition (also called an atomic transition, quantum jump, or quantum leap) is an electron changing from one energy level to another within an atom[1] or artificial atom.",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Atomic electron transition",
           "type": "wikipedia"
         }
       ]
@@ -1163,16 +1342,6 @@
       "refs": [
         {
           "name": "Isotopes_of_caesium#Caesium-133",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
-      "name": "hyperfine transition frequency of Cs",
-      "protection": "admin_protection",
-      "refs": [
-        {
-          "name": "Caesium standard",
           "type": "wikipedia"
         }
       ]
@@ -1199,25 +1368,38 @@
       ]
     },
     {
-      "name": "1967"
+      "name": "1967",
+      "type": "time"
     },
     {
-      "name": "1979"
+      "name": "1979",
+      "type": "time"
     },
     {
-      "name": "1983"
+      "name": "1983",
+      "type": "time"
     },
     {
-      "name": "2019"
+      "name": "2019",
+      "type": "time"
+    },
+    {
+      "name": "2020",
+      "type": "time"
+    },
+    {
+      "name": "per 100 km",
+      "type": "measure_divisor",
+      "protection": "admin_protection"
     }
   ],
   "triples": [
     {
-      "name": "Mathematical constant",
+      "name": "mathematical constant",
       "description": "A mathematical constant that never changes e.g. Pi",
       "from": "constant",
       "verb": "is part of",
-      "to": "Mathematics",
+      "to": "mathematics",
       "type": "constant",
       "protection": "admin_protection",
       "refs": [
@@ -1232,15 +1414,15 @@
       "description": "ratio of the circumference of a circle to its diameter",
       "from": "Pi",
       "verb": "is a",
-      "to": "Mathematical constant",
+      "to": "mathematical constant",
       "type": "hidden_triple"
     },
     {
       "name": "\uD835\uDC52 (math)",
       "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
-      "from": "Euler's constant",
+      "from": "Euler's number",
       "verb": "is a",
-      "to": "Mathematical constant",
+      "to": "mathematical constant",
       "type": "hidden_triple"
     },
     {
@@ -1255,32 +1437,108 @@
       "description": "Is the limit of (1 + 1/n)^n as n approaches infinity",
       "from": "\uD835\uDC52",
       "verb": "is alias of",
-      "to": "Euler's constant",
+      "to": "Euler's number",
       "type": "hidden_triple"
     },
     {
-      "name": "Natural science (branch)",
-      "from": "Natural science",
+      "name": "natural science",
+      "description": "Natural science is understanding and prediction of natural phenomena, based on empirical evidence",
+      "from": "natural",
       "verb": "is part of",
-      "to": "Science",
-      "type": "hidden_triple"
+      "to": "science",
+      "refs": [
+        {
+          "name": "Natural_science",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
-      "from": "Physics",
+      "from": "physics",
       "verb": "is a",
-      "to": "Natural science"
+      "to": "natural science"
     },
     {
       "name": "Physical constant",
       "description": "A physical constant is a physical quantity that is generally believed to be both universal in nature and have constant value in time",
       "from": "constant",
       "verb": "is part of",
-      "to": "Physics",
+      "to": "physics",
       "type": "constant",
       "protection": "admin_protection",
       "refs": [
         {
           "name": "Physical_constant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "base unit",
+      "from": "unit",
+      "verb": "can be",
+      "to": "base",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "derived unit",
+      "from": "unit",
+      "verb": "can be",
+      "to": "derived",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "named derived unit",
+      "from": "derived unit",
+      "verb": "can be",
+      "to": "named",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "kinematic derived unit",
+      "from": "derived unit",
+      "verb": "can be",
+      "to": "kinematic",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "mechanics derived unit",
+      "from": "derived unit",
+      "verb": "can be",
+      "to": "mechanics",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "international system",
+      "from": "system",
+      "verb": "can be",
+      "to": "international",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "International System of Units (SI)",
+      "description": "The International System of Units, internationally known by the abbreviation SI (from French Système international d'unités), is the modern form of the metric system and the world's most widely used system of measurement.",
+      "from": "international system",
+      "verb": "of",
+      "to": "base unit",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "International System of Units",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "SI base unit",
+      "description": "The SI base units are the standard units of measurement defined by the International System of Units (SI) for the seven base quantities of what is now known as the International System of Quantities: they are notably a basic set from which all other SI units can be derived.",
+      "from": "base unit",
+      "verb": "is part of",
+      "to": "International System of Units (SI)",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "SI_base_unit",
           "type": "wikipedia"
         }
       ]
@@ -1376,6 +1634,312 @@
       "to": "candela"
     },
     {
+      "name": "named SI derived unit",
+      "from": "named derived unit",
+      "verb": "can be part of",
+      "to": "International System of Units (SI)",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "SI_derived_unit#Derived units with special names",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "kinematic SI derived unit",
+      "from": "kinematic derived unit",
+      "verb": "can be part of",
+      "to": "International System of Units (SI)",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "mechanics SI derived unit",
+      "from": "mechanics derived unit",
+      "verb": "can be part of",
+      "to": "International System of Units (SI)",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "metre per second",
+      "from": "metre",
+      "verb": "per",
+      "to": "second",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Metre per second",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "second squared",
+      "from": "second",
+      "verb": "can be",
+      "to": "square",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "second cubed",
+      "from": "second",
+      "verb": "can be",
+      "to": "cube",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "square metre",
+      "from": "metre",
+      "verb": "can be",
+      "to": "square",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "cubic metre",
+      "from": "metre",
+      "verb": "can be",
+      "to": "cube",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "cubic metre per second",
+      "from": "cubic metre",
+      "verb": "per",
+      "to": "second",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Cubic metre per second",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "m3/s",
+      "verb": "is alias of",
+      "to": "cubic metre per second"
+    },
+    {
+      "name": "elementary charge",
+      "description": "The elementary charge, usually denoted by e, is a fundamental physical constant, defined as the electric charge carried by a single proton (+1 e) or, equivalently, the magnitude of the negative electric charge carried by a single electron, which has charge −1 e.",
+      "from": "elementary",
+      "verb": "can have",
+      "to": "charge",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Elementary charge",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Planck constant",
+      "description": "The Planck constant is a fundamental physical constant[1] of foundational importance in quantum mechanics: a photon's energy is equal to its frequency multiplied by the Planck constant, and the wavelength of a matter wave equals the Planck constant divided by the associated particle momentum.",
+      "from": "constant",
+      "verb": "of",
+      "to": "Planck",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Planck constant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Boltzmann constant",
+      "description": "The Boltzmann constant (kB or k) is the proportionality factor that relates the average relative thermal energy of particles in a gas with the thermodynamic temperature of the gas.",
+      "from": "constant",
+      "verb": "of",
+      "to": "Boltzmann",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Boltzmann_constant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "Avogadro constant",
+      "description": "The Avogadro constant is an SI defining constant with an exact value of 6.02214076×1023 mol−1 (reciprocal moles). It defines the number of constituent particles in one mole, where the particles in question can be either molecules, atoms, ions, ion pairs, or any other elementary entities.",
+      "from": "constant",
+      "verb": "of",
+      "to": "Avogadro",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Avogadro_constant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "speed of light",
+      "from": "speed",
+      "verb": "of",
+      "to": "light",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "J⋅s",
+      "description": "is the unit of the Planck constant.",
+      "from": "joule",
+      "verb": "times",
+      "to": "second",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "J/K",
+      "description": "is the unit of the Boltzmann constant.",
+      "from": "joule",
+      "verb": "per",
+      "to": "kelvin",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "mol−1",
+      "description": "is the unit of the Avogadro constant.",
+      "from": "mole",
+      "verb": "per",
+      "to": "one",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "luminous efficacy",
+      "description": "Luminous efficacy is a measure of how well a light source produces visible light. It is the ratio of luminous flux to power, measured in lumens per watt in the International System of Units (SI). ",
+      "from": "luminous",
+      "verb": "can be",
+      "to": "efficacy",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Avogadro_constant",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "lm/W",
+      "description": "is the unit of the luminous efficacy",
+      "from": "lumen",
+      "verb": "per",
+      "to": "watt",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "metre per second squared",
+      "from": "metre",
+      "verb": "per",
+      "to": "second squared",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Metre per second squared",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "m/s2",
+      "verb": "is alias of",
+      "to": "metre per second squared",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "metre per second cubed",
+      "from": "metre",
+      "verb": "per",
+      "to": "second cubed",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Metre per second cubed",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "m/s3",
+      "verb": "is alias of",
+      "to": "metre per second cubed",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "radian per second",
+      "description": "The radian per second is the unit of angular velocity in the International System of Units (SI).",
+      "from": "radian",
+      "verb": "per",
+      "to": "second",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Radian per second",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "rad/s",
+      "verb": "is alias of",
+      "to": "radian per second",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "angular velocity",
+      "from": "velocity",
+      "verb": "per",
+      "to": "angle",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Angular velocity",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "angular acceleration",
+      "from": "acceleration",
+      "verb": "per",
+      "to": "angle",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Angular acceleration",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "radian per second squared",
+      "from": "radian",
+      "verb": "per",
+      "to": "second squared",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "rad/s2",
+      "verb": "is alias of",
+      "to": "radian per second squared",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
       "name": "l (unit symbol)",
       "from": "l",
       "verb": "is alias of",
@@ -1383,11 +1947,156 @@
     },
     {
       "name": "m/s",
-      "from": "meter",
+      "from": "m/s",
+      "verb": "is alias of",
+      "to": "metre per second",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "frequency drift",
+      "from": "frequency",
+      "verb": "can",
+      "to": "drift",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "hertz per second",
+      "from": "hertz",
       "verb": "per",
       "to": "second",
       "type": "measure",
       "protection": "admin_protection"
+    },
+    {
+      "name": "Hz/s",
+      "verb": "is alias of",
+      "to": "hertz per second",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "flow rate",
+      "from": "rate",
+      "verb": "of",
+      "to": "flow",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "volumetric flow rate",
+      "from": "volumetric",
+      "verb": "of",
+      "to": "flow rate",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Volumetric flow rate",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "from": "distance",
+      "verb": "is a",
+      "to": "mechanics SI derived unit"
+    },
+    {
+      "name": "square metre",
+      "from": "metre",
+      "verb": "can be",
+      "to": "square",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Square metre",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "cubic metre",
+      "from": "metre",
+      "verb": "can be",
+      "to": "cube",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Cubic metre",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "per day",
+      "verb": "per",
+      "to": "day",
+      "type": "measure_divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per km",
+      "verb": "per",
+      "to": "day",
+      "type": "measure_divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per kWh",
+      "verb": "per",
+      "to": "kWh",
+      "type": "measure_divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per t",
+      "verb": "per",
+      "to": "t",
+      "type": "measure_divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per l",
+      "verb": "per",
+      "to": "litre",
+      "type": "measure_divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "per year",
+      "verb": "per",
+      "to": "year",
+      "type": "measure_divisor",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "hyperfine transition",
+      "from": "transition",
+      "verb": "can be",
+      "to": "hyperfine",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "hyperfine transition frequency",
+      "from": "hyperfine transition",
+      "verb": "has a",
+      "to": "frequency",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "hyperfine transition frequency of Cs",
+      "from": "hyperfine transition frequency",
+      "verb": "of",
+      "to": "Caesium-133",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Caesium standard",
+          "type": "wikipedia"
+        }
+      ]
     },
     {
       "name": "1967 (Year)",
@@ -1397,19 +2106,19 @@
     },
     {
       "name": "1979 (Year)",
-      "from": "1967",
+      "from": "1979",
       "verb": "is a",
       "to": "Year"
     },
     {
       "name": "1983 (Year)",
-      "from": "1967",
+      "from": "1983",
       "verb": "is a",
       "to": "Year"
     },
     {
       "name": "2019 (Year)",
-      "from": "1967",
+      "from": "2019",
       "verb": "is a",
       "to": "Year"
     },
@@ -1522,7 +2231,11 @@
   ],
   "sources": [
     {
-      "name": "Mathematical constant",
+      "name": "by definition",
+      "description": "A definition is a statement of the meaning of a term (a word, phrase, or other set of symbols).[1][2] Definitions can be classified into two large categories: intensional definitions (which try to give the sense of a term), and extensional definitions (which try to list the objects that a term describes)."
+    },
+    {
+      "name": "mathematical constant",
       "description": "A mathematical constant is a key number whose value is fixed by an unambiguous definition to facilitate using it across multiple mathematical problems."
     },
     {
@@ -1540,11 +2253,37 @@
   "values": [
     {
       "words": [
-        "Pi"
+        "zero"
+      ],
+      "number": "0",
+      "share": "public",
+      "protection": "admin_protection",
+      "source": "by definition"
+    },
+    {
+      "words": [
+        "one"
+      ],
+      "number": "1",
+      "share": "public",
+      "protection": "admin_protection",
+      "source": "by definition"
+    },
+    {
+      "words": [
+        "Pi (math)"
       ],
       "number": "3.14159265358979323846264338327950288419716939937510",
       "share": "public",
-      "source": "Mathematical constant"
+      "source": "mathematical constant"
+    },
+    {
+      "words": [
+        "\uD835\uDC52"
+      ],
+      "number": "2.71828182845904523536028747135266249775724709369995957496696762772407663035354759457138217852516642742746",
+      "share": "public",
+      "source": "mathematical constant"
     },
     {
       "words": [
@@ -1552,7 +2291,7 @@
       ],
       "number": "0.5772156649015328606065120900824024310421",
       "share": "public",
-      "source": "Mathematical constant"
+      "source": "mathematical constant"
     },
     {
       "words": [
@@ -1625,6 +2364,13 @@
       "source": "The International System of Units"
     }
   ],
+  "components": [
+    {
+      "name": "Word",
+      "description": "simply show the word or triple name",
+      "type": "phrase_name"
+    }
+  ],
   "views": [
     {
       "name": "base units",
@@ -1633,8 +2379,7 @@
       "components": [
         {
           "position": "1",
-          "name": "Name",
-          "type": "phrase_name"
+          "name": "Word"
         }
       ]
     }

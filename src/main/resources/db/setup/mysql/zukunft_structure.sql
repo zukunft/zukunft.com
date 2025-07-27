@@ -294,7 +294,7 @@ CREATE TABLE IF NOT EXISTS user_profiles
     type_name    varchar(255)     NOT NULL COMMENT 'the unique type name as shown to the user and used for the selection',
     code_id      varchar(255) DEFAULT NULL COMMENT 'this id text is unique for all code links,is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration',
     description  text         DEFAULT NULL COMMENT 'text to explain the type to the user as a tooltip; to be replaced by a language form entry',
-    right_level  smallint     DEFAULT NULL COMMENT 'the access right level to prevent unpermitted right gaining'
+    right_level  smallint     DEFAULT NULL COMMENT 'the access right level to prevent not permitted right gaining'
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -341,11 +341,12 @@ CREATE TABLE IF NOT EXISTS users
     user_name          varchar(255)     NOT NULL COMMENT 'the user name unique for this pod',
     ip_address         varchar(100) DEFAULT NULL COMMENT 'all users a first identified with the ip address',
     password           varchar(255) DEFAULT NULL COMMENT 'the hash value of the password',
-    description        text         DEFAULT NULL COMMENT 'for system users the description to expain the profile to human users',
+    description        text         DEFAULT NULL COMMENT 'for system users the description to explain the profile to human users',
     code_id            varchar(100) DEFAULT NULL COMMENT 'to select e.g. the system batch user',
     user_profile_id    bigint       DEFAULT NULL COMMENT 'to define the user roles and read and write rights',
     user_type_id       bigint       DEFAULT NULL COMMENT 'to set the confirmation level of a user',
-    right_level        smallint     DEFAULT NULL COMMENT 'the access right level to prevent unpermitted right gaining',
+    excluded           smallint     DEFAULT NULL COMMENT 'true if the user is deactivated but cannot be deleted due to log entries',
+    right_level        smallint     DEFAULT NULL COMMENT 'the access right level to prevent not permitted right gaining',
     email              varchar(255) DEFAULT NULL COMMENT 'the primary email for verification',
     email_status       smallint     DEFAULT NULL COMMENT 'if the email has been verified or if a password reset has been send',
     email_alternative  varchar(255) DEFAULT NULL COMMENT 'an alternative email for account recovery',
@@ -617,6 +618,87 @@ ALTER TABLE change_values_norm
 -- --------------------------------------------------------
 
 --
+-- table structure to log all time value changes done by any user on values with a standard group id
+--
+
+CREATE TABLE IF NOT EXISTS change_values_time_norm
+(
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_time_norm',
+    change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
+    user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
+    change_action_id smallint   NOT NULL COMMENT 'the curl action',
+    group_id         char(112)  NOT NULL,
+    change_field_id  smallint   NOT NULL,
+    old_value        timestamp DEFAULT NULL,
+    new_value        timestamp DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+COMMENT 'to log all time value changes done by any user on values with a standard group id';
+
+--
+-- AUTO_INCREMENT for table change_values_time_norm
+--
+ALTER TABLE change_values_time_norm
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure to log all text value changes done by any user on values with a standard group id
+--
+
+CREATE TABLE IF NOT EXISTS change_values_text_norm
+(
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_text_norm',
+    change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
+    user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
+    change_action_id smallint   NOT NULL COMMENT 'the curl action',
+    group_id         char(112)  NOT NULL,
+    change_field_id  smallint   NOT NULL,
+    old_value        text DEFAULT NULL,
+    new_value        text DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+COMMENT 'to log all text value changes done by any user on values with a standard group id';
+
+--
+-- AUTO_INCREMENT for table change_values_text_norm
+--
+ALTER TABLE change_values_text_norm
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure to log all geo value changes done by any user on values with a standard group id
+--
+
+CREATE TABLE IF NOT EXISTS change_values_geo_norm
+(
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_geo_norm',
+    change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
+    user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
+    change_action_id smallint   NOT NULL COMMENT 'the curl action',
+    group_id         char(112)  NOT NULL,
+    change_field_id  smallint   NOT NULL,
+    old_value        point  DEFAULT NULL,
+    new_value        point  DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+COMMENT 'to log all geo value changes done by any user on values with a standard group id';
+
+--
+-- AUTO_INCREMENT for table change_values_geo_norm
+--
+ALTER TABLE change_values_geo_norm
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
 -- table structure to log all changes done by any user on values with a prime group id
 --
 
@@ -644,6 +726,87 @@ ALTER TABLE change_values_prime
 -- --------------------------------------------------------
 
 --
+-- table structure to log all time value changes done by any user on values with a prime group id
+--
+
+CREATE TABLE IF NOT EXISTS change_values_time_prime
+(
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_time_prime',
+    change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
+    user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
+    change_action_id smallint   NOT NULL COMMENT 'the curl action',
+    group_id         bigint     NOT NULL,
+    change_field_id  smallint   NOT NULL,
+    old_value        timestamp DEFAULT NULL,
+    new_value        timestamp DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+COMMENT 'to log all time value changes done by any user on values with a prime group id';
+
+--
+-- AUTO_INCREMENT for table change_values_time_prime
+--
+ALTER TABLE change_values_time_prime
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure to log all text value changes done by any user on values with a prime group id
+--
+
+CREATE TABLE IF NOT EXISTS change_values_text_prime
+(
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_text_prime',
+    change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
+    user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
+    change_action_id smallint   NOT NULL COMMENT 'the curl action',
+    group_id         bigint     NOT NULL,
+    change_field_id  smallint   NOT NULL,
+    old_value        text   DEFAULT NULL,
+    new_value        text   DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+COMMENT 'to log all text value changes done by any user on values with a prime group id';
+
+--
+-- AUTO_INCREMENT for table change_values_text_prime
+--
+ALTER TABLE change_values_text_prime
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure to log all geo value changes done by any user on values with a prime group id
+--
+
+CREATE TABLE IF NOT EXISTS change_values_geo_prime
+(
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_geo_prime',
+    change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
+    user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
+    change_action_id smallint   NOT NULL COMMENT 'the curl action',
+    group_id         bigint     NOT NULL,
+    change_field_id  smallint   NOT NULL,
+    old_value        point  DEFAULT NULL,
+    new_value        point  DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+COMMENT 'to log all geo value changes done by any user on values with a prime group id';
+
+--
+-- AUTO_INCREMENT for table change_values_geo_prime
+--
+ALTER TABLE change_values_geo_prime
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
 -- table structure to log all changes done by any user on values with a big group id
 --
 
@@ -666,6 +829,87 @@ CREATE TABLE IF NOT EXISTS change_values_big
 -- AUTO_INCREMENT for table change_values_big
 --
 ALTER TABLE change_values_big
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure to log all time value changes done by any user on values with a big group id
+--
+
+CREATE TABLE IF NOT EXISTS change_values_time_big
+(
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_time_big',
+    change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
+    user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
+    change_action_id smallint   NOT NULL COMMENT 'the curl action',
+    group_id         text       NOT NULL,
+    change_field_id  smallint   NOT NULL,
+    old_value        timestamp DEFAULT NULL,
+    new_value        timestamp DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+COMMENT 'to log all time value changes done by any user on values with a big group id';
+
+--
+-- AUTO_INCREMENT for table change_values_time_big
+--
+ALTER TABLE change_values_time_big
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure to log all text value changes done by any user on values with a big group id
+--
+
+CREATE TABLE IF NOT EXISTS change_values_text_big
+(
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_text_big',
+    change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
+    user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
+    change_action_id smallint   NOT NULL COMMENT 'the curl action',
+    group_id         text       NOT NULL,
+    change_field_id  smallint   NOT NULL,
+    old_value        text DEFAULT NULL,
+    new_value        text DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+COMMENT 'to log all text value changes done by any user on values with a big group id';
+
+--
+-- AUTO_INCREMENT for table change_values_text_big
+--
+ALTER TABLE change_values_text_big
+    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+
+-- --------------------------------------------------------
+
+--
+-- table structure to log all geo value changes done by any user on values with a big group id
+--
+
+CREATE TABLE IF NOT EXISTS change_values_geo_big
+(
+    change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_geo_big',
+    change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
+    user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
+    change_action_id smallint   NOT NULL COMMENT 'the curl action',
+    group_id         text       NOT NULL,
+    change_field_id  smallint   NOT NULL,
+    old_value        point  DEFAULT NULL,
+    new_value        point  DEFAULT NULL
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8
+COMMENT 'to log all geo value changes done by any user on values with a big group id';
+
+--
+-- AUTO_INCREMENT for table change_values_geo_big
+--
+ALTER TABLE change_values_geo_big
     MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
@@ -965,7 +1209,7 @@ ALTER TABLE verbs
 CREATE TABLE IF NOT EXISTS triples
 (
     triple_id           bigint           NOT NULL COMMENT 'the internal unique primary index',
-    from_phrase_id      bigint           NOT NULL COMMENT 'the phrase_id that is linked',
+    from_phrase_id      bigint       DEFAULT NULL COMMENT 'the phrase_id that is linked which can be null e.g. if a symbol is assigned to a triple (m/s is symbol for meter per second)',
     verb_id             bigint           NOT NULL COMMENT 'the verb_id that defines how the phrases are linked',
     to_phrase_id        bigint           NOT NULL COMMENT 'the phrase_id to which the first phrase is linked',
     user_id             bigint       DEFAULT NULL COMMENT 'the owner / creator of the triple',
@@ -3266,13 +3510,13 @@ ALTER TABLE view_link_types
 -- table structure to link view to a word,triple,verb or formula with an n:m relation
 --
 
-CREATE TABLE IF NOT EXISTS view_term_links
+CREATE TABLE IF NOT EXISTS term_views
 (
-    view_term_link_id bigint       NOT NULL COMMENT 'the internal unique primary index',
+    term_view_id bigint       NOT NULL COMMENT 'the internal unique primary index',
     term_id           bigint       NOT NULL,
     view_id           bigint       NOT NULL,
     view_link_type_id smallint     NOT NULL DEFAULT 1 COMMENT '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups',
-    user_id           bigint   DEFAULT NULL COMMENT 'the owner / creator of the view_term_link',
+    user_id           bigint   DEFAULT NULL COMMENT 'the owner / creator of the term_view',
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id     smallint DEFAULT NULL COMMENT 'to restrict the access',
@@ -3283,19 +3527,19 @@ CREATE TABLE IF NOT EXISTS view_term_links
     COMMENT 'to link view to a word,triple,verb or formula with an n:m relation';
 
 --
--- AUTO_INCREMENT for table view_term_links
+-- AUTO_INCREMENT for table term_views
 --
-ALTER TABLE view_term_links
-    MODIFY view_term_link_id int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE term_views
+    MODIFY term_view_id int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes to link view to a word,triple,verb or formula with an n:m relation
 --
 
-CREATE TABLE IF NOT EXISTS user_view_term_links
+CREATE TABLE IF NOT EXISTS user_term_views
 (
-    view_term_link_id bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
-    user_id           bigint       NOT NULL COMMENT 'the changer of the view_term_link',
+    term_view_id bigint       NOT NULL COMMENT 'with the user_id the internal unique primary index',
+    user_id           bigint       NOT NULL COMMENT 'the changer of the term_view',
     view_link_type_id smallint DEFAULT NULL,
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
@@ -4164,6 +4408,42 @@ ALTER TABLE change_values_prime
 -- --------------------------------------------------------
 
 --
+-- indexes for table change_values_time_prime
+--
+
+ALTER TABLE change_values_time_prime
+    ADD PRIMARY KEY (change_id),
+    ADD KEY change_values_time_prime_change_idx (change_id),
+    ADD KEY change_values_time_prime_change_time_idx (change_time),
+    ADD KEY change_values_time_prime_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_values_text_prime
+--
+
+ALTER TABLE change_values_text_prime
+    ADD PRIMARY KEY (change_id),
+    ADD KEY change_values_text_prime_change_idx (change_id),
+    ADD KEY change_values_text_prime_change_time_idx (change_time),
+    ADD KEY change_values_text_prime_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_values_geo_prime
+--
+
+ALTER TABLE change_values_geo_prime
+    ADD PRIMARY KEY (change_id),
+    ADD KEY change_values_geo_prime_change_idx (change_id),
+    ADD KEY change_values_geo_prime_change_time_idx (change_time),
+    ADD KEY change_values_geo_prime_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table change_values_norm
 --
 
@@ -4176,6 +4456,42 @@ ALTER TABLE change_values_norm
 -- --------------------------------------------------------
 
 --
+-- indexes for table change_values_time_norm
+--
+
+ALTER TABLE change_values_time_norm
+    ADD PRIMARY KEY (change_id),
+    ADD KEY change_values_time_norm_change_idx (change_id),
+    ADD KEY change_values_time_norm_change_time_idx (change_time),
+    ADD KEY change_values_time_norm_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_values_text_norm
+--
+
+ALTER TABLE change_values_text_norm
+    ADD PRIMARY KEY (change_id),
+    ADD KEY change_values_text_norm_change_idx (change_id),
+    ADD KEY change_values_text_norm_change_time_idx (change_time),
+    ADD KEY change_values_text_norm_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_values_geo_norm
+--
+
+ALTER TABLE change_values_geo_norm
+    ADD PRIMARY KEY (change_id),
+    ADD KEY change_values_geo_norm_change_idx (change_id),
+    ADD KEY change_values_geo_norm_change_time_idx (change_time),
+    ADD KEY change_values_geo_norm_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
 -- indexes for table change_values_big
 --
 
@@ -4184,6 +4500,42 @@ ALTER TABLE change_values_big
     ADD KEY change_values_big_change_idx (change_id),
     ADD KEY change_values_big_change_time_idx (change_time),
     ADD KEY change_values_big_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_values_time_big
+--
+
+ALTER TABLE change_values_time_big
+    ADD PRIMARY KEY (change_id),
+    ADD KEY change_values_time_big_change_idx (change_id),
+    ADD KEY change_values_time_big_change_time_idx (change_time),
+    ADD KEY change_values_time_big_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_values_text_big
+--
+
+ALTER TABLE change_values_text_big
+    ADD PRIMARY KEY (change_id),
+    ADD KEY change_values_text_big_change_idx (change_id),
+    ADD KEY change_values_text_big_change_time_idx (change_time),
+    ADD KEY change_values_text_big_user_idx (user_id);
+
+-- --------------------------------------------------------
+
+--
+-- indexes for table change_values_geo_big
+--
+
+ALTER TABLE change_values_geo_big
+    ADD PRIMARY KEY (change_id),
+    ADD KEY change_values_geo_big_change_idx (change_id),
+    ADD KEY change_values_geo_big_change_time_idx (change_time),
+    ADD KEY change_values_geo_big_user_idx (user_id);
 
 -- --------------------------------------------------------
 
@@ -5587,25 +5939,25 @@ ALTER TABLE view_link_types
 -- --------------------------------------------------------
 
 --
--- indexes for table view_term_links
+-- indexes for table term_views
 --
 
-ALTER TABLE view_term_links
-    ADD PRIMARY KEY (view_term_link_id),
-    ADD KEY view_term_links_term_idx (term_id),
-    ADD KEY view_term_links_view_idx (view_id),
-    ADD KEY view_term_links_view_link_type_idx (view_link_type_id),
-    ADD KEY view_term_links_user_idx (user_id);
+ALTER TABLE term_views
+    ADD PRIMARY KEY (term_view_id),
+    ADD KEY term_views_term_idx (term_id),
+    ADD KEY term_views_view_idx (view_id),
+    ADD KEY term_views_view_link_type_idx (view_link_type_id),
+    ADD KEY term_views_user_idx (user_id);
 
 --
--- indexes for table user_view_term_links
+-- indexes for table user_term_views
 --
 
-ALTER TABLE user_view_term_links
-    ADD PRIMARY KEY (view_term_link_id,user_id),
-    ADD KEY user_view_term_links_view_term_link_idx (view_term_link_id),
-    ADD KEY user_view_term_links_user_idx (user_id),
-    ADD KEY user_view_term_links_view_link_type_idx (view_link_type_id);
+ALTER TABLE user_term_views
+    ADD PRIMARY KEY (term_view_id,user_id),
+    ADD KEY user_term_views_term_view_idx (term_view_id),
+    ADD KEY user_term_views_user_idx (user_id),
+    ADD KEY user_term_views_view_link_type_idx (view_link_type_id);
 
 -- --------------------------------------------------------
 
@@ -5812,6 +6164,39 @@ ALTER TABLE change_values_norm
 -- --------------------------------------------------------
 
 --
+-- constraints for table change_values_time_norm
+--
+
+ALTER TABLE change_values_time_norm
+    ADD CONSTRAINT change_values_time_norm_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_time_norm_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_time_norm_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_values_text_norm
+--
+
+ALTER TABLE change_values_text_norm
+    ADD CONSTRAINT change_values_text_norm_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_text_norm_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_text_norm_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_values_geo_norm
+--
+
+ALTER TABLE change_values_geo_norm
+    ADD CONSTRAINT change_values_geo_norm_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_geo_norm_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_geo_norm_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
 -- constraints for table change_values_prime
 --
 
@@ -5823,6 +6208,39 @@ ALTER TABLE change_values_prime
 -- --------------------------------------------------------
 
 --
+-- constraints for table change_values_time_prime
+--
+
+ALTER TABLE change_values_time_prime
+    ADD CONSTRAINT change_values_time_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_time_prime_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_time_prime_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_values_text_prime
+--
+
+ALTER TABLE change_values_text_prime
+    ADD CONSTRAINT change_values_text_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_text_prime_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_text_prime_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_values_geo_prime
+--
+
+ALTER TABLE change_values_geo_prime
+    ADD CONSTRAINT change_values_geo_prime_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_geo_prime_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_geo_prime_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
 -- constraints for table change_values_big
 --
 
@@ -5830,6 +6248,39 @@ ALTER TABLE change_values_big
     ADD CONSTRAINT change_values_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
     ADD CONSTRAINT change_values_big_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
     ADD CONSTRAINT change_values_big_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_values_time_big
+--
+
+ALTER TABLE change_values_time_big
+    ADD CONSTRAINT change_values_time_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_time_big_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_time_big_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_values_text_big
+--
+
+ALTER TABLE change_values_text_big
+    ADD CONSTRAINT change_values_text_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_text_big_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_text_big_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
+
+-- --------------------------------------------------------
+
+--
+-- constraints for table change_values_geo_big
+--
+
+ALTER TABLE change_values_geo_big
+    ADD CONSTRAINT change_values_geo_big_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT change_values_geo_big_change_action_fk FOREIGN KEY (change_action_id) REFERENCES change_actions (change_action_id),
+    ADD CONSTRAINT change_values_geo_big_change_field_fk FOREIGN KEY (change_field_id) REFERENCES change_fields (change_field_id);
 
 -- --------------------------------------------------------
 
@@ -6613,22 +7064,22 @@ ALTER TABLE user_views
 -- --------------------------------------------------------
 
 --
--- constraints for table view_term_links
+-- constraints for table term_views
 --
 
-ALTER TABLE view_term_links
-    ADD CONSTRAINT view_term_links_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
-    ADD CONSTRAINT view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id),
-    ADD CONSTRAINT view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
+ALTER TABLE term_views
+    ADD CONSTRAINT term_views_view_fk FOREIGN KEY (view_id) REFERENCES views (view_id),
+    ADD CONSTRAINT term_views_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id),
+    ADD CONSTRAINT term_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id);
 
 --
--- constraints for table user_view_term_links
+-- constraints for table user_term_views
 --
 
-ALTER TABLE user_view_term_links
-    ADD CONSTRAINT user_view_term_links_view_term_link_fk FOREIGN KEY (view_term_link_id) REFERENCES view_term_links (view_term_link_id),
-    ADD CONSTRAINT user_view_term_links_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
-    ADD CONSTRAINT user_view_term_links_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
+ALTER TABLE user_term_views
+    ADD CONSTRAINT user_term_views_term_view_fk FOREIGN KEY (term_view_id) REFERENCES term_views (term_view_id),
+    ADD CONSTRAINT user_term_views_user_fk FOREIGN KEY (user_id) REFERENCES users (user_id),
+    ADD CONSTRAINT user_term_views_view_link_type_fk FOREIGN KEY (view_link_type_id) REFERENCES view_link_types (view_link_type_id);
 
 -- --------------------------------------------------------
 

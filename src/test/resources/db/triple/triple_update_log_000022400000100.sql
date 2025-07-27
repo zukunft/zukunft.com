@@ -50,7 +50,7 @@ SELECT triple_update_log_000022400000100
         (1::bigint,
          2::smallint,
          18::smallint,
-         'Mathematical constant'::text,
+         'mathematical constant'::text,
          ''::text,
          1::bigint,
          68::smallint,

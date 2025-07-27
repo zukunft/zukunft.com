@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/system/sys_log.php - object to handle a system errors
+    model/system/sys_log.php - object to handle a system errors
     ----------------------
 
     This file is part of zukunft.com - calc with words
@@ -31,24 +31,28 @@
 
 namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once API_SYSTEM_PATH . 'sys_log.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -61,15 +65,14 @@ use cfg\helper\db_object_seq_id;
 use cfg\helper\type_list;
 use cfg\helper\type_object;
 use cfg\log\change;
-use cfg\log\change_action;
 use cfg\sandbox\sandbox;
-use cfg\system\sys_log_status;
-use cfg\system\sys_log_function;
 use cfg\user\user;
-use controller\system\sys_log as sys_log_api;
+use shared\enum\change_actions;
+use shared\json_fields;
 use shared\library;
 use DateTime;
 use DateTimeInterface;
+use shared\types\api_type_list;
 
 class sys_log extends db_object_seq_id
 {
@@ -142,6 +145,7 @@ class sys_log extends db_object_seq_id
     public ?int $usr_id = null;         // the user id who was logged in when the error happened
     public string $usr_name = '';       // the username who was logged in when the error happened
     public ?int $solver_id = null;      // the admin id who has solved the problem
+    // TODO deprecate
     public ?string $solver_name = '';    // the admin id who has solved the problem
     public ?DateTime $log_time = null;  // timestamp when the issue appeared
     public ?int $type_id = null;        // type of the error
@@ -152,7 +156,6 @@ class sys_log extends db_object_seq_id
     public ?int $status_id = null;      // the status of the error
 
     public ?string $function_name = '';  //
-    public string $status_name = '';    //
 
 
     /*
@@ -183,7 +186,6 @@ class sys_log extends db_object_seq_id
             $this->log_description = $db_row[self::FLD_DESCRIPTION];
             $this->log_trace = $db_row[self::FLD_TRACE];
             $this->status_id = $db_row[sys_log_status::FLD_ID];
-            $this->status_name = $db_row[type_object::FLD_NAME];
         }
         return $result;
     }
@@ -212,26 +214,19 @@ class sys_log extends db_object_seq_id
         return $this->usr;
     }
 
+
     /*
-     * cast
+     * preloaded
      */
 
     /**
-     * @return sys_log_api a filled frontend api object
+     * get the name of the system log entry status
+     * @return string the name of the status
      */
-    function get_api_obj(): sys_log_api
+    function status_name(): string
     {
-        $dsp_obj = new sys_log_api();
-        $dsp_obj->id = $this->id();
-        $dsp_obj->time = $this->log_time->format('Y-m-d H:i:s');
-        $dsp_obj->user = $this->usr_name;
-        $dsp_obj->text = $this->log_text;
-        $dsp_obj->description = $this->log_description;
-        $dsp_obj->trace = $this->log_trace;
-        $dsp_obj->prg_part = $this->function_name;
-        //$dsp_obj->owner = $this->solver_name;
-        $dsp_obj->status = $this->status_name;
-        return $dsp_obj;
+        global $sys_log_sta_cac;
+        return $sys_log_sta_cac->name($this->status_id);
     }
 
 
@@ -273,7 +268,7 @@ class sys_log extends db_object_seq_id
      */
     function sql_foreign_key(sql_creator $sc): string
     {
-        return $this->sql_foreign_key_create($sc, new sql_type_list([]));
+        return $this->sql_foreign_key_create($sc, new sql_type_list());
     }
 
 
@@ -350,7 +345,7 @@ class sys_log extends db_object_seq_id
         $lib = new library();
         $tbl_name = $lib->class_to_name(sys_log::class);
         $log = new change($this->user());
-        $log->set_action(change_action::UPDATE);
+        $log->set_action(change_actions::UPDATE);
         $log->set_table($tbl_name);
 
         return $log;
@@ -362,6 +357,36 @@ class sys_log extends db_object_seq_id
     function id_field(): string
     {
         return self::FLD_ID;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create the array for the api message
+     * which is on this level the same as the export json array
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        $vars[json_fields::ID] = $this->id();
+        $vars[json_fields::TIME] = $this->log_time->format(DateTimeInterface::ATOM);
+        $vars[json_fields::USER_NAME] = $this->usr_name;
+        $vars[json_fields::TEXT] = $this->log_text;
+        $vars[json_fields::DESCRIPTION] = $this->log_description;
+        $vars[json_fields::TRACE] = $this->log_trace;
+        $vars[json_fields::PRG_PART] = $this->function_name;
+        //$vars[json_fields::ID] = $this->solver_name;
+        $vars[json_fields::OWNER] = '';
+        $vars[json_fields::STATUS] = $this->status_id;
+
+        return $vars;
     }
 
     /**
@@ -390,12 +415,14 @@ class sys_log extends db_object_seq_id
     private function save_field_status(sql_db $db_con, sys_log $db_rec): bool
     {
         log_debug();
+        global $sys_log_sta_cac;
+
         $result = false;
         if ($db_rec->status_id <> $this->status_id) {
             $log = $this->log_upd();
-            $log->old_value = $db_rec->status_name;
+            $log->old_value = $sys_log_sta_cac->name($db_rec->status_id);
             $log->old_id = $db_rec->status_id;
-            $log->new_value = $this->status_name;
+            $log->new_value = $this->status_name();
             $log->new_id = $this->status_id;
             $log->row_id = $this->id();
             $log->set_field(sys_log_status::FLD_ID);

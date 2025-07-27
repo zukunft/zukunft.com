@@ -32,7 +32,13 @@
 
 namespace html\types;
 
-include_once TYPES_PATH . 'type_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::TYPES . 'type_list.php';
+include_once paths::SHARED_TYPES . 'component_type.php';
+
+use shared\types\component_type;
+
 
 class component_type_list extends type_list
 {
@@ -46,6 +52,16 @@ class component_type_list extends type_list
     {
         global $html_component_types;
         return parent::type_selector($html_component_types->lst_key(), $name, $form, $selected);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function default_id(): int
+    {
+        return parent::id(component_type::SHOW_NAME);
     }
 
 }

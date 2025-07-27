@@ -13,12 +13,12 @@
   ],
   "triples": [
     {
-      "from": "Sales of products",
+      "from": "sales of products",
       "verb": "is part of",
       "to": "income statement"
     },
     {
-      "from": "Sales of services and other",
+      "from": "sales of services and other",
       "verb": "is part of",
       "to": "income statement"
     },
@@ -127,7 +127,7 @@
         "2017",
         "USD",
         "million",
-        "Sales of products"
+        "sales of products"
       ],
       "number": "28133",
       "protection": "admin_protection",
@@ -139,7 +139,7 @@
         "2017",
         "USD",
         "million",
-        "Sales of services and other"
+        "sales of services and other"
       ],
       "number": "6179",
       "protection": "admin_protection",

@@ -2,7 +2,7 @@
 
 /*
 
-    cfg/formula/formula_link_type.php - the formula link type object with the ENUM values for hardcoded formulas
+    model/formula/formula_link_type.php - the formula link type object with the ENUM values for hardcoded formulas
     ---------------------------------
 
     This file is part of zukunft.com - calc with words
@@ -31,11 +31,13 @@
 
 namespace cfg\formula;
 
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_type.php';
 
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -67,7 +69,7 @@ class formula_link_type extends type_object
 
     // field lists for the table creation of phrase type
     const FLD_LST_EXTRA = array(
-        [formula::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', formula::class, ''],
+        [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', formula::class, ''],
         [phrase::FLD_TYPE, phrase::FLD_TYPE_SQL_TYP, sql_field_default::NOT_NULL, '', phrase_type::class, ''],
     );
 

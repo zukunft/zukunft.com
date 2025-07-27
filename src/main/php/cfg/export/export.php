@@ -43,54 +43,27 @@
 
 namespace cfg\export;
 
-include_once SHARED_PATH . 'library.php';
-include_once SERVICE_PATH . 'config.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::SHARED . 'library.php';
+include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\config;
 use cfg\phrase\phrase_list;
 use cfg\user\user;
-use html\phrase\phrase_list as phrase_list_dsp;
 use shared\library;
 
 class export
 {
 
-    // the json header
-    const VERSION = 'version';
-    const POD = 'pod';
-    const TIME = 'time';
-    const SELECTION = 'selection';
-    const DESCRIPTION = 'description';
-    const USER = 'user';
-    const USER_ID = 'user_id';
-    const USERS = 'users';
-    const VERBS = 'verbs';
-    const WORDS = 'words';
-    const WORD_LIST = 'word-list'; // a list of the word names without further parameters
-    const NAME = 'name';
-    const TYPE = 'type';
-    const PHRASES = 'phrases';
-    const PHRASE_VALUES = 'phrase-values';
-    const TRIPLES = 'triples';
-    const FROM = 'from';
-    const VERB = 'verb';
-    const TO = 'to';
-    const FORMULAS = 'formulas';
-    const SOURCES = 'sources';
-    const REFS = 'refs';
-    const VALUES = 'values';
-    const VALUE_NUMBER = 'number';
-    const VALUE_LIST = 'value-list';
-    const CONTEXT = 'context';
-    const VIEWS = 'views';
-    const COMPONENTS = 'components';
-    const CALC_VALIDATION = 'calc-validation';
-    const VIEW_VALIDATION = 'view-validation';
-    const IP_BLACKLIST = 'ip-blacklist';
+    /*
+     * set and get
+     */
 
     /**
      * export zukunft.com data as object for creating e.g. a json message
@@ -102,8 +75,10 @@ class export
     {
 
         global $db_con;
+        global $cfg_sys;
+
         $lib = new library();
-        $cfg = new config();
+        $cfg_sys = new config();
 
         log_debug();
         $export_obj = (object)[];
@@ -115,11 +90,10 @@ class export
 
                 // 1. create the header
                 $export_obj->version = PRG_VERSION;
-                $export_obj->pod = $cfg->get_db(config::SITE_NAME, $db_con);
+                $export_obj->pod = $cfg_sys->get_db(config::SITE_NAME, $db_con);
                 $export_obj->time = date("Y-m-d H:i:s");
                 $export_obj->user = $usr->name;
-                $phr_lst_dsp = new phrase_list_dsp($phr_lst->api_json());
-                $export_obj->selection = $phr_lst_dsp->names(); // must be set by before the call TODO not nice better use the $phr_lst->object_exp_lst()
+                $export_obj->selection = $phr_lst->names(); // must be set by before the call TODO not nice better use the $phr_lst->object_exp_lst()
 
                 // 1.1. collect all personal values - value that cannot be seen by other user
 

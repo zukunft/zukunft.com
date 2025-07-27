@@ -28,19 +28,22 @@
 
 namespace unit;
 
-include_once MODEL_FORMULA_PATH . 'formula_list.php';
-include_once WEB_FORMULA_PATH . 'formula_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
 
-use api\formula\formula as formula_api;
-use api\word\word as word_api;
+include_once paths::MODEL_FORMULA . 'formula_list.php';
+include_once html_paths::FORMULA . 'formula_list.php';
+
 use cfg\db\sql_creator;
-use cfg\formula\formula;
-use cfg\word\triple;
-use cfg\verb\verb;
-use html\formula\formula_list as formula_list_dsp;
-use cfg\formula\formula_list;
 use cfg\db\sql_db;
+use cfg\formula\formula;
+use cfg\formula\formula_list;
+use cfg\verb\verb;
+use cfg\word\triple;
 use cfg\word\word;
+use html\formula\formula_list as formula_list_dsp;
+use shared\const\formulas;
+use shared\const\words;
 use test\test_cleanup;
 
 class formula_list_tests
@@ -60,19 +63,22 @@ class formula_list_tests
         $t->name = 'formula_list->';
         $t->resource_path = 'db/formula/';
 
-        $t->header('Unit tests of the formula list class (src/main/php/model/formula/formula_list.php)');
+        // start the test section (ts)
+        $ts = 'unit formula list ';
+        $t->header($ts);
 
-        $t->subheader('SQL statement creation tests');
+        $t->subheader($ts . 'sql statement creation');
 
         // load only the names
         $frm_lst = new formula_list($usr);
         $t->assert_sql_names($sc, $frm_lst, new formula($usr));
-        $t->assert_sql_names($sc, $frm_lst, new formula($usr), formula_api::TN_READ);
+        $t->assert_sql_names($sc, $frm_lst, new formula($usr), formulas::SCALE_TO_SEC);
 
         // sql to load a list of formulas by the id, name or ...
         $frm_lst = new formula_list($usr);
-        $t->assert_sql_by_ids($sc, $frm_lst);
-        $t->assert_sql_by_names($sc, $frm_lst, array(formula_api::TN_INCREASE, formula_api::TN_INCREASE));
+        $test_name = 'load formulas by ids';
+        $t->assert_sql_by_ids($test_name, $sc, $frm_lst);
+        $t->assert_sql_by_names($sc, $frm_lst, array(formulas::INCREASE, formulas::INCREASE));
         $t->assert_sql_like($sc, $frm_lst, 'i');
         $t->assert_sql_all_paged($db_con, $frm_lst);
         $this->assert_sql_by_word_ref($t, $db_con, $frm_lst);
@@ -85,18 +91,18 @@ class formula_list_tests
         //$t->assert_sql_all($db_con, $frm);
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $frm_lst = $t->formula_list();
         $t->assert_api($frm_lst);
 
 
-        $t->subheader('Im- and Export tests');
+        $t->subheader($ts . 'im- and export');
         $json_file = 'unit/formula/formula_list.json';
         $t->assert_json_file(new formula_list($usr), $json_file);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $trp_lst = $t->formula_list();
         $t->assert_api_to_dsp($trp_lst, new formula_list_dsp());
@@ -228,7 +234,7 @@ class formula_list_tests
     {
         // prepare
         $wrd = new word($t->usr1);
-        $wrd->set(1,word_api::TN_ADD);
+        $wrd->set(words::DEFAULT_WORD_ID,words::TEST_ADD);
         $phr = $wrd->phrase();
 
         // check the Postgres query syntax

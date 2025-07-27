@@ -31,12 +31,14 @@
 
 namespace cfg\component;
 
-include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_COMPONENT_PATH . 'component_type.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_COMPONENT . 'component_type.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
 
 use shared\types\view_styles;
 use cfg\helper\type_list;
@@ -63,7 +65,7 @@ class view_style_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(view_styles::COL_SM_4);
+        return parent::id(view_styles::COL_SM_8);
     }
 
 }

@@ -33,9 +33,11 @@
 
 namespace html;
 
-include_once SYSTEM_PATH . 'messages.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED_ENUM . 'messages.php';
 
-use html\system\messages;
+use shared\enum\messages as msg_id;
 
 class html_selector
 {
@@ -56,10 +58,11 @@ class html_selector
 
     function display(): string
     {
+        global $mtr;
         $result = $this->start_selector();
 
         if ($this->dummy_text == '') {
-            $this->dummy_text = (new messages())->txt(messages::PLEASE_SELECT);
+            $this->dummy_text = $mtr->txt(msg_id::PLEASE_SELECT);
         }
 
         if ($this->selected == 0) {

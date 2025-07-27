@@ -32,26 +32,37 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+use cfg\const\paths;
 
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_list.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_GROUP_PATH . 'group_id.php';
-//include_once MODEL_GROUP_PATH . 'result_id.php';
-//include_once MODEL_PHRASE_PATH . 'phrase.php';
-//include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-//include_once MODEL_RESULT_PATH . 'result.php';
-//include_once MODEL_RESULT_PATH . 'result_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_list.php';
-include_once SHARED_PATH . 'library.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_list.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_id.php';
+//include_once paths::MODEL_GROUP . 'result_id.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+//include_once paths::MODEL_PHRASE . 'phrase_list.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+//include_once paths::MODEL_RESULT . 'result_db.php';
+//include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_db.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value_list.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -60,20 +71,84 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type_list;
 use cfg\formula\formula;
+use cfg\formula\formula_db;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\group\result_id;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\result\result;
+use cfg\result\result_db;
 use cfg\result\result_list;
 use cfg\user\user;
+use cfg\user\user_message;
 use cfg\value\value;
+use cfg\value\value_base;
+use cfg\value\value_db;
 use cfg\value\value_list;
+use shared\enum\messages as msg_id;
 use shared\library;
 
 class sandbox_value_list extends sandbox_list
 {
+
+    /*
+     * object vars
+     */
+
+    // speed versus memory var for fast getting a value of the list
+    private array $name_hash = [];
+    private bool $name_hash_dirty = true;
+
+
+
+    /*
+     * construct and map
+     */
+
+    function __construct(user $usr, array $lst = [])
+    {
+        parent::__construct($usr, $lst);
+    }
+
+
+    /*
+     * set and get
+     */
+
+    /**
+     * @return array with the value group names
+     */
+    function name_lst(): array
+    {
+        $lst = array();
+        if ($this->name_hash_dirty) {
+            if ($this->count() > 0) {
+                foreach ($this->lst() as $val) {
+                    // use only valid ids
+                    $name = $val->grp()->name();
+                    if ($name <> '') {
+                        $lst[] = $val->grp()->name();
+                    }
+                }
+            }
+            asort($lst);
+            $this->name_hash = $lst;
+            $this->name_hash_dirty = false;
+        }
+        return $this->name_hash;
+    }
+
+    /**
+     * to be called after the lists have been updated
+     * but the index list have not yet been updated
+     */
+    protected function set_lst_dirty(): void
+    {
+        $this->name_hash_dirty = true;
+        parent::set_lst_dirty();
+    }
+
 
     /*
      * load
@@ -149,10 +224,10 @@ class sandbox_value_list extends sandbox_list
     {
         // differences between value and result list
         $list_class = value_list::class;
-        $tbl_lst = value::TBL_LIST;
+        $tbl_lst = value_db::TBL_LIST;
         if ($class !== value::class) {
             $list_class = result_list::class;
-            $tbl_lst = result::TBL_LIST;
+            $tbl_lst = result_db::TBL_LIST;
         }
 
         $lib = new library();
@@ -255,8 +330,13 @@ class sandbox_value_list extends sandbox_list
     ): sql_par
     {
         $qp = $this->load_sql_init(
-            $sc, $class, 'phr',
-            $sc_par_lst, $sc->par_list(), $usr_pos);
+            $sc,
+            $class,
+            'phr',
+            $sc_par_lst,
+            $sc->par_list(),
+            new sql_type_list(),
+            $usr_pos);
         if ($this->is_prime($sc_par_lst)) {
             $max_phr = group_id::PRIME_PHRASES_STD;
             if (($class == result::class
@@ -264,7 +344,7 @@ class sandbox_value_list extends sandbox_list
                 $max_phr = result_id::PRIME_PHRASES_STD;
                 if ($frm_pos != 0) {
                     $sc->add_where_no_par(
-                        '', formula::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
+                        '', formula_db::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
                 }
             }
             $this->load_sql_set_phrase_fields($sc, $phr_pos_lst, $or, $max_phr);
@@ -278,7 +358,7 @@ class sandbox_value_list extends sandbox_list
             }
             if ($frm_pos != 0) {
                 $sc->add_where_no_par(
-                    '', formula::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
+                    '', formula_db::FLD_ID, sql_par_type::INT_SAME, $frm_pos);
             }
             $this->load_sql_set_phrase_fields($sc, $phr_pos_lst, $or, $max_phr);
         } else {
@@ -312,7 +392,7 @@ class sandbox_value_list extends sandbox_list
         int         $max_phr
     ): void
     {
-        $used_or = true; // the first phrase is always or to force staring with brakest
+        $used_or = true; // the first phrase is always or to force staring with brackets
         foreach ($phr_pos_lst as $phr_pos) {
             $spt = sql_par_type::INT_SAME;
             if ($used_or) {
@@ -342,55 +422,64 @@ class sandbox_value_list extends sandbox_list
         string         $query_name,
         array          $tbl_types,
         sql_field_list $par_lst,
+        sql_type_list  $sc_typ_lst,
         ?int           $usr_pos = null
     ): sql_par
     {
+        $lib = new library();
+
         $is_std = $this->is_std($tbl_types);
         $is_prime = $this->is_prime($tbl_types);
         $is_main = $this->is_main($tbl_types);
 
         // differences between value and result list
+        // set the default settings for values
+        $val = $sc_typ_lst->value_object($this->user());
         $list_class = value_list::class;
-        $fld_lst = value::FLD_NAMES;
-        $fld_lst_std = value::FLD_NAMES_STD;
-        $fld_lst_dummy = value::FLD_NAMES_STD_DUMMY;
-        $fld_lst_usr_ex_std = value::FLD_NAMES_DATE_USR_EX_STD;
-        $fld_lst_usr_num_ex_std = value::FLD_NAMES_NUM_USR_EX_STD;
-        $fld_lst_usr_num = value::FLD_NAMES_NUM_USR;
-        $fld_lst_usr_only = value::FLD_NAMES_USR_ONLY;
-        if ($class != value::class) {
+        $fld_lst = value_db::FLD_NAMES;
+        $fld_lst_std = $val::FLD_NAMES_STD;
+        $fld_lst_dummy = value_db::FLD_NAMES_STD_DUMMY;
+        $fld_lst_usr_ex_std = value_db::FLD_NAMES_DATE_USR_EX_STD;
+        $fld_lst_usr_num_ex_std = value_db::FLD_NAMES_NUM_USR_EX_STD;
+        $fld_lst_usr_txt = $val::FLD_NAMES_USR;
+        $fld_lst_usr_num = $val::FLD_NAMES_NUM_USR;
+        $fld_lst_usr_only = value_db::FLD_NAMES_USR_ONLY;
+
+        // overwrite the value settings for results
+        if (!$lib->is_value($class)) {
             $list_class = result_list::class;
-            $fld_lst_std = result::FLD_NAMES_STD;
+            $fld_lst_std = result_db::FLD_NAMES_STD;
             if ($is_std) {
-                $fld_lst = result::FLD_NAMES_ALL;
+                $fld_lst = result_db::FLD_NAMES_ALL;
                 if ($is_prime or $is_main) {
-                    $fld_lst_dummy = result::FLD_NAMES_STD_DUMMY;
+                    $fld_lst_dummy = result_db::FLD_NAMES_STD_DUMMY;
                 } else {
-                    $fld_lst_dummy = result::FLD_NAMES_DUMMY;
+                    $fld_lst_dummy = result_db::FLD_NAMES_DUMMY;
                 }
             } else {
-                $fld_lst = result::FLD_NAMES_NON_STD;
-                $fld_lst_dummy = result::FLD_NAMES_DUMMY;
+                $fld_lst = result_db::FLD_NAMES_NON_STD;
+                $fld_lst_dummy = result_db::FLD_NAMES_DUMMY;
             }
-            $fld_lst_usr_ex_std = result::FLD_NAMES_DATE_USR_EX_STD;
-            $fld_lst_usr_num_ex_std = result::FLD_NAMES_NUM_USR_EX_STD;
-            $fld_lst_usr_num = result::FLD_NAMES_NUM_USR;
-            $fld_lst_usr_only = result::FLD_NAMES_USR_ONLY;
+            $fld_lst_usr_ex_std = result_db::FLD_NAMES_DATE_USR_EX_STD;
+            $fld_lst_usr_num_ex_std = result_db::FLD_NAMES_NUM_USR_EX_STD;
+            // TODO use const overwrites for the result types a.g. for geo location results
+            $fld_lst_usr_txt = [];
+            $fld_lst_usr_num = result_db::FLD_NAMES_NUM_USR;
+            $fld_lst_usr_only = result_db::FLD_NAMES_USR_ONLY;
         }
 
         $tbl_ext = $this->table_extension($tbl_types);
         $qp = new sql_par($list_class, new sql_type_list($tbl_types), $tbl_ext);
         $qp->name .= $query_name;
 
-        $sc->set_class($class, new sql_type_list([]), $tbl_ext);
+        $sc->set_class($class, new sql_type_list(), $tbl_ext);
         if ($par_lst->count() > 0) {
             $sc->set_par_list($par_lst);
         }
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
-        $val = new value($this->user());
         if ($is_prime) {
             $sc->set_id_field_dummy($val->id_field_group(true));
-            if ($class == value::class) {
+            if ($lib->is_value($class)) {
                 $sc->set_id_field($val->id_fields_prime());
             } else {
                 $num_of_main_phrases = result_id::PRIME_SOURCE_PHRASES + result_id::PRIME_RESULT_PHRASES;
@@ -417,7 +506,7 @@ class sandbox_value_list extends sandbox_list
             if ($is_std) {
                 $sc->set_id_field_usr_dummy($val->id_field_group(false, true));
             }
-            if ($class == value::class) {
+            if ($lib->is_value($class)) {
                 $sc->set_id_field_num_dummy($val->id_fields_prime());
             } else {
                 $sc->set_id_field_num_dummy($val->id_fields_prime(1, result_id::MAIN_PHRASES_ALL));
@@ -429,11 +518,11 @@ class sandbox_value_list extends sandbox_list
         if ($is_std) {
             // TODO replace next line with union select field name synchronisation
             $sc->set_fields_num_dummy($fld_lst_dummy);
-            if ($class == value::class) {
+            if ($lib->is_value($class)) {
                 $sc->set_fields($fld_lst_std);
             } else {
                 if ($is_prime or $is_main) {
-                    $sc->set_fields(array_merge(result::FLD_NAMES_STD_NON_DUMMY, $fld_lst_std));
+                    $sc->set_fields(array_merge(result_db::FLD_NAMES_STD_NON_DUMMY, $fld_lst_std));
                 } else {
                     $sc->set_fields($fld_lst_std);
                 }
@@ -447,10 +536,135 @@ class sandbox_value_list extends sandbox_list
                 $usr_par = $par_lst->get($usr_pos);
                 $usr_par_name = $usr_par->name;
             }
+            if ($fld_lst_usr_txt != []) {
+                $sc->set_usr_fields($fld_lst_usr_txt, true, $usr_par_name);
+            }
             $sc->set_usr_num_fields($fld_lst_usr_num, true, $usr_par_name);
             $sc->set_usr_only_fields($fld_lst_usr_only);
         }
         return $qp;
+    }
+
+
+    /*
+     * info
+     */
+
+    /**
+     * reports the difference to the given value list as a human-readable messages
+     * @param sandbox_value_list $val_lst the list of the object to compare with
+     * @param msg_id $msg_missing the message id for a missing value object
+     * @param msg_id $msg_additional the message id for an additional value object
+     * @return user_message
+     */
+    function diff_msg(
+        sandbox_value_list $val_lst,
+        msg_id             $msg_missing = msg_id::VALUE_MISSING,
+        msg_id             $msg_additional = msg_id::VALUE_ADDITIONAL,
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        foreach ($this->lst() as $val) {
+            $val_to_chk = $val_lst->get_by_id($val->id());
+            if ($val_to_chk == null) {
+                $vars = [msg_id::VAR_VAL_ID => $val->dsp_db()];
+                $usr_msg->add_id_with_vars($msg_missing, $vars);
+            }
+            if ($val_to_chk != null) {
+                $usr_msg->add($val->diff_msg($val_to_chk));
+            }
+        }
+        foreach ($val_lst->lst() as $val) {
+            $val_to_chk = $this->get_by_id($val->id());
+            if ($val_to_chk == null) {
+                $vars = [msg_id::VAR_VAL_ID => $val->dsp_db()];
+                $usr_msg->add_id_with_vars($msg_additional, $vars);
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return array with the sorted value ids
+     */
+    function id_lst(): array
+    {
+        return $this->id_pos_lst();
+    }
+
+
+    /*
+     * modify
+     */
+
+    /**
+     * add one value to the value list, but only if it is not yet part of the list
+     * @param value_base|null $val_to_add the value object to be added to the list
+     * @returns bool true the value has been added
+     */
+    function add_by_group(?value_base $val_to_add): bool
+    {
+        $result = false;
+        // check parameters
+        if ($val_to_add != null) {
+            $name = $val_to_add->grp()->name();
+            if ($name != '') {
+                if (count($this->name_lst()) > 0) {
+                    if (!in_array($name, $this->name_lst())) {
+                        parent::add_obj($val_to_add);
+                        $this->add_hash_name($name);
+                        $result = true;
+                    }
+                } else {
+                    parent::add_obj($val_to_add);
+                    $this->add_hash_name($name);
+                    $result = true;
+                }
+            }
+        }
+        return $result;
+    }
+
+    private function add_hash_name(string $name): void
+    {
+        if ($this->count() != count($this->name_hash)) {
+            $this->name_lst();
+        } else {
+            $this->name_hash[] = $name;
+            // assuming that in most cases either the id or the names has is needed for building up the list but not both
+            $this->set_lst_dirty();
+        }
+    }
+
+    /**
+     * add one value to the value list, but only if it is not yet part of the list
+     * @param value_base|null $val_to_add the value object to be added to the list
+     * @param bool $allow_duplicates true if e.g. the group id is not yet set but the value should nevertheless be added
+     * @returns bool true the value has been added
+     */
+    function add(?value_base $val_to_add, bool $allow_duplicates = false): bool
+    {
+        $result = false;
+        // check parameters
+        if ($val_to_add != null) {
+            if ($allow_duplicates) {
+                parent::add_obj($val_to_add, $allow_duplicates);
+            } else {
+                if ($val_to_add->is_id_set() or $val_to_add->grp()->name() != '') {
+                    $id = $val_to_add->id();
+                    if (count($this->id_lst()) > 0) {
+                        if (!in_array($id, $this->id_lst())) {
+                            parent::add_obj($val_to_add);
+                            $result = true;
+                        }
+                    } else {
+                        parent::add_obj($val_to_add);
+                        $result = true;
+                    }
+                }
+            }
+        }
+        return $result;
     }
 
 }

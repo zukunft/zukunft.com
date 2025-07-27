@@ -2,8 +2,9 @@
 
 /*
 
-    cfg/phrase/phrase_table.php - remember which phrases are stored in which table and pod
+    model/phrase/phrase_table.php - remember which phrases are stored in which table and pod
     ---------------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -31,14 +32,16 @@
 
 namespace cfg\phrase;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_PHRASE_PATH . 'phrase_table_status.php';
-include_once MODEL_SYSTEM_PATH . 'pod.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_USER_PATH . 'user.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_PHRASE . 'phrase_table_status.php';
+include_once paths::MODEL_SYSTEM . 'pod.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_USER . 'user.php';
 
 use cfg\db\sql;
 use cfg\db\sql_field_default;

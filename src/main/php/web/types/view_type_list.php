@@ -32,7 +32,12 @@
 
 namespace html\types;
 
-include_once TYPES_PATH . 'type_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::TYPES . 'type_list.php';
+include_once paths::SHARED_TYPES . 'view_type.php';
+
+use shared\types\view_type;
 
 class view_type_list extends type_list
 {
@@ -46,6 +51,11 @@ class view_type_list extends type_list
     {
         global $html_view_types;
         return parent::type_selector($html_view_types->lst_key(), $name, $form, $selected);
+    }
+
+    function default_id(): int
+    {
+        return parent::id(view_type::DEFAULT);
     }
 
 }

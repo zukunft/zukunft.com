@@ -35,16 +35,18 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
 
-use cfg\value\value;
-use html\html_base;
-use html\view\view as view_dsp;
-use html\value\value as value_dsp;
+include_once paths::SHARED_CONST . 'views.php';
+
 use cfg\user\user;
+use cfg\value\value;
 use cfg\view\view;
+use html\html_base;
+use html\value\value as value_dsp;
+use html\view\view as view_dsp;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("value_add");
@@ -64,7 +66,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_VALUE_ADD);
+    $msk->load_by_code_id(view_shared::VALUE_ADD);
     $back = $_GET[api::URL_VAR_BACK] = '';     // the word id from which this value change has been called (maybe later any page)
 
     // create the object to store the parameters so that if the add form is shown again it is already filled

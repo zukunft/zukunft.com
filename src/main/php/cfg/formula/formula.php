@@ -2,13 +2,14 @@
 
 /*
 
-    cfg/formula/formula.php - the main formula object
+    model/formula/formula.php - the main formula object
     -----------------------
 
     The main sections of this object are
     - db const:          const for the database link
     - object vars:       the variables of this formula object
     - construct and map: including the mapping of the db row to this formula object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the vars from unexpected changes
     - preloaded:         select e.g. types from cache
     - cast:              create an api object and set the vars from an api json
@@ -53,92 +54,105 @@
 
 namespace cfg\formula;
 
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once SERVICE_EXPORT_PATH . 'formula_exp.php';
-include_once MODEL_RESULT_PATH . 'result_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once MODEL_ELEMENT_PATH . 'element.php';
-include_once MODEL_ELEMENT_PATH . 'element_list.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'protection_type.php';
-include_once MODEL_SANDBOX_PATH . 'share_type.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_RESULT_PATH . 'result_list.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_FORMULA_PATH . 'formula_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_link.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
-include_once MODEL_FORMULA_PATH . 'expression.php';
-include_once MODEL_FORMULA_PATH . 'parameter_type.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once API_FORMULA_PATH . 'formula.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::MODEL_ELEMENT . 'element.php';
+include_once paths::MODEL_ELEMENT . 'element_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
+include_once paths::MODEL_SANDBOX . 'protection_type.php';
+include_once paths::MODEL_SANDBOX . 'share_type.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_FORMULA . 'formula_type.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_FORMULA . 'expression.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_CALC . 'parameter_type.php';
+include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
+use cfg\db\sql_field_type;
+use cfg\db\sql_par;
+use cfg\db\sql_par_field_list;
+use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
 use cfg\element\element;
 use cfg\element\element_list;
+use cfg\helper\data_object;
+use cfg\helper\db_object_seq_id;
 use cfg\log\change;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
 use cfg\phrase\term;
 use cfg\phrase\term_list;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_typed;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\view\view;
-use cfg\word\word;
 use cfg\result\result;
 use cfg\result\result_list;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_code_id;
+use cfg\user\user;
+use cfg\user\user_message;
 use cfg\value\value;
-use api\formula\formula as formula_api;
-use html\word\word as word_dsp;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\json_fields;
-use shared\library;
-use math;
+use cfg\view\view;
+use cfg\view\view_db;
+use cfg\word\triple;
+use cfg\word\word;
 use DateTime;
 use Exception;
+use math;
+use shared\calc\parameter_type;
+use shared\const\chars;
+use shared\const\formulas;
+use shared\enum\messages;
+use shared\enum\messages as msg_id;
+use shared\helper\CombineObject;
+use shared\json_fields;
+use shared\library;
+use shared\types\api_type_list;
+use shared\types\phrase_type as phrase_type_shared;
 
-class formula extends sandbox_typed
+class formula extends sandbox_code_id
 {
 
     /*
@@ -148,98 +162,15 @@ class formula extends sandbox_typed
     // comments used for the database creation
     const TBL_COMMENT = 'the mathematical expression to calculate results based on values and results';
 
-    // object specific database and JSON object field names
-    // means: database fields only used for formulas
-    // table fields where the change should be encoded before shown to the user
-    // *_COM: the description of the field
-    // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID = 'formula_id';
-    const FLD_ID_SQL_TYP = sql_field_type::INT;
-    const FLD_NAME_COM = 'the text used to search for formulas that must also be unique for all terms (words, triples, verbs and formulas)';
-    const FLD_NAME = 'formula_name';
-    const FLD_TYPE_COM = 'the id of the formula type';
-    const FLD_TYPE = 'formula_type_id';
-    const FLD_TYPE_SQL_TYP = sql_field_type::INT;
-    const FLD_FORMULA_TEXT_COM = 'the internal formula expression with the database references e.g. {f1} for formula with id 1';
-    const FLD_FORMULA_TEXT = 'formula_text';
-    const FLD_FORMULA_TEXT_SQL_TYP = sql_field_type::TEXT;
-    const FLD_FORMULA_USER_TEXT_COM = 'the formula expression in user readable format as shown to the user which can include formatting for better readability';
-    const FLD_FORMULA_USER_TEXT = 'resolved_text';
-    const FLD_FORMULA_USER_TEXT_SQL_TYP = sql_field_type::TEXT;
-    //const FLD_REF_TEXT = "ref_text";             // the formula field "ref_txt" is a more internal field, which should not be shown to the user (only to an admin for debugging)
-    const FLD_DESCRIPTION_COM = 'text to be shown to the user for mouse over; to be replaced by a language form entry';
-    const FLD_ALL_NEEDED_COM = 'the "calculate only if all values used in the formula exist" flag should be converted to "all needed for calculation" instead of just displaying "1"';
-    const FLD_ALL_NEEDED = 'all_values_needed';
-    const FLD_ALL_NEEDED_SQL_TYP = sql_field_type::INT_SMALL;
-    const FLD_LAST_UPDATE_COM = 'time of the last calculation relevant update';
-    const FLD_LAST_UPDATE = 'last_update';
-    const FLD_LAST_UPDATE_SQL_TYP = sql_field_type::TIME;
-    const FLD_VIEW_COM = 'the default mask for this formula';
-    const FLD_VIEW = 'view_id';
-    const FLD_VIEW_SQL_TYP = sql_field_type::INT;
-    const FLD_USAGE_COM = 'number of results linked to this formula';
-    const FLD_USAGE = 'usage'; // TODO convert to a percent value of relative importance e.g. is 100% if all results, words and triples use this formula; should be possible to adjust the weight of e.g. values and views with the user specific system settings
-    const FLD_USAGE_SQL_TYP = sql_field_type::INT;
-
-    // the field names used for the im- and export in the json or yaml format
-    const FLD_EXPRESSION = 'expression';
-    const FLD_ASSIGN = 'assigned_word';
-
-    // list of fields that MUST be set by one user
-    // TODO add foreign key for share and protection type?
-    const FLD_LST_MUST_BE_IN_STD = array(
-        [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::UNIQUE, '', self::FLD_NAME_COM],
-        [self::FLD_FORMULA_TEXT, self::FLD_FORMULA_TEXT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_FORMULA_TEXT_COM],
-        [self::FLD_FORMULA_USER_TEXT, self::FLD_FORMULA_USER_TEXT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_FORMULA_USER_TEXT_COM],
-    );
-    // list of must fields that CAN be changed by the user
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
-        [self::FLD_NAME, self::FLD_NAME_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
-        [self::FLD_FORMULA_TEXT, self::FLD_FORMULA_TEXT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_FORMULA_TEXT_COM],
-        [self::FLD_FORMULA_USER_TEXT, self::FLD_FORMULA_USER_TEXT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_FORMULA_USER_TEXT_COM],
-    );
-    // list of fields that CAN be changed by the user
-    const FLD_LST_USER_CAN_CHANGE = array(
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
-        [self::FLD_TYPE, self::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, formula_type::class, self::FLD_TYPE_COM],
-        [self::FLD_ALL_NEEDED, self::FLD_ALL_NEEDED_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_ALL_NEEDED_COM],
-        [self::FLD_LAST_UPDATE, self::FLD_LAST_UPDATE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_LAST_UPDATE_COM],
-        [self::FLD_VIEW, self::FLD_VIEW_SQL_TYP, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
-        [self::FLD_USAGE, self::FLD_USAGE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_USAGE_COM],
-    );
-
-    // all database field names excluding the id
-    // actually empty because all formula fields are user specific
-    // TODO check if last_update must be user specific
-    const FLD_NAMES = array();
-    // list of the user specific database field names
-    const FLD_NAMES_USR = array(
-        self::FLD_FORMULA_TEXT,
-        self::FLD_FORMULA_USER_TEXT,
-        sandbox_named::FLD_DESCRIPTION
-    );
-    // list of the user specific numeric database field names
-    const FLD_NAMES_NUM_USR = array(
-        self::FLD_TYPE,
-        self::FLD_ALL_NEEDED,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
-    );
-    // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
-        self::FLD_NAME,
-        self::FLD_FORMULA_TEXT,
-        self::FLD_FORMULA_USER_TEXT,
-        sandbox_named::FLD_DESCRIPTION,
-        self::FLD_TYPE,
-        self::FLD_ALL_NEEDED,
-        self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
-        sandbox::FLD_SHARE,
-        sandbox::FLD_PROTECT
-    );
+    // forward the const to enable usage of $this::CONST_NAME
+    const FLD_ID = formula_db::FLD_ID;
+    const FLD_LST_MUST_BE_IN_STD = formula_db::FLD_LST_MUST_BE_IN_STD;
+    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = formula_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
+    const FLD_LST_USER_CAN_CHANGE = formula_db::FLD_LST_USER_CAN_CHANGE;
+    const FLD_NAMES = formula_db::FLD_NAMES;
+    const FLD_NAMES_USR = formula_db::FLD_NAMES_USR;
+    const FLD_NAMES_NUM_USR = formula_db::FLD_NAMES_NUM_USR;
+    const ALL_SANDBOX_FLD_NAMES = formula_db::ALL_SANDBOX_FLD_NAMES;
 
 
     /*
@@ -258,6 +189,10 @@ class formula extends sandbox_typed
     private ?int $usage = null;            // indicator of the popularity for sorting selection boxes
 
     // in memory only fields
+    // list of phrase that link to this formula
+    private ?formula_link_list $lnk_lst = null;
+    // old list of phrase that link to this formula
+    private ?phrase_list $phr_lst = null;
     public ?string $type_cl = '';          // the code id of the formula type
     public ?word $name_wrd = null;         // the triple object for the formula name:
     //                                        because values can only be assigned to phrases, also for the formula name a triple must exist
@@ -275,8 +210,8 @@ class formula extends sandbox_typed
      */
     function __construct(user $usr)
     {
-        parent::__construct($usr);
         $this->reset();
+        parent::__construct($usr);
 
         $this->rename_can_switch = UI_CAN_CHANGE_FORMULA_NAME;
     }
@@ -289,8 +224,6 @@ class formula extends sandbox_typed
     {
         parent::reset();
 
-        $this->name = '';
-
         $this->ref_text = null;
         $this->ref_text_dirty = false;
         $this->usr_text = null;
@@ -300,6 +233,8 @@ class formula extends sandbox_typed
         $this->last_update = null;
         $this->usage = null;
 
+        $this->lnk_lst = null;
+        $this->phr_lst = null;
         $this->type_cl = '';
         $this->name_wrd = null;
 
@@ -324,9 +259,9 @@ class formula extends sandbox_typed
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
-        string $id_fld = self::FLD_ID,
-        string $name_fld = self::FLD_NAME,
-        string $type_fld = self::FLD_TYPE): bool
+        string $id_fld = formula_db::FLD_ID,
+        string $name_fld = formula_db::FLD_NAME,
+        string $type_fld = formula_db::FLD_TYPE): bool
     {
         global $frm_typ_cac;
         $lib = new library();
@@ -335,25 +270,25 @@ class formula extends sandbox_typed
             if (array_key_exists($type_fld, $db_row)) {
                 $this->type_id = $db_row[$type_fld];
             }
-            if (array_key_exists(self::FLD_FORMULA_TEXT, $db_row)) {
-                $this->ref_text = $db_row[self::FLD_FORMULA_TEXT];
+            if (array_key_exists(formula_db::FLD_FORMULA_TEXT, $db_row)) {
+                $this->ref_text = $db_row[formula_db::FLD_FORMULA_TEXT];
             }
-            if (array_key_exists(self::FLD_FORMULA_USER_TEXT, $db_row)) {
-                $this->usr_text = $db_row[self::FLD_FORMULA_USER_TEXT];
+            if (array_key_exists(formula_db::FLD_FORMULA_USER_TEXT, $db_row)) {
+                $this->usr_text = $db_row[formula_db::FLD_FORMULA_USER_TEXT];
             }
-            if (array_key_exists(self::FLD_ALL_NEEDED, $db_row)) {
-                $this->need_all_val = $lib->get_bool($db_row[self::FLD_ALL_NEEDED]);
+            if (array_key_exists(formula_db::FLD_ALL_NEEDED, $db_row)) {
+                $this->need_all_val = $lib->get_bool($db_row[formula_db::FLD_ALL_NEEDED]);
             }
-            if (array_key_exists(self::FLD_LAST_UPDATE, $db_row)) {
-                $this->last_update = $lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id());
+            if (array_key_exists(formula_db::FLD_LAST_UPDATE, $db_row)) {
+                $this->last_update = $lib->get_datetime($db_row[formula_db::FLD_LAST_UPDATE], $this->dsp_id());
             }
-            if (array_key_exists(self::FLD_VIEW, $db_row)) {
-                if ($db_row[self::FLD_VIEW] != null) {
-                    $this->set_view_id($db_row[self::FLD_VIEW]);
+            if (array_key_exists(formula_db::FLD_VIEW, $db_row)) {
+                if ($db_row[formula_db::FLD_VIEW] != null) {
+                    $this->set_view_id($db_row[formula_db::FLD_VIEW]);
                 }
             }
-            if (array_key_exists(self::FLD_USAGE, $db_row)) {
-                $this->set_usage($db_row[self::FLD_USAGE]);
+            if (array_key_exists(formula_db::FLD_USAGE, $db_row)) {
+                $this->set_usage($db_row[formula_db::FLD_USAGE]);
             }
 
             if ($this->type_id > 0) {
@@ -379,42 +314,162 @@ class formula extends sandbox_typed
         return $result;
     }
 
+    /**
+     * map a formula api json to this model formula object
+     * similar to the import_obj function but using the database id instead of names as the unique key
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message the message for the user why the action has failed and a suggested solution
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $msg = parent::api_mapper($api_json);
+
+        if (array_key_exists(json_fields::USR_TEXT, $api_json)) {
+            if ($api_json[json_fields::USR_TEXT] <> '') {
+                $this->set_user_text($api_json[json_fields::USR_TEXT]);
+            }
+        }
+
+        return $msg;
+    }
+
+    /**
+     * import a formula and its links from an import JSON object
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user who has initiated the import mainly used to add tge code id to the database
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper_user(
+        array       $in_ex_json,
+        user        $usr_req,
+        data_object $dto = null,
+        object      $test_obj = null
+    ): user_message
+    {
+        $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
+
+        if (key_exists(json_fields::USR_TEXT, $in_ex_json)) {
+            if ($in_ex_json[json_fields::USR_TEXT] <> '') {
+                $this->set_user_text($in_ex_json[json_fields::USR_TEXT]);
+            }
+        }
+
+        if (key_exists(json_fields::ASSIGNED, $in_ex_json)) {
+            $phr_lst = new phrase_list($this->user());
+            $phr_lst->import_map_names($in_ex_json[json_fields::ASSIGNED], $dto);
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * set the vars of this formula object based on the given json without writing to the database
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        global $frm_typ_cac;
+
+        // reset the all parameters for the formula object but keep the user
+        $usr = $this->user();
+        $this->reset();
+        $this->set_user($usr);
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+
+        if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
+            $this->type_id = $frm_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
+        } else {
+            $this->type_id = $frm_typ_cac->default_id();
+        }
+        if (key_exists(json_fields::EXPRESSION, $in_ex_json)) {
+            if ($in_ex_json[json_fields::EXPRESSION] <> '') {
+                $this->usr_text = $in_ex_json[json_fields::EXPRESSION];
+            }
+        }
+
+        // assign the phrases to the formula
+        if (key_exists(json_fields::ASSIGNED_WORD, $in_ex_json)) {
+            $phr_names = explode(",", $in_ex_json[json_fields::ASSIGNED_WORD]);
+            if ($dto != null) {
+                $phr_lst = $dto->phrase_list();
+                foreach ($phr_names as $name) {
+                    $phr = $phr_lst->get_by_name($name);
+                    if ($phr == null) {
+                        $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING, [
+                            msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
+                            msg_id::VAR_NAME => $name,
+                            msg_id::VAR_FORMULA => $this->name(),
+                        ]);
+                    } else {
+                        $this->link_phrase($phr);
+                    }
+                }
+            }
+        }
+
+        // set the default type if no type is specified
+        if ($this->type_id == 0) {
+            $this->type_id = $frm_typ_cac->default_id();
+        }
+
+        return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        if ($this->is_excluded() and !$typ_lst->test_mode()) {
+            $vars = [];
+            $vars[json_fields::ID] = $this->id();
+            $vars[json_fields::EXCLUDED] = true;
+        } else {
+            $vars = parent::api_json_array($typ_lst, $usr);
+            $vars[json_fields::USR_TEXT] = $this->usr_text;
+        }
+
+        return $vars;
+    }
+
 
     /*
      * set and get
      */
 
     /**
-     * set the most used object vars with one set statement
-     * @param int $id mainly for test creation the database id of the formula
-     * @param string $name mainly for test creation the name of the formula
-     * @param string $type_code_id the code id of the predefined formula type
-     */
-    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
-    {
-        parent::set($id, $name);
-
-        if ($type_code_id != '') {
-            $this->set_type($type_code_id);
-        }
-    }
-
-    /**
      * set the predefined type of this formula
      *
-     * @param string $type_code_id the code id that should be added to this formula
-     * @return void
+     * @param string $code_id the code id that should be added to this formula
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $type_code_id): void
+    function set_type(string $code_id, user $usr_req = new user()): user_message
     {
         global $frm_typ_cac;
-        $this->type_id = $frm_typ_cac->id($type_code_id);
+        return parent::set_type_by_code_id(
+            $code_id, $frm_typ_cac, msg_id::FORMULA_TYPE_NOT_FOUND, $usr_req);
     }
 
     /**
      * set the value to rank the formulas by usage
      *
-     * @param int $usage a higher value moves the formula to the top of the selection list
+     * @param int|null $usage a higher value moves the formula to the top of the selection list
      * @return void
      */
     function set_usage(?int $usage): void
@@ -453,11 +508,6 @@ class formula extends sandbox_typed
         return $this->usage;
     }
 
-    function name(): string
-    {
-        return $this->name;
-    }
-
     /**
      * update the expression by setting the human-readable format and try to update the database reference format
      * @param string $usr_txt the formula expression in the human-readable format
@@ -480,14 +530,13 @@ class formula extends sandbox_typed
         return $this->usr_text;
     }
 
-    function ref_text(): string
+    function ref_text(): ?string
     {
         if ($this->ref_text_dirty) {
             $this->generate_ref_text();
         }
         return $this->ref_text;
     }
-
 
 
     /*
@@ -502,58 +551,6 @@ class formula extends sandbox_typed
     {
         global $frm_typ_cac;
         return $frm_typ_cac->name($this->type_id);
-    }
-
-
-    /*
-     * cast
-     */
-
-    /**
-     * @returns term the formula object cast into a term object
-     */
-    function term(): term
-    {
-        $trm = new term($this->user());
-        $trm->set_obj($this);
-        return $trm;
-    }
-
-    /**
-     * @return formula_api the formula frontend api object
-     */
-    function api_obj(): formula_api
-    {
-        $api_obj = new formula_api();
-        if ($this->is_excluded()) {
-            $api_obj->set_id($this->id());
-            $api_obj->excluded = true;
-        } else {
-            parent::fill_api_obj($api_obj);
-            $api_obj->set_usr_text($this->usr_text);
-        }
-        return $api_obj;
-    }
-
-    /**
-     * map a formula api json to this model formula object
-     * similar to the import_obj function but using the database id instead of names as the unique key
-     * @param array $api_json the api array with the word values that should be mapped
-     * @return user_message the message for the user why the action has failed and a suggested solution
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-            if ($key == json_fields::USR_TEXT) {
-                if ($value <> '') {
-                    $this->set_user_text($value);
-                }
-            }
-        }
-
-        return $msg;
     }
 
 
@@ -588,9 +585,9 @@ class formula extends sandbox_typed
     {
         $sc->set_class($this::class);
         $sc->set_fields(array_merge(
-            self::FLD_NAMES,
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR,
+            formula_db::FLD_NAMES,
+            formula_db::FLD_NAMES_USR,
+            formula_db::FLD_NAMES_NUM_USR,
             array(user::FLD_ID)
         ));
 
@@ -653,12 +650,12 @@ class formula extends sandbox_typed
 
     function name_field(): string
     {
-        return self::FLD_NAME;
+        return formula_db::FLD_NAME;
     }
 
     function all_sandbox_fields(): array
     {
-        return self::ALL_SANDBOX_FLD_NAMES;
+        return formula_db::ALL_SANDBOX_FLD_NAMES;
     }
 
 
@@ -666,8 +663,25 @@ class formula extends sandbox_typed
      * word
      */
 
+
     /**
-     * create the corresponding name word for the formula name
+     * create the corresponding name word object for the formula name
+     * @return word with the name of the formula
+     */
+    function formula_word(): word
+    {
+        global $phr_typ_cac;
+
+        // if the formula word is missing, try a word creating as a kind of auto recovery
+        $name_wrd = new word($this->user());
+        $name_wrd->set_name($this->name());
+        $name_wrd->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
+        return $name_wrd;
+    }
+
+
+    /**
+     * add the corresponding name word for the formula name to the database
      * @return bool true if adding the word has been successful
      */
     function wrd_add(): bool
@@ -678,9 +692,7 @@ class formula extends sandbox_typed
         $result = false;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
-        $name_wrd = new word($this->user());
-        $name_wrd->set_name($this->name());
-        $name_wrd->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
+        $name_wrd = $this->formula_word();
         $name_wrd->save()->get_last_message();
         if ($name_wrd->id() > 0) {
             $this->name_wrd = $name_wrd;
@@ -767,8 +779,69 @@ class formula extends sandbox_typed
 
 
     /*
+     * modify
+     */
+
+    /**
+     * fill this formula based on the given formula
+     *
+     * @param formula|CombineObject|db_object_seq_id $obj word with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
+     * @return user_message a warning in case of a conflict e.g. due to a missing change time
+     */
+    function fill(formula|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
+    {
+        $usr_msg = parent::fill($obj, $usr_req);
+
+        if ($obj->ref_text != null) {
+            $this->ref_text = $obj->ref_text;
+        }
+        if ($obj->usr_text != null) {
+            $this->usr_text = $obj->usr_text;
+        }
+        if ($obj->need_all_val != null) {
+            $this->need_all_val = $obj->need_all_val;
+        }
+        if ($obj->last_update != null) {
+            $this->last_update = $obj->last_update;
+        }
+
+        return $usr_msg;
+    }
+
+
+    /*
      * info
      */
+
+    /**
+     * returns ok message if this formula can be added to the database
+     * e.g. a formula without expression should not be added to the database
+     * @return user_message the explanation why the link cannot yet be added to the database
+     */
+    function db_ready(): user_message
+    {
+        $usr_msg = parent::db_ready();
+
+        if ($this->ref_text == null and $this->usr_text == null) {
+            $usr_msg->add_id_with_vars(msg_id::FORMULA_EXPRESSION_MISSING,
+                [msg_id::VAR_FORMULA => $this->dsp_id()]);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return bool true if the formula object probably has already been added to the database
+     *              false e.g. if some parameters are missing
+     */
+    function is_valid(): bool
+    {
+        $result = parent::is_valid();
+        if ($this->ref_text == null and $this->usr_text == null) {
+            $result = false;
+        }
+        return $result;
+    }
 
     /**
      * return the true if the formula has a special type and the result is a kind of hardcoded
@@ -784,10 +857,49 @@ class formula extends sandbox_typed
     }
 
     /**
+     * check if the formula in the database needs to be updated
+     * e.g. for import  if this formula has only the name set, the protection should not be updated in the database
+     *
+     * @param formula|CombineObject|db_object_seq_id $db_obj the formula as saved in the database
+     * @return bool true if this formula has infos that should be saved in the database
+     */
+    function needs_db_update(formula|CombineObject|db_object_seq_id $db_obj): bool
+    {
+        $result = parent::needs_db_update($db_obj);
+        if ($this->ref_text() != null) {
+            if ($this->ref_text() != $db_obj->ref_text()) {
+                $result = true;
+            }
+        }
+        if ($this->usr_text() != null) {
+            if ($this->usr_text() != $db_obj->usr_text()) {
+                $result = true;
+            }
+        }
+        if ($this->type_id() != null) {
+            if ($this->type_id() != $db_obj->type_id()) {
+                $result = true;
+            }
+        }
+        if ($this->need_all_val != $db_obj->need_all_val) {
+            $result = true;
+        }
+        if ($this->view_id() != null) {
+            if ($this->view_id() != $db_obj->view_id()) {
+                $result = true;
+            }
+        }
+        if ($this->usage() != $db_obj->usage()) {
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
      * return the result of a special formula
      * e.g. "this" or "next" where the value of this or the following time word is returned
      */
-    function special_result(phrase_list $phr_lst, phrase $time_phr): value
+    function special_result(phrase_list $phr_lst, ?phrase $time_phr = null): value
     {
         log_debug("formula->special_result (" . $this->id() . ",t" . $phr_lst->dsp_id() . ",time" . $time_phr->name() . " and user " . $this->user()->name . ")");
         $val = null;
@@ -1007,7 +1119,7 @@ class formula extends sandbox_typed
 
         $db_con->set_class(result::class);
         $db_con->set_usr($this->user()->id());
-        return $db_con->delete_old(self::FLD_ID, $this->id());
+        return $db_con->delete_old(formula_db::FLD_ID, $this->id());
     }
 
     /**
@@ -1024,7 +1136,7 @@ class formula extends sandbox_typed
         $rst->ref_text = $this->ref_text_r;
         $rst->num_text = $this->ref_text_r;
         $rst->src_grp->set_phrase_list(clone $phr_lst);
-        $rst->grp->set_phrase_list(clone $phr_lst);
+        $rst->grp()->set_phrase_list(clone $phr_lst);
         if ($rst->last_val_update < $this->last_update) {
             $rst->last_val_update = $this->last_update;
         }
@@ -1055,7 +1167,7 @@ class formula extends sandbox_typed
         if ($this->ref_text_r == '' and $this->ref_text <> '') {
             $exp = new expression($this->user());
             $exp->set_ref_text($this->ref_text, $pre_trm_lst);
-            $this->ref_text_r = expression::CHAR_CALC . $exp->r_part();
+            $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
         }
 
         // create the result list
@@ -1065,9 +1177,9 @@ class formula extends sandbox_typed
         $res_init = $this->create_result($phr_lst); // maybe move the constructor of result_list?
 
         // load the formula element groups; similar parts is used in the explain method in result
-        // e.g. for "Sales differentiator Sector / Total Sales" the element groups are
-        //      "Sales differentiator Sector" and "Total Sales" where
-        //      the element group "Sales differentiator Sector" has the elements: "Sales" (of type word), "differentiator" (verb), "Sector" (word)
+        // e.g. for "sales differentiator sector / Total sales" the element groups are
+        //      "sales differentiator sector" and "Total sales" where
+        //      the element group "sales differentiator sector" has the elements: "sales" (of type word), "differentiator" (verb), "sector" (word)
         $exp = $this->expression($pre_trm_lst);
         $elm_grp_lst = $exp->element_grp_lst($pre_trm_lst);
         log_debug('in ' . $exp->ref_text() . ' ' . $lib->dsp_count($elm_grp_lst->lst()) . ' element groups found');
@@ -1100,7 +1212,7 @@ class formula extends sandbox_typed
                     // fill each results created by any previous number filling
                     foreach ($res_lst->lst() as $res) {
                         // fill each results created by any previous number filling
-                        if ($res->val_missing == False) {
+                        if (!$res->val_missing) {
                             if ($fig_lst->fig_missing and $this->need_all_val) {
                                 log_debug('figure missing');
                                 $res->val_missing = True;
@@ -1124,7 +1236,7 @@ class formula extends sandbox_typed
                         $res_master = clone $res;
                         $fig_nbr = 1;
                         foreach ($fig_lst->lst() as $fig) {
-                            if ($res->val_missing == False) {
+                            if (!$res->val_missing) {
                                 if ($fig_lst->fig_missing and $this->need_all_val) {
                                     log_debug('figure missing');
                                     $res->val_missing = True;
@@ -1225,7 +1337,7 @@ class formula extends sandbox_typed
                 if ($res->num_text == '') {
                     log_err('num text is empty nothing needs to be done, but actually this should never happen');
                 } else {
-                    if ($res->last_val_update > $res->last_update) {
+                    if ($res->last_val_update > $res->last_update()) {
                         // check if all needed value exist
                         $can_calc = false;
                         if ($this->need_all_val) {
@@ -1244,7 +1356,7 @@ class formula extends sandbox_typed
                             log_debug('always calculate ' . $this->dsp_id());
                             $can_calc = true;
                         }
-                        if ($can_calc == true) {
+                        if ($can_calc) {
                             log_debug('calculate ' . $res->num_text . ' for ' . $phr_lst->dsp_id());
                             $calc = new math;
                             $res->set_number($calc->parse($res->num_text));
@@ -1279,7 +1391,7 @@ class formula extends sandbox_typed
     /**
      * calculate the result for one formula for one user
      * and save the result in the database
-     * @param phrase_list $phr_lst is the context for the value retrieval and it also contains any time words
+     * @param phrase_list $phr_lst is the context for the value retrieval, and it also contains any time words
      * the time words are only separated right before saving to the database
      * always returns an array of results
      * TODO check if calculation is really needed
@@ -1323,20 +1435,23 @@ class formula extends sandbox_typed
             // the phrase left of the equation sign should be added to the result
             // e.g. percent for the increase formula
             $has_result_phrases = false;
-            $res_add_phr_lst = $exp->res_phr_lst();
-            if (isset($res_add_phr_lst)) {
-                log_debug('use words ' . $res_add_phr_lst->dsp_id() . ' for the result');
-                $has_result_phrases = true;
-            }
-            // use only the part right of the equation sign for the result calculation
-            $this->ref_text_r = expression::CHAR_CALC . $exp->r_part();
-            log_debug('->calc got result words of ' . $this->ref_text_r);
+            $res_lst = new result_list($this->user());
+            if ($exp->is_valid()) {
+                $res_add_phr_lst = $exp->result_phrases();
+                if (isset($res_add_phr_lst)) {
+                    log_debug('use words ' . $res_add_phr_lst->dsp_id() . ' for the result');
+                    $has_result_phrases = true;
+                }
+                // use only the part right of the equation sign for the result calculation
+                $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
+                log_debug('->calc got result words of ' . $this->ref_text_r);
 
-            // get the list of the numeric results
-            // $res_lst is a list of all results saved in the database
-            $res_lst = $this->to_num($phr_lst);
-            if (isset($res_add_phr_lst)) {
-                log_debug($lib->dsp_count($res_lst->lst()) . ' formula results to save');
+                // get the list of the numeric results
+                // $res_lst is a list of all results saved in the database
+                $res_lst = $this->to_num($phr_lst);
+                if (isset($res_add_phr_lst)) {
+                    log_debug($lib->dsp_count($res_lst->lst()) . ' formula results to save');
+                }
             }
 
             // save the numeric results
@@ -1375,7 +1490,7 @@ class formula extends sandbox_typed
                                     // but probably this is not needed, because the source words are also saved
                                     //$scale_wrd_lst = $res_add_wrd_lst->scaling_lst ();
                                     //$res->grp()->phrase_list()->merge($scale_wrd_lst->lst);
-                                    //zu_debug(self::class . '->calc -> added the scaling word "'.implode(",",$scale_wrd_lst->names()).'" to the result words "'.implode(",",$res->grp()->phrase_list()->names()).'"');
+                                    //zu_debug(self::class . '->calc -> added the scaling word '.implode(",",$scale_wrd_lst->names()).' to the result words "'.implode(",",$res->grp()->phrase_list()->names()).'"');
                                 }
 
                                 // if the formula is a scaling formula, remove the obsolete scaling word from the source words
@@ -1425,7 +1540,7 @@ class formula extends sandbox_typed
      * calculate the formula results based on a given figure list
      *
      * @param figure_list $fig_lst the value and results that should be used for the calculation
-     * @return figure_list the received figure list with the additions forlua results
+     * @return figure_list the received figure list with the additions formula results
      */
     function calc_with(figure_list $fig_lst): figure_list
     {
@@ -1457,6 +1572,21 @@ class formula extends sandbox_typed
 
 
     /*
+     * cast
+     */
+
+    /**
+     * @returns term the formula object cast into a term object
+     */
+    function term(): term
+    {
+        $trm = new term($this->user());
+        $trm->set_obj($this);
+        return $trm;
+    }
+
+
+    /*
      * im- and export
      */
 
@@ -1464,64 +1594,24 @@ class formula extends sandbox_typed
      * import a formula from a JSON object
      *
      * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    function import_obj(
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        object       $test_obj = null
+    ): user_message
     {
-        global $frm_typ_cac;
-        global $shr_typ_cac;
-        global $ptc_typ_cac;
-
-        log_debug();
-
-        // reset the all parameters for the formula object but keep the user
-        $usr = $this->user();
-        $this->reset();
-        $this->set_user($usr);
-        $result = parent::import_obj($in_ex_json, $test_obj);
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::TYPE_NAME) {
-                $this->type_id = $frm_typ_cac->id($value);
-            }
-            if ($key == self::FLD_EXPRESSION) {
-                if ($value <> '') {
-                    $this->usr_text = $value;
-                }
-            }
-        }
-
-        // set the default type if no type is specified
-        if ($this->type_id == 0) {
-            $this->type_id = $frm_typ_cac->default_id();
-        }
-
-        // save the formula in the database
-        if (!$test_obj) {
-            if ($result->is_ok()) {
-                $result->add($this->save());
-            }
-        }
+        $usr_msg = parent::import_obj($in_ex_json, $usr_req, $dto, $test_obj);
 
         // assign the formula to the words and triple
-        if ($result->is_ok()) {
-            log_debug('saved ' . $this->dsp_id());
-            foreach ($in_ex_json as $key => $value) {
-                if ($result->is_ok()) {
-                    if ($key == self::FLD_ASSIGN) {
-                        if (is_array($value)) {
-                            foreach ($value as $lnk_phr_name) {
-                                $result->add_message($this->assign_name($lnk_phr_name, $test_obj));
-                            }
-                        } else {
-                            $result->add_message($this->assign_name($value, $test_obj));
-                        }
-                    }
-                }
-            }
-        }
+        $this->assign_phrases($usr_msg);
 
-        return $result;
+        return $usr_msg;
     }
 
     private function assign_name(string $phr_name, object $test_obj = null): string
@@ -1533,6 +1623,52 @@ class formula extends sandbox_typed
             $result .= $this->assign_phrase($phr);
         }
         return $result;
+    }
+
+    /**
+     * add a phrase link to this formula object without updating the database
+     * @param phrase $phr
+     * @return void
+     */
+    function link_phrase(phrase $phr): void
+    {
+        if ($this->lnk_lst == null) {
+            $this->lnk_lst = new formula_link_list($this->user());
+        }
+        $lnk = new formula_link($this->user());
+        $lnk->set_formula($this);
+        $lnk->set_phrase($phr);
+        $this->lnk_lst->add_link_by_key($lnk);
+    }
+
+    function save_links(user_message $usr_msg): void
+    {
+        if ($this->lnk_lst != null) {
+            foreach ($this->lnk_lst->lst() as $lnk) {
+                $usr_msg->add($lnk->save());
+            }
+        }
+    }
+
+    /**
+     * assign the formula to the words and triple
+     * TODO dismiss and use instead the link_phrase and save_links functions
+     * @param user_message $usr_msg to enrich with messages
+     * @return void
+     */
+    function assign_phrases(user_message $usr_msg = new user_message()): void
+    {
+        if ($usr_msg->is_ok()) {
+            $phr_lst = $this->phr_lst;
+            if ($phr_lst != null) {
+                if (!$phr_lst->is_empty()) {
+                    $usr_msg->add($phr_lst->save());
+                    foreach ($phr_lst as $phr) {
+                        $this->assign_phrase($phr);
+                    }
+                }
+            }
+        }
     }
 
     function assign_phrase(phrase $phr): string
@@ -1566,6 +1702,9 @@ class formula extends sandbox_typed
         if (isset($this->type_id)) {
             if ($this->type_id <> $frm_typ_cac->default_id()) {
                 $vars[json_fields::TYPE_NAME] = $frm_typ_cac->code_id($this->type_id);
+            } else {
+                // unset the type that might be set by the parent object
+                unset($vars[json_fields::TYPE_NAME]);
             }
         }
         if ($this->usr_text <> '') {
@@ -1618,6 +1757,24 @@ class formula extends sandbox_typed
     }
 
     /**
+     * get all terms used in this formula
+     * including the phrases that should be added to the result
+     * @param term_list $cache with the terms already loaded
+     * @return term_list list of all terms used in the formula expression
+     */
+    function term_list(term_list $cache): term_list
+    {
+        $trm_lst = new term_list($this->user());
+        $exp = $this->expression($cache);
+        $elm_lst = $exp->element_list($cache);
+        foreach ($elm_lst->lst() as $elm) {
+            $trm_lst->add($elm->term());
+        }
+        $res_phr_lst = $exp->result_phrases($cache);
+        return $trm_lst->merge($res_phr_lst->term_list());
+    }
+
+    /**
      * @param string $frm_text the formula expression in the reference format
      * @param string $start_maker
      * @param string $end_maker
@@ -1649,7 +1806,7 @@ class formula extends sandbox_typed
      */
     function wrd_ids(string $frm_text): array
     {
-        return $this->trm_ids($frm_text, expression::WORD_START, expression::WORD_END);
+        return $this->trm_ids($frm_text, chars::WORD_START, chars::WORD_END);
     }
 
     /**
@@ -1658,7 +1815,7 @@ class formula extends sandbox_typed
      */
     function trp_ids(string $frm_text): array
     {
-        return $this->trm_ids($frm_text, expression::TRIPLE_START, expression::TRIPLE_END);
+        return $this->trm_ids($frm_text, chars::TRIPLE_START, chars::TRIPLE_END);
     }
 
     /**
@@ -1667,7 +1824,7 @@ class formula extends sandbox_typed
      */
     function vrb_ids(string $frm_text): array
     {
-        return $this->trm_ids($frm_text, expression::VERB_START, expression::VERB_END);
+        return $this->trm_ids($frm_text, chars::VERB_START, chars::VERB_END);
     }
 
     /**
@@ -1676,7 +1833,7 @@ class formula extends sandbox_typed
      */
     function frm_ids(string $frm_text): array
     {
-        return $this->trm_ids($frm_text, expression::FORMULA_START, expression::FORMULA_END);
+        return $this->trm_ids($frm_text, chars::FORMULA_START, chars::FORMULA_END);
     }
 
     /**
@@ -1733,7 +1890,7 @@ class formula extends sandbox_typed
         foreach ($elm_add_ids as $elm_add_id) {
             $field_names = array();
             $field_values = array();
-            $field_names[] = self::FLD_ID;
+            $field_names[] = formula_db::FLD_ID;
             $field_values[] = $this->id();
             $field_names[] = user::FLD_ID;
             if ($frm_usr_id > 0) {
@@ -1763,7 +1920,7 @@ class formula extends sandbox_typed
         foreach ($elm_del_ids as $elm_del_id) {
             $field_names = array();
             $field_values = array();
-            $field_names[] = self::FLD_ID;
+            $field_names[] = formula_db::FLD_ID;
             $field_values[] = $this->id();
             if ($frm_usr_id > 0) {
                 $field_names[] = user::FLD_ID;
@@ -1891,17 +2048,22 @@ class formula extends sandbox_typed
     /**
      * update the database reference text based on the user text
      * TODO check in not the left AND the right part needs to be transformed as expression
+     * TODO Prio 1 return a user message instead of a string
      *
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @param user_message $usr_msg to enrich with problems and suggested solution
      * @return string which is empty if the update of the reference text was successful and otherwise the error message that should be shown to the user
      */
-    function generate_ref_text(?term_list $trm_lst = null): string
+    function generate_ref_text(
+        ?term_list $trm_lst = null,
+        user_message $usr_msg = new user_message()
+    ): string
     {
         $result = '';
         if ($this->usr_text != null) {
             $exp = new expression($this->user());
             $exp->set_user_text($this->usr_text, $trm_lst);
-            $this->ref_text = $exp->ref_text($trm_lst);
+            $this->ref_text = $exp->ref_text($trm_lst, $usr_msg);
             $this->ref_text_dirty = false;
             $result .= $exp->err_text;
         }
@@ -1968,7 +2130,7 @@ class formula extends sandbox_typed
     {
         $lib = new library();
         $sc->set_class($lib->class_to_name(self::class));
-        return $sc->load_sql_not_changed($this->id(), $this->owner_id);
+        return $sc->load_sql_not_changed($this->id(), $this->owner_id());
     }
 
     /**
@@ -2014,9 +2176,9 @@ class formula extends sandbox_typed
         $qp->name = $class . '_user_sandbox';
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(array_merge(array(user::FLD_ID), self::FLD_NAMES_USR, self::FLD_NAMES_NUM_USR));
+        $db_con->set_fields(array_merge(array(user::FLD_ID), formula_db::FLD_NAMES_USR, formula_db::FLD_NAMES_NUM_USR));
         $db_con->add_par(sql_par_type::INT, strval($this->id()));
-        $qp->sql = $db_con->select_by_field(self::FLD_ID);
+        $qp->sql = $db_con->select_by_field(formula_db::FLD_ID);
         $qp->par = $db_con->get_par();
 
         return $qp;
@@ -2031,13 +2193,13 @@ class formula extends sandbox_typed
      */
     function load_sql_user_changes(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par
     {
         $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
         $sc->set_fields(array_merge(
-            self::FLD_NAMES_USR,
-            self::FLD_NAMES_NUM_USR
+            formula_db::FLD_NAMES_USR,
+            formula_db::FLD_NAMES_NUM_USR
         ));
         return parent::load_sql_user_changes($sc, $sc_par_lst);
     }
@@ -2062,7 +2224,7 @@ class formula extends sandbox_typed
         $db_con->set_class(element::class);
         try {
             $msg = $db_con->delete_old(
-                array(self::FLD_ID, user::FLD_ID),
+                array(formula_db::FLD_ID, user::FLD_ID),
                 array($this->id(), $this->user()->id()));
         } catch (Exception $e) {
             log_err($action . ' elements ' . $msg_failed . ' because ' . $e);
@@ -2073,7 +2235,7 @@ class formula extends sandbox_typed
             $db_con->set_class(formula::class, true);
             try {
                 $msg = $db_con->delete_old(
-                    array(self::FLD_ID, user::FLD_ID),
+                    array(formula_db::FLD_ID, user::FLD_ID),
                     array($this->id(), $this->user()->id()));
                 if ($msg == '') {
                     $this->usr_cfg_id = null;
@@ -2097,8 +2259,8 @@ class formula extends sandbox_typed
         $usr_msg = new user_message();
         $this->last_update = new DateTime();
         $db_con->set_class(formula::class);
-        if (!$db_con->update_old($this->id(), self::FLD_LAST_UPDATE, sql::NOW)) {
-            $usr_msg->add_message('saving the update trigger for formula ' . $this->dsp_id() . ' failed');
+        if (!$db_con->update_old($this->id(), formula_db::FLD_LAST_UPDATE, sql::NOW)) {
+            $usr_msg->add_id_with_vars(msg_id::FAILED_SAVE_FORMULA_TRIGGER, [msg_id::VAR_ID => $this->dsp_id()]);
         }
 
         log_debug('->save_field_trigger_update timestamp of ' .
@@ -2123,7 +2285,7 @@ class formula extends sandbox_typed
             $log->new_value = $this->usr_text;
             $log->std_value = $std_rec->usr_text;
             $log->row_id = $this->id();
-            $log->set_field(self::FLD_FORMULA_USER_TEXT);
+            $log->set_field(formula_db::FLD_FORMULA_USER_TEXT);
             $usr_msg->add($this->save_field_user($db_con, $log));
         }
         return $usr_msg;
@@ -2143,7 +2305,7 @@ class formula extends sandbox_typed
             $log->new_value = $this->ref_text;
             $log->std_value = $std_rec->ref_text;
             $log->row_id = $this->id();
-            $log->set_field(self::FLD_FORMULA_TEXT);
+            $log->set_field(formula_db::FLD_FORMULA_TEXT);
             $usr_msg->add($this->save_field_user($db_con, $log));
             // updating the reference expression is probably relevant for calculation, so force to update the timestamp
             if ($usr_msg->is_ok()) {
@@ -2179,7 +2341,7 @@ class formula extends sandbox_typed
                 $log->std_value = '0';
             }
             $log->row_id = $this->id();
-            $log->set_field(self::FLD_ALL_NEEDED);
+            $log->set_field(formula_db::FLD_ALL_NEEDED);
             $usr_msg->add($this->save_field_user($db_con, $log));
             // switch on that all fields are needed for the calculation, probably some formula results can be removed
             if ($usr_msg->is_ok()) {
@@ -2226,7 +2388,7 @@ class formula extends sandbox_typed
                 $log->new_value = $this->name();
                 $log->std_value = $std_rec->name();
                 $log->row_id = $this->id();
-                $log->set_field(self::FLD_NAME);
+                $log->set_field(formula_db::FLD_NAME);
                 $usr_msg->add($this->save_field_user($db_con, $log));
                 // in case a word link exist, change also the name of the word
                 $wrd = new word($this->user());
@@ -2265,11 +2427,11 @@ class formula extends sandbox_typed
             $log->new_value = $this->name();
             $log->std_value = $std_rec->name();
             $log->row_id = $this->id();
-            $log->set_field(self::FLD_NAME);
+            $log->set_field(formula_db::FLD_NAME);
             if ($log->add()) {
                 $db_con->set_class(formula::class);
                 if (!$db_con->update_old($this->id(),
-                    array(self::FLD_NAME),
+                    array(formula_db::FLD_NAME),
                     array($this->name()))) {
                     $result .= 'formula ' . $db_rec->name() . ' cannot be renamed to ' . $this->name();
                 }
@@ -2288,7 +2450,7 @@ class formula extends sandbox_typed
         if ($trm->type() == formula::class) {
             //$result = $trm;
             $result = true;
-        } elseif ($trm->type() == word::class or $trm->type() == word_dsp::class) {
+        } elseif ($trm->type() == word::class) {
             if ($trm->obj() == null) {
                 log_warning('The object of the term has been expected to be loaded');
             } else {
@@ -2321,7 +2483,7 @@ class formula extends sandbox_typed
             // check if a word, triple or verb with the same name is already in the database
             $trm = $this->get_term();
             if ($trm->id_obj() > 0 and !$this->is_term_the_same($trm)) {
-                $usr_msg->add_message($trm->id_used_msg($this));
+                $usr_msg->add($trm->id_used_msg($this));
                 log_debug('->save_id_if_updated name "' . $trm->name() . '" used already as "' . $trm->type() . '"');
             } else {
 
@@ -2339,14 +2501,14 @@ class formula extends sandbox_typed
                         $usr_msg->add($msg);
                         // ... and use it for the update
                         $this->set_id($db_chk->id());
-                        $this->owner_id = $db_chk->owner_id;
+                        $this->set_owner_id($db_chk->owner_id());
                         // force including again
                         $this->include();
                         $db_rec->exclude();
                         $this->save_field_excluded($db_con, $db_rec, $std_rec);
                         log_debug('->save_id_if_updated found a display component link with target ids "' . $db_chk->dsp_id() . '", so del "' . $db_rec->dsp_id() . '" and add ' . $this->dsp_id());
                     } else {
-                        $usr_msg->add_message('A view component with the name "' . $this->name() . '" already exists. Please use another name.');
+                        $usr_msg->add_id_with_vars(msg_id::COMPONENT_ALREADY_EXISTS, [msg_id::VAR_COMPONENT_NAME => $this->name()]);
                     }
                 } else {
                     // the formula can be renamed (either for this user or for all users)
@@ -2355,7 +2517,7 @@ class formula extends sandbox_typed
                         // in this case change is allowed and done
                         log_debug('->save_id_if_updated change the existing display component link ' . $this->dsp_id() . ' (db "' . $db_rec->dsp_id() . '", standard "' . $std_rec->dsp_id() . '")');
                         //$this->load_objects();
-                        $usr_msg->add_message($this->save_id_fields($db_con, $db_rec, $std_rec));
+                        $usr_msg->add_message_text($this->save_id_fields($db_con, $db_rec, $std_rec));
                     } else {
                         // if the target link has not yet been created
                         // ... request to delete the old
@@ -2366,7 +2528,7 @@ class formula extends sandbox_typed
 
                         // ... and create a new display component link
                         $this->set_id(0);
-                        $this->owner_id = $this->user()->id();
+                        $this->set_owner_id($this->user()->id());
                         // TODO check the usr_msg values and if the id is needed
                         $usr_msg->add($this->add());
                         log_debug('->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
@@ -2413,18 +2575,18 @@ class formula extends sandbox_typed
                 $db_con->set_class(formula::class);
                 // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
                 $this->set_id($db_con->insert_old(
-                    array(self::FLD_NAME, user::FLD_ID, self::FLD_LAST_UPDATE, self::FLD_FORMULA_TEXT, self::FLD_FORMULA_USER_TEXT),
+                    array(formula_db::FLD_NAME, user::FLD_ID, formula_db::FLD_LAST_UPDATE, formula_db::FLD_FORMULA_TEXT, formula_db::FLD_FORMULA_USER_TEXT),
                     array($this->name(), $this->user()->id(), sql::NOW, $this->ref_text, $this->usr_text)));
                 if ($this->id() > 0) {
                     log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id());
                     // update the id in the log for the correct reference
                     if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_message('Updating the reference in the log failed');
+                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
                         $this->set_id(0);
                         // TODO do rollback or retry?
                     }
                 } else {
-                    $usr_msg->add_message("Adding formula " . $this->name . " failed.");
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_FORMULA, [msg_id::VAR_NAME => $this->name]);
                 }
             }
         }
@@ -2441,13 +2603,13 @@ class formula extends sandbox_typed
                 $std_rec = clone $db_rec;
                 // save the formula fields
                 if ($use_func) {
-                    $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
+                    $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
                 } else {
                     $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
                 }
             }
         } else {
-            $usr_msg->add_message("Adding formula " . $this->name . " failed.");
+            $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_FORMULA, [msg_id::VAR_NAME => $this->name]);
         }
 
         return $usr_msg;
@@ -2465,6 +2627,7 @@ class formula extends sandbox_typed
         log_debug($this->dsp_id());
 
         global $db_con;
+        global $mtr;
         global $phr_typ_cac;
 
         // decide which db write method should be used
@@ -2492,10 +2655,10 @@ class formula extends sandbox_typed
                             if ($trm->obj()->type_id == $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK)) {
                                 log_debug('adding formula name ' . $this->dsp_id() . ' has just a matching formula word');
                             } else {
-                                $usr_msg->add_message($trm->id_used_msg($this));
+                                $usr_msg->add($trm->id_used_msg($this));
                             }
                         } else {
-                            $usr_msg->add_message($trm->id_used_msg($this));
+                            $usr_msg->add($trm->id_used_msg($this));
                         }
                     } else {
                         $this->set_id($trm->id_obj());
@@ -2503,45 +2666,106 @@ class formula extends sandbox_typed
                     }
                 }
             }
+        }
 
-            // create a new formula or update an existing
-            if ($this->id() <= 0) {
-                // convert the formula text to db format (any error messages should have been returned from the calling user script)
-                $usr_msg->add_message($this->generate_ref_text());
-                if ($usr_msg->is_ok()) {
-                    $usr_msg->add_message($this->add($use_func)->get_last_message());
+        // create an object to check possible duplicates
+        $similar = null;
+
+        // if a new object is supposed to be added check upfront for a similar object to prevent adding duplicates
+        if ($this->id() == 0) {
+            log_debug('check possible duplicates before adding ' . $this->dsp_id());
+            $similar = $this->get_similar();
+            if ($similar->id() <> 0) {
+                // check that the get_similar function has really found a similar object and report potential program errors
+                if (!$this->is_similar($similar)) {
+                    $msg_not = $mtr->txt(msg_id::NOT_SIMILAR);
+
+                    $usr_msg->add_id_with_vars(msg_id::FORMULA_NOT_SIMILAR, [
+                        msg_id::VAR_ID => $this->dsp_id(),
+                        msg_id::VAR_VALUE => $msg_not,
+                        msg_id::VAR_VAL_ID => $similar->dsp_id()
+                    ]);
+                } else {
+                    // if similar is found set the id to trigger the updating instead of adding
+                    $similar->load_by_id($similar->id()); // e.g. to get the type_id
+                    // prevent that the id of a formula is used for the word with the type formula link
+                    if (get_class($this) == get_class($similar)) {
+                        $this->set_id($similar->id());
+                    } else {
+                        if (!((get_class($this) == word::class and get_class($similar) == formula::class)
+                            or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
+                            $usr_msg->add($similar->id_used_msg($this));
+                        }
+                    }
                 }
             } else {
-                log_debug('update ' . $this->id());
-                // read the database values to be able to check if something has been changed; done first,
-                // because it needs to be done for user and general formulas
-                $db_rec = new formula($this->user());
-                $db_rec->load_by_id($this->id());
-                log_debug('database formula "' . $db_rec->name() . '" (' . $db_rec->id() . ') loaded');
-                $std_rec = new formula($this->user()); // must also be set to allow to take the ownership
-                $std_rec->set_id($this->id());
-                $std_rec->load_standard();
-                log_debug('standard formula "' . $std_rec->name() . '" (' . $std_rec->id() . ') loaded');
+                $similar = null;
+            }
 
-                // for a correct user formula detection (function can_change) set the owner even if the formula has not been loaded before the save
-                if ($this->owner_id <= 0) {
-                    $this->owner_id = $std_rec->owner_id;
-                }
+        }
 
-                // ... and convert the formula text to db format (any error messages should have been returned from the calling user script)
-                $usr_msg->add_message($this->generate_ref_text());
+        // create a new formula or update an existing
+        if ($usr_msg->is_ok()) {
+            if ($this->id() <= 0) {
+                // convert the formula text to db format (any error messages should have been returned from the calling user script)
+                $usr_msg->add_message_text($this->generate_ref_text());
                 if ($usr_msg->is_ok()) {
 
-                    // check if the id parameters are supposed to be changed
-                    $usr_msg->add($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
+                    log_debug('add');
+                    $usr_msg->add($this->add($use_func));
+                }
+            } else {
+                // if the similar object is not the same as $this object, suggest renaming $this object
+                if ($similar != null) {
+                    log_debug('got similar and suggest renaming or merge');
+                    // e.g. if a source already exists update the source
+                    // but if a word with the same name of a formula already exists suggest a new formula name
+                    if (!$this->is_same($similar)) {
+                        $usr_msg->add($similar->id_used_msg($this));
+                    }
+                }
 
-                    // if a problem has appeared up to here, don't try to save the values
-                    // the problem is shown to the user by the calling interactive script
+                // update the existing object
+                if ($usr_msg->is_ok()) {
+                    log_debug('update ' . $this->id());
+                    // read the database values to be able to check if something has been changed; done first,
+                    // because it needs to be done for user and general formulas
+                    $db_rec = new formula($this->user());
+                    $db_rec->load_by_id($this->id());
+                    log_debug('database formula "' . $db_rec->name() . '" (' . $db_rec->id() . ') loaded');
+
+                    // relevant is if there is a user config in the database
+                    // so use this information to prevent
+                    // the need to forward the db_rec to all functions
+                    if ($db_rec->has_usr_cfg() and !$this->has_usr_cfg()) {
+                        $this->usr_cfg_id = $db_rec->usr_cfg_id;
+                    }
+
+                    $std_rec = new formula($this->user()); // must also be set to allow to take the ownership
+                    $std_rec->set_id($this->id());
+                    $std_rec->load_standard();
+                    log_debug('standard formula "' . $std_rec->name() . '" (' . $std_rec->id() . ') loaded');
+
+                    // for a correct user formula detection (function can_change) set the owner even if the formula has not been loaded before the save
+                    if ($this->owner_id() <= 0) {
+                        $this->set_owner_id($std_rec->owner_id());
+                    }
+
+                    // ... and convert the formula text to db format (any error messages should have been returned from the calling user script)
+                    $usr_msg->add_message_text($this->generate_ref_text());
                     if ($usr_msg->is_ok()) {
-                        if ($use_func) {
-                            $usr_msg->add_message($this->save_fields_func($db_con, $db_rec, $std_rec));
-                        } else {
-                            $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
+
+                        // check if the id parameters are supposed to be changed
+                        $usr_msg->add($this->save_id_if_updated($db_con, $db_rec, $std_rec, $use_func));
+
+                        // if a problem has appeared up to here, don't try to save the values
+                        // the problem is shown to the user by the calling interactive script
+                        if ($usr_msg->is_ok()) {
+                            if ($use_func) {
+                                $usr_msg->add($this->save_fields_func($db_con, $db_rec, $std_rec));
+                            } else {
+                                $usr_msg->add($this->save_all_fields($db_con, $db_rec, $std_rec));
+                            }
                         }
                     }
                 }
@@ -2552,7 +2776,7 @@ class formula extends sandbox_typed
             // a '1' in the result only indicates that an update has been done for testing; '1' doesn't mean that there has been an error
             if ($usr_msg->is_ok()) {
                 if (!$this->element_refresh($this->ref_text)) {
-                    $usr_msg->add_message('Refresh of the formula elements failed');
+                    $usr_msg->add_id(msg_id::FAILED_REFRESH_FORMULA);
                 }
             }
         }
@@ -2575,7 +2799,7 @@ class formula extends sandbox_typed
      */
     protected function reserved_names(): array
     {
-        return formula_api::RESERVED_NAMES;
+        return formulas::RESERVED_NAMES;
     }
 
     /**
@@ -2583,7 +2807,7 @@ class formula extends sandbox_typed
      */
     protected function fixed_names(): array
     {
-        return formula_api::FIXED_NAMES;
+        return formulas::FIXED_NAMES;
     }
 
 
@@ -2594,7 +2818,7 @@ class formula extends sandbox_typed
     /**
      * remove depending on objects
      * needs to be overwritten by the child class if needed
-     * TODO make sure that onle user specific data is deleted
+     * TODO make sure that only user specific data is deleted
      *
      * @return user_message the message for the user why the action has failed and a suggested solution
      */
@@ -2607,7 +2831,7 @@ class formula extends sandbox_typed
         $frm_lnk_lst = new formula_link_list($this->user());
         if ($frm_lnk_lst->load_by_frm_id($this->id())) {
             $msg = $frm_lnk_lst->del_without_log();
-            $usr_msg->add_message($msg);
+            $usr_msg->add_message_text($msg);
         }
 
         // and the corresponding formula elements
@@ -2620,7 +2844,7 @@ class formula extends sandbox_typed
             $db_con->set_class(element::class);
             $db_con->set_usr($this->user()->id());
             $msg = $db_con->delete_old($this->id_field(), $this->id());
-            $usr_msg->add_message($msg);
+            $usr_msg->add_message_text($msg);
         }
 
         // and the corresponding results
@@ -2628,7 +2852,7 @@ class formula extends sandbox_typed
             $db_con->set_class(result::class);
             $db_con->set_usr($this->user()->id());
             $msg = $db_con->delete_old($this->id_field(), $this->id());
-            $usr_msg->add_message($msg);
+            $usr_msg->add_message_text($msg);
         }
 
         // and the corresponding word if possible
@@ -2652,18 +2876,18 @@ class formula extends sandbox_typed
      * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         return array_merge(
             parent::db_fields_all(),
             [
-                self::FLD_TYPE,
-                self::FLD_FORMULA_TEXT,
-                self::FLD_FORMULA_USER_TEXT,
-                self::FLD_ALL_NEEDED,
-                self::FLD_LAST_UPDATE,
-                self::FLD_VIEW,
-                self::FLD_USAGE
+                formula_db::FLD_TYPE,
+                formula_db::FLD_FORMULA_TEXT,
+                formula_db::FLD_FORMULA_USER_TEXT,
+                formula_db::FLD_ALL_NEEDED,
+                formula_db::FLD_LAST_UPDATE,
+                formula_db::FLD_VIEW,
+                formula_db::FLD_USAGE
             ],
             parent::db_fields_all_sandbox()
         );
@@ -2679,7 +2903,7 @@ class formula extends sandbox_typed
      */
     function db_fields_changed(
         sandbox|formula $sbx,
-        sql_type_list   $sc_par_lst = new sql_type_list([])
+        sql_type_list   $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -2692,60 +2916,60 @@ class formula extends sandbox_typed
         if ($sbx->type_id() <> $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_TYPE,
-                    $cng_fld_cac->id($table_id . self::FLD_TYPE),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_TYPE,
+                    $cng_fld_cac->id($table_id . formula_db::FLD_TYPE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                self::FLD_TYPE,
+                formula_db::FLD_TYPE,
                 $this->type_id(),
-                self::FLD_TYPE_SQL_TYP,
+                formula_db::FLD_TYPE_SQL_TYP,
                 $sbx->type_id()
             );
         }
         if ($sbx->ref_text <> $this->ref_text) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_TEXT,
-                    $cng_fld_cac->id($table_id . self::FLD_FORMULA_TEXT),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_FORMULA_TEXT,
+                    $cng_fld_cac->id($table_id . formula_db::FLD_FORMULA_TEXT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                self::FLD_FORMULA_TEXT,
+                formula_db::FLD_FORMULA_TEXT,
                 $this->ref_text,
-                self::FLD_FORMULA_TEXT_SQL_TYP,
+                formula_db::FLD_FORMULA_TEXT_SQL_TYP,
                 $sbx->ref_text
             );
         }
         if ($sbx->usr_text <> $this->usr_text) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_FORMULA_USER_TEXT,
-                    $cng_fld_cac->id($table_id . self::FLD_FORMULA_USER_TEXT),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_FORMULA_USER_TEXT,
+                    $cng_fld_cac->id($table_id . formula_db::FLD_FORMULA_USER_TEXT),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                self::FLD_FORMULA_USER_TEXT,
+                formula_db::FLD_FORMULA_USER_TEXT,
                 $this->usr_text,
-                self::FLD_FORMULA_USER_TEXT_SQL_TYP,
+                formula_db::FLD_FORMULA_USER_TEXT_SQL_TYP,
                 $sbx->usr_text
             );
         }
         if ($sbx->need_all_val <> $this->need_all_val) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_ALL_NEEDED,
-                    $cng_fld_cac->id($table_id . self::FLD_ALL_NEEDED),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_ALL_NEEDED,
+                    $cng_fld_cac->id($table_id . formula_db::FLD_ALL_NEEDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                self::FLD_ALL_NEEDED,
+                formula_db::FLD_ALL_NEEDED,
                 $this->need_all_val,
-                self::FLD_ALL_NEEDED_SQL_TYP,
+                formula_db::FLD_ALL_NEEDED_SQL_TYP,
                 $sbx->need_all_val
             );
         }
@@ -2754,7 +2978,7 @@ class formula extends sandbox_typed
             or $sbx->need_all_val <> $this->need_all_val
             or $this->last_update == null) {
             $lst->add_field(
-                self::FLD_LAST_UPDATE,
+                formula_db::FLD_LAST_UPDATE,
                 sql::NOW,
                 sql_field_type::TIME
             );
@@ -2762,14 +2986,14 @@ class formula extends sandbox_typed
         if ($sbx->view_id() <> $this->view_id()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_VIEW,
-                    $cng_fld_cac->id($table_id . self::FLD_VIEW),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_VIEW,
+                    $cng_fld_cac->id($table_id . formula_db::FLD_VIEW),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_link_field(
-                self::FLD_VIEW,
-                view::FLD_NAME,
+                formula_db::FLD_VIEW,
+                view_db::FLD_NAME,
                 $this->view,
                 $sbx->view
             );
@@ -2777,15 +3001,15 @@ class formula extends sandbox_typed
         if ($sbx->usage() <> $this->usage()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_USAGE,
-                    $cng_fld_cac->id($table_id . self::FLD_USAGE),
+                    sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_USAGE,
+                    $cng_fld_cac->id($table_id . formula_db::FLD_USAGE),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                self::FLD_USAGE,
+                formula_db::FLD_USAGE,
                 $this->usage(),
-                self::FLD_USAGE_SQL_TYP,
+                formula_db::FLD_USAGE_SQL_TYP,
                 $sbx->usage()
             );
         }

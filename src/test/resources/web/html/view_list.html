@@ -2,13 +2,19 @@
 <html lang="en">
 <head><title>test view_list (zukunft.com)</title>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="/lib_external/bootstrap-5.3.3-dist/css/bootstrap.css">
+    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css"/>
-    <link rel="stylesheet" href="/lib_external/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
 </head>
 <body>
-<div class="container"><h4>view list display test</h4>view list with tooltip: Start view, Add word<br>view list with
-    link: Start view, Add word<br><br><h4>Selector tests</h4>
+<div class="container"><h4>view list display test</h4>view list with tooltip:<span
+        title="A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view."
+        data-toggle="tooltip">Start view</span>,<span title="system form to add a word"
+                                                      data-toggle="tooltip">Add word</span><br>view list with link:<a
+        href="/http/view.php?m=29&id=1"
+        title="A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.">Start
+    view</a>,<a href="/http/view.php?m=29&id=3" title="system form to add a word">Add word</a><br><br><h4>Selector
+    tests</h4>
     <div class="form-group col-md-4"><label for="test_selector">No view selected</label><select class="form-control"
                                                                                                 name="test_selector"
                                                                                                 id="test_selector">

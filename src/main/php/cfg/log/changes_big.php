@@ -2,8 +2,9 @@
 
 /*
 
-    cfg/log/changes_big.php - log group changes for values with more than 16 phrases
+    model/log/changes_big.php - log group changes for values with more than 16 phrases
     -----------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -31,9 +32,11 @@
 
 namespace cfg\log;
 
-include_once MODEL_LOG_PATH . 'change_value.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_LOG . 'change_value.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
 
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
@@ -51,8 +54,8 @@ class changes_big extends change
     // field list to log the actual change of the named user sandbox object
     const FLD_LST_CHANGE = array(
         [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
-        [self::FLD_OLD_VALUE, self::FLD_OLD_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
-        [self::FLD_NEW_VALUE, self::FLD_NEW_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [change::FLD_OLD_VALUE, change::FLD_OLD_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [change::FLD_NEW_VALUE, change::FLD_NEW_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [self::FLD_OLD_ID, self::FLD_OLD_ID_BIG_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_OLD_ID_COM],
         [self::FLD_NEW_ID, self::FLD_OLD_ID_BIG_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NEW_ID_COM],
     );

@@ -11,13 +11,14 @@
     - db const:          const for the database link
     - object vars:       the variables of this word object
     - construct and map: including the mapping of the db row to this word object
+    - api:               create an api array for the frontend and set the vars based on a frontend api message
     - set and get:       to capsule the vars from unexpected changes
     - modify:            change potentially all variables of this sandbox object
     - cast:              create an api object and set the vars from an api json
     - load:              database access object (DAO) functions
     - load sql:          create the sql statements for loading from the db
     - im- and export:    create an export object and set the vars from an import object
-    - information:       functions to make code easier to read
+    - info:              functions to make code easier to read
     - log read:          read related log messages
     - log write:         write changes to the log table
     - add:               insert a new row the database
@@ -54,36 +55,39 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+use cfg\const\paths;
 
-include_once API_SYSTEM_PATH . 'messages.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-//include_once MODEL_LOG_PATH . 'change_link.php';
-//include_once MODEL_LOG_PATH . 'change_log_list.php';
-include_once MODEL_SYSTEM_PATH . 'message_translator.php';
-//include_once MODEL_PHRASE_PATH . 'phrase.php';
-//include_once MODEL_PHRASE_PATH . 'term.php';
-//include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+//include_once paths::MODEL_LOG . 'change_link.php';
+//include_once paths::MODEL_LOG . 'change_log_list.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+//include_once paths::MODEL_PHRASE . 'term.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VERB . 'verb.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
-use api\system\messages as msg_enum;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -93,23 +97,26 @@ use cfg\db\sql_par_field_list;
 use cfg\db\sql_par_type;
 use cfg\db\sql_type;
 use cfg\db\sql_type_list;
-use cfg\helper\db_object_seq_id;
 use cfg\formula\formula;
+use cfg\helper\data_object;
+use cfg\helper\db_object_seq_id;
 use cfg\log\change;
-use cfg\log\change_action;
 use cfg\log\change_link;
 use cfg\log\change_log_list;
-use cfg\system\message_translator;
 use cfg\phrase\phrase;
 use cfg\phrase\term;
-use cfg\word\triple;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\verb\verb;
+use cfg\word\triple;
 use cfg\word\word;
+use Exception;
+use shared\enum\change_actions;
+use shared\enum\messages as msg_id;
+use shared\helper\CombineObject;
 use shared\json_fields;
 use shared\library;
-use Exception;
+use shared\types\api_type_list;
 
 class sandbox_named extends sandbox
 {
@@ -122,8 +129,6 @@ class sandbox_named extends sandbox
     // *_SQL_TYP is the sql data type used for the field
     const FLD_NAME = 'name';
     const FLD_NAME_SQL_TYP = sql_field_type::NAME; // in many cases overwritten by NAME_UNIQUE
-    const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
 
     /*
@@ -131,9 +136,11 @@ class sandbox_named extends sandbox
      */
 
     // database fields only used for objects that have a name
-    protected string $name = '';        // simply the object name, which cannot be empty if it is a named object
-    public ?string $description = null; // the object description that is shown as a mouseover explain to the user
-    //                                     if description is NULL the database value should not be updated
+    // simply the object name, which is only null if the object has not yet been written to the database
+    protected ?string $name = null;
+    // the object description that is shown as a mouseover explain to the user
+    // if description is NULL the database value should not be updated
+    public ?string $description = null;
 
 
     /*
@@ -148,7 +155,7 @@ class sandbox_named extends sandbox
     {
         parent::reset();
 
-        $this->set_name('');
+        $this->set_name(null);
         $this->description = null;
     }
 
@@ -174,11 +181,102 @@ class sandbox_named extends sandbox
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_name($db_row[$name_fld]);
-            if (array_key_exists(self::FLD_DESCRIPTION, $db_row)) {
-                $this->description = $db_row[self::FLD_DESCRIPTION];
+            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             }
         }
         return $result;
+    }
+
+    /**
+     * set the type based on the api json
+     * @param array $api_json the api json array with the values that should be mapped
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = parent::api_mapper($api_json);
+
+        if (array_key_exists(json_fields::NAME, $api_json)) {
+            $this->set_name($api_json[json_fields::NAME]);
+        }
+        if (array_key_exists(json_fields::DESCRIPTION, $api_json)) {
+            if ($api_json[json_fields::DESCRIPTION] <> '') {
+                $this->description = $api_json[json_fields::DESCRIPTION];
+            }
+        }
+
+        return $usr_msg;
+    }
+
+    /**
+     * function to import the core user sandbox object values from a json string
+     * e.g. the share and protection settings
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    {
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+
+        if (key_exists(json_fields::NAME, $in_ex_json)) {
+            $this->set_name($in_ex_json[json_fields::NAME]);
+        }
+        if (key_exists(json_fields::DESCRIPTION, $in_ex_json)) {
+            if ($in_ex_json[json_fields::DESCRIPTION] <> '') {
+                $this->description = $in_ex_json[json_fields::DESCRIPTION];
+            }
+        }
+
+        return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        $vars[json_fields::NAME] = $this->name();
+        if ($typ_lst->test_mode()) {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        } else {
+            $vars[json_fields::DESCRIPTION] = $this->description();
+        }
+
+        return $vars;
+    }
+
+
+    /*
+     * im- and export
+     */
+
+    /**
+     * create an array with the export json fields
+     * @param bool $do_load true if any missing data should be loaded while creating the array
+     * @return array with the json fields
+     */
+    function export_json(bool $do_load = true): array
+    {
+        $vars = parent::export_json($do_load);
+        $vars[json_fields::NAME] = $this->name();
+        if ($this->description <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description;
+        }
+        return $vars;
     }
 
 
@@ -190,9 +288,8 @@ class sandbox_named extends sandbox
      * set the most used object vars with one set statement
      * @param int $id mainly for test creation the database id of the named user sandbox object
      * @param string $name mainly for test creation the name of the named user sandbox object
-     * @param string $type_code_id the code id of the predefined object type only used by some child objects
      */
-    function set(int $id = 0, string $name = '', string $type_code_id = ''): void
+    function set(int $id = 0, string $name = ''): void
     {
         parent::set_id($id);
 
@@ -204,21 +301,44 @@ class sandbox_named extends sandbox
     /**
      * set the name of this named user sandbox object
      * set and get of the name is needed to use the same function for phrase or term
+     * the name can be set to null e.g. for the compare object
      *
-     * @param string $name the name of this named user sandbox object e.g. word set in the related object
-     * @return void
+     * @param string|null $name the name of this named user sandbox object e.g. word set in the related object
+     * @return user_message
      */
-    function set_name(string $name): void
+    function set_name(?string $name): user_message
     {
+        $usr_msg = new user_message();
+        if (trim($name) <> $name) {
+            $usr_msg->add_id_with_vars(msg_id::TRIM_NAME,
+                [msg_id::VAR_NAME => $name]);
+            $name = trim($name);
+        }
         $this->name = $name;
+        return $usr_msg;
     }
 
     /**
      * get the name of the word object
+     * TODO can it be merged with name_or_null() ?
      *
      * @return string the name from the object e.g. word using the same function as the phrase and term
      */
     function name(): string
+    {
+        if ($this->name == null) {
+            return '';
+        } else {
+            return $this->name;
+        }
+    }
+
+    /**
+     * get the name of the word object or null
+     *
+     * @return string|null the name from the object e.g. word using the same function as the phrase and term
+     */
+    function name_or_null(): ?string
     {
         return $this->name;
     }
@@ -244,11 +364,7 @@ class sandbox_named extends sandbox
      */
     function description(): ?string
     {
-        if ($this->excluded) {
-            return null;
-        } else {
-            return $this->description;
-        }
+        return $this->description;
     }
 
     /**
@@ -276,17 +392,18 @@ class sandbox_named extends sandbox
      * if the given description is not set (null) the description is not removed
      * if the given description is an empty string (not null) the description is removed
      *
-     * @param sandbox_named|db_object_seq_id $sbx sandbox object with the values that should be updated e.g. based on the import
+     * @param sandbox_named|CombineObject|db_object_seq_id $obj sandbox object with the values that should be updated e.g. based on the import
+     * @param user $usr_req the user who has requested the fill
      * @return user_message a warning in case of a conflict e.g. due to a missing change time
      */
-    function fill(sandbox_named|db_object_seq_id $sbx): user_message
+    function fill(sandbox_named|CombineObject|db_object_seq_id $obj, user $usr_req): user_message
     {
-        $usr_msg = parent::fill($sbx);
-        if ($sbx->name() != null) {
-            $this->set_name($sbx->name());
+        $usr_msg = parent::fill($obj, $usr_req);
+        if ($obj->name() != null) {
+            $this->set_name($obj->name());
         }
-        if ($sbx->description() != null) {
-            $this->set_description($sbx->description());
+        if ($obj->description() != null) {
+            $this->set_description($obj->description());
         }
         return $usr_msg;
     }
@@ -330,27 +447,6 @@ class sandbox_named extends sandbox
 
         $api_obj->set_name($this->name());
         $api_obj->description = $this->description;
-    }
-
-    /**
-     * set the type based on the api json
-     * @param array $api_json the api json array with the values that should be mapped
-     */
-    function set_by_api_json(array $api_json): user_message
-    {
-        $msg = parent::set_by_api_json($api_json);
-
-        foreach ($api_json as $key => $value) {
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
-            }
-        }
-        return $msg;
     }
 
 
@@ -455,62 +551,38 @@ class sandbox_named extends sandbox
 
 
     /*
-     * im- and export
+     * info
      */
 
     /**
-     * function to import the core user sandbox object values from a json string
-     * e.g. the share and protection settings
-     *
-     * @param array $in_ex_json an array with the data of the json object
-     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
-     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     * create human-readable messages of the differences between the named sandbox objects
+     * @param sandbox_named|CombineObject|db_object_seq_id $obj which might be different to this named sandbox
+     * @return user_message the human-readable messages of the differences between the named sandbox objects
      */
-    function import_obj(array $in_ex_json, object $test_obj = null): user_message
+    function diff_msg(sandbox_named|CombineObject|db_object_seq_id $obj): user_message
     {
-        $usr_msg = parent::import_obj($in_ex_json, $test_obj);
-        foreach ($in_ex_json as $key => $value) {
-            if ($key == json_fields::NAME) {
-                $this->set_name($value);
-            }
-            if ($key == json_fields::DESCRIPTION) {
-                if ($value <> '') {
-                    $this->description = $value;
-                }
-            }
+        $usr_msg = parent::diff_msg($obj);
+        if ($this->name() != $obj->name()) {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::DIFF_NAME, [
+                msg_id::VAR_NAME => $obj->name(),
+                msg_id::VAR_NAME_CHK => $this->name(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_SANDBOX_NAME => $this->dsp_id(),
+            ]);
         }
         return $usr_msg;
     }
 
     /**
-     * create an array with the export json fields
-     * @param bool $do_load true if any missing data should be loaded while creating the array
-     * @return array with the json fields
-     */
-    function export_json(bool $do_load = true): array
-    {
-        $vars = parent::export_json($do_load);
-        $vars[json_fields::NAME] = $this->name();
-        if ($this->description <> '') {
-            $vars[json_fields::DESCRIPTION] = $this->description;
-        }
-        return $vars;
-    }
-
-
-    /*
-     * information
-     */
-
-    /**
      * check if the named object in the database needs to be updated
      *
-     * @param sandbox_named $db_obj the word as saved in the database
+     * @param sandbox_named|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update_named(sandbox_named $db_obj): bool
+    function needs_db_update(sandbox_named|CombineObject|db_object_seq_id $db_obj): bool
     {
-        $result = parent::needs_db_update_sandbox($db_obj);
+        $result = parent::needs_db_update($db_obj);
         if ($this->name != null) {
             if ($this->name != $db_obj->name) {
                 $result = true;
@@ -518,6 +590,57 @@ class sandbox_named extends sandbox
         }
         if ($this->description != null) {
             if ($this->description != $db_obj->description) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * check if this might be added to the database
+     * which is for named objects without dependencies the same as db_ready
+     * @return user_message including suggested solutions
+     *       if something is missing e.g. a linked object
+     */
+    function can_be_ready(): user_message
+    {
+        return $this->db_ready();
+    }
+
+    /**
+     * check if the named sandbox object can be added to the database
+     * @return user_message including suggested solutions
+     *       if e.g. the id and the name is something
+     */
+    function db_ready(): user_message
+    {
+        $usr_msg = parent::db_ready();
+        if ($this->id() == 0) {
+            if ($this->name() == '') {
+                $usr_msg->add_id(msg_id::ID_AND_NAME_MISSING);
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * @return bool true if the triple object probably has been added to the database
+     *              false e.g. if some parameters ar missing
+     */
+    function is_valid(): bool
+    {
+        if ($this->id() != 0 and $this->name() != '') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function no_id_but_name(): bool
+    {
+        $result = false;
+        if ($this->id() == 0 or $this->id() == null) {
+            if ($this->name(true) != '' and $this->name(true) != null) {
                 $result = true;
             }
         }
@@ -572,7 +695,7 @@ class sandbox_named extends sandbox
 
         $log = new change($this->user());
         // TODO add the table exceptions from sql_db
-        $log->set_action(change_action::ADD);
+        $log->set_action(change_actions::ADD);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
         $log->set_field($tbl_name . '_name');
         $log->set_user($this->user());
@@ -595,7 +718,7 @@ class sandbox_named extends sandbox
         $tbl_name = $lib->class_to_name($this::class);
 
         $log = new change($this->user());
-        $log->set_action(change_action::DELETE);
+        $log->set_action(change_actions::DELETE);
         $log->set_table($tbl_name . sql_db::TABLE_EXTENSION);
         $log->set_field($tbl_name . '_name');
         $log->old_value = $this->name();
@@ -670,10 +793,10 @@ class sandbox_named extends sandbox
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
                     if (!$log->add_ref($this->id())) {
-                        $usr_msg->add_message('Updating the reference in the log failed');
+                        $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
                         // TODO do rollback or retry?
                     } else {
-                        //$usr_msg->add_message($this->set_owner($new_owner_id));
+                        //$usr_msg->add_message_text($this->set_owner($new_owner_id));
 
                         // TODO all all objects to the potential used of the prepared sql function with log
                         if (!$this->sql_write_prepared()) {
@@ -691,7 +814,10 @@ class sandbox_named extends sandbox
                 } else {
                     $lib = new library();
                     $class_name = $lib->class_to_name($this::class);
-                    $usr_msg->add_message('Adding ' . $class_name . ' ' . $this->dsp_id() . ' failed due to logging error.');
+                    $usr_msg->add_id_with_vars(msg_id::FAILED_ADD_LOGGING_ERROR, [
+                        msg_id::VAR_CLASS_NAME => $class_name,
+                        msg_id::VAR_ID => $this->dsp_id()
+                    ]);
                 }
             }
         }
@@ -725,12 +851,12 @@ class sandbox_named extends sandbox
     protected function check_preserved(): user_message
     {
         global $usr;
+        global $mtr;
 
         // init
         $usr_msg = new user_message();
-        $mtr = new message_translator();
-        $msg_res = $mtr->txt(msg_enum::IS_RESERVED);
-        $msg_for = $mtr->txt(msg_enum::RESERVED_NAME);
+        $msg_res = $mtr->txt(msg_id::IS_RESERVED);
+        $msg_for = $mtr->txt(msg_id::RESERVED_NAME);
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
 
@@ -739,7 +865,10 @@ class sandbox_named extends sandbox
             if (in_array($this->name(), $this->reserved_names())) {
                 // the admin user needs to add the read test objects during initial load
                 if ($usr->is_admin() and !in_array($this->name(), $this->fixed_names())) {
-                    $usr_msg->add_message('"' . $this->name() . '" ' . $msg_res . ' ' . $class_name . ' ' . $msg_for);
+                    $usr_msg->add_id_with_vars(msg_id::GROUP_IS_RESERVED, [
+                        msg_id::VAR_NAME => $this->name(),
+                        msg_id::VAR_JSON_TEXT => $msg_res . ' ' . $class_name . ' ' . $msg_for
+                    ]);
                 }
             }
         }
@@ -814,7 +943,7 @@ class sandbox_named extends sandbox
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id();
-                $log->set_field(self::FLD_DESCRIPTION);
+                $log->set_field(sql_db::FLD_DESCRIPTION);
                 $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
@@ -865,7 +994,7 @@ class sandbox_named extends sandbox
                 // TODO activate when the prepared SQL is ready to use
                 // only do the update here if the update is not done with one sql statement at the end
                 if ($this->sql_write_prepared()) {
-                    $qp = $this->sql_update($db_con->sql_creator(), $db_rec, new sql_type_list([]));
+                    $qp = $this->sql_update($db_con->sql_creator(), $db_rec, new sql_type_list());
                     $usr_msg = $db_con->update($qp, $this::class . ' update name');
                     $result = $usr_msg->get_message();
                 } else {
@@ -1021,7 +1150,7 @@ class sandbox_named extends sandbox
         sql_creator        $sc,
         sql_par_field_list $fvt_lst,
         array              $fld_lst_all = [],
-        sql_type_list      $sc_par_lst = new sql_type_list([])): sql_par
+        sql_type_list      $sc_par_lst = new sql_type_list()): sql_par
     {
         // make the query name unique based on the changed fields
         $lib = new library();
@@ -1059,7 +1188,7 @@ class sandbox_named extends sandbox
         sql_par            $qp,
         sql_par_field_list $fvt_lst,
         string             $id_fld_new,
-        sql_type_list      $sc_par_lst_sub = new sql_type_list([])
+        sql_type_list      $sc_par_lst_sub = new sql_type_list()
     ): sql_par
     {
         // set some var names to shorten the code lines
@@ -1110,13 +1239,13 @@ class sandbox_named extends sandbox
      * @param sql_type_list $sc_par_lst only used for link objects
      * @return array list of all database field names that have been updated
      */
-    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list([])): array
+    function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
         return [
             $this::FLD_ID,
             user::FLD_ID,
             $this->name_field(),
-            self::FLD_DESCRIPTION
+            sql_db::FLD_DESCRIPTION
         ];
     }
 
@@ -1130,7 +1259,7 @@ class sandbox_named extends sandbox
      */
     function db_fields_changed(
         sandbox       $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list([])
+        sql_type_list $sc_par_lst = new sql_type_list()
     ): sql_par_field_list
     {
         $lst = new sql_par_field_list();

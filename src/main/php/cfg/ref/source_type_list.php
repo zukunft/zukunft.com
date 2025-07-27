@@ -5,6 +5,7 @@
     model/ref/source_type_list.php - to link coded functionality to a source
     ------------------------------
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -31,18 +32,22 @@
 
 namespace cfg\ref;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_REF_PATH . 'source_type.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_REF . 'source_type.php';
+include_once paths::SHARED_ENUM . 'source_types.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\helper\type_list;
 use cfg\db\sql;
 use cfg\db\sql_db;
 use cfg\sandbox\sandbox_named;
+use shared\enum\source_types;
 use shared\library;
 
 class source_type_list extends type_list
@@ -69,12 +74,12 @@ class source_type_list extends type_list
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
-                $type_code_id = strval($db_entry[sql::FLD_CODE_ID]);
-                $type_name = strval($db_entry[sql::FLD_TYPE_NAME]);
-                $type_comment = strval($db_entry[sandbox_named::FLD_DESCRIPTION]);
+                $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
+                $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
+                $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new source_type($type_code_id, $type_name, $type_comment);
                 $type_obj->set_id($db_entry[self::FLD_ID]);
-                //$type_obj->url = $db_entry[self::FLD_URL];
+                //$type_obj->set_url($db_entry[self::FLD_URL]);
                 $this->add($type_obj);
             }
         }
@@ -88,14 +93,14 @@ class source_type_list extends type_list
     function load_dummy(): void
     {
         parent::load_dummy();
-        $type = new source_type(source_type::XBRL, source_type::XBRL);
-        $type->set_id(source_type::XBRL_ID);
+        $type = new source_type(source_types::XBRL, source_types::XBRL);
+        $type->set_id(source_types::XBRL_ID);
         $this->add($type);
-        $type = new source_type(source_type::CSV, source_type::CSV);
-        $type->set_id(source_type::CSV_ID);
+        $type = new source_type(source_types::CSV, source_types::CSV);
+        $type->set_id(source_types::CSV_ID);
         $this->add($type);
-        $type = new source_type(source_type::PDF, source_type::PDF);
-        $type->set_id(source_type::PDF_ID);
+        $type = new source_type(source_types::PDF, source_types::PDF);
+        $type->set_id(source_types::PDF_ID);
         $this->add($type);
     }
 
@@ -104,7 +109,7 @@ class source_type_list extends type_list
      */
     function default_id(): int
     {
-        return parent::id(source_type::XBRL);
+        return parent::id(source_types::XBRL);
     }
 
     /**

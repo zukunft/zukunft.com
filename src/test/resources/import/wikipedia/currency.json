@@ -7,10 +7,13 @@
       "name": "Currency"
     },
     {
-      "name": "ISO 4217code"
+      "name": "ISO 4217 code"
     },
     {
-      "name": "Symbol orabbreviation"
+      "name": "Symbol or abbreviation"
+    },
+    {
+      "name": "Total [lower-alpha 2]"
     },
     {
       "name": "Proportion of daily volume April 2019"
@@ -376,7 +379,7 @@
     {
       "from": "USD",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "USD",
@@ -386,7 +389,7 @@
     {
       "from": "US$",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "US$",
@@ -401,7 +404,7 @@
     {
       "from": "EUR",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "EUR",
@@ -411,7 +414,7 @@
     {
       "from": "\u20ac",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "\u20ac",
@@ -426,7 +429,7 @@
     {
       "from": "JPY",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "JPY",
@@ -436,7 +439,7 @@
     {
       "from": "\u00a5 \/ \u5186",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "\u00a5 \/ \u5186",
@@ -451,7 +454,7 @@
     {
       "from": "GBP",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "GBP",
@@ -461,7 +464,7 @@
     {
       "from": "\u00a3",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "\u00a3",
@@ -476,7 +479,7 @@
     {
       "from": "CNY",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "CNY",
@@ -486,7 +489,7 @@
     {
       "from": "\u00a5 \/ \u5143",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "\u00a5 \/ \u5143",
@@ -501,7 +504,7 @@
     {
       "from": "AUD",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "AUD",
@@ -511,7 +514,7 @@
     {
       "from": "A$",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "A$",
@@ -526,7 +529,7 @@
     {
       "from": "CAD",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "CAD",
@@ -536,7 +539,7 @@
     {
       "from": "C$",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "C$",
@@ -551,7 +554,7 @@
     {
       "from": "CHF",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "CHF",
@@ -561,7 +564,7 @@
     {
       "from": "CHF",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "CHF",
@@ -576,7 +579,7 @@
     {
       "from": "HKD",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "HKD",
@@ -586,7 +589,7 @@
     {
       "from": "HK$",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "HK$",
@@ -601,7 +604,7 @@
     {
       "from": "SGD",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "SGD",
@@ -611,7 +614,7 @@
     {
       "from": "S$",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "S$",
@@ -626,7 +629,7 @@
     {
       "from": "SEK",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "SEK",
@@ -636,7 +639,7 @@
     {
       "from": "kr",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "kr",
@@ -651,7 +654,7 @@
     {
       "from": "KRW",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "KRW",
@@ -661,7 +664,7 @@
     {
       "from": "\u20a9 \/ \uc6d0",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "\u20a9 \/ \uc6d0",
@@ -676,7 +679,7 @@
     {
       "from": "NOK",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "NOK",
@@ -686,7 +689,7 @@
     {
       "from": "kr",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "kr",
@@ -701,7 +704,7 @@
     {
       "from": "NZD",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "NZD",
@@ -711,7 +714,7 @@
     {
       "from": "NZ$",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "NZ$",
@@ -726,7 +729,7 @@
     {
       "from": "INR",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "INR",
@@ -736,7 +739,7 @@
     {
       "from": "\u20b9",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "\u20b9",
@@ -751,7 +754,7 @@
     {
       "from": "MXN",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "MXN",
@@ -761,7 +764,7 @@
     {
       "from": "MX$",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "MX$",
@@ -776,7 +779,7 @@
     {
       "from": "TWD",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "TWD",
@@ -786,7 +789,7 @@
     {
       "from": "NT$",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "NT$",
@@ -801,7 +804,7 @@
     {
       "from": "ZAR",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "ZAR",
@@ -811,7 +814,7 @@
     {
       "from": "R",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "R",
@@ -826,7 +829,7 @@
     {
       "from": "BRL",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "BRL",
@@ -836,7 +839,7 @@
     {
       "from": "R$",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "R$",
@@ -851,7 +854,7 @@
     {
       "from": "DKK",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "DKK",
@@ -861,7 +864,7 @@
     {
       "from": "kr",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "kr",
@@ -876,7 +879,7 @@
     {
       "from": "PLN",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "PLN",
@@ -886,7 +889,7 @@
     {
       "from": "z\u0142",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "z\u0142",
@@ -901,7 +904,7 @@
     {
       "from": "THB",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "THB",
@@ -911,7 +914,7 @@
     {
       "from": "\u0e3f",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "\u0e3f",
@@ -926,7 +929,7 @@
     {
       "from": "ILS",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "ILS",
@@ -936,7 +939,7 @@
     {
       "from": "\u20aa",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "\u20aa",
@@ -951,7 +954,7 @@
     {
       "from": "IDR",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "IDR",
@@ -961,7 +964,7 @@
     {
       "from": "Rp",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "Rp",
@@ -976,7 +979,7 @@
     {
       "from": "CZK",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "CZK",
@@ -986,7 +989,7 @@
     {
       "from": "K\u010d",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "K\u010d",
@@ -1001,7 +1004,7 @@
     {
       "from": "AED",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "AED",
@@ -1011,7 +1014,7 @@
     {
       "from": "\u062f.\u0625",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "\u062f.\u0625",
@@ -1026,7 +1029,7 @@
     {
       "from": "TRY",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "TRY",
@@ -1036,7 +1039,7 @@
     {
       "from": "\u20ba",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "\u20ba",
@@ -1051,7 +1054,7 @@
     {
       "from": "HUF",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "HUF",
@@ -1061,7 +1064,7 @@
     {
       "from": "Ft",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "Ft",
@@ -1076,7 +1079,7 @@
     {
       "from": "CLP",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "CLP",
@@ -1086,7 +1089,7 @@
     {
       "from": "CLP$",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "CLP$",
@@ -1101,7 +1104,7 @@
     {
       "from": "SAR",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "SAR",
@@ -1111,7 +1114,7 @@
     {
       "from": "\ufdfc",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "\ufdfc",
@@ -1126,7 +1129,7 @@
     {
       "from": "PHP",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "PHP",
@@ -1136,7 +1139,7 @@
     {
       "from": "\u20b1",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "\u20b1",
@@ -1151,7 +1154,7 @@
     {
       "from": "MYR",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "MYR",
@@ -1161,7 +1164,7 @@
     {
       "from": "RM",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "RM",
@@ -1176,7 +1179,7 @@
     {
       "from": "COP",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "COP",
@@ -1186,7 +1189,7 @@
     {
       "from": "COL$",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "COL$",
@@ -1201,7 +1204,7 @@
     {
       "from": "RUB",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "RUB",
@@ -1211,7 +1214,7 @@
     {
       "from": "\u20bd",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "\u20bd",
@@ -1226,7 +1229,7 @@
     {
       "from": "RON",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "RON",
@@ -1236,7 +1239,7 @@
     {
       "from": "L",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "L",
@@ -1251,7 +1254,7 @@
     {
       "from": "PEN",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "PEN",
@@ -1261,7 +1264,7 @@
     {
       "from": "S\/",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "S\/",
@@ -1276,7 +1279,7 @@
     {
       "from": "BHD",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "BHD",
@@ -1286,7 +1289,7 @@
     {
       "from": ".\u062f.\u0628",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": ".\u062f.\u0628",
@@ -1301,7 +1304,7 @@
     {
       "from": "BGN",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "BGN",
@@ -1311,7 +1314,7 @@
     {
       "from": "BGN",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "BGN",
@@ -1326,7 +1329,7 @@
     {
       "from": "ARS",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
       "from": "ARS",
@@ -1336,7 +1339,7 @@
     {
       "from": "ARG$",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
       "from": "ARG$",
@@ -1349,54 +1352,29 @@
       "to": "Currency"
     },
     {
-      "from": "",
-      "verb": "is a",
-      "to": "ISO 4217code"
-    },
-    {
-      "from": "",
-      "verb": "is symbol for",
-      "to": "Other"
-    },
-    {
-      "from": "",
-      "verb": "is a",
-      "to": "Symbol orabbreviation"
-    },
-    {
-      "from": "",
-      "verb": "is symbol for",
-      "to": "Other"
-    },
-    {
-      "from": "Total[lower-alpha 2]",
+      "from": "Total [lower-alpha 2]",
       "verb": "is a",
       "to": "Currency"
     },
     {
-      "from": "Total[lower-alpha 2]",
+      "from": "Total [lower-alpha 2]",
       "verb": "is a",
-      "to": "ISO 4217code"
+      "to": "ISO 4217 code"
     },
     {
-      "from": "Total[lower-alpha 2]",
+      "from": "Total [lower-alpha 2]",
       "verb": "is symbol for",
-      "to": "Total[lower-alpha 2]"
+      "to": "Total [lower-alpha 2]"
     },
     {
-      "from": "Total[lower-alpha 2]",
+      "from": "Total [lower-alpha 2]",
       "verb": "is a",
-      "to": "Symbol orabbreviation"
+      "to": "Symbol or abbreviation"
     },
     {
-      "from": "Total[lower-alpha 2]",
+      "from": "Total [lower-alpha 2]",
       "verb": "is symbol for",
-      "to": "Total[lower-alpha 2]"
-    },
-    {
-      "from": "",
-      "verb": "is a",
-      "to": "Growth rate (2019\u20132022)"
+      "to": "Total [lower-alpha 2]"
     }
   ],
   "values": [
@@ -2242,14 +2220,14 @@
     },
     {
       "words": [
-        "Total[lower-alpha 2]",
+        "Total [lower-alpha 2]",
         "Proportion of daily volume April 2019"
       ],
       "number": 200
     },
     {
       "words": [
-        "Total[lower-alpha 2]",
+        "Total [lower-alpha 2]",
         "Proportion of daily volume April 2022"
       ],
       "number": 200

@@ -34,20 +34,23 @@
 
 namespace unit_read;
 
-include_once WEB_PATH . 'frontend.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
 
-use api\phrase\group as group_api;
-use api\value\value as value_api;
-use api\word\triple as triple_api;
-use api\word\word as word_api;
-use cfg\user\user_message;
-use cfg\verb\verb;
+include_once paths::WEB . 'frontend.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+
 use html\types\type_lists as type_list_dsp;
-use test\all_tests;
-use unit\api_tests;
-use unit\all_unit_tests;
+use shared\const\groups;
+use shared\const\triples;
+use shared\const\values;
+use shared\const\words;
 use shared\types\verbs;
+use test\all_tests;
+use unit\all_unit_tests;
+use unit\api_tests;
+use unit_ui\all_ui_tests;
 
 class all_unit_read_tests extends all_unit_tests
 {
@@ -80,6 +83,7 @@ class all_unit_read_tests extends all_unit_tests
         (new user_read_tests)->run($this);
         (new protection_read_tests)->run($this);
         (new share_read_tests)->run($this);
+        (new horizontal_read_tests)->run($this);
         (new word_read_tests)->run($this);
         (new word_list_read_tests)->run($this);
         (new verb_read_tests)->run($this);
@@ -108,11 +112,11 @@ class all_unit_read_tests extends all_unit_tests
         (new job_read_tests)->run($this);
 
         // load the types from the api message
-        $api_msg = $this->type_lists_api($this->usr1)->get_json();
+        $api_msg = $this->type_lists_api($this->usr1);
         new type_list_dsp($api_msg);
 
         $api_test = new api_tests();
-        $api_test->run_api_test($this);
+        $api_test->run($this);
 
         // test all system views
         $api_test->run_ui_test($this);
@@ -128,18 +132,18 @@ class all_unit_read_tests extends all_unit_tests
     {
         // add functional test rows to the database for read testing e.g. exclude sandbox entries
         $this->test_triple(
-            triple_api::TN_PI, verbs::IS, word_api::TN_READ,
-            triple_api::TN_PI_NAME, triple_api::TN_PI_NAME
+            triples::PI, verbs::IS, words::MATH,
+            triples::PI_NAME, triples::PI_NAME
         );
-        $phr_grp = $this->add_phrase_group(array(triple_api::TN_PI_NAME), group_api::TN_READ);
-        $this->test_value_by_phr_grp($phr_grp, value_api::TV_READ);
+        $phr_grp = $this->add_phrase_group(array(triples::PI_NAME), groups::TN_READ);
+        $this->test_value_by_phr_grp($phr_grp, values::PI_LONG);
 
         $this->test_triple(
-            triple_api::TN_E, verbs::IS, word_api::TN_READ,
-            triple_api::TN_E, triple_api::TN_E
+            triples::E, verbs::IS, words::MATH,
+            triples::E, triples::E
         );
-        $phr_grp = $this->add_phrase_group(array(triple_api::TN_E), group_api::TN_READ);
-        $this->test_value_by_phr_grp($phr_grp, value_api::TV_E);
+        $phr_grp = $this->add_phrase_group(array(triples::E), groups::TN_READ);
+        $this->test_value_by_phr_grp($phr_grp, values::E);
     }
 
     /**
@@ -149,10 +153,10 @@ class all_unit_read_tests extends all_unit_tests
      */
     private function clean_up_unit_db_tests(): void
     {
-        //$this->del_triple_by_name(triple_api::TN_READ_NAME);
-        //$phr_grp = $this->load_phrase_group_by_name(group_api::TN_READ);
+        //$this->del_triple_by_name(triples::TN_READ_NAME);
+        //$phr_grp = $this->load_phrase_group_by_name(groups::TN_READ);
         //$this->del_value_by_phr_grp($phr_grp);
-        //$this->del_phrase_group(group_api::TN_READ);
+        //$this->del_phrase_group(groups::TN_READ);
     }
 
 }

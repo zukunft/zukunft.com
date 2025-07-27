@@ -44,6 +44,13 @@ class sql
     const DELETE = 'DELETE FROM';
     const PREPARE = 'PREPARE';
 
+    // setup roles
+    const ROLE_CREATE = 'CREATE ROLE';
+    const ROLE_WITH = 'WITH LOGIN CREATEDB NOSUPERUSER NOCREATEROLE INHERIT NOREPLICATION CONNECTION LIMIT -1';
+    const ROLE_WITH_MYSQL = 'WITH LOGIN CREATEDB NOSUPERUSER NOCREATEROLE INHERIT NOREPLICATION CONNECTION LIMIT -1';
+    const PASSWORD = "PASSWORD '";
+    const PASSWORD_END = "'";
+
     // setup tables
     const CREATE = 'CREATE OR REPLACE';
     const INDEX = 'INDEX';
@@ -80,24 +87,29 @@ class sql
     const FUNCTION_RETURN_INT = 'RETURNS bigint AS';
     const FUNCTION_RETURN_INT_MYSQL = '';
     const FUNCTION_NO_RETURN = 'RETURNS void AS';
+    const FUNCTION_COUNT = 'COUNT';
     const FUNCTION_NO_RETURN_MYSQL = '';
     const RETURNING = 'RETURNING';
     const RETURN = 'RETURN';
     const VIEW = 'VIEW';
     const AS = 'AS';
     const FROM = 'FROM';
+    const LEFT_JOIN = 'LEFT JOIN';
+    const ON = 'ON';
     const CONCAT = 'CONCAT';
     const CASE = 'CASE WHEN';
     const CASE_MYSQL = 'IF(';
     const THEN = 'THEN';
     const THEN_MYSQL = ',';
     const IS_NULL = 'IS NULL';
+    const NULL = 'NULL';
     const NOT_TRUE = 'IS NOT TRUE';
     const ELSE = 'ELSE';
     const ELSE_MYSQL = ',';
     const END = 'END';
     const END_MYSQL = ')';
     const UNION = 'UNION';
+    const UNION_ALL = 'UNION ALL';
     const IN = 'IN';
     const COALESCE = 'COALESCE';
 
@@ -112,18 +124,13 @@ class sql
     const FALSE = '0'; // representing true in the where part for a smallint field
     const ID_NULL = 0; // the 'not set' value for an id; could have been null if postgres index would allow it
 
-    // sql field names used for several classes
-    const FLD_CODE_ID = 'code_id';     // field name for the code link e.g. for words used for the system configuration
-    const FLD_CODE_ID_SQL_TYP = sql_field_type::CODE_ID;
-    const FLD_VALUE = 'value';         // field name e.g. for the configuration value
-    const FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
-    const FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const
-
     // query name extensions to make the query name unique
     const NAME_ALL = 'all'; // for queries that should return all rows without paging
     const NAME_SEP = '_'; // for snake case query and file names
+    const NAME_PHRASE_COUNT = 'r'; // the number of phrase ids used to select the values
     const NAME_BY = 'by'; // to separate the query selection in the query name e.g. for (load) word_by_name
     const NAME_EXT_USER = '_user';
+    const NAME_EXT_COUNT = '_count';
     const NAME_EXT_MEDIAN_USER = 'median_user'; // to get the user that is owner of the most often used db row
     const NAME_EXT_EX_OWNER = 'ex_owner'; // excluding the owner of the loaded db row
     const NAME_EXT_USER_CONFIG = 'usr_cfg';
@@ -131,6 +138,7 @@ class sql
     // for sql functions that do the change log and the actual change with on function
     const FLD_LOG_FIELD_PREFIX = 'field_id_'; // added to the field name to include the preloaded log field id
     const FLD_LOG_ID_PREFIX = 'id_'; // added to the field name to include the actual id changed in the log e.g. for type changes
+    const FLD_LOG_REQ_USER = 'req_user_id'; // the sql parameter name for the user id of the user who has requested the change
     const PAR_PREFIX = '_'; // to separate the parameter names e.g. _word_id instead of word_id for the given parameter
     const PAR_PREFIX_MYSQL = '@'; // for the new sequence id using MySQL
     const PAR_NEW_ID_PREFIX = 'new_'; // added to the field id name to remember the sequence id

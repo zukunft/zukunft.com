@@ -35,19 +35,27 @@
 
 namespace html\types;
 
-include_once SHARED_PATH . 'api.php';
-include_once TYPES_PATH . 'type_object.php';
-include_once TYPES_PATH . 'protection.php';
-include_once HTML_PATH . 'html_selector.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED . 'api.php';
+include_once html_paths::TYPES . 'protection.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::TYPES . 'type_object.php';
+include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::VERB . 'verb.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use html\user\user_message;
-use shared\api;
 use html\html_selector;
 use html\types\type_object as type_object_dsp;
+use html\verb\verb;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
+use shared\types\view_styles;
 
 class type_list
 {
@@ -56,37 +64,49 @@ class type_list
     const CODE_ID_NOT_FOUND = -1;
 
     // the protected main var without id list because this is only loaded once
-    private array $lst = array();
+    private array $lst = [];
     private array $hash = []; // hash list with the code id for fast selection
 
+
+    function reset(): void
+    {
+        $this->lst = [];
+        $this->hash = [];
+    }
 
     /**
      * set the vars of these list display objects bases on the api json array
      * @param array $json_array an api list json message
      * @return user_message ok or a warning e.g. if the server version does not match
      */
-    function set_from_json_array(array $json_array): user_message
+    function set_from_json_array(array $json_array, string $class = ''): user_message
     {
         $usr_msg = new user_message();
         foreach ($json_array as $value) {
-            if (!array_key_exists(json_fields::CODE_ID, $value)) {
-                $usr_msg->add_err('code id is missing for ' . implode(',', $value));
-            }
-            if (array_key_exists(json_fields::DESCRIPTION, $value)) {
-                $typ = new type_object_dsp(
-                    $value[json_fields::ID],
-                    $value[json_fields::CODE_ID],
-                    $value[json_fields::NAME],
-                    $value[json_fields::DESCRIPTION]
-                );
+            if ($class == verb::class) {
+                $vrb = new verb();
+                $vrb->api_mapper($value);
+                $this->add_obj($vrb);
             } else {
-                $typ = new type_object_dsp(
-                    $value[json_fields::ID],
-                    $value[json_fields::CODE_ID],
-                    $value[json_fields::NAME]
-                );
+                if (!array_key_exists(json_fields::CODE_ID, $value)) {
+                    $usr_msg->add_err('code id is missing for ' . implode(',', $value));
+                }
+                if (array_key_exists(json_fields::DESCRIPTION, $value)) {
+                    $typ = new type_object_dsp(
+                        $value[json_fields::ID],
+                        $value[json_fields::CODE_ID],
+                        $value[json_fields::NAME],
+                        $value[json_fields::DESCRIPTION]
+                    );
+                } else {
+                    $typ = new type_object_dsp(
+                        $value[json_fields::ID],
+                        $value[json_fields::CODE_ID],
+                        $value[json_fields::NAME]
+                    );
+                }
+                $this->add_obj($typ);
             }
-            $this->add_obj($typ);
         }
         return $usr_msg;
     }
@@ -99,6 +119,26 @@ class type_list
         $result = array();
         foreach ($this->lst as $typ) {
             $result[$typ->id()] = $typ->name();
+        }
+        return $result;
+    }
+
+    /**
+     * @returns array the protected list of values or formula results
+     */
+    function lst(): array
+    {
+        return $this->lst;
+    }
+
+    /**
+     * @returns array with the names on the db keys
+     */
+    function db_id_list(): array
+    {
+        $result = array();
+        foreach ($this->lst as $obj) {
+            $result[$obj->id()] = $obj->name();
         }
         return $result;
     }
@@ -151,9 +191,9 @@ class type_list
     /**
      * pick a type from the preloaded object list
      * @param int $id the database id of the expected type
-     * @return type_object|null the type object
+     * @return verb|type_object|null the type object
      */
-    function get(int $id): ?type_object
+    function get(int $id): verb|type_object|null
     {
         $result = null;
         if ($id > 0) {
@@ -170,6 +210,16 @@ class type_list
         return $result;
     }
 
+    /**
+     * get the type object by code id (just to shorten the code)
+     * @param string $code_id
+     * @return verb|type_object|null
+     */
+    function get_by_code_id(string $code_id): verb|type_object|null
+    {
+        return $this->get($this->id($code_id));
+    }
+
 
     /*
      * modify functions
@@ -177,17 +227,19 @@ class type_list
 
     /**
      * add a phrase or ... to the list
-     * @returns bool true if the object has been added
+     * @returns user_message if adding failed or something is strange the messages for the user with the suggested solutions
      */
-    protected function add_obj(object $obj): bool
+    protected function add_obj(object $obj): user_message
     {
-        $result = false;
+        $usr_msg = new user_message();
+
         if (!in_array($obj->id(), $this->id_lst())) {
             $this->lst[] = $obj;
             $this->hash[$obj->code_id] = $obj->id();
-            $result = true;
+        } else {
+            $usr_msg->add_id(msg_id::LIST_DOUBLE_ENTRY);
         }
-        return $result;
+        return $usr_msg;
     }
 
     /**
@@ -224,8 +276,8 @@ class type_list
         string $name = '',
         string $form = '',
         int    $selected = 0,
-        string $col_class = '',
-        string $label = ''
+        string $col_class = view_styles::COL_SM_4,
+        string $label = 'type: '
     ): string
     {
         $sel = new html_selector();

@@ -1,0 +1,15 @@
+{
+  "version": "0.0.3",
+  "time": "2023-04-29 09:51:30",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message for data_object based import by counting the views"
+  ],
+  "views": [
+    {
+      "name": "System Test View",
+      "type": "presentation"
+    }
+  ]
+}
+

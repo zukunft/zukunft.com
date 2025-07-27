@@ -1,7 +1,7 @@
 <?php
 /*
 
-    cfg/system/phrase_table_status.php - the status of a phrase table
+    model/system/phrase_table_status.php - the status of a phrase table
     ----------------------------------
 
 
@@ -32,7 +32,9 @@
 
 namespace cfg\phrase;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
 
 use cfg\helper\type_object;
 

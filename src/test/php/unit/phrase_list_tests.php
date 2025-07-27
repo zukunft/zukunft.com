@@ -28,26 +28,29 @@
 
 namespace unit;
 
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
 
-use api\word\triple as triple_api;
-use api\word\word as word_api;
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase;
 use cfg\phrase\phrase_list;
-use cfg\phrase\phrase_type;
 use cfg\verb\verb;
 use cfg\word\word;
 use html\phrase\phrase_list as phrase_list_dsp;
 use shared\enum\foaf_direction;
-use test\test_cleanup;
+use shared\const\triples;
+use shared\const\words;
 use shared\types\phrase_type as phrase_type_shared;
 use shared\types\verbs;
+use test\test_cleanup;
 
 class phrase_list_tests
 {
@@ -72,10 +75,11 @@ class phrase_list_tests
         $t->name = 'phrase_list->';
         $t->resource_path = 'db/phrase/';
 
-        $t->header('phrase list unit tests');
+        // start the test section (ts)
+        $ts = 'unit phrase list ';
+        $t->header($ts);
 
-
-        $t->subheader('Cast tests');
+        $t->subheader($ts . 'cast');
 
         $phr_lst = $this->get_phrase_list();
         $trm_lst = $phr_lst->term_list();
@@ -83,7 +87,7 @@ class phrase_list_tests
         $t->assert('cast phrase list to term list', $phr_lst->dsp_name(), $trm_lst->dsp_name());
 
 
-        $t->subheader('SQL statement creation tests');
+        $t->subheader($ts . 'sql statement creation');
 
         // load by name pattern (expected to be most often used)
         $phr_lst = new phrase_list($usr);
@@ -92,29 +96,30 @@ class phrase_list_tests
         // load by phrase ids
         $phr_lst = new phrase_list($usr);
         $phr_ids = new phr_ids(array(3, -2, 4, -7));
-        $t->assert_sql_by_ids($sc, $phr_lst, $phr_ids);
+        $test_name = 'load phrases by ids';
+        $t->assert_sql_by_ids($test_name, $sc, $phr_lst, $phr_ids);
         $this->assert_sql_names_by_ids($t, $db_con, $phr_lst, $phr_ids);
-        $phr_names = array(word_api::TN_READ, triple_api::TN_READ);
+        $phr_names = array(words::MATH, triples::MATH_CONST);
         $t->assert_sql_by_names($sc, $phr_lst, $phr_names);
 
         // to review
         $t->assert_sql_names($sc, $phr_lst, new phrase($usr));
-        $t->assert_sql_names($sc, $phr_lst, new phrase($usr), triple_api::TN_READ);
+        $t->assert_sql_names($sc, $phr_lst, new phrase($usr), triples::MATH_CONST);
 
         $this->test = $t;
 
         // sql to load a list of phrases by a phrase list
         $phr_lst = new phrase_list($usr);
         $wrd = new word($usr);
-        $wrd->set(1, word_api::TN_CH);
+        $wrd->set(words::DEFAULT_WORD_ID, words::CH);
         $phr_lst->add($wrd->phrase());
-        $vrb = $vrb_cac->get_verb(verbs::IS_PART_OF);
+        $vrb = $vrb_cac->get_verb(verbs::PART_NAME);
         $this->assert_sql_linked_phrases($db_con->sql_creator(), $t, $phr_lst, $vrb, foaf_direction::UP);
         // TODO activate Prio 1
         //$this->assert_sql_by_phr_lst($db_con, $t, $phr_lst, $vrb, foaf_direction::UP);
 
 
-        $t->subheader('Selection tests');
+        $t->subheader($ts . 'selection');
 
         // check that a time phrase is correctly removed from a phrase list
         $phr_lst = $this->get_phrase_list();
@@ -125,15 +130,15 @@ class phrase_list_tests
         $target = $this->get_phrase_list_ex_time()->dsp_id();
         $t->display('phrase_list->ex_time names', $target, $result);
 
-        $test_name = 'get all words related to a phrase list: Mathematics, constant, Mathematical constant, Pi and Pi (Math) results in Mathematics, constant and Pi';
+        $test_name = 'get all words related to a phrase list: mathematics, constant, mathematical constant, Pi and Pi (Math) results in mathematics, constant and Pi';
         $phr_lst = $t->phrase_list();
         $wrd_lst = $phr_lst->wrd_lst_all();
-        $t->assert($test_name, $wrd_lst->count(), 3);
+        $t->assert($test_name, $wrd_lst->count(), 4);
 
         // TODO add assume time sql statement test
 
 
-        $t->subheader('FOAF unit tests');
+        $t->subheader($ts . 'FOAF');
 
         $test_name = 'test the verb "are" by getting the phrases that are a city';
         $wrd_city = $t->word_city();
@@ -143,13 +148,13 @@ class phrase_list_tests
         //$t->assert_contains($test_name, $city_lst->names(), $target->names());
 
 
-        $t->subheader('API unit tests');
+        $t->subheader($ts . 'api');
 
         $phr_lst = $t->phrase_list();
         $t->assert_api($phr_lst);
 
 
-        $t->subheader('HTML frontend unit tests');
+        $t->subheader($ts . 'html frontend');
 
         $phr_lst = $t->phrase_list();
         $t->assert_api_to_dsp($phr_lst, new phrase_list_dsp());
@@ -158,12 +163,12 @@ class phrase_list_tests
         $phr_lst_dsp = $t->phrase_list_dsp();
         $phr = $phr_lst_dsp->mainly();
         if ($phr != null) {
-            $t->assert_text_contains('Main word is "math"', $phr->name(), word_api::TN_READ);
+            $t->assert_text_contains('Main word is "math"', $phr->name(), words::MATH);
         }
 
 
 
-        $t->subheader('Combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');
+        $t->subheader($ts . 'combined objects like phrases should not be used for im- or export, so not tests is needed. Instead the single objects like word or triple should be im- and exported');
 
     }
 
@@ -197,7 +202,7 @@ class phrase_list_tests
     {
         global $usr;
         $wrd = new word($usr);
-        $wrd->set(1, word_api::TN_ADD);
+        $wrd->set(words::DEFAULT_WORD_ID, words::TEST_ADD);
         return $wrd->phrase();
     }
 
@@ -210,7 +215,7 @@ class phrase_list_tests
         global $phr_typ_cac;
 
         $wrd = new word($usr);
-        $wrd->set(2, word_api::TN_RENAMED);
+        $wrd->set(words::CONST_ID, words::TEST_RENAMED);
         $wrd->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         return $wrd->phrase();
     }

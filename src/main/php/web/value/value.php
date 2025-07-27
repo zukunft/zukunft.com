@@ -5,7 +5,8 @@
     web/value/value.php - create the html code to show a value to the user
     -------------------
 
-    to creat the HTML code to display a formula
+    to create the HTML code to show a value to the user
+    and allow changing the value
 
 
     This file is part of zukunft.com - calc with words
@@ -34,74 +35,58 @@
 
 namespace html\value;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
-include_once API_SANDBOX_PATH . 'sandbox.php';
-include_once API_SANDBOX_PATH . 'sandbox_value.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once paths::DB . 'sql_db.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'styles.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::FIGURE . 'figure.php';
+include_once html_paths::HELPER . 'config.php';
+include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::GROUP . 'group.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_db;
-use cfg\phrase\phrase;
-use cfg\user\user_message;
-use shared\api;
-use html\sandbox\config as config_html;
-use html\log\user_log_display;
-use html\ref\source as source_dsp;
-use html\rest_ctrl as api_dsp;
+use html\group\group;
+use html\figure\figure;
+use html\helper\config;
 use html\html_base;
-use html\phrase\phrase_group;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\figure\figure as figure_dsp;
+use html\log\user_log_display;
+use html\phrase\phrase;
+use html\phrase\phrase_list;
+use html\ref\source;
+use html\rest_ctrl as api_dsp;
 use html\sandbox\sandbox_value;
-use html\word\word as word_dsp;
+use html\styles;
+use html\user\user_message;
+use html\word\word;
+use shared\const\views;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 
 class value extends sandbox_value
 {
 
-
-    /**
-     * create the HTML code to show the value name to the user
-     *
-     * @param phrase_list_dsp|null $phr_lst_exclude usually the context phrases that does not need to be repeated
-     * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
-     */
-    function name_linked(phrase_list_dsp|null $phr_lst_exclude = null): string
-    {
-        return $this->grp()->display_linked($phr_lst_exclude);
-    }
-
-    /**
-     * @return string the formatted value with a link to change this value
-     */
-    function ref_edit(string $back = ''): string
-    {
-        $html = new html_base();
-        $url = $html->url(api_dsp::VALUE_EDIT, $this->id(), $back);
-        $txt = $this->val_formatted();
-        return $html->ref($url, $txt);
-    }
-
-
     /*
      * set and get
      */
 
     /**
-     * set the vars of this object bases on the api json string
-     * @param string $json_api_msg an api json message as a string
-     * @return \html\user\user_message ok or a warning e.g. if the server version does not match
-     */
-    function set_from_json(string $json_api_msg): \html\user\user_message
-    {
-        return $this->set_from_json_array(json_decode($json_api_msg, true));
-    }
-
-    /**
-     * @param phrase_group $grp
+     * @param group $grp
      * @return float
      */
-    function get(phrase_group $grp): float
+    function get(group $grp): float
     {
         /*
          * $result = null;
@@ -153,7 +138,7 @@ class value extends sandbox_value
 
 
     /*
-     * interface
+     * api
      */
 
     /**
@@ -170,75 +155,214 @@ class value extends sandbox_value
 
 
     /*
+     * select
+     */
+
+    /**
+     * to select the value if it matches all given phrase names
+     * @param array $names the phrase names for the selection
+     * @return bool true if this values is related to all phrase names
+     */
+    function match_all(array $names): bool
+    {
+        $result = true;
+        $phr_names = $this->phr_lst()->names();
+        foreach ($names as $name) {
+            if ($result) {
+                if (!in_array($name, $phr_names)) {
+                    $result = false;
+                }
+            }
+        }
+        return $result;
+    }
+
+
+    /*
      * cast
      */
 
     /**
-     * @returns figure_dsp the figure display object base on this value object
+     * @returns figure the figure display object base on this value object
      */
-    function figure(): figure_dsp
+    function figure(): figure
     {
-        $fig = new figure_dsp();
+        $fig = new figure();
         $fig->set_obj($this);
         return $fig;
     }
 
 
     /*
-     * display
+     * base
      */
 
-    function display(string $back = ''): string
-    {
-        if (!$this->is_std()) {
-            return '<span class="user_specific">' . $this->val_formatted() . '</span>';
-        } else {
-            return $this->val_formatted();
-        }
-    }
-
-    function display_linked(string $back = ''): string
-    {
-        return $this->ref_edit($back);
-    }
-
     /**
-     * @return string the html code to display a value
+     * create the html code to show only the value in default format to the user
      * this is the opposite of the convert function
+     * @return string the html code to show only the value
      */
-    function display_value(): string
+    function value(): string
     {
-        $result = '';
-        if (!is_null($this->number())) {
-            $num_text = $this->val_formatted();
+        $html = new html_base();
+        if ($this->number() != null) {
+            $result = $this->val_formatted();
             if (!$this->is_std()) {
-                $result = '<span class="user_specific">' . $num_text . '</span>';
-                //$result = $num_text;
-            } else {
-                $result = $num_text;
+                $result = $html->span($result, styles::STYLE_USER);
             }
+        } elseif ($this->text_value() != null) {
+            $result = $this->text_value();
+        } elseif ($this->time_value() != null) {
+            $result = $this->time_value();
+        } else {
+            $result = '';
         }
         return $result;
     }
 
     /**
-     * @return string html code to show the value with the possibility to click for the result explanation
+     * create the html code to show only the value formatted based on the user settings
+     * with a link to see more related information of the value
+     * @return string the formatted value with a link for more details
      */
-    function display_value_linked($back): string
+    function value_link(string $back = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url_new(api_dsp::VALUE, $this->id(), '', $back);
+        $txt = $this->value();
+        return $html->ref($url, $txt);
+    }
+
+    /**
+     * create the html code to show only the value formatted based on the user settings
+     * with a link to change the value itself or the value parameters
+     * @return string the formatted value with a link to change this value
+     */
+    function value_edit(string $back = ''): string
+    {
+        $html = new html_base();
+        $url = $html->url_new(api_dsp::VALUE_EDIT, $this->id(), '', $back);
+        $txt = $this->value();
+        return $html->ref($url, $txt);
+    }
+
+    /**
+     * create the HTML code to show to the user
+     * the value with the name and the formatted value
+     * with a tooltip
+     *
+     * @param phrase_list|null $phr_lst_exclude usually the context phrases that does not need to be repeated
+     * @param string $sep the separator string between the name and the value
+     * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
+     */
+    function name_tip(phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
+    {
+        return $this->grp()->name_tip($phr_lst_exclude) . $sep . $this->value();
+    }
+
+    /**
+     * create the HTML code to show the value name and the formatted value to the user
+     *
+     * @param phrase_list|null $phr_lst_exclude usually the context phrases that does not need to be repeated
+     * @param string $sep the separator string between the name and the value
+     * @return string the HTML code of all phrases linked to the value, but not including the phrase from the $phr_lst_exclude
+     */
+    function name_link(phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
+    {
+        return $this->grp()->name_link_list($phr_lst_exclude) . $sep . $this->value_edit('');
+    }
+
+    /**
+     * depending on the word list format the numeric value
+     * format the value for on screen display
+     * similar to the corresponding function in the "result" class
+     * @returns string the HTML code to display this value
+     */
+    function val_formatted(): string
     {
         $result = '';
 
+        $cfg = new config();
+
         if (!is_null($this->number())) {
-            $num_text = $this->val_formatted();
-            $link_format = '';
-            if (!$this->is_std()) {
-                $link_format = ' class="user_specific"';
+            // load the list of phrases if needed
+            if (!$this->grp()->phr_lst()->is_empty()) {
+                if ($this->grp()->phr_lst()->has_percent()) {
+                    $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
+                } else {
+                    if ($this->number() >= 1000 or $this->number() <= -1000) {
+                        $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());
+                    } else {
+                        $result = round($this->number(), 2);
+                    }
+                }
+            } else {
+                // use default settings
+                $result = round($this->number(), 2);
             }
-            // to review
-            $result .= '<a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '" ' . $link_format . ' >' . $num_text . '</a>';
         }
         return $result;
     }
+
+
+    /*
+     * buttons
+     */
+
+    /**
+     * offer the user to add a new value similar to this value
+     *
+     * possible future parameters:
+     * $fixed_words - words that the user is not suggested to change this time
+     * $select_word - suggested words which the user can change
+     * $type_word   - word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word
+     *
+     * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
+     * @returns string the HTML code for a button to add a value related to this value
+     */
+    function btn_add(string $back = ''): string
+    {
+        $msg_code_id = msg_id::VALUE_ADD;
+        $explain = '';
+
+        if ($this->grp()->phr_lst()->is_empty()) {
+            if (!empty($this->grp()->phr_lst()->lst())) {
+                $explain = htmlentities($this->grp()->phr_lst()->dsp_name());
+                $msg_code_id = msg_id::VALUE_ADD_SIMILAR;
+            }
+        }
+
+        return parent::btn_add_sbx(
+            views::VALUE_ADD,
+            $msg_code_id,
+            $back, $explain);
+    }
+
+    /**
+     * @return string the html code for a bottom
+     * to change a value e.g. the name or the type
+     */
+    function btn_edit(string $back = ''): string
+    {
+        return parent::btn_edit_sbx(
+            views::VALUE_EDIT,
+            msg_id::VALUE_EDIT,
+            $back);
+    }
+
+    /**
+     * @return string the html code for a bottom
+     * to exclude the value for the current user
+     * or if no one uses the value delete the complete value
+     */
+    function btn_del(string $back = ''): string
+    {
+        return parent::btn_del_sbx(
+            views::VALUE_DEL,
+            msg_id::VALUE_DEL,
+            $back);
+    }
+
 
     /*
      * backend requests
@@ -287,66 +411,9 @@ class value extends sandbox_value
         return $this->grp()->is_id_set();
     }
 
-    /**
-     * offer the user to add a new value similar to this value
-     *
-     * possible future parameters:
-     * $fixed_words - words that the user is not suggested to change this time
-     * $select_word - suggested words which the user can change
-     * $type_word   - word to preselect the suggested words e.g. "Country" to list all their countries first for the suggested word
-     *
-     * @param string $back the id of the word from which the page has been called (TODO to be replace with the back trace object)
-     * @returns string the HTML code for a button to add a value related to this value
+    /*
+     * to review
      */
-    function btn_add(string $back): string
-    {
-        $result = '';
-
-        $val_btn_title = '';
-        $url_phr = '';
-        if ($this->grp()->phr_lst()->is_empty()) {
-            if (!empty($this->grp()->phr_lst()->lst())) {
-                $val_btn_title = "add new value similar to " . htmlentities($this->grp()->phr_lst()->dsp_name());
-            } else {
-                $val_btn_title = "add new value";
-            }
-            $url_phr = $this->grp()->phr_lst()->id_url_long();
-        }
-
-        $val_btn_call = '/http/value_add.php?back=' . $back . $url_phr;
-        $result .= \html\btn_add($val_btn_title, $val_btn_call);
-
-        return $result;
-    }
-
-    /**
-     * depending on the word list format the numeric value
-     * format the value for on screen display
-     * similar to the corresponding function in the "result" class
-     * @returns string the HTML code to display this value
-     */
-    function val_formatted(): string
-    {
-        $result = '';
-
-        $cfg = new config_html();
-
-        if (!is_null($this->number())) {
-            // load the list of phrases if needed
-            if (!$this->grp()->phr_lst()->is_empty()) {
-                if ($this->grp()->phr_lst()->has_percent()) {
-                    $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
-                } else {
-                    if ($this->number() >= 1000 or $this->number() <= -1000) {
-                        $result .= number_format($this->number(), 0, $cfg->dec_point(), $cfg->thousand_sep());
-                    } else {
-                        $result = round($this->number(), 2);
-                    }
-                }
-            }
-        }
-        return $result;
-    }
 
     // the same as \html\btn_del_value, but with another icon
     function btn_undo_add_value($back): string
@@ -358,9 +425,8 @@ class value extends sandbox_value
     function dsp_tbl_std($back): string
     {
         log_debug('value->dsp_tbl_std ');
-        $result = '';
-        $result .= '    <td>' . "\n";
-        $result .= '      <div class="right_ref"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->val_formatted() . '</a></div>' . "\n";
+        $result = '    <td>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->val_formatted() . '</a></div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -371,7 +437,7 @@ class value extends sandbox_value
         log_debug('value->dsp_tbl_usr');
         $result = '';
         $result .= '    <td>' . "\n";
-        $result .= '      <div class="right_ref"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '" class="user_specific">' . $this->val_formatted() . '</a></div>' . "\n";
+        $result .= '      <div class="' . styles::STYLE_RIGHT . '"><a href="/http/value_edit.php?id=' . $this->id() . '&back=' . $back . '" class="' . styles::STYLE_USER . '">' . $this->val_formatted() . '</a></div>' . "\n";
         $result .= '    </td>' . "\n";
         return $result;
     }
@@ -395,7 +461,7 @@ class value extends sandbox_value
         log_debug("value->dsp_hist for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back . ".");
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display($this->user());
+        $log_dsp = new user_log_display();
         $log_dsp->id = $this->id();
         $log_dsp->obj = $this;
         $log_dsp->type = \cfg\value\value::class;
@@ -403,7 +469,7 @@ class value extends sandbox_value
         $log_dsp->size = $size;
         $log_dsp->call = $call;
         $log_dsp->back = $back;
-        $result .= $log_dsp->dsp_hist();
+        $result .= $log_dsp->dsp_hist_old();
 
         log_debug("done");
         return $result;
@@ -415,7 +481,7 @@ class value extends sandbox_value
         log_debug($this->id() . ",size" . $size . ",b" . $size);
         $result = ''; // reset the html code var
 
-        $log_dsp = new user_log_display($this->user());
+        $log_dsp = new user_log_display();
         $log_dsp->id = $this->id();
         $log_dsp->type = value::class;
         $log_dsp->page = $page;
@@ -449,7 +515,7 @@ class value extends sandbox_value
 
         // get value changes by the user that are not standard
         $sql = "SELECT v.group_id,
-                    " . $db_con->get_usr_field(value::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
+                    " . $db_con->get_usr_field(value_db::FLD_VALUE, 'v', 'u', sql_db::FLD_FORMAT_VAL) . ",
                    t.word_id,
                    t.word_name
               FROM groups g,
@@ -498,10 +564,10 @@ class value extends sandbox_value
                 }
                 // prepare a new value display
                 $row_value = $db_row["numeric_value"];
-                $word_names = $wrd->display_linked(rest_ctrl::STYLE_GREY);
+                $word_names = $wrd->name_linked(styles::STYLE_GREY);
                 $group_id = $new_group_id;
             } else {
-                $word_names .= ", " . $wrd->display_linked(rest_ctrl::STYLE_GREY);
+                $word_names .= ", " . $wrd->name_linked(styles::STYLE_GREY);
             }
         }
         // display the last row if there has been at least one word
@@ -593,7 +659,7 @@ class value extends sandbox_value
                 foreach (array_keys($this->ids()) as $pos) {
                     if ($phr->id == $this->ids()[$pos]) {
                         $phr->is_wrd_id = $type_ids[$pos];
-                        $is_wrd = new word_dsp();
+                        $is_wrd = new word();
                         $is_wrd->set_id($phr->is_wrd_id);
                         $phr->is_wrd = $is_wrd;
                         $phr->dsp_pos = $pos;
@@ -666,7 +732,7 @@ class value extends sandbox_value
                         $phrase_url = '/http/word_edit.php?id=' . $phr->id . '&back=' . $back;
                     } else {
                         $lnk_id = $phr->id * -1;
-                        $phrase_url = '/http/link_edit.php?id=' . $lnk_id . '&back=' . $back;
+                        $phrase_url = '/http/view.php?m=' . views::TRIPLE_EDIT . '&id=' . $lnk_id . '&back=' . $back;
                     }
 
                     // show the phrase selector
@@ -758,7 +824,7 @@ class value extends sandbox_value
                 if ($phr_id == 0) {
                     $result .= '    <td colspan="2">';
 
-                    $phr_new = new phrase($this->user());
+                    $phr_new = new phrase();
                     $result .= $phr_new->dsp_selector(null, $script, $url_pos, '', $back);
                     $url_pos++;
 
@@ -792,7 +858,7 @@ class value extends sandbox_value
         log_debug('load source');
         $src = $this->load_source();
         if (isset($src)) {
-            $scr_dsp = new source_dsp($src->api_json());
+            $scr_dsp = new source($src->api_json());
             $result .= $scr_dsp->dsp_select($script, $back);
             $result .= '<br><br>';
         }
@@ -809,12 +875,12 @@ class value extends sandbox_value
         // display the user changes
         log_debug('user changes');
         if ($this->id() > 0) {
-            $changes = $this->dsp_hist(0, sql_db::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist(0, 0, '', $back);
             if (trim($changes) <> "") {
                 $result .= $html->dsp_text_h3("Latest changes related to this value", "change_hist");
                 $result .= $changes;
             }
-            $changes = $this->dsp_hist_links(0, sql_db::ROW_LIMIT, '', $back);
+            $changes = $this->dsp_hist_links(0, 0, '', $back);
             if (trim($changes) <> "") {
                 $result .= $html->dsp_text_h3("Latest link changes related to this value", "change_hist");
                 $result .= $changes;
@@ -828,7 +894,7 @@ class value extends sandbox_value
                 $samples = $this->dsp_samples($main_wrd->id, $this->ids(), 10, $back);
                 log_debug("value->dsp_edit samples.");
                 if (trim($samples) <> "") {
-                    $result .= $html->dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->display_linked(rest_ctrl::STYLE_GREY) . '" values as an indication', 'change_hist');
+                    $result .= $html->dsp_text_h3('Please have a look at these other "' . $main_wrd->dsp_obj()->name_linked(styles::STYLE_GREY) . '" values as an indication', 'change_hist');
                     $result .= $samples;
                 }
                 */

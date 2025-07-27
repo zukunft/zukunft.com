@@ -33,9 +33,8 @@
 namespace unit_ui;
 
 use html\html_base;
-use html\word\word as word_dsp;
-use shared\types\view_styles;
-use shared\views as view_shared;
+use html\word\word;
+use shared\const\views;
 use test\test_cleanup;
 
 class word_ui_tests
@@ -44,29 +43,42 @@ class word_ui_tests
     {
         $html = new html_base();
 
-        $t->subheader('html ui unit page word tests');
+        // start the test section (ts)
+        $ts = 'unit ui html word ';
+        $t->header($ts);
 
-        $wrd = new word_dsp($t->word()->api_json());
-        $wrd_pi = new word_dsp($t->word_pi()->api_json());
+        // TODO add a list of differences between the user word and the standard word
+        //      with an undo button to change back to the standard
+        // TODO add this ui test for all main sandbox objects
+
+        $wrd = new word($t->word()->api_json());
+        $wrd_pi = new word($t->word_pi()->api_json());
+        $wrd_zh = new word($t->word_zh()->api_json());
+        $wrd_city = new word($t->word_city()->api_json());
         $test_page = $html->text_h1('Word display test');
         $test_page .= $html->text_h2('names');
-        $test_page .= 'pur: ' . $wrd->display() . '<br>';
-        $test_page .= 'with link: ' . $wrd->display_linked() . '<br>';
+        $test_page .= 'with tooltip: ' . $wrd->name_tip() . '<br>';
+        $test_page .= 'with link: ' . $wrd->name_link() . '<br>';
         $test_page .= $html->text_h2('buttons');
         $test_page .= 'add button: ' . $wrd->btn_add() . '<br>';
         $test_page .= 'edit button: ' . $wrd->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
         $test_page .= $html->text_h2('select');
-        $test_page .= $wrd->dsp_type_selector(view_shared::MC_WORD_EDIT) . '<br>';
-        $test_page .= $wrd->view_selector(view_shared::MC_WORD_EDIT, $t->view_list_dsp()) . '<br>';
-        $test_page .= $wrd->view_selector(view_shared::MC_WORD_EDIT, $t->view_list_long_dsp()) . '<br>';
+        $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT) . '<br>';
+        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t->view_list_dsp()) . '<br>';
+        $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t->view_list_long_dsp(), 'view_long') . '<br>';
+        $test_page .= $html->form(views::WORD_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
-        $test_page .= $html->tbl($wrd->th() . $wrd_pi->tr());
-        $test_page .= 'del in columns: ' . $wrd->dsp_del() . '<br>';
-        $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id()) . '<br>';
+        $test_page .= $html->tbl($html->tr($wrd->th()) . $wrd_pi->tr());
+        $test_page .= 'del in columns: ' . $html->tbl($wrd->dsp_del()) . '<br>';
+        $test_page .= 'unlink in columns: ' . $html->tbl($wrd_pi->dsp_unlink($wrd->id())) . '<br>';
         $test_page .= $html->text_h2('view header');
         $test_page .= $wrd->header() . '<br>';
+        $test_page .= $html->text_h2('parents of ' . $wrd_zh->name());
+        $test_page .= $wrd_zh->parents()->name_link() . '<br>';
+        $test_page .= $html->text_h2('children of ' . $wrd_city->name());
+        $test_page .= $wrd_city->children()->name_link() . '<br>';
         $t->html_test($test_page, 'word html components', 'word', $t);
 
     }

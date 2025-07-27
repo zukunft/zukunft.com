@@ -8,7 +8,7 @@
   "verbs": [
     {
       "name": "not set",
-      "description": "placeholder verb to enable foreign key checks in the database and for the selection",
+      "description": "no verb / predicate selected",
       "code_id": "not_set"
     },
     {
@@ -23,10 +23,26 @@
     {
       "name": "is part of",
       "code_id": "contains",
-      "description": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or Sectors and Regions are different splittings",
+      "description": "if several similar term create different views to the same sum; E.g. Cash Flow Paper, Balance Sheet and Income statement are Financial Statements. Or sectors and Regions are different splittings",
       "name_plural_reverse": "contains",
       "name_plural": "is part of",
       "name_reverse": "contains"
+    },
+    {
+      "name": "can be part of",
+      "code_id": "can_be_part_of",
+      "description": "if the assigment is optional in both directions e.g. a base unit can be a SI unit but not all SI units are base units",
+      "name_plural_reverse": "contains",
+      "name_plural": "can be part of",
+      "name_reverse": "contains"
+    },
+    {
+      "name": "of",
+      "code_id": "of",
+      "description": "to narrow a selection e.g. the world population is usually the population of all humans",
+      "name_plural_reverse": "of",
+      "name_plural": "of",
+      "name_reverse": "of"
     },
     {
       "name": "with",
@@ -88,7 +104,7 @@
     },
     {
       "name": "is measure type for",
-      "code_id": "",
+      "code_id": "measure_type",
       "description": "is the default measure type for",
       "name_plural_reverse": "have the measure type",
       "name_plural": "are measure type for",
@@ -120,10 +136,16 @@
     },
     {
       "name": "is alias of",
-      "code_id": "",
+      "code_id": "alias",
       "name_plural_reverse": "is alias of",
       "name_plural": "is alias of",
       "name_reverse": "is alias of"
+    },
+    {
+      "name": "can",
+      "code_id": "can",
+      "description": "to assign a behavior e.g. GDP can decline",
+      "name_plural": "can"
     },
     {
       "name": "can be",
@@ -138,6 +160,18 @@
       "code_id": "can_get",
       "description": "",
       "name_plural": "can get"
+    },
+    {
+      "name": "can cause",
+      "code_id": "can_cause",
+      "description": "",
+      "name_plural": "can cause"
+    },
+    {
+      "name": "can have",
+      "code_id": "can_have",
+      "description": "",
+      "name_plural": "can have"
     },
     {
       "name": "can use",
@@ -162,6 +196,14 @@
       "name_plural": "per",
       "name_plural_reverse": "",
       "name_reverse": ""
+    },
+    {
+      "name": "times",
+      "code_id": "times",
+      "description": "to multiply the two given phrases to one unit e.g. Joule times second (J⋅s) for the Plank constant",
+      "name_plural": "times",
+      "name_plural_reverse": "times",
+      "name_reverse": "times"
     },
     {
       "name": "is selector for",
@@ -194,6 +236,14 @@
       "name_plural": "and",
       "name_plural_reverse": "and",
       "name_reverse": "and"
+    },
+    {
+      "name": "on",
+      "code_id": "on",
+      "description": "to specify a subgroup e.g. taxes on income",
+      "name_plural_reverse": "distribute to",
+      "name_plural": "on",
+      "name_reverse": "distribute to"
     }
   ]
 }

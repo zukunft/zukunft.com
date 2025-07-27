@@ -32,10 +32,13 @@
 
 namespace unit_read;
 
-use api\formula\formula as formula_api;
-use api\word\triple as triple_api;
-use cfg\formula\formula;
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'triples.php';
+
+use cfg\word\triple;
 use cfg\word\triple_list;
+use shared\const\triples;
 use test\test_cleanup;
 
 class triple_list_read_tests
@@ -49,32 +52,35 @@ class triple_list_read_tests
         // init
         $t->name = 'triple list read db->';
 
-        $t->header('Test the triple list class (classes/triple_list.php)');
+        $t->header('triple list database read tests');
 
         // test loading triple names
         $test_name = 'loading triple names with pattern return the expected triple';
-        $pattern = substr(triple_api::TN_READ, 0, -1);
+        $pattern = substr(triples::MATH_CONST, 0, -1);
         $trp_lst = new triple_list($t->usr1);
         $trp_lst->load_names($pattern);
-        $t->assert_contains($test_name, $trp_lst->names(), triple_api::TN_READ);
+        $t->assert_contains($test_name, $trp_lst->names(), triples::MATH_CONST);
 
 
         // test load by triple list by ids
         $test_name = 'load triples by ids';
         $trp_lst = new triple_list($t->usr1);
-        $trp_lst->load_by_ids(array(1,2));
-        $target = array(triple_api::TN_READ, triple_api::TN_PI_NAME); // order adjusted based on the number of usage
+        $trp_lst->load_by_ids(array(triples::MATH_CONST_ID,triples::PI_SYMBOL_ID));
+        $target = array(triples::MATH_CONST, triples::PI_SYMBOL_NAME); // order adjusted based on the number of usage
         $t->assert_contains($test_name, $trp_lst->names(), $target);
         /* TODO activate
         $test_name = 'load triples by names';
         $wrd_lst = new triple_list($t->usr1);
-        $wrd_lst->load_by_names(array(triple_api::TN_READ,triple_api::TN_PI));
+        $wrd_lst->load_by_names(array(triples::TN_READ,triples::TN_PI));
         $t->assert_contains($test_name, $wrd_lst->ids(), array(1,3));
         $test_name = 'load triples staring with P';
         $wrd_lst = new triple_list($t->usr1);
         $wrd_lst->load_like('P');
-        $t->assert_contains($test_name, $wrd_lst->names(), triple_api::TN_PI);
+        $t->assert_contains($test_name, $wrd_lst->names(), triples::TN_PI);
         */
+
+        $test_name = 'all expected test triples are in the database';
+        $t->assert_db_test_id_list($test_name, triples::TEST_TRIPLE_IDS, new triple($t->usr1), new triple_list($t->usr1));
 
     }
 

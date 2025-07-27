@@ -23,7 +23,7 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
@@ -40,20 +40,21 @@ class api
      */
 
     // TODO review (move to application.yaml)
+    const HOST_TESTING = 'http://localhost/';
     const HOST_DEV = 'http://localhost/';
     const HOST_DEV_RELATIVE = '/';
     const HOST_UAT = 'https://test.zukunft.com/';
     const HOST_PROD = 'https://www.zukunft.com/';
     const HOST_SAME = '/';
-    const BS_PATH_DEV = 'bootstrap-5.3.3-dist/';
-    const BS_PATH_UAT = 'bootstrap/4.1.3/';
-    const BS_PATH_PROD = 'bootstrap/4.1.3/';
+    const BS_PATH_DEV = 'bootstrap/';
+    const BS_PATH_UAT = 'bootstrap/';
+    const BS_PATH_PROD = 'bootstrap/';
     const BS_JS = 'js' . DIRECTORY_SEPARATOR . 'bootstrap.js';
-    const BS_CSS_PATH_DEV = 'bootstrap-5.3.3-dist/';
-    const BS_CSS_PATH_UAT = 'bootstrap/4.3.1/';
-    const BS_CSS_PATH_PROD = 'bootstrap/4.3.1/';
+    const BS_CSS_PATH_DEV = 'bootstrap/';
+    const BS_CSS_PATH_UAT = 'bootstrap/';
+    const BS_CSS_PATH_PROD = 'bootstrap/';
     const BS_CSS = 'css' . DIRECTORY_SEPARATOR . 'bootstrap.css';
-    const EXT_LIB_PATH = 'lib_external' . DIRECTORY_SEPARATOR;
+    const EXT_LIB_PATH = 'external_lib' . DIRECTORY_SEPARATOR;
     const HOST_SYS_LOG = '';
 
     // the url name of the main script that is used in combination with the host url
@@ -95,6 +96,14 @@ class api
     const URL_VAR_ID_LST = 'ids'; // a comma separated list of internal database ids
     const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
     const URL_VAR_PATTERN = 'pattern'; // part of a name to select a named object such as word, triple, ...
+
+    // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
+    const URL_VAR_CONFIG_PART = 'part';
+    const URL_VAR_WITH_PHRASES = 'incl_phrases';
+    const URL_VAR_TRUE = '1';
+    const CONFIG_ALL = 'all';
+    const CONFIG_FRONTEND = 'frontend';
+    const CONFIG_USER = 'user';
     const URL_VAR_COMMENT = 'comment';
     const URL_VAR_DESCRIPTION = 'description';
     const URL_VAR_DEBUG = 'debug'; // to force the output of debug messages
@@ -114,18 +123,35 @@ class api
     const URL_VAR_BACK = 'back';
 
     // to be sorted
+    const URL_VAR_NEED_ALL = 'need_all_val';
+    const URL_VAR_USER_EXPRESSION = 'formula_text';
     const URL_VAR_LINK_VIEW = 'link_view';
     const URL_VAR_UNLINK_VIEW = 'unlink_view';
     const URL_VAR_TYPE = 'type';
     const URL_VAR_SHARE = 'share';
     const URL_VAR_PROTECTION = 'protection';
     const URL_VAR_CONFIRM = 'confirm';
+    const URL_REF = 'reference';
+    const URL_VAR_PHRASE_TYPE = 'phrase_type';
+    const URL_VAR_FORMULA_TYPE = 'formula_type';
+    const URL_VAR_USER_PROFILE = 'user_profile';
+    const URL_VAR_PLURAL = 'plural';
+    const URL_VAR_REVERSE = 'reverse';
+    const URL_VAR_REVERSE_PLURAL = 'plural_reverse';
+    const URL_VAR_URL = 'url';
 
     // used for the change log
+    // the short name of the object class name e.g. word instead of cfg/word
+    const URL_VAR_CLASS = 'class';
+    // the name of the field to filter the changes which might be more than one database field
+    const URL_VAR_FIELD = 'field';
     const URL_VAR_WORD_ID = 'word_id';
     const URL_VAR_WORD_FLD = 'word_field';
     const URL_VAR_LINK_PHRASE = 'link_phrase';
     const URL_VAR_UNLINK_PHRASE = 'unlink_phrase';
+
+    // used for languages
+    const URL_VAR_LANGUAGE_FORM = 'languageForm';
 
 
     /*
@@ -166,6 +192,7 @@ class api
     const JSON_LIST_CHANGE_LOG_FIELDS = 'change_field_list';
     const JSON_LIST_VERBS = 'verbs';
     const JSON_LIST_SYSTEM_VIEWS = 'system_views';
+    const JSON_LIST_PHRASE_IDS = 'phrase_ids';
 
 
     /*

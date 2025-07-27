@@ -30,11 +30,13 @@
 
 */
 
-include_once EXPORT_PATH . 'xml.php';
+use cfg\const\paths;
 
-use api\word\word as word_api;
-use im_export\json_io;
+include_once paths::SHARED_CONST . 'words.php';
+
 use cfg\phrase\phrase_list;
+use cfg\export\json_io;
+use shared\const\words;
 use test\test_cleanup;
 
 function run_export_test(test_cleanup $t): void
@@ -45,19 +47,19 @@ function run_export_test(test_cleanup $t): void
     $t->header('Test the xml export class (classes/xml.php)');
 
     $phr_lst = new phrase_list($usr);
-    $phr_lst->load_by_names(array(word_api::TN_READ));
+    $phr_lst->load_by_names(array(words::MATH));
     $xml_export = new xml_io;
     $xml_export->usr = $usr;
     $xml_export->phr_lst = $phr_lst;
     $result = $xml_export->export();
-    $target = 'Mathematics';
+    $target = 'mathematics';
     $t->dsp_contains(', xml->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
     $t->header('Test the json export class (classes/json.php)');
 
     $json_export = new json_io($usr, $phr_lst);
     $result = $json_export->export();
-    $target = 'Mathematics';
+    $target = 'mathematics';
     $t->dsp_contains(', json->export for ' . $phr_lst->dsp_id() . ' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
 }

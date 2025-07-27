@@ -7,6 +7,7 @@
 
     for writing the user change to the database the classes model/user/user_log* are used
 
+
     This file is part of zukunft.com - calc with words
 
     zukunft.com is free software: you can redistribute it and/or modify it
@@ -33,28 +34,31 @@
 
 namespace cfg\log;
 
-include_once API_LOG_PATH . 'change_log_list.php';
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-//include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_GROUP_PATH . 'group_id.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-//include_once MODEL_REF_PATH . 'source.php';
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VERB_PATH . 'verb.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-//include_once MODEL_WORD_PATH . 'triple.php';
-include_once WEB_LOG_PATH . 'change_log_list.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
 
-use api\log\change_log_list as change_log_list_api;
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+//include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_id.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VERB . 'verb.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_WORD . 'word.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'library.php';
+
 use cfg\system\base_list;
 use cfg\component\component;
 use cfg\db\sql;
@@ -67,12 +71,14 @@ use cfg\group\group_id;
 use cfg\sandbox\sandbox;
 use cfg\ref\source;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\value\value;
+use cfg\value\value_base;
 use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\word;
 use cfg\word\triple;
-use html\log\change_log_list as change_log_list_dsp;
+use shared\enum\change_fields;
 use shared\library;
 
 class change_log_list extends base_list
@@ -89,44 +95,7 @@ class change_log_list extends base_list
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return change_log_list_api the word list object with the display interface functions
-     */
-    function api_obj(): change_log_list_api
-    {
-        $api_obj = new change_log_list_api();
-        foreach ($this->lst() as $chg) {
-            $api_obj->add($chg->api_obj());
-        }
-        return $api_obj;
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * @return change_log_list_dsp the word list object with the display interface functions
-     */
-    function dsp_obj(): change_log_list_dsp
-    {
-        $dsp_obj = new change_log_list_dsp();
-        foreach ($this->lst() as $chg) {
-            $dsp_obj->add($chg->dsp_obj());
-        }
-        return $dsp_obj;
-    }
-
-
-    /*
-     * load interface
+     * load
      */
 
     /**
@@ -171,42 +140,30 @@ class change_log_list extends base_list
     }
 
     /**
-     * create an SQL statement to retrieve the changes done by the given user
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param user $usr the user sandbox object
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     * load a list of sandbox object changes
+     * e.g. the change of a value
+     * @param string $class the name of the class
+     * @param int|string|null $id the unique database id of the sandbox object to filter the changes
+     * @param user|null $usr if set load only the changes of the given user
+     * @param string|null $field_name the field that has been change e.g. 'view_id'
+     *                                if not set, all changes are returned
+     * @return bool true if at least one change found
      */
-    function load_sql_by_user(sql_creator $sc, user $usr): sql_par
+    function load_by_obj_fld(
+        string          $class,
+        int|string|null $id = null,
+        user|null       $usr = null,
+        string|null     $field_name = ''
+    ): bool
     {
-        $qp = $this->load_sql($sc, 'user_last', self::class);
-
-        $sc->add_where(user::FLD_ID, $usr->id());
-        $qp->sql = $sc->sql();
-        $qp->par = $sc->get_par();
-        return $qp;
-    }
-
-    /**
-     * create the common part of an SQL statement to retrieve the parameters of the change log
-     * TODO use class name instead of TBL_CHANGE
-     *
-     * @param sql_creator $sc with the target db_type set
-     * @param string $query_name the name extension to make the query name unique
-     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
-     */
-    function load_sql(sql_creator $sc, string $query_name): sql_par
-    {
-        $qp = new sql_par($this::class);
-        $sc->set_class(change::class);
-        $qp->name .= $query_name;
-        $sc->set_name($qp->name);
-        $sc->set_fields(change::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), user::class);
-        $sc->set_join_fields(array(change_field_list::FLD_TABLE), change_field::class);
-        $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
-
-        return $qp;
+        global $db_con;
+        $qp = $this->load_sql_obj_fld(
+            $db_con->sql_creator(),
+            $class,
+            $field_name,
+            $id,
+            $usr);
+        return $this->load($qp, $usr);
     }
 
     /**
@@ -268,12 +225,12 @@ class change_log_list extends base_list
 
     /**
      * load a list of the view changes of a value
-     * @param value $val the value to which the view changes should be loaded
+     * @param value_base $val the value to which the view changes should be loaded
      * @param string $field_name the field that has been change e.g. 'numeric_value'
      *                           if not set, all changes are returned
      * @return bool true if at least one change found
      */
-    function load_by_fld_of_val(value $val, user $usr, string $field_name = ''): bool
+    function load_by_fld_of_val(value_base $val, user $usr, string $field_name = ''): bool
     {
         global $db_con;
 
@@ -364,6 +321,50 @@ class change_log_list extends base_list
 
 
     /*
+     * load sql
+     */
+
+    /**
+     * create an SQL statement to retrieve the changes done by the given user
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param user $usr the user sandbox object
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_user(sql_creator $sc, user $usr): sql_par
+    {
+        $qp = $this->load_sql($sc, 'user_last', self::class);
+
+        $sc->add_where(user::FLD_ID, $usr->id());
+        $qp->sql = $sc->sql();
+        $qp->par = $sc->get_par();
+        return $qp;
+    }
+
+    /**
+     * create the common part of an SQL statement to retrieve the parameters of the change log
+     * TODO use class name instead of TBL_CHANGE
+     *
+     * @param sql_creator $sc with the target db_type set
+     * @param string $query_name the name extension to make the query name unique
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    private function load_sql(sql_creator $sc, string $query_name): sql_par
+    {
+        $qp = new sql_par($this::class);
+        $sc->set_class(change::class);
+        $qp->name .= $query_name;
+        $sc->set_name($qp->name);
+        $sc->set_fields(change::FLD_NAMES);
+        $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
+        $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
+        $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
+
+        return $qp;
+    }
+
+
+    /*
      * load internals
      */
 
@@ -371,14 +372,18 @@ class change_log_list extends base_list
     {
         $result = '';
         if ($class == word::class) {
-            if ($field_name == change_field_list::FLD_WORD_VIEW) {
+            if ($field_name == change_fields::FLD_WORD_VIEW) {
                 $result = 'dsp_of_wrd';
             } else {
-                $result = $field_name . '_of_wrd';
+                if ($field_name != '') {
+                    $result = $field_name . '_of_wrd';
+                } else {
+                    $result = 'wrd';
+                }
                 log_info('field name ' . $field_name . ' not expected for table ' . $class);
             }
         } elseif ($class == triple::class) {
-            if ($field_name == change_field_list::FLD_TRIPLE_VIEW) {
+            if ($field_name == change_fields::FLD_TRIPLE_VIEW) {
                 $result = 'dsp_of_trp';
             } else {
                 $result = $field_name . '_of_trp';
@@ -437,8 +442,12 @@ class change_log_list extends base_list
         $lib = new library();
         $table_name = $lib->class_to_table($class);
         $table_id = $cng_tbl_cac->id($table_name);
-        $table_field_name = $table_id . $field_name;
-        $field_id = $cng_fld_cac->id($table_field_name);
+        if ($field_name != '') {
+            $table_field_name = $table_id . $field_name;
+            $table_field_id = $cng_fld_cac->id($table_field_name);
+        } else {
+            $table_field_id = $table_id;
+        }
         $log_named = new change($usr);
         $query_ext = $this->table_field_to_query_name($class, $field_name);
         if ($class == value::class) {
@@ -469,7 +478,12 @@ class change_log_list extends base_list
             }
         }
         $qp = $log_named->load_sql($sc, $query_ext);
-        $sc->add_where(change::FLD_FIELD_ID, $field_id);
+        if ($field_name != '') {
+            $sc->add_where(change::FLD_FIELD_ID, $table_field_id);
+        } else {
+            // TODO replace 'l2' with a var or const
+            $sc->add_where(change_field::FLD_TABLE, $table_field_id, null, 'l2');
+        }
         if ($class == value::class) {
             $sc->add_where(group::FLD_ID, $id);
         } else {
@@ -544,6 +558,7 @@ class change_log_list extends base_list
     /**
      * load this list of changes
      * @param sql_par $qp the SQL statement, the unique name of the SQL statement and the parameter list
+     * @param user $usr the user who wants to see the changes e.g. to check the permission
      * @return bool true if at least one change found
      */
     private function load(sql_par $qp, user $usr): bool
@@ -558,7 +573,7 @@ class change_log_list extends base_list
             if ($db_rows != null) {
                 foreach ($db_rows as $db_row) {
                     $chg = new change($usr);
-                    $chg->row_mapper($db_row);
+                    $chg->row_mapper($db_row, '', $usr);
                     $this->add_obj($chg);
                     $result = true;
                 }
@@ -601,9 +616,10 @@ class change_log_list extends base_list
         if (!$this->is_empty()) {
             $lst = $this->lst();
             $first = $lst[array_key_first($lst)];
-            $msg = $first->dsp_last();
+            $msg = $first->dsp();
         }
         return $msg;
     }
+
 
 }

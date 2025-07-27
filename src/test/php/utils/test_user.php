@@ -36,6 +36,7 @@
 
 use cfg\user\user;
 use html\user\user as user_dsp;
+use shared\const\users;
 use test\all_tests;
 
 function run_user_test(all_tests $t): void
@@ -50,7 +51,7 @@ function run_user_test(all_tests $t): void
 
     $usr_dsp = new user_dsp($usr->api_json());
     $result = $usr_dsp->form_edit($back);
-    $target = user::SYSTEM_TEST_NAME;
+    $target = users::SYSTEM_TEST_NAME;
     $t->dsp_contains(', user_display->dsp_edit', $target, $result);
 
     // display system usernames
@@ -63,7 +64,7 @@ function run_user_test(all_tests $t): void
     }
     echo 'user id: ' . $usr->id() . '<br>';
 
-    $t->header('Test the user permission scripts (e.g. /user/user.php)');
+    $t->header('user permission tests');
 
     $ip_addr = '2.204.210.217';
     $result = $usr->ip_check($ip_addr);

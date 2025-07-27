@@ -31,12 +31,115 @@
 
 namespace html\log;
 
-use api\log\change_log_list as change_log_list_api;
-use html\html_base;
-use html\system\back_trace;
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'styles.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'library.php';
 
-class change_log_list extends change_log_list_api
+use html\html_base;
+use html\rest_ctrl;
+use html\sandbox\list_dsp;
+use html\styles;
+use html\system\back_trace;
+use html\user\user;
+use html\user\user_message;
+use shared\api;
+use shared\library;
+
+class change_log_list extends list_dsp
 {
+
+    /*
+     * set and get
+     */
+
+    /**
+     * set the vars of a word object based on the given json
+     * @param array $json_array an api single object json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function api_mapper(array $json_array): user_message
+    {
+        return parent::api_mapper_list($json_array, new change_log_named());
+    }
+
+
+    /*
+     * load
+     */
+
+    /**
+     * load a list of changes from the api
+     *
+     * @param string $class the class name of the object to test
+     * @param int|string $id the database id of the object to which the changes should be listed
+     * @param string $fld the url api field name to select only some changes e.g. 'word_field'
+     * @param user|null $usr to select only the changes of this user
+     * @param int $size to set a page size that is different from the default page size
+     * @param int $page offset the number of pages
+     * @return user_message to report any problems to the user
+     */
+    function load_by_object_field(
+        string     $class,
+        int|string $id = 1,
+        string     $fld = '',
+        user|null  $usr = null,
+        int        $size = 0,
+        int        $page = 0
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        $json = $this->load_api_by_object_field($class, $id, $fld, $usr, $size, $page);
+        $actual = json_decode($json, true);
+
+        $this->set_from_json($actual);
+
+        return $usr_msg;
+    }
+
+    /**
+     * get the json of a list of changes from the api
+     *
+     * @param string $class the class name of the object to test
+     * @param int|string $id the database id of the object to which the changes should be listed
+     * @param string $fld the url api field name to select only some changes e.g. 'word_field'
+     * @param user|null $usr to select only the changes of this user
+     * @param int $limit to set a page size that is different from the default page size
+     * @param int $page offset the number of pages
+     * @return string the api json as a string
+     */
+    function load_api_by_object_field(
+        string     $class,
+        int|string $id = 1,
+        string     $fld = '',
+        user|null  $usr = null,
+        int        $limit = 0,
+        int        $page = 0
+    ): string
+    {
+        $lib = new library();
+        $log_class = $lib->class_to_name(change_log_list::class);
+        $url = api::HOST_TESTING . api::URL_API_PATH . $lib->camelize_ex_1($log_class);
+        $class = $lib->class_to_api_name($class);
+        $data = [];
+        $data[api::URL_VAR_CLASS] = $class;
+        $data[api::URL_VAR_ID] = $id;
+        $data[api::URL_VAR_FIELD] = $fld;
+        $ctrl = new rest_ctrl();
+        return $ctrl->api_call(rest_ctrl::GET, $url, $data);
+    }
+
+
+    /*
+     * table
+     */
 
     /**
      * show all changes of a named user sandbox object e.g. a word as table
@@ -48,9 +151,9 @@ class change_log_list extends change_log_list_api
         $html = new html_base();
         $html_text = $this->th($condensed, $with_users);
         foreach ($this->lst() as $chg) {
-            $html_text .= $html->td($chg->tr($back, $condensed, $with_users));
+            $html_text .= $chg->tr($back, $condensed, $with_users);
         }
-        return $html->tbl($html->tr($html_text), html_base::STYLE_BORDERLESS);
+        return $html->tbl($html_text, styles::STYLE_BORDERLESS);
     }
 
     /**
@@ -67,9 +170,9 @@ class change_log_list extends change_log_list_api
                 $head_text .= $html->th('user');
             }
             $head_text .= $html->th_row(array('field','from','to'));
-            $head_text .= $html->th('');  // extra column for the undo icon
         }
-        return $head_text;
+        $head_text .= $html->th('');  // extra column for the undo icon
+        return $html->tr($head_text);
     }
 
 }

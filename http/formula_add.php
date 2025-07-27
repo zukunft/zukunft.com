@@ -37,17 +37,19 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
 
-use html\html_base;
-use html\view\view as view_dsp;
-use html\formula\formula as formula_dsp;
+include_once paths::SHARED_CONST . 'views.php';
+
 use cfg\formula\formula;
 use cfg\user\user;
 use cfg\view\view;
 use cfg\word\word;
+use html\formula\formula as formula_dsp;
+use html\html_base;
+use html\view\view as view_dsp;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("formula_add");
@@ -67,7 +69,7 @@ if ($usr->id() > 0) {
 
     // prepare the display
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_FORMULA_ADD);
+    $msk->load_by_code_id(view_shared::FORMULA_ADD);
     $back = $_GET[api::URL_VAR_BACK] = '';
 
     // init the formula object
@@ -77,8 +79,8 @@ if ($usr->id() > 0) {
     if (isset($_GET['formula_name'])) {
         $frm->set_name($_GET['formula_name']);
     } // the new formula name
-    if (isset($_GET['formula_text'])) {
-        $frm->set_user_text($_GET['formula_text']);
+    if (isset($_GET[api::URL_VAR_USER_EXPRESSION])) {
+        $frm->set_user_text($_GET[api::URL_VAR_USER_EXPRESSION]);
     } // the new formula text in the user format
     if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
         $frm->description = $_GET[api::URL_VAR_DESCRIPTION];
@@ -86,7 +88,7 @@ if ($usr->id() > 0) {
     if (isset($_GET['type'])) {
         $frm->type_id = $_GET['type'];
     }
-    if ($_GET['need_all_val'] == 'on') {
+    if ($_GET[api::URL_VAR_NEED_ALL] == 'on') {
         $frm->need_all_val = true;
     } else {
         $frm->need_all_val = false;
@@ -119,7 +121,7 @@ if ($usr->id() > 0) {
         log_debug('word');
         $trm = $frm->get_term();
         if ($trm->id_obj() > 0) {
-            $msg .= $trm->id_used_msg($this);
+            $msg .= $html->dsp_err($trm->id_used_msg_text($this));
         }
         log_debug('checked');
 

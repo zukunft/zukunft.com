@@ -35,7 +35,9 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'zu_lib.php';
 
-include_once SHARED_PATH . 'views.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 use cfg\component\component;
 use cfg\user\user;
@@ -44,7 +46,7 @@ use cfg\word\word;
 use html\html_base;
 use html\view\view as view_dsp;
 use shared\api;
-use shared\views as view_shared;
+use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("view_edit");
@@ -65,7 +67,7 @@ if ($usr->id() > 0) {
 
     // prepare the display to edit the view
     $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::MC_VIEW_ADD);
+    $msk->load_by_code_id(view_shared::VIEW_ADD);
     $back = $_GET[api::URL_VAR_BACK] = '';
 
     // create the view object that the user can change

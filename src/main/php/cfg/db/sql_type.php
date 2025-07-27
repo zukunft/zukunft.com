@@ -2,8 +2,9 @@
 
 /*
 
-    /model/dp/sql_type.php - enum of the sql statement creation parameters
-    ----------------------
+    model/dp/sql_type.php - enum of the sql statement creation parameters
+    ---------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -42,7 +43,7 @@ enum sql_type: string
     case REF = 'ref'; // to change the log query name if a reference has been changed
     case LOAD = 'load';
     case NORM = 'norm'; // the data used be most users should be loaded
-    case NORM_EXT = 'norm_ext'; // force to use the norm extesion for the table name e.g. for the change log
+    case NORM_EXT = 'norm_ext'; // force to use the norm extension for the table name e.g. for the change log
     case COMPLETE = 'complete'; // force to load all rows from the database because the number of rows are expected to be limited and all rows should be e.g. load to the chance at once
 
     // the fixed table types for a value or result
@@ -52,6 +53,15 @@ enum sql_type: string
     case BIG = 'big'; // more than 16 64-bit phrase ids
     case INDEX = 'index'; // one 32-bit and two 16-bit phrase ids
     case LARGE = 'large'; // one 48-bit and one 16-bit phrase ids
+
+    // part of the table name to select the tables for numeric values
+    case NUMERIC = 'numeric';
+    // part of the table name to select the tables for timestamp values
+    case TIME = 'time';
+    // part of the table name to select the tables for text values
+    case TEXT = 'text';
+    // part of the table name to select the tables for geographic location values
+    case GEO = 'geo';
 
     // the fixed table subtypes
     case STANDARD = 'standard'; // value or result that is public and unprotected
@@ -74,6 +84,7 @@ enum sql_type: string
     case EXCL_NAME_ONLY = 'excl_name_only';
     case SANDBOX = 'sandbox'; // to include the standard sandbox fields in the sql statement
     case KEY_SMALL_INT = 'key_small_int'; // use a smallint as the prime db key e.g. for types
+    case REQUESTING_USER = 'request_user'; // the change requesting user is part of the query parameters which is needed e.g. to separate the requesting user id when deleting a user
     case SELECT_FOR_INSERT = 'select_for_insert'; // use a select statement for the insert values
 
     /**
@@ -98,6 +109,8 @@ enum sql_type: string
             self::LIST => sql::NAME_SEP . self::LIST->value,
             self::LOG => sql::NAME_SEP . self::LOG->value,
             self::REF => sql::NAME_SEP . self::REF->value,
+            //self::TEXT => sql::NAME_SEP . self::TEXT->value,
+            //self::GEO => sql::NAME_SEP . self::GEO->value,
             default => '',
         };
     }
@@ -121,6 +134,17 @@ enum sql_type: string
     {
         return match($this) {
             self::INSERT, self::UPDATE, self::DELETE => true,
+            default => false,
+        };
+    }
+
+    /**
+     * @return bool true if the sql type is used to select the value type
+     */
+    function is_val_type(): bool
+    {
+        return match($this) {
+            self::NUMERIC, self::TIME, self::TEXT, self::GEO => true,
             default => false,
         };
     }

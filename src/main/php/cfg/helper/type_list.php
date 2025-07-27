@@ -32,69 +32,74 @@
 
 namespace cfg\helper;
 
-include_once API_SYSTEM_PATH . 'type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'position_type.php';
-include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'view_style.php';
-include_once MODEL_COMPONENT_PATH . 'view_style_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_ELEMENT_PATH . 'element_type.php';
-include_once MODEL_ELEMENT_PATH . 'element_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
-include_once MODEL_REF_PATH . 'ref_type.php';
-include_once MODEL_REF_PATH . 'ref_type_list.php';
-include_once MODEL_REF_PATH . 'source_type.php';
-include_once MODEL_REF_PATH . 'source_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'job_type.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language.php';
-include_once MODEL_LANGUAGE_PATH . 'language_form.php';
-include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language_list.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_action_list.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-include_once MODEL_LOG_PATH . 'change_table_field.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
-include_once MODEL_PHRASE_PATH . 'phrase_types.php';
-include_once MODEL_REF_PATH . 'ref.php';
-include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
-include_once MODEL_USER_PATH . 'user_profile_list.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_VERB_PATH . 'verb_list.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_link_type.php';
-include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_type.php';
-include_once MODEL_VIEW_PATH . 'view_type_list.php';
-include_once WEB_USER_PATH . 'user_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
+use cfg\const\paths;
 
-use api\system\type_list as type_list_api;
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
+include_once paths::MODEL_COMPONENT . 'component_type.php';
+include_once paths::MODEL_COMPONENT . 'component_type_list.php';
+include_once paths::MODEL_COMPONENT . 'position_type.php';
+include_once paths::MODEL_COMPONENT . 'position_type_list.php';
+include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::MODEL_COMPONENT . 'view_style_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_ELEMENT . 'element_type.php';
+include_once paths::MODEL_ELEMENT . 'element_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_type.php';
+include_once paths::MODEL_FORMULA . 'formula_type_list.php';
+include_once paths::MODEL_REF . 'ref_type.php';
+include_once paths::MODEL_REF . 'ref_type_list.php';
+include_once paths::MODEL_REF . 'source_type.php';
+include_once paths::MODEL_REF . 'source_type_list.php';
+include_once paths::MODEL_SYSTEM . 'job_type.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_LANGUAGE . 'language.php';
+include_once paths::MODEL_LANGUAGE . 'language_form.php';
+include_once paths::MODEL_LANGUAGE . 'language_form_list.php';
+include_once paths::MODEL_LANGUAGE . 'language_list.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_action_list.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'change_table_field.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::MODEL_PHRASE . 'phrase_types.php';
+include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_SANDBOX . 'share_type_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_link_type.php';
+include_once paths::MODEL_VIEW . 'view_link_type_list.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::MODEL_VIEW . 'view_type_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
+
 use cfg\component\component_link_type;
 use cfg\component\component_link_type_list;
 use cfg\component\component_type;
@@ -103,6 +108,8 @@ use cfg\component\position_type;
 use cfg\component\position_type_list;
 use cfg\component\view_style;
 use cfg\component\view_style_list;
+use cfg\const\def;
+use cfg\const\files;
 use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -141,18 +148,21 @@ use cfg\system\sys_log_function;
 use cfg\system\sys_log_function_list;
 use cfg\system\sys_log_status_list;
 use cfg\system\sys_log_status;
+use cfg\user\user;
 use cfg\user\user_profile;
 use cfg\user\user_profile_list;
 use cfg\verb\verb;
+use cfg\verb\verb_db;
 use cfg\verb\verb_list;
 use cfg\view\view;
 use cfg\view\view_link_type;
 use cfg\view\view_link_type_list;
 use cfg\view\view_type;
 use cfg\view\view_type_list;
-use html\user\user_type_list as type_list_dsp;
+use controller\api_message;
 use shared\json_fields;
 use shared\library;
+use shared\types\api_type_list;
 use shared\types\protection_type;
 use shared\types\share_type;
 
@@ -204,35 +214,6 @@ class type_list
 
 
     /*
-     * cast
-     */
-
-    /**
-     * @return type_list_api the object type list frontend api object
-     */
-    function api_obj(): object
-    {
-        return new type_list_api($this->lst);
-    }
-
-    /**
-     * @returns string the api json message for the object as a string
-     */
-    function api_json(): string
-    {
-        return $this->api_obj()->get_json();
-    }
-
-    /**
-     * @return type_list_dsp the word frontend api object
-     */
-    function dsp_obj(): object
-    {
-        return new type_list_dsp($this->lst);
-    }
-
-
-    /*
      * set and get
      */
 
@@ -274,16 +255,22 @@ class type_list
     {
         if ($item->id() <= 0) {
             log_err('Type id ' . $item->id() . ' not expected');
-        } elseif ($item->code_id == '' and !$this->usr_can_add) {
+        } elseif ($item->code_id() == '' and !$this->usr_can_add) {
             log_err('Type code id for ' . $item->id() . ' cannot be empty');
         } else {
             $this->lst[$item->id()] = $item;
-            $this->hash[$item->code_id] = $item->id();
+            $this->hash[$item->code_id()] = $item->id();
         }
         if ($this->usr_can_add) {
             $this->name_hash[$item->name] = $item->id();
         }
     }
+
+    function add_direct(type_object|ref|view $item): void
+    {
+        $this->lst[] = $item;
+    }
+
 
     /*
      * database (dao) functions
@@ -319,11 +306,11 @@ class type_list
         $qp->name = $db_type . sql::NAME_SEP . $query_name;
         $sc->set_name($qp->name);
         if ($class == verb::class) {
-            $sc->set_fields(verb::FLD_NAMES);
+            $sc->set_fields(verb_db::FLD_NAMES);
         } elseif ($class == ref_type::class) {
-            $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql::FLD_CODE_ID, ref_type_list::FLD_URL));
+            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, ref_type_list::FLD_URL));
         } else {
-            $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql::FLD_CODE_ID));
+            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
         }
         if ($order_field == '') {
             $order_field = $sc->get_id_field_name($class);
@@ -416,7 +403,7 @@ class type_list
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $type_id = $db_row[$db_con->get_id_field_name($class)];
-                $type_code_id = strval($db_row[sql::FLD_CODE_ID]);
+                $type_code_id = strval($db_row[sql_db::FLD_CODE_ID]);
                 // database field name exceptions
                 if ($class == change_action::class) {
                     $type_name = strval($db_row[type_object::FLD_ACTION]);
@@ -432,9 +419,9 @@ class type_list
                     $type_name = strval($db_row[$db_con->get_name_field($class)]);
                 } else {
                     // TODO use a unique type name for each type
-                    $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
+                    $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
                 }
-                $type_comment = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
+                $type_comment = strval($db_row[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);
                 $this->add($type_obj);
             }
@@ -452,7 +439,7 @@ class type_list
         $this->hash = [];
         if ($type_list != null) {
             foreach ($type_list as $key => $type) {
-                $this->hash[$type->code_id] = $key;
+                $this->hash[$type->code_id()] = $key;
             }
         }
         return $this->hash;
@@ -500,6 +487,66 @@ class type_list
         }
         return $result;
     }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create the api json message string for this list
+     * @param api_type_list|array $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @returns string the api json message for the object as a string
+     */
+    function api_json(api_type_list|array $typ_lst = [], user|null $usr = null): string
+    {
+        if (is_array($typ_lst)) {
+            $typ_lst = new api_type_list($typ_lst);
+        }
+
+        // null values are not needed in the api message to the frontend
+        // but in the api message to the backend null values are relevant
+        // e.g. to remove empty string overwrites
+        $vars = $this->api_json_array($typ_lst, $usr);
+        $vars = array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+
+        // add header if requested
+        if ($typ_lst->use_header()) {
+            global $db_con;
+            $api_msg = new api_message();
+            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+        } else {
+            $msg = $vars;
+        }
+
+        return json_encode($msg);
+    }
+
+    function api_json_array(): array
+    {
+        $vars = [];
+        foreach ($this->lst() as $typ) {
+            // TODO undo this exception
+            if ($typ::class == ref_type::class
+                or $typ::class == verb::class
+                or $typ::class == view::class) {
+                $typ_vars = $typ->api_json_array(new api_type_list([]));
+            } else {
+                $typ_vars[json_fields::NAME] = $typ->name();
+                $typ_vars[json_fields::CODE_ID] = $typ->code_id();
+                $typ_vars[json_fields::DESCRIPTION] = $typ->description();
+                $typ_vars[json_fields::ID] = $typ->id();
+            }
+            $vars[] = $typ_vars;
+        }
+        return $vars;
+    }
+
+
+    /*
+     * im- and export
+     */
 
     /**
      * fill the list base on the csv resource file
@@ -560,7 +607,7 @@ class type_list
                         $typ_obj->set_id($data[$id_col]);
                         $typ_obj->set_name($data[$name_col]);
                         if ($code_id_col > 0) {
-                            $typ_obj->set_code_id($data[$code_id_col]);
+                            $typ_obj->set_code_id_db($data[$code_id_col]);
                         }
                         if (array_key_exists($desc_col, $data)) {
                             $typ_obj->set_description($data[$desc_col]);
@@ -577,12 +624,12 @@ class type_list
         return $list;
     }
 
-    private  function config_csv_get_file(type_list $list): string
+    private function config_csv_get_file(type_list $list): string
     {
         $csv_path = '';
         $lib = new library();
         $type = $lib->class_to_name($list::class);
-        foreach (BASE_CODE_LINK_FILES as $csv_class) {
+        foreach (def::BASE_CODE_LINK_FILES as $csv_class) {
             $csv_file_name = $lib->class_to_name($csv_class);
             if (str_ends_with($type, '_list')) {
                 $csv_list_type = $csv_file_name . '_list';
@@ -591,7 +638,7 @@ class type_list
             }
             $csv_file_name .= sql_db::TABLE_EXTENSION;
             if ($csv_list_type == $type) {
-                $csv_path = PATH_BASE_CODE_LINK_FILES . $csv_file_name . BASE_CODE_LINK_FILE_TYPE;
+                $csv_path = files::CODE_LINK_PATH . $csv_file_name . files::CODE_LINK_TYPE;
             }
         }
         return $csv_path;
@@ -609,7 +656,7 @@ class type_list
         $lib = new library();
         $result = 0;
         if ($code_id != '' and $code_id != null) {
-            if (array_key_exists($code_id, $this->hash)) {
+            if ($this->has_code_id($code_id)) {
                 $result = $this->hash[$code_id];
             } else {
                 if ($this->usr_can_add) {
@@ -651,6 +698,15 @@ class type_list
         return $result;
     }
 
+    function names(): array
+    {
+        $result = [];
+        foreach ($this->lst as $item) {
+            $result[] = $item->name();
+        }
+        return $result;
+    }
+
     /**
      * return user specific type name based on the database row id
      *
@@ -684,6 +740,11 @@ class type_list
             log_debug('Type id not set');
         }
         return $result;
+    }
+
+    function has_code_id(string $code_id): bool
+    {
+        return array_key_exists($code_id, $this->hash);
     }
 
     /**

@@ -34,70 +34,20 @@
 
 namespace unit_write;
 
-include_once SERVICE_PATH . 'config.php';
+use cfg\const\paths;
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\component\component_link_type;
-use cfg\component\component_type;
-use cfg\component\component_type_list;
-use cfg\component\position_type_list;
-use cfg\config;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\element\element;
-use cfg\element\element_type;
-use cfg\element\element_type_list;
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\formula\formula_link_type_list;
-use cfg\formula\formula_type;
-use cfg\formula\formula_type_list;
-use cfg\group\group;
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SERVICE . 'config.php';
+include_once TEST_CONST_PATH . 'files.php';
+
 use cfg\import\import_file;
 use cfg\system\ip_range;
 use cfg\system\job;
-use cfg\system\job_type;
 use cfg\system\job_type_list;
-use cfg\language\language_form_list;
-use cfg\language\language_list;
-use cfg\log\change;
-use cfg\log\change_action;
-use cfg\log\change_action_list;
-use cfg\log\change_field;
-use cfg\log\change_field_list;
-use cfg\log\change_link;
-use cfg\log\change_table;
-use cfg\log\change_table_list;
-use cfg\log\changes_big;
-use cfg\log\changes_norm;
-use cfg\phrase\phrase_type;
-use cfg\phrase\phrase_types;
-use cfg\protection_type;
-use cfg\protection_type_list;
-use cfg\ref\ref;
-use cfg\ref\ref_type;
-use cfg\ref\ref_type_list;
-use cfg\result\result;
-use cfg\share_type;
-use cfg\share_type_list;
-use cfg\ref\source;
-use cfg\source_type;
-use cfg\ref\source_type_list;
-use cfg\system\sys_log;
-use cfg\system\sys_log_function;
-use cfg\sys_log_status;
-use cfg\word\triple;
 use cfg\user\user;
-use cfg\user\user_profile;
-use cfg\value\value;
-use cfg\verb\verb;
-use cfg\view\view;
-use cfg\view_type;
-use cfg\view_type_list;
-use cfg\word\word;
-use Exception;
-use html\html_base;
+use const\files as test_files;
+use shared\const\users;
+use shared\enum\user_profiles;
 use shared\library;
 use test\all_tests;
 use unit\lib_tests;
@@ -117,7 +67,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // switch to the test user
         // create the system user before the local user and admin to get the desired database id
-        $usr->load_by_profile_code(user_profile::TEST);
+        $usr->load_by_profile_code(user_profiles::TEST);
         if ($usr->id() <= 0) {
 
             // but only from localhost
@@ -125,11 +75,11 @@ class all_unit_write_tests extends all_unit_read_tests
             if (array_key_exists("REMOTE_ADDR", $_SERVER)) {
                 $ip_addr = $_SERVER['REMOTE_ADDR'];
             }
-            if ($ip_addr == user::SYSTEM_LOCAL_IP) {
+            if ($ip_addr == users::SYSTEM_ADMIN_IP) {
                 $db_con->import_system_users();
             }
 
-            $usr->load_by_profile_code(user_profile::TEST);
+            $usr->load_by_profile_code(user_profiles::TEST);
         }
 
         if ($usr->id() > 0) {
@@ -160,6 +110,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 $t->set_users();
                 $t->create_test_db_entries($t);
                 // run the db write tests
+                (new user_write_tests)->run($t);
                 (new word_write_tests)->run($t);
                 (new word_list_write_tests)->run($t);
                 (new verb_write_tests)->run($t);
@@ -193,6 +144,8 @@ class all_unit_write_tests extends all_unit_read_tests
                 (new component_write_tests)->run($t);
                 (new component_link_write_tests)->run($t);
 
+                (new import_write_tests())->run($t);
+
                 // TODO activate Prio 2
                 // run_export_test($t);
                 // run_permission_test ($t);
@@ -212,7 +165,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
                 $import = new import_file();
                 $import->import_base_config($usr);
-                $import->import_test_files($usr);
+                $this->import_test_files($usr);
             }
 
             // testing cleanup to remove any remaining test records
@@ -227,7 +180,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
     /**
      * recreate the database to test the database setup script
-     * TODO make shure that this can never be called in PROD
+     * TODO make sure that this can never be called in PROD
      *
      * @return void
      */
@@ -248,8 +201,8 @@ class all_unit_write_tests extends all_unit_read_tests
         if ($db_con->has_table($ip_tbl_name)) {
             $result = $usr->get();
         } else {
-            $usr->set_id(SYSTEM_USER_ID);
-            $usr->set_profile(user_profile::ADMIN);
+            $usr->set_id(users::SYSTEM_ID);
+            $usr->set_profile(user_profiles::ADMIN);
         }
 
         // remember the user
@@ -257,10 +210,10 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // use the system user for the database updates
         if ($db_con->has_table($ip_tbl_name)) {
-            $usr->load_by_id(SYSTEM_USER_ID);
+            $usr->load_by_id(users::SYSTEM_ID);
         } else {
-            $usr->set_id(SYSTEM_USER_ID);
-            $usr->set_profile(user_profile::ADMIN);
+            $usr->set_id(users::SYSTEM_ID);
+            $usr->set_profile(user_profiles::ADMIN);
         }
 
         // drop all old database tables
@@ -282,7 +235,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // use the system user for the database updates
         $usr = new user;
-        $usr->load_by_id(SYSTEM_USER_ID);
+        $usr->load_by_id(users::SYSTEM_ID);
         $sys_usr = $usr;
 
         // run reset the main database tables
@@ -314,13 +267,12 @@ class all_unit_write_tests extends all_unit_read_tests
 
         $import = new import_file();
         $import->import_base_config($sys_usr);
-        $import->import_config($usr);
         $import->import_config_yaml($usr);
 
         // use the system user again to create the database test datasets
         global $usr;
         $usr = new user;
-        $usr->load_by_id(SYSTEM_USER_ID);
+        $usr->load_by_id(users::SYSTEM_ID);
         $sys_usr = $usr;
 
         // create the test dataset to check the basic write functions
@@ -356,6 +308,45 @@ class all_unit_write_tests extends all_unit_read_tests
         echo "\n";
         echo $errors . ' internal errors';
 
+    }
+
+    /**
+     * TODO move HTML code to frontend
+     * import some zukunft.com test json files
+     */
+    function import_test_files(user $usr): string
+    {
+        $result = '';
+        log_info('test import',
+            'import_test_files',
+            'import of the some test json files',
+            'import_test_files',
+            $usr, true
+        );
+
+        $imf = new import_file();
+
+        foreach (test_files::TEST_IMPORT_FILE_LIST as $filename) {
+            $result .= $imf->json_file($filename, $usr, false)->get_last_message();
+        }
+        foreach (test_files::TEST_DIRECT_IMPORT_FILE_LIST as $filename) {
+            $result .= $imf->json_file($filename, $usr)->get_last_message();
+        }
+
+
+        log_debug('import test ... done');
+
+        return $result;
+    }
+
+    /**
+     * display a message immediately to the user
+     * @param string $txt the text that should be should to the user
+     */
+    function echo(string $txt): void
+    {
+        echo $txt;
+        echo "\n";
     }
 
 }
