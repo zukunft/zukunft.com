@@ -55,37 +55,38 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
+use cfg\const\paths;
 
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-//include_once MODEL_LOG_PATH . 'change_link.php';
-//include_once MODEL_LOG_PATH . 'change_log_list.php';
-//include_once MODEL_PHRASE_PATH . 'phrase.php';
-//include_once MODEL_PHRASE_PATH . 'term.php';
-//include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+//include_once paths::MODEL_LOG . 'change_link.php';
+//include_once paths::MODEL_LOG . 'change_log_list.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+//include_once paths::MODEL_PHRASE . 'term.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VERB . 'verb.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -128,8 +129,6 @@ class sandbox_named extends sandbox
     // *_SQL_TYP is the sql data type used for the field
     const FLD_NAME = 'name';
     const FLD_NAME_SQL_TYP = sql_field_type::NAME; // in many cases overwritten by NAME_UNIQUE
-    const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
 
     /*
@@ -182,8 +181,8 @@ class sandbox_named extends sandbox
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
         if ($result) {
             $this->set_name($db_row[$name_fld]);
-            if (array_key_exists(self::FLD_DESCRIPTION, $db_row)) {
-                $this->description = $db_row[self::FLD_DESCRIPTION];
+            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             }
         }
         return $result;
@@ -578,10 +577,10 @@ class sandbox_named extends sandbox
     /**
      * check if the named object in the database needs to be updated
      *
-     * @param sandbox_named|sandbox $db_obj the word as saved in the database
+     * @param sandbox_named|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(sandbox_named|sandbox $db_obj): bool
+    function needs_db_update(sandbox_named|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->name != null) {
@@ -635,6 +634,17 @@ class sandbox_named extends sandbox
         } else {
             return false;
         }
+    }
+
+    function no_id_but_name(): bool
+    {
+        $result = false;
+        if ($this->id() == 0 or $this->id() == null) {
+            if ($this->name(true) != '' and $this->name(true) != null) {
+                $result = true;
+            }
+        }
+        return $result;
     }
 
 
@@ -933,7 +943,7 @@ class sandbox_named extends sandbox
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id();
-                $log->set_field(self::FLD_DESCRIPTION);
+                $log->set_field(sql_db::FLD_DESCRIPTION);
                 $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
@@ -1235,7 +1245,7 @@ class sandbox_named extends sandbox
             $this::FLD_ID,
             user::FLD_ID,
             $this->name_field(),
-            self::FLD_DESCRIPTION
+            sql_db::FLD_DESCRIPTION
         ];
     }
 

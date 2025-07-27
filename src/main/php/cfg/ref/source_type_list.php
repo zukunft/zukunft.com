@@ -32,14 +32,16 @@
 
 namespace cfg\ref;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_REF_PATH . 'source_type.php';
-include_once SHARED_ENUM_PATH . 'source_types.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_REF . 'source_type.php';
+include_once paths::SHARED_ENUM . 'source_types.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\helper\type_list;
 use cfg\db\sql;
@@ -72,9 +74,9 @@ class source_type_list extends type_list
         $db_lst = $db_con->get($qp);
         if ($db_lst != null) {
             foreach ($db_lst as $db_entry) {
-                $type_code_id = strval($db_entry[sql::FLD_CODE_ID]);
-                $type_name = strval($db_entry[sql::FLD_TYPE_NAME]);
-                $type_comment = strval($db_entry[sandbox_named::FLD_DESCRIPTION]);
+                $type_code_id = strval($db_entry[sql_db::FLD_CODE_ID]);
+                $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
+                $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new source_type($type_code_id, $type_name, $type_comment);
                 $type_obj->set_id($db_entry[self::FLD_ID]);
                 //$type_obj->set_url($db_entry[self::FLD_URL]);

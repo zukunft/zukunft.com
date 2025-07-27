@@ -32,9 +32,11 @@
 
 namespace cfg\log;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
 
 use cfg\helper\type_list;
 use cfg\helper\type_object;

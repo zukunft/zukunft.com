@@ -66,52 +66,54 @@
 
 namespace cfg\user;
 
-include_once MODEL_HELPER_PATH . 'db_id_object_non_sandbox.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
-//include_once DB_PATH . 'db_check.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-//include_once MODEL_IMPORT_PATH . 'import_file.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
-//include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_log.php';
-//include_once MODEL_LOG_PATH . 'change_table_list.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-//include_once MODEL_REF_PATH . 'source.php';
-//include_once MODEL_REF_PATH . 'source_db.php';
-//include_once MODEL_WORD_PATH . 'triple.php';
-//include_once MODEL_WORD_PATH . 'triple_list.php';
-include_once MODEL_USER_PATH . 'user_db.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
-include_once MODEL_USER_PATH . 'user_type.php';
-//include_once MODEL_VERB_PATH . 'verb_list.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_VIEW_PATH . 'view_sys_list.php';
-//include_once MODEL_PHRASE_PATH . 'term.php';
-include_once SHARED_HELPER_PATH . 'Config.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_CONST_PATH . 'users.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'library.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_id_object_non_sandbox.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
+//include_once paths::DB . 'db_check.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+//include_once paths::MODEL_IMPORT . 'import_file.php';
+include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+//include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+//include_once paths::MODEL_LOG . 'change_table_list.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+//include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_REF . 'source_db.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+//include_once paths::MODEL_WORD . 'triple_list.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+include_once paths::MODEL_USER . 'user_type.php';
+//include_once paths::MODEL_VERB . 'verb_list.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_VIEW . 'view_sys_list.php';
+//include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::SHARED_HELPER . 'Config.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -174,16 +176,28 @@ class user extends db_id_object_non_sandbox
      */
 
     // database fields
+    // more unique keys
     public ?string $name = null;          // simply the username, which is only empty if the user object is not yet saved to the database
     public ?string $ip_addr = null;       // simply the ip address used if no username is given
+    public ?string $email = null;         // the email used for the signup process
     public ?string $password = null;      // only used for the login and password change process
-    public ?string $description = null;   // used for system users to describe the target; can be used by users for a short introduction
-    public ?string $code_id = null;       // the main id to detect system users
-    public ?int $profile_id = null;       // id of the preloaded user profiles to define the base permissions of the user that should be used now
-    public ?int $type_id = null;          // the confirmation level / status of the user e.g. email checked or passport checked which might lead to a different profile id
-    public ?string $email = null;         //
+
+    // additional info
+    private ?string $description = null;  // used for system users to describe the target; can be used by users for a short introduction
     public ?string $first_name = null;    //
     public ?string $last_name = null;     //
+
+    // for the permission settings
+    public ?int $profile_id = null;       // id of the preloaded user profiles to define the base permissions of the user that should be used now
+    public ?string $code_id = null;       // the main id to detect system users
+    public ?int $type_id = null;          // the confirmation level / status of the user e.g. email checked or passport checked which might lead to a different profile id
+    public ?bool $excluded = null;        // to deactivate users that have already a log entry and cannot be deleted any more
+
+    // var used for the registration and logon process
+    public ?string $activation_key = '';
+    public ?string $activation_timeout = '';
+    public ?string $db_now = '';
+
     // TODO move to user config e.g. by using the key word "pod-user-config"
     public ?string $dec_point = null;     // the decimal point char for this user
     public ?string $thousand_sep = null;  // the thousand separator user for this user
@@ -199,12 +213,6 @@ class user extends db_id_object_non_sandbox
     // TODO add set and get
     // e.g. only admin are allowed to see other user parameters
     public ?user $viewer = null;          // the user who wants to access this user
-
-
-    // var used for the registration and logon process
-    public ?string $activation_key = '';
-    public ?string $activation_timeout = '';
-    public ?string $db_now = '';
 
 
     /*
@@ -231,26 +239,37 @@ class user extends db_id_object_non_sandbox
     function reset(): void
     {
         $this->set_id(0);
+
+        // more unique keys
         $this->name = null;
-        $this->description = null;
         $this->ip_addr = null;
         $this->email = null;
+
+        // additional info
+        $this->description = null;
         $this->first_name = null;
         $this->last_name = null;
+
+        // for the permission settings
+        $this->profile_id = null;
         $this->code_id = null;
+        $this->type_id = null;
+        $this->excluded = null;
+
+        // used only for the signup process
+        $this->activation_key = '';
+        $this->activation_timeout = '';
+        $this->db_now = '';
+
+        // TODO Prio 2 move it to user config base on a value list
         $this->dec_point = null;
         $this->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
         $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
-        $this->profile_id = null;
 
         $this->trm = null;
         $this->source = null;
 
         $this->viewer = null;
-
-        $this->activation_key = '';
-        $this->activation_timeout = '';
-        $this->db_now = '';
 
     }
 
@@ -294,16 +313,39 @@ class user extends db_id_object_non_sandbox
 
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
-            $this->code_id = $db_row[sql::FLD_CODE_ID];
             $this->name = $db_row[user_db::FLD_NAME];
             $this->ip_addr = $db_row[user_db::FLD_IP_ADDR];
             $this->email = $db_row[user_db::FLD_EMAIL];
+
+            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
+                $this->set_description($db_row[sql_db::FLD_DESCRIPTION]);
+            }
             if (array_key_exists(user_db::FLD_FIRST_NAME, $db_row)) {
                 $this->first_name = $db_row[user_db::FLD_FIRST_NAME];
             }
             if (array_key_exists(user_db::FLD_LAST_NAME, $db_row)) {
                 $this->last_name = $db_row[user_db::FLD_LAST_NAME];
             }
+
+            $this->profile_id = $db_row[user_db::FLD_PROFILE];
+            $this->code_id = $db_row[sql_db::FLD_CODE_ID];
+            if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
+                $this->excluded = $db_row[sql_db::FLD_EXCLUDED];
+            }
+
+            if (array_key_exists(user_db::FLD_ACTIVATION_KEY, $db_row)) {
+                $this->activation_key = $db_row[user_db::FLD_ACTIVATION_KEY];
+            }
+            if (array_key_exists(user_db::FLD_ACTIVATION_TIMEOUT, $db_row)) {
+                $this->activation_timeout = $db_row[user_db::FLD_ACTIVATION_TIMEOUT];
+            }
+            if (array_key_exists(user_db::FLD_DB_NOW, $db_row)) {
+                $this->db_now = $db_row[user_db::FLD_DB_NOW];
+            }
+
+            $this->dec_point = shared_config::DEFAULT_DEC_POINT;
+            $this->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
+            $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
             if (array_key_exists(user_db::FLD_TERM, $db_row)) {
                 if ($db_row[user_db::FLD_TERM] != null) {
                     $trm = new term($this);
@@ -318,19 +360,7 @@ class user extends db_id_object_non_sandbox
                     $this->source = $src;
                 }
             }
-            $this->profile_id = $db_row[user_db::FLD_PROFILE];
-            $this->dec_point = shared_config::DEFAULT_DEC_POINT;
-            $this->thousand_sep = shared_config::DEFAULT_THOUSAND_SEP;
-            $this->percent_decimals = shared_config::DEFAULT_PERCENT_DECIMALS;
-            if (array_key_exists(user_db::FLD_ACTIVATION_KEY, $db_row)) {
-                $this->activation_key = $db_row[user_db::FLD_ACTIVATION_KEY];
-            }
-            if (array_key_exists(user_db::FLD_ACTIVATION_TIMEOUT, $db_row)) {
-                $this->activation_timeout = $db_row[user_db::FLD_ACTIVATION_TIMEOUT];
-            }
-            if (array_key_exists(user_db::FLD_DB_NOW, $db_row)) {
-                $this->db_now = $db_row[user_db::FLD_DB_NOW];
-            }
+
             $result = true;
             log_debug($this->name, $debug - 25);
         }
@@ -410,9 +440,18 @@ class user extends db_id_object_non_sandbox
         if (key_exists(json_fields::IP_ADDR, $json)) {
             $this->ip_addr = $json[json_fields::IP_ADDR];
         }
+        if (key_exists(json_fields::EMAIL, $json)) {
+            $this->email = $json[json_fields::EMAIL];
+        }
         // the password is not to be expected to be imported or exported
         if (key_exists(json_fields::DESCRIPTION, $json)) {
-            $this->description = $json[json_fields::DESCRIPTION];
+            $this->set_description($json[json_fields::DESCRIPTION]);
+        }
+        if (key_exists(json_fields::FIRST_NAME, $json)) {
+            $this->first_name = $json[json_fields::FIRST_NAME];
+        }
+        if (key_exists(json_fields::LAST_NAME, $json)) {
+            $this->last_name = $json[json_fields::LAST_NAME];
         }
         if (key_exists(json_fields::PROFILE, $json)) {
             $profile_id_to_add = $usr_pro_cac->id($json[json_fields::PROFILE]);
@@ -425,15 +464,10 @@ class user extends db_id_object_non_sandbox
                 ]);
             }
         }
-        if (key_exists(json_fields::EMAIL, $json)) {
-            $this->email = $json[json_fields::EMAIL];
+        if (key_exists(json_fields::EXCLUDED, $json)) {
+            $this->excluded = $json[json_fields::EXCLUDED];
         }
-        if (key_exists(json_fields::FIRST_NAME, $json)) {
-            $this->first_name = $json[json_fields::FIRST_NAME];
-        }
-        if (key_exists(json_fields::LAST_NAME, $json)) {
-            $this->last_name = $json[json_fields::LAST_NAME];
-        }
+        // TODO Prio 2 report unexpected json field names
 
     }
 
@@ -445,6 +479,7 @@ class user extends db_id_object_non_sandbox
     /**
      * create an array for the api json creation
      * differs from the export array by using the internal id instead of the names
+     * TODO Prio 1 add the missing fields like ip_addr
      * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
@@ -452,8 +487,8 @@ class user extends db_id_object_non_sandbox
     function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
     {
         $vars = $this->api_json_array_core($typ_lst, $usr);
-        if ($this->description != null) {
-            $vars[json_fields::DESCRIPTION] = $this->description;
+        if ($this->description() != null) {
+            $vars[json_fields::DESCRIPTION] = $this->description();
         }
         if ($this->profile_id > 0) {
             $vars[json_fields::PROFILE_ID] = $this->profile_id;
@@ -552,7 +587,7 @@ class user extends db_id_object_non_sandbox
             $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => sql::FLD_CODE_ID,
+                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -603,6 +638,29 @@ class user extends db_id_object_non_sandbox
     function email(): ?string
     {
         return $this->email;
+    }
+
+    /**
+     * set the description of this user which explains the role of predefined users for the requesting user
+     *
+     * @param string|null $description the description from the user e.g. for system users
+     * @return void
+     */
+    function set_description(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * get the description of the user
+     * if the object is excluded null is returned
+     * to check the value before the exclusion access the var direct via $this->description
+     *
+     * @return string|null the description from the user e.g. for system users
+     */
+    function description(): ?string
+    {
+        return $this->description;
     }
 
     /**
@@ -1112,9 +1170,10 @@ class user extends db_id_object_non_sandbox
             $sys_usr = new user();
             $sys_usr->set_name(users::SYSTEM_NAME);
             $sys_usr->set_email(users::SYSTEM_EMAIL);
+            $sys_usr->set_description(users::SYSTEM_COM);
             $sys_usr->set_profile_id(user_profiles::SYSTEM_ID);
-            $sys_usr->description = users::SYSTEM_COM;
             $sys_usr->code_id = users::SYSTEM_CODE_ID;
+            $sys_usr->excluded = false;
             $usr_msg->add($sys_usr->save_direct());
             if (!$usr_msg->is_ok()) {
                 log_fatal('system user cannot be created', 'sql_db->create_system_user');
@@ -1124,11 +1183,12 @@ class user extends db_id_object_non_sandbox
                 // add the local admin user to use it for the import
                 $local_usr = new user();
                 $local_usr->set_name(users::SYSTEM_ADMIN_NAME);
-                $local_usr->set_email(users::SYSTEM_ADMIN_EMAIL);
-                $local_usr->set_profile(user_profiles::ADMIN);
-                $local_usr->description = users::SYSTEM_ADMIN_COM;
-                $local_usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
                 $local_usr->ip_addr = users::SYSTEM_ADMIN_IP;
+                $local_usr->set_email(users::SYSTEM_ADMIN_EMAIL);
+                $local_usr->set_description(users::SYSTEM_ADMIN_COM);
+                $local_usr->set_profile(user_profiles::ADMIN);
+                $local_usr->code_id = users::SYSTEM_ADMIN_CODE_ID;
+                $local_usr->excluded = false;
                 $usr_msg->add($local_usr->save_direct());
                 if (!$usr_msg->is_ok()) {
                     log_fatal('local admin user cannot be created', 'sql_db->create_system_user');
@@ -1372,12 +1432,13 @@ class user extends db_id_object_non_sandbox
         // reset all parameters of this user object
         $this->reset();
 
+        // TODO Prio 1 move to import_mapper
         foreach ($json_obj as $key => $value) {
             if ($key == json_fields::NAME) {
                 $this->name = $value;
             }
             if ($key == json_fields::DESCRIPTION) {
-                $this->description = $value;
+                $this->set_description($value);
             }
             if ($key == user_db::FLD_EMAIL) {
                 $this->email = $value;
@@ -1428,8 +1489,8 @@ class user extends db_id_object_non_sandbox
         $vars = [];
 
         $vars[json_fields::NAME] = $this->name;
-        if ($this->description <> '') {
-            $vars[json_fields::DESCRIPTION] = $this->description;
+        if ($this->description() <> '') {
+            $vars[json_fields::DESCRIPTION] = $this->description();
         }
         if ($this->email <> '') {
             $vars[json_fields::EMAIL] = $this->email;
@@ -1476,8 +1537,8 @@ class user extends db_id_object_non_sandbox
         if ($obj->password != null) {
             $this->password = $obj->password;
         }
-        if ($obj->description != null) {
-            $this->description = $obj->description;
+        if ($obj->description() != null) {
+            $this->set_description($obj->description());
         }
         if ($obj->code_id != null) {
             $this->code_id = $obj->code_id;
@@ -1693,6 +1754,7 @@ class user extends db_id_object_non_sandbox
     function dummy_all(): void
     {
         $this->set_id(0);
+        // TODO Prio 1 use a const
         $this->code_id = 'all';
         $this->name = 'standard user view for all users';
     }
@@ -2110,8 +2172,13 @@ class user extends db_id_object_non_sandbox
             // the sql creator is used more than once, so create it upfront
             $sc = $db_con->sql_creator();
 
-            $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([sql_type::LOG]));
-            $upd_msg = $db_con->update($qp, 'update and log ' . $this->dsp_id());
+            if (in_array($this->name(), users::TEST_NO_LOG)) {
+                $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([]));
+                $upd_msg = $db_con->update($qp, 'update ' . $this->dsp_id());
+            } else {
+                $qp = $this->sql_update($sc, $db_usr, $usr_req, new sql_type_list([sql_type::LOG]));
+                $upd_msg = $db_con->update($qp, 'update and log ' . $this->dsp_id());
+            }
             $usr_msg->add($upd_msg);
 
             log_debug('all fields for ' . $this->dsp_id() . ' has been saved');
@@ -2284,7 +2351,9 @@ class user extends db_id_object_non_sandbox
         // update does not need to return an id
         $sc_par_lst_used->add(sql_type::NO_ID_RETURN);
         // log for users is always on and log functions must always use named parameters
-        $sc_par_lst_used->add(sql_type::NAMED_PAR);
+        if ($sc_par_lst->incl_log()) {
+            $sc_par_lst_used->add(sql_type::NAMED_PAR);
+        }
         // get the field names, values and parameter types that have been changed
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
@@ -2323,29 +2392,56 @@ class user extends db_id_object_non_sandbox
             // list of parameters actually used in order of the function usage
             $par_lst_out = new sql_par_field_list();
 
-            // init the function body
-            $sql = $sc->sql_func_start('', $sc_par_lst_used);
-
-            // don't use the log parameter for the sub queries
-            $sc_par_lst_sub = $sc_par_lst_used->remove(sql_type::LOG);
-            $sc_par_lst_sub->add(sql_type::LIST);
-            $sc_par_lst_log = clone $sc_par_lst_sub;
-            $sc_par_lst_log->add(sql_type::UPDATE_PART);
-
             // get the fields actually changed
             $fld_lst = $fvt_lst->names();
             $fld_lst_chg = array_intersect($fld_lst, $fld_lst_all);
 
-            // add the row id
-            $fvt_lst->add_field(
-                $sc->id_field_name(),
-                $this->id(),
-                db_object_seq_id::FLD_ID_SQL_TYP);
+            // init the function body
+            if ($sc_par_lst->incl_log()) {
+                $sql = $sc->sql_func_start('', $sc_par_lst_used);
 
-            // create the query parameters for the log entries for the single fields
-            $qp_log = $sc->sql_func_log_update($this::class, $usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id());
-            $sql .= ' ' . $qp_log->sql;
-            $par_lst_out->add_list($qp_log->par_fld_lst);
+                // don't use the log parameter for the sub queries
+                $sc_par_lst_sub = $sc_par_lst_used->remove(sql_type::LOG);
+                $sc_par_lst_sub->add(sql_type::LIST);
+                $sc_par_lst_log = clone $sc_par_lst_sub;
+                $sc_par_lst_log->add(sql_type::UPDATE_PART);
+
+                // add the row id
+                $fvt_lst->add_field(
+                    $sc->id_field_name(),
+                    $this->id(),
+                    db_object_seq_id::FLD_ID_SQL_TYP);
+
+                // create the query parameters for the log entries for the single fields
+                $qp_log = $sc->sql_func_log_update($this::class, $usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id());
+                $sql .= ' ' . $qp_log->sql;
+                $par_lst_out->add_list($qp_log->par_fld_lst);
+            } else {
+                $sql = '';
+
+                // add the parameters with type
+                $par_lst_out = new sql_par_field_list();
+                foreach ($fld_lst_chg as $fld) {
+                    $par_lst_out->add_field(
+                        $fld,
+                        $fvt_lst->get_value($fld),
+                        $fvt_lst->get_type($fld));
+                }
+
+                // add the row id
+                $fvt_lst->add_field(
+                    $sc->id_field_name(),
+                    $this->id(),
+                    db_object_seq_id::FLD_ID_SQL_TYP);
+
+                // add the row id of the standard table for user overwrites
+                $log_id = $fvt_lst->get_value($id_fld);
+                $id_type = $fvt_lst->get_type($id_fld);
+                $par_lst_out->add_field(
+                    $id_fld,
+                    $log_id,
+                    $id_type);
+            }
 
             // update the fields excluding the unique id
             $update_fvt_lst = new sql_par_field_list();
@@ -2353,7 +2449,11 @@ class user extends db_id_object_non_sandbox
                 $update_fvt_lst->add($fvt_lst->get($fld));
             }
             $sc_update = clone $sc;
-            $sc_par_lst_upd = new sql_type_list([sql_type::NAMED_PAR, sql_type::UPDATE, sql_type::UPDATE_PART]);
+            if ($sc_par_lst->incl_log()) {
+                $sc_par_lst_upd = new sql_type_list([sql_type::NAMED_PAR, sql_type::UPDATE, sql_type::UPDATE_PART]);
+            } else {
+                $sc_par_lst_upd = new sql_type_list([sql_type::UPDATE, sql_type::UPDATE_PART]);
+            }
             $sc_par_lst_upd_ex_log = $sc_par_lst_upd->remove(sql_type::LOG);
             $qp_update = $this->sql_common($sc_update, $sc_par_lst_upd_ex_log);
             $qp_update->sql = $sc_update->create_sql_update(
@@ -2361,20 +2461,33 @@ class user extends db_id_object_non_sandbox
             // add the insert row to the function body
             $sql .= ' ' . $qp_update->sql . ' ';
 
-            $sql .= $sc->sql_func_end();
+            if ($sc_par_lst->incl_log()) {
+                $sql .= $sc->sql_func_end();
+            }
 
             // create the query parameters for the actual change
             $qp_chg = clone $qp;
-            $qp_chg->sql = $sc->create_sql_update(
-                $id_fld, $id_val, $par_lst_out, [], $sc_par_lst_used);
-            $qp_chg->par = $fvt_lst->values();
+            if ($sc_par_lst->incl_log()) {
+                $qp_chg->sql = $sc->create_sql_update(
+                    $id_fld, $id_val, $par_lst_out, [], $sc_par_lst_used);
+                $qp_chg->par = $fvt_lst->values();
+            }
 
             // merge all together and create the function
-            $qp->sql = $qp_chg->sql . $sql . ';';
+            if ($sc_par_lst->incl_log()) {
+                $qp->sql = $qp_chg->sql . $sql . ';';
+            } else {
+                $sc->set_par_list($par_lst_out->sql_field_list());
+                $qp->sql = $sc->prepare_sql($sql, $qp_chg->name, $par_lst_out->types());
+            }
             $qp->par = $par_lst_out->values();
 
             // create the call sql statement
-            return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
+            if ($sc_par_lst->incl_log()) {
+                return $sc->sql_call($qp, $qp_chg->name, $par_lst_out);
+            } else {
+                return $qp;
+            }
         } else {
             return $qp;
         }
@@ -2508,19 +2621,19 @@ class user extends db_id_object_non_sandbox
         // the password is not part of the standard update process
 
         // the description is mainly used for system users
-        if ($db_usr->description <> $this->description) {
+        if ($db_usr->description() <> $this->description()) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sandbox_named::FLD_DESCRIPTION,
-                $this->description,
-                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
-                $db_usr->description
+                sql_db::FLD_DESCRIPTION,
+                $this->description(),
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
+                $db_usr->description()
             );
         }
 
@@ -2584,6 +2697,22 @@ class user extends db_id_object_non_sandbox
         */
 
         // TODO add user_db::FLD_LEVEL
+
+        if ($db_usr->excluded  <> $this->excluded) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                sql_db::FLD_EXCLUDED,
+                $this->excluded,
+                sql_db::FLD_EXCLUDED_SQL_TYP,
+                $db_usr->excluded
+            );
+        }
 
         // the is used as the name if no name is given
         if ($db_usr->email <> $this->email) {

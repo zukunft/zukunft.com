@@ -34,27 +34,30 @@
 
 namespace cfg\log;
 
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-//include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_GROUP_PATH . 'group_id.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-//include_once MODEL_REF_PATH . 'source.php';
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VERB_PATH . 'verb.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-//include_once MODEL_WORD_PATH . 'triple.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+//include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_id.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_REF . 'source.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VERB . 'verb.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_WORD . 'word.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\system\base_list;
 use cfg\component\component;
@@ -68,6 +71,7 @@ use cfg\group\group_id;
 use cfg\sandbox\sandbox;
 use cfg\ref\source;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\value\value;
 use cfg\value\value_base;
 use cfg\verb\verb;
@@ -352,7 +356,7 @@ class change_log_list extends base_list
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
         $sc->set_fields(change::FLD_NAMES);
-        $sc->set_join_fields(array(user::FLD_NAME), user::class);
+        $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
         $sc->set_join_fields(array(change_fields::FLD_TABLE), change_field::class);
         $sc->set_order(change_log::FLD_TIME, sql::ORDER_DESC);
 

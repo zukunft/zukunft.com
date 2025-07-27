@@ -32,9 +32,11 @@
 
 namespace html;
 
-//include_once API_OBJECT_PATH . 'controller.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+//include_once paths::API_OBJECT . 'controller.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'library.php';
 
 use controller\controller;
 use shared\api;

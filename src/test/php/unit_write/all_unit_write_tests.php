@@ -34,8 +34,10 @@
 
 namespace unit_write;
 
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SERVICE_PATH . 'config.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SERVICE . 'config.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\import\import_file;

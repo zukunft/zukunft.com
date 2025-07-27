@@ -35,59 +35,62 @@
 
 namespace unit;
 
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_list.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
-include_once MODEL_USER_PATH . 'user_type.php';
-include_once MODEL_USER_PATH . 'user_official_type.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range.php';
-include_once MODEL_SYSTEM_PATH . 'session.php';
-include_once MODEL_SYSTEM_PATH . 'job_type.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'job_time.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase_types.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_VERB_PATH . 'verb_list.php';
-include_once MODEL_ELEMENT_PATH . 'element_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
-include_once MODEL_ELEMENT_PATH . 'element_type.php';
-include_once MODEL_VIEW_PATH . 'view_sys_list.php';
-include_once MODEL_VIEW_PATH . 'view_sys_list.php';
-include_once MODEL_VIEW_PATH . 'view_link_type.php';
-include_once MODEL_VIEW_PATH . 'view_type.php';
-include_once MODEL_VIEW_PATH . 'view_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
-include_once MODEL_VIEW_PATH . 'term_view.php';
-include_once MODEL_REF_PATH . 'ref_type_list.php';
-include_once MODEL_REF_PATH . 'source_list.php';
-include_once MODEL_REF_PATH . 'source_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_action_list.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_table_field.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_LOG_PATH . 'change_link.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+include_once paths::MODEL_USER . 'user_type.php';
+include_once paths::MODEL_USER . 'user_official_type.php';
+include_once paths::MODEL_SYSTEM . 'ip_range.php';
+include_once paths::MODEL_SYSTEM . 'session.php';
+include_once paths::MODEL_SYSTEM . 'job_type.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_SYSTEM . 'job_time.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_PHRASE . 'phrase_types.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
+include_once paths::MODEL_ELEMENT . 'element_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type_list.php';
+include_once paths::MODEL_ELEMENT . 'element_type.php';
+include_once paths::MODEL_VIEW . 'view_sys_list.php';
+include_once paths::MODEL_VIEW . 'view_sys_list.php';
+include_once paths::MODEL_VIEW . 'view_link_type.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::MODEL_VIEW . 'view_type_list.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
+include_once paths::MODEL_COMPONENT . 'component_type_list.php';
+include_once paths::MODEL_COMPONENT . 'position_type_list.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::MODEL_REF . 'ref_type_list.php';
+include_once paths::MODEL_REF . 'source_list.php';
+include_once paths::MODEL_REF . 'source_type_list.php';
+include_once paths::MODEL_SANDBOX . 'share_type_list.php';
+include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
+include_once paths::MODEL_LANGUAGE . 'language_list.php';
+include_once paths::MODEL_LANGUAGE . 'language_form_list.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_action_list.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_LOG . 'change_table_field.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\component\component_link_type_list;
 use cfg\component\component_type_list;
 use cfg\component\position_type_list;
+use cfg\const\files;
 use cfg\db\sql_db;
 use cfg\element\element_type_list;
 use cfg\formula\formula_link_type_list;
@@ -123,6 +126,7 @@ use unit_ui\base_ui_tests;
 use const\files as test_files;
 use unit_write\import_write_tests;
 use unit_write\user_write_tests;
+use unit_write\value_write_tests;
 use unit_write\word_write_tests;
 
 class all_unit_tests extends test_cleanup
@@ -195,20 +199,20 @@ class all_unit_tests extends test_cleanup
              * prepare db testing
              */
 
-            $this->create_test_db_entries($t);
+            //$this->create_test_db_entries($t);
 
             /*
              * import
              */
 
             // run the selected db import tests
-            (new import_write_tests())->run($t);
             /*
             $test_name = 'validate config import';
             $imf = new import_file();
             $import_result = $imf->import_config_yaml($sys_usr, true);
             $t->assert($test_name, $import_result->is_ok(), true, $t::TIMEOUT_LIMIT_IMPORT);
             */
+            (new import_write_tests())->run($t);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::SYSTEM_VIEWS_FILE, $usr);
@@ -255,7 +259,7 @@ class all_unit_tests extends test_cleanup
             //(new group_write_tests)->run($this);
             //(new source_write_tests)->run($this);
             //(new ref_write_tests)->run($this);
-            //(new value_write_tests)->run($this);
+            (new value_write_tests)->run($this);
             //(new formula_write_tests)->run($this);
             //(new formula_link_write_tests)->run($this);
             //(new expression_write_tests)->run($this);

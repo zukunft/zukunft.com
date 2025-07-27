@@ -7,377 +7,46 @@
   ],
   "words": [
     {
-      "name": "problem",
-      "comment": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
-      "refs": [
-        {
-          "name": "Problem_solving",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "one"
     },
     {
-      "name": "global",
-      "comment": "here more a something that effects all people on earth (wikipedia does not really match)",
-      "refs": [
-        {
-          "name": "Globalization",
-          "type": "wikipedia"
-        }
-      ]
+      "name": "million"
     },
     {
-      "name": "solution",
-      "refs": [
-        {
-          "name": "Problem solving",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q730920",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "priority",
-      "refs": [
-        {
-          "name": "Prioritization",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11888847",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "potential",
-      "refs": [
-        {
-          "name": "Potential",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q1202245",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "gain",
-      "refs": [
-        {
-          "name": "Utility",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q466707",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "loss"
-    },
-    {
-      "name": "percent",
-      "comment": "to specify numbers in percent",
-      "type": "percent",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "climate",
-      "refs": [
-        {
-          "name": "Climate",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7937",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "warm",
-      "refs": [
-        {
-          "name": "heating",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q4311765",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "warming"
-    },
-    {
-      "name": "warmer"
-    },
-    {
-      "name": "reduce"
-    },
-    {
-      "name": "gas",
-      "refs": [
-        {
-          "name": "gas",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11432",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "global",
-      "refs": [
-        {
-          "name": "Globalization",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7181",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "emissions"
-    },
-    {
-      "name": "populism"
-    },
-    {
-      "name": "avoid"
-    },
-    {
-      "name": "wrong"
-    },
-    {
-      "name": "decisions"
-    },
-    {
-      "name": "artificial"
-    },
-    {
-      "name": "intelligence"
-    },
-    {
-      "name": "health"
-    },
-    {
-      "name": "research"
-    },
-    {
-      "name": "poverty"
-    },
-    {
-      "name": "taxes"
-    },
-    {
-      "name": "education"
-    },
-    {
-      "name": "spending"
-    },
-    {
-      "name": "pension",
-      "refs": [
-        {
-          "name": "Pension",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q156223",
-          "type": "wikidata"
-        }
-      ]
+      "name": "billion"
     },
     {
       "name": "happy"
     },
     {
-      "name": "unhappy"
-    },
-    {
       "name": "time"
     },
     {
-      "name": "points"
+      "name": "point"
     },
     {
-      "name": "DALY",
-      "refs": [
-        {
-          "name": "Disability-adjusted life year",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q55627",
-          "type": "wikidata"
-        }
-      ]
+      "name": "global"
     },
     {
-      "name": "human",
-      "refs": [
-        {
-          "name": "Homo",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q15978631",
-          "type": "wikidata"
-        }
-      ]
+      "name": "human"
     },
     {
-      "name": "population",
-      "refs": [
-        {
-          "name": "Population",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q2625603",
-          "type": "wikidata"
-        }
-      ]
+      "name": "population"
     },
     {
-      "name": "htp"
+      "name": "percent"
     },
     {
-      "name": "million",
-      "comment": "to specify numbers in millions",
-      "type": "scaling",
-      "protection": "admin_protection"
+      "name": "this"
     },
     {
-      "name": "billion",
-      "comment": "to specify numbers in billion",
-      "type": "scaling",
-      "protection": "admin_protection"
+      "name": "prior"
     },
     {
-      "name": "trillion",
-      "comment": "to specify numbers in trillion",
-      "type": "scaling",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "mio"
-    },
-    {
-      "name": "m"
-    },
-    {
-      "name": "CHF",
-      "type": "measure"
-    },
-    {
-      "name": "USD",
-      "type": "measure"
-    },
-    {
-      "name": "world"
-    },
-    {
-      "name": "GDP"
-    },
-    {
-      "name": "2024"
+      "name": "year"
     }
   ],
   "triples": [
-    {
-      "name": "global problem",
-      "from": "problem",
-      "verb": "can be",
-      "to": "global",
-      "comment": "here more a personal issue (wikipedia does not really match)",
-      "refs": [
-        {
-          "name": "List_of_global_issues",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q65117122",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "from": "warmer",
-      "verb": "is a",
-      "to": "warm"
-    },
-    {
-      "from": "warming",
-      "verb": "is a",
-      "to": "warm"
-    },
-    {
-      "name": "global warming",
-      "from": "climate",
-      "verb": "can get",
-      "to": "warmer",
-      "refs": [
-        {
-          "name": "Climate_change",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7942",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "warming potential",
-      "from": "warming",
-      "verb": "can use",
-      "to": "potential"
-    },
-    {
-      "name": "climate gas",
-      "from": "gas",
-      "verb": "can cause",
-      "to": "warming",
-      "refs": [
-        {
-          "name": "Climate_change",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7942",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "world population",
-      "from": "Population",
-      "verb": "of",
-      "to": "human",
-      "refs": [
-        {
-          "name": "World population",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11188",
-          "type": "wikidata"
-        }
-      ]
-    },
     {
       "name": "time points",
       "from": "points",
@@ -393,50 +62,9 @@
       "description": "To measure the \"happy points\" ask the person how happy he feels let's say on a scale from 1 (least happy) to 10 (most happy). If you sum the number of happy points over a period, you get the \"happy time points\". "
     },
     {
-      "from": "htp",
+      "name": "htp",
       "verb": "is symbol for",
       "to": "happy time points"
-    },
-    {
-      "from": "m",
-      "verb": "is symbol for",
-      "to": "million"
-    },
-    {
-      "from": "mio",
-      "verb": "is symbol for",
-      "to": "million"
-    },
-    {
-      "from": "b",
-      "verb": "is symbol for",
-      "to": "billion"
-    },
-    {
-      "from": "global warming",
-      "verb": "is a",
-      "to": "global problem"
-    },
-    {
-      "from": "populism",
-      "verb": "is a",
-      "to": "global problem"
-    },
-    {
-      "name": "health can be a global problem",
-      "from": "health",
-      "verb": "can be",
-      "to": "global problem"
-    },
-    {
-      "from": "poverty",
-      "verb": "is a",
-      "to": "global problem"
-    },
-    {
-      "from": "education",
-      "verb": "can be",
-      "to": "global problem"
     }
   ],
   "formulas": [
@@ -454,6 +82,11 @@
       "name": "global happy time points",
       "expression": "\"htp\" = \"htp\",\"percent\" * \"global\",\"human\",\"population\"",
       "assigned_word": "htp"
+    },
+    {
+      "name": "System Test Formula",
+      "expression": "\"percent\" = ( \"this\" -  \"prior\" ) / \"prior\"",
+      "assigned_word": "year"
     }
   ]
 }

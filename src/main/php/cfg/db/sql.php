@@ -124,13 +124,6 @@ class sql
     const FALSE = '0'; // representing true in the where part for a smallint field
     const ID_NULL = 0; // the 'not set' value for an id; could have been null if postgres index would allow it
 
-    // sql field names used for several classes
-    const FLD_CODE_ID = 'code_id';     // field name for the code link e.g. for words used for the system configuration
-    const FLD_CODE_ID_SQL_TYP = sql_field_type::CODE_ID;
-    const FLD_VALUE = 'value';         // field name e.g. for the configuration value
-    const FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
-    const FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const
-
     // query name extensions to make the query name unique
     const NAME_ALL = 'all'; // for queries that should return all rows without paging
     const NAME_SEP = '_'; // for snake case query and file names

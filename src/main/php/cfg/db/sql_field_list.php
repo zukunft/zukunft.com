@@ -43,8 +43,10 @@
 
 namespace cfg\db;
 
-include_once DB_PATH . 'sql_field.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_field.php';
+include_once paths::SHARED . 'library.php';
 
 use DateTime;
 use shared\library;

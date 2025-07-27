@@ -31,67 +31,69 @@
 
 namespace cfg\db;
 
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_SYSTEM_PATH . 'log.php';
-include_once MODEL_DB_PATH . 'sql_field_type.php';
-include_once MODEL_DB_PATH . 'sql_field_default.php';
-include_once MODEL_DB_PATH . 'sql_where_type.php';
-include_once MODEL_DB_PATH . 'sql_where.php';
-include_once MODEL_DB_PATH . 'sql_where_list.php';
-include_once MODEL_DB_PATH . 'sql_pg.php';
-include_once MODEL_DB_PATH . 'sql.php';
-//include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_ELEMENT_PATH . 'element.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_LOG_PATH . 'change_value.php';
-include_once MODEL_FORMULA_PATH . 'formula_link.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_link.php';
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_LOG_PATH . 'change_values_big.php';
-include_once MODEL_LOG_PATH . 'change_values_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_time_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_time_big.php';
-include_once MODEL_LOG_PATH . 'change_values_time_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_time_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_text_big.php';
-include_once MODEL_LOG_PATH . 'change_values_text_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_text_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_big.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_prime.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-include_once MODEL_LOG_PATH . 'changes_big.php';
-include_once MODEL_LOG_PATH . 'changes_norm.php';
-include_once MODEL_REF_PATH . 'ref.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
-include_once MODEL_USER_PATH . 'user_type.php';
-include_once MODEL_USER_PATH . 'user_official_type.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_time.php';
-include_once MODEL_VALUE_PATH . 'value_text.php';
-include_once MODEL_VALUE_PATH . 'value_geo.php';
-include_once MODEL_VALUE_PATH . 'value_time_series.php';
-include_once MODEL_VIEW_PATH . 'term_view.php';
-include_once SHARED_CONST_PATH . 'users.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_SYSTEM . 'log.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_where_type.php';
+include_once paths::DB . 'sql_where.php';
+include_once paths::DB . 'sql_where_list.php';
+include_once paths::DB . 'sql_pg.php';
+include_once paths::DB . 'sql.php';
+//include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_ELEMENT . 'element.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_LOG . 'change_value.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_SYSTEM . 'ip_range.php';
+include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_values_big.php';
+include_once paths::MODEL_LOG . 'change_values_norm.php';
+include_once paths::MODEL_LOG . 'change_values_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_big.php';
+include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+include_once paths::MODEL_LOG . 'change_values_text_big.php';
+include_once paths::MODEL_LOG . 'change_values_text_norm.php';
+include_once paths::MODEL_LOG . 'change_values_text_prime.php';
+include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
+include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'changes_big.php';
+include_once paths::MODEL_LOG . 'changes_norm.php';
+include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+include_once paths::MODEL_USER . 'user_type.php';
+include_once paths::MODEL_USER . 'user_official_type.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_time.php';
+include_once paths::MODEL_VALUE . 'value_text.php';
+include_once paths::MODEL_VALUE . 'value_geo.php';
+include_once paths::MODEL_VALUE . 'value_time_series.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\component\component_link;
 use cfg\helper\db_object_seq_id;
@@ -2428,7 +2430,7 @@ class sql_creator
                 $sql = sql::DELETE . ' ' . $this->table . ' ';
                 $sql .= $sql_where;
                 if ($sc_par_lst->exclude_sql()) {
-                    $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                    $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
                 }
             }
         } else {
@@ -2437,7 +2439,7 @@ class sql_creator
             $sql .= $sql_where;
 
             if ($sc_par_lst->exclude_sql()) {
-                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
         }
 
@@ -2468,7 +2470,7 @@ class sql_creator
             $sql .= ' ' . $this->name_sql_esc($this->table) . ' ';
             $sql .= $this->sql_where_fvt($fvt_lst_id);
             if ($sc_par_lst->exclude_sql()) {
-                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
             $sql .= sql::SEP;
         }
@@ -2524,7 +2526,7 @@ class sql_creator
                 $sql = sql::DELETE . ' ' . $this->table . ' ';
                 $sql .= $sql_where;
                 if ($excluded) {
-                    $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                    $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
                 }
             }
         } else {
@@ -2533,7 +2535,7 @@ class sql_creator
             $sql .= $sql_where;
 
             if ($excluded) {
-                $sql .= ' ' . sql::AND . ' ' . sandbox::FLD_EXCLUDED . ' = ' . sql::TRUE;
+                $sql .= ' ' . sql::AND . ' ' . sql_db::FLD_EXCLUDED . ' = ' . sql::TRUE;
             }
         }
 
@@ -3743,13 +3745,13 @@ class sql_creator
 
             // include rows where code_id is null
             if ($typ == sql_par_type::TEXT or $typ == sql_par_type::KEY_512) {
-                if ($fld == sql::FLD_CODE_ID) {
+                if ($fld == sql_db::FLD_CODE_ID) {
                     if ($this->db_type == sql_db::POSTGRES) {
                         $sql_where .= ' ' . sql::AND . ' ';
                         if ($this->usr_query or $this->join <> '') {
                             $sql_where .= sql_db::STD_TBL . '.';
                         }
-                        $sql_where .= sql::FLD_CODE_ID . ' IS NOT NULL';
+                        $sql_where .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
                     }
                 }
             }
@@ -3921,13 +3923,13 @@ class sql_creator
 
                         // include rows where code_id is null
                         if ($typ == sql_par_type::TEXT or $typ == sql_par_type::KEY_512) {
-                            if ($this->par_lst->name($i) == sql::FLD_CODE_ID) {
+                            if ($this->par_lst->name($i) == sql_db::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $result .= ' ' . sql::AND . ' ';
                                     if ($this->usr_query or $this->join <> '') {
                                         $result .= sql_db::STD_TBL . '.';
                                     }
-                                    $result .= sql::FLD_CODE_ID . ' IS NOT NULL';
+                                    $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
                                 }
                             }
                         }
@@ -5128,58 +5130,58 @@ class sql_creator
         $result = $type . '_name';
         // TODO remove these exceptions for a unique name in the "with_log" undate queries
         if ($result == 'link_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_link_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'component_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'component_link_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'position_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'element_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'formula_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'formula_link_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'ref_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'source_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'share_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'protection_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'profile_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'job_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
         if ($result == 'triple_name') {

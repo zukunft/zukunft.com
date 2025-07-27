@@ -32,8 +32,11 @@
 
 namespace unit_ui;
 
-include_once MODEL_CONST_PATH . 'files.php';
-include_once WEB_HELPER_PATH . 'data_object.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::MODEL_CONST . 'files.php';
+include_once html_paths::HELPER . 'data_object.php';
 
 use cfg\const\files;
 use cfg\import\import;

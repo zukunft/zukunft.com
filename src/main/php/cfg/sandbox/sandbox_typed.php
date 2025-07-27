@@ -45,20 +45,22 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-//include_once MODEL_HELPER_PATH . 'type_list.php';
-//include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_HELPER . 'type_list.php';
+//include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_db;
@@ -158,7 +160,7 @@ class sandbox_typed extends sandbox_named
             $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr_req->name(),
                 msg_id::VAR_USER_PROFILE => $usr_req->profile_code_id(),
-                msg_id::VAR_NAME => sql::FLD_TYPE_NAME,
+                msg_id::VAR_NAME => sql_db::FLD_TYPE_NAME,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -294,10 +296,10 @@ class sandbox_typed extends sandbox_named
     /**
      * check if the typed object in the database needs to be updated
      *
-     * @param sandbox_typed|sandbox $db_obj the word as saved in the database
+     * @param sandbox_typed|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(sandbox_typed|sandbox $db_obj): bool
+    function needs_db_update(sandbox_typed|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->type_id != null) {

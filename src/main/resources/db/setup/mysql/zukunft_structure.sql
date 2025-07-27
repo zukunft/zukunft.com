@@ -345,6 +345,7 @@ CREATE TABLE IF NOT EXISTS users
     code_id            varchar(100) DEFAULT NULL COMMENT 'to select e.g. the system batch user',
     user_profile_id    bigint       DEFAULT NULL COMMENT 'to define the user roles and read and write rights',
     user_type_id       bigint       DEFAULT NULL COMMENT 'to set the confirmation level of a user',
+    excluded           smallint     DEFAULT NULL COMMENT 'true if the user is deactivated but cannot be deleted due to log entries',
     right_level        smallint     DEFAULT NULL COMMENT 'the access right level to prevent not permitted right gaining',
     email              varchar(255) DEFAULT NULL COMMENT 'the primary email for verification',
     email_status       smallint     DEFAULT NULL COMMENT 'if the email has been verified or if a password reset has been send',
@@ -1208,7 +1209,7 @@ ALTER TABLE verbs
 CREATE TABLE IF NOT EXISTS triples
 (
     triple_id           bigint           NOT NULL COMMENT 'the internal unique primary index',
-    from_phrase_id      bigint           NOT NULL COMMENT 'the phrase_id that is linked',
+    from_phrase_id      bigint       DEFAULT NULL COMMENT 'the phrase_id that is linked which can be null e.g. if a symbol is assigned to a triple (m/s is symbol for meter per second)',
     verb_id             bigint           NOT NULL COMMENT 'the verb_id that defines how the phrases are linked',
     to_phrase_id        bigint           NOT NULL COMMENT 'the phrase_id to which the first phrase is linked',
     user_id             bigint       DEFAULT NULL COMMENT 'the owner / creator of the triple',

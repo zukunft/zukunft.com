@@ -48,9 +48,9 @@ include_once TEST_PHP_UTIL_PATH . 'test_base.php';
 // load the main test control class
 include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
 
+use cfg\log_text\text_log_format;
 use cfg\user\user;
 use test\all_tests;
-use test\format;
 
 
 global $db_con;
@@ -79,7 +79,7 @@ if ($db_con->is_open()) {
             $t->run_unit();
 
             // display the test results
-            if ($t->format == format::HTML) {
+            if ($t->format == text_log_format::HTML) {
                 $t->dsp_result_html();
             } else {
                 $t->dsp_result();

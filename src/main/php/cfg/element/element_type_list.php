@@ -33,8 +33,10 @@
 
 namespace cfg\element;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_ELEMENT_PATH . 'element_type.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_ELEMENT . 'element_type.php';
 
 use cfg\helper\type_list;
 

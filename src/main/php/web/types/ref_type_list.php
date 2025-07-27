@@ -32,7 +32,9 @@
 
 namespace html\types;
 
-include_once SHARED_CONST_PATH . 'refs.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED_CONST . 'refs.php';
 
 use shared\const\refs;
 

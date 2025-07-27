@@ -85,25 +85,26 @@ class formulas
     const PARTS_IN_PERCENT_DB = '{w' . words::PCT_ID . '}={w' . words::PARTS_ID . '}{v' . verbs::OF_ID . '}/{w' . words::TOTAL_ID . '}';
 
     // persevered formula names for unit and integration tests
-    const SYSTEM_TEXT_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula
-    const SYSTEM_TEXT_ADD_VIA_FUNC = 'System Test Formula via SQL function';
-    const SYSTEM_TEXT_ADD_VIA_SQL = 'System Test Formula via SQL insert';
-    const SYSTEM_TEXT_RENAMED = 'System Test Formula Renamed';
-    const SYSTEM_TEXT_EXCLUDED = 'System Test Formula Excluded';
-    const SYSTEM_TEXT_THIS = 'System Test Formula This'; // to test if another formula of the functional type "this" can be created
-    const SYSTEM_TEXT_THIS_EXP = '= "System Test Formula This"';
-    const SYSTEM_TEXT_RATIO = 'System Test Formula PE Ratio'; // to test a simple ration calculation like how many times Switzerland is bigger than the canton zurich or the price to earning ration for equity
-    const SYSTEM_TEXT_RATIO_EXP = '"System Test Word PE Ratio" = "System Test Word Share Price" / "System Test Word Earnings"';
-    const SYSTEM_TEXT_SECTOR = 'System Test Formula sector'; // to test the selection by a phrases and parents e.g. split all country totals by canton
-    const SYSTEM_TEXT_SECTOR_EXP = '= "Country" "differentiator" "Canton" / "System Test Word Total"';
-    const SYSTEM_TEXT_SCALE_K = 'System Test Formula scale thousand to one';
-    const SYSTEM_TEXT_SCALE_K_EXP = '"one" = "System Test Scaling Word e.g. thousands" * 1000';
-    const SYSTEM_TEXT_SCALE_TO_K = 'System Test Formula scale one to thousand';
-    const SYSTEM_TEXT_SCALE_TO_K_EXP = '"System Test Scaling Word e.g. thousands" = "one" / 1000';
-    const SYSTEM_TEXT_SCALE_MIO = 'System Test Formula scale millions to one';
-    const SYSTEM_TEXT_SCALE_MIO_EXP = '"one" = "million" * 1000000';
-    const SYSTEM_TEXT_SCALE_BIL = 'System Test Formula scale billions to one';
-    const SYSTEM_TEXT_SCALE_BIL_EXP = '"one" = "System Test Scaling Word e.g. billions" * 1000000000';
+    const SYSTEM_TEST_ADD = 'System Test Formula'; // to test adding a new formula to the database and using the increase formula
+    const SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Formula via SQL function';
+    const SYSTEM_TEST_ADD_VIA_SQL = 'System Test Formula via SQL insert';
+    const SYSTEM_TEST_ADD_COM = 'System Test Formula Description';
+    const SYSTEM_TEST_RENAMED = 'System Test Formula Renamed';
+    const SYSTEM_TEST_EXCLUDED = 'System Test Formula Excluded';
+    const SYSTEM_TEST_THIS = 'System Test Formula This'; // to test if another formula of the functional type "this" can be created
+    const SYSTEM_TEST_THIS_EXP = '= "System Test Formula This"';
+    const SYSTEM_TEST_RATIO = 'System Test Formula PE Ratio'; // to test a simple ration calculation like how many times Switzerland is bigger than the canton zurich or the price to earning ration for equity
+    const SYSTEM_TEST_RATIO_EXP = '"System Test Word PE Ratio" = "System Test Word Share Price" / "System Test Word Earnings"';
+    const SYSTEM_TEST_SECTOR = 'System Test Formula sector'; // to test the selection by a phrases and parents e.g. split all country totals by canton
+    const SYSTEM_TEST_SECTOR_EXP = '= "Country" "differentiator" "Canton" / "System Test Word Total"';
+    const SYSTEM_TEST_SCALE_K = 'System Test Formula scale thousand to one';
+    const SYSTEM_TEST_SCALE_K_EXP = '"one" = "System Test Scaling Word e.g. thousands" * 1000';
+    const SYSTEM_TEST_SCALE_TO_K = 'System Test Formula scale one to thousand';
+    const SYSTEM_TEST_SCALE_TO_K_EXP = '"System Test Scaling Word e.g. thousands" = "one" / 1000';
+    const SYSTEM_TEST_SCALE_MIO = 'System Test Formula scale millions to one';
+    const SYSTEM_TEST_SCALE_MIO_EXP = '"one" = "million" * 1000000';
+    const SYSTEM_TEST_SCALE_BIL = 'System Test Formula scale billions to one';
+    const SYSTEM_TEST_SCALE_BIL_EXP = '"one" = "System Test Scaling Word e.g. billions" * 1000000000';
 
     // formula names that are reserved either
     // for creating the test formulas, that are removed after the test
@@ -111,18 +112,18 @@ class formulas
     // or for fixed of the default data set that are used for unit tests
     const RESERVED_NAMES = array(
         self::SCALE_TO_SEC,
-        self::SYSTEM_TEXT_ADD,
-        self::SYSTEM_TEXT_ADD_VIA_FUNC,
-        self::SYSTEM_TEXT_ADD_VIA_SQL,
-        self::SYSTEM_TEXT_RENAMED,
-        self::SYSTEM_TEXT_EXCLUDED,
-        self::SYSTEM_TEXT_THIS,
-        self::SYSTEM_TEXT_RATIO,
-        self::SYSTEM_TEXT_SECTOR,
-        self::SYSTEM_TEXT_SCALE_K,
-        self::SYSTEM_TEXT_SCALE_TO_K,
-        self::SYSTEM_TEXT_SCALE_MIO,
-        self::SYSTEM_TEXT_SCALE_BIL
+        self::SYSTEM_TEST_ADD,
+        self::SYSTEM_TEST_ADD_VIA_FUNC,
+        self::SYSTEM_TEST_ADD_VIA_SQL,
+        self::SYSTEM_TEST_RENAMED,
+        self::SYSTEM_TEST_EXCLUDED,
+        self::SYSTEM_TEST_THIS,
+        self::SYSTEM_TEST_RATIO,
+        self::SYSTEM_TEST_SECTOR,
+        self::SYSTEM_TEST_SCALE_K,
+        self::SYSTEM_TEST_SCALE_TO_K,
+        self::SYSTEM_TEST_SCALE_MIO,
+        self::SYSTEM_TEST_SCALE_BIL
     );
 
     // array of formula names that used for db read testing and that should not be renamed
@@ -134,17 +135,17 @@ class formulas
     // that are removed after each test
     // and therefore cannot be used by users
     const TEST_FORMULAS = array(
-        self::SYSTEM_TEXT_ADD,
-        self::SYSTEM_TEXT_ADD_VIA_FUNC,
-        self::SYSTEM_TEXT_ADD_VIA_SQL,
-        self::SYSTEM_TEXT_RENAMED,
-        self::SYSTEM_TEXT_EXCLUDED,
-        self::SYSTEM_TEXT_THIS,
-        self::SYSTEM_TEXT_RATIO,
-        self::SYSTEM_TEXT_SECTOR,
-        self::SYSTEM_TEXT_SCALE_K,
-        self::SYSTEM_TEXT_SCALE_TO_K,
-        self::SYSTEM_TEXT_SCALE_MIO,
-        self::SYSTEM_TEXT_SCALE_BIL
+        self::SYSTEM_TEST_ADD,
+        self::SYSTEM_TEST_ADD_VIA_FUNC,
+        self::SYSTEM_TEST_ADD_VIA_SQL,
+        self::SYSTEM_TEST_RENAMED,
+        self::SYSTEM_TEST_EXCLUDED,
+        self::SYSTEM_TEST_THIS,
+        self::SYSTEM_TEST_RATIO,
+        self::SYSTEM_TEST_SECTOR,
+        self::SYSTEM_TEST_SCALE_K,
+        self::SYSTEM_TEST_SCALE_TO_K,
+        self::SYSTEM_TEST_SCALE_MIO,
+        self::SYSTEM_TEST_SCALE_BIL
     );
 }

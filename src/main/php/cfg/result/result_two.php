@@ -32,7 +32,9 @@
 
 namespace cfg\result;
 
-include_once MODEL_RESULT_PATH . 'result.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_RESULT . 'result.php';
 
 class result_two extends result
 {

@@ -35,142 +35,143 @@
 
 namespace cfg\db;
 
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_DB_PATH . 'sql_creator.php';
-include_once MODEL_DB_PATH . 'sql_sync_sequences.php';
-include_once MODEL_SYSTEM_PATH . 'log.php';
-include_once MODEL_IMPORT_PATH . 'import_file.php';
-include_once MODEL_HELPER_PATH . 'config_numbers.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once MODEL_CONST_PATH . 'def.php';
-include_once MODEL_CONST_PATH . 'files.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'position_type.php';
-include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'view_style.php';
-include_once MODEL_COMPONENT_PATH . 'view_style_list.php';
-include_once SERVICE_PATH . 'config.php';
-include_once MODEL_HELPER_PATH . 'config_numbers.php';
-include_once MODEL_ELEMENT_PATH . 'element.php';
-include_once MODEL_ELEMENT_PATH . 'element_type.php';
-include_once MODEL_ELEMENT_PATH . 'element_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_link.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_IMPORT_PATH . 'import_file.php';
-include_once MODEL_SANDBOX_PATH . 'protection_type.php';
-include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'share_type.php';
-include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once MODEL_SYSTEM_PATH . 'job_time.php';
-include_once MODEL_SYSTEM_PATH . 'job_type.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language.php';
-include_once MODEL_LANGUAGE_PATH . 'language_form.php';
-include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language_list.php';
-include_once MODEL_SYSTEM_PATH . 'log.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_action_list.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_values_big.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_link.php';
-include_once MODEL_LOG_PATH . 'change_values_big.php';
-include_once MODEL_LOG_PATH . 'change_values_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_time_big.php';
-include_once MODEL_LOG_PATH . 'change_values_time_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_text_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_time_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_text_big.php';
-include_once MODEL_LOG_PATH . 'change_values_text_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_big.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_prime.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-include_once MODEL_LOG_PATH . 'change_table_field.php';
-include_once MODEL_LOG_PATH . 'changes_big.php';
-include_once MODEL_LOG_PATH . 'changes_norm.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_table.php';
-include_once MODEL_PHRASE_PATH . 'phrase_table_status.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
-include_once MODEL_PHRASE_PATH . 'phrase_types.php';
-include_once MODEL_SYSTEM_PATH . 'pod.php';
-include_once MODEL_SYSTEM_PATH . 'pod_status.php';
-include_once MODEL_SYSTEM_PATH . 'pod_type.php';
-include_once MODEL_REF_PATH . 'ref.php';
-include_once MODEL_REF_PATH . 'ref_type.php';
-include_once MODEL_REF_PATH . 'ref_type_list.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_SYSTEM_PATH . 'session.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_REF_PATH . 'source_type.php';
-include_once MODEL_REF_PATH . 'source_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_level.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_type.php';
-include_once MODEL_SYSTEM_PATH . 'system_time.php';
-include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_HELPER_PATH . 'type_lists.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
-include_once MODEL_USER_PATH . 'user_type.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_USER_PATH . 'user_official_type.php';
-include_once MODEL_USER_PATH . 'user_profile_list.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_time.php';
-include_once MODEL_VALUE_PATH . 'value_text.php';
-include_once MODEL_VALUE_PATH . 'value_geo.php';
-include_once MODEL_VALUE_PATH . 'value_time_series.php';
-include_once MODEL_VALUE_PATH . 'value_ts_data.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_VERB_PATH . 'verb_list.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_list.php';
-include_once MODEL_VIEW_PATH . 'view_link_type.php';
-include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_sys_list.php';
-include_once MODEL_VIEW_PATH . 'term_view.php';
-include_once MODEL_VIEW_PATH . 'view_type.php';
-include_once MODEL_VIEW_PATH . 'view_type_list.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'users.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'language_codes.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SHARED_HELPER_PATH . 'Translator.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_sync_sequences.php';
+include_once paths::MODEL_SYSTEM . 'log.php';
+include_once paths::MODEL_IMPORT . 'import_file.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::MODEL_COMPONENT . 'component_type.php';
+include_once paths::MODEL_COMPONENT . 'component_type_list.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
+include_once paths::MODEL_COMPONENT . 'position_type.php';
+include_once paths::MODEL_COMPONENT . 'position_type_list.php';
+include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::MODEL_COMPONENT . 'view_style_list.php';
+include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::MODEL_ELEMENT . 'element.php';
+include_once paths::MODEL_ELEMENT . 'element_type.php';
+include_once paths::MODEL_ELEMENT . 'element_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_type.php';
+include_once paths::MODEL_FORMULA . 'formula_type_list.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_IMPORT . 'import_file.php';
+include_once paths::MODEL_SANDBOX . 'protection_type.php';
+include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'share_type.php';
+include_once paths::MODEL_SANDBOX . 'share_type_list.php';
+include_once paths::MODEL_SYSTEM . 'ip_range.php';
+include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_SYSTEM . 'job_time.php';
+include_once paths::MODEL_SYSTEM . 'job_type.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_LANGUAGE . 'language.php';
+include_once paths::MODEL_LANGUAGE . 'language_form.php';
+include_once paths::MODEL_LANGUAGE . 'language_form_list.php';
+include_once paths::MODEL_LANGUAGE . 'language_list.php';
+include_once paths::MODEL_SYSTEM . 'log.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_action_list.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_LOG . 'change_values_big.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_LOG . 'change_values_big.php';
+include_once paths::MODEL_LOG . 'change_values_norm.php';
+include_once paths::MODEL_LOG . 'change_values_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_big.php';
+include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+include_once paths::MODEL_LOG . 'change_values_text_norm.php';
+include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+include_once paths::MODEL_LOG . 'change_values_text_big.php';
+include_once paths::MODEL_LOG . 'change_values_text_prime.php';
+include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
+include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'change_table_field.php';
+include_once paths::MODEL_LOG . 'changes_big.php';
+include_once paths::MODEL_LOG . 'changes_norm.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_table.php';
+include_once paths::MODEL_PHRASE . 'phrase_table_status.php';
+include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::MODEL_PHRASE . 'phrase_types.php';
+include_once paths::MODEL_SYSTEM . 'pod.php';
+include_once paths::MODEL_SYSTEM . 'pod_status.php';
+include_once paths::MODEL_SYSTEM . 'pod_type.php';
+include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'ref_type.php';
+include_once paths::MODEL_REF . 'ref_type_list.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SYSTEM . 'session.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_type.php';
+include_once paths::MODEL_REF . 'source_type_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
+include_once paths::MODEL_SYSTEM . 'system_time.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_HELPER . 'type_lists.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+include_once paths::MODEL_USER . 'user_type.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_USER . 'user_official_type.php';
+include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_time.php';
+include_once paths::MODEL_VALUE . 'value_text.php';
+include_once paths::MODEL_VALUE . 'value_geo.php';
+include_once paths::MODEL_VALUE . 'value_time_series.php';
+include_once paths::MODEL_VALUE . 'value_ts_data.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_list.php';
+include_once paths::MODEL_VIEW . 'view_link_type.php';
+include_once paths::MODEL_VIEW . 'view_link_type_list.php';
+include_once paths::MODEL_VIEW . 'view_sys_list.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::MODEL_VIEW . 'view_type_list.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'language_codes.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_HELPER . 'Translator.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -353,6 +354,19 @@ class sql_db
     const SETUP_INDEX = 'indexes for tables';
     const SETUP_INDEX_COM = 'remark: no index needed for preloaded tables such as phrase types';
     const SETUP_FOREIGN_KEY = 'foreign key constraints and auto_increment for tables';
+
+    // db field names that are used in many classes
+    const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
+    const FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
+    const FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
+    const FLD_DESCRIPTION = 'description';
+    const FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
+    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
+    const FLD_CODE_ID = 'code_id';     // field name for the code link e.g. for words used for the system configuration
+    const FLD_CODE_ID_SQL_TYP = sql_field_type::CODE_ID;
+    const FLD_VALUE = 'value';         // field name e.g. for the configuration value
+    const FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
+    const FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const
 
     // classes that have a database table in order of suggested table creation so that depending on tables are created later
     const DB_TABLE_CLASSES = [
@@ -1141,7 +1155,7 @@ class sql_db
     function setup_db(): user_message
     {
         global $sys_times;
-
+        global $log_txt;
 
         $usr_msg = new user_message();
 
@@ -1149,7 +1163,7 @@ class sql_db
         $sql = $this->sql_to_create_database_structure();
         try {
             // because no log yet exists here echo instead of log_echo() is used
-            echo 'Run db setup sql script' . "\n";
+            $log_txt->echo_log('Run db setup sql script');
             $sys_times->switch(system_time_type::DB_SETUP);
             $sql_msg = $this->exe_script($sql);
             $sys_times->switch();
@@ -1174,7 +1188,7 @@ class sql_db
         // fill the tables with the essential data
         if ($usr_msg->is_ok()) {
             // because no user yet exists here echo instead of log_echo() is used
-            echo 'Create system users' . "\n";
+            $log_txt->echo_log('Create system users');
             $this->reset_config();
             $this->import_system_users();
 
@@ -1184,7 +1198,7 @@ class sql_db
             $usr->load_by_id(users::SYSTEM_ID);
 
             // recreate the code link database rows
-            log_echo('Create the code links');
+            $log_txt->echo_log('Create the code links');
             $this->db_fill_code_links();
             $sys_typ_lst = new type_lists();
             $sys_typ_lst->load($this, $usr);
@@ -1272,6 +1286,7 @@ class sql_db
     function run_db_truncate(user $sys_usr): void
     {
         global $sys_times;
+        global $log_txt;
 
         $lib = new library();
         $sys_times->switch(system_time_type::DB_WRITE);
@@ -1279,9 +1294,7 @@ class sql_db
         // the tables in order to avoid the usage of CASCADE
         $table_names = sql_db::DB_TABLE_CLASSES_DESC_DEPENDING;
 
-        log_echo("\n");
-        log_echo('truncate ');
-        log_echo("\n");
+        $log_txt->echo_log('truncate ');
 
         // truncate tables that have already a build in truncate statement creation
         $sql = '';
@@ -2495,64 +2508,64 @@ class sql_db
         $result = $type . '_name';
         // exceptions to be adjusted
         if ($result == 'link_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'system_time_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_types_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'phrase_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'view_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'component_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'component_link_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'position_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'element_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'formula_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'formula_link_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'ref_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'source_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'share_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'protection_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'profile_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'sys_log_status_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         if ($result == 'job_type_name') {
-            $result = sql::FLD_TYPE_NAME;
+            $result = sql_db::FLD_TYPE_NAME;
         }
         // temp solution until the standard field name for the name field is actually "name" (or something else not object specific)
         if ($result == 'triple_name') {
@@ -3591,13 +3604,13 @@ class sql_db
                 $result .= sql_db::STD_TBL . '.';
             }
             $this->add_par(sql_par_type::TEXT, $code_id);
-            $result .= sql::FLD_CODE_ID . " = " . $this->par_name();
+            $result .= sql_db::FLD_CODE_ID . " = " . $this->par_name();
             if ($this->db_type == sql_db::POSTGRES) {
                 $result .= ' AND ';
                 if ($this->usr_query or $this->join <> '') {
                     $result .= sql_db::STD_TBL . '.';
                 }
-                $result .= sql::FLD_CODE_ID . ' IS NOT NULL';
+                $result .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
             }
         } elseif ($name <> '' and !is_null($this->usr_id)) {
             $result .= $this->set_where_name($name, $this->name_field);
@@ -3706,13 +3719,13 @@ class sql_db
                         }
 
                         if ($par_type == sql_par_type::TEXT or $par_type == sql_par_type::KEY_512) {
-                            if ($id_fields[$used_fields] == sql::FLD_CODE_ID) {
+                            if ($id_fields[$used_fields] == sql_db::FLD_CODE_ID) {
                                 if ($this->db_type == sql_db::POSTGRES) {
                                     $this->where .= ' AND ';
                                     if ($this->usr_query or $this->join <> '') {
                                         $this->where .= sql_db::STD_TBL . '.';
                                     }
-                                    $this->where .= sql::FLD_CODE_ID . ' IS NOT NULL';
+                                    $this->where .= sql_db::FLD_CODE_ID . ' IS NOT NULL';
                                 }
                             }
                         }
@@ -4111,7 +4124,7 @@ class sql_db
      */
     function select_by_code_id(bool $has_id = true): string
     {
-        return $this->select_by(array(sql::FLD_CODE_ID), $has_id);
+        return $this->select_by(array(sql_db::FLD_CODE_ID), $has_id);
     }
 
     /**
@@ -5677,9 +5690,10 @@ class sql_db
 
     function truncate_table_all(): void
     {
-        // the sequence names of the tables to reset
+        global $log_txt;
 
-        log_echo('truncate all tables ');
+        // the sequence names of the tables to reset
+        $log_txt->echo_log('truncate all tables ');
         foreach (DB_SEQ_LIST as $seq_name) {
             $this->reset_seq($seq_name);
         }
@@ -5687,8 +5701,9 @@ class sql_db
 
     function truncate_table(string $table_name): void
     {
+        global $log_txt;
 
-        log_echo('truncate table ' . $table_name);
+        $log_txt->echo_log('truncate table ' . $table_name);
         $sql = sql::TRUNCATE . ' ' . $this->get_table_name_esc($table_name) . ' ' . sql::CASCADE . '; ';
         try {
             $this->exe($sql);
@@ -5700,10 +5715,11 @@ class sql_db
     function drop_table(string $table_name): void
     {
         global $sys_times;
+        global $log_txt;
+
         $sys_times->switch(system_time_type::DB_WRITE);
 
-
-        log_echo('DROP TABLE ' . $table_name);
+        $log_txt->echo_log('DROP TABLE ' . $table_name);
         if ($this->has_table($table_name)) {
             $sql = 'drop table ' . $table_name . ' cascade;';
             try {
@@ -5726,10 +5742,11 @@ class sql_db
     function reset_seq(string $seq_name, int $start_id = 1): void
     {
         global $sys_times;
+        global $log_txt;
+
         $sys_times->switch(system_time_type::DB_WRITE);
 
-
-        log_echo('RESET SEQUENCE ' . $seq_name);
+        $log_txt->echo_log('RESET SEQUENCE ' . $seq_name);
         $sql = 'ALTER SEQUENCE ' . $seq_name . ' RESTART ' . $start_id . ';';
         try {
             $this->exe($sql);

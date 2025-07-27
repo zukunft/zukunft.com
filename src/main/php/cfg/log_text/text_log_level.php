@@ -30,9 +30,9 @@
 
 */
 
-namespace test;
+namespace cfg\log_text;
 
-enum level: int
+enum text_log_level: int
 {
 
     // show all test results

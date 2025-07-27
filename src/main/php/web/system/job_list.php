@@ -32,12 +32,14 @@
 
 namespace html\system;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'styles.php';
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_SYSTEM_PATH . 'job.php';
-include_once WEB_USER_PATH . 'user_message.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SYSTEM . 'job.php';
+include_once html_paths::USER . 'user_message.php';
 
 use html\html_base;
 use html\sandbox\list_dsp;

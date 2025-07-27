@@ -34,10 +34,12 @@
 
 namespace html;
 
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once WEB_HTML_PATH . 'styles.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::HTML . 'styles.php';
+include_once paths::SHARED . 'library.php';
 
 use shared\api;
 use shared\library;

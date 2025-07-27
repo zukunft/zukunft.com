@@ -35,17 +35,21 @@
 
 namespace cfg\value;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_type.php';
-//include_once MODEL_REF_PATH . 'source_db.php';
-//include_once MODEL_USER_PATH . 'user.php';
-//include_once MODEL_LANGUAGE_PATH . 'language.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_type.php';
+//include_once paths::MODEL_REF . 'source_db.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_LANGUAGE . 'language.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_type;
@@ -93,7 +97,7 @@ class value_db
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR_EX_STD = array(
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // list of the user specific datetime database field names
@@ -115,14 +119,14 @@ class value_db
         self::FLD_VALUE,
         source_db::FLD_ID,
         sandbox_multi::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // list of the user specific numeric database field names for text tables and queries
     const FLD_NAMES_NUM_USR_TEXT = array(
         source_db::FLD_ID,
         sandbox_multi::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // list of the user specific numeric database field names for timetables and queries
@@ -130,14 +134,14 @@ class value_db
         self::FLD_VALUE_TIME,
         source_db::FLD_ID,
         sandbox_multi::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // list of the user specific numeric database field names for geo point tables and queries
     const FLD_NAMES_NUM_USR_GEO = array(
         source_db::FLD_ID,
         sandbox_multi::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
@@ -145,7 +149,7 @@ class value_db
         self::FLD_VALUE,
         source_db::FLD_ID,
         sandbox_multi::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // list of field names that are only on the user sandbox row

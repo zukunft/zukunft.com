@@ -32,7 +32,9 @@
 
 namespace unit;
 
-include_once MODEL_ELEMENT_PATH . 'element_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_ELEMENT . 'element_list.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -85,8 +87,7 @@ class element_tests
 
         $t->subheader($ts . 'element api');
         $elm = $t->element();
-        // TODO Prio 0 activate
-        //$t->assert_api_json($elm);
+        $t->assert_api_json($elm);
 
         // JSON export list
         /*

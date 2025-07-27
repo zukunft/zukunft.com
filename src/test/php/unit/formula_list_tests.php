@@ -28,8 +28,11 @@
 
 namespace unit;
 
-include_once MODEL_FORMULA_PATH . 'formula_list.php';
-include_once WEB_FORMULA_PATH . 'formula_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::MODEL_FORMULA . 'formula_list.php';
+include_once html_paths::FORMULA . 'formula_list.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;

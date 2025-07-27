@@ -32,10 +32,12 @@
 
 namespace html;
 
-include_once WEB_HELPER_PATH . 'data_object.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_SHEET_PATH . 'position_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::SHEET . 'position_list.php';
 
 use html\helper\data_object;
 use html\word\triple;

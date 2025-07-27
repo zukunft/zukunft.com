@@ -32,15 +32,15 @@
 
 namespace cfg\import;
 
-include_once EXPORT_PATH . 'export.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'library.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
 
-use cfg\export\export;
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'json_fields.php';
+
 use cfg\phrase\phrase_list;
 use cfg\user\user;
 use shared\json_fields;

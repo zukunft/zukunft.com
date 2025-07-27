@@ -32,7 +32,9 @@
 
 namespace cfg\helper;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 
 use cfg\sandbox\sandbox_link_named;
 

@@ -45,7 +45,9 @@
 
 namespace unit;
 
-include_once MODEL_CONST_PATH . 'def.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_CONST . 'def.php';
 
 use cfg\const\def;
 use cfg\db\sql_creator;

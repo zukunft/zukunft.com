@@ -44,41 +44,44 @@
 
 namespace test;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_CONST_PATH . 'def.php';
-include_once MODEL_CONST_PATH . 'files.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_COMPONENT_PATH . 'component_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
-include_once MODEL_RESULT_PATH . 'results.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_db.php';
-include_once MODEL_VALUE_PATH . 'value_time.php';
-include_once MODEL_VALUE_PATH . 'value_text.php';
-include_once MODEL_VALUE_PATH . 'value_geo.php';
-include_once MODEL_VALUE_PATH . 'value_ts_data.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'position_types.php';
-include_once SHARED_ENUM_PATH . 'source_types.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_CONST_PATH . 'components.php';
-include_once SHARED_CONST_PATH . 'formulas.php';
-include_once SHARED_CONST_PATH . 'groups.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'values.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_COMPONENT . 'component_list.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
+include_once paths::MODEL_RESULT . 'results.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_db.php';
+include_once paths::MODEL_VALUE . 'value_time.php';
+include_once paths::MODEL_VALUE . 'value_text.php';
+include_once paths::MODEL_VALUE . 'value_geo.php';
+include_once paths::MODEL_VALUE . 'value_ts_data.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'position_types.php';
+include_once paths::SHARED_ENUM . 'source_types.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'groups.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'values.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -498,6 +501,7 @@ class create_test_objects extends test_base
     }
 
     /**
+     * TODO Prio 1 fill up all used vars
      * @return user used for unit testing with all vars set
      */
     function user_filled(): user
@@ -505,6 +509,7 @@ class create_test_objects extends test_base
         $usr = new user();
         $usr->set_name(users::TEST_USER_NAME);
         $usr->ip_addr = users::TEST_USER_IP;
+        $usr->excluded = true;
         return $usr;
     }
 
@@ -516,6 +521,7 @@ class create_test_objects extends test_base
         $usr = new user();
         $usr->set(users::SYSTEM_TEST_ID, users::SYSTEM_TEST_NAME, users::SYSTEM_TEST_EMAIL);
         $usr->set_profile(user_profiles::TEST);
+        $usr->set_description(users::SYSTEM_TEST_COM);
         return $usr;
     }
 
@@ -2703,7 +2709,7 @@ class create_test_objects extends test_base
         $frm = $this->formula_filled();
         $frm->include();
         $frm->set_id(0);
-        $frm->set_name(formulas::SYSTEM_TEXT_ADD);
+        $frm->set_name(formulas::SYSTEM_TEST_ADD);
         return $frm;
     }
 
@@ -2787,7 +2793,7 @@ class create_test_objects extends test_base
     function formula_add_by_func(): formula
     {
         $frm = new formula($this->usr1);
-        $frm->set_name(formulas::SYSTEM_TEXT_ADD_VIA_FUNC);
+        $frm->set_name(formulas::SYSTEM_TEST_ADD_VIA_FUNC);
         $frm->set_user_text(formulas::INCREASE_EXP, $this->term_list_increase());
         $frm->set_type(formula_type::CALC, $this->usr1);
         return $frm;
@@ -2800,7 +2806,7 @@ class create_test_objects extends test_base
     function formula_add_by_sql(): formula
     {
         $frm = new formula($this->usr1);
-        $frm->set_name(formulas::SYSTEM_TEXT_ADD_VIA_SQL);
+        $frm->set_name(formulas::SYSTEM_TEST_ADD_VIA_SQL);
         $frm->set_user_text(formulas::INCREASE_EXP, $this->phrase_list_increase()->term_list());
         $frm->set_type(formula_type::CALC, $this->usr1);
         return $frm;

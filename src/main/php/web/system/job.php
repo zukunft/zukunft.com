@@ -31,12 +31,14 @@
 
 namespace html\system;
 
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use DateTime;
 use DateTimeInterface;

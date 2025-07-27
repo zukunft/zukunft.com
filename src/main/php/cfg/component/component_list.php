@@ -40,26 +40,32 @@
 
 namespace cfg\component;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_db.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once SHARED_TYPES_PATH . 'component_type.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED_TYPES . 'component_type.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -67,6 +73,7 @@ use cfg\db\sql_db;
 use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\helper\data_object;
+use cfg\import\import;
 use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_named;
 use cfg\sandbox\sandbox_link_named;
@@ -74,11 +81,10 @@ use cfg\helper\combine_named;
 use cfg\helper\type_list;
 use cfg\user\user;
 use cfg\user\user_message;
-use cfg\view\view;
 use cfg\view\view_db;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
+use shared\const\triples;
+use shared\const\words;
+use shared\enum\messages as msg_id;
 use shared\types\component_type as comp_type_shared;
 
 class component_list extends sandbox_list_named
@@ -190,7 +196,24 @@ class component_list extends sandbox_list_named
     }
 
     /**
-     * create an SQL statement to retrieve a list of sources from the database
+     * set the SQL query parameters to load a list of components by the names
+     * TODO use name_field() function to avoid overwrites
+     * @param sql_creator $sc with the target db_type set
+     * @param array $names a list of strings with the word names
+     * @param string $fld the name of the name field
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_names(
+        sql_creator $sc,
+        array $names,
+        string $fld = component_db::FLD_NAME
+    ): sql_par
+    {
+        return parent::load_sql_by_names($sc, $names, $fld);
+    }
+
+    /**
+     * create an SQL statement to retrieve a list of components from the database
      *
      * @param sql_creator $sc with the target db_type set
      * @param array $ids component ids that should be loaded
@@ -302,18 +325,132 @@ class component_list extends sandbox_list_named
     }
 
     /**
-     * save all components of this list
-     * TODO create one SQL and commit statement for faster execution
+     * add or update all components to the database
+     * starting with the $cache that contains the words, triples, verbs
+     * add the components that does not yet have a database id
+     * similar to triple_list->save_with_cache but using the term_list
      *
+     * @param import|null $imp the import object with the filename and the estimated time of arrival
      * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(): user_message
+    function save(import $imp = null): user_message
     {
-        $result = new user_message();
-        foreach ($this->lst() as $cmp) {
-            $result->add($cmp->save());
+        global $cfg;
+
+        $usr_msg = new user_message();
+
+        $load_per_sec = $cfg->get_by([words::COMPONENTS, words::LOAD, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $save_per_sec = $cfg->get_by([words::COMPONENTS, words::STORE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $upd_per_sec = $cfg->get_by([words::COMPONENTS, words::UPDATE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $del_per_sec = $cfg->get_by([words::COMPONENTS, words::DELETE, triples::OBJECTS_PER_SECOND, triples::EXPECTED_TIME, words::IMPORT], 1);
+        $max_frm_levels = $cfg->get_by([words::COMPONENTS, triples::MAX_LEVELS, words::IMPORT], 99);
+
+        if ($this->is_empty()) {
+            log_info('no components to save');
+        } else {
+
+            // repeat filling the database id to the component list
+            // and adding missing components to the database
+            // until it is clear that a component is missing
+            $frm_added = true;
+            $level = 0;
+            $db_lst_all = new component_list($this->user());
+            $add_lst = new component_list($this->user());
+            while ($frm_added and $level < $max_frm_levels) {
+                $frm_added = false;
+                $usr_msg->unset_added_depending();
+
+                // get the components that needs to be added
+                // TODO check if other list save function are using the cache instead of this here
+                $chk_lst = clone $this;
+                $load_lst = $chk_lst->missing_ids();
+
+                // load the components by name from the database that does not yet have a database id
+                $step_time = $load_lst->count() / $load_per_sec;
+                $imp->step_start(msg_id::LOAD, component::class, $load_lst->count(), $step_time);
+                $db_lst = new component_list($this->user());
+                // force to load all names including the components excluded by the user to potential include the components due to the import
+                // TODO add load_all = true also to the other objects
+                $db_lst->load_by_names($load_lst->names(true), true);
+                $imp->step_end($load_lst->count(), $load_per_sec);
+
+                // fill up the overall db list with db value for later detection of the components that needs to be updated
+                $db_lst_all->merge($db_lst);
+
+                // fill up the loaded list with db value to select only the components that really needs to be inserted
+                $load_lst->fill_by_name($db_lst, true, false);
+
+                // select the components that are ready to be added to the database
+                $load_lst = $load_lst->get_ready($usr_msg, $imp->file_name);
+
+                // get the components that still needs to be added
+                // TODO check if other list save function are using the cache instead of this here
+                $add_lst = $load_lst->missing_ids();
+
+                // create any missing sql insert functions and insert the missing components
+                if (!$add_lst->is_empty()) {
+
+                    $step_time = $add_lst->count() / $save_per_sec;
+                    $imp->step_start(msg_id::SAVE, component::class, $add_lst->count(), $step_time);
+                    $usr_msg->add($add_lst->insert($db_lst_all, true, $imp, component::class));
+                    if ($add_lst->count() > 0) {
+                        $usr_msg->set_added_depending();
+                        $frm_added = true;
+                    }
+                    $imp->step_end($add_lst->count(), $save_per_sec);
+                }
+
+                $level++;
+            }
+
+            // reload the id of the components added with the last run
+            // TODO use the insert message instead to increase speed
+            $db_lst = new component_list($this->user());
+            if (!$add_lst->is_empty()) {
+                $db_lst->load_by_names($add_lst->names(true), true);
+            }
+
+            // fill up the overall db list with db value for later detection of the components that needs to be updated
+            $db_lst_all->merge($db_lst);
+
+
+            // create any missing sql update functions and update the components
+            $usr_msg->add($this->update($db_lst_all, true, $imp, component::class, $upd_per_sec));
+
+
+            // fill up the main list with the components to check if anything is missing
+            $this->fill_by_name($db_lst_all, true);
+
+
+            // create any missing sql delete functions and delete unused sandbox objects
+            $usr_msg->add($this->delete($db_lst_all, true, $imp, component::class, $del_per_sec));
+
         }
-        return $result;
+
+        return $usr_msg;
+    }
+
+    /**
+     * get a list of components that are ready to be added to the database
+     * TODO Prio 2 move to
+     * @return component_list list of the components that have an id or a name
+     */
+    function get_ready(user_message $usr_msg, string $file_name = ''): component_list
+    {
+        $cmp_lst = new component_list($this->user());
+        foreach ($this->lst() as $cmp) {
+            $cmp_msg = $cmp->db_ready();
+            if ($cmp_msg->is_ok()) {
+                $cmp_lst->add_by_name($cmp);
+            } else {
+                $usr_msg->add($cmp_msg);
+                $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_NOT_READY, [
+                    msg_id::VAR_FILE_NAME => $file_name,
+                    msg_id::VAR_FORMULA => $cmp->dsp_id(),
+                ]);
+            }
+        }
+        return $cmp_lst;
     }
 
 }

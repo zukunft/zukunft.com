@@ -32,13 +32,17 @@
 
 namespace cfg\log;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\sandbox\sandbox_named;
 use shared\library;
 
@@ -65,8 +69,8 @@ class change_table_field
         [
             [change_field::FLD_ID, 'f', self::FLD_ID_AS],
             [[[change_table::FLD_ID, 't'], [change_field::FLD_NAME, 'f']], '', self::FLD_NAME_AS],
-            [sandbox_named::FLD_DESCRIPTION, 'f'],
-            [[sql::FLD_CODE_ID, 'f', [[change_table::FLD_ID, 't'], [change_field::FLD_NAME, 'f']]], '', self::FLD_CODE_ID_AS]
+            [sql_db::FLD_DESCRIPTION, 'f'],
+            [[sql_db::FLD_CODE_ID, 'f', [[change_table::FLD_ID, 't'], [change_field::FLD_NAME, 'f']]], '', self::FLD_CODE_ID_AS]
         ],
         [[change_table::FLD_ID, 't'], [change_field::FLD_TABLE, 'f']]
     ];

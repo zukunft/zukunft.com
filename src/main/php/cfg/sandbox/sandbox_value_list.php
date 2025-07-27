@@ -32,35 +32,37 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
+use cfg\const\paths;
 
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_list.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_db.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_GROUP_PATH . 'group_id.php';
-//include_once MODEL_GROUP_PATH . 'result_id.php';
-//include_once MODEL_PHRASE_PATH . 'phrase.php';
-//include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-//include_once MODEL_RESULT_PATH . 'result.php';
-//include_once MODEL_RESULT_PATH . 'result_db.php';
-//include_once MODEL_RESULT_PATH . 'result_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_db.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VALUE_PATH . 'value_list.php';
-//include_once MODEL_VALUE_PATH . 'value_text.php';
-//include_once MODEL_VALUE_PATH . 'value_time.php';
-//include_once MODEL_VALUE_PATH . 'value_geo.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'library.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_list.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_id.php';
+//include_once paths::MODEL_GROUP . 'result_id.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+//include_once paths::MODEL_PHRASE . 'phrase_list.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+//include_once paths::MODEL_RESULT . 'result_db.php';
+//include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_db.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value_list.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;

@@ -32,7 +32,9 @@
 
 namespace unit_ui;
 
-include_once WEB_VIEW_PATH . 'view_list.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::VIEW . 'view_list.php';
 
 use html\html_base;
 use html\view\view_list as view_list_dsp;

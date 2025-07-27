@@ -32,9 +32,11 @@
 
 namespace unit;
 
-include_once MODEL_USER_PATH . 'user_message.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_USER . 'user_message.php';
 include_once TEST_CONST_PATH . 'files.php';
-include_once SHARED_CONST_PATH . 'users.php';
+include_once paths::SHARED_CONST . 'users.php';
 
 use cfg\user\user_message;
 use DateTimeInterface;

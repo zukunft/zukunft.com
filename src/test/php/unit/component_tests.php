@@ -32,7 +32,9 @@
 
 namespace unit;
 
-include_once MODEL_COMPONENT_PATH . 'component.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_COMPONENT . 'component.php';
 
 use cfg\component\component;
 use cfg\component\component_type;

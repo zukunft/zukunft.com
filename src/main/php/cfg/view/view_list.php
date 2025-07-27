@@ -32,23 +32,27 @@
 
 namespace cfg\view;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_named.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_db.php';
-include_once MODEL_VIEW_PATH . 'view_type.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -59,13 +63,13 @@ use cfg\db\sql_par_type;
 use cfg\helper\combine_named;
 use cfg\helper\data_object;
 use cfg\helper\type_list;
+use cfg\import\import;
 use cfg\sandbox\sandbox_link_named;
 use cfg\sandbox\sandbox_list_named;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\user\user_message;
-
-global $sys_msk_cac;
+use shared\const\words;
 
 class view_list extends sandbox_list_named
 {
@@ -150,6 +154,23 @@ class view_list extends sandbox_list_named
         $qp->par = $sc->get_par();
 
         return $qp;
+    }
+
+    /**
+     * set the SQL query parameters to load a list of views by the names
+     * TODO use name_field() function to avoid overwrites
+     * @param sql_creator $sc with the target db_type set
+     * @param array $names a list of strings with the word names
+     * @param string $fld the name of the name field
+     * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
+     */
+    function load_sql_by_names(
+        sql_creator $sc,
+        array $names,
+        string $fld = view_db::FLD_NAME
+    ): sql_par
+    {
+        return parent::load_sql_by_names($sc, $names, $fld);
     }
 
     /**
@@ -255,15 +276,19 @@ class view_list extends sandbox_list_named
      * save all views of this list
      * TODO create one SQL and commit statement for faster execution
      *
+     * @param import|null $imp the import object with the estimate of the total save time
      * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(): user_message
+    function save(import $imp = null): user_message
     {
-        $result = new user_message();
+        $usr_msg = parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->user()));
+        // TODO Prio 2 use list based saving of the component links
         foreach ($this->lst() as $msk) {
-            $result->add($msk->save());
+            if ($msk->has_components()) {
+                $usr_msg->add($msk->save_component_links());
+            }
         }
-        return $result;
+        return $usr_msg;
     }
 
 }

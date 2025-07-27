@@ -32,20 +32,21 @@
 
 namespace cfg\phrase;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once WEB_PHRASE_PATH . 'term_list.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -445,22 +446,6 @@ class term_list extends sandbox_list_named
     }
 
     /**
-     * add the terms of the given list to this list but avoid duplicates
-     * merge as a function, because the array_merge does not create an object
-     * @param term_list $lst_to_add with the terms to be added
-     * @return term_list with all terms of this list and the given list
-     */
-    function merge(term_list $lst_to_add): term_list
-    {
-        if (!$lst_to_add->is_empty()) {
-            foreach ($lst_to_add->lst() as $trm_to_add) {
-                $this->add($trm_to_add);
-            }
-        }
-        return $this;
-    }
-
-    /**
      * add the terms of the given list to this list
      * but avoid duplicates by the name
      * merge as a function, because the array_merge does not create an object
@@ -549,7 +534,7 @@ class term_list extends sandbox_list_named
      * this function is called from dsp_id, so no call of another function is allowed
      * TODO move to a parent object for phrase list and term list
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $name_lst = array();
         foreach ($this->lst() as $trm) {

@@ -35,14 +35,18 @@
 
 namespace cfg\formula;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+//include_once paths::MODEL_VIEW . 'view.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\sandbox\sandbox;
@@ -103,7 +107,7 @@ class formula_db
     );
     // list of fields that CAN be changed by the user
     const FLD_LST_USER_CAN_CHANGE = array(
-        [sandbox_named::FLD_DESCRIPTION, sandbox_named::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TYPE, self::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, formula_type::class, self::FLD_TYPE_COM],
         [self::FLD_ALL_NEEDED, self::FLD_ALL_NEEDED_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_ALL_NEEDED_COM],
         [self::FLD_LAST_UPDATE, self::FLD_LAST_UPDATE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_LAST_UPDATE_COM],
@@ -119,14 +123,14 @@ class formula_db
     const FLD_NAMES_USR = array(
         self::FLD_FORMULA_TEXT,
         self::FLD_FORMULA_USER_TEXT,
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
         self::FLD_ALL_NEEDED,
         self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -135,11 +139,11 @@ class formula_db
         self::FLD_NAME,
         self::FLD_FORMULA_TEXT,
         self::FLD_FORMULA_USER_TEXT,
-        sandbox_named::FLD_DESCRIPTION,
+        sql_db::FLD_DESCRIPTION,
         self::FLD_TYPE,
         self::FLD_ALL_NEEDED,
         self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );

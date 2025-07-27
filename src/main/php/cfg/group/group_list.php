@@ -32,17 +32,19 @@
 
 namespace cfg\group;
 
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -715,7 +717,7 @@ class group_list extends sandbox_list
     /**
      * return a list of the word names
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $phr_lst) {

@@ -166,6 +166,7 @@ class views
     const TEST_ADD_NAME = 'System Test View';
     const TEST_ADD_VIA_FUNC_NAME = 'System Test View added via sql function';
     const TEST_ADD_VIA_SQL_NAME = 'System Test View added via sql insert';
+    const TEST_ADD_COM = 'System Test View Description';
     const TEST_ADD = 'System Test View Code Id';
     const TEST_RENAMED_NAME = 'System Test View Renamed';
     const TEST_COMPLETE_NAME = 'System Test View Complete';

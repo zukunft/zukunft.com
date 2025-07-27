@@ -35,19 +35,23 @@
 
 namespace cfg\word;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_LANGUAGE_PATH . 'language.php';
-//include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-//include_once MODEL_VERB_PATH . 'verb.php';
-//include_once MODEL_VERB_PATH . 'verb_db.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_LANGUAGE . 'language.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+//include_once paths::MODEL_VERB . 'verb.php';
+//include_once paths::MODEL_VERB . 'verb_db.php';
+//include_once paths::MODEL_VIEW . 'view.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\language\language;
@@ -71,7 +75,7 @@ class triple_db
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
     const FLD_ID = 'triple_id';
-    const FLD_FROM_COM = 'the phrase_id that is linked';
+    const FLD_FROM_COM = 'the phrase_id that is linked which can be null e.g. if a symbol is assigned to a triple (m/s is symbol for meter per second)';
     const FLD_FROM = 'from_phrase_id';
     const FLD_VERB_COM = 'the verb_id that defines how the phrases are linked';
     const FLD_TO_COM = 'the phrase_id to which the first phrase is linked';
@@ -99,7 +103,7 @@ class triple_db
 
     // list of fields that MUST be set by one user
     const FLD_LST_LINK = array(
-        [self::FLD_FROM, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_FROM_COM],
+        [self::FLD_FROM, sql_field_type::INT_UNIQUE_PART, sql_field_default::NULL, sql::INDEX, '', self::FLD_FROM_COM],
         [verb_db::FLD_ID, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, verb::class, self::FLD_VERB_COM],
         [self::FLD_TO, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TO_COM],
     );
@@ -112,7 +116,7 @@ class triple_db
         [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
         [self::FLD_NAME_GIVEN, self::FLD_NAME_GIVEN_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_GIVEN_COM],
         [self::FLD_NAME_AUTO, self::FLD_NAME_AUTO_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_AUTO_COM],
-        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_COND_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_COND_ID_COM],
         [phrase::FLD_TYPE, phrase::FLD_TYPE_SQL_TYP, sql_field_default::NULL, sql::INDEX, phrase_type::class, word_db::FLD_TYPE_COM],
         [self::FLD_VIEW, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, view::class, self::FLD_VIEW_COM],
@@ -121,7 +125,7 @@ class triple_db
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
         [self::FLD_INACTIVE, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_INACTIVE_COM],
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
     );
 
     // all database field names excluding the id and excluding the user specific fields
@@ -141,12 +145,12 @@ class triple_db
         self::FLD_NAME,
         self::FLD_NAME_GIVEN,
         self::FLD_NAME_AUTO,
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_VALUES,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -155,10 +159,10 @@ class triple_db
         self::FLD_NAME,
         self::FLD_NAME_GIVEN,
         self::FLD_NAME_AUTO,
-        sandbox_named::FLD_DESCRIPTION,
+        sql_db::FLD_DESCRIPTION,
         phrase::FLD_TYPE,
         self::FLD_VALUES,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );

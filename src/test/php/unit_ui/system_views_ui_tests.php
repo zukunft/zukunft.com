@@ -32,7 +32,9 @@
 
 namespace unit_ui;
 
-include_once SHARED_CONST_PATH . 'views.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 use html\html_base;
 use shared\const\views as view_shared;

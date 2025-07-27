@@ -32,10 +32,13 @@
 
 namespace unit;
 
-include_once DB_PATH . 'sql_creator.php';
-include_once MODEL_FORMULA_PATH . 'fig_ids.php';
-include_once MODEL_FORMULA_PATH . 'figure_list.php';
-include_once WEB_FIGURE_PATH . 'figure_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::DB . 'sql_creator.php';
+include_once paths::MODEL_FORMULA . 'fig_ids.php';
+include_once paths::MODEL_FORMULA . 'figure_list.php';
+include_once html_paths::FIGURE . 'figure_list.php';
 
 use cfg\db\sql_creator;
 use cfg\formula\fig_ids;

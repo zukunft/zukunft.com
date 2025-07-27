@@ -32,7 +32,9 @@
 
 namespace unit_read;
 
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'user_profiles.php';
 
 use cfg\user\user_profile_list;
 use cfg\user\user;

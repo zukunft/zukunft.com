@@ -64,7 +64,9 @@
 
 */
 
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::SHARED . 'library.php';
 
 use cfg\formula\expression;
 use shared\const\chars;

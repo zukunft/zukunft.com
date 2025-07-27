@@ -32,11 +32,13 @@
 
 namespace unit;
 
-include_once MODEL_SYSTEM_PATH . 'pod_type.php';
-include_once MODEL_SYSTEM_PATH . 'pod_status.php';
-include_once MODEL_SYSTEM_PATH . 'pod.php';
-include_once MODEL_PHRASE_PATH . 'phrase_table_status.php';
-include_once MODEL_PHRASE_PATH . 'phrase_table.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'pod_type.php';
+include_once paths::MODEL_SYSTEM . 'pod_status.php';
+include_once paths::MODEL_SYSTEM . 'pod.php';
+include_once paths::MODEL_PHRASE . 'phrase_table_status.php';
+include_once paths::MODEL_PHRASE . 'phrase_table.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;

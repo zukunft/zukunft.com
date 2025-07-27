@@ -32,10 +32,12 @@
 
 namespace html;
 
-include_once WEB_HELPER_PATH . 'data_object.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_SHEET_PATH . 'position_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::SHEET . 'position_list.php';
 
 use html\phrase\phrase;
 use html\phrase\phrase_list;

@@ -34,32 +34,34 @@
 
 namespace cfg\verb;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-//include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'changes_norm.php';
-include_once MODEL_LOG_PATH . 'changes_big.php';
-//include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+//include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_LOG . 'changes_norm.php';
+include_once paths::MODEL_LOG . 'changes_big.php';
+//include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -175,9 +177,9 @@ class verb extends type_object
     {
         $result = parent::row_mapper($db_row, $id_fld);
         if ($result) {
-            if (array_key_exists(sql::FLD_CODE_ID, $db_row)) {
-                if ($db_row[sql::FLD_CODE_ID] != null) {
-                    $this->set_code_id_db($db_row[sql::FLD_CODE_ID]);
+            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
+                if ($db_row[sql_db::FLD_CODE_ID] != null) {
+                    $this->set_code_id_db($db_row[sql_db::FLD_CODE_ID]);
                 }
             }
             $this->set_name($db_row[$name_fld]);
@@ -193,8 +195,8 @@ class verb extends type_object
             if (array_key_exists(verb_db::FLD_FORMULA, $db_row)) {
                 $this->set_formula_name($db_row[verb_db::FLD_FORMULA]);
             }
-            if (array_key_exists(sandbox_named::FLD_DESCRIPTION, $db_row)) {
-                $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
+            if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
+                $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             }
             if (array_key_exists(verb_db::FLD_WORDS, $db_row)) {
                 if ($db_row[verb_db::FLD_WORDS] == null) {
@@ -469,7 +471,7 @@ class verb extends type_object
     function load_sql_by_code_id(sql_creator $sc, string $code_id, string $class = self::class): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id', $class);
-        $sc->add_where(sql::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -866,7 +868,7 @@ class verb extends type_object
             $log->new_value = $this->code_id;
             $log->std_value = $db_rec->code_id;
             $log->row_id = $this->id();
-            $log->set_field(sql::FLD_CODE_ID);
+            $log->set_field(sql_db::FLD_CODE_ID);
             $usr_msg = $this->save_field_do($db_con, $log);
         }
         return $usr_msg;
@@ -947,7 +949,7 @@ class verb extends type_object
             $log->new_value = $this->description;
             $log->std_value = $db_rec->description;
             $log->row_id = $this->id();
-            $log->set_field(sandbox_named::FLD_DESCRIPTION);
+            $log->set_field(sql_db::FLD_DESCRIPTION);
             $usr_msg = $this->save_field_do($db_con, $log);
         }
         return $usr_msg;

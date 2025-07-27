@@ -35,10 +35,12 @@
 
 namespace cfg\helper;
 
-include_once MODEL_HELPER_PATH . 'db_object_multi.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use cfg\user\user;
 use cfg\user\user_message;

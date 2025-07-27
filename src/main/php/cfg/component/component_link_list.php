@@ -44,15 +44,17 @@
 
 namespace cfg\component;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link_list.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_db.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -319,12 +321,12 @@ class component_link_list extends sandbox_link_list
     /**
      * @return array with all component names linked usually to one view
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $lnk) {
             if ($lnk->component() != null) {
-                $name = $lnk->component()->name();
+                $name = $lnk->component()->name($ignore_excluded);
                 if ($name <> '') {
                     if (!in_array($name, $result)) {
                         $result[] = $name;

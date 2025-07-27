@@ -32,15 +32,18 @@
 
 namespace unit_ui;
 
-include_once SHARED_TYPES_PATH . 'component_type.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once WEB_COMPONENT_PATH . 'component_exe.php';
-include_once WEB_HTML_PATH . 'html_selector.php';
-include_once WEB_HTML_PATH . 'button.php';
-include_once WEB_RESULT_PATH . 'result_list.php';
-include_once WEB_VERB_PATH . 'verb_list.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once html_paths::COMPONENT . 'component_exe.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::VERB . 'verb_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 
 use cfg\component\component;
 use cfg\group\group;

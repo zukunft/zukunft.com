@@ -32,7 +32,9 @@
 
 namespace unit_ui;
 
-include_once WEB_USER_PATH . 'user.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::USER . 'user.php';
 
 use html\html_base;
 use html\user\user as user_dsp;

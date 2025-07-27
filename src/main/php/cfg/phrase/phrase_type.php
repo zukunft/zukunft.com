@@ -32,10 +32,12 @@
 
 namespace cfg\phrase;
 
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;

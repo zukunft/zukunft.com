@@ -34,53 +34,55 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_db.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_GROUP_PATH . 'result_id.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_HELPER_PATH . 'db_object_multi.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_LOG_PATH . 'change_link.php';
-include_once MODEL_LOG_PATH . 'change_value.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_REF_PATH . 'source_db.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_RESULT_PATH . 'result_db.php';
-include_once MODEL_WORD_PATH . 'triple_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_db.php';
-//include_once MODEL_VALUE_PATH . 'value_time.php';
-//include_once MODEL_VALUE_PATH . 'value_text.php';
-//include_once MODEL_VALUE_PATH . 'value_geo.php';
-//include_once MODEL_VALUE_PATH . 'value_time_series.php';
-include_once MODEL_WORD_PATH . 'word_list.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_GROUP . 'result_id.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_LOG . 'change_value.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_RESULT . 'result_db.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_db.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+//include_once paths::MODEL_VALUE . 'value_time_series.php';
+include_once paths::MODEL_WORD . 'word_list.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -979,7 +981,7 @@ class sandbox_value extends sandbox_multi
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array(user::FLD_ID));
         $this->load_sql_where_id($qp, $sc, true);
-        $sc->add_where(sandbox::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
+        $sc->add_where(sql_db::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -1422,6 +1424,30 @@ class sandbox_value extends sandbox_multi
     function trp_lst(): triple_list
     {
         return $this->phrase_list()->triples();
+    }
+
+    /**
+     * load a value by the phrase ids
+     * @param array $names with the word of triple names
+     * @param  phrase_list|null $phr_lst with the cache of the phrases already loaded
+     * @return int the id of the object found and zero if nothing is found
+     */
+    function load_by_names(array $names, phrase_list $phr_lst = null): int
+    {
+        $load_lst = new phrase_list($this->user());
+        if ($phr_lst == null) {
+            $load_lst->load_by_names($names);
+        } else {
+            foreach ($names as $name) {
+                $phr = $phr_lst->get_by_name($name);
+                if ($phr == null) {
+                    $phr = new phrase($this->user());
+                    $phr->load_by_name($name);
+                }
+                $load_lst->add($phr);
+            }
+        }
+        return $this->load_by_grp($load_lst->get_grp_id());
     }
 
 

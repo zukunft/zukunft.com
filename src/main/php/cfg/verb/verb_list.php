@@ -32,22 +32,24 @@
 
 namespace cfg\verb;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-//include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_WORD_PATH . 'triple_db.php';
-include_once SHARED_ENUM_PATH . 'foaf_direction.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+//include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 
 use cfg\db\sql_db;
 use cfg\db\sql_par;
@@ -146,7 +148,7 @@ class verb_list extends type_list
             $db_con->set_class(triple::class);
             $db_con->set_name($qp->name);
             $db_con->set_usr($this->user()->id());
-            $db_con->set_usr_num_fields(array(sandbox::FLD_EXCLUDED));
+            $db_con->set_usr_num_fields(array(sql_db::FLD_EXCLUDED));
             $db_con->set_join_fields(array_merge(verb_db::FLD_NAMES, array(verb_db::FLD_NAME)), verb::class);
             $db_con->set_fields(array(verb_db::FLD_ID));
             // set the where clause depending on the values given
@@ -273,6 +275,11 @@ class verb_list extends type_list
         $vrb->set_code_id_db(verbs::MEASURE);
         $this->add_verb($vrb);
         $vrb = new verb();
+        $vrb->set_id(verbs::ALIAS_ID);
+        $vrb->set_name(verbs::ALIAS_NAME);
+        $vrb->set_code_id_db(verbs::ALIAS);
+        $this->add_verb($vrb);
+        $vrb = new verb();
         $vrb->set_id(verbs::CAN_BE_ID);
         $vrb->set_name(verbs::CAN_BE_NAME);
         $vrb->set_code_id_db(verbs::CAN_BE);
@@ -293,6 +300,11 @@ class verb_list extends type_list
         $vrb->set_code_id_db(verbs::CAN_CAUSE);
         $this->add_verb($vrb);
         $vrb = new verb();
+        $vrb->set_id(verbs::PER_ID);
+        $vrb->set_name(verbs::PER_NAME);
+        $vrb->set_code_id_db(verbs::PER);
+        $this->add_verb($vrb);
+        $vrb = new verb();
         $vrb->set_id(verbs::SYMBOL_ID);
         $vrb->set_name(verbs::SYMBOL_NAME);
         $vrb->set_code_id_db(verbs::SYMBOL);
@@ -304,6 +316,19 @@ class verb_list extends type_list
         $this->add_verb($vrb);
     }
 
+
+    /*
+     * cast
+     */
+
+    function term_list(): term_list
+    {
+        $trm_lst = new term_list($this->usr);
+        foreach ($this->lst() as $vrb) {
+            $trm_lst->add($vrb->term());
+        }
+        return $trm_lst;
+    }
 
     /*
      * info
@@ -327,6 +352,7 @@ class verb_list extends type_list
         }
         return $trm_lst;
     }
+
 
     /*
      * modify

@@ -36,7 +36,9 @@
 
 namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
 
 use cfg\helper\type_object;
 

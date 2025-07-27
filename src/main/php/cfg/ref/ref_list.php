@@ -32,19 +32,21 @@
 
 namespace cfg\ref;
 
-include_once DB_PATH . 'sql_db.php';
-//include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-//include_once MODEL_IMPORT_PATH . 'import.php';
-//include_once MODEL_REF_PATH . 'ref.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once SHARED_CONST_PATH . 'refs.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql_db.php';
+//include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+//include_once paths::MODEL_IMPORT . 'import.php';
+//include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use cfg\db\sql_db;
 use cfg\helper\type_list;

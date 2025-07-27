@@ -60,36 +60,39 @@
 
 namespace cfg\phrase;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_list.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once MODEL_VALUE_PATH . 'value_list.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_VERB_PATH . 'verb_db.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'word_list.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_WORD_PATH . 'triple_db.php';
-include_once MODEL_WORD_PATH . 'triple_list.php';
-include_once MODEL_PHRASE_PATH . 'trm_ids.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once SHARED_ENUM_PATH . 'foaf_direction.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_FORMULA . 'formula_list.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_list.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::MODEL_WORD . 'triple_list.php';
+include_once paths::MODEL_PHRASE . 'trm_ids.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -99,6 +102,7 @@ use cfg\formula\formula_list;
 use cfg\group\group;
 use cfg\group\group_id;
 use cfg\helper\data_object;
+use cfg\import\import;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_list_named;
 use cfg\user\user_message;
@@ -213,31 +217,6 @@ class phrase_list extends sandbox_list_named
 
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_like($sc, $pattern);
-        return $this->load($qp);
-    }
-
-    /**
-     * load the phrases including the related word or triple object
-     * by the given name list from the database
-     *
-     * @param array $names of phrase names that should be loaded
-     * @param phrase_list|null $phr_lst a list of preloaded phrase that should not be loaded again
-     * @return bool true if at least one phrase has been loaded
-     */
-    function load_by_names(array $names = [], ?phrase_list $phr_lst = null): bool
-    {
-        global $db_con;
-
-        // exclude the names that have been in the cache
-        if ($phr_lst != null) {
-            $names_to_load = array_diff($names, $phr_lst->names());
-        } else {
-            $names_to_load = $names;
-        }
-
-        // create the sql and load
-        $sc = $db_con->sql_creator();
-        $qp = $this->load_sql_by_names($sc, $names_to_load);
         return $this->load($qp);
     }
 
@@ -815,7 +794,7 @@ class phrase_list extends sandbox_list_named
             if ($db_phr_lst) {
                 log_debug('got ' . $lib->dsp_count($db_phr_lst));
                 foreach ($db_phr_lst as $db_phr) {
-                    if (is_null($db_phr[sandbox::FLD_EXCLUDED]) or $db_phr[sandbox::FLD_EXCLUDED] == 0) {
+                    if (is_null($db_phr[sql_db::FLD_EXCLUDED]) or $db_phr[sql_db::FLD_EXCLUDED] == 0) {
                         // add the phrase linked by the triple
                         if ($db_phr[phrase::FLD_ID] != 0 and !in_array($db_phr[phrase::FLD_ID], $this->ids())) {
                             $new_phrase = new phrase($this->user());
@@ -1420,22 +1399,6 @@ class phrase_list extends sandbox_list_named
                 }
             }
         }
-    }
-
-    /**
-     * add the phrases of the given list to this list but avoid duplicates
-     * merge as a function, because the array_merge does not create an object
-     * @param phrase_list $lst_to_add with the phrases to be added
-     * @return phrase_list with all phrases of this list and the given list
-     */
-    function merge(phrase_list $lst_to_add): phrase_list
-    {
-        if (!$lst_to_add->is_empty()) {
-            foreach ($lst_to_add->lst() as $phr_to_add) {
-                $this->add($phr_to_add);
-            }
-        }
-        return $this;
     }
 
     /**
@@ -2182,9 +2145,10 @@ class phrase_list extends sandbox_list_named
      * save all changes of the phrase list to the database
      * TODO speed up by creation one SQL statement
      *
+     * @param import|null $imp the import object with the estimate of the total save time
      * @return user_message the message that should be shown to the user if something went wrong
      */
-    function save(): user_message
+    function save(import $imp = null): user_message
     {
         $usr_msg = new user_message();
 
@@ -2291,12 +2255,12 @@ class phrase_list extends sandbox_list_named
      * this function is called from dsp_id, so no call of another function is allowed
      * TODO move to a parent object for phrase list and term list
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $name_lst = array();
         foreach ($this->lst() as $phr) {
             if ($phr != null) {
-                $name_lst[] = $phr->name();
+                $name_lst[] = $phr->name($ignore_excluded);
             }
         }
         return $name_lst;

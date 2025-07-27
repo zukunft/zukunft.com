@@ -32,12 +32,15 @@
 
 namespace unit;
 
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'word_db.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_db.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -197,14 +200,14 @@ class word_tests
         $wrd_db = $t->word();
         $wrd_db->fill($wrd_imp, $usr_sys);
         $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
-        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [sandbox_named::FLD_DESCRIPTION]);
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [sql_db::FLD_DESCRIPTION]);
         $test_name = 'check if the code id cannot be set by normal user';
         $wrd_imp = $t->word();
         $wrd_imp->set_code_id('test code id', $usr_sys);
         $wrd_db = $t->word();
         $wrd_db->fill($wrd_imp, $usr);
         $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();
-        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [sql::FLD_CODE_ID]);
+        $t->assert($t->name . 'fill id: ' . $test_name, $non_do_fld_names, [sql_db::FLD_CODE_ID]);
 
         $test_name = 'check if database would not be updated if only the name is given in import';
         $in_wrd = $t->word_name_only();

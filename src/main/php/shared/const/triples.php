@@ -43,7 +43,7 @@ class triples
 
     // keyword to select the system configuration
     const SYSTEM_CONFIG = 'system configuration';
-    const SYSTEM_CONFIG_ID = 129;
+    const SYSTEM_CONFIG_ID = 151;
 
     // triple names used for the system configuration
     const NUMBER_FORMAT = 'number format';
@@ -59,6 +59,7 @@ class triples
     const EXPECTED_TIME = 'expected time';
     const BYTES_PER_SECOND = 'bytes second';
     const OBJECTS_PER_SECOND = 'objects second';
+    const MAX_LEVELS = 'max levels';
     const AUTOMATIC_CREATE = 'automatic create';
     const ROW_LIMIT = 'row limit';
     const RESPONSE_TIME = 'response time';
@@ -70,7 +71,7 @@ class triples
     const MATH_CONST_COM = 'A mathematical constant that never changes e.g. Pi';
     const PI = 'Pi (math)';
     const PI_NAME = 'Pi (math)';
-    const PI_ID = 44;
+    const PI_ID = 51;
     const PI_COM = 'ratio of the circumference of a circle to its diameter';
     const PI_SYMBOL = 'π (unit symbol)';
     const PI_SYMBOL_NAME = 'π (unit symbol)';
@@ -88,44 +89,44 @@ class triples
 
     // triple used in the default start view
     const GLOBAL_PROBLEM = 'global problem';
-    const GLOBAL_PROBLEM_ID = 69;
+    const GLOBAL_PROBLEM_ID = 91;
     const GLOBAL_WARMING = 'global warming';
-    const GLOBAL_WARMING_ID = 72;
+    const GLOBAL_WARMING_ID = 94;
     const GWP = 'global warming potential';
-    const GWP_ID = 73;
+    const GWP_ID = 95;
     const TIME_POINTS = 'time points';
-    const TIME_POINTS_ID = 76;
+    const TIME_POINTS_ID = 98;
     const HAPPY_TIME_POINTS = 'happy time points';
-    const HAPPY_TIME_POINTS_ID = 80;
+    const HAPPY_TIME_POINTS_ID = 102;
     const GLOBAL_WARMING_PROBLEM = 'global warming (global problem)';
-    const GLOBAL_WARMING_PROBLEM_ID = 81;
+    const GLOBAL_WARMING_PROBLEM_ID = 103;
     const POPULISM_PROBLEM = 'populism (global problem)';
-    const POPULISM_PROBLEM_ID = 82;
+    const POPULISM_PROBLEM_ID = 104;
     const POTENTIAL_HEALTH_PROBLEM = 'health can be a global problem';
-    const POTENTIAL_HEALTH_PROBLEM_ID = 83;
+    const POTENTIAL_HEALTH_PROBLEM_ID = 105;
     const POVERTY_PROBLEM = 'poverty (global problem)';
-    const POVERTY_PROBLEM_ID = 84;
+    const POVERTY_PROBLEM_ID = 106;
     const POTENTIAL_EDUCATION_PROBLEM = 'education can be global problem';
-    const POTENTIAL_EDUCATION_PROBLEM_ID = 85;
+    const POTENTIAL_EDUCATION_PROBLEM_ID = 107;
     const CASH_FLOW = 'cash flow';
-    const CASH_FLOW_ID = 100;
+    const CASH_FLOW_ID = 122;
     const CASH_FLOW_STATEMENT = 'cash flow statement';
-    const CASH_FLOW_STATEMENT_ID = 101;
+    const CASH_FLOW_STATEMENT_ID = 124;
     const INCOME_TAX = 'income taxes';
-    const INCOME_TAX_ID = 102;
+    const INCOME_TAX_ID = 123;
 
     const TN_CUBIC_METER = 'm3';
 
     const CANTON_ZURICH = 'Zurich (Canton)';
-    const CANTON_ZURICH_ID = 106;
+    const CANTON_ZURICH_ID = 128;
     const CITY_ZH = 'Zurich (City)';
-    const CITY_ZH_ID = 107;
+    const CITY_ZH_ID = 129;
     const CITY_ZH_NAME = 'City of Zurich';
     const CITY_ZH_COM = 'the city of Zurich';
     const CITY_BE = 'Bern (City)';
-    const CITY_BE_ID = 108;
+    const CITY_BE_ID = 130;
     const CITY_GE = 'Geneva (City)';
-    const CITY_GE_ID = 109;
+    const CITY_GE_ID = 131;
     const CANTON_ZURICH_NAME = 'Canton Zurich';
     const COMPANY_ZURICH = "Zurich Insurance";
     const COMPANY_VESTAS = "Vestas SA";

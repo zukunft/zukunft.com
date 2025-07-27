@@ -32,8 +32,10 @@
 
 namespace test;
 
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\component\component;
 use cfg\component\component_link;

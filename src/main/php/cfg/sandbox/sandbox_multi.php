@@ -58,72 +58,74 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_HELPER_PATH . 'db_object_multi_user.php';
-//include_once MODEL_COMPONENT_PATH . 'component.php';
-//include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_ELEMENT_PATH . 'element.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_FORMULA_PATH . 'formula_db.php';
-//include_once MODEL_FORMULA_PATH . 'formula_link.php';
-//include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
-//include_once MODEL_GROUP_PATH . 'group.php';
-//include_once MODEL_GROUP_PATH . 'group_id.php';
-//include_once MODEL_GROUP_PATH . 'result_id.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_HELPER_PATH . 'db_object_multi.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-//include_once MODEL_LOG_PATH . 'change_link.php';
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_LOG_PATH . 'change_value.php';
-include_once MODEL_LOG_PATH . 'change_values_big.php';
-include_once MODEL_LOG_PATH . 'change_values_time_big.php';
-include_once MODEL_LOG_PATH . 'change_values_text_big.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_big.php';
-include_once MODEL_LOG_PATH . 'change_values_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_time_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_text_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_time_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_text_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_prime.php';
-include_once MODEL_LOG_PATH . 'changes_big.php';
-include_once MODEL_LOG_PATH . 'changes_norm.php';
-//include_once MODEL_PHRASE_PATH . 'phrase.php';
-//include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_db.php';
-include_once MODEL_USER_PATH . 'user_list.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VALUE_PATH . 'value_db.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-//include_once MODEL_WORD_PATH . 'triple.php';
-include_once SHARED_CONST_PATH . 'sources.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_multi_user.php';
+//include_once paths::MODEL_COMPONENT . 'component.php';
+//include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_ELEMENT . 'element.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_FORMULA . 'formula_db.php';
+//include_once paths::MODEL_FORMULA . 'formula_link.php';
+//include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_id.php';
+//include_once paths::MODEL_GROUP . 'result_id.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+//include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_value.php';
+include_once paths::MODEL_LOG . 'change_values_big.php';
+include_once paths::MODEL_LOG . 'change_values_time_big.php';
+include_once paths::MODEL_LOG . 'change_values_text_big.php';
+include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+include_once paths::MODEL_LOG . 'change_values_norm.php';
+include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+include_once paths::MODEL_LOG . 'change_values_text_norm.php';
+include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
+include_once paths::MODEL_LOG . 'change_values_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+include_once paths::MODEL_LOG . 'change_values_text_prime.php';
+include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+include_once paths::MODEL_LOG . 'changes_big.php';
+include_once paths::MODEL_LOG . 'changes_norm.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value_db.php';
+include_once paths::MODEL_VERB . 'verb.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_WORD . 'word.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::SHARED_CONST . 'sources.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -218,14 +220,14 @@ class sandbox_multi extends db_object_multi_user
     const FLD_NAMES_USR = array();
     // combine FLD_NAMES_NUM_USR_SBX and FLD_NAMES_NUM_USR_ONLY_SBX just for shorter code
     const FLD_NAMES_NUM_USR = array(
-        self::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         self::FLD_SHARE,
         self::FLD_PROTECT
     );
     // all database sandbox field names used to identify if there are some user specific changes so excluding the id fields
     const ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -338,7 +340,7 @@ class sandbox_multi extends db_object_multi_user
             // e.g. the list of names does not include the field excluded
             // TODO instead the excluded rows are filtered out on SQL level
             if (array_key_exists(sandbox_multi::FLD_EXCLUDED, $db_row)) {
-                $this->set_excluded($db_row[self::FLD_EXCLUDED]);
+                $this->set_excluded($db_row[sql_db::FLD_EXCLUDED]);
             }
             if (!$load_std) {
                 if (array_key_exists(sandbox::FLD_CHANGE_USER, $db_row)) {
@@ -2432,7 +2434,7 @@ class sandbox_multi extends db_object_multi_user
                 }
             }
         }
-        $log->set_field(self::FLD_EXCLUDED);
+        $log->set_field(sql_db::FLD_EXCLUDED);
         return $log;
     }
 
@@ -4244,8 +4246,8 @@ class sandbox_multi extends db_object_multi_user
         if ($sbx->excluded <> $this->excluded) {
             if ($sc_par_lst->incl_log()) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . self::FLD_EXCLUDED,
-                    $cng_fld_cac->id($table_id . self::FLD_EXCLUDED),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_EXCLUDED),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
@@ -4255,9 +4257,9 @@ class sandbox_multi extends db_object_multi_user
                 $old_val = null;
             }
             $lst->add_field(
-                self::FLD_EXCLUDED,
+                sql_db::FLD_EXCLUDED,
                 $this->excluded,
-                self::FLD_EXCLUDED_SQL_TYP,
+                sql_db::FLD_EXCLUDED_SQL_TYP,
                 $old_val
             );
         }
@@ -4376,7 +4378,7 @@ class sandbox_multi extends db_object_multi_user
      */
     function db_fields_all_sandbox(): array
     {
-        return [self::FLD_EXCLUDED, self::FLD_SHARE, self::FLD_PROTECT];
+        return [sql_db::FLD_EXCLUDED, self::FLD_SHARE, self::FLD_PROTECT];
     }
 
     /**
@@ -4391,9 +4393,9 @@ class sandbox_multi extends db_object_multi_user
         $lst = [];
         if ($sbx->excluded <> $this->excluded) {
             $lst[] = [
-                self::FLD_EXCLUDED,
+                sql_db::FLD_EXCLUDED,
                 $this->excluded,
-                self::FLD_EXCLUDED_SQL_TYP
+                sql_db::FLD_EXCLUDED_SQL_TYP
             ];
         }
         if ($sbx->share_id <> $this->share_id) {

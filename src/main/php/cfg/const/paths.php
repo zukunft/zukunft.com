@@ -2,7 +2,7 @@
 
 /*
 
-    model/const/paths.php - set the path const for all php scripts
+    model/const/paths.php - set the path const for the backend php scripts
     ---------------------
 
 
@@ -32,26 +32,27 @@
 
 namespace cfg\const;
 
-
 class paths
 {
 
     // set all path for the program code here at once
     const SRC = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR;
     const MAIN = self::SRC . 'main' . DIRECTORY_SEPARATOR;
-    const PHP_LIB = self::MAIN . 'php' . DIRECTORY_SEPARATOR; // recreation of the PHP for library use only
-    const MODEL = self::PHP_LIB . 'cfg' . DIRECTORY_SEPARATOR; // path of the main model objects for db saving, api feed and processing
+    // recreation of the PHP for library use only
+    const PHP_LIB = self::MAIN . 'php' . DIRECTORY_SEPARATOR;
+    // path of the main model objects for db saving, api feed and processing
+    const MODEL = self::PHP_LIB . 'cfg' . DIRECTORY_SEPARATOR;
     const DB = self::MODEL . 'db' . DIRECTORY_SEPARATOR;
     const UTIL = self::PHP_LIB . 'utils' . DIRECTORY_SEPARATOR;
     const SERVICE = self::PHP_LIB . 'service' . DIRECTORY_SEPARATOR;
     const MODEL_IMPORT = self::MODEL . 'import' . DIRECTORY_SEPARATOR;
-    const SERVICE_EXPORT = self::SERVICE . 'export' . DIRECTORY_SEPARATOR;
     const EXPORT = self::MODEL . 'export' . DIRECTORY_SEPARATOR;
     const SERVICE_MATH = self::SERVICE . 'math' . DIRECTORY_SEPARATOR;
     const MODEL_CONST = self::MODEL . 'const' . DIRECTORY_SEPARATOR;
     const MODEL_HELPER = self::MODEL . 'helper' . DIRECTORY_SEPARATOR;
     const MODEL_SYSTEM = self::MODEL . 'system' . DIRECTORY_SEPARATOR;
     const MODEL_LOG = self::MODEL . 'log' . DIRECTORY_SEPARATOR;
+    const MODEL_LOG_TEXT = self::MODEL . 'log_text' . DIRECTORY_SEPARATOR;
     const MODEL_DB = self::MODEL . 'db' . DIRECTORY_SEPARATOR;
     const MODEL_LANGUAGE = self::MODEL . 'language' . DIRECTORY_SEPARATOR;
     const MODEL_USER = self::MODEL . 'user' . DIRECTORY_SEPARATOR;
@@ -93,29 +94,11 @@ class paths
     const API_VIEW = self::API_OBJECT . 'view' . DIRECTORY_SEPARATOR;
     const API_COMPONENT = self::API_OBJECT . 'component' . DIRECTORY_SEPARATOR;
     const API_REF = self::API_OBJECT . 'ref' . DIRECTORY_SEPARATOR;
-    const WEB = self::PHP_LIB . 'web' . DIRECTORY_SEPARATOR; // path of the pure html frontend objects
-    const WEB_ELEMENT = self::WEB . 'element' . DIRECTORY_SEPARATOR;
-    const WEB_LOG = self::WEB . 'log' . DIRECTORY_SEPARATOR;
-    const WEB_USER = self::WEB . 'user' . DIRECTORY_SEPARATOR;
-    const WEB_SYSTEM = self::WEB . 'system' . DIRECTORY_SEPARATOR;
-    const WEB_HELPER = self::WEB . 'helper' . DIRECTORY_SEPARATOR;
-    const WEB_TYPES = self::WEB . 'types' . DIRECTORY_SEPARATOR;
-    const WEB_SANDBOX = self::WEB . 'sandbox' . DIRECTORY_SEPARATOR;
-    const WEB_HTML = self::WEB . 'html' . DIRECTORY_SEPARATOR;
-    const WEB_HIST = self::WEB . 'hist' . DIRECTORY_SEPARATOR;
-    const WEB_WORD = self::WEB . 'word' . DIRECTORY_SEPARATOR;
-    const WEB_PHRASE = self::WEB . 'phrase' . DIRECTORY_SEPARATOR;
-    const WEB_GROUP = self::WEB . 'group' . DIRECTORY_SEPARATOR;
-    const WEB_VERB = self::WEB . 'verb' . DIRECTORY_SEPARATOR;
-    const WEB_VALUE = self::WEB . 'value' . DIRECTORY_SEPARATOR;
-    const WEB_FORMULA = self::WEB . 'formula' . DIRECTORY_SEPARATOR;
-    const WEB_RESULT = self::WEB . 'result' . DIRECTORY_SEPARATOR;
-    const WEB_FIGURE = self::WEB . 'figure' . DIRECTORY_SEPARATOR;
-    const WEB_VIEW = self::WEB . 'view' . DIRECTORY_SEPARATOR;
-    const WEB_COMPONENT = self::WEB . 'component' . DIRECTORY_SEPARATOR;
-    const WEB_FORM = self::WEB_COMPONENT . 'form' . DIRECTORY_SEPARATOR;
-    const WEB_SHEET = self::WEB_COMPONENT . 'sheet' . DIRECTORY_SEPARATOR;
-    const WEB_REF = self::WEB . 'ref' . DIRECTORY_SEPARATOR;
+
+    // path of the pure html frontend objects
+    const WEB = self::PHP_LIB . 'web' . DIRECTORY_SEPARATOR;
+    // only used for initial loading
+    const WEB_CONST = self::WEB . 'const' . DIRECTORY_SEPARATOR;
 
     // resource paths
     const RES = self::MAIN . 'resources' . DIRECTORY_SEPARATOR;

@@ -32,9 +32,11 @@
 
 namespace unit;
 
-include_once DB_PATH . 'sql.php';
-include_once MODEL_VALUE_PATH . 'value_time_series.php';
-include_once MODEL_VALUE_PATH . 'value_obj.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::MODEL_VALUE . 'value_time_series.php';
+include_once paths::MODEL_VALUE . 'value_obj.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -227,7 +229,7 @@ class value_tests
 
         // TODO move to ui tests
         $val_dsp = new value_dsp($val->api_json([api_type::INCL_PHRASES]));
-        $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32812" title="3.14">3.14</a>');
+        $t->assert('value edit link', $val_dsp->value_edit(), '<a href="/http/view.php?m=value_edit&id=32819" title="3.14">3.14</a>');
 
         $t->subheader($ts . 'convert and api');
 

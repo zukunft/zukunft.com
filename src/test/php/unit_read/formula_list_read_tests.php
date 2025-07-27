@@ -32,7 +32,9 @@
 
 namespace unit_read;
 
-include_once SHARED_CONST_PATH . 'triples.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'triples.php';
 
 use cfg\formula\formula;
 use cfg\formula\formula_list;

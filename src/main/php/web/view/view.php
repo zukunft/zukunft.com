@@ -37,22 +37,24 @@
 
 namespace html\view;
 
-include_once WEB_VIEW_PATH . 'view_exe.php';
-include_once WEB_HTML_PATH . 'button.php';
-include_once WEB_HTML_PATH . 'display_list.php';
-include_once WEB_HELPER_PATH . 'config.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'styles.php';
-include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_HELPER_PATH . 'Config.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'library.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_TYPES_PATH . 'view_type.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::VIEW . 'view_exe.php';
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'display_list.php';
+include_once html_paths::HELPER . 'config.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'styles.php';
+include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_HELPER . 'Config.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_TYPES . 'view_type.php';
 
 use html\button;
 use html\display_list;

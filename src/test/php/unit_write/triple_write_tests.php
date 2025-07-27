@@ -32,9 +32,11 @@
 
 namespace unit_write;
 
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_CONST_PATH . 'triples.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'triples.php';
 
 use cfg\formula\formula;
 use cfg\log\change_link;

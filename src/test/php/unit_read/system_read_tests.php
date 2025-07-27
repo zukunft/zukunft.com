@@ -32,10 +32,12 @@
 
 namespace unit_read;
 
-include_once MODEL_SYSTEM_PATH . 'sys_log.php';
-include_once DB_PATH . 'db_check.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'sys_log.php';
+include_once paths::DB . 'db_check.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 
 use cfg\formula\formula;
 use cfg\system\job_type_list;

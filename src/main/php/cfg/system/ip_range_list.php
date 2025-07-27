@@ -32,16 +32,18 @@
 
 namespace cfg\system;
 
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-//include_once MODEL_IMPORT_PATH . 'import.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'Translator.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'ip_range.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+//include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Translator.php';
 
 use cfg\db\sql_db;
 use cfg\db\sql_par;

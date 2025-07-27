@@ -37,8 +37,12 @@ use cfg\db\sql_db;
 use cfg\phrase\phrase;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
+use cfg\word\triple;
 use html\verb\verb as verb_dsp;
+use shared\const\triples;
+use shared\const\words;
 use shared\enum\foaf_direction;
+use shared\types\verbs;
 use test\test_cleanup;
 
 class verb_tests
@@ -92,6 +96,13 @@ class verb_tests
         $vrb = $t->verb();
         $t->assert_api_to_dsp($vrb, new verb_dsp());
 
+
+        $t->subheader($ts . 'triple usage');
+
+        $this->assert_verb($t, verbs::IS, $t->triple_pi(), words::PI . ' (' . triples::MATH_CONST . ')');
+        $this->assert_verb($t, verbs::PART, $t->triple(), words::CONST_NAME . ' ' . verbs::PART_NAME . ' ' . words::MATH);
+
+
         // start the test section (ts)
         $ts = 'unit verb list ';
         $t->header($ts);
@@ -111,6 +122,19 @@ class verb_tests
         // ... same for direction down
         $this->assert_sql_by_linked_phrases($t, $db_con, $vrb_lst, $phr, foaf_direction::DOWN);
 
+    }
+
+    private function assert_verb(
+        test_cleanup $t,
+        string $code_id,
+        triple $trp,
+        string $name_generated
+    ): void
+    {
+        global $vrb_cac;
+        $test_name = 'the sample triple generated name for verb ';
+        $vrb = $vrb_cac->get_verb($code_id);
+        $t->assert($test_name . $vrb->name(), $trp->generate_name(), $name_generated);
     }
 
     /**

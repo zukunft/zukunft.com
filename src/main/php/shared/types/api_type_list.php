@@ -32,7 +32,9 @@
 
 namespace shared\types;
 
-include_once SHARED_TYPES_PATH . 'api_type.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'api_type.php';
 
 use cfg\db\sql_type;
 
