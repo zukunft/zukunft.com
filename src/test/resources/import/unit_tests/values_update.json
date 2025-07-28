@@ -1,0 +1,17 @@
+{
+  "version": "0.0.3",
+  "time": "2025-07-17 14:06:27",
+  "user": "zukunft.com system batch job",
+  "selection": [
+    "unit test message for adding a description to a value via data_object based import"
+  ],
+  "values": [
+    {
+      "words": [
+        "System Test Word for value curl testing"
+      ],
+      "description": "System Test Word Description for value curl testing"
+    }
+  ]
+}
+

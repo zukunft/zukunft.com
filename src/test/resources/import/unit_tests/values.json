@@ -7,16 +7,6 @@
   ],
   "words": [
     {
-      "name": "problem",
-      "comment": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
-      "refs": [
-        {
-          "name": "Problem_solving",
-          "type": "wikipedia"
-        }
-      ]
-    },
-    {
       "name": "global",
       "comment": "here more a something that effects all people on earth (wikipedia does not really match)",
       "refs": [
@@ -27,30 +17,55 @@
       ]
     },
     {
-      "name": "solution",
+      "name": "human",
       "refs": [
         {
-          "name": "Problem solving",
+          "name": "Homo",
           "type": "wikipedia"
         },
         {
-          "name": "Q730920",
+          "name": "Q15978631",
           "type": "wikidata"
         }
       ]
     },
     {
-      "name": "priority",
+      "name": "population",
       "refs": [
         {
-          "name": "Prioritization",
+          "name": "Population",
           "type": "wikipedia"
         },
         {
-          "name": "Q11888847",
+          "name": "Q2625603",
           "type": "wikidata"
         }
       ]
+    },
+    {
+      "name": "billion",
+      "comment": "to specify numbers in billion",
+      "type": "scaling",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "GDP"
+    },
+    {
+      "name": "trillion",
+      "comment": "to specify numbers in trillion",
+      "type": "scaling",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "EUR",
+      "type": "measure"
+    },
+    {
+      "name": "2024"
+    },
+    {
+      "name": "warming"
     },
     {
       "name": "potential",
@@ -88,242 +103,13 @@
       "protection": "admin_protection"
     },
     {
-      "name": "climate",
-      "refs": [
-        {
-          "name": "Climate",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7937",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "warm",
-      "refs": [
-        {
-          "name": "heating",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q4311765",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "warming"
-    },
-    {
-      "name": "warmer"
-    },
-    {
-      "name": "reduce"
-    },
-    {
-      "name": "gas",
-      "refs": [
-        {
-          "name": "gas",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11432",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "global",
-      "refs": [
-        {
-          "name": "Globalization",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7181",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "emissions"
-    },
-    {
-      "name": "populism"
-    },
-    {
-      "name": "avoid"
-    },
-    {
-      "name": "wrong"
-    },
-    {
-      "name": "decisions"
-    },
-    {
-      "name": "artificial"
-    },
-    {
-      "name": "intelligence"
-    },
-    {
-      "name": "health"
-    },
-    {
-      "name": "research"
-    },
-    {
-      "name": "poverty"
-    },
-    {
-      "name": "taxes"
-    },
-    {
-      "name": "education"
-    },
-    {
-      "name": "spending"
-    },
-    {
-      "name": "pension",
-      "refs": [
-        {
-          "name": "Pension",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q156223",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "happy"
-    },
-    {
-      "name": "unhappy"
-    },
-    {
-      "name": "time"
-    },
-    {
-      "name": "points"
-    },
-    {
-      "name": "DALY",
-      "refs": [
-        {
-          "name": "Disability-adjusted life year",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q55627",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "human",
-      "refs": [
-        {
-          "name": "Homo",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q15978631",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "population",
-      "refs": [
-        {
-          "name": "Population",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q2625603",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
       "name": "htp"
     },
     {
-      "name": "million",
-      "comment": "to specify numbers in millions",
-      "type": "scaling",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "billion",
-      "comment": "to specify numbers in billion",
-      "type": "scaling",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "trillion",
-      "comment": "to specify numbers in trillion",
-      "type": "scaling",
-      "protection": "admin_protection"
-    },
-    {
-      "name": "mio"
-    },
-    {
-      "name": "m"
-    },
-    {
-      "name": "CHF",
-      "type": "measure"
-    },
-    {
-      "name": "USD",
-      "type": "measure"
-    },
-    {
-      "name": "world"
-    },
-    {
-      "name": "GDP"
-    },
-    {
-      "name": "2024"
+      "name": "System Test Word for value curl testing"
     }
   ],
   "triples": [
-    {
-      "name": "global problem",
-      "from": "problem",
-      "verb": "can be",
-      "to": "global",
-      "comment": "here more a personal issue (wikipedia does not really match)",
-      "refs": [
-        {
-          "name": "List_of_global_issues",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q65117122",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "from": "warmer",
-      "verb": "is a",
-      "to": "warm"
-    },
-    {
-      "from": "warming",
-      "verb": "is a",
-      "to": "warm"
-    },
     {
       "name": "global warming",
       "from": "climate",
@@ -336,44 +122,6 @@
         },
         {
           "name": "Q7942",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "warming potential",
-      "from": "warming",
-      "verb": "can use",
-      "to": "potential"
-    },
-    {
-      "name": "climate gas",
-      "from": "gas",
-      "verb": "can cause",
-      "to": "warming",
-      "refs": [
-        {
-          "name": "Climate_change",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q7942",
-          "type": "wikidata"
-        }
-      ]
-    },
-    {
-      "name": "world population",
-      "from": "Population",
-      "verb": "of",
-      "to": "human",
-      "refs": [
-        {
-          "name": "World population",
-          "type": "wikipedia"
-        },
-        {
-          "name": "Q11188",
           "type": "wikidata"
         }
       ]
@@ -396,47 +144,6 @@
       "from": "htp",
       "verb": "is symbol for",
       "to": "happy time points"
-    },
-    {
-      "from": "m",
-      "verb": "is symbol for",
-      "to": "million"
-    },
-    {
-      "from": "mio",
-      "verb": "is symbol for",
-      "to": "million"
-    },
-    {
-      "from": "b",
-      "verb": "is symbol for",
-      "to": "billion"
-    },
-    {
-      "from": "global warming",
-      "verb": "is a",
-      "to": "global problem"
-    },
-    {
-      "from": "populism",
-      "verb": "is a",
-      "to": "global problem"
-    },
-    {
-      "name": "health can be a global problem",
-      "from": "health",
-      "verb": "can be",
-      "to": "global problem"
-    },
-    {
-      "from": "poverty",
-      "verb": "is a",
-      "to": "global problem"
-    },
-    {
-      "from": "education",
-      "verb": "can be",
-      "to": "global problem"
     }
   ],
   "values": [
@@ -451,13 +158,13 @@
     },
     {
       "words": [
-        "world",
+        "global",
         "GDP",
-        "million",
-        "USD",
+        "trillion",
+        "EUR",
         "2024"
       ],
-      "number": "110047109"
+      "number": "100"
     },
     {
       "words": [
@@ -478,6 +185,12 @@
         "GDP"
       ],
       "number": "-32"
+    },
+    {
+      "words": [
+        "System Test Word for value curl testing"
+      ],
+      "number": "123456"
     }
   ]
 }
