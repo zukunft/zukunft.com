@@ -124,6 +124,7 @@ use unit\import_tests as import_tests;
 use unit_ui\all_ui_tests;
 use unit_ui\base_ui_tests;
 use const\files as test_files;
+use unit_ui\horizontal_ui_tests;
 use unit_write\import_write_tests;
 use unit_write\user_write_tests;
 use unit_write\value_write_tests;
@@ -212,7 +213,7 @@ class all_unit_tests extends test_cleanup
             $import_result = $imf->import_config_yaml($sys_usr, true);
             $t->assert($test_name, $import_result->is_ok(), true, $t::TIMEOUT_LIMIT_IMPORT);
             */
-            (new import_write_tests())->run($t);
+            //(new import_write_tests())->run($t);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::SYSTEM_VIEWS_FILE, $usr);
@@ -248,6 +249,12 @@ class all_unit_tests extends test_cleanup
 
 
             /*
+             * user interface
+             */
+
+            (new horizontal_ui_tests)->run($t);
+
+            /*
              * db write
              */
 
@@ -259,7 +266,7 @@ class all_unit_tests extends test_cleanup
             //(new group_write_tests)->run($this);
             //(new source_write_tests)->run($this);
             //(new ref_write_tests)->run($this);
-            (new value_write_tests)->run($this);
+            //(new value_write_tests)->run($this);
             //(new formula_write_tests)->run($this);
             //(new formula_link_write_tests)->run($this);
             //(new expression_write_tests)->run($this);

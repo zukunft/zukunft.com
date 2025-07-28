@@ -125,7 +125,7 @@ if ($db_con->is_open()) {
 
     $view = $url_array[api::URL_VAR_MASK] ?? 0; // the database id of the view to display
     $id = $url_array[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
-    $confirm = $url_array[api::URL_VAR_CONFIRM] ?? 0; // the database id of the prime object to display
+    $confirm = $url_array[api::URL_VAR_CONFIRM_LONG] ?? 0; // the database id of the prime object to display
 
     $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
     $view_words = $url_array[api::URL_VAR_WORDS] ?? '';

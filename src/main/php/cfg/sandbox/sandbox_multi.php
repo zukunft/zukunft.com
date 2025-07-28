@@ -1021,7 +1021,7 @@ class sandbox_multi extends db_object_multi_user
             ]);
         }
         if ($this->protection_id() != $obj->protection_id()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
+            $usr_msg->add_id_with_vars(msg_id::DIFF_PROTECTION, [
                 msg_id::VAR_PROTECT => $obj->protection_type_name(),
                 msg_id::VAR_PROTECT_CHK => $this->protection_type_name(),
                 msg_id::VAR_NAME => $this->dsp_id(),

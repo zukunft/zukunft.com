@@ -261,6 +261,7 @@ include_once TEST_UNIT_PATH . 'api_tests.php';
 
 // load the testing functions for creating HTML code
 include_once TEST_UNIT_UI_PATH . 'all_ui_tests.php';
+include_once TEST_UNIT_UI_PATH . 'horizontal_ui_tests.php';
 
 // load the unit testing modules with database read only
 include_once TEST_UNIT_READ_PATH . 'all_unit_read_tests.php';

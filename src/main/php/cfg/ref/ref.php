@@ -637,6 +637,27 @@ class ref extends sandbox_link
     }
 
     /**
+     * set the description of this reference which explains the object for the user
+     *
+     * @param string|null $description the name of this reference set in the related object
+     * @return void
+     */
+    function set_description(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * get the description of the reference
+     *
+     * @return string|null the description from the object e.g. word using the same function as the phrase and term
+     */
+    function description(): ?string
+    {
+        return $this->description;
+    }
+
+    /**
      * TODO use always a function like this to set an object
      * TODO use a cache to reduce database access because an id will never change and due to that no database refresh is needed
      * @param int|null $id

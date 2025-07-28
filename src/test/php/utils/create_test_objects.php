@@ -6,7 +6,7 @@
     ----------------------------------
 
     TODO create all test object from here
-    TODO shorten the names e.g. if the phrase is most often used use the functin name canton() for the phrase
+    TODO shorten the names e.g. if the phrase is most often used use the function name canton() for the phrase
 
     object adding, loading and testing functions
 
@@ -64,7 +64,6 @@ include_once paths::MODEL_VALUE . 'value_time.php';
 include_once paths::MODEL_VALUE . 'value_text.php';
 include_once paths::MODEL_VALUE . 'value_geo.php';
 include_once paths::MODEL_VALUE . 'value_ts_data.php';
-include_once html_paths::FORMULA . 'formula.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
@@ -82,6 +81,17 @@ include_once paths::SHARED_CONST . 'values.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::REF . 'ref.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::RESULT . 'result.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::COMPONENT . 'component.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -186,10 +196,7 @@ use cfg\word\word;
 use cfg\word\word_db;
 use cfg\word\word_list;
 use controller\api_message;
-use DateTime;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\view\view_list as view_list_dsp;
-use html\word\word as word_dsp;
+use shared\api;
 use shared\const\users;
 use shared\enum\change_actions;
 use shared\enum\change_fields;
@@ -220,6 +227,20 @@ use shared\types\share_type as share_type_shared;
 use shared\types\verbs;
 use shared\types\view_styles;
 use shared\types\view_type;
+use html\user\user as user_dsp;
+use html\sandbox\sandbox as sandbox_dsp;
+use html\word\word as word_dsp;
+use html\verb\verb as verb_dsp;
+use html\word\triple as triple_dsp;
+use html\ref\source as source_dsp;
+use html\ref\ref as ref_dsp;
+use html\value\value as value_dsp;
+use html\formula\formula as formula_dsp;
+use html\result\result as result_dsp;
+use html\view\view as view_dsp;
+use html\component\component as component_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
+use html\view\view_list as view_list_dsp;
 use unit\sys_log_tests;
 use unit_write\component_link_write_tests;
 use unit_write\component_write_tests;
@@ -231,6 +252,7 @@ use unit_write\triple_write_tests;
 use unit_write\value_write_tests;
 use unit_write\view_write_tests;
 use unit_write\word_write_tests;
+use DateTime;
 
 class create_test_objects extends test_base
 {
@@ -633,6 +655,178 @@ class create_test_objects extends test_base
     }
 
     /**
+     * get the frontend object related to the given backend class
+     * @param string $class the given main class name
+     * @return sandbox_dsp|user_dsp|ref_dsp with only a few vars filled
+     */
+    function class_to_ui_object(string $class): sandbox_dsp|user_dsp|ref_dsp
+    {
+        $obj = null;
+        switch ($class) {
+            case user::class;
+                $obj = new user_dsp();
+                break;
+            case word::class;
+                $obj = new word_dsp();
+                break;
+            case verb::class;
+                $obj = new verb_dsp();
+                break;
+            case triple::class;
+                $obj = new triple_dsp();
+                break;
+            case source::class;
+                $obj = new source_dsp();
+                break;
+            case ref::class;
+                $obj = new ref_dsp();
+                break;
+            case value::class;
+                $obj = new value_dsp();
+                break;
+            case formula::class;
+                $obj = new formula_dsp();
+                break;
+            case result::class;
+                $obj = new result_dsp();
+                break;
+            case view::class;
+                $obj = new view_dsp();
+                break;
+            case component::class;
+                $obj = new component_dsp();
+                break;
+            default:
+                log_err('no frontend object defined for ' . $class);
+        }
+        return $obj;
+    }
+
+    /**
+     * get the filled url object related to the given class
+     * @param string $class the given main class name
+     * @return string with only a few vars filled
+     */
+    function class_to_url_add(string $class): string
+    {
+        $url = api::HOST_TESTING . api::MAIN_SCRIPT . api::URL_PAR;
+        switch ($class) {
+            case user::class;
+                $obj = $this->user_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_IP, $obj->ip_addr);
+                break;
+            case word::class;
+                $obj = $this->word_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_PLURAL, $obj->plural());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(api::URL_VAR_VIEW_LONG, $obj->view_id());
+                break;
+            case verb::class;
+                $obj = $this->verb_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                break;
+            case triple::class;
+                $obj = $this->triple_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_FROM_ID_LONG, $obj->from_id());
+                $url .= $this->url_par(api::URL_VAR_VERB_ID_LONG, $obj->verb_id());
+                $url .= $this->url_par(api::URL_VAR_TO_ID_LONG, $obj->to_id());
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name_given());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(api::URL_VAR_VIEW_LONG, $obj->view_id());
+                break;
+            case source::class;
+                $obj = $this->source_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_URL, $obj->url());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case ref::class;
+                $obj = $this->reference_plus();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_PHRASE_LONG, $obj->from_id());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->predicate_id());
+                $url .= $this->url_par(api::URL_VAR_URL, $obj->url());
+                $url .= $this->url_par(api::URL_VAR_EXTERNAL_KEY, $obj->external_key());
+                $url .= $this->url_par(api::URL_VAR_SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case value::class;
+                $obj = $this->value_16_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_PHRASE_LIST_LONG, implode(',',$obj->ids()));
+                $url .= $this->url_par(api::URL_VAR_NUMERIC_VALUE_LONG, $obj->value());
+                $url .= $this->url_par(api::URL_VAR_SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case formula::class;
+                $obj = $this->formula_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case result::class;
+                $obj = $this->result_main_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_PHRASE_LIST_LONG, implode(',',$obj->ids()));
+                $url .= $this->url_par(api::URL_VAR_NUMERIC_VALUE_LONG, $obj->value());
+                $url .= $this->url_par(api::URL_VAR_FORMULA_LONG, $obj->formula_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case view::class;
+                $obj = $this->view_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case component::class;
+                $obj = $this->component_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            default:
+                log_err('no filled url object defined for ' . $class);
+        }
+        $url .= $this->url_par(api::URL_VAR_ACTION_LONG, api::URL_VAR_ACTION_ADD, true);
+        return $url;
+    }
+
+    private function url_par(string $name, ?string $par, bool $last = false): string
+    {
+        if ($par == null) {
+            return '';
+        } else {
+            if ($last) {
+                return $name . api::URL_EQ . urlencode($par);
+            } else {
+                return $name . api::URL_EQ . urlencode($par) . api::URL_ADD;
+            }
+        }
+    }
+
+    /**
      * @return word "mathematics" as the main word for unit testing
      */
     function word(): word
@@ -888,7 +1082,7 @@ class create_test_objects extends test_base
     /**
      * @return word of the master pod name
      */
-    function word_zukunftcom(): word
+    function word_zukunft_com(): word
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::MASTER_POD_NAME_ID, words::MASTER_POD_NAME);
@@ -1312,7 +1506,7 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_const()->phrase());
         $trp->set_verb($this->verb_part());
         $trp->set_to($this->word()->phrase());
-        $trp->set_type(phrase_type_shared::MATH_CONST, $this->usr1);
+        $trp->set_type(phrase_type_shared::MATH_CONST);
         global $ptc_typ_cac;
         $trp->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $trp;
@@ -1324,6 +1518,9 @@ class create_test_objects extends test_base
     function triple_filled(): triple
     {
         $trp = $this->triple();
+        $trp->set_name_given(triples::MATH_CONST_GIVEN);
+        $trp->set_view_id(views::START_ID);
+        $trp->set_usage(triples::SYSTEM_TEST_ADD_USAGE);
         $trp->exclude();
         return $trp;
     }
@@ -2210,7 +2407,7 @@ class create_test_objects extends test_base
     function phrase_list_pod_launch(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->word_zukunftcom()->phrase());
+        $lst->add($this->word_zukunft_com()->phrase());
         $lst->add($this->triple_sys_config()->phrase());
         $lst->add($this->word_pod()->phrase());
         $lst->add($this->word_launch()->phrase());
@@ -2223,7 +2420,7 @@ class create_test_objects extends test_base
     function phrase_list_pod_url(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->word_zukunftcom()->phrase());
+        $lst->add($this->word_zukunft_com()->phrase());
         $lst->add($this->triple_sys_config()->phrase());
         $lst->add($this->word_pod()->phrase());
         $lst->add($this->word_url()->phrase());
@@ -2236,7 +2433,7 @@ class create_test_objects extends test_base
     function phrase_list_pod_point(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
-        $lst->add($this->word_zukunftcom()->phrase());
+        $lst->add($this->word_zukunft_com()->phrase());
         $lst->add($this->triple_sys_config()->phrase());
         $lst->add($this->word_pod()->phrase());
         $lst->add($this->word_point()->phrase());

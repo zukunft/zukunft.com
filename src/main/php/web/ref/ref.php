@@ -60,9 +60,9 @@ class ref extends db_object_dsp
      */
 
     private ?phrase_dsp $phr;
-    private ?source $source;
-    private ?string $external_key; // maybe use field name instead
-    private ?string $url;
+    private ?source $source = null;
+    private ?string $external_key = null; // maybe use field name instead
+    private ?string $url = null;
     private ?int $predicate_id;
     // the mouse over tooltip for the named object e.g. word, triple, formula, verb, view or component
     public ?string $description = null;

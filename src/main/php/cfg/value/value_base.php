@@ -592,22 +592,6 @@ class value_base extends sandbox_value
         return $this->symbol;
     }
 
-    /**
-     * @return phrase_list the phrase list of the value
-     */
-    function phrase_list(): phrase_list
-    {
-        return $this->grp()->phrase_list();
-    }
-
-    /**
-     * @return array with the ids of the phrases
-     */
-    function ids(): array
-    {
-        return $this->phrase_list()->ids();
-    }
-
     function set_group_id_by_phrase_list(phrase_list $phr_lst): user_message
     {
         $usr_msg = new user_message();

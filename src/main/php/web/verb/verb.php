@@ -65,7 +65,7 @@ class verb extends sandbox_named
      */
 
     // this id text is unique for all code links and is used for system im- and export
-    public string $code_id;
+    public ?string $code_id = null;
     public int $usage = 0;
     public ?string $reverse = null;
     public ?string $rev_plural = null;
@@ -80,7 +80,7 @@ class verb extends sandbox_named
         $this->code_id = $code_id;
     }
 
-    function code_id(): string
+    function code_id(): ?string
     {
         return $this->code_id;
     }

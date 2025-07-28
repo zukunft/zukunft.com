@@ -87,6 +87,7 @@ class all_ui_tests extends all_unit_tests
         (new base_ui_tests)->run($t);
         (new type_lists_ui_tests)->run($t);
         (new user_ui_tests)->run($t);
+        (new horizontal_ui_tests)->run($t);
 
         $t->subheader($ts . 'page');
         (new word_ui_tests)->run($t);

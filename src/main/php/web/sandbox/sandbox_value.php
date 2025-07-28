@@ -39,18 +39,26 @@ use html\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::GROUP . 'group.php';
+include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use DateTime;
 use html\group\group;
+use html\phrase\phrase;
 use html\phrase\phrase_list;
 use html\user\user_message;
+use shared\api;
 use shared\json_fields;
 
 class sandbox_value extends sandbox
 {
+
+    /*
+     * object vars
+     */
 
     private group $grp; // the phrase group with the list of words and triples (not the source words and triples)
     private ?float $number = null; // the number calculated by the system
@@ -74,6 +82,30 @@ class sandbox_value extends sandbox
     {
         $this->set_grp(new group());
         parent::__construct($api_json);
+    }
+
+    /**
+     * set the vars of this value frontend object bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array): user_message
+    {
+        $usr_msg = parent::url_mapper($url_array);
+        if ($usr_msg->is_ok()) {
+            if (array_key_exists(api::URL_VAR_PHRASE_LIST_LONG, $url_array)) {
+                $id_lst = explode(',', $url_array[api::URL_VAR_PHRASE_LIST_LONG]);
+                if (count($id_lst) > 0) {
+                    $this->set_phrases_by_is_list($id_lst);
+                }
+            }
+            if (array_key_exists(api::URL_VAR_NUMERIC_VALUE_LONG, $url_array)) {
+                if ($url_array[api::URL_VAR_NUMERIC_VALUE_LONG] != null) {
+                    $this->set_number($url_array[api::URL_VAR_NUMERIC_VALUE_LONG]);
+                }
+            }
+        }
+        return $usr_msg;
     }
 
 
@@ -148,6 +180,20 @@ class sandbox_value extends sandbox
         return $this->is_std;
     }
 
+    /**
+     * set the phrase list based on the given id list
+     * @param array $id_lst with the all phrase ids for the unique identification of this value
+     * @return void
+     */
+    function set_phrases_by_is_list(array $id_lst): void
+    {
+        $phr_lst = new phrase_list();
+        foreach ($id_lst as $id) {
+            $phr = new phrase();
+            $phr->set_id($id);
+            $this->grp()->add($phr);
+        }
+    }
     /**
      * @returns phrase_list the list of phrases as an object
      */

@@ -63,7 +63,7 @@ class source extends sandbox_code_id
      * object vars
      */
 
-    private ?string $url;
+    private ?string $url = null;
 
 
     /*

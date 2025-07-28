@@ -168,6 +168,7 @@ use cfg\word\triple;
 use cfg\word\word;
 use Exception;
 use shared\enum\change_actions;
+use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\json_fields;
@@ -752,7 +753,7 @@ class sandbox extends db_object_seq_id_user
             ]);
         }
         if ($this->protection_id() != $obj->protection_id()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
+            $usr_msg->add_id_with_vars(msg_id::DIFF_PROTECTION, [
                 msg_id::VAR_PROTECT => $obj->protection_type_name(),
                 msg_id::VAR_PROTECT_CHK => $this->protection_type_name(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),

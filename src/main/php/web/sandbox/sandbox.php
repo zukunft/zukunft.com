@@ -106,7 +106,7 @@ class sandbox extends db_object_dsp
      */
     function url_mapper(array $url_array): user_message
     {
-        $usr_msg = parent::api_mapper($url_array);
+        $usr_msg = parent::url_mapper($url_array);
         if (array_key_exists(api::URL_VAR_SHARE, $url_array)) {
             $this->share_id = $url_array[api::URL_VAR_SHARE];
         } else {

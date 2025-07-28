@@ -270,7 +270,7 @@ class view extends view_exe
     }
 
     /**
-     * the zukunft logo that should be show always
+     * the zukunft logo that should be always shown
      */
     private function html_navbar_end(): string
     {

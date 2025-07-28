@@ -1058,6 +1058,26 @@ class triple extends sandbox_link_named
         return $this->code_id;
     }
 
+    /**
+     * @param int $id the id of the default view that should be remembered
+     */
+    function set_view_id(int $id): void
+    {
+        if ($this->view == null) {
+            $this->view = new view($this->user());
+        }
+        $this->view->set_id($id);
+    }
+
+    function set_view(?view $msk): void
+    {
+        $this->view = $msk;
+    }
+
+    function view(): ?view
+    {
+        return $this->view;
+    }
 
     /**
      * @return int the id of the default view for this triple or null if no view is preferred

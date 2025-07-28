@@ -91,13 +91,32 @@ class db_object extends TextIdObject
     function url_mapper(array $url_array): user_message
     {
         $usr_msg = new user_message();
-        if (array_key_exists(api::URL_VAR_ID, $url_array)) {
-            $this->set_id($url_array[api::URL_VAR_ID]);
-        } else {
-            $this->set_id(0);
-            $usr_msg->add_err('Mandatory field id missing in form url array ' . json_encode($url_array));
+        if (!$this->url_is_add_action($url_array)) {
+            // if the request is to add an object ignore the id
+            if (array_key_exists(api::URL_VAR_ID, $url_array)) {
+                $this->set_id($url_array[api::URL_VAR_ID]);
+            } else {
+                $this->set_id(0);
+                $usr_msg->add_err('Mandatory field id missing in form url array ' . json_encode($url_array));
+            }
         }
         return $usr_msg;
+    }
+
+    function url_is_add_action(array $url_array): bool
+    {
+        $is_add = false;
+        if (array_key_exists(api::URL_VAR_ACTION, $url_array)) {
+            if ($url_array[api::URL_VAR_ACTION] == api::URL_VAR_ACTION_ADD) {
+                $is_add = true;
+            }
+        }
+        if (array_key_exists(api::URL_VAR_ACTION_LONG, $url_array)) {
+            if ($url_array[api::URL_VAR_ACTION_LONG] == api::URL_VAR_ACTION_ADD) {
+                $is_add = true;
+            }
+        }
+        return $is_add;
     }
 
 

@@ -343,6 +343,22 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
+     * @return phrase_list the phrase list of the value
+     */
+    function phrase_list(): phrase_list
+    {
+        return $this->grp()->phrase_list();
+    }
+
+    /**
+     * @return array with the ids of the phrases
+     */
+    function ids(): array
+    {
+        return $this->phrase_list()->ids();
+    }
+
+    /**
      * remember the description of the value in the related phrase group object
      * TODO check if the null value should be used to avoid overwriting the db value
      * @param string $txt the description of the value or null if
@@ -1388,11 +1404,6 @@ class sandbox_value extends sandbox_multi
         } else {
             return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
         }
-    }
-
-    function phrase_list(): phrase_list
-    {
-        return $this->grp()->phrase_list();
     }
 
 

@@ -147,6 +147,11 @@ class word extends sandbox_code_id
                     $this->set_view_id($url_array[api::URL_VAR_VIEW]);
                 }
             }
+            if (array_key_exists(api::URL_VAR_VIEW_LONG, $url_array)) {
+                if ($url_array[api::URL_VAR_VIEW_LONG] != null) {
+                    $this->set_view_id($url_array[api::URL_VAR_VIEW_LONG]);
+                }
+            }
         }
         return $usr_msg;
     }

@@ -67,6 +67,7 @@ class triples
 
     // triples included in the initial setup that are used for system testing
     const MATH_CONST = 'mathematical constant';
+    const MATH_CONST_GIVEN = 'math const';
     const MATH_CONST_ID = 1;
     const MATH_CONST_COM = 'A mathematical constant that never changes e.g. Pi';
     const PI = 'Pi (math)';
@@ -83,6 +84,7 @@ class triples
     const SYSTEM_TEST_ADD = 'System Test Triple';
     const SYSTEM_TEST_ADD_COM = 'System Test Triple Description';
     const SYSTEM_TEST_ADD_AUTO = 'System Test Triple';
+    const SYSTEM_TEST_ADD_USAGE = 123;
     const SYSTEM_TEST_EXCLUDED = 'System Test Excluded Zurich Insurance is not part of the City of Zurich';
     const SYSTEM_TEST_ADD_VIA_FUNC = 'System Test Triple added via sql function';
     const SYSTEM_TEST_ADD_VIA_SQL = 'System Test Triple added via prepared sql insert';

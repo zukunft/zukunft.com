@@ -39,7 +39,7 @@ class api
      * URL
      */
 
-    // TODO review (move to application.yaml)
+    // TODO review (move to .env and/or application.yaml)
     const HOST_TESTING = 'http://localhost/';
     const HOST_DEV = 'http://localhost/';
     const HOST_DEV_RELATIVE = '/';
@@ -69,19 +69,32 @@ class api
     const URL_API_PATH = 'api/';
     const URL_VAR_MASK = 'm'; // the internal database id of the view used to format the object
     const URL_VAR_ID = 'id'; // the internal database id of the main view object
+    const URL_VAR_ACTION = 'a'; // the curl action
+    const URL_VAR_ACTION_LONG = 'action'; // the curl action for the long url
+    const URL_VAR_CONFIRM = 'n'; // the action status
+    const URL_VAR_CONFIRM_LONG = 'confirm';  // the action status for the long url
+    const URL_VAR_ACTION_ADD = 'add'; // the curl action code to add an object
+    const URL_VAR_ACTION_EDIT = 'edit'; // the curl action to change an object
+    const URL_VAR_ACTION_DEL = 'del'; // the curl action to delete an object
     const URL_VAR_CONTEXT = 'x'; // list of terms to describe the context used for the view
     const URL_VAR_WORD = 'w';
     const URL_VAR_VERB = 'b';
     const URL_VAR_TRIPLE = 't';
     const URL_VAR_PHRASE = 'p'; // the id or name of one phrase
+    const URL_VAR_PHRASE_LONG = 'phrase_id';
+    const URL_VAR_PHRASE_LIST_LONG = 'phrase_ids';
     const URL_VAR_SOURCE = 's';
+    const URL_VAR_SOURCE_LONG = 'source_id';
     const URL_VAR_REF = 'l'; // l for data link to external
     const URL_VAR_VALUE = 'v';
+    const URL_VAR_NUMERIC_VALUE_LONG = 'number';
     const URL_VAR_FORMULA = 'f';
+    const URL_VAR_FORMULA_LONG = 'formula_id';
     const URL_VAR_TERM = 'e';
     const URL_VAR_RESULT = 'r';
     const URL_VAR_FIGURE = 'i';
     const URL_VAR_VIEW = 'v';
+    const URL_VAR_VIEW_LONG = 'view_id';
     const URL_VAR_COMPONENT = 'c';
     const URL_VAR_GROUP = 'g';
     const URL_VAR_FORMULA_LINK = 'fl'; // to link a formula to a phrase
@@ -130,7 +143,6 @@ class api
     const URL_VAR_TYPE = 'type';
     const URL_VAR_SHARE = 'share';
     const URL_VAR_PROTECTION = 'protection';
-    const URL_VAR_CONFIRM = 'confirm';
     const URL_REF = 'reference';
     const URL_VAR_PHRASE_TYPE = 'phrase_type';
     const URL_VAR_FORMULA_TYPE = 'formula_type';
@@ -139,6 +151,12 @@ class api
     const URL_VAR_REVERSE = 'reverse';
     const URL_VAR_REVERSE_PLURAL = 'plural_reverse';
     const URL_VAR_URL = 'url';
+    const URL_VAR_EXTERNAL_KEY = 'external_key';
+
+    // for triple link selections
+    const URL_VAR_FROM_ID_LONG = 'from_id';
+    const URL_VAR_TO_ID_LONG = 'to_id';
+    const URL_VAR_VERB_ID_LONG = 'verb_id';
 
     // used for the change log
     // the short name of the object class name e.g. word instead of cfg/word
