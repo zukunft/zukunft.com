@@ -186,7 +186,7 @@ class sql_type_list
      */
 
     /**
-     * @return bool true to seelct the table for values and results linked to an average number of phrases
+     * @return bool true to select the table for values and results linked to an average number of phrases
      */
     function is_most(): bool
     {
@@ -194,7 +194,7 @@ class sql_type_list
     }
 
     /**
-     * @return bool true to seelct the table for values and results linked to only a few fields
+     * @return bool true to select the table for values and results linked to only a few fields
      */
     function is_prime(): bool
     {
@@ -202,7 +202,7 @@ class sql_type_list
     }
 
     /**
-     * @return bool true to seelct the table for values and results linked to many fields
+     * @return bool true to select the table for values and results linked to many fields
      */
     function is_big(): bool
     {
@@ -598,7 +598,7 @@ class sql_type_list
      */
 
     /**
-     * @return string with the paraneters in a human-readable format
+     * @return string with the parameters in a human-readable format
      */
     public function dsp_id(): string
     {

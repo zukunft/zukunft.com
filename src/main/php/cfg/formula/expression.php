@@ -53,7 +53,7 @@
     or: word1 || word2 e.g. “GAAP[>is:US]” use word1 or word2 (maybe replace “||” with “or” for users)
     or: -word e.g. “-word” remove the word from the context
 
-    samples: next["->Timejump"] means next needs a time jump word
+    samples: next["->time_jump"] means next needs a time jump word
     db format: {f2}[->{}]
 
     Four steps to get the result

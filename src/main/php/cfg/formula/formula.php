@@ -84,6 +84,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
 include_once paths::MODEL_SANDBOX . 'protection_type.php';
 include_once paths::MODEL_SANDBOX . 'share_type.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
@@ -132,6 +133,7 @@ use cfg\result\result_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_code_id;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\view\view;
@@ -588,7 +590,7 @@ class formula extends sandbox_code_id
             formula_db::FLD_NAMES,
             formula_db::FLD_NAMES_USR,
             formula_db::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         ));
 
         return parent::load_standard_sql($sc);
@@ -1892,7 +1894,7 @@ class formula extends sandbox_code_id
             $field_values = array();
             $field_names[] = formula_db::FLD_ID;
             $field_values[] = $this->id();
-            $field_names[] = user::FLD_ID;
+            $field_names[] = user_db::FLD_ID;
             if ($frm_usr_id > 0) {
                 $field_values[] = $frm_usr_id;
             } else {
@@ -1923,7 +1925,7 @@ class formula extends sandbox_code_id
             $field_names[] = formula_db::FLD_ID;
             $field_values[] = $this->id();
             if ($frm_usr_id > 0) {
-                $field_names[] = user::FLD_ID;
+                $field_names[] = user_db::FLD_ID;
                 $field_values[] = $frm_usr_id;
             }
             $field_names[] = element::FLD_TYPE;
@@ -1980,19 +1982,19 @@ class formula extends sandbox_code_id
             foreach ($db_lst as $db_row) {
                 // update word links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[user::FLD_ID], $this->user()->id());
+                    $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[user_db::FLD_ID], $this->user()->id());
                 }
                 // update triple links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[user::FLD_ID], $this->user()->id());
+                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[user_db::FLD_ID], $this->user()->id());
                 }
                 // update verb links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[user::FLD_ID], $this->user()->id());
+                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[user_db::FLD_ID], $this->user()->id());
                 }
                 // update formula links of the standard formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, $db_row[user::FLD_ID], $this->user()->id());
+                    $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, $db_row[user_db::FLD_ID], $this->user()->id());
                 }
             }
         }
@@ -2150,7 +2152,7 @@ class formula extends sandbox_code_id
             $qp = $this->not_changed_sql($db_con->sql_creator());
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
-                if ($db_row[user::FLD_ID] > 0) {
+                if ($db_row[user_db::FLD_ID] > 0) {
                     $result = false;
                 }
             }
@@ -2176,7 +2178,7 @@ class formula extends sandbox_code_id
         $qp->name = $class . '_user_sandbox';
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(array_merge(array(user::FLD_ID), formula_db::FLD_NAMES_USR, formula_db::FLD_NAMES_NUM_USR));
+        $db_con->set_fields(array_merge(array(user_db::FLD_ID), formula_db::FLD_NAMES_USR, formula_db::FLD_NAMES_NUM_USR));
         $db_con->add_par(sql_par_type::INT, strval($this->id()));
         $qp->sql = $db_con->select_by_field(formula_db::FLD_ID);
         $qp->par = $db_con->get_par();
@@ -2224,7 +2226,7 @@ class formula extends sandbox_code_id
         $db_con->set_class(element::class);
         try {
             $msg = $db_con->delete_old(
-                array(formula_db::FLD_ID, user::FLD_ID),
+                array(formula_db::FLD_ID, user_db::FLD_ID),
                 array($this->id(), $this->user()->id()));
         } catch (Exception $e) {
             log_err($action . ' elements ' . $msg_failed . ' because ' . $e);
@@ -2235,7 +2237,7 @@ class formula extends sandbox_code_id
             $db_con->set_class(formula::class, true);
             try {
                 $msg = $db_con->delete_old(
-                    array(formula_db::FLD_ID, user::FLD_ID),
+                    array(formula_db::FLD_ID, user_db::FLD_ID),
                     array($this->id(), $this->user()->id()));
                 if ($msg == '') {
                     $this->usr_cfg_id = null;
@@ -2575,7 +2577,7 @@ class formula extends sandbox_code_id
                 $db_con->set_class(formula::class);
                 // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
                 $this->set_id($db_con->insert_old(
-                    array(formula_db::FLD_NAME, user::FLD_ID, formula_db::FLD_LAST_UPDATE, formula_db::FLD_FORMULA_TEXT, formula_db::FLD_FORMULA_USER_TEXT),
+                    array(formula_db::FLD_NAME, user_db::FLD_ID, formula_db::FLD_LAST_UPDATE, formula_db::FLD_FORMULA_TEXT, formula_db::FLD_FORMULA_USER_TEXT),
                     array($this->name(), $this->user()->id(), sql::NOW, $this->ref_text, $this->usr_text)));
                 if ($this->id() > 0) {
                     log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id());

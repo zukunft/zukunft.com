@@ -752,7 +752,7 @@ include_once html_paths::HTML . 'html_base.php';
 
 // include all other libraries that are usually needed
 include_once paths::MODEL_CONST . 'env.php';
-include_once paths::SERVICE . 'db_code_link.php';
+include_once paths::SERVICE . 'db_cl.php';
 include_once paths::SERVICE . 'config.php';
 
 // to avoid circle include
@@ -1344,7 +1344,7 @@ function prg_end($db_con, $echo_header = true): void
 }
 
 // special page closing only for the about page
-function prg_end_about($link)
+function prg_end_about($link): void
 {
     global $db_con;
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;
@@ -1362,7 +1362,7 @@ function prg_end_about($link)
 
 // special page closing of api pages
 // for the api e.g. the csv export no footer should be shown
-function prg_end_api($link)
+function prg_end_api($link): void
 {
     global $db_con;
     global $sys_time_start, $sys_time_limit, $sys_script, $sys_log_msg_lst;

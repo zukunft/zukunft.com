@@ -1044,7 +1044,7 @@ class phrase_list extends sandbox_list_named
     }
 
     /**
-     * @returns bool true if at least one id is positive or not used to avoid exeeding PHP_INT_MAX
+     * @returns bool true if at least one id is positive or not used to avoid exceeding PHP_INT_MAX
      */
     function one_positiv(): bool
     {

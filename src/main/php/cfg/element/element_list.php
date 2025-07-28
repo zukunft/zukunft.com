@@ -46,6 +46,7 @@ include_once paths::MODEL_PHRASE . 'term_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 
 use cfg\db\sql_creator;
@@ -55,6 +56,7 @@ use cfg\phrase\term_list;
 use cfg\sandbox\sandbox_list;
 use cfg\system\sys_log_level;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 
 class element_list extends sandbox_list
@@ -144,7 +146,7 @@ class element_list extends sandbox_list
         $qp = $this->load_sql($sc, 'frm_id');
         if ($frm_id > 0) {
             $sc->add_where(formula_db::FLD_ID, $frm_id);
-            $sc->add_where(user::FLD_ID, $this->user()->id());
+            $sc->add_where(user_db::FLD_ID, $this->user()->id());
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -166,7 +168,7 @@ class element_list extends sandbox_list
         if ($frm_id > 0 and $elm_type_id != 0) {
             $sc->add_where(formula_db::FLD_ID, $frm_id);
             $sc->add_where(element::FLD_TYPE, $elm_type_id);
-            $sc->add_where(user::FLD_ID, $this->user()->id());
+            $sc->add_where(user_db::FLD_ID, $this->user()->id());
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';

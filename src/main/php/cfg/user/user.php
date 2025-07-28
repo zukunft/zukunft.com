@@ -2308,7 +2308,7 @@ class user extends db_id_object_non_sandbox
         // add the requesting user id for logging
         $fvt_lst_log = clone $fvt_lst;
         $fvt_lst_log->add_field(
-            user::FLD_ID,
+            user_db::FLD_ID,
             $usr->id(),
             sql_par_type::INT
         );

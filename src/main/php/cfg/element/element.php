@@ -62,6 +62,7 @@ include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_CONST . 'chars.php';
@@ -83,6 +84,7 @@ use cfg\helper\db_object_seq_id_user;
 use cfg\helper\type_object;
 use cfg\phrase\term;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\word\triple;
@@ -130,7 +132,7 @@ class element extends db_object_seq_id_user
     // all database field names excluding the id, standard name and user specific fields
     const FLD_NAMES = array(
         formula_db::FLD_ID,
-        user::FLD_ID,
+        user_db::FLD_ID,
         self::FLD_ORDER,
         self::FLD_TYPE,
         self::FLD_REF_ID
@@ -141,7 +143,7 @@ class element extends db_object_seq_id_user
         [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, self::FLD_FORMULA_COM],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NOT_NULL, '', '', ''],
         [element_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, element_type::class, ''],
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', user::class, ''],
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, '', user::class, ''],
         [self::FLD_REF_ID, sql_field_type::INT, sql_field_default::NULL, '', '', self::FLD_REF_ID_COM],
         [self::FLD_TEXT, sql_field_type::NAME, sql_field_default::NULL, '', '', ''],
     );
@@ -539,7 +541,7 @@ class element extends db_object_seq_id_user
     {
         return [
             $this::FLD_ID,
-            user::FLD_ID,
+            user_db::FLD_ID,
             self::FLD_REF_ID
         ];
     }

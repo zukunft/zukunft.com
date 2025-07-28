@@ -119,7 +119,7 @@ class change_link extends change_log
 
     // all database field names
     const FLD_NAMES = array(
-        user::FLD_ID,
+        user_db::FLD_ID,
         self::FLD_TABLE_ID,
         self::FLD_TIME,
         self::FLD_OLD_FROM_TEXT,
@@ -140,7 +140,7 @@ class change_link extends change_log
     const FLD_LST_KEY = array(
         [self::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_ID_COM],
         [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [self::FLD_ACTION, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', change_action::class, self::FLD_ACTION_COM],
     );
     // field list to log the actual change of the value with a standard group id
@@ -215,7 +215,7 @@ class change_link extends change_log
             $this->new_to_id = $db_row[self::FLD_NEW_TO_ID];
             // TODO check if not the complete user should be loaded
             $usr = new user();
-            $usr->set_id($db_row[user::FLD_ID]);
+            $usr->set_id($db_row[user_db::FLD_ID]);
             $usr->name = $db_row[user_db::FLD_NAME];
             $this->set_user($usr);
         }
@@ -242,7 +242,7 @@ class change_link extends change_log
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
 
-        $sc->add_where(user::FLD_ID, $usr->id());
+        $sc->add_where(user_db::FLD_ID, $usr->id());
         $sc->set_order(self::FLD_ID, sql::ORDER_DESC);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -395,7 +395,7 @@ class change_link extends change_log
 
         $sql_fields = array();
         $sql_values = array();
-        $sql_fields[] = user::FLD_ID;
+        $sql_fields[] = user_db::FLD_ID;
         $sql_values[] = $this->user()->id();
         $sql_fields[] = change_action::FLD_ID;
         $sql_values[] = $this->action_id;
@@ -579,7 +579,7 @@ class change_link extends change_log
 
         $sql_fields = array();
         $sql_values = array();
-        $sql_fields[] = user::FLD_ID;
+        $sql_fields[] = user_db::FLD_ID;
         $sql_values[] = $this->user()->id();
         $sql_fields[] = change_action::FLD_ID;
         $sql_values[] = $this->action_id;
@@ -764,7 +764,7 @@ class change_link extends change_log
     ): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), user_db::FLD_ID_SQL_TYP);
+        $fvt_lst->add_field(user_db::FLD_ID, $this->user()->id(), user_db::FLD_ID_SQL_TYP);
         $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
         $fvt_lst->add_field(change_table::FLD_ID, $this->table_id, type_object::FLD_ID_SQL_TYP);
 
@@ -855,7 +855,7 @@ class change_link extends change_log
     function db_fields(): array
     {
         $sql_fields = array();
-        $sql_fields[] = user::FLD_ID;
+        $sql_fields[] = user_db::FLD_ID;
         $sql_fields[] = change_action::FLD_ID;
         $sql_fields[] = change_field::FLD_ID;
 

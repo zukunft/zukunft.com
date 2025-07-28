@@ -335,7 +335,7 @@ class change_log_list extends base_list
     {
         $qp = $this->load_sql($sc, 'user_last', self::class);
 
-        $sc->add_where(user::FLD_ID, $usr->id());
+        $sc->add_where(user_db::FLD_ID, $usr->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;

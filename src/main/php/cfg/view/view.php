@@ -80,6 +80,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_typed.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
@@ -114,6 +115,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_code_id;
 use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
@@ -718,7 +720,7 @@ class view extends sandbox_code_id
             view_db::FLD_NAMES,
             view_db::FLD_NAMES_USR,
             view_db::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         ));
 
         return parent::load_standard_sql($sc);

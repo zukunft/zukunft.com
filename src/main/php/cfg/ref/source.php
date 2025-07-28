@@ -78,6 +78,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -99,6 +100,7 @@ use cfg\log\change;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_code_id;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use shared\const\sources;
 use shared\enum\messages as msg_id;
@@ -391,7 +393,7 @@ class source extends sandbox_code_id
             source_db::FLD_NAMES,
             source_db::FLD_NAMES_USR,
             source_db::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         ));
 
         return parent::load_standard_sql($sc);
@@ -494,7 +496,7 @@ class source extends sandbox_code_id
         } else {
             $qp = $this->not_changed_sql($db_con->sql_creator());
             $db_row = $db_con->get1($qp);
-            $change_user_id = $db_row[user::FLD_ID];
+            $change_user_id = $db_row[user_db::FLD_ID];
             if ($change_user_id > 0) {
                 $result = false;
             }

@@ -339,7 +339,7 @@ class create_test_objects extends test_base
         $vars[json_fields::LIST_PROTECTION_TYPES] = $ptc_typ_cac->api_json_array();
         $vars[json_fields::LIST_LANGUAGES] = $lan_cac->api_json_array();
         $vars[json_fields::LIST_LANGUAGE_FORMS] = $lan_for_cac->api_json_array();
-        $vars[json_fields::LIST_SYS_LOG_STATI] = $sys_log_sta_cac->api_json_array();
+        $vars[json_fields::LIST_SYS_LOG_STATUUS] = $sys_log_sta_cac->api_json_array();
         $vars[json_fields::LIST_JOB_TYPES] = $job_typ_cac->api_json_array();
         $vars[json_fields::LIST_CHANGE_LOG_ACTIONS] = $cng_act_cac->api_json_array();
         $vars[json_fields::LIST_CHANGE_LOG_TABLES] = $cng_tbl_cac->api_json_array();

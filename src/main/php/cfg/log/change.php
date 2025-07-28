@@ -130,7 +130,7 @@ class change extends change_log
 
     // all database field names
     const FLD_NAMES = array(
-        user::FLD_ID,
+        user_db::FLD_ID,
         self::FLD_TIME,
         self::FLD_ACTION,
         self::FLD_FIELD_ID,
@@ -204,14 +204,14 @@ class change extends change_log
             // TODO check if not the complete user should be loaded
             $usr_set = false;
             if ($usr != null) {
-                if ($db_row[user::FLD_ID] == $usr->id()) {
+                if ($db_row[user_db::FLD_ID] == $usr->id()) {
                     $this->set_user($usr);
                     $usr_set = true;
                 }
             }
             if (!$usr_set) {
                 $row_usr = new user();
-                $row_usr->set_id($db_row[user::FLD_ID]);
+                $row_usr->set_id($db_row[user_db::FLD_ID]);
                 $row_usr->name = $db_row[user_db::FLD_NAME];
                 $this->set_user($row_usr);
             }
@@ -287,7 +287,7 @@ class change extends change_log
             $usr = $this->user();
         }
 
-        $sc->add_where(user::FLD_ID, $usr->id());
+        $sc->add_where(user_db::FLD_ID, $usr->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;

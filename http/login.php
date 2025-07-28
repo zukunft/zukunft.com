@@ -87,7 +87,7 @@ if ($db_con->is_open()) {
             if (mysqli_num_rows($sql_result) == 1) {
                 $row = mysqli_fetch_array($sql_result);
                 session_start();
-                $_SESSION['usr_id'] = $row[user::FLD_ID];
+                $_SESSION['usr_id'] = $row[user_db::FLD_ID];
                 $_SESSION['user_name'] = $row[user_db::FLD_NAME];
                 $_SESSION['logged'] = TRUE;
                 // TODO ask if cookies are allowed: if yes, the session id does not need to be forwarded

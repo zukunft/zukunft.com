@@ -62,6 +62,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_db.php';
@@ -86,6 +87,7 @@ use cfg\helper\db_object_seq_id;
 use cfg\formula\formula;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\user\user;
@@ -162,7 +164,7 @@ class term extends combine_named
     const TBL_FLD_LST_VIEW = [
         [word::class, [
             [word_db::FLD_ID, term::FLD_ID, self::FLD_WORD_ID_TO_TERM_ID],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [word_db::FLD_NAME, term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
             [word_db::FLD_VALUES, self::FLD_USAGE],
@@ -175,7 +177,7 @@ class term extends combine_named
         ], [phrase::FLD_TYPE, word_db::FLD_ID]],
         [triple::class, [
             [triple_db::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
             [triple_db::FLD_VALUES, self::FLD_USAGE],
@@ -188,7 +190,7 @@ class term extends combine_named
         ], ['', triple_db::FLD_ID]],
         [formula::class, [
             [formula_db::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [formula_db::FLD_NAME, term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
             [formula_db::FLD_USAGE, self::FLD_USAGE],
@@ -201,7 +203,7 @@ class term extends combine_named
         ], ['', formula_db::FLD_ID]],
         [verb::class, [
             [verb_db::FLD_ID, term::FLD_ID, self::FLD_VERB_ID_TO_TERM_ID],
-            [sql::NULL_VALUE, user::FLD_ID, sql_db::FLD_CONST],
+            [sql::NULL_VALUE, user_db::FLD_ID, sql_db::FLD_CONST],
             [verb_db::FLD_NAME, term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
             [verb_db::FLD_WORDS, self::FLD_USAGE],

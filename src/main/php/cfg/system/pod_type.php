@@ -47,7 +47,7 @@ class pod_type extends type_object
 
     // list of the pod types
     const MASTER = 'master'; // the main write pod for all phrases that are not assigned to any other pod
-    const PHRASE_MASTER = 'phrase_master'; // the main write pod for the phrases assigned thid pod
+    const PHRASE_MASTER = 'phrase_master'; // the main write pod for the phrases assigned this pod
     const READ_ONLY = "read_only"; // a read only pod for load balancing
 
 

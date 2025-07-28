@@ -49,6 +49,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -67,6 +68,7 @@ use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\sandbox\sandbox;
 use cfg\user\user;
+use cfg\user\user_db;
 use shared\enum\change_actions;
 use shared\json_fields;
 use shared\library;
@@ -111,7 +113,7 @@ class sys_log extends db_object_seq_id
     // all database field names excluding the id
     // the extra user field is needed because it is common to check the log entries of others users e.g. for admin users
     const FLD_NAMES = array(
-        user::FLD_ID,
+        user_db::FLD_ID,
         self::FLD_SOLVER,
         self::FLD_TIME,
         self::FLD_TYPE,
@@ -130,8 +132,8 @@ class sys_log extends db_object_seq_id
         [self::FLD_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_TEXT_COM],
         [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TRACE, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_TRACE_COM],
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_USER_COM],
-        [self::FLD_SOLVER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_SOLVER_COM, user::FLD_ID],
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_USER_COM],
+        [self::FLD_SOLVER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_SOLVER_COM, user_db::FLD_ID],
         [sys_log_status::FLD_ID, sql_field_type::INT, sql_field_default::ONE, sql::INDEX, sys_log_status::class, ''],
     );
 
@@ -174,7 +176,7 @@ class sys_log extends db_object_seq_id
         $lib = new library();
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
-            $this->usr_id = $db_row[user::FLD_ID];
+            $this->usr_id = $db_row[user_db::FLD_ID];
             $this->usr_name = $db_row[sandbox::FLD_USER_NAME];
             $this->solver_id = $db_row[self::FLD_SOLVER];
             $this->solver_name = $db_row[self::FLD_SOLVER_NAME];

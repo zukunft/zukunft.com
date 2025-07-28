@@ -53,6 +53,7 @@ include_once paths::MODEL_FORMULA . 'formula_db.php';
 //include_once paths::MODEL_RESULT . 'result_db.php';
 //include_once paths::MODEL_RESULT . 'result_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_db.php';
@@ -81,6 +82,7 @@ use cfg\result\result;
 use cfg\result\result_db;
 use cfg\result\result_list;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\value\value_base;
@@ -277,7 +279,7 @@ class sandbox_value_list extends sandbox_list
         $pos_usr = $par_pos;
         $par_pos++;
         $par_name = $sc->par_name($par_pos);
-        $sc->add_where_par(user::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
+        $sc->add_where_par(user_db::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
 
         // remember the parameters
         $par_lst = clone $sc->par_list();

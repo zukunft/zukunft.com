@@ -44,6 +44,7 @@ include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_type.php';
 //include_once paths::MODEL_REF . 'source_db.php';
 //include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_db.php';
 //include_once paths::MODEL_LANGUAGE . 'language.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox.php';
 //include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
@@ -57,6 +58,7 @@ use cfg\ref\source_db;
 use cfg\user\user;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_multi;
+use cfg\user\user_db;
 
 class value_db
 {
@@ -93,7 +95,7 @@ class value_db
     );
     // fields that are not part of the standard result table, but that needs to be included for a correct union field match
     const FLD_NAMES_STD_DUMMY = array(
-        user::FLD_ID,
+        user_db::FLD_ID,
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR_EX_STD = array(

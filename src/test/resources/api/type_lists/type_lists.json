@@ -960,7 +960,7 @@
         "id": 1
       }
     ],
-    "sys_log_stati": [
+    "sys_log_statuus": [
       {
         "name": "new",
         "code_id": "new",

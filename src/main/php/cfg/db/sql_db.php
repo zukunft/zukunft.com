@@ -139,6 +139,7 @@ include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_HELPER . 'type_lists.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_profile.php';
 include_once paths::MODEL_USER . 'user_type.php';
 include_once paths::MODEL_USER . 'user_message.php';
@@ -262,6 +263,7 @@ use cfg\system\sys_log_type;
 use cfg\system\system_time;
 use cfg\system\system_time_type;
 use cfg\phrase\term;
+use cfg\user\user_db;
 use cfg\value\value;
 use cfg\value\value_geo;
 use cfg\value\value_text;
@@ -2071,7 +2073,7 @@ class sql_db
                     $usr_field_lst[] = $this->name_field;
                 }
                 if (!$this->all_query) {
-                    $field_lst[] = user::FLD_ID;
+                    $field_lst[] = user_db::FLD_ID;
                 }
             } else {
                 if (!in_array($this->class, sql_db::DB_TYPES_NOT_NAMED)) {
@@ -2138,7 +2140,7 @@ class sql_db
                                         if ($this->fields != '') {
                                             $this->fields .= ', ';
                                         }
-                                        $this->fields .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
+                                        $this->fields .= ' ' . sql_db::USR_TBL . '.' . user_db::FLD_ID;
                                     } else {
                                         if ($this->usr_query) {
                                             if ($this->fields != '') {
@@ -2160,7 +2162,7 @@ class sql_db
                             if ($this->fields != '') {
                                 $this->fields .= ', ';
                             }
-                            $this->fields .= ' ' . sql_db::USR_TBL . '.' . user::FLD_ID;
+                            $this->fields .= ' ' . sql_db::USR_TBL . '.' . user_db::FLD_ID;
                         } else {
                             if ($this->usr_query) {
                                 if ($this->fields != '') {
@@ -2181,7 +2183,7 @@ class sql_db
             if ($this->fields != '') {
                 $this->fields .= ', ';
             }
-            $this->fields .= ' ' . sql_db::STD_TBL . '.' . user::FLD_ID . ' AS owner_id';
+            $this->fields .= ' ' . sql_db::STD_TBL . '.' . user_db::FLD_ID . ' AS owner_id';
         }
 
         // add join fields
@@ -3486,7 +3488,7 @@ class sql_db
         if ($this->usr_only_query) {
             if (!$this->all_query) {
                 $this->add_par(sql_par_type::INT, $this->usr_view_id);
-                $result .= ' AND ' . user::FLD_ID . ' = ' . $this->par_name();
+                $result .= ' AND ' . user_db::FLD_ID . ' = ' . $this->par_name();
             }
         }
 
@@ -3618,7 +3620,7 @@ class sql_db
         if ($this->usr_only_query) {
             if (!$this->all_query) {
                 $this->add_par(sql_par_type::INT, $this->usr_view_id);
-                $result .= ' AND ' . user::FLD_ID . ' = ' . $this->par_name();
+                $result .= ' AND ' . user_db::FLD_ID . ' = ' . $this->par_name();
             }
         }
 
@@ -3788,7 +3790,7 @@ class sql_db
 
         $this->set_order_text(trim($table_prefix . $order_field . ' ' . $direction));
         if ($this->all_query) {
-            $this->order .= ', ' . $table_prefix . user::FLD_ID;
+            $this->order .= ', ' . $table_prefix . user_db::FLD_ID;
         }
     }
 
@@ -3853,7 +3855,7 @@ class sql_db
                     $this->join .= ' ON ' . sql_db::STD_TBL . '.' . $this->id_field . ' = ' . sql_db::USR_TBL . '.' . $this->id_field;
                 }
                 if (!$this->all_query) {
-                    $this->join .= ' AND ' . sql_db::USR_TBL . '.' . user::FLD_ID . ' = ';
+                    $this->join .= ' AND ' . sql_db::USR_TBL . '.' . user_db::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -3931,7 +3933,7 @@ class sql_db
                     $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join_table_name . ' ' . sql_db::ULK_TBL;
                     $this->join .= ' ON ' . sql_db::LNK_TBL . '.' . $join_id_field . ' = ' . sql_db::ULK_TBL . '.' . $join_id_field;
                     if (!$this->all_query) {
-                        $this->join .= ' AND ' . sql_db::ULK_TBL . '.' . user::FLD_ID . ' = ';
+                        $this->join .= ' AND ' . sql_db::ULK_TBL . '.' . user_db::FLD_ID . ' = ';
                         if ($this->query_name == '') {
                             $this->join .= $this->usr_view_id;
                         } else {
@@ -3971,7 +3973,7 @@ class sql_db
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join2_table_name . ' ' . sql_db::ULK2_TBL;
                 $this->join .= ' ON ' . sql_db::LNK2_TBL . '.' . $join2_id_field . ' = ' . sql_db::ULK2_TBL . '.' . $join2_id_field;
                 if (!$this->all_query) {
-                    $this->join .= ' AND ' . sql_db::ULK2_TBL . '.' . user::FLD_ID . ' = ';
+                    $this->join .= ' AND ' . sql_db::ULK2_TBL . '.' . user_db::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -4010,7 +4012,7 @@ class sql_db
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join3_table_name . ' ' . sql_db::ULK3_TBL;
                 $this->join .= ' ON ' . sql_db::LNK3_TBL . '.' . $join3_id_field . ' = ' . sql_db::ULK3_TBL . '.' . $join3_id_field;
                 if (!$this->all_query) {
-                    $this->join .= ' AND ' . sql_db::ULK3_TBL . '.' . user::FLD_ID . ' = ';
+                    $this->join .= ' AND ' . sql_db::ULK3_TBL . '.' . user_db::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -4049,7 +4051,7 @@ class sql_db
                 $this->join .= ' LEFT JOIN ' . sql_db::TBL_USER_PREFIX . $join4_table_name . ' ' . sql_db::ULK4_TBL;
                 $this->join .= ' ON ' . sql_db::LNK4_TBL . '.' . $join4_id_field . ' = ' . sql_db::ULK4_TBL . '.' . $join4_id_field;
                 if (!$this->all_query) {
-                    $this->join .= ' AND ' . sql_db::ULK4_TBL . '.' . user::FLD_ID . ' = ';
+                    $this->join .= ' AND ' . sql_db::ULK4_TBL . '.' . user_db::FLD_ID . ' = ';
                     if ($this->query_name == '') {
                         $this->join .= $this->usr_view_id;
                     } else {
@@ -4164,7 +4166,7 @@ class sql_db
         $this->set_from();
         $id_fld = $this->id_field;
         if ($owner_id > 0) {
-            $this->set_where(array($this->id_field, user::FLD_ID));
+            $this->set_where(array($this->id_field, user_db::FLD_ID));
         } else {
             $this->set_where(array($this->id_field));
         }
@@ -4194,7 +4196,7 @@ class sql_db
         $this->set_field_statement(true);
         $this->set_from();
         if ($owner_id > 0) {
-            $this->set_where(array($this->id_field, user::FLD_ID));
+            $this->set_where(array($this->id_field, user_db::FLD_ID));
         } else {
             $this->set_where(array($this->id_field));
         }

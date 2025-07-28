@@ -56,6 +56,7 @@ include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_VIEW . 'view.php';
 
 use cfg\db\sql;
@@ -73,6 +74,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\view\view;
 
 class term_view extends sandbox_link
@@ -419,7 +421,7 @@ class term_view extends sandbox_link
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)));
+            array(user_db::FLD_ID)));
         if ($this->id() > 0) {
             $sc->add_where($this->id_field(), $this->id());
         } elseif ($this->view()->id() > 0 and $this->term()->id() != 0) {

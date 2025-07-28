@@ -79,6 +79,7 @@ include_once paths::MODEL_LOG . 'change_action.php';
 //include_once paths::MODEL_PHRASE . 'term.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VERB . 'verb.php';
 //include_once paths::MODEL_WORD . 'word.php';
@@ -106,6 +107,7 @@ use cfg\log\change_log_list;
 use cfg\phrase\phrase;
 use cfg\phrase\term;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\word\triple;
@@ -785,7 +787,7 @@ class sandbox_named extends sandbox
                     $db_con->set_usr($this->user()->id());
                     $this->set_id(
                         $db_con->insert_old(
-                            array($class_name . '_name', user::FLD_ID), array($this->name, $this->user()->id())));
+                            array($class_name . '_name', user_db::FLD_ID), array($this->name, $this->user()->id())));
                 }
 
                 // save the object fields if saving the key was successful
@@ -1243,7 +1245,7 @@ class sandbox_named extends sandbox
     {
         return [
             $this::FLD_ID,
-            user::FLD_ID,
+            user_db::FLD_ID,
             $this->name_field(),
             sql_db::FLD_DESCRIPTION
         ];

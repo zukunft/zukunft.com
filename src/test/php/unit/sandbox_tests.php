@@ -44,6 +44,7 @@ include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\component\component;
@@ -65,6 +66,7 @@ use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
 use cfg\ref\source_db;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\value\value;
 use cfg\verb\verb;
 use cfg\verb\verb_db;
@@ -590,7 +592,7 @@ class sandbox_tests
         // ... similar with joined fields
         $db_con->set_class(formula::class);
         $db_con->set_fields(array(
-            user::FLD_ID,
+            user_db::FLD_ID,
             formula_db::FLD_FORMULA_TEXT,
             formula_db::FLD_FORMULA_USER_TEXT,
             sql_db::FLD_DESCRIPTION,
@@ -1000,7 +1002,7 @@ class sandbox_tests
         // ... similar with joined fields
         $db_con->set_class(formula::class);
         $db_con->set_fields(array(
-            user::FLD_ID,
+            user_db::FLD_ID,
             formula_db::FLD_FORMULA_TEXT,
             formula_db::FLD_FORMULA_USER_TEXT,
             sql_db::FLD_DESCRIPTION,

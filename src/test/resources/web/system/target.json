@@ -567,7 +567,7 @@
         "comment": ""
       }
     ],
-    "sys_log_stati": [
+    "sys_log_statuus": [
       {
         "id": 1,
         "code_id": "new",

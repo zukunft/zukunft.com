@@ -2,8 +2,8 @@
 
 /*
 
-  db_code_link.php - class that links the upfront loaded type list
-  ----------------
+  model/service/db_cl.php - code link class that links the upfront loaded type list
+  -----------------------
 
   TODO check automatically that all rows with code_id are existing in the database and add any missing rows
 
@@ -31,7 +31,7 @@
 
 */
 
-namespace model;
+namespace cfg;
 
 use cfg\const\paths;
 
@@ -215,9 +215,9 @@ class db_cl
      * the type object base on the given database row id
      *
      * @param int $id the database row id
-     * @return mixed the type object
+     * @return type_object|null the type object
      */
-    function sys_log_status(int $id)
+    function sys_log_status(int $id): ?type_object
     {
         global $sys_log_sta_cac;
         return $sys_log_sta_cac->get($id);
@@ -263,6 +263,12 @@ class db_cl
     {
         global $cmp_typ_cac;
         return $cmp_typ_cac->get_by_id($id);
+    }
+
+    function component_link_type(int $id)
+    {
+        global $cmp_lnk_typ_cac;
+        return $cmp_lnk_typ_cac->get_by_id($id);
     }
 
     function component_pos_type(int $id)

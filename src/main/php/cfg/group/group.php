@@ -81,6 +81,7 @@ include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
@@ -107,6 +108,7 @@ use cfg\result\result;
 use cfg\sandbox\sandbox_multi;
 use cfg\sandbox\sandbox_value;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\word\word;
@@ -913,7 +915,7 @@ class group extends sandbox_multi
     {
         $fld_lst = array_merge(
             $this::FLD_NAMES,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         );
         return parent::load_standard_sql($sc, $fld_lst);
     }
@@ -933,7 +935,7 @@ class group extends sandbox_multi
 
         $fld_lst = array_merge(
             $this::FLD_NAMES,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         );
 
         $sc->set_class($this::class, $sc_par_lst);
@@ -1755,7 +1757,7 @@ class group extends sandbox_multi
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->set([
             [group::FLD_ID, $this->id(), $sc->get_sql_par_type($this->id())],
-            [user::FLD_ID, $this->user()->id(), sql_par_type::INT],
+            [user_db::FLD_ID, $this->user()->id(), sql_par_type::INT],
             [self::FLD_NAME, $this->name, sql_par_type::TEXT],
             [sql_db::FLD_DESCRIPTION, $this->description, sql_par_type::TEXT]
         ]);

@@ -502,7 +502,7 @@ class phrase_list extends sandbox_list_named
      * offer the user to add a new value for these phrases
      * similar to value.php/btn_add
      */
-    function btn_add_value($back)
+    function btn_add_value($back): string
     {
         $result = \html\btn_add_value($this, Null, $back);
         /*

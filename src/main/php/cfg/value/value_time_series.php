@@ -51,6 +51,7 @@ include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_REF . 'source_db.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
@@ -67,6 +68,7 @@ use cfg\sandbox\sandbox_value;
 use cfg\ref\source;
 use cfg\ref\source_db;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use shared\enum\messages as msg_id;
 use shared\library;
@@ -87,7 +89,7 @@ class value_time_series extends sandbox_value
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
-        user::FLD_ID,
+        user_db::FLD_ID,
         group::FLD_ID
     );
 
@@ -325,7 +327,7 @@ class value_time_series extends sandbox_value
         if ($log->id() > 0) {
             $db_con->set_class(value_time_series::class);
             $this->id = $db_con->insert_old(
-                array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
+                array(group::FLD_ID, user_db::FLD_ID, self::FLD_LAST_UPDATE),
                 array($this->grp()->id(), $this->user()->id(), sql::NOW));
             if ($this->id() > 0) {
                 // update the reference in the log
@@ -357,7 +359,7 @@ class value_time_series extends sandbox_value
      */
 
     /**
-     * temp overwrite of the id_field function of sandbox_value class until this class is revied
+     * temp overwrite of the id_field function of sandbox_value class until this class is reviewed
      *
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return string|array the field name(s) of the prime database index of the object

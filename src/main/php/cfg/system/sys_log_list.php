@@ -48,6 +48,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log_type.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 
@@ -58,6 +59,7 @@ use cfg\db\sql_par_type;
 use cfg\helper\type_object;
 use cfg\sandbox\sandbox;
 use cfg\user\user;
+use cfg\user\user_db;
 use shared\enum\sys_log_statuus;
 
 class sys_log_list extends base_list
@@ -122,13 +124,13 @@ class sys_log_list extends base_list
         } elseif ($this->dsp_type == self::DSP_OTHER) {
             $db_con->add_par(sql_par_type::INT, $this->user()->id());
             $sql_where = $sql_status .
-                ' AND (' . sql_db::STD_TBL . '.' . user::FLD_ID . ' <> ' . $db_con->par_name() .
+                ' AND (' . sql_db::STD_TBL . '.' . user_db::FLD_ID . ' <> ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
             $qp->name .= self::DSP_OTHER;
         } elseif ($this->dsp_type == self::DSP_MY) {
             $db_con->add_par(sql_par_type::INT, $this->user()->id());
             $sql_where = $sql_status .
-                ' AND (' . sql_db::STD_TBL . '.' . user::FLD_ID . ' = ' . $db_con->par_name() .
+                ' AND (' . sql_db::STD_TBL . '.' . user_db::FLD_ID . ' = ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
             $qp->name .= self::DSP_MY;
         } else {
