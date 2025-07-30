@@ -841,6 +841,12 @@ enum messages: string
     case TRIPLE_ADD = 'triple_add';
     case TRIPLE_EDIT = 'triple_edit';
     case TRIPLE_DEL = 'triple_del';
+    case SOURCE_ADD = 'source_add';
+    case SOURCE_EDIT = 'source_edit';
+    case SOURCE_DEL = 'source_del';
+    case REF_ADD = 'ref_add';
+    case REF_EDIT = 'ref_edit';
+    case REF_DEL = 'ref_del';
     case VALUE_ADD = 'value_add';
     case VALUE_ADD_SIMILAR = 'value_add_similar';
     case VALUE_EDIT = 'value_edit';
@@ -850,6 +856,8 @@ enum messages: string
     case FORMULA_DEL = 'formula_del';
     case FORMULA_LINK = 'formula_link';
     case FORMULA_UNLINK = 'formula_unlink';
+    case RESULT_EDIT = 'result_edit';
+    case RESULT_DEL = 'result_del';
     case VIEW_ADD = 'view_add';
     case VIEW_EDIT = 'view_edit';
     case VIEW_DEL = 'view_del';
@@ -858,6 +866,9 @@ enum messages: string
     case COMPONENT_DEL = 'component_del';
     case COMPONENT_LINK = 'component_link';
     case COMPONENT_UNLINK = 'component_unlink';
+    case USER_ADD = 'user_add';
+    case USER_EDIT = 'user_edit';
+    case USER_DEL = 'user_del';
     case PLEASE_SELECT = 'please_select';
     case FORM_WORD_ADD_TITLE = 'form_title_word_add';
     case FORM_WORD_EDIT_TITLE = 'form_title_word_edit';

@@ -81,6 +81,21 @@ class value extends sandbox_value
 {
 
     /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::VALUE_ADD;
+    const VIEW_EDIT = views::VALUE_EDIT;
+    const VIEW_DEL = views::VALUE_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::VALUE_ADD;
+    const MSG_EDIT = msg_id::VALUE_EDIT;
+    const MSG_DEL = msg_id::VALUE_DEL;
+
+
+    /*
      * object vars
      */
 
@@ -377,31 +392,6 @@ class value extends sandbox_value
             views::VALUE_ADD,
             $msg_code_id,
             $back, $explain);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to change a value e.g. the name or the type
-     */
-    function btn_edit(string $back = ''): string
-    {
-        return parent::btn_edit_sbx(
-            views::VALUE_EDIT,
-            msg_id::VALUE_EDIT,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to exclude the value for the current user
-     * or if no one uses the value delete the complete value
-     */
-    function btn_del(string $back = ''): string
-    {
-        return parent::btn_del_sbx(
-            views::VALUE_DEL,
-            msg_id::VALUE_DEL,
-            $back);
     }
 
 

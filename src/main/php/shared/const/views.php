@@ -106,7 +106,9 @@ class views
     const RESULT_DEL_ID = 27;
     const VERBS = 'verbs';
     const USER = 'user';
+    const USER_ADD = 'user_add';
     const USER_EDIT = 'user_edit';
+    const USER_DEL = 'user_del';
     const ERR_LOG = 'error_log';
     const ERR_UPD = 'error_update';
     const IMPORT = 'import';

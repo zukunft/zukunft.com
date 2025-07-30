@@ -44,7 +44,9 @@ use cfg\const\paths;
 include_once paths::MODEL_CONST . 'def.php';
 
 use cfg\const\def;
+use cfg\result\result;
 use cfg\verb\verb;
+use html\button;
 use shared\library;
 use test\test_cleanup;
 
@@ -59,6 +61,20 @@ class horizontal_ui_tests
         // start the test section (ts)
         $ts = 'unit ui horizontal ';
         $t->header($ts);
+
+        $t->subheader($ts . 'button');
+        foreach (def::MAIN_CLASSES as $class) {
+            $ui_obj = $t->class_to_ui_object($class);
+            $test_name = 'add ' . $lib->class_to_name($class) . ' html code';
+            if ($class != result::class) {
+                // it should not be possible to add result via an ui button
+                $t->assert_text_contains($test_name, $ui_obj->btn_add(), button::IMG_ADD_FA);
+            }
+            $test_name = 'edit ' . $lib->class_to_name($class) . ' html code';
+            $t->assert_text_contains($test_name, $ui_obj->btn_edit(), button::IMG_EDIT_FA);
+            $test_name = 'del ' . $lib->class_to_name($class) . ' html code';
+            $t->assert_text_contains($test_name, $ui_obj->btn_del(), button::IMG_DEL_FA);
+        }
 
         $t->subheader($ts . 'url');
         foreach (def::MAIN_CLASSES as $class) {

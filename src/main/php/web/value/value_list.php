@@ -35,15 +35,18 @@
 namespace html\value;
 
 use cfg\const\paths;
-use cfg\phrase\phr_ids;
 use html\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::HTML . 'button.php';
+// TODO move phr_ids to shared objects
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_ctrl.php';
 include_once html_paths::HTML . 'styles.php';
+include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::GROUP . 'group_list.php';
+include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
@@ -57,6 +60,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
 
 use html\button;
+use cfg\phrase\phr_ids;
 use html\group\group;
 use html\html_base;
 use html\group\group_list;

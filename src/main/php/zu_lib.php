@@ -371,6 +371,7 @@ use html\phrase\phrase_group as phrase_group_dsp;
          or create a table for the pod prime, index and big_index phrases with the global phrase_id
     TODO save in the local pod setting the value and result tables actually used to speed up value searches
     TODO offer syntactic sugar translation for PL SQL
+    TODO use the LLM-KI token weights to preload the triple weights
     TODO reduce the function parameters to 3 or less wherever possible
     TODO use popular Open Source LLM systems to fill the word and triple (and value) tables
     TODO do not allow any HTML or script code fragments in the text fields

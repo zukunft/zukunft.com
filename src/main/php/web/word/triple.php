@@ -89,6 +89,21 @@ class triple extends sandbox_code_id
 {
 
     /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::TRIPLE_ADD;
+    const VIEW_EDIT = views::TRIPLE_EDIT;
+    const VIEW_DEL = views::TRIPLE_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::TRIPLE_ADD;
+    const MSG_EDIT = msg_id::TRIPLE_EDIT;
+    const MSG_DEL = msg_id::TRIPLE_DEL;
+
+
+    /*
      * object vars
      */
 
@@ -406,48 +421,6 @@ class triple extends sandbox_code_id
     function name_link(?string $back = '', string $style = '', int $msk_id = views::TRIPLE_ID): string
     {
         return parent::name_link($back, $style, $msk_id);
-    }
-
-
-    /*
-     * buttons
-     */
-
-    /**
-     * @return string the html code for a bottom
-     * to create a new word for the current user
-     */
-    function btn_add(string $back = ''): string
-    {
-        return parent::btn_add_sbx(
-            views::TRIPLE_ADD,
-            msg_id::TRIPLE_ADD,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to change a triple e.g. the name or the type
-     */
-    function btn_edit(string $back = ''): string
-    {
-        return parent::btn_edit_sbx(
-            views::TRIPLE_EDIT,
-            msg_id::TRIPLE_EDIT,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to exclude the triple for the current user
-     * or if no one uses the word delete the complete word
-     */
-    function btn_del(string $back = ''): string
-    {
-        return parent::btn_del_sbx(
-            views::TRIPLE_DEL,
-            msg_id::TRIPLE_DEL,
-            $back);
     }
 
 

@@ -657,9 +657,9 @@ class create_test_objects extends test_base
     /**
      * get the frontend object related to the given backend class
      * @param string $class the given main class name
-     * @return sandbox_dsp|user_dsp|ref_dsp with only a few vars filled
+     * @return word_dsp|sandbox_dsp|user_dsp|ref_dsp with only a few vars filled
      */
-    function class_to_ui_object(string $class): sandbox_dsp|user_dsp|ref_dsp
+    function class_to_ui_object(string $class): word_dsp|sandbox_dsp|user_dsp|ref_dsp
     {
         $obj = null;
         switch ($class) {
