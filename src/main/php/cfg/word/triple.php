@@ -86,6 +86,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb.php';
@@ -130,6 +131,7 @@ use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_link_named;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\value\value_list;
 use cfg\verb\verb;
@@ -1058,6 +1060,26 @@ class triple extends sandbox_link_named
         return $this->code_id;
     }
 
+    /**
+     * @param int $id the id of the default view that should be remembered
+     */
+    function set_view_id(int $id): void
+    {
+        if ($this->view == null) {
+            $this->view = new view($this->user());
+        }
+        $this->view->set_id($id);
+    }
+
+    function set_view(?view $msk): void
+    {
+        $this->view = $msk;
+    }
+
+    function view(): ?view
+    {
+        return $this->view;
+    }
 
     /**
      * @return int the id of the default view for this triple or null if no view is preferred
@@ -1443,7 +1465,7 @@ class triple extends sandbox_link_named
             triple_db::FLD_NAMES,
             triple_db::FLD_NAMES_USR,
             triple_db::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         ));
 
         return $this->load_sql_select_qp($sc, $qp);
@@ -1999,7 +2021,7 @@ class triple extends sandbox_link_named
         } else {
             $qp = $this->not_changed_sql($db_con->sql_creator());
             $db_row = $db_con->get1($qp);
-            if ($db_row[user::FLD_ID] > 0) {
+            if ($db_row[user_db::FLD_ID] > 0) {
                 $result = false;
             }
         }
@@ -2417,7 +2439,7 @@ class triple extends sandbox_link_named
                     }
                 } else {
                     $db_con->set_class(triple::class);
-                    $this->set_id($db_con->insert_old(array(triple_db::FLD_FROM, verb_db::FLD_ID, triple_db::FLD_TO, user::FLD_ID),
+                    $this->set_id($db_con->insert_old(array(triple_db::FLD_FROM, verb_db::FLD_ID, triple_db::FLD_TO, user_db::FLD_ID),
                         array($this->from_id(), $this->verb_id(), $this->to_id(), $this->user()->id())));
                 }
                 // TODO make sure on all add functions that the database object is always set

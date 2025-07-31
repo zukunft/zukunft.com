@@ -33,7 +33,7 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
 
@@ -68,6 +68,7 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // prepare the display
+    // TODO use view_shared::PHRASE_LIST instead of WORD_ADD
     $msk_db = new view($usr);
     $msk_db->load_by_code_id(view_shared::WORD_ADD);
     $msk = new view_dsp($msk_db->api_json());

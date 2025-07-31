@@ -11,6 +11,7 @@
     - api:               set the object vars based on the api json message and create a json for the backend
     - cast:              create related frontend objects e.g. the phrase of a triple
     - base:              html code for the single object vars
+    - buttons:           html code for the buttons e.g. to add, edit, del, link or unlink
 
 
     This file is part of zukunft.com - calc with words
@@ -48,6 +49,7 @@ include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use html\html_base;
@@ -55,17 +57,33 @@ use html\phrase\term;
 use html\sandbox\sandbox_named;
 use html\user\user_message;
 use shared\const\views;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 
 class verb extends sandbox_named
 {
 
     /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::VERB_ADD;
+    const VIEW_EDIT = views::VERB_EDIT;
+    const VIEW_DEL = views::VERB_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::VERB_ADD;
+    const MSG_EDIT = msg_id::VERB_EDIT;
+    const MSG_DEL = msg_id::VERB_DEL;
+
+
+    /*
      * object vars
      */
 
     // this id text is unique for all code links and is used for system im- and export
-    public string $code_id;
+    public ?string $code_id = null;
     public int $usage = 0;
     public ?string $reverse = null;
     public ?string $rev_plural = null;
@@ -80,7 +98,7 @@ class verb extends sandbox_named
         $this->code_id = $code_id;
     }
 
-    function code_id(): string
+    function code_id(): ?string
     {
         return $this->code_id;
     }

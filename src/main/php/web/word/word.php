@@ -110,6 +110,21 @@ class word extends sandbox_code_id
 {
 
     /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::WORD_ADD;
+    const VIEW_EDIT = views::WORD_EDIT;
+    const VIEW_DEL = views::WORD_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::WORD_ADD;
+    const MSG_EDIT = msg_id::WORD_EDIT;
+    const MSG_DEL = msg_id::WORD_DEL;
+
+
+    /*
      * object vars
      */
 
@@ -145,6 +160,11 @@ class word extends sandbox_code_id
             if (array_key_exists(api::URL_VAR_VIEW, $url_array)) {
                 if ($url_array[api::URL_VAR_VIEW] != null) {
                     $this->set_view_id($url_array[api::URL_VAR_VIEW]);
+                }
+            }
+            if (array_key_exists(api::URL_VAR_VIEW_LONG, $url_array)) {
+                if ($url_array[api::URL_VAR_VIEW_LONG] != null) {
+                    $this->set_view_id($url_array[api::URL_VAR_VIEW_LONG]);
                 }
             }
         }
@@ -346,43 +366,6 @@ class word extends sandbox_code_id
     /*
      * buttons
      */
-
-    /**
-     * @return string the html code for a bottom
-     * to create a new word for the current user
-     */
-    function btn_add(string $back = ''): string
-    {
-        return parent::btn_add_sbx(
-            views::WORD_ADD,
-            msg_id::WORD_ADD,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to change a word e.g. the name or the type
-     */
-    function btn_edit(string $back = ''): string
-    {
-        return parent::btn_edit_sbx(
-            views::WORD_EDIT,
-            msg_id::WORD_EDIT,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to exclude the word for the current user
-     * or if no one uses the word delete the complete word
-     */
-    function btn_del(string $back = ''): string
-    {
-        return parent::btn_del_sbx(
-            views::WORD_DEL,
-            msg_id::WORD_DEL,
-            $back);
-    }
 
     /**
      * @returns string the html code to display a bottom to edit the word link in a table cell
@@ -587,11 +570,7 @@ class word extends sandbox_code_id
      */
     function is_hidden(): bool
     {
-        $result = false;
-        if ($this->is_type(phrase_type::SCALING_HIDDEN)) {
-            $result = true;
-        }
-        return $result;
+        return $this->is_type(phrase_type::SCALING_HIDDEN);
     }
 
     /*

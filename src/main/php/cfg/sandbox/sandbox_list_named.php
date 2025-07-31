@@ -789,7 +789,7 @@ class sandbox_list_named extends sandbox_list
             // TODO test if get_by_obj_id is faster
             $db_sbx = $db_lst->get_by_name($sbx->name(true), true);
             if ($db_sbx != null) {
-                // TODO review not_used so that e.g. words are "not_used" that have an owner but are not used for other opbejct like values
+                // TODO review not_used so that e.g. words are "not_used" that have an owner but are not used for other object like values
                 // if ($sbx->is_excluded() and $sbx->not_used()) {
                 if ($sbx->is_excluded()) {
                     $del_lst->add($sbx);

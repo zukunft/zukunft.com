@@ -65,6 +65,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
@@ -88,6 +89,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
@@ -112,7 +114,7 @@ class formula_link extends sandbox_link
     const FLD_NAMES = array(
         formula_db::FLD_ID,
         phrase::FLD_ID,
-        user::FLD_ID,
+        user_db::FLD_ID,
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
         sql_db::FLD_EXCLUDED,
@@ -542,7 +544,7 @@ class formula_link extends sandbox_link
         $db_con->usr_id = $this->user()->id();
         $db_row = $db_con->get1($qp);
         if ($db_row != null) {
-            if ($db_row[user::FLD_ID] > 0) {
+            if ($db_row[user_db::FLD_ID] > 0) {
                 $result = false;
             }
         }
@@ -593,7 +595,7 @@ class formula_link extends sandbox_link
         global $db_con;
         $db_con->set_class(self::class);
         return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user::FLD_ID, 'order_nbr'),
+            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID, 'order_nbr'),
             array($this->formula_id(), $this->phrase_id(), $this->user()->id(), $this->order_nbr));
     }
 

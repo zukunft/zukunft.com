@@ -101,7 +101,7 @@ class system_time_list
     /**
      * @return string description of the execution times by category
      */
-    function report(float $expectd = 0): string
+    function report(float $expected = 0): string
     {
         $total = 0.0;
         $time_report = '';
@@ -112,7 +112,7 @@ class system_time_list
             $time_report .= $cat . ': ' .  round($time, 4) . ' sec';
             $total = $total + $time;
         }
-        $time_report .= ' -> measured ' .  round($total, 4) . ' / unmeasured ' .  round($expectd - $total, 4);
+        $time_report .= ' -> measured ' .  round($total, 4) . ' / unmeasured ' .  round($expected - $total, 4);
         return $time_report;
     }
 

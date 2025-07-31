@@ -85,6 +85,21 @@ class component extends sandbox_code_id
 {
 
     /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::COMPONENT_ADD;
+    const VIEW_EDIT = views::COMPONENT_EDIT;
+    const VIEW_DEL = views::COMPONENT_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::COMPONENT_ADD;
+    const MSG_EDIT = msg_id::COMPONENT_EDIT;
+    const MSG_DEL = msg_id::COMPONENT_DEL;
+
+
+    /*
      * object vars
      */
 

@@ -100,7 +100,7 @@ class result_id extends id
     const PRIME_RESULT_PHRASES = 0;
     const MAIN_PHRASES_ALL = 8;
     const MAIN_PHRASES = 6;
-    // TODO check for consistant usage
+    // TODO check for consistent usage
     const MAIN_PHRASES_STD = 5;
     const MAIN_SOURCE_PHRASES = 1;
     const MAIN_RESULT_PHRASES = 1;

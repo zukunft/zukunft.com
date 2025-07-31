@@ -336,7 +336,7 @@ class sandbox_multi extends db_object_multi_user
         }
         $result = parent::row_mapper_multi($db_row, $ext, $id_fld, $one_id_fld);
         if ($result) {
-            $this->set_owner_id($db_row[user::FLD_ID]);
+            $this->set_owner_id($db_row[user_db::FLD_ID]);
             // e.g. the list of names does not include the field excluded
             // TODO instead the excluded rows are filtered out on SQL level
             if (array_key_exists(sandbox_multi::FLD_EXCLUDED, $db_row)) {
@@ -715,7 +715,7 @@ class sandbox_multi extends db_object_multi_user
      *
      * @param sql_par $qp the query parameters fully set without the sql, par and ext
      * @param sql_creator $sc the sql creator with all parameters set
-     * @param bool $all true if all id fields should be used independend from the number of ids
+     * @param bool $all true if all id fields should be used independent from the number of ids
      * @return sql_par the SQL statement, the name of the SQL statement and the parameter list
      */
     protected function load_sql_where_id(sql_par $qp, sql_creator $sc, bool $all = false): sql_par
@@ -847,7 +847,7 @@ class sandbox_multi extends db_object_multi_user
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
                 $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id());
-                if ($db_con->update_old($this->id(), user::FLD_ID, $this->user()->id())) {
+                if ($db_con->update_old($this->id(), user_db::FLD_ID, $this->user()->id())) {
                     $result = true;
                 }
             }
@@ -1021,7 +1021,7 @@ class sandbox_multi extends db_object_multi_user
             ]);
         }
         if ($this->protection_id() != $obj->protection_id()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
+            $usr_msg->add_id_with_vars(msg_id::DIFF_PROTECTION, [
                 msg_id::VAR_PROTECT => $obj->protection_type_name(),
                 msg_id::VAR_PROTECT_CHK => $this->protection_type_name(),
                 msg_id::VAR_NAME => $this->dsp_id(),
@@ -1160,7 +1160,7 @@ class sandbox_multi extends db_object_multi_user
         $sc->set_class($this::class);
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(array(user::FLD_ID));
+        $sc->set_fields(array(user_db::FLD_ID));
         $qp->sql = $sc->select_by_id_not_owner($this->id());
 
         $qp->par = $sc->get_par();
@@ -1181,8 +1181,8 @@ class sandbox_multi extends db_object_multi_user
 
         $qp = $this->load_sql_median_user($db_con->sql_creator());
         $db_row = $db_con->get1($qp);
-        if ($db_row[user::FLD_ID] > 0) {
-            $result = $db_row[user::FLD_ID];
+        if ($db_row[user_db::FLD_ID] > 0) {
+            $result = $db_row[user_db::FLD_ID];
         } else {
             if ($this->owner_id() > 0) {
                 $result = $this->owner_id();
@@ -1277,7 +1277,7 @@ class sandbox_multi extends db_object_multi_user
                 $std->save();
             } else {
                 if (!$db_con->update_old(
-                    $this->id(), user::FLD_ID, $new_owner_id, group::FLD_ID)) {
+                    $this->id(), user_db::FLD_ID, $new_owner_id, group::FLD_ID)) {
                     $result = false;
                 }
             }
@@ -1345,7 +1345,7 @@ class sandbox_multi extends db_object_multi_user
         $db_con->set_class($this::class, true);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(array(user::FLD_ID));
+        $db_con->set_fields(array(user_db::FLD_ID));
         $qp->sql = $db_con->select_by_id_not_owner($this->id(), $this->owner_id());
 
         $qp->par = $db_con->get_par();
@@ -1370,7 +1370,7 @@ class sandbox_multi extends db_object_multi_user
         $qp = $this->changer_sql($db_con);
         $db_row = $db_con->get1($qp);
         if ($db_row) {
-            $user_id = $db_row[user::FLD_ID];
+            $user_id = $db_row[user_db::FLD_ID];
         }
 
         log_debug('is ' . $user_id);
@@ -1394,10 +1394,10 @@ class sandbox_multi extends db_object_multi_user
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
-            array_merge(array(user::FLD_ID, user_db::FLD_NAME), user_db::FLD_NAMES_LIST),
+            array_merge(array(user_db::FLD_ID, user_db::FLD_NAME), user_db::FLD_NAMES_LIST),
             user::class,
-            user::FLD_ID,
-            user::FLD_ID);
+            user_db::FLD_ID,
+            user_db::FLD_ID);
         $sc->add_where($this->id_field(), $this->id());
         $sc->add_where(sandbox_multi::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
 
@@ -1424,8 +1424,8 @@ class sandbox_multi extends db_object_multi_user
         $qp = $this->load_sql_of_users_that_changed($db_con->sql_creator());
         $db_usr_lst = $db_con->get($qp);
         foreach ($db_usr_lst as $db_usr) {
-            if ($db_usr[user::FLD_ID] > 0) {
-                $usr_id_lst[] = $db_usr[user::FLD_ID];
+            if ($db_usr[user_db::FLD_ID] > 0) {
+                $usr_id_lst[] = $db_usr[user_db::FLD_ID];
             }
         }
         $result->load_by_ids($db_con, $usr_id_lst);
@@ -1620,7 +1620,7 @@ class sandbox_multi extends db_object_multi_user
                 // create an entry in the user sandbox
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . $class);
                 $db_con->set_usr($this->user()->id());
-                $log_id = $db_con->insert_old(array($this->id_field(), user::FLD_ID), array($this->id(), $this->user()->id()));
+                $log_id = $db_con->insert_old(array($this->id_field(), user_db::FLD_ID), array($this->id(), $this->user()->id()));
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $class . ' failed.');
                     $result = false;
@@ -2158,7 +2158,7 @@ class sandbox_multi extends db_object_multi_user
      * create the sql statement to delete a value in the database
      * similar to sandbox/sql_delete, but additional for prime or big tables
      * TODO check if user specific overwrites can be deleted
-     * TODO chekc if can be moved to sandbox_value object
+     * TODO check if can be moved to sandbox_value object
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
@@ -2190,7 +2190,7 @@ class sandbox_multi extends db_object_multi_user
                     $id_lst = [$id_lst, $this->user_id()];
                 }
                 $qp->sql = $sc->create_sql_delete(
-                    [$this->id_field(), user::FLD_ID], $id_lst, $sc_par_lst_used);
+                    [$this->id_field(), user_db::FLD_ID], $id_lst, $sc_par_lst_used);
             } else {
                 $qp->sql = $sc->create_sql_delete($this->id_field(), $id_lst, $sc_par_lst_used);
             }
@@ -2273,7 +2273,7 @@ class sandbox_multi extends db_object_multi_user
 
         // add the user_id if needed
         $fvt_lst_out->add_field(
-            user::FLD_ID,
+            user_db::FLD_ID,
             $this->user_id(),
             sql_par_type::INT);
 
@@ -2755,7 +2755,7 @@ class sandbox_multi extends db_object_multi_user
 
         /*
         if ($this::class == word::class and $obj_to_check::class == formula::class) {
-            // special case if word should be created representing the formula it is a kind of same at least the creation of the word should be alloed
+            // special case if word should be created representing the formula it is a kind of same at least the creation of the word should be allowed
             if ($this->name == $obj_to_check->name) {
                 $result = true;
             }
@@ -3488,7 +3488,7 @@ class sandbox_multi extends db_object_multi_user
         // TODO review check why a different list for the log is needed; instead use the field names like in sandbox
         $fvt_lst_log = clone $fvt_lst;
         $fvt_lst_log->add_field(group::FLD_ID, $this->grp()->id());
-        $fvt_lst_log->add_field(user::FLD_ID, $this->user_id(), sql_par_type::INT);
+        $fvt_lst_log->add_field(user_db::FLD_ID, $this->user_id(), sql_par_type::INT);
 
         // create the log entry for the value
         if ($fvt_lst_log->has_name($this::FLD_VALUE)) {
@@ -3561,8 +3561,8 @@ class sandbox_multi extends db_object_multi_user
             }
         }
         if (!$sc_par_lst->is_standard()) {
-            if ($fvt_lst_all->has_name(user::FLD_ID) and $sc_par_lst->is_insert()) {
-                $fvt_lst_write->add($fvt_lst_all->get(user::FLD_ID));
+            if ($fvt_lst_all->has_name(user_db::FLD_ID) and $sc_par_lst->is_insert()) {
+                $fvt_lst_write->add($fvt_lst_all->get(user_db::FLD_ID));
             }
         }
         if ($this->is_numeric()) {
@@ -3745,7 +3745,7 @@ class sandbox_multi extends db_object_multi_user
         } else {
             if ($sc_par_lst->is_usr_tbl()) {
                 $qp->sql = $sc->create_sql_update(
-                    [$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fvt_lst);
+                    [$this->id_field(), user_db::FLD_ID], [$this->id(), $this->user_id()], $fvt_lst);
             } else {
                 $qp->sql = $sc->create_sql_update($this->id_field(), $this->id(), $fvt_lst);
             }
@@ -3813,7 +3813,7 @@ class sandbox_multi extends db_object_multi_user
         if ($usr_tbl) {
             $key_fld_pos = array_search($this->id_field(), $fld_lst_ex_log);
             unset($fld_lst_ex_log[$key_fld_pos]);
-            $key_fld_pos = array_search(user::FLD_ID, $fld_lst_ex_log);
+            $key_fld_pos = array_search(user_db::FLD_ID, $fld_lst_ex_log);
             unset($fld_lst_ex_log[$key_fld_pos]);
             $fld_lst_ex_log_and_key = $fld_lst_ex_log;
         } else {
@@ -3836,7 +3836,7 @@ class sandbox_multi extends db_object_multi_user
         if (!$sc_par_lst->is_call_only()) {
             if ($usr_tbl) {
                 // insert a new row in the user table
-                $fld_lst_ex_log_and_key = array_merge([$this->id_field(), user::FLD_ID], $fld_lst_ex_log);
+                $fld_lst_ex_log_and_key = array_merge([$this->id_field(), user_db::FLD_ID], $fld_lst_ex_log);
                 $fvt_lst_ex_log_and_key = $fvt_lst->get_intersect($fld_lst_ex_log_and_key);
                 $sc_insert = clone $sc;
                 $qp_insert = $this->sql_common($sc_insert, $sc_par_lst_sub);
@@ -3945,7 +3945,7 @@ class sandbox_multi extends db_object_multi_user
         if ($usr_tbl) {
             $key_fld_pos = array_search($id_fld, $fld_lst_chg);
             unset($fld_lst_chg[$key_fld_pos]);
-            $key_fld_pos = array_search(user::FLD_ID, $fld_lst_chg);
+            $key_fld_pos = array_search(user_db::FLD_ID, $fld_lst_chg);
             unset($fld_lst_chg[$key_fld_pos]);
         }
 

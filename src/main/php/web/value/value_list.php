@@ -38,11 +38,15 @@ use cfg\const\paths;
 use html\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::HTML . 'button.php';
+// TODO move phr_ids to shared objects
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_ctrl.php';
 include_once html_paths::HTML . 'styles.php';
+include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::GROUP . 'group_list.php';
+include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
@@ -56,11 +60,14 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
 
 use html\button;
+use cfg\phrase\phr_ids;
 use html\group\group;
 use html\html_base;
 use html\group\group_list;
+use html\phrase\phrase;
 use html\phrase\phrase_list;
 use html\rest_ctrl;
+use html\result\result_list;
 use html\sandbox\list_dsp;
 use html\styles;
 use html\user\user_message;
@@ -722,7 +729,7 @@ class value_list extends list_dsp
                 log_debug('add time ' . $val->id);
                 if ($val->time_phr != null) {
                     if ($val->time_phr->id() > 0) {
-                        $time_phr = new phrase($val->user());
+                        $time_phr = new phrase();
                         $time_phr->load_by_id($val->time_phr->id());
                         $val->time_phr = $time_phr;
                         $dsp_phr_lst->add($time_phr);
@@ -738,7 +745,7 @@ class value_list extends list_dsp
                 log_debug('linked words ' . $val->id . ' done');
                 // to review
                 // list the related results
-                $res_lst = new result_list($this->user());
+                $res_lst = new result_list();
                 $res_lst->load_by_val($val);
                 $result .= $res_lst->frm_links_html();
                 $result .= '    </td>';
@@ -775,7 +782,7 @@ class value_list extends list_dsp
         // allow the user to add a completely new value
         log_debug('new');
         if (empty($common_phr_ids)) {
-            $common_phr_lst_new = new word_list($this->user());
+            $common_phr_lst_new = new word_list();
             $common_phr_ids[] = $this->phr->id();
             $common_phr_lst_new->load_by_ids($common_phr_ids);
         }

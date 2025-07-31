@@ -173,6 +173,11 @@ zukunft.com:
             daily:
               ip user: 1000
               tooltip-comment: "maximal number of changes that an user without login can do per day"
+        url:
+          tooltip-comment: "the setting for the url"
+          format:
+            sys-conf-value: "readable"
+            tooltip-comment: "either 'technical' for a shortest possible url which is not human readable or 'readable' for an url which is easier to understand for humans or 'moveable' for a pod independent url"
         frontend:
           tooltip-comment: "the setting for the user interface"
           language:

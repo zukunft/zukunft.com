@@ -57,6 +57,7 @@ include_once paths::MODEL_SYSTEM . 'job_list.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
@@ -86,6 +87,7 @@ use cfg\phrase\term;
 use cfg\phrase\term_list;
 use cfg\system\job;
 use cfg\system\job_list;
+use cfg\user\user_db;
 use cfg\word\triple;
 use cfg\user\user;
 use cfg\user\user_list;
@@ -345,7 +347,7 @@ class result_list extends sandbox_value_list
         $pos_usr = $par_pos;
         $par_pos++;
         $par_name = $sc->par_name($par_pos);
-        $sc->add_where_par(user::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
+        $sc->add_where_par(user_db::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
 
         // remember the parameters
         $par_lst = clone $sc->par_list();
@@ -812,7 +814,7 @@ class result_list extends sandbox_value_list
         $phr->load_by_id($phr_id);
 
         $val_lst = new value_list($this->usr);
-        $value_lst = $val_lst->load_frm_related_grp_phrs($phr_id, $frm_phr_ids, $this->user()->id());
+        $value_lst = $val_lst->load_frm_related_grp_phrases($phr_id, $frm_phr_ids, $this->user()->id());
 
         foreach (array_keys($value_lst) as $val_id) {
             // maybe use for debugging

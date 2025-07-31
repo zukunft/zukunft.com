@@ -39,16 +39,34 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use html\html_base;
 use html\sandbox\db_object;
 use shared\const\views;
+use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
 use shared\json_fields;
 
 class user extends db_object
 {
+
+    /*
+     * const
+     */
+
+    // TODO allow only admin users to add or change other users
+    // curl views
+    const VIEW_ADD = views::USER_ADD;
+    const VIEW_EDIT = views::USER_EDIT;
+    const VIEW_DEL = views::USER_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::USER_ADD;
+    const MSG_EDIT = msg_id::USER_EDIT;
+    const MSG_DEL = msg_id::USER_DEL;
+
 
     /*
      * object vars

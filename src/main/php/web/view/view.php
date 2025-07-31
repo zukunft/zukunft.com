@@ -52,6 +52,7 @@ include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_TYPES . 'view_type.php';
@@ -65,6 +66,7 @@ use html\styles;
 use html\system\back_trace;
 use html\word\word;
 use shared\api;
+use shared\const\views;
 use shared\library;
 use shared\types\view_styles;
 use shared\types\view_type;
@@ -73,6 +75,21 @@ use shared\helper\Config as shared_config;
 
 class view extends view_exe
 {
+
+    /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::VIEW_ADD;
+    const VIEW_EDIT = views::VIEW_EDIT;
+    const VIEW_DEL = views::VIEW_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::VIEW_ADD;
+    const MSG_EDIT = msg_id::VIEW_EDIT;
+    const MSG_DEL = msg_id::VIEW_DEL;
+
 
     /**
      * show the navigation bar, which allow the user to search, to login or change the settings
@@ -270,7 +287,7 @@ class view extends view_exe
     }
 
     /**
-     * the zukunft logo that should be show always
+     * the zukunft logo that should be always shown
      */
     private function html_navbar_end(): string
     {

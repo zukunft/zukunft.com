@@ -80,6 +80,21 @@ class view_base extends sandbox_code_id
 {
 
     /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::VIEW_ADD;
+    const VIEW_EDIT = views::VIEW_EDIT;
+    const VIEW_DEL = views::VIEW_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::VIEW_ADD;
+    const MSG_EDIT = msg_id::VIEW_EDIT;
+    const MSG_DEL = msg_id::VIEW_DEL;
+
+
+    /*
      * object vars
      */
 
@@ -208,48 +223,6 @@ class view_base extends sandbox_code_id
     function title(db_object $dbo): string
     {
         return $this->name() . ' ' . $dbo->name();
-    }
-
-
-    /*
-     * buttons
-     */
-
-    /**
-     * @return string the html code for a bottom
-     * to create a new view for the current user
-     */
-    function btn_add(string $back = ''): string
-    {
-        return parent::btn_add_sbx(
-            views::VIEW_ADD,
-            msg_id::VIEW_ADD,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to change a view e.g. the name or the type
-     */
-    function btn_edit(string $back = ''): string
-    {
-        return parent::btn_edit_sbx(
-            views::VIEW_EDIT,
-            msg_id::VIEW_EDIT,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to exclude the view for the current user
-     * or if no one uses the view delete the complete view
-     */
-    function btn_del(string $back = ''): string
-    {
-        return parent::btn_del_sbx(
-            views::VERB_DEL,
-            msg_id::VALUE_DEL,
-            $back);
     }
 
 

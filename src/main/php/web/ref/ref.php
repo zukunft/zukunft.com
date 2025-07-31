@@ -38,31 +38,49 @@ use cfg\const\paths;
 use html\const\paths as html_paths;
 include_once paths::SHARED . 'json_fields.php';
 
-include_once paths::SHARED . 'json_fields.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::REF . 'source.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use html\sandbox\db_object as db_object_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\user\user_message;
 use html\word\word as word_dsp;
 use html\ref\source as source_dsp;
+use shared\const\views;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 
 class ref extends db_object_dsp
 {
 
     /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::REF_ADD;
+    const VIEW_EDIT = views::REF_EDIT;
+    const VIEW_DEL = views::REF_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::REF_ADD;
+    const MSG_EDIT = msg_id::REF_EDIT;
+    const MSG_DEL = msg_id::REF_DEL;
+
+
+    /*
      * object vars
      */
 
     private ?phrase_dsp $phr;
-    private ?source $source;
-    private ?string $external_key; // maybe use field name instead
-    private ?string $url;
+    private ?source $source = null;
+    private ?string $external_key = null; // maybe use field name instead
+    private ?string $url = null;
     private ?int $predicate_id;
     // the mouse over tooltip for the named object e.g. word, triple, formula, verb, view or component
     public ?string $description = null;

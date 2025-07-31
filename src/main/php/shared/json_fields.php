@@ -246,7 +246,7 @@ class json_fields
     const LIST_PROTECTION_TYPES = 'protection_types';
     const LIST_LANGUAGES = 'languages';
     const LIST_LANGUAGE_FORMS = 'language_forms';
-    const LIST_SYS_LOG_STATI = 'sys_log_stati';
+    const LIST_SYS_LOG_STATUUS = 'sys_log_statuus';
     const LIST_JOB_TYPES = 'job_types';
     const LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
     const LIST_CHANGE_LOG_TABLES = 'change_table_list';

@@ -35,15 +35,19 @@
 namespace html\sandbox;
 
 use cfg\const\paths;
+use html\button;
 use html\const\paths as html_paths;
 include_once paths::API_OBJECT . 'api_message.php';
+include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_ctrl.php';
 //include_once html_paths::PHRASE . 'phrase.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view_list.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 
@@ -55,11 +59,32 @@ use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
 use html\user\user_message;
+use shared\const\views;
+use shared\enum\messages as msg_id;
 use shared\helper\TextIdObject;
 use shared\json_fields;
 
 class db_object extends TextIdObject
 {
+
+    /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::WORD_ADD;
+    const VIEW_EDIT = views::WORD_EDIT;
+    const VIEW_DEL = views::WORD_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::WORD_ADD;
+    const MSG_EDIT = msg_id::WORD_EDIT;
+    const MSG_DEL = msg_id::WORD_DEL;
+
+
+    /*
+     * object vars
+     */
 
     // fields for the backend link
     public int|string $id = 0; // the database id of the object, which is the same as the related database object in the backend
@@ -91,13 +116,32 @@ class db_object extends TextIdObject
     function url_mapper(array $url_array): user_message
     {
         $usr_msg = new user_message();
-        if (array_key_exists(api::URL_VAR_ID, $url_array)) {
-            $this->set_id($url_array[api::URL_VAR_ID]);
-        } else {
-            $this->set_id(0);
-            $usr_msg->add_err('Mandatory field id missing in form url array ' . json_encode($url_array));
+        if (!$this->url_is_add_action($url_array)) {
+            // if the request is to add an object ignore the id
+            if (array_key_exists(api::URL_VAR_ID, $url_array)) {
+                $this->set_id($url_array[api::URL_VAR_ID]);
+            } else {
+                $this->set_id(0);
+                $usr_msg->add_err('Mandatory field id missing in form url array ' . json_encode($url_array));
+            }
         }
         return $usr_msg;
+    }
+
+    function url_is_add_action(array $url_array): bool
+    {
+        $is_add = false;
+        if (array_key_exists(api::URL_VAR_ACTION, $url_array)) {
+            if ($url_array[api::URL_VAR_ACTION] == api::URL_VAR_CURL_CREATE) {
+                $is_add = true;
+            }
+        }
+        if (array_key_exists(api::URL_VAR_ACTION_LONG, $url_array)) {
+            if ($url_array[api::URL_VAR_ACTION_LONG] == api::URL_VAR_CURL_CREATE) {
+                $is_add = true;
+            }
+        }
+        return $is_add;
     }
 
 
@@ -217,6 +261,108 @@ class db_object extends TextIdObject
     function dsp_id(): string
     {
         return $this->id();
+    }
+
+
+    /*
+     * buttons
+     */
+
+    /**
+     * @return string the html code for a bottom
+     * to create a new sandbox object e.g. word for the current user
+     */
+    function btn_add(string $back = ''): string
+    {
+        return $this->btn_add_sbx(
+            $this::VIEW_ADD,
+            $this::MSG_ADD,
+            $back);
+    }
+
+    /**
+     * @return string the html code for a bottom
+     * to change a sandbox object e.g. the word name or the type
+     */
+    function btn_edit(string $back = ''): string
+    {
+        return $this->btn_edit_sbx(
+            $this::VIEW_EDIT,
+            $this::MSG_EDIT,
+            $back);
+    }
+
+    /**
+     * @return string the html code for a bottom
+     * to exclude the sandbox object e.g. word for the current user
+     * or if no one uses the sandbox object delete the complete sandbox object e.g. word
+     */
+    function btn_del(string $back = ''): string
+    {
+        return $this->btn_del_sbx(
+            $this::VIEW_DEL,
+            $this::MSG_DEL,
+            $back);
+    }
+
+    /**
+     * create the html code to add a sandbox object for the current user
+     *
+     * @param int|string $msk_id the code id or database id of the view used to add the object
+     * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
+     * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
+     * @return string the html code for a bottom
+     */
+    function btn_add_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
+    {
+        $btn = $this->btn_sbx($msk_id, $back);
+        return $btn->add($msg_code_id, $explain);
+    }
+
+    /**
+     * html code to change a sandbox object e.g. the name or the type
+     *
+     * @param int|string $msk_id the code id or database id of the view used to add the object
+     * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
+     * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
+     * @return string the html code for a bottom
+     */
+    function btn_edit_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
+    {
+        $btn = $this->btn_sbx($msk_id, $back);
+        return $btn->edit($msg_code_id, $explain);
+    }
+
+    /**
+     * html code to exclude the sandbox object for the current user
+     * or if no one uses the word delete the complete word
+     *
+     * @param int|string $msk_id the code id or database id of the view used to add the object
+     * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
+     * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
+     * @return string the html code for a bottom
+     */
+    function btn_del_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
+    {
+        $btn = $this->btn_sbx($msk_id, $back);
+        return $btn->del($msg_code_id, $explain);
+    }
+
+    /**
+     * create the html code for a button
+     *
+     * @param int|string $msk_id the code id or database id of the view used to add the object
+     * @param string $back the backtrace for the return page after adding the object and for undo actions
+     * @return button the filled bottom object
+     */
+    private function btn_sbx(int|string $msk_id, string $back = ''): button
+    {
+        $html = new html_base();
+        $url = $html->url_new($msk_id, $this->id(), '', $back);
+        return new button($url, $back);
     }
 
 

@@ -42,6 +42,7 @@ include_once paths::MODEL_PHRASE . 'phrase_table_status.php';
 include_once paths::MODEL_SYSTEM . 'pod.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 
 use cfg\db\sql;
 use cfg\db\sql_field_default;
@@ -50,6 +51,7 @@ use cfg\helper\db_object_seq_id;
 use cfg\system\pod;
 use cfg\system\sys_log_status;
 use cfg\user\user;
+use cfg\user\user_db;
 
 class phrase_table extends db_object_seq_id
 {
@@ -69,7 +71,7 @@ class phrase_table extends db_object_seq_id
     // all database field names excluding the id
     // the extra user field is needed because it is common to check the log entries of others users e.g. for admin users
     const FLD_NAMES = array(
-        user::FLD_ID,
+        user_db::FLD_ID,
         sys_log_status::FLD_ID
     );
 

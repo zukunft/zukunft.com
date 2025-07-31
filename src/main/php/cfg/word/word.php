@@ -93,16 +93,18 @@ include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_REF . 'ref.php';
 include_once paths::MODEL_REF . 'ref_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
-include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
@@ -111,7 +113,6 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
-include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
@@ -136,6 +137,7 @@ use cfg\ref\ref_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_code_id;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\value\value_list;
 use cfg\verb\verb_db;
@@ -682,7 +684,7 @@ class word extends sandbox_code_id
             word_db::FLD_NAMES,
             word_db::FLD_NAMES_USR,
             word_db::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         ));
 
         return parent::load_standard_sql($sc);
@@ -1316,7 +1318,7 @@ class word extends sandbox_code_id
         $db_con->set_class(word::class);
         $db_con->set_usr($this->user()->id());
         $db_con->set_fields(array(word_db::FLD_VIEW));
-        $db_con->set_join_usr_count_fields(array(user::FLD_ID), word::class);
+        $db_con->set_join_usr_count_fields(array(user_db::FLD_ID), word::class);
         $qp = new sql_par(self::class);
         $qp->name = 'word_view_most_used';
         $db_con->set_name($qp->name);
@@ -1501,7 +1503,7 @@ class word extends sandbox_code_id
         } else {
             $qp = $this->not_changed_sql($db_con);
             $db_row = $db_con->get1($qp);
-            if ($db_row[user::FLD_ID] > 0) {
+            if ($db_row[user_db::FLD_ID] > 0) {
                 $result = false;
             }
         }

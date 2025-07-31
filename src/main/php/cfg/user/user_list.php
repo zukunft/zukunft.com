@@ -156,7 +156,7 @@ class user_list
     ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(user::FLD_ID, $ids);
+        $sc->add_where(user_db::FLD_ID, $ids);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -208,7 +208,7 @@ class user_list
     {
         $lib = new library();
         $class = $lib->class_to_name($dbo::class);
-        $sql = 'SELECT ' . user::FLD_ID . ',';
+        $sql = 'SELECT ' . user_db::FLD_ID . ',';
         $id_fields = $dbo->id_field();
         if (is_array($id_fields)) {
             $sql .= ' COUNT (*) AS ' . self::FLD_CHANGES;
@@ -216,7 +216,7 @@ class user_list
             $sql .= ' COUNT (' . $dbo->id_field() . ') AS ' . self::FLD_CHANGES;
         }
         $sql .= ' FROM ' . sql_db::TBL_USER_PREFIX . $class . sql_db::TABLE_EXTENSION;
-        $sql .= ' GROUP BY ' . user::FLD_ID;
+        $sql .= ' GROUP BY ' . user_db::FLD_ID;
         return $sql;
     }
 
@@ -244,10 +244,10 @@ class user_list
 
     private function load_sql_count_sum_changes(): string
     {
-        $sql = 'SELECT ' . sql_db::GRP_TBL . '.' . user::FLD_ID . ',';
+        $sql = 'SELECT ' . sql_db::GRP_TBL . '.' . user_db::FLD_ID . ',';
         $sql .= ' SUM (' . sql_db::GRP_TBL . '.' . self::FLD_CHANGES . ') AS ' . self::FLD_CHANGES;
         $sql .= ' FROM ( ' . $this->load_sql_count_all_changes() . ') ' . sql_db::GRP_TBL;
-        $sql .= ' GROUP BY ' . user::FLD_ID;
+        $sql .= ' GROUP BY ' . user_db::FLD_ID;
         return $sql;
     }
 
@@ -261,7 +261,7 @@ class user_list
     {
         $sub_sql = '(' . $this->load_sql_count_sum_changes() . ')';
         $qp = $this->load_sql($sc, 'count_changes');
-        $sc->set_join_sql($sub_sql, array(self::FLD_CHANGES), user::FLD_ID);
+        $sc->set_join_sql($sub_sql, array(self::FLD_CHANGES), user_db::FLD_ID);
         $sc->add_where(self::FLD_CHANGES, '', sql_par_type::NOT_NULL, sql_db::LNK_TBL);
         $sc->set_order(self::FLD_CHANGES, sql::ORDER_DESC, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
@@ -379,7 +379,7 @@ class user_list
         if ($db_usr_lst != null) {
             foreach ($db_usr_lst as $db_usr) {
                 $usr = new user;
-                $usr->set_id($db_usr[user::FLD_ID]);
+                $usr->set_id($db_usr[user_db::FLD_ID]);
                 $usr->name = $db_usr[user_db::FLD_NAME];
                 $usr->code_id = $db_usr[sql_db::FLD_CODE_ID];
                 $this->lst[] = $usr;

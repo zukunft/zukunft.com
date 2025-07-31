@@ -92,6 +92,7 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED_TYPES . 'share_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
+include_once TEST_CONST_PATH . 'paths.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\component\component;
@@ -150,6 +151,7 @@ use cfg\word\triple;
 use cfg\word\triple_list;
 use cfg\word\word;
 use cfg\word\word_list;
+use const\paths as test_paths;
 use const\files as test_files;
 use Exception;
 use html\component\component_exe as component_dsp;
@@ -179,169 +181,162 @@ use shared\helper\CombineObject;
 use shared\library;
 use shared\types\api_type;
 use shared\types\verbs;
+use unit_read\system_views_read_tests;
 
 // TODO activate
 //use html\group\group as group_dsp;
-
-// set all paths of the testing code
-const TEST_UNIT_PATH = TEST_PHP_PATH . 'unit' . DIRECTORY_SEPARATOR;               // for unit tests
-const TEST_UNIT_READ_PATH = TEST_PHP_PATH . 'unit_read' . DIRECTORY_SEPARATOR;     // for the unit tests with database read only
-const TEST_UNIT_DSP_PATH = TEST_UNIT_PATH . 'html' . DIRECTORY_SEPARATOR;           // for the unit tests that create HTML code
-const TEST_UNIT_HTML_PATH = TEST_PHP_PATH . 'unit_display' . DIRECTORY_SEPARATOR; // for the unit tests that create HTML code
-const TEST_UNIT_UI_PATH = TEST_PHP_PATH . 'unit_ui' . DIRECTORY_SEPARATOR;        // for the unit tests that create JSON messages for the frontend
-const TEST_UNIT_WRITE_PATH = TEST_PHP_PATH . 'unit_write' . DIRECTORY_SEPARATOR;  // for the unit tests that save to database (and cleanup the test data after completion)
-const TEST_UNIT_INT_PATH = TEST_PHP_PATH . 'integration' . DIRECTORY_SEPARATOR;   // for integration tests
-const TEST_DEV_PATH = TEST_PHP_PATH . 'dev' . DIRECTORY_SEPARATOR;                // for test still in development
 
 
 // load the system config for testing
 include_once paths::SERVICE . 'config.php';
 
 // load the other test utility modules (beside this base configuration module)
-include_once TEST_PHP_UTIL_PATH . 'create_test_objects.php';
-include_once TEST_PHP_UTIL_PATH . 'test_system.php';
-include_once TEST_PHP_UTIL_PATH . 'test_db_link.php';
-include_once TEST_PHP_UTIL_PATH . 'test_user.php';
-include_once TEST_PHP_UTIL_PATH . 'test_user_sandbox.php';
-include_once TEST_PHP_UTIL_PATH . 'test_api.php';
-include_once TEST_PHP_UTIL_PATH . 'test_cleanup.php';
+include_once test_paths::UTILS . 'create_test_objects.php';
+include_once test_paths::UTILS . 'test_system.php';
+include_once test_paths::UTILS . 'test_db_link.php';
+include_once test_paths::UTILS . 'test_user.php';
+include_once test_paths::UTILS . 'test_user_sandbox.php';
+include_once test_paths::UTILS . 'test_api.php';
+include_once test_paths::UTILS . 'test_cleanup.php';
 
 // load the unit testing modules
-include_once TEST_UNIT_PATH . 'all_unit_tests.php';
-include_once TEST_UNIT_PATH . 'lib_tests.php';
-include_once TEST_UNIT_PATH . 'math_tests.php';
-include_once TEST_UNIT_PATH . 'system_tests.php';
-include_once TEST_UNIT_PATH . 'sql_tests.php';
-include_once TEST_UNIT_PATH . 'pod_tests.php';
-include_once TEST_UNIT_PATH . 'user_tests.php';
-include_once TEST_UNIT_PATH . 'user_list_tests.php';
-include_once TEST_UNIT_PATH . 'sandbox_tests.php';
-include_once TEST_UNIT_PATH . 'type_tests.php';
-include_once TEST_UNIT_PATH . 'horizontal_tests.php';
-include_once TEST_UNIT_PATH . 'word_tests.php';
-include_once TEST_UNIT_PATH . 'word_list_tests.php';
-include_once TEST_UNIT_PATH . 'triple_tests.php';
-include_once TEST_UNIT_PATH . 'triple_list_tests.php';
-include_once TEST_UNIT_PATH . 'phrase_tests.php';
-include_once TEST_UNIT_PATH . 'phrase_list_tests.php';
-include_once TEST_UNIT_PATH . 'group_tests.php';
-include_once TEST_UNIT_PATH . 'group_list_tests.php';
-include_once TEST_UNIT_PATH . 'term_tests.php';
-include_once TEST_UNIT_PATH . 'term_list_tests.php';
-include_once TEST_UNIT_PATH . 'value_tests.php';
-include_once TEST_UNIT_PATH . 'value_list_tests.php';
-include_once TEST_UNIT_PATH . 'formula_tests.php';
-include_once TEST_UNIT_PATH . 'formula_list_tests.php';
-include_once TEST_UNIT_PATH . 'formula_link_tests.php';
-include_once TEST_UNIT_PATH . 'result_tests.php';
-include_once TEST_UNIT_PATH . 'result_list_tests.php';
-include_once TEST_UNIT_PATH . 'element_tests.php';
-include_once TEST_UNIT_PATH . 'element_list_tests.php';
-include_once TEST_UNIT_PATH . 'figure_tests.php';
-include_once TEST_UNIT_PATH . 'figure_list_tests.php';
-include_once TEST_UNIT_PATH . 'expression_tests.php';
-include_once TEST_UNIT_PATH . 'view_tests.php';
-include_once TEST_UNIT_PATH . 'term_view_tests.php';
-include_once TEST_UNIT_PATH . 'view_list_tests.php';
-include_once TEST_UNIT_PATH . 'component_tests.php';
-include_once TEST_UNIT_PATH . 'component_link_tests.php';
-include_once TEST_UNIT_PATH . 'component_list_tests.php';
-include_once TEST_UNIT_PATH . 'component_link_list_tests.php';
-include_once TEST_UNIT_PATH . 'verb_tests.php';
-include_once TEST_UNIT_PATH . 'source_tests.php';
-include_once TEST_UNIT_PATH . 'source_list_tests.php';
-include_once TEST_UNIT_PATH . 'ref_tests.php';
-include_once TEST_UNIT_PATH . 'language_tests.php';
-include_once TEST_UNIT_PATH . 'job_tests.php';
-include_once TEST_UNIT_PATH . 'change_log_tests.php';
-include_once TEST_UNIT_PATH . 'sys_log_tests.php';
-include_once TEST_UNIT_PATH . 'import_tests.php';
-include_once TEST_UNIT_PATH . 'db_setup_tests.php';
-include_once TEST_UNIT_PATH . 'api_tests.php';
+include_once test_paths::UNIT . 'all_unit_tests.php';
+include_once test_paths::UNIT . 'lib_tests.php';
+include_once test_paths::UNIT . 'math_tests.php';
+include_once test_paths::UNIT . 'system_tests.php';
+include_once test_paths::UNIT . 'sql_tests.php';
+include_once test_paths::UNIT . 'pod_tests.php';
+include_once test_paths::UNIT . 'user_tests.php';
+include_once test_paths::UNIT . 'user_list_tests.php';
+include_once test_paths::UNIT . 'sandbox_tests.php';
+include_once test_paths::UNIT . 'type_tests.php';
+include_once test_paths::UNIT . 'horizontal_tests.php';
+include_once test_paths::UNIT . 'word_tests.php';
+include_once test_paths::UNIT . 'word_list_tests.php';
+include_once test_paths::UNIT . 'triple_tests.php';
+include_once test_paths::UNIT . 'triple_list_tests.php';
+include_once test_paths::UNIT . 'phrase_tests.php';
+include_once test_paths::UNIT . 'phrase_list_tests.php';
+include_once test_paths::UNIT . 'group_tests.php';
+include_once test_paths::UNIT . 'group_list_tests.php';
+include_once test_paths::UNIT . 'term_tests.php';
+include_once test_paths::UNIT . 'term_list_tests.php';
+include_once test_paths::UNIT . 'value_tests.php';
+include_once test_paths::UNIT . 'value_list_tests.php';
+include_once test_paths::UNIT . 'formula_tests.php';
+include_once test_paths::UNIT . 'formula_list_tests.php';
+include_once test_paths::UNIT . 'formula_link_tests.php';
+include_once test_paths::UNIT . 'result_tests.php';
+include_once test_paths::UNIT . 'result_list_tests.php';
+include_once test_paths::UNIT . 'element_tests.php';
+include_once test_paths::UNIT . 'element_list_tests.php';
+include_once test_paths::UNIT . 'figure_tests.php';
+include_once test_paths::UNIT . 'figure_list_tests.php';
+include_once test_paths::UNIT . 'expression_tests.php';
+include_once test_paths::UNIT . 'view_tests.php';
+include_once test_paths::UNIT . 'term_view_tests.php';
+include_once test_paths::UNIT . 'view_list_tests.php';
+include_once test_paths::UNIT . 'component_tests.php';
+include_once test_paths::UNIT . 'component_link_tests.php';
+include_once test_paths::UNIT . 'component_list_tests.php';
+include_once test_paths::UNIT . 'component_link_list_tests.php';
+include_once test_paths::UNIT . 'verb_tests.php';
+include_once test_paths::UNIT . 'source_tests.php';
+include_once test_paths::UNIT . 'source_list_tests.php';
+include_once test_paths::UNIT . 'ref_tests.php';
+include_once test_paths::UNIT . 'language_tests.php';
+include_once test_paths::UNIT . 'job_tests.php';
+include_once test_paths::UNIT . 'change_log_tests.php';
+include_once test_paths::UNIT . 'sys_log_tests.php';
+include_once test_paths::UNIT . 'import_tests.php';
+include_once test_paths::UNIT . 'db_setup_tests.php';
 
 // load the testing functions for creating HTML code
-include_once TEST_UNIT_UI_PATH . 'all_ui_tests.php';
+include_once test_paths::UNIT_UI . 'all_ui_tests.php';
+include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
 
 // load the unit testing modules with database read only
-include_once TEST_UNIT_READ_PATH . 'all_unit_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'system_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'sql_db_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'user_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'job_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'change_log_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'sys_log_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'horizontal_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'word_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'word_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'triple_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'triple_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'verb_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'phrase_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'phrase_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'group_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'term_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'term_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'value_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'value_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'formula_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'formula_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'expression_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'element_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'view_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'view_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'component_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'component_list_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'source_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'ref_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'share_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'protection_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'language_read_tests.php';
-include_once TEST_UNIT_READ_PATH . 'export_read_tests.php';
+include_once test_paths::UNIT_READ . 'all_unit_read_tests.php';
+include_once test_paths::UNIT_READ . 'api_tests.php';
+include_once test_paths::UNIT_READ . 'system_read_tests.php';
+include_once test_paths::UNIT_READ . 'system_views_read_tests.php';
+include_once test_paths::UNIT_READ . 'sql_db_read_tests.php';
+include_once test_paths::UNIT_READ . 'user_read_tests.php';
+include_once test_paths::UNIT_READ . 'job_read_tests.php';
+include_once test_paths::UNIT_READ . 'change_log_read_tests.php';
+include_once test_paths::UNIT_READ . 'sys_log_read_tests.php';
+include_once test_paths::UNIT_READ . 'horizontal_read_tests.php';
+include_once test_paths::UNIT_READ . 'word_read_tests.php';
+include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'triple_read_tests.php';
+include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'verb_read_tests.php';
+include_once test_paths::UNIT_READ . 'phrase_read_tests.php';
+include_once test_paths::UNIT_READ . 'phrase_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'group_read_tests.php';
+include_once test_paths::UNIT_READ . 'term_read_tests.php';
+include_once test_paths::UNIT_READ . 'term_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'value_read_tests.php';
+include_once test_paths::UNIT_READ . 'value_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'formula_read_tests.php';
+include_once test_paths::UNIT_READ . 'formula_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'expression_read_tests.php';
+include_once test_paths::UNIT_READ . 'element_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'view_read_tests.php';
+include_once test_paths::UNIT_READ . 'view_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'component_read_tests.php';
+include_once test_paths::UNIT_READ . 'component_list_read_tests.php';
+include_once test_paths::UNIT_READ . 'source_read_tests.php';
+include_once test_paths::UNIT_READ . 'ref_read_tests.php';
+include_once test_paths::UNIT_READ . 'share_read_tests.php';
+include_once test_paths::UNIT_READ . 'protection_read_tests.php';
+include_once test_paths::UNIT_READ . 'language_read_tests.php';
+include_once test_paths::UNIT_READ . 'export_read_tests.php';
 
 // load the testing functions that save data to the database
-include_once TEST_UNIT_WRITE_PATH . 'all_unit_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'user_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'word_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'word_list_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'verb_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'triple_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'phrase_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'phrase_list_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'group_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'group_list_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'graph_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'term_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'value_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'source_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'ref_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'expression_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'formula_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'formula_link_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'formula_trigger_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'result_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'element_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'element_group_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'job_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'view_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'view_link_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'component_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'component_link_write_tests.php';
-include_once TEST_UNIT_WRITE_PATH . 'import_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'user_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'word_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'word_list_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'verb_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'triple_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'phrase_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'phrase_list_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'group_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'group_list_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'graph_tests.php';
+include_once test_paths::UNIT_WRITE . 'term_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'value_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'source_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'ref_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'expression_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'formula_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'formula_link_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'formula_trigger_tests.php';
+include_once test_paths::UNIT_WRITE . 'result_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'element_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'element_group_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'job_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'view_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'view_link_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'component_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'component_link_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'import_write_tests.php';
 
-include_once TEST_UNIT_WRITE_PATH . 'test_word_display.php';
-include_once TEST_UNIT_WRITE_PATH . 'test_math.php';
+include_once test_paths::UNIT_WRITE . 'test_word_display.php';
+include_once test_paths::UNIT_WRITE . 'test_math.php';
 
 //
-include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
+include_once test_paths::UTILS . 'all_tests.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log_format.php';
 include_once paths::MODEL_LOG_TEXT . 'text_log_level.php';
 
 // load the integration test functions
-include_once TEST_UNIT_INT_PATH . 'test_import.php';
-include_once TEST_UNIT_INT_PATH . 'test_export.php';
+include_once test_paths::UNIT_INT . 'test_import.php';
+include_once test_paths::UNIT_INT . 'test_export.php';
 
 // load the test functions still in development
-include_once TEST_DEV_PATH . 'test_legacy.php';
+include_once test_paths::DEV . 'test_legacy.php';
 
 // TODO to be dismissed
 include_once html_paths::USER . 'user_display_old.php';
@@ -846,13 +841,13 @@ class test_base
         $class = '';
         if ($dbo != null) {
             $class = $lib->class_to_name($dbo::class);
-            $folder = $class . '/';
+            $folder = $class . DIRECTORY_SEPARATOR;
             if ($id > 0) {
                 $dbo_name = '_' . $class;
                 $dbo_name .= '_' . $id;
             }
         }
-        $filename = 'views/' . $folder . $dsp_code_id . $dbo_name;
+        $filename = test_paths::VIEWS . $folder . $dsp_code_id . $dbo_name;
 
         // load the view from the database
         $msk = new view($usr);
@@ -1014,7 +1009,7 @@ class test_base
         $lib = new library();
 
         $actual = $this->html_page($body);
-        $expected = $this->file('web/html/' . $filename . '.html');
+        $expected = $this->file('web/html/' . $filename . test_files::HTML);
         return $this->assert($test_name, $lib->trim_html($actual), $lib->trim_html($expected));
     }
 
@@ -4054,13 +4049,14 @@ class test_base
      */
 
     /**
+     * TODO Prio 1 make sure that all paths used here are a const from one of the three paths.php
      * @param string $test_resource_path the path of the file staring from the test resource path
      * @return string the content of the test resource file
      */
     function file(string $test_resource_path): string
     {
         $result = '';
-        $filepath = test_files::RESOURCE_PATH . $test_resource_path;
+        $filepath = test_paths::RESOURCE . $test_resource_path;
         if ($this->has_file($test_resource_path)) {
             $result = file_get_contents($filepath);
             if ($result === false) {
@@ -4078,7 +4074,7 @@ class test_base
      */
     function has_file(string $test_resource_path): bool
     {
-        return file_exists(test_files::RESOURCE_PATH . $test_resource_path);
+        return file_exists(test_paths::RESOURCE . $test_resource_path);
     }
 
     /*

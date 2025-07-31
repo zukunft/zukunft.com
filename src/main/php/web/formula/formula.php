@@ -98,6 +98,21 @@ class formula extends sandbox_code_id
 {
 
     /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::FORMULA_ADD;
+    const VIEW_EDIT = views::FORMULA_EDIT;
+    const VIEW_DEL = views::FORMULA_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::FORMULA_ADD;
+    const MSG_EDIT = msg_id::FORMULA_EDIT;
+    const MSG_DEL = msg_id::FORMULA_DEL;
+
+
+    /*
      * object vars
      */
 
@@ -230,19 +245,6 @@ class formula extends sandbox_code_id
      */
 
     /**
-     * create the HTML code for a button to create a new formula
-     * @param string $back the stack trace for the undo functionality
-     * @return string html code to change to formula
-     */
-    function btn_add(string $back = ''): string
-    {
-        return parent::btn_add_sbx(
-            views::VALUE_ADD,
-            msg_id::FORMULA_ADD,
-            $back);
-    }
-
-    /**
      * create the HTML code for a button to change the formula
      * @param string $back the stack trace for the undo functionality
      * @return string html code to change to formula
@@ -251,8 +253,8 @@ class formula extends sandbox_code_id
     {
         global $mtr;
         return parent::btn_edit_sbx(
-            views::FORMULA_EDIT,
-            msg_id::FORMULA_EDIT,
+            $this::VIEW_EDIT,
+            $this::MSG_EDIT,
             $back, $mtr->txt(msg_id::FOR) . $this->name);
     }
 
@@ -265,8 +267,8 @@ class formula extends sandbox_code_id
     {
         global $mtr;
         return parent::btn_del_sbx(
-            views::FORMULA_DEL,
-            msg_id::FORMULA_DEL,
+            $this::VIEW_DEL,
+            $this::MSG_DEL,
             $back, $mtr->txt(msg_id::OF) . $this->name);
     }
 

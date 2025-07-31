@@ -317,13 +317,13 @@ class group extends sandbox_named
             $this->name_tip = $result;
             $this->name_tip_dirty = false;
         } else {
-            $result = $this->name();
+            $result = $this->name_tip;
         }
         return $result;
     }
 
     /**
-     * @param phrase_list|null $phr_lst_header list of phrases already shown in the header and don't need to be include in the result
+     * @param phrase_list|null $phr_lst_header list of phrases already shown in the header and don't need to be included in the result
      * @return string
      */
     function name_link_list(phrase_list $phr_lst_header = null): string
@@ -349,7 +349,7 @@ class group extends sandbox_named
             $this->name_link = $result;
             $this->name_link_dirty = false;
         } else {
-            $result = $this->name();
+            $result = $this->name_link;
         }
         return $result;
     }

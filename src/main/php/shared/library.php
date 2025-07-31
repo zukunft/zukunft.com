@@ -37,6 +37,7 @@ use cfg\const\paths;
 include_once paths::SERVICE . 'config.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_VALUE . 'value_db.php';
 
 use cfg\component\view_style;
@@ -58,6 +59,7 @@ use cfg\system\sys_log_status;
 use cfg\system\sys_log_status_list;
 use cfg\system\sys_log_type;
 use cfg\system\system_time;
+use cfg\user\user_db;
 use cfg\user\user_official_type;
 use cfg\value\value;
 use cfg\value\value_db;
@@ -2514,7 +2516,7 @@ class library
                 sql_db::FLD_DESCRIPTION => 'des',
                 phrase::FLD_TYPE => 'pty',
                 value_db::FLD_ID => 'grp',
-                user::FLD_ID => 'usr',
+                user_db::FLD_ID => 'usr',
                 source_db::FLD_ID => 'src',
                 sandbox_multi::FLD_VALUE => 'val',
                 sandbox_multi::FLD_LAST_UPDATE => 'upd',

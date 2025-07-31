@@ -42,7 +42,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 // set the other path once for all scripts
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 // load once the common const and vars used almost every time
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
@@ -125,7 +125,7 @@ if ($db_con->is_open()) {
 
     $view = $url_array[api::URL_VAR_MASK] ?? 0; // the database id of the view to display
     $id = $url_array[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
-    $confirm = $url_array[api::URL_VAR_CONFIRM] ?? 0; // the database id of the prime object to display
+    $confirm = $url_array[api::URL_VAR_CONFIRM_LONG] ?? 0; // the database id of the prime object to display
 
     $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
     $view_words = $url_array[api::URL_VAR_WORDS] ?? '';

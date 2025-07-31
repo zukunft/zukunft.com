@@ -88,6 +88,7 @@ include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_db.php';
@@ -117,6 +118,7 @@ use cfg\formula\formula_link;
 use cfg\group\group_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_named;
+use cfg\user\user_db;
 use cfg\value\value_list;
 use cfg\verb\verb_db;
 use cfg\verb\verb_list;
@@ -193,7 +195,7 @@ class phrase extends combine_named
     const TBL_FLD_LST_VIEW = [
         [word::class, [
             [word_db::FLD_ID, phrase::FLD_ID],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [word_db::FLD_NAME, phrase::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
             [word_db::FLD_VALUES],
@@ -204,7 +206,7 @@ class phrase extends combine_named
         ], word_db::FLD_ID],
         [triple::class, [
             [triple_db::FLD_ID, phrase::FLD_ID, '* -1'],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], phrase::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
             [triple_db::FLD_VALUES],
@@ -292,7 +294,7 @@ class phrase extends combine_named
                 if (array_key_exists(sandbox::FLD_PROTECT . $fld_ext, $db_row)) {
                     $wrd->set_protection_id($db_row[sandbox::FLD_PROTECT . $fld_ext]);
                 }
-                //$wrd->set_owner_id($db_row[_user::FLD_ID . $fld_ext]);
+                //$wrd->set_owner_id($db_row[_user_db::FLD_ID . $fld_ext]);
                 $this->obj = $wrd;
                 $result = true;
             } elseif ($db_row[$id_fld] < 0) {
@@ -320,7 +322,7 @@ class phrase extends combine_named
                 }
                 // not yet loaded with initial load
                 // $trp->name = $db_row[triple_db::FLD_NAME_GIVEN . $fld_ext];
-                // $trp->set_owner_id($db_row[_user::FLD_ID . $fld_ext]);
+                // $trp->set_owner_id($db_row[_user_db::FLD_ID . $fld_ext]);
                 // $trp->from->set_id($db_row[triple_db::FLD_FROM]);
                 // $trp->to->set_id($db_row[triple_db::FLD_TO]);
                 // $trp->verb->set_id($db_row[verb_db::FLD_ID]);

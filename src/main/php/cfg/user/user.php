@@ -594,6 +594,11 @@ class user extends db_id_object_non_sandbox
         return $usr_msg;
     }
 
+    function code_id(): ?string
+    {
+        return $this->code_id;
+    }
+
     /**
      * @return string the unique username for the user on this pod
      */
@@ -727,6 +732,34 @@ class user extends db_id_object_non_sandbox
             $key_fld = self::KEY_ID;
         }
         return $key_fld;
+    }
+
+    /**
+     * set the excluded field for this user in the database
+     *
+     * @param bool $db_val the value from the database row array
+     * @return void
+     */
+    function set_excluded(?bool $db_val): void
+    {
+        if ($db_val == null) {
+            $this->excluded = false;
+        } else {
+            $this->excluded = $db_val;
+        }
+    }
+
+    /**
+     * @return bool true if an admin user wanted to exclude the user from this pod without deleting the history
+     */
+    function is_excluded(): bool
+    {
+        if ($this->excluded == null) {
+            // by default an object is not excluded
+            return false;
+        } else {
+            return $this->excluded;
+        }
     }
 
 
@@ -2275,7 +2308,7 @@ class user extends db_id_object_non_sandbox
         // add the requesting user id for logging
         $fvt_lst_log = clone $fvt_lst;
         $fvt_lst_log->add_field(
-            user::FLD_ID,
+            user_db::FLD_ID,
             $usr->id(),
             sql_par_type::INT
         );

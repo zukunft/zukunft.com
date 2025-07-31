@@ -52,6 +52,8 @@ use cfg\result\result;
 use cfg\value\value;
 use cfg\verb\verb;
 use cfg\verb\verb_list;
+use html\formula\formula;
+use html\ref\source;
 use html\verb\verb_list as verb_list_dsp;
 use html\button;
 use html\component\component_exe as component_dsp;
@@ -61,6 +63,7 @@ use html\result\result as result_dsp;
 use html\result\result_list as result_list_dsp;
 use html\value\value as value_dsp;
 use html\verb\verb as verb_dsp;
+use html\word\word;
 use shared\library;
 use shared\const\components;
 use shared\const\values;
@@ -262,7 +265,24 @@ class base_ui_tests
         $t->display('component_dsp->text', $target, $result);
 
 
-        $t->header('unit html button tests');
+        $t->subheader($ts . 'button tests');
+        $test_name = 'a sandbox object e.g. word add button html code';
+        $target = '<a href="/http/view.php?m=word_add&back=1" title="add new word"><i class="far fa-plus-square"></i></a>';
+        $wrd = new word();
+        $t->assert($test_name, $wrd->btn_add('1'), $target);
+
+        $test_name = 'a sandbox object e.g. source change button html code';
+        $target = '<a href="/http/view.php?m=source_edit&id=1&back=1" title="source_edit"><i class="far fa-edit"></i></a>';
+        $src = new source();
+        $src->set_from_json($t->source()->api_json());
+        $t->assert($test_name, $src->btn_edit('1'), $target);
+
+        $test_name = 'a sandbox object e.g. formula delete button html code';
+        $target = '<a href="/http/view.php?m=formula_del&id=1&back=1" title="delete this formula of scale minute to sec"><i class="far fa-times-circle"></i></a>';
+        $frm = new formula();
+        $frm->set_from_json($t->formula()->api_json());
+        $t->assert($test_name, $frm->btn_del('1'), $target);
+
 
         $url = $html->url(views::WORD_ADD);
         $back = '1';

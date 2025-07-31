@@ -7,8 +7,8 @@
 
     The main sections of this object are
     - object vars:       the variables of this triple object
-    - set and get:       to capsule the vars from unexpected changes
     - api:               set the object vars based on the api json message and create a json for the backend
+    - set and get:       to capsule the vars from unexpected changes
     - base:              html code for the single object vars
     - buttons:           html code for the buttons e.g. to add, edit, del, link or unlink
     - select:            html code to select parameter like the type
@@ -44,6 +44,7 @@ namespace html\word;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -76,6 +77,7 @@ use html\word\triple as triple_dsp;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
 use html\verb\verb as verb_dsp;
+use shared\api;
 use shared\const\views;
 use shared\json_fields;
 use shared\enum\messages as msg_id;
@@ -87,6 +89,21 @@ class triple extends sandbox_code_id
 {
 
     /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::TRIPLE_ADD;
+    const VIEW_EDIT = views::TRIPLE_EDIT;
+    const VIEW_DEL = views::TRIPLE_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::TRIPLE_ADD;
+    const MSG_EDIT = msg_id::TRIPLE_EDIT;
+    const MSG_DEL = msg_id::TRIPLE_DEL;
+
+
+    /*
      * object vars
      */
 
@@ -96,6 +113,123 @@ class triple extends sandbox_code_id
     private ?verb_dsp $verb = null;
     private ?phrase_dsp $to = null;
     private ?string $plural = null;
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * set the vars of this word frontend object bases on the url array
+     * public because it is reused e.g. by the phrase group display object
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array): user_message
+    {
+        $usr_msg = parent::url_mapper($url_array);
+        if ($usr_msg->is_ok()) {
+            if (array_key_exists(api::URL_VAR_FROM_ID_LONG, $url_array)) {
+                $this->set_from_by_id($url_array[api::URL_VAR_FROM_ID_LONG]);
+            }
+            if (array_key_exists(api::URL_VAR_VERB_ID_LONG, $url_array)) {
+                $this->set_verb_by_id($url_array[api::URL_VAR_VERB_ID_LONG]);
+            }
+            if (array_key_exists(api::URL_VAR_TO_ID_LONG, $url_array)) {
+                $this->set_to_by_id($url_array[api::URL_VAR_TO_ID_LONG]);
+            }
+            // TODO Prio 2 use the languages forms
+            if (array_key_exists(api::URL_VAR_PLURAL, $url_array)) {
+                $this->set_plural($url_array[api::URL_VAR_PLURAL]);
+            } else {
+                $this->set_plural(null);
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the vars of this object bases on the api json array
+     * @param array $json_array an api json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function api_mapper(array $json_array): user_message
+    {
+        $usr_msg = parent::api_mapper($json_array);
+        if (array_key_exists(json_fields::FROM_PHRASE, $json_array)) {
+            $value = $json_array[json_fields::FROM_PHRASE];
+            if (is_array($value)) {
+                $phr = new phrase_dsp();
+                $phr->api_mapper($value);
+                $this->set_from($phr);
+            } else {
+                $this->set_from_by_id($value);
+            }
+        } elseif (array_key_exists(json_fields::FROM, $json_array)) {
+            $value = $json_array[json_fields::FROM];
+            if (is_array($value)) {
+                $phr = new phrase_dsp();
+                $phr->api_mapper($value);
+                $this->set_from($phr);
+            } else {
+                $this->set_from_by_id($value);
+            }
+        } else {
+            $this->set_from(new phrase_dsp());
+        }
+        if (array_key_exists(json_fields::VERB, $json_array)) {
+            $value = $json_array[json_fields::VERB];
+            if (is_array($value)) {
+                $vrb = new verb_dsp();
+                $vrb->api_mapper($value);
+                $this->set_verb($vrb);
+            } else {
+                $this->set_verb_by_id($value);
+            }
+        } else {
+            $this->set_verb(new verb_dsp());
+        }
+        if (array_key_exists(json_fields::TO_PHRASE, $json_array)) {
+            $value = $json_array[json_fields::TO_PHRASE];
+            if (is_array($value)) {
+                $phr = new phrase_dsp();
+                $phr->api_mapper($value);
+                $this->set_to($phr);
+            } else {
+                $this->set_to_by_id($value);
+            }
+        } elseif (array_key_exists(json_fields::TO, $json_array)) {
+            $value = $json_array[json_fields::TO];
+            if (is_array($value)) {
+                $phr = new phrase_dsp();
+                $phr->api_mapper($value);
+                $this->set_to($phr);
+            } else {
+                $this->set_to_by_id($value);
+            }
+        } else {
+            $this->set_to(new phrase_dsp());
+        }
+        return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * @return array the json message array to send the updated data to the backend
+     * an array is used (instead of a string) to enable combinations of api_array() calls
+     */
+    function api_array(): array
+    {
+        $vars = parent::api_array();
+        $vars[json_fields::FROM] = $this->from()->id();
+        $vars[json_fields::VERB] = $this->verb()->id();
+        $vars[json_fields::TO] = $this->to()->id();
+        return $vars;
+    }
 
 
     /*
@@ -174,7 +308,7 @@ class triple extends sandbox_code_id
         return $this->to;
     }
 
-    function set_plural(string $plural): void
+    function set_plural(?string $plural): void
     {
         $this->plural = $plural;
     }
@@ -209,89 +343,6 @@ class triple extends sandbox_code_id
         } else {
             return $phr_typ_cac->get($this->type_id());
         }
-    }
-
-
-    /*
-     * api
-     */
-
-    /**
-     * set the vars of this object bases on the api json array
-     * @param array $json_array an api json message
-     * @return user_message ok or a warning e.g. if the server version does not match
-     */
-    function api_mapper(array $json_array): user_message
-    {
-        $usr_msg = parent::api_mapper($json_array);
-        if (array_key_exists(json_fields::FROM_PHRASE, $json_array)) {
-            $value = $json_array[json_fields::FROM_PHRASE];
-            if (is_array($value)) {
-                $phr = new phrase_dsp();
-                $phr->api_mapper($value);
-                $this->set_from($phr);
-            } else {
-                $this->set_from_by_id($value);
-            }
-        } elseif (array_key_exists(json_fields::FROM, $json_array)) {
-            $value = $json_array[json_fields::FROM];
-            if (is_array($value)) {
-                $phr = new phrase_dsp();
-                $phr->api_mapper($value);
-                $this->set_from($phr);
-            } else {
-                $this->set_from_by_id($value);
-            }
-        } else {
-            $this->set_from(new phrase_dsp());
-        }
-        if (array_key_exists(json_fields::VERB, $json_array)) {
-            $value = $json_array[json_fields::VERB];
-            if (is_array($value)) {
-                $vrb = new verb_dsp();
-                $vrb->api_mapper($value);
-                $this->set_verb($vrb);
-            } else {
-                $this->set_verb_by_id($value);
-            }
-        } else {
-            $this->set_verb(new verb_dsp());
-        }
-        if (array_key_exists(json_fields::TO_PHRASE, $json_array)) {
-            $value = $json_array[json_fields::TO_PHRASE];
-            if (is_array($value)) {
-                $phr = new phrase_dsp();
-                $phr->api_mapper($value);
-                $this->set_to($phr);
-            } else {
-                $this->set_to_by_id($value);
-            }
-        } elseif (array_key_exists(json_fields::TO, $json_array)) {
-            $value = $json_array[json_fields::TO];
-            if (is_array($value)) {
-                $phr = new phrase_dsp();
-                $phr->api_mapper($value);
-                $this->set_to($phr);
-            } else {
-                $this->set_to_by_id($value);
-            }
-        } else {
-            $this->set_to(new phrase_dsp());
-        }
-        return $usr_msg;
-    }
-
-    /**
-     * @return array the json message array to send the updated data to the backend
-     * an array is used (instead of a string) to enable combinations of api_array() calls
-     */
-    function api_array(): array
-    {
-        $vars = parent::api_array();
-        $vars[json_fields::FROM] = $this->from()->id();
-        $vars[json_fields::VERB] = $this->verb()->id();
-        $vars[json_fields::TO] = $this->to()->id();
-        return $vars;
     }
 
 
@@ -370,48 +421,6 @@ class triple extends sandbox_code_id
     function name_link(?string $back = '', string $style = '', int $msk_id = views::TRIPLE_ID): string
     {
         return parent::name_link($back, $style, $msk_id);
-    }
-
-
-    /*
-     * buttons
-     */
-
-    /**
-     * @return string the html code for a bottom
-     * to create a new word for the current user
-     */
-    function btn_add(string $back = ''): string
-    {
-        return parent::btn_add_sbx(
-            views::TRIPLE_ADD,
-            msg_id::TRIPLE_ADD,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to change a triple e.g. the name or the type
-     */
-    function btn_edit(string $back = ''): string
-    {
-        return parent::btn_edit_sbx(
-            views::TRIPLE_EDIT,
-            msg_id::TRIPLE_EDIT,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to exclude the triple for the current user
-     * or if no one uses the word delete the complete word
-     */
-    function btn_del(string $back = ''): string
-    {
-        return parent::btn_del_sbx(
-            views::TRIPLE_DEL,
-            msg_id::TRIPLE_DEL,
-            $back);
     }
 
 

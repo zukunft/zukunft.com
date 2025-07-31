@@ -49,6 +49,7 @@ include_once paths::MODEL_USER . 'user_profile_list.php';
 include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_db.php';
 include_once paths::SHARED_CONST . 'users.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED . 'library.php';
 
@@ -62,6 +63,7 @@ use cfg\result\result_two;
 use cfg\system\sys_log_function;
 use cfg\system\system_time_type;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\user\user_profile_list;
 use cfg\value\value;
@@ -246,7 +248,7 @@ class db_check
         $result .= $db_con->add_column('user_' . 'values_time_series', 'protect_id', 'smallint');
         $result .= $db_con->add_column('position_type', 'code_id', 'varchar(50)');
         $result .= $db_con->add_column('source_type', 'description', 'text');
-        $result .= $db_con->add_column('ref', user::FLD_ID, 'bigint');
+        $result .= $db_con->add_column('ref', user_db::FLD_ID, 'bigint');
         $result .= $db_con->add_column('ref', 'source_id', 'bigint');
         $result .= $db_con->add_column('ref', 'url', 'text');
         $result .= $db_con->add_column('ref', 'description', 'text');
@@ -301,7 +303,7 @@ class db_check
         }
         $result .= $db_con->add_column('user_' . 'triple', 'values', 'bigint');
         $result .= $db_con->add_column('user_' . 'word', 'values', 'bigint');
-        $result .= $db_con->add_column('view_term_link', user::FLD_ID, 'bigint');
+        $result .= $db_con->add_column('view_term_link', user_db::FLD_ID, 'bigint');
         $result .= $db_con->add_column('view_term_link', 'description', 'text');
         $result .= $db_con->add_column('view_term_link', 'excluded', 'smallint');
         $result .= $db_con->add_column('view_term_link', 'share_type_id', 'smallint');
@@ -332,7 +334,7 @@ class db_check
         $result .= $db_con->column_allow_null('job', 'start_time');
         $result .= $db_con->column_allow_null('job', 'end_time');
         $result .= $db_con->column_allow_null('job', 'row_id');
-        $result .= $db_con->column_force_not_null('user_' . 'source', user::FLD_ID);
+        $result .= $db_con->column_force_not_null('user_' . 'source', user_db::FLD_ID);
         $result .= $db_con->change_column_name($lib->class_to_name(value::class), 'word_value', value_db::FLD_VALUE);
         $result .= $db_con->change_column_name('user_' . $lib->class_to_name(value::class), 'word_value', value_db::FLD_VALUE);
         $result .= $db_con->change_table_name('word_types', 'phrase_type');
@@ -358,11 +360,11 @@ class db_check
             $sql = 'UPDATE' . ' `users` SET `activation_timeout` = CURRENT_TIMESTAMP WHERE `users`.`activation_timeout` = 0';
             $result .= $db_con->exe_try('Filling missing activation timestamps for users', $sql);
 
-            $sql = file_get_contents(files::RESOURCE_PATH . 'db/upgrade/v0.0.3/upgrade_mysql.sql');
+            $sql = file_get_contents(files::DB_UPGRADE_V003_PATH . files::DB_UPGRADE_MYSQL);
             $result .= $db_con->exe_try('Finally add the new views', $sql);
         }
         if ($db_con->db_type == sql_db::POSTGRES) {
-            $sql = file_get_contents(files::RESOURCE_PATH . 'db/upgrade/v0.0.3/upgrade_postgres.sql');
+            $sql = file_get_contents(files::DB_UPGRADE_V003_PATH . files::DB_UPGRADE_POSTGRES);
             //src/main/resources/db/upgrade/v0.0.3/upgrade_postgres.sql
             //$result .= $db_con->exe_try('Finally add the new views', $sql);
         }

@@ -58,10 +58,10 @@ include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::MODEL_WORD . 'word_db.php';
@@ -85,7 +85,7 @@ use cfg\db\sql_field_type;
 use cfg\helper\db_object_seq_id;
 use cfg\formula\formula;
 use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\user\user;
@@ -162,7 +162,7 @@ class term extends combine_named
     const TBL_FLD_LST_VIEW = [
         [word::class, [
             [word_db::FLD_ID, term::FLD_ID, self::FLD_WORD_ID_TO_TERM_ID],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [word_db::FLD_NAME, term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
             [word_db::FLD_VALUES, self::FLD_USAGE],
@@ -175,7 +175,7 @@ class term extends combine_named
         ], [phrase::FLD_TYPE, word_db::FLD_ID]],
         [triple::class, [
             [triple_db::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
             [triple_db::FLD_VALUES, self::FLD_USAGE],
@@ -188,7 +188,7 @@ class term extends combine_named
         ], ['', triple_db::FLD_ID]],
         [formula::class, [
             [formula_db::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [formula_db::FLD_NAME, term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
             [formula_db::FLD_USAGE, self::FLD_USAGE],
@@ -201,7 +201,7 @@ class term extends combine_named
         ], ['', formula_db::FLD_ID]],
         [verb::class, [
             [verb_db::FLD_ID, term::FLD_ID, self::FLD_VERB_ID_TO_TERM_ID],
-            [sql::NULL_VALUE, user::FLD_ID, sql_db::FLD_CONST],
+            [sql::NULL_VALUE, user_db::FLD_ID, sql_db::FLD_CONST],
             [verb_db::FLD_NAME, term::FLD_NAME],
             [sql_db::FLD_DESCRIPTION],
             [verb_db::FLD_WORDS, self::FLD_USAGE],
@@ -383,25 +383,25 @@ class term extends combine_named
             if ($class == word::class) {
                 if ($this->obj == null) {
                     $this->obj = new word($this->user());
-                    $this->obj->set_id($id);
+                    $this->obj()->set_id($id);
                 }
             } elseif ($class == triple::class) {
                 if ($this->obj == null) {
                     $this->obj = new triple($this->user());
-                    $this->obj->set_id($id);
+                    $this->obj()->set_id($id);
                 }
             } elseif ($class == formula::class) {
                 if ($this->obj == null) {
                     $this->obj = new formula($this->user());
-                    $this->obj->set_id($id);
+                    $this->obj()->set_id($id);
                 }
             } elseif ($class == verb::class) {
                 if ($this->obj == null) {
                     $this->obj = new verb();
-                    $this->obj->set_id($id);
+                    $this->obj()->set_id($id);
                 }
             }
-            $this->obj->set_id($id);
+            $this->obj()->set_id($id);
         }
     }
 
@@ -439,7 +439,7 @@ class term extends combine_named
         if ($class != '' and $this->obj == null) {
             $this->set_obj_by_class($class);
         }
-        $this->obj->set_name($name);
+        $this->obj()->set_name($name);
     }
 
     /**
@@ -455,7 +455,7 @@ class term extends combine_named
         if ($class != '' and $this->obj == null) {
             $this->set_obj_by_class($class);
         }
-        $this->obj->set_user($usr);
+        $this->obj()->set_user($usr);
     }
 
     /**
@@ -467,9 +467,9 @@ class term extends combine_named
     function set_usage(?int $usage): void
     {
         if ($usage == null) {
-            $this->obj->set_usage(0);
+            $this->obj()->set_usage(0);
         } else {
-            $this->obj->set_usage($usage);
+            $this->obj()->set_usage($usage);
         }
     }
 
@@ -519,8 +519,8 @@ class term extends combine_named
     function name(): string
     {
         $result = '';
-        if (isset($this->obj)) {
-            $result = $this->obj->name();
+        if ($this->obj() != null) {
+            $result = $this->obj()->name();
         }
         return $result;
     }
@@ -532,8 +532,8 @@ class term extends combine_named
     function user(): ?user
     {
         $result = new user();
-        if (isset($this->obj)) {
-            $result = $this->obj->user();
+        if ($this->obj() != null) {
+            $result = $this->obj()->user();
         }
         return $result;
     }
@@ -541,7 +541,7 @@ class term extends combine_named
     function type(): string
     {
         $result = '';
-        if (isset($this->obj)) {
+        if ($this->obj() != null) {
             $result = $this->obj::class;
         }
         return $result;
@@ -549,7 +549,7 @@ class term extends combine_named
 
     function usage(): int
     {
-        return $this->obj->usage();
+        return $this->obj()->usage();
     }
 
 
@@ -1005,9 +1005,9 @@ class term extends combine_named
     {
         $phr = null;
         if (get_class($this->obj) == word::class) {
-            $phr = $this->obj->phrase();
+            $phr = $this->obj()->phrase();
         } elseif (get_class($this->obj) == triple::class) {
-            $phr = $this->obj->phrase();
+            $phr = $this->obj()->phrase();
         }
         return $phr;
     }

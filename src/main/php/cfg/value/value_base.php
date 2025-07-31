@@ -131,6 +131,7 @@ include_once paths::MODEL_SYSTEM . 'job.php';
 include_once paths::MODEL_SYSTEM . 'job_type_list.php';
 include_once paths::MODEL_SYSTEM . 'log.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
@@ -168,6 +169,7 @@ use cfg\ref\source;
 use cfg\sandbox\sandbox_multi;
 use cfg\ref\source_db;
 use cfg\system\log;
+use cfg\user\user_db;
 use shared\const\chars;
 use shared\enum\change_actions;
 use shared\enum\change_fields;
@@ -592,22 +594,6 @@ class value_base extends sandbox_value
         return $this->symbol;
     }
 
-    /**
-     * @return phrase_list the phrase list of the value
-     */
-    function phrase_list(): phrase_list
-    {
-        return $this->grp()->phrase_list();
-    }
-
-    /**
-     * @return array with the ids of the phrases
-     */
-    function ids(): array
-    {
-        return $this->phrase_list()->ids();
-    }
-
     function set_group_id_by_phrase_list(phrase_list $phr_lst): user_message
     {
         $usr_msg = new user_message();
@@ -813,34 +799,34 @@ class value_base extends sandbox_value
             $fld_lst = array_merge(
                 value_db::FLD_NAMES,
                 value_db::FLD_NAMES_NUM_USR,
-                array(user::FLD_ID)
+                array(user_db::FLD_ID)
             );
         } elseif ($this->is_time_value()) {
             $fld_lst = array_merge(
                 value_db::FLD_NAMES,
                 value_db::FLD_NAMES_NUM_USR_TIME,
-                array(user::FLD_ID)
+                array(user_db::FLD_ID)
             );
         } elseif ($this->is_text_value()) {
             $fld_lst = array_merge(
                 value_db::FLD_NAMES,
                 value_db::FLD_NAMES_USR_TEXT,
                 value_db::FLD_NAMES_NUM_USR_TEXT,
-                array(user::FLD_ID)
+                array(user_db::FLD_ID)
             );
         } elseif ($this->is_geo_value()) {
             $fld_lst = array_merge(
                 value_db::FLD_NAMES,
                 value_db::FLD_NAMES_USR_GEO,
                 value_db::FLD_NAMES_NUM_USR_GEO,
-                array(user::FLD_ID)
+                array(user_db::FLD_ID)
             );
         } else {
             // fallback option
             $fld_lst = array_merge(
                 value_db::FLD_NAMES,
                 value_db::FLD_NAMES_NUM_USR,
-                array(user::FLD_ID)
+                array(user_db::FLD_ID)
             );
         }
         return parent::load_standard_sql($sc, $fld_lst);
@@ -1651,7 +1637,7 @@ class value_base extends sandbox_value
         } else {
             $qp = $this->not_changed_sql($db_con->sql_creator());
             $db_row = $db_con->get1($qp);
-            if ($db_row[user::FLD_ID] > 0) {
+            if ($db_row[user_db::FLD_ID] > 0) {
                 $result = false;
             }
         }
@@ -2226,7 +2212,7 @@ class value_base extends sandbox_value
                 //    $this->set_id($ins_result->get_row_id());
                 //}
                 //$db_con->set_type(self::class);
-                //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, value_db::FLD_VALUE, sandbox_multi::FLD_LAST_UPDATE), array($this->grp()->id(), $this->user()->id, $this->number, sql::NOW)));
+                //$this->set_id($db_con->insert(array(group::FLD_ID, user_db::FLD_ID, value_db::FLD_VALUE, sandbox_multi::FLD_LAST_UPDATE), array($this->grp()->id(), $this->user()->id, $this->number, sql::NOW)));
                 if ($this->is_id_set()) {
                     // update the reference in the log
                     if ($this->grp()->is_prime()) {

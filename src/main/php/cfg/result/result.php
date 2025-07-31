@@ -74,6 +74,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::SHARED_CONST . 'chars.php';
@@ -106,6 +107,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_multi;
 use cfg\sandbox\sandbox_value;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use DateTime;
 use shared\calc\parameter_type;
@@ -213,7 +215,7 @@ class result extends sandbox_value
                 $this->src_grp->set_id($db_row[result_db::FLD_SOURCE_GRP]);
             }
             $this->set_number($db_row[sandbox_multi::FLD_VALUE]);
-            $this->set_owner_id($db_row[user::FLD_ID]);
+            $this->set_owner_id($db_row[user_db::FLD_ID]);
             $this->set_last_update($lib->get_datetime($db_row[sandbox_multi::FLD_LAST_UPDATE]));
             $this->last_val_update = $lib->get_datetime($db_row[sandbox_multi::FLD_LAST_UPDATE]);
 
@@ -480,7 +482,7 @@ class result extends sandbox_value
      */
     function load_standard_sql(sql_creator $sc, array $fld_lst = []): sql_par
     {
-        $fld_lst = array_merge(result_db::FLD_NAMES, array(user::FLD_ID));
+        $fld_lst = array_merge(result_db::FLD_NAMES, array(user_db::FLD_ID));
         return parent::load_standard_sql($sc, $fld_lst);
     }
 
@@ -555,7 +557,7 @@ class result extends sandbox_value
         $sc->set_class(self::class);
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $sc->set_id_field($this->id_field());
-        $sc->set_fields(array_merge(result_db::FLD_NAMES, array(user::FLD_ID)));
+        $sc->set_fields(array_merge(result_db::FLD_NAMES, array(user_db::FLD_ID)));
 
         $qp = $this->load_sql_by_grp_prepare($sc, $grp);
         return parent::load_standard_sql_by($sc, $qp);

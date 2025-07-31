@@ -232,11 +232,11 @@ class type_lists
             //$usr_msg->add_err('Mandatory system_views missing in API JSON ' . json_encode($json_array));
             $this->set_system_views();
         }
-        if (array_key_exists(api::JSON_LIST_SYS_LOG_STATI, $json_array)) {
-            $this->set_sys_log_stati($json_array[api::JSON_LIST_SYS_LOG_STATI]);
+        if (array_key_exists(api::JSON_LIST_SYS_LOG_STATUUS, $json_array)) {
+            $this->set_sys_log_statuus($json_array[api::JSON_LIST_SYS_LOG_STATUUS]);
         } else {
-            $usr_msg->add_err('Mandatory sys_log_stati missing in API JSON ' . json_encode($json_array));
-            $this->set_sys_log_stati();
+            $usr_msg->add_err('Mandatory sys_log_statuus missing in API JSON ' . json_encode($json_array));
+            $this->set_sys_log_statuus();
         }
         if (array_key_exists(api::JSON_LIST_JOB_TYPES, $json_array)) {
             $this->set_job_types($json_array[api::JSON_LIST_JOB_TYPES]);
@@ -384,11 +384,11 @@ class type_lists
         $html_verbs->set_from_json_array($json_array, verb::class);
     }
 
-    function set_sys_log_stati(array $json_array = null): void
+    function set_sys_log_statuus(array $json_array = null): void
     {
-        global $html_sys_log_stati;
-        $html_sys_log_stati = new sys_log_status_list();
-        $html_sys_log_stati->set_from_json_array($json_array);
+        global $html_sys_log_statuus;
+        $html_sys_log_statuus = new sys_log_status_list();
+        $html_sys_log_statuus->set_from_json_array($json_array);
     }
 
     function set_job_types(array $json_array = null): void

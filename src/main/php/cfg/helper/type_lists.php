@@ -306,7 +306,7 @@ class type_lists
         global $lan_for_cac;
         $vars[json_fields::LIST_LANGUAGE_FORMS] = $lan_for_cac->api_json_array();
         global $sys_log_sta_cac;
-        $vars[json_fields::LIST_SYS_LOG_STATI] = $sys_log_sta_cac->api_json_array();
+        $vars[json_fields::LIST_SYS_LOG_STATUUS] = $sys_log_sta_cac->api_json_array();
         global $job_typ_cac;
         $vars[json_fields::LIST_JOB_TYPES] = $job_typ_cac->api_json_array();
         global $cng_act_cac;

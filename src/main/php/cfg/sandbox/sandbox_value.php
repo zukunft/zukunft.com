@@ -68,6 +68,7 @@ include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_RESULT . 'result_db.php';
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VALUE . 'value_base.php';
 //include_once paths::MODEL_VALUE . 'value.php';
@@ -112,6 +113,7 @@ use cfg\ref\source;
 use cfg\result\result;
 use cfg\result\result_db;
 use cfg\ref\source_db;
+use cfg\user\user_db;
 use cfg\value\value_db;
 use cfg\value\value_geo;
 use cfg\value\value;
@@ -243,10 +245,10 @@ class sandbox_value extends sandbox_multi
     const FLD_ALL_SOURCE_GROUP_PRIME = array();
     const FLD_ALL_SOURCE_GROUP_BIG = array();
     const FLD_ALL_OWNER = array(
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'the owner / creator of the -=class=-'],
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'the owner / creator of the -=class=-'],
     );
     const FLD_ALL_CHANGER = array(
-        [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, 'the changer of the -=class=-'],
+        [user_db::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, 'the changer of the -=class=-'],
     );
     // database fields that should only be taken from the user sandbox table
     const FLD_NAMES_USR_ONLY = array(
@@ -340,6 +342,22 @@ class sandbox_value extends sandbox_multi
     function grp_id(): int|string
     {
         return $this->grp()->id();
+    }
+
+    /**
+     * @return phrase_list the phrase list of the value
+     */
+    function phrase_list(): phrase_list
+    {
+        return $this->grp()->phrase_list();
+    }
+
+    /**
+     * @return array with the ids of the phrases
+     */
+    function ids(): array
+    {
+        return $this->phrase_list()->ids();
     }
 
     /**
@@ -979,7 +997,7 @@ class sandbox_value extends sandbox_multi
         $sc->set_usr($this->user()->id());
         // overwrite the standard id field because e.g. prime values have a combined id field
         $sc->set_id_field($this->id_field());
-        $sc->set_fields(array(user::FLD_ID));
+        $sc->set_fields(array(user_db::FLD_ID));
         $this->load_sql_where_id($qp, $sc, true);
         $sc->add_where(sql_db::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
         $qp->sql = $sc->sql();
@@ -1005,7 +1023,7 @@ class sandbox_value extends sandbox_multi
         $qp = $this->load_sql_changer($db_con->sql_creator());
         $db_row = $db_con->get1($qp);
         if ($db_row) {
-            $user_id = $db_row[user::FLD_ID];
+            $user_id = $db_row[user_db::FLD_ID];
         }
 
         log_debug('is ' . $user_id);
@@ -1091,7 +1109,7 @@ class sandbox_value extends sandbox_multi
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_id_field($this->id_field());
-        $sc->set_fields(array(user::FLD_ID));
+        $sc->set_fields(array(user_db::FLD_ID));
 
         return $this->load_sql_set_where($qp, $sc, $id_ext);
     }
@@ -1254,9 +1272,9 @@ class sandbox_value extends sandbox_multi
             // TODO add the test case to change the user of a normal value
             if ($sc_par_lst->is_insert() or $sc_par_lst->is_usr_tbl()) {
                 $lst->add_field(
-                    user::FLD_ID,
+                    user_db::FLD_ID,
                     $this->user()->id(),
-                    user::FLD_ID_SQL_TYP
+                    user_db::FLD_ID_SQL_TYP
                 );
             }
             if ($sc_par_lst->is_usr_tbl()
@@ -1388,11 +1406,6 @@ class sandbox_value extends sandbox_multi
         } else {
             return $lib->class_to_name(group::class) . sql_db::FLD_EXT_ID;
         }
-    }
-
-    function phrase_list(): phrase_list
-    {
-        return $this->grp()->phrase_list();
     }
 
 
@@ -1835,7 +1848,7 @@ class sandbox_value extends sandbox_multi
             if (!is_array($id_fields)) {
                 $id_fields = [$id_fields];
             }
-            $id_fields[] = user::FLD_ID;
+            $id_fields[] = user_db::FLD_ID;
             if (!is_array($id_lst)) {
                 $id_lst = [$id_lst];
             }
@@ -1939,7 +1952,7 @@ class sandbox_value extends sandbox_multi
 
         // for standard prime values add the user only for the log
         if ($sc_par_lst->is_standard() and $sc_par_lst->is_prime()) {
-            $fvt_lst_log->add_field(user::FLD_ID, $this->user_id(), sql_par_type::INT);
+            $fvt_lst_log->add_field(user_db::FLD_ID, $this->user_id(), sql_par_type::INT);
         }
 
         // create the log entry for the value
@@ -2046,7 +2059,7 @@ class sandbox_value extends sandbox_multi
             $fields = [group::FLD_ID];
         }
         if (!$sc_par_lst->is_standard()) {
-            $fields[] = user::FLD_ID;
+            $fields[] = user_db::FLD_ID;
         }
         if ($this->is_numeric()) {
             $fields[] = self::FLD_VALUE;

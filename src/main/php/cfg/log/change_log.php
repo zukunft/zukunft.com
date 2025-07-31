@@ -185,7 +185,7 @@ class change_log extends db_object_seq_id_user
     const FLD_LST_KEY = array(
         [self::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_ID_COM],
         [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [self::FLD_ACTION, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', change_action::class, self::FLD_ACTION_COM],
     );
     // field list to log the actual change that is overwritten by the child object e.g. for named, value and link tables
@@ -739,7 +739,7 @@ class change_log extends db_object_seq_id_user
             $sc->add_where($this::FLD_ROW_ID, $row_id);
         }
         // TODO check!
-        //$fields[] = user::FLD_ID;
+        //$fields[] = user_db::FLD_ID;
         $sc->set_page();
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -974,10 +974,10 @@ class change_log extends db_object_seq_id_user
     {
         $fvt_lst = new sql_par_field_list();
         if ($sc_par_lst->has_requesting_user()) {
-            $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), db_object_seq_id::FLD_ID_SQL_TYP,
+            $fvt_lst->add_field(user_db::FLD_ID, $this->user()->id(), db_object_seq_id::FLD_ID_SQL_TYP,
                 null, sql::PAR_PREFIX . sql::FLD_LOG_REQ_USER);
         } else {
-            $fvt_lst->add_field(user::FLD_ID, $this->user()->id(), db_object_seq_id::FLD_ID_SQL_TYP);
+            $fvt_lst->add_field(user_db::FLD_ID, $this->user()->id(), db_object_seq_id::FLD_ID_SQL_TYP);
         }
         $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
         if ($this->field_id != null) {
@@ -997,7 +997,7 @@ class change_log extends db_object_seq_id_user
     function db_fields(): array
     {
         $sql_fields = array();
-        $sql_fields[] = user::FLD_ID;
+        $sql_fields[] = user_db::FLD_ID;
         $sql_fields[] = change_action::FLD_ID;
         $sql_fields[] = change_field::FLD_ID;
 

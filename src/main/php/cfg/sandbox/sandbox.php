@@ -168,6 +168,7 @@ use cfg\word\triple;
 use cfg\word\word;
 use Exception;
 use shared\enum\change_actions;
+use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\json_fields;
@@ -203,10 +204,10 @@ class sandbox extends db_object_seq_id_user
 
     // field lists for the table creation
     const FLD_ALL_OWNER = array(
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_ID_COM],
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_ID_COM],
     );
     const FLD_ALL_CHANGER = array(
-        [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_ID_COM_CHANGER],
+        [user_db::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_ID_COM_CHANGER],
     );
     const FLD_LST_ALL = array(
         [sql_db::FLD_EXCLUDED, sql_db::FLD_EXCLUDED_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_EXCLUDED_COM],
@@ -348,7 +349,7 @@ class sandbox extends db_object_seq_id_user
             if (!$load_std) {
                 $this->usr_cfg_id = $db_row[sql_db::TBL_USER_PREFIX . $id_fld];
             }
-            $this->set_owner_id($db_row[user::FLD_ID]);
+            $this->set_owner_id($db_row[user_db::FLD_ID]);
             if ($allow_usr_protect) {
                 $this->row_mapper_usr($db_row);
             } else {
@@ -752,7 +753,7 @@ class sandbox extends db_object_seq_id_user
             ]);
         }
         if ($this->protection_id() != $obj->protection_id()) {
-            $usr_msg->add_id_with_vars(msg_id::DIFF_SHARE, [
+            $usr_msg->add_id_with_vars(msg_id::DIFF_PROTECTION, [
                 msg_id::VAR_PROTECT => $obj->protection_type_name(),
                 msg_id::VAR_PROTECT_CHK => $this->protection_type_name(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
@@ -1144,7 +1145,7 @@ class sandbox extends db_object_seq_id_user
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
                 $db_con->set_class($this::class);
                 $db_con->set_usr($this->user()->id());
-                if ($db_con->update_old($this->id(), user::FLD_ID, $this->user()->id())) {
+                if ($db_con->update_old($this->id(), user_db::FLD_ID, $this->user()->id())) {
                     $result = true;
                 }
             }
@@ -1182,7 +1183,7 @@ class sandbox extends db_object_seq_id_user
         $db_con->set_class($this::class, true);
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(array(user::FLD_ID));
+        $db_con->set_fields(array(user_db::FLD_ID));
         $qp->sql = $db_con->select_by_id_not_owner($this->id());
 
         $qp->par = $db_con->get_par();
@@ -1203,8 +1204,8 @@ class sandbox extends db_object_seq_id_user
 
         $qp = $this->load_sql_median_user($db_con);
         $db_row = $db_con->get1($qp);
-        if ($db_row[user::FLD_ID] > 0) {
-            $result = $db_row[user::FLD_ID];
+        if ($db_row[user_db::FLD_ID] > 0) {
+            $result = $db_row[user_db::FLD_ID];
         } else {
             if ($this->owner_id() > 0) {
                 $result = $this->owner_id();
@@ -1268,7 +1269,7 @@ class sandbox extends db_object_seq_id_user
 
             $db_con->set_class($this::class);
             $db_con->set_usr($this->user()->id());
-            if (!$db_con->update_old($this->id(), user::FLD_ID, $new_owner_id)) {
+            if (!$db_con->update_old($this->id(), user_db::FLD_ID, $new_owner_id)) {
                 $result = false;
             }
 
@@ -1338,7 +1339,7 @@ class sandbox extends db_object_seq_id_user
         $qp = $this->load_sql_changer($db_con->sql_creator());
         $db_row = $db_con->get1($qp);
         if ($db_row) {
-            $user_id = $db_row[user::FLD_ID];
+            $user_id = $db_row[user_db::FLD_ID];
         }
 
         log_debug('is ' . $user_id);
@@ -1361,10 +1362,10 @@ class sandbox extends db_object_seq_id_user
         $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
-        $sc->set_fields(array(user::FLD_ID));
+        $sc->set_fields(array(user_db::FLD_ID));
         $sc->add_where($this->id_field(), $this->id());
         if ($this->owner_id() > 0) {
-            $sc->add_where(user::FLD_ID, $this->owner_id(), sql_par_type::INT_NOT);
+            $sc->add_where(user_db::FLD_ID, $this->owner_id(), sql_par_type::INT_NOT);
         }
         $sc->add_where(sql_db::FLD_EXCLUDED, 1, sql_par_type::CONST_OR_NULL);
         $qp->sql = $sc->sql();
@@ -1391,8 +1392,8 @@ class sandbox extends db_object_seq_id_user
         $qp = $this->load_sql_of_users_that_changed($db_con->sql_creator());
         $db_usr_lst = $db_con->get($qp);
         foreach ($db_usr_lst as $db_usr) {
-            if ($db_usr[user::FLD_ID] > 0) {
-                $usr_id_lst[] = $db_usr[user::FLD_ID];
+            if ($db_usr[user_db::FLD_ID] > 0) {
+                $usr_id_lst[] = $db_usr[user_db::FLD_ID];
             }
         }
         $result->load_by_ids($db_con, $usr_id_lst);
@@ -1417,10 +1418,10 @@ class sandbox extends db_object_seq_id_user
         $sc->set_name($qp->name);
         $sc->set_usr($this->user()->id());
         $sc->set_join_fields(
-            array_merge(array(user::FLD_ID, user_db::FLD_NAME), user_db::FLD_NAMES_LIST),
+            array_merge(array(user_db::FLD_ID, user_db::FLD_NAME), user_db::FLD_NAMES_LIST),
             user::class,
-            user::FLD_ID,
-            user::FLD_ID);
+            user_db::FLD_ID,
+            user_db::FLD_ID);
         $sc->add_where($this->id_field(), $this->id());
         $sc->add_where(sql_db::FLD_EXCLUDED, 1, sql_par_type::INT_NOT_OR_NULL);
 
@@ -1520,7 +1521,7 @@ class sandbox extends db_object_seq_id_user
                 $msg = $usr_msg->get_message();
             } else {
                 $msg = $db_con->delete_old(
-                    array($this->id_field(), user::FLD_ID),
+                    array($this->id_field(), user_db::FLD_ID),
                     array($this->id(), $this->user()->id()));
             }
             if ($msg == '') {
@@ -1603,7 +1604,7 @@ class sandbox extends db_object_seq_id_user
                     $db_con->set_class($this::class, true);
                     $db_con->set_usr($this->user()->id());
                     $log_id = $db_con->insert_old(
-                        array($this->id_field(), user::FLD_ID), array($this->id(), $this->user()->id()));
+                        array($this->id_field(), user_db::FLD_ID), array($this->id(), $this->user()->id()));
                 }
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $this::class . ' failed.');
@@ -1636,7 +1637,7 @@ class sandbox extends db_object_seq_id_user
         $sc->set_usr($this->user()->id());
         $sc->set_fields($this->all_sandbox_fields());
         $sc->add_where($this->id_field(), $this->id());
-        $sc->add_where(user::FLD_ID, $this->user()->id());
+        $sc->add_where(user_db::FLD_ID, $this->user()->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -3215,7 +3216,7 @@ class sandbox extends db_object_seq_id_user
             $par_lst = [$this->id()];
             if ($sc_par_lst_used->is_usr_tbl() and !$sc_par_lst_used->exclude_sql()) {
                 $qp->sql = $sc->create_sql_delete(
-                    [$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $sc_par_lst_used);
+                    [$this->id_field(), user_db::FLD_ID], [$this->id(), $this->user_id()], $sc_par_lst_used);
                 $par_lst[] = $this->user_id();
             } else {
                 $qp->sql = $sc->create_sql_delete($this->id_field(), $this->id(), $sc_par_lst_used);
@@ -3269,7 +3270,7 @@ class sandbox extends db_object_seq_id_user
 
         // add the user_id if needed
         $fvt_lst_out->add_field(
-            user::FLD_ID,
+            user_db::FLD_ID,
             $this->user_id(),
             sql_par_type::INT);
 
@@ -3664,7 +3665,7 @@ class sandbox extends db_object_seq_id_user
         if ($usr_tbl) {
             $key_fld_pos = array_search($this->id_field(), $fld_lst_ex_log);
             unset($fld_lst_ex_log[$key_fld_pos]);
-            $key_fld_pos = array_search(user::FLD_ID, $fld_lst_ex_log);
+            $key_fld_pos = array_search(user_db::FLD_ID, $fld_lst_ex_log);
             unset($fld_lst_ex_log[$key_fld_pos]);
             $fld_lst_ex_log_and_key = $fld_lst_ex_log;
         } else {
@@ -3722,7 +3723,7 @@ class sandbox extends db_object_seq_id_user
         if (!$sc_par_lst->is_call_only()) {
             if ($usr_tbl) {
                 // insert a new row in the user table
-                $fld_lst_ex_log_and_key = array_merge([$this->id_field(), user::FLD_ID], $fld_lst_ex_log);
+                $fld_lst_ex_log_and_key = array_merge([$this->id_field(), user_db::FLD_ID], $fld_lst_ex_log);
                 // TODO remove this exception e.g. by adding the $sc_par_lst to the call
                 if ($this::class == triple::class) {
                     $fld_lst_ex_log_and_key = array_diff($fld_lst_ex_log_and_key, [$this->from_field(), verb_db::FLD_ID, $this->to_field()]);
@@ -3844,7 +3845,7 @@ class sandbox extends db_object_seq_id_user
         } else {
             if ($sc_par_lst->is_usr_tbl()) {
                 $qp->sql = $sc->create_sql_update(
-                    [$this->id_field(), user::FLD_ID], [$this->id(), $this->user_id()], $fvt_lst);
+                    [$this->id_field(), user_db::FLD_ID], [$this->id(), $this->user_id()], $fvt_lst);
             } else {
                 $qp->sql = $sc->create_sql_update(
                     $this->id_field(), $this->id(), $fvt_lst);
@@ -3912,7 +3913,7 @@ class sandbox extends db_object_seq_id_user
         if ($usr_tbl) {
             $key_fld_pos = array_search($id_fld, $fld_lst_chg);
             unset($fld_lst_chg[$key_fld_pos]);
-            $key_fld_pos = array_search(user::FLD_ID, $fld_lst_chg);
+            $key_fld_pos = array_search(user_db::FLD_ID, $fld_lst_chg);
             unset($fld_lst_chg[$key_fld_pos]);
         }
 

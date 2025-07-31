@@ -74,6 +74,7 @@ include_once paths::MODEL_LOG . 'change.php';
 //include_once paths::MODEL_REF . 'ref.php';
 //include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -98,6 +99,7 @@ use cfg\helper\db_object_seq_id;
 use cfg\log\change;
 use cfg\log\change_link;
 use cfg\ref\ref;
+use cfg\user\user_db;
 use cfg\word\triple;
 use cfg\user\user;
 use cfg\user\user_message;
@@ -788,7 +790,7 @@ class sandbox_link extends sandbox
         global $db_con;
         $db_con->set_class(self::class);
         return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user::FLD_ID),
+            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID),
             array($this->fob()->id(), $this->tob()->id(), $this->user()->id()));
     }
 
@@ -1242,11 +1244,11 @@ class sandbox_link extends sandbox
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         if ($usr_tbl) {
             return [$this::FLD_ID,
-                user::FLD_ID
+                user_db::FLD_ID
             ];
         } else {
             return [$this::FLD_ID,
-                user::FLD_ID,
+                user_db::FLD_ID,
                 $this->from_field(),
                 $this->to_field()
             ];
