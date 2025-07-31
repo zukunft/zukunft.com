@@ -5,6 +5,9 @@
     model/const/paths.php - set the path const for the frontend php scripts
     ---------------------
 
+    the paths for the backend php scripts are in main/php/cfg/const/paths.php
+    the paths for the resources are in main/php/cfg/const/files.php or test/php/const/files.php
+
 
     This file is part of zukunft.com - calc with words
 
@@ -34,6 +37,7 @@ namespace html\const;
 
 class paths
 {
+
     // path of the const and classes that are shared between the backend and the html frontend
     const SHARED = PHP_PATH . 'shared' . DIRECTORY_SEPARATOR;
     const SHARED_TYPES = self::SHARED . 'types' . DIRECTORY_SEPARATOR;
@@ -65,6 +69,5 @@ class paths
     const VERB = self::WEB . 'verb' . DIRECTORY_SEPARATOR;
     const VIEW = self::WEB . 'view' . DIRECTORY_SEPARATOR;
     const WORD = self::WEB . 'word' . DIRECTORY_SEPARATOR;
-
 
 }

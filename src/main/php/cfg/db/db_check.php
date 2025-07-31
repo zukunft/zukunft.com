@@ -360,11 +360,11 @@ class db_check
             $sql = 'UPDATE' . ' `users` SET `activation_timeout` = CURRENT_TIMESTAMP WHERE `users`.`activation_timeout` = 0';
             $result .= $db_con->exe_try('Filling missing activation timestamps for users', $sql);
 
-            $sql = file_get_contents(files::RESOURCE_PATH . 'db/upgrade/v0.0.3/upgrade_mysql.sql');
+            $sql = file_get_contents(files::DB_UPGRADE_V003_PATH . files::DB_UPGRADE_MYSQL);
             $result .= $db_con->exe_try('Finally add the new views', $sql);
         }
         if ($db_con->db_type == sql_db::POSTGRES) {
-            $sql = file_get_contents(files::RESOURCE_PATH . 'db/upgrade/v0.0.3/upgrade_postgres.sql');
+            $sql = file_get_contents(files::DB_UPGRADE_V003_PATH . files::DB_UPGRADE_POSTGRES);
             //src/main/resources/db/upgrade/v0.0.3/upgrade_postgres.sql
             //$result .= $db_con->exe_try('Finally add the new views', $sql);
         }

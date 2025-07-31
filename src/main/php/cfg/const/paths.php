@@ -5,6 +5,9 @@
     model/const/paths.php - set the path const for the backend php scripts
     ---------------------
 
+    the paths for the frontend php scripts are in main/php/web/const/paths.php
+    the paths for the resources are in main/php/cfg/const/files.php or test/php/const/files.php
+
 
     This file is part of zukunft.com - calc with words
 

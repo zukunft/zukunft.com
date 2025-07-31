@@ -135,6 +135,7 @@
 
 namespace test;
 
+use const\paths as test_paths;
 
 // main test settings
 const ERROR_LIMIT = 0; // increase to 1 or more to detect more than one error message with one run
@@ -147,7 +148,7 @@ const QUICK_TEST_ONLY = false; // true to run only a single test for faster debu
 const WRITE_TEST = true; // perform also the db write tests
 
 
-include_once TEST_UNIT_WRITE_PATH . 'all_unit_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 
 use cfg\log_text\text_log_format;
 use unit_write\all_unit_write_tests;

@@ -570,11 +570,7 @@ class word extends sandbox_code_id
      */
     function is_hidden(): bool
     {
-        $result = false;
-        if ($this->is_type(phrase_type::SCALING_HIDDEN)) {
-            $result = true;
-        }
-        return $result;
+        return $this->is_type(phrase_type::SCALING_HIDDEN);
     }
 
     /*

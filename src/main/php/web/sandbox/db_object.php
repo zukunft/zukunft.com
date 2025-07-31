@@ -132,12 +132,12 @@ class db_object extends TextIdObject
     {
         $is_add = false;
         if (array_key_exists(api::URL_VAR_ACTION, $url_array)) {
-            if ($url_array[api::URL_VAR_ACTION] == api::URL_VAR_ACTION_ADD) {
+            if ($url_array[api::URL_VAR_ACTION] == api::URL_VAR_CURL_CREATE) {
                 $is_add = true;
             }
         }
         if (array_key_exists(api::URL_VAR_ACTION_LONG, $url_array)) {
-            if ($url_array[api::URL_VAR_ACTION_LONG] == api::URL_VAR_ACTION_ADD) {
+            if ($url_array[api::URL_VAR_ACTION_LONG] == api::URL_VAR_CURL_CREATE) {
                 $is_add = true;
             }
         }

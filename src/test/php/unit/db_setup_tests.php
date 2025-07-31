@@ -36,9 +36,8 @@ use cfg\const\paths;
 
 include_once paths::MODEL_IMPORT . 'import.php';
 
-use cfg\component\component;
-use cfg\component\component_link;
 use cfg\db\sql_db;
+use const\files as test_files;
 use shared\library;
 use test\test_cleanup;
 
@@ -65,19 +64,19 @@ class db_setup_tests
                 $test_name = $name . ' sql create is part of setup sql for ' . $db_type;
                 $sql_create = $t->file(
                     paths::DB_RES_SUB . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
-                    $name . '_create' . $db->ext($db_type) . '.sql');
+                    $name . test_files::SQL_CREATE_EXT . $db->ext($db_type) . test_files::SQL);
                 $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
                 $sql_fixed_trim = str_replace($lib->trim_sql($sql_create),'', $sql_fixed_trim);
 
                 $test_name = $name . ' sql index is part of setup sql for ' . $db_type;
                 $sql_create = $t->file(
                     paths::DB_RES_SUB . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
-                    $name . '_index' . $db->ext($db_type) . '.sql');
+                    $name . test_files::SQL_INDEX_EXT . $db->ext($db_type) . test_files::SQL);
                 $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
                 $sql_fixed_trim = str_replace($lib->trim_sql($sql_create),'', $sql_fixed_trim);
 
                 $filename = paths::DB_RES_SUB . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
-                    $name . '_foreign_key' . $db->ext($db_type) . '.sql';
+                    $name . test_files::SQL_FOREIGN_KEY_EXT . $db->ext($db_type) . test_files::SQL;
                 if ($t->has_file($filename)) {
                     $test_name = $name . ' foreign key sql is part of setup sql for ' . $db_type;
                     $sql_create = $t->file($filename);
@@ -92,7 +91,7 @@ class db_setup_tests
                 $test_name = $name . ' sql view is part of setup sql for ' . $db_type;
                 $sql_create = $t->file(
                     paths::DB_RES_SUB . $lib->class_to_path($name) . DIRECTORY_SEPARATOR .
-                    $name . '_view' . $db->ext($db_type) . '.sql');
+                    $name . '_view' . $db->ext($db_type) . test_files::SQL);
                 $t->assert_sql_contains($test_name, $sql_fixed, $sql_create);
                 $sql_fixed_trim = str_replace($lib->trim_sql($sql_create),'', $sql_fixed_trim);
             }

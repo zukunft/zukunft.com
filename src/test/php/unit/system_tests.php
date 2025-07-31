@@ -59,6 +59,7 @@ use cfg\system\sys_log_status_list;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\word\word;
+use const\paths as test_paths;
 use DateTime;
 use html\system\sys_log as sys_log_dsp;
 use html\system\sys_log_list as sys_log_list_dsp;
@@ -480,16 +481,16 @@ class system_tests
         $log_lst_dsp = new sys_log_list_dsp($log_lst->api_json());
         $usr1_dsp = new user($t->usr1->api_json());
         $created = $log_lst_dsp->api_json([api_type::HEADER], $usr1_dsp);
-        $expected = file_get_contents(test_files::RESOURCE_PATH . 'api/sys_log_list/sys_log_list.json');
+        $expected = file_get_contents(test_files::SYS_LOG_LIST_API);
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
         $t->assert('sys_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
         $created = $log_lst_dsp->get_html($usr1_dsp);
-        $expected = file_get_contents(test_files::RESOURCE_PATH . 'web/system/sys_log_list.html');
+        $expected = file_get_contents(test_files::SYS_LOG_LIST_HTML);
         $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
 
         $created = $log_lst_dsp->get_html_page($usr1_dsp);
-        $expected = file_get_contents(test_files::RESOURCE_PATH . 'web/system/sys_log_list_page.html');
+        $expected = file_get_contents(test_files::SYS_LOG_LIST_PAGE);
         $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
 
     }

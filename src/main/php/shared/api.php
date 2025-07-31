@@ -67,45 +67,56 @@ class api
     const URL_ADD = '&';
     const URL_EQ = '=';
     const URL_API_PATH = 'api/';
-    const URL_VAR_MASK = 'm'; // the internal database id of the view used to format the object
     const URL_VAR_ID = 'id'; // the internal database id of the main view object
+
+    // the var names for the short url (in alphabetic order to detect duplicates)
     const URL_VAR_ACTION = 'a'; // the curl action
-    const URL_VAR_ACTION_LONG = 'action'; // the curl action for the long url
-    const URL_VAR_CONFIRM = 'n'; // the action status
-    const URL_VAR_CONFIRM_LONG = 'confirm';  // the action status for the long url
-    const URL_VAR_ACTION_ADD = 'add'; // the curl action code to add an object
-    const URL_VAR_ACTION_EDIT = 'edit'; // the curl action to change an object
-    const URL_VAR_ACTION_DEL = 'del'; // the curl action to delete an object
-    const URL_VAR_CONTEXT = 'x'; // list of terms to describe the context used for the view
-    const URL_VAR_WORD = 'w';
     const URL_VAR_VERB = 'b';
+    const URL_VAR_COMPONENT = 'c';
+    const URL_VAR_TERM = 'e';
+    const URL_VAR_FORMULA = 'f';
+    const URL_VAR_GROUP = 'g';
+    const URL_VAR_LOG = 'h'; // h for history of the object
+    const URL_VAR_FIGURE = 'i';
+    const URL_VAR_JOB = 'j'; // for system batch jobs
+    const URL_VAR_MASK = 'm'; // the internal database id of the view used to format the object
+    const URL_VAR_CONFIRM = 'n'; // the action status (e.g. show, confirm)
+    const URL_VAR_RESULT = 'r';
+    const URL_VAR_SOURCE = 's';
+    const URL_VAR_VIEW = 'v';
+    const URL_VAR_WORD = 'w';
     const URL_VAR_TRIPLE = 't';
     const URL_VAR_PHRASE = 'p'; // the id or name of one phrase
-    const URL_VAR_PHRASE_LONG = 'phrase_id';
-    const URL_VAR_PHRASE_LIST_LONG = 'phrase_ids';
-    const URL_VAR_SOURCE = 's';
-    const URL_VAR_SOURCE_LONG = 'source_id';
-    const URL_VAR_REF = 'l'; // l for data link to external
     const URL_VAR_VALUE = 'v';
-    const URL_VAR_NUMERIC_VALUE_LONG = 'number';
-    const URL_VAR_FORMULA = 'f';
-    const URL_VAR_FORMULA_LONG = 'formula_id';
-    const URL_VAR_TERM = 'e';
-    const URL_VAR_RESULT = 'r';
-    const URL_VAR_FIGURE = 'i';
-    const URL_VAR_VIEW = 'v';
-    const URL_VAR_VIEW_LONG = 'view_id';
-    const URL_VAR_COMPONENT = 'c';
-    const URL_VAR_GROUP = 'g';
+    const URL_VAR_CONTEXT = 'x'; // list of terms to describe the context used for the view
     const URL_VAR_FORMULA_LINK = 'fl'; // to link a formula to a phrase
     const URL_VAR_VIEW_TERM_LINK = 'vl'; // to link a view to a term
     const URL_VAR_COMPONENT_LINK = 'cl'; // to link a component to a view
     const URL_VAR_VALUE_TIME_SERIES = 'ts';
-    const URL_VAR_LOG = 'h'; // h for history of the object
     const URL_VAR_LOG_LINK = 'hl'; // history of a link object
     const URL_VAR_SYS_LOG = 'hs'; // history of a system event
-    const URL_VAR_JOB = 'j'; // for system batch jobs
     const URL_VAR_IP = 'ip'; // for ip ranges (for admin only)
+
+    // the var names for the easy human-readable url (in content related order)
+    const URL_VAR_ACTION_LONG = 'action'; // the curl action for the long url
+    const URL_VAR_CONFIRM_LONG = 'confirm';  // the action status for the long url
+
+    // enum for next step the action for URL_VAR_ACTION
+    const URL_VAR_CURL_CREATE = 'add'; // the curl action code to add an object
+    const URL_VAR_CURL_UPDATE = 'edit'; // the curl action to change an object
+    const URL_VAR_CURL_REMOVE = 'del'; // the curl action to delete an object
+    const URL_VAR_CURL_LOAD = 'show'; // the curl action to show object with the most relevant fields
+    const URL_VAR_CURL_FULL = 'full'; // to show object with all fields
+    const URL_VAR_CURL_POPUP = 'popup'; // to show object with only a few fields as a popup window
+    const URL_VAR_CURL_CELL = 'cell'; // to show object with only the name or key as table cell
+
+    const URL_VAR_PHRASE_LONG = 'phrase_id';
+    const URL_VAR_PHRASE_LIST_LONG = 'phrase_ids';
+    const URL_VAR_SOURCE_LONG = 'source_id';
+    const URL_VAR_REF = 'l'; // l for data link to external
+    const URL_VAR_NUMERIC_VALUE_LONG = 'number';
+    const URL_VAR_FORMULA_LONG = 'formula_id';
+    const URL_VAR_VIEW_LONG = 'view_id';
     const URL_VAR_ID_LST = 'ids'; // a comma separated list of internal database ids
     const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
     const URL_VAR_PATTERN = 'pattern'; // part of a name to select a named object such as word, triple, ...

@@ -42,6 +42,7 @@ include_once TEST_CONST_PATH . 'files.php';
 use cfg\db\sql_creator;
 use cfg\import\convert_wikipedia_table;
 use cfg\import\import;
+use const\paths as test_paths;
 use test\test_base;
 use test\test_cleanup;
 use const\files as test_files;
@@ -108,9 +109,9 @@ class import_tests
         $t->assert($test_name, $dto->formula_list()->count(), 4);
 
         $test_name = 'JSON import warning creation';
-        $json_str = file_get_contents(test_files::IMPORT_PATH . 'warning_and_error_test.json');
-        $imp = new import(test_files::IMPORT_PATH . 'warning_and_error_test.json');
-        $result = $imp->put_json_direct($json_str, $usr, test_files::IMPORT_PATH . 'warning_and_error_test.json');
+        $json_str = file_get_contents(test_files::IMPORT_WARNING);
+        $imp = new import(test_paths::IMPORT . 'warning_and_error_test.json');
+        $result = $imp->put_json_direct($json_str, $usr, test_paths::IMPORT . 'warning_and_error_test.json');
         $target = 'Unknown element "test"';
         $t->assert($test_name, $result->get_last_message_translated(), $target);
 

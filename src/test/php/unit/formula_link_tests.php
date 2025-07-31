@@ -43,6 +43,7 @@ use cfg\db\sql_type;
 use cfg\formula\formula_link;
 use cfg\formula\formula_link_list;
 use cfg\formula\formula_link_type;
+use const\paths as test_paths;
 use shared\library;
 use test\test_base;
 use test\test_cleanup;
@@ -95,7 +96,7 @@ class formula_link_tests
         // sql to load the user formula link by id
         $db_con->db_type = sql_db::POSTGRES;
         $created_sql = $lnk->load_sql_user_changes($db_con->sql_creator())->sql;
-        $expected_sql = $t->file('db/formula/formula_link_by_usr_cfg.sql');
+        $expected_sql = $t->file(test_paths::DB_FORMULA . 'formula_link_by_usr_cfg.sql');
         $t->assert('formula_link->load_user_sql by formula link id', $lib->trim($created_sql), $lib->trim($expected_sql));
 
         $t->subheader($ts . 'formula link sql write');

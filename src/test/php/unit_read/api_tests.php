@@ -37,27 +37,13 @@
 
 */
 
-namespace unit;
-
-use cfg\const\paths;
-use html\const\paths as html_paths;
-
-include_once paths::MODEL_LOG . 'change_log.php';
-include_once paths::MODEL_LOG . 'change_field.php';
-include_once paths::MODEL_LOG . 'change_field_list.php';
-include_once paths::MODEL_LOG . 'change_log_list.php';
-include_once paths::MODEL_SYSTEM . 'job.php';
-include_once html_paths::HELPER . 'data_object.php';
-include_once paths::SHARED_CONST . 'formulas.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_CONST . 'words.php';
-include_once paths::SHARED_ENUM . 'change_fields.php';
+namespace unit_read;
 
 use cfg\component\component;
 use cfg\component\component_list;
+use cfg\const\paths;
 use cfg\formula\formula;
 use cfg\formula\formula_list;
-use cfg\group\group;
 use cfg\helper\type_lists;
 use cfg\language\language;
 use cfg\language\language_form;
@@ -76,26 +62,36 @@ use cfg\view\view_list;
 use cfg\word\triple;
 use cfg\word\word;
 use cfg\word\word_list;
+use html\const\paths as html_paths;
 use html\helper\config;
 use html\helper\data_object as data_object_dsp;
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use shared\api;
-use shared\const\triples;
-use shared\const\users;
-use shared\enum\change_fields;
-use shared\helper\Config as shared_config;
-use shared\library;
 use shared\const\components;
 use shared\const\formulas;
 use shared\const\refs;
 use shared\const\sources;
+use shared\const\users;
 use shared\const\values;
 use shared\const\views;
 use shared\const\words;
+use shared\enum\change_fields;
+use shared\library;
 use shared\types\verbs;
 use test\test_cleanup;
+
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once html_paths::HELPER . 'data_object.php';
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
 
 class api_tests
 {
@@ -239,105 +235,6 @@ class api_tests
         $phr_zh->load_by_name(words::ZH);
         $phr_zh->load_by_id($phr_zh->id());
         $t->assert($test_name, $phr_zh->name(), words::ZH);
-
-    }
-
-    /**
-     * get the api message and forward it to the ui
-     * TODO move all other HTML frontend tests here
-     *
-     * @param test_cleanup $t
-     * @return void
-     */
-    function run_ui_test(test_cleanup $t): void
-    {
-        // create the stable test context that is not based on the database so that the test results rarely change
-        $cfg = new data_object_dsp();
-        $cfg->set_view_list($t->view_list_dsp());
-        // create the test pages
-        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));
-        $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), 1, $cfg);
-        $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(views::VERB, $t->usr1, new verb(), 1);
-        $t->assert_view(views::VERB_ADD, $t->usr1, new verb());
-        $t->assert_view(views::VERB_EDIT, $t->usr1, new verb(), 1);
-        $t->assert_view(views::VERB_DEL, $t->usr1, new verb(), 1);
-        //$t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), 1);
-        $t->assert_view(views::TRIPLE_ADD, $t->usr1, new triple($t->usr1));
-        $t->assert_view(views::TRIPLE_EDIT, $t->usr1, new triple($t->usr1), 1);
-        $t->assert_view(views::TRIPLE_DEL, $t->usr1, new triple($t->usr1), 1);
-        //$t->assert_view(views::SOURCE, $t->usr1, new source($t->usr1), 1);
-        $t->assert_view(views::SOURCE_ADD, $t->usr1, new source($t->usr1));
-        $t->assert_view(views::SOURCE_EDIT, $t->usr1, new source($t->usr1), 1);
-        $t->assert_view(views::SOURCE_DEL, $t->usr1, new source($t->usr1), 1);
-        // TODO add:
-        // REF
-        $t->assert_view(views::REF_ADD, $t->usr1, new ref($t->usr1));
-        // VALUE
-        // GROUP
-        //$t->assert_view(views::GROUP_ADD, $t->usr1, new group($t->usr1));
-        // FORMULA
-        $t->assert_view(views::FORMULA_ADD, $t->usr1, new formula($t->usr1));
-        $t->assert_view(views::FORMULA_EDIT, $t->usr1, new formula($t->usr1), 1);
-        $t->assert_view(views::FORMULA_DEL, $t->usr1, new formula($t->usr1), 1);
-        // FORMULA TEST
-        // RESULT
-        // VIEW
-        $t->assert_view(views::VIEW_ADD, $t->usr1, new view($t->usr1));
-        $t->assert_view(views::VIEW_EDIT, $t->usr1, new view($t->usr1), 1);
-        $t->assert_view(views::VIEW_DEL, $t->usr1, new view($t->usr1), 1);
-        // COMPONENT
-        $t->assert_view(views::COMPONENT_ADD, $t->usr1, new component($t->usr1));
-        $t->assert_view(views::COMPONENT_EDIT, $t->usr1, new component($t->usr1), 1);
-        $t->assert_view(views::COMPONENT_DEL, $t->usr1, new component($t->usr1), 1);
-        // USER
-        // LANGUAGE
-        // SYS LOG
-        // CHANGE LOG
-        // IMPORT
-        // EXPORT
-        // PROCESS
-        // FIND
-        //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1);
-        // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
-
-
-        // start the test section (ts)
-        $ts = 'unit web frontend ';
-        $t->header($ts);
-
-        $html = new html_base();
-        $target = htmlspecialchars(trim('<html> <head> <title>Header test (zukunft.com)</title> <link rel="stylesheet" type="text/css" href="../../../main/resources/style/style.css" /> </head> <body class="center_form">'));
-        $target = htmlspecialchars(trim('<title>Header test (zukunft.com)</title>'));
-        $result = htmlspecialchars(trim($html->header('Header test', 'center_form')));
-        $t->dsp_contains(", dsp_header", $target, $result);
-
-        // check if the about page contains at least some basic keywords
-        // TODO activate Prio 3: $result = file_get_contents('https://www.zukunft.com/http/about.php?id=1');
-        $target = 'zukunft.com AG';
-        if (strpos($result, $target) > 0) {
-            $result = $target;
-        } else {
-            $result = '';
-        }
-        // about does not return a page for unknown reasons at the moment
-        // $t->dsp_contains(', frontend about.php '.$result.' contains at least ' . $target, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
-
-        $is_connected = $t->dsp_web_test(
-            'http/privacy_policy.html',
-            'Swiss purpose of data protection',
-            ', frontend privacy_policy.php contains at least');
-        $is_connected = $t->dsp_web_test(
-            'http/error_update.php?id=1',
-            'not permitted',
-            ', frontend error_update.php contains at least', $is_connected);
-        $t->dsp_web_test(
-            'http/find.php?pattern=' . words::ABB,
-            words::ABB,
-            ', frontend find.php contains at least', $is_connected);
-
-
 
     }
 

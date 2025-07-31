@@ -809,7 +809,7 @@ class create_test_objects extends test_base
             default:
                 log_err('no filled url object defined for ' . $class);
         }
-        $url .= $this->url_par(api::URL_VAR_ACTION_LONG, api::URL_VAR_ACTION_ADD, true);
+        $url .= $this->url_par(api::URL_VAR_ACTION_LONG, api::URL_VAR_CURL_CREATE, true);
         return $url;
     }
 
