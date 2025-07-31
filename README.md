@@ -49,6 +49,8 @@ To install this version 0.0.3 on a [debian](https://wiki.debian.org/) system do 
    sudo ./zukunft.com/install.sh
    ```
 
+If fine you should see the frontpage at [localhost/http/view.php]()
+
 ## Planned changes
 
 For [versions 0.0.3](https://github.com/users/zukunft/projects/1) these changes are planned

@@ -34,9 +34,7 @@ To run all build in tests start from bash
    php /var/www/html/test/test.php
    ```
 
-To check the frontpage call
-
-[localhost/http/view.php]()
+To check open the frontpage again at [localhost/http/view.php]()
 
 
 Production installation (to be reviewed):
