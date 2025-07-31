@@ -3,19 +3,20 @@
 ## Calculating with RDF data.
 
 This program should
-- be a GGG browser
-- make the Giant Global Graph usable for the real-time delphi-method
-- an exoskeleton for the brain
-- make slow thinking (Kahneman) faster
-- allow each user have her/his own OLAP cube
+- be a [Giant Global Graph](https://en.wikipedia.org/wiki/Giant_Global_Graph) (GGG) browser
+- make the GGG usable for a real-time [delphi-method](https://en.wikipedia.org/wiki/Delphi_method)
+- an [exoskeleton](https://en.wikipedia.org/wiki/Exoskeleton_(human)) for the brain
+- make slow thinking ([Kahneman](https://en.wikipedia.org/wiki/Daniel_Kahneman)) faster
+- allow each user have her/his own [OLAP cube](https://en.wikipedia.org/wiki/OLAP_cube)
 - make efficient community learning easy by connecting all user OLAP cubes point to point
 - allow double-sided tree structures within the cubes by using phrases
-- use common sense by using opencyc via conceptnet.io
-- enable data exchange to wikidata and other interlinking databases
+- use common sense by using opencyc via [conceptnet](https://conceptnet.io/)
+- enable data exchange to [wikidata](https://www.wikidata.org/) and other interlinking databases
+- secure the relevant LLM tokens to enable live learning without losing the [golden rule](https://en.wikipedia.org/wiki/Golden_Rule) as a target
 
 ## Development installation
 
-To install this version 0.0.3 on a debian system (https://wiki.debian.org/) do as root e.g. in /home/your_user/:
+To install this version 0.0.3 on a [debian](https://wiki.debian.org/) system do as root e.g. in /home/your_user/:
 
 1. Clone the repository:
    ```bash
@@ -50,11 +51,12 @@ To install this version 0.0.3 on a debian system (https://wiki.debian.org/) do a
 
 ## Planned changes
 
-For versions 0.0.3 these changes are planned
-- JSON import
-- system mask
+For [versions 0.0.3](https://github.com/users/zukunft/projects/1) these changes are planned
+- [JSON import](https://github.com/zukunft/zukunft.com/issues/11)
+- [system masks](https://github.com/zukunft/zukunft.com/issues/72)
+- start page
 
-and for versions 0.0.4
+and for [versions 0.0.4](https://github.com/users/zukunft/projects/2)
 - fix the unit and integration tests
 
 and for versions 0.0.5
@@ -71,9 +73,9 @@ mais quand il n'y a plus rien à retrancher."
 Or in English: "reduce to the max"
 
 The code use for zukunft.com should be as simple as possible and have only a few dependencies and each part as capsuled as possible,
-so basically follow the Zen of Python https://www.python.org/dev/peps/pep-0020/
-The minimal requirements are a LAMP server (https://wiki.debian.org/LaMp) and an HTML (using some HTML5 features) browser.
-If you see anything that does not look simple to you, please request a change on https://github.com/zukunft/zukunft.com or write an email to timon@zukunft.com
+so basically follow the [Zen of Python](https://www.python.org/dev/peps/pep-0020/)
+The minimal requirements are a [LAPP/LAMP server](https://wiki.debian.org/LaMp) and an HTML (using some HTML5 features) browser.
+If you see anything that does not look simple to you, please request a change in [issues](https://github.com/zukunft/zukunft.com/issues) or write an email to timon@zukunft.com
 
 
 Target user experience:
@@ -81,18 +83,18 @@ Target user experience:
   each formula should have 3 to 5, max 8 elements due to the limitation of the human work memory
 - **user sandbox**: the look and feel should never change without confirmation by the user
 - **don't disturb**: suggested changes should never prevent the user from continuing
-- **always sorted**: the messages to the user should be sorted by criticality but taking the reaktion time into account
+- **always sorted**: the messages to the user should be sorted by criticality but taking the reaction time into account
 - prevent duplicates in the values or formulas to force user to social interaction
 
 General coding principles:
-1. **Don't repeat yourself**: one point of change (https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) (but coded repeating by intention can be used)
+1. **Don't repeat yourself**: [one point](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) of change (but coded repeating by intention can be used)
 2. **test**: each facade function should have a unit test called from test_units.php or test_unit_db.php
   with zukunft.com/test a complete unit and integration test
   best: first write the test and then the code
-3. **only needed dependencies**: use the least external code possible because https://archive.fosdem.org/2021/schedule/event/dep_as_strong_as_the_weakest_link/
+3. **only needed dependencies**: use the least external code possible to reduce the [weak points](https://archive.fosdem.org/2021/schedule/event/dep_as_strong_as_the_weakest_link/)
 4. **best guess**: assume almost everything can happen and in case of incomplete data use best guess assumptions to complete the process but report the assumption to the calling function and create the message to the user if all assumptions are collected
 5. **never change** a running system (until you have a very, very good reason)
-6. **one click update**: allow to update a pod with one click on the fly (https://en.wikipedia.org/wiki/Continuous_delivery)
+6. **one click update**: allow to update a pod with one click [on the fly](https://en.wikipedia.org/wiki/Continuous_delivery)
 7. **log in/out**: all user changes and data im- and export are logged with an undo and redo option
 8. **small code package**: split if function and classes are getting too big or at least the most important functions within a class should be on top of each class
 9. **error detection** and tracking: in case something unexpected happens the code should try to create an internal error message to enable later debugging
