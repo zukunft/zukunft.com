@@ -68,6 +68,7 @@ class users
     const SYSTEM_TEST_NAME = 'zukunft.com system test';
     const SYSTEM_TEST_EMAIL = 'test@zukunft.com';
     const SYSTEM_TEST_CODE_ID = 'test';
+    const SYSTEM_TEST_COM = 'the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests';
 
     // the user that acts as a partner for the system tests
     // so that multi-user behaviour can be tested
@@ -116,6 +117,11 @@ class users
     const FIXED_NAMES = array(
         self::SYSTEM_NAME
     );
+
+    // list of usernames that are only used for system testing and that does not create log entries
+    const TEST_NO_LOG = [
+        self::TEST_USER_NAME
+    ];
 
 
     // change right levels to prevent access level gaining

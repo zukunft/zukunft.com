@@ -35,25 +35,28 @@
 
 namespace html\value;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
-include_once DB_PATH . 'sql_db.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_HTML_PATH . 'styles.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_FIGURE_PATH . 'figure.php';
-include_once WEB_HELPER_PATH . 'config.php';
-include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once WEB_GROUP_PATH . 'group.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_REF_PATH . 'source.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once paths::DB . 'sql_db.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'styles.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::FIGURE . 'figure.php';
+include_once html_paths::HELPER . 'config.php';
+include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::GROUP . 'group.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use html\group\group;
 use html\figure\figure;
@@ -68,6 +71,7 @@ use html\sandbox\sandbox_value;
 use html\styles;
 use html\user\user_message;
 use html\word\word;
+use shared\api;
 use shared\const\views;
 use shared\enum\messages as msg_id;
 use shared\json_fields;
@@ -77,8 +81,62 @@ class value extends sandbox_value
 {
 
     /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::VALUE_ADD;
+    const VIEW_EDIT = views::VALUE_EDIT;
+    const VIEW_DEL = views::VALUE_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::VALUE_ADD;
+    const MSG_EDIT = msg_id::VALUE_EDIT;
+    const MSG_DEL = msg_id::VALUE_DEL;
+
+
+    /*
+     * object vars
+     */
+
+    public ?source $src;
+
+
+    /*
+     * construct and map
+     */
+
+    /**
+     * set the vars of this value frontend object bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function url_mapper(array $url_array): user_message
+    {
+        $usr_msg = parent::url_mapper($url_array);
+        if ($usr_msg->is_ok()) {
+            if (array_key_exists(api::URL_VAR_SOURCE_LONG, $url_array)) {
+                if ($url_array[api::URL_VAR_SOURCE_LONG] != null) {
+                    $this->set_source_id($url_array[api::URL_VAR_SOURCE_LONG]);
+                }
+            }
+        }
+        return $usr_msg;
+    }
+
+
+    /*
      * set and get
      */
+
+    function set_source_id(int $id): void
+    {
+        if ($id > 0) {
+            $src = new source();
+            $src->id = $id;
+            $this->src = $src;
+        }
+    }
 
     /**
      * @param group $grp
@@ -334,31 +392,6 @@ class value extends sandbox_value
             views::VALUE_ADD,
             $msg_code_id,
             $back, $explain);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to change a value e.g. the name or the type
-     */
-    function btn_edit(string $back = ''): string
-    {
-        return parent::btn_edit_sbx(
-            views::VALUE_EDIT,
-            msg_id::VALUE_EDIT,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to exclude the value for the current user
-     * or if no one uses the value delete the complete value
-     */
-    function btn_del(string $back = ''): string
-    {
-        return parent::btn_del_sbx(
-            views::VALUE_DEL,
-            msg_id::VALUE_DEL,
-            $back);
     }
 
 

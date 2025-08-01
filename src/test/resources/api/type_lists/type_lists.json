@@ -960,7 +960,7 @@
         "id": 1
       }
     ],
-    "sys_log_stati": [
+    "sys_log_statuus": [
       {
         "name": "new",
         "code_id": "new",
@@ -6524,6 +6524,12 @@
         "code_id": "2geo_value",
         "description": "",
         "id": 789
+      },
+      {
+        "name": "1excluded",
+        "code_id": "1excluded",
+        "description": "",
+        "id": 790
       }
     ],
     "verbs": [

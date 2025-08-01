@@ -32,15 +32,18 @@
 
 namespace shared\calc;
 
-include_once MODEL_SYSTEM_PATH . 'BasicEnum.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::MODEL_SYSTEM . 'BasicEnum.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
 
 use cfg\formula\formula;
 use cfg\system\BasicEnum;

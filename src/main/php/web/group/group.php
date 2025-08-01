@@ -42,13 +42,15 @@
 
 namespace html\group;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_named.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_named.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\phrase\phrase as phrase;
 use html\phrase\phrase_list as phrase_list;
@@ -315,13 +317,13 @@ class group extends sandbox_named
             $this->name_tip = $result;
             $this->name_tip_dirty = false;
         } else {
-            $result = $this->name();
+            $result = $this->name_tip;
         }
         return $result;
     }
 
     /**
-     * @param phrase_list|null $phr_lst_header list of phrases already shown in the header and don't need to be include in the result
+     * @param phrase_list|null $phr_lst_header list of phrases already shown in the header and don't need to be included in the result
      * @return string
      */
     function name_link_list(phrase_list $phr_lst_header = null): string
@@ -347,7 +349,7 @@ class group extends sandbox_named
             $this->name_link = $result;
             $this->name_link_dirty = false;
         } else {
-            $result = $this->name();
+            $result = $this->name_link;
         }
         return $result;
     }

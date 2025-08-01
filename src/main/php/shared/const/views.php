@@ -106,7 +106,9 @@ class views
     const RESULT_DEL_ID = 27;
     const VERBS = 'verbs';
     const USER = 'user';
+    const USER_ADD = 'user_add';
     const USER_EDIT = 'user_edit';
+    const USER_DEL = 'user_del';
     const ERR_LOG = 'error_log';
     const ERR_UPD = 'error_update';
     const IMPORT = 'import';
@@ -166,6 +168,7 @@ class views
     const TEST_ADD_NAME = 'System Test View';
     const TEST_ADD_VIA_FUNC_NAME = 'System Test View added via sql function';
     const TEST_ADD_VIA_SQL_NAME = 'System Test View added via sql insert';
+    const TEST_ADD_COM = 'System Test View Description';
     const TEST_ADD = 'System Test View Code Id';
     const TEST_RENAMED_NAME = 'System Test View Renamed';
     const TEST_COMPLETE_NAME = 'System Test View Complete';

@@ -32,7 +32,9 @@
 
 namespace unit_write;
 
-include_once SHARED_CONST_PATH . 'sources.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'sources.php';
 
 use cfg\ref\source;
 use shared\const\sources;

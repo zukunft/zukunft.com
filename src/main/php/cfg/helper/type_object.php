@@ -41,30 +41,32 @@
 
 namespace cfg\helper;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
 // TODO avoid include loops
-//include_once MODEL_LANGUAGE_PATH . 'language.php';
-//include_once MODEL_LANGUAGE_PATH . 'language_form.php';
-//include_once MODEL_LOG_PATH . 'change_action.php';
-//include_once MODEL_LOG_PATH . 'change_table.php';
-//include_once MODEL_LOG_PATH . 'change_table_field.php';
-//include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-//include_once MODEL_SYSTEM_PATH . 'pod.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+//include_once paths::MODEL_LANGUAGE . 'language.php';
+//include_once paths::MODEL_LANGUAGE . 'language_form.php';
+//include_once paths::MODEL_LOG . 'change_action.php';
+//include_once paths::MODEL_LOG . 'change_table.php';
+//include_once paths::MODEL_LOG . 'change_table_field.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+//include_once paths::MODEL_SYSTEM . 'pod.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -106,8 +108,6 @@ class type_object extends db_object_seq_id
     const FLD_NAME = 'type_name';
     const FLD_CODE_ID_COM = 'this id text is unique for all code links, is used for system im- and export and is used to link coded functionality to a specific word e.g. to get the values of the system configuration';
     const FLD_DESCRIPTION_COM = 'text to explain the type to the user as a tooltip; to be replaced by a language form entry';
-    const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
     // type name exceptions
     const FLD_ACTION = 'change_action_name';
@@ -119,8 +119,8 @@ class type_object extends db_object_seq_id
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     const FLD_LST_ALL = array(
-        [sql::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );
 
 
@@ -173,7 +173,7 @@ class type_object extends db_object_seq_id
             $this->set_id(($db_row[language::FLD_ID]));
         }
         if ($this->id() > 0) {
-            $this->code_id = strval($db_row[sql::FLD_CODE_ID]);
+            $this->code_id = strval($db_row[sql_db::FLD_CODE_ID]);
             $type_name = '';
             if ($class == change_action::class) {
                 $type_name = strval($db_row[self::FLD_ACTION]);
@@ -186,10 +186,10 @@ class type_object extends db_object_seq_id
             } elseif ($class == language::class) {
                 $type_name = strval($db_row[language::FLD_NAME]);
             } else {
-                $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
+                $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
             }
             $this->name = $type_name;
-            $this->description = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
+            $this->description = strval($db_row[sql_db::FLD_DESCRIPTION]);
             $result = true;
         }
         return $result;
@@ -270,7 +270,7 @@ class type_object extends db_object_seq_id
             $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => sql::FLD_CODE_ID,
+                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -450,7 +450,7 @@ class type_object extends db_object_seq_id
     {
         $typ_lst = new type_list();
         $qp = $typ_lst->load_sql($sc, $class, 'code_id');
-        $sc->add_where(sql::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 

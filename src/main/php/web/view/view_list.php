@@ -31,19 +31,21 @@
 
 namespace html\view;
 
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_REF_PATH . 'source.php';
-include_once WEB_SANDBOX_PATH . 'sandbox.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_VIEW_PATH . 'view.php';
-include_once WEB_VIEW_PATH . 'view.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_CONST_PATH . 'views.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use html\ref\source;
 use html\rest_ctrl;

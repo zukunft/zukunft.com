@@ -53,38 +53,41 @@
 
 namespace cfg\component;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_db.php';
-include_once MODEL_COMPONENT_PATH . 'view_style.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_db.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_link.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_code_id.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'components.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'position_types.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_COMPONENT . 'component_db.php';
+include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'position_types.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -104,6 +107,7 @@ use cfg\phrase\phrase;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_code_id;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\word\word;
 use shared\enum\change_actions;
@@ -810,7 +814,7 @@ class component extends sandbox_code_id
             component_db::FLD_NAMES,
             component_db::FLD_NAMES_USR,
             component_db::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         ));
 
         return parent::load_standard_sql($sc);
@@ -1006,6 +1010,7 @@ class component extends sandbox_code_id
 
     /**
      * create human-readable messages of the differences between the objects
+     * is expected to be similar to the has_diff function
      * @param component|sandbox|CombineObject|db_object_seq_id $obj which might be different to this sandbox object
      * @return user_message the human-readable messages of the differences between the sandbox objects
      */
@@ -1027,11 +1032,12 @@ class component extends sandbox_code_id
 
     /**
      * check if the named object in the database needs to be updated
+     * is expected to be similar to the diff_msg function
      *
-     * @param component|sandbox $db_obj the word as saved in the database
+     * @param component|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(component|sandbox $db_obj): bool
+    function needs_db_update(component|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->formula_id() != null) {
@@ -1564,7 +1570,7 @@ class component extends sandbox_code_id
           $db_con = new mysql;
           $db_con->usr_id = $this->user()->id();
           $db_type = $db_con->get1($sql);
-          $this->type_name = $db_type[sql::FLD_TYPE_NAME];
+          $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }
         return $this->type_name;
       } */

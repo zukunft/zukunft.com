@@ -43,37 +43,40 @@
 
 namespace cfg\value;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_list.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_IMPORT_PATH . 'import.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_GROUP_PATH . 'group_list.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'value_type_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'word_list.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_ENUM_PATH . 'value_types.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_value_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_list.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'value_type_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'value_types.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_field_list;
@@ -95,6 +98,7 @@ use cfg\ref\source;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_value_list;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\word\word;
 use cfg\word\word_list;
@@ -134,8 +138,8 @@ class value_list extends sandbox_value_list
                     log_info('group id missing');
                 }
                 $excluded = null;
-                if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
-                    $excluded = $db_row[sandbox::FLD_EXCLUDED];
+                if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
+                    $excluded = $db_row[sql_db::FLD_EXCLUDED];
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
                     if (array_key_exists(value_db::FLD_VALUE, $db_row)) {
@@ -420,7 +424,7 @@ class value_list extends sandbox_value_list
         $pos_usr = $par_pos;
         $par_pos++;
         $par_name = $sc->par_name($par_pos);
-        $sc->add_where_par(user::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
+        $sc->add_where_par(user_db::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
 
         // remember the parameters
         $par_lst = clone $sc->par_list();

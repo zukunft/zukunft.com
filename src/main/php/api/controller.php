@@ -34,10 +34,12 @@
 
 namespace controller;
 
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'views.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use cfg\helper\combine_object;
 use cfg\ref\source;

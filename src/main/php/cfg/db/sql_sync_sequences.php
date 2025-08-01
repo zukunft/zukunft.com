@@ -31,7 +31,9 @@
 
 namespace cfg\db;
 
-include_once MODEL_USER_PATH . 'user_message.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_USER . 'user_message.php';
 
 use cfg\user\user_message;
 use Exception;
@@ -42,6 +44,7 @@ class sql_sync_sequences
     private function sync_postgres($result, sql_db $db_con): user_message
     {
         global $debug;
+        global $log_txt;
 
         $usr_msg = new user_message();
         while ($row = pg_fetch_assoc($result)) {
@@ -49,7 +52,7 @@ class sql_sync_sequences
             $table = $row['table_name'];
             $column = $row['column_name'];
             if ($debug > 0) {
-                echo "Checking sequence '$sequence' for table '$table' column '$column'...\n";
+                $log_txt->echo_log("Checking sequence '$sequence' for table '$table' column '$column'...");
             }
 
             // Get max value of the column
@@ -68,10 +71,10 @@ class sql_sync_sequences
             if ($max_val > $curr_val) {
                 $set_val_sql = "SELECT setval('$sequence', $max_val)";
                 pg_query($db_con->postgres_link, $set_val_sql);
-                echo "Sequence '$sequence' updated to $max_val\n";
+                $log_txt->echo_log("Sequence '$sequence' updated to $max_val");
             } else {
                 if ($debug > 0) {
-                    echo "Sequence '$sequence' is already up to date ($curr_val >= $max_val)\n";
+                    $log_txt->echo_log("Sequence '$sequence' is already up to date ($curr_val >= $max_val)");
                 }
             }
         }
@@ -81,6 +84,7 @@ class sql_sync_sequences
     private function sync_mysql($result, sql_db $db_con): user_message
     {
         global $debug;
+        global $log_txt;
 
         $usr_msg = new user_message();
         while ($row = mysqli_fetch_assoc($result)) {
@@ -88,7 +92,7 @@ class sql_sync_sequences
             $column = $row['COLUMN_NAME'];
 
             if ($debug > 0) {
-                echo "Checking AUTO_INCREMENT for table '$table' column '$column'...\n";
+                $log_txt->echo_log("Checking AUTO_INCREMENT for table '$table' column '$column'...");
             }
 
             // Get max value
@@ -107,10 +111,10 @@ class sql_sync_sequences
             if ($max_val + 1 > $auto_increment) {
                 $set_ai_sql = "ALTER TABLE `$table` AUTO_INCREMENT = " . ($max_val + 1);
                 mysqli_query($db_con->mysql, $set_ai_sql);
-                echo "→ Updated AUTO_INCREMENT for '$table' to " . ($max_val + 1) . "\n";
+                $log_txt->echo_log("→ Updated AUTO_INCREMENT for '$table' to " . ($max_val + 1));
             } else {
                 if ($debug > 0) {
-                    echo "→ AUTO_INCREMENT for '$table' is already up to date ($auto_increment >= $max_val + 1)\n";
+                    $log_txt->echo_log("→ AUTO_INCREMENT for '$table' is already up to date ($auto_increment >= $max_val + 1)");
                 }
             }
         }

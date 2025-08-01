@@ -42,22 +42,25 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 // set the other path once for all scripts
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 // load once the common const and vars used almost every time
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
+
+use cfg\const\paths;
+use html\const\paths as html_paths;
 
 // load what is used here
-include_once WEB_PATH . 'frontend.php';
-include_once MODEL_SYSTEM_PATH . 'system_time_list.php';
-include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once WEB_HELPER_PATH . 'config.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_VALUE_PATH . 'value.php';
-include_once WEB_VIEW_PATH . 'view.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'views.php';
+include_once paths::WEB . 'frontend.php';
+include_once paths::MODEL_SYSTEM . 'system_time_list.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once html_paths::HELPER . 'config.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::VIEW . 'view.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use cfg\component\component;
 use cfg\formula\formula;
@@ -122,7 +125,7 @@ if ($db_con->is_open()) {
 
     $view = $url_array[api::URL_VAR_MASK] ?? 0; // the database id of the view to display
     $id = $url_array[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
-    $confirm = $url_array[api::URL_VAR_CONFIRM] ?? 0; // the database id of the prime object to display
+    $confirm = $url_array[api::URL_VAR_CONFIRM_LONG] ?? 0; // the database id of the prime object to display
 
     $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
     $view_words = $url_array[api::URL_VAR_WORDS] ?? '';

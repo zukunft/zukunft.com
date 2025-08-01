@@ -36,16 +36,19 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
+
+use cfg\const\paths;
+use html\const\paths as html_paths;
 
 // load what is used here
-include_once API_OBJECT_PATH . 'controller.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_VIEW_PATH . 'view.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'views.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::VIEW . 'view.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use cfg\system\sys_log;
 use cfg\user\user;

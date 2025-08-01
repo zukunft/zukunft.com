@@ -32,7 +32,9 @@
 
 namespace unit;
 
-include_once WEB_FIGURE_PATH . 'figure.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::FIGURE . 'figure.php';
 
 use cfg\result\results;
 use html\figure\figure as figure_dsp;

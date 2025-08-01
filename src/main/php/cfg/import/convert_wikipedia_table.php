@@ -32,15 +32,15 @@
 
 namespace cfg\import;
 
-include_once EXPORT_PATH . 'export.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_PATH . 'library.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
 
-use cfg\export\export;
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'json_fields.php';
+
 use cfg\phrase\phrase_list;
 use cfg\user\user;
 use shared\json_fields;
@@ -406,7 +406,7 @@ class convert_wikipedia_table
                             $word[$key] = $word_part_par;
                         }
                     } else {
-                        // TODO base this on the ontologie / context
+                        // TODO base this on the ontology / context
                         $word_name = str_replace('[lower-alpha 2]', '', $word_part);
                         $word[json_fields::NAME] = $word_name;
                     }
@@ -414,7 +414,7 @@ class convert_wikipedia_table
             } else {
                 if ($word_entry != '') {
                     if (!in_array($word_entry, $words_in_list)) {
-                        // TODO base this on the ontologie / context
+                        // TODO base this on the ontology / context
                         $word_name = str_replace('[lower-alpha 2]', '', $word_entry);
                         $word[json_fields::NAME] = $word_name;
                     }
@@ -440,7 +440,7 @@ class convert_wikipedia_table
             return false;
         } else {
             // remove percent symbol
-            // TODO base this on the ontologie / context
+            // TODO base this on the ontology / context
             $cell_text = str_replace('%', '', $cell_text);
             if (is_numeric($cell_text)) {
                 return true;
@@ -460,7 +460,7 @@ class convert_wikipedia_table
             return null;
         } else {
             // remove percent symbol
-            // TODO base this on the ontologie / context
+            // TODO base this on the ontology / context
             if ($cell_text == '%') {
                 $word = [];
                 $word[json_fields::NAME] = '%';
@@ -481,7 +481,7 @@ class convert_wikipedia_table
             return null;
         } else {
             // remove percent symbol
-            // TODO base this on the ontologie / context
+            // TODO base this on the ontology / context
             $cell_text = str_replace('%', '', $cell_text);
             if (is_numeric($cell_text)) {
                 return floatval($cell_text);

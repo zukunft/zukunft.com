@@ -32,7 +32,9 @@
 
 namespace unit_write;
 
-include_once SHARED_ENUM_PATH . 'change_tables.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'change_tables.php';
 
 use cfg\formula\formula;
 use cfg\formula\formula_link;
@@ -57,15 +59,15 @@ class formula_link_write_tests
 
         $t->header('formula link db write tests');
 
-        $t->subheader('formula link write sandbox tests for ' . formulas::SYSTEM_TEXT_ADD);
+        $t->subheader('formula link write sandbox tests for ' . formulas::SYSTEM_TEST_ADD);
         $t->assert_write_link($t->formula_link_filled_add());
 
         $t->subheader('prepare formula link specific write tests');
-        $frm = $t->test_formula(formulas::SYSTEM_TEXT_ADD, formulas::INCREASE_EXP);
+        $frm = $t->test_formula(formulas::SYSTEM_TEST_ADD, formulas::INCREASE_EXP);
         $wrd = $t->test_word(words::TEST_ADD);
 
 
-        $t->test_formula_link(formulas::SYSTEM_TEXT_ADD, words::TEST_ADD);
+        $t->test_formula_link(formulas::SYSTEM_TEST_ADD, words::TEST_ADD);
 
         // link the test formula to another word
         $test_name = 'link phrase "' . $wrd->name() . '" to a formula "' . $frm->name() . '" using the formula function link_phr';
@@ -112,7 +114,7 @@ class formula_link_write_tests
         $t->display('formula_link->load by phrase id and link id "' . $phr->dsp_name(), $target, $result);
 
         // ... check if the link is shown correctly
-        $frm = $t->load_formula(formulas::SYSTEM_TEXT_ADD);
+        $frm = $t->load_formula(formulas::SYSTEM_TEST_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         echo $phr_lst->dsp_id() . '<br>';
         $result = $phr_lst->does_contain($phr);
@@ -124,7 +126,7 @@ class formula_link_write_tests
         //     so even if the word is linked the word link is nevertheless false
         // TODO add a check that the word is linked if the second user activates the word
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formulas::SYSTEM_TEXT_ADD);
+        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
@@ -135,7 +137,7 @@ class formula_link_write_tests
 
         // if second user removes the new link
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formulas::SYSTEM_TEXT_ADD);
+        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
         $phr = new phrase($t->usr2);
         $phr->load_by_name(words::TEST_ADD);
         $result = $frm->unlink_phr($phr);
@@ -156,7 +158,7 @@ class formula_link_write_tests
 
         // ... check if the link is really not used any more for the second user
         $frm = new formula($t->usr2);
-        $frm->load_by_name(formulas::SYSTEM_TEXT_ADD);
+        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
@@ -166,7 +168,7 @@ class formula_link_write_tests
         // ... check if the value update for the second user has been triggered
 
         // ... check if the link is still used for the first user
-        $frm = $t->load_formula(formulas::SYSTEM_TEXT_ADD);
+        $frm = $t->load_formula(formulas::SYSTEM_TEST_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = true;
@@ -190,7 +192,7 @@ class formula_link_write_tests
         $t->display('formula_link->unlink_phr logged of "' . $phr->name() . '" from "' . $frm->name() . '"', $target, $result);
 
         // check if the formula is not used any more for both users
-        $frm = $t->load_formula(formulas::SYSTEM_TEXT_ADD);
+        $frm = $t->load_formula(formulas::SYSTEM_TEST_ADD);
         $phr_lst = $frm->assign_phr_ulst();
         $result = $phr_lst->does_contain($phr);
         $target = false;
@@ -223,7 +225,7 @@ class formula_link_write_tests
 
         $t->subheader('cleanup formula link write');
         $frm = new formula($t->usr1);
-        $frm->load_by_name(formulas::SYSTEM_TEXT_ADD);
+        $frm->load_by_name(formulas::SYSTEM_TEST_ADD);
         $wrd = new word($t->usr1);
         $wrd->load_by_name(words::TEST_ADD);
         $lnk = new formula_link($t->usr1);
@@ -269,13 +271,13 @@ class formula_link_write_tests
     {
         $t->header('Check if all base formulas link correctly');
 
-        $t->test_formula_link(formulas::SYSTEM_TEXT_RATIO, words::TEST_SHARE);
-        $t->test_formula_link(formulas::SYSTEM_TEXT_SECTOR, words::TEST_SHARE);
-        $t->test_formula_link(formulas::SYSTEM_TEXT_ADD, words::YEAR_CAP);
-        $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_K, words::TEST_IN_K);
-        $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_TO_K, words::ONE);
-        $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_MIO, words::MIO);
-        $t->test_formula_link(formulas::SYSTEM_TEXT_SCALE_BIL, words::TEST_BIL);
+        $t->test_formula_link(formulas::SYSTEM_TEST_RATIO, words::TEST_SHARE);
+        $t->test_formula_link(formulas::SYSTEM_TEST_SECTOR, words::TEST_SHARE);
+        $t->test_formula_link(formulas::SYSTEM_TEST_ADD, words::YEAR_CAP);
+        $t->test_formula_link(formulas::SYSTEM_TEST_SCALE_K, words::TEST_IN_K);
+        $t->test_formula_link(formulas::SYSTEM_TEST_SCALE_TO_K, words::ONE);
+        $t->test_formula_link(formulas::SYSTEM_TEST_SCALE_MIO, words::MIO);
+        $t->test_formula_link(formulas::SYSTEM_TEST_SCALE_BIL, words::TEST_BIL);
         $t->test_formula_link(formulas::INCREASE, words::YEAR_CAP);
 
     }

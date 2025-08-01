@@ -32,9 +32,11 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once MODEL_SANDBOX_PATH . 'share_type.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::MODEL_SANDBOX . 'share_type.php';
 
 use cfg\helper\type_list;
 use shared\types\share_type as share_type_shared;

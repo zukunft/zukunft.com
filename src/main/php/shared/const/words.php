@@ -86,7 +86,7 @@ class words
     const URL_ID = 326;
     // e.g. the launch date of the first beta version of zukunft.com
     const LAUNCH = 'launch';
-    const LAUNCH_ID = 375;
+    const LAUNCH_ID = 376;
 
     // for the user settings
     const ROW = 'row';
@@ -114,7 +114,7 @@ class words
 
     // e.g. the geolocation of the development of zukunft.com
     const POINT = 'point';
-    const POINT_ID = 376;
+    const POINT_ID = 377;
 
     // general words used also for the system configuration that have a fixed tooltip
     const TIME = 'time';
@@ -329,9 +329,9 @@ class words
 
     // words from import test file companies.json used for the start page in order of appearance
     const ABB = 'ABB';
-    const ABB_ID = 1009;
+    const ABB_ID = 1010;
     const VESTAS = 'Vestas';
-    const VESTAS_ID = 1012;
+    const VESTAS_ID = 1013;
 
     // for the config.yaml
     const TEST = 'test';
@@ -397,6 +397,7 @@ class words
     const TEST_ADD_API_COM = 'System Test Word API Description';
     const TEST_UPD_API = 'System Test Word API Renamed';
     const TEST_UPD_API_COM = 'System Test Word API Description Renamed';
+    const TEST_ADD_VALUE = 'System Test Word for value curl testing';
 
 
     // list of predefined word names used for system testing that are expected to be never renamed

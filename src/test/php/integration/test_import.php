@@ -33,6 +33,7 @@
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\import\import_file;
+use const\paths as test_paths;
 use test\test_cleanup;
 use const\files as test_files;
 
@@ -42,7 +43,7 @@ function run_import_test($file_list, test_cleanup $t): void
 
     $t->header('Zukunft.com integration tests by importing the sample cases');
 
-    $import_path = test_files::IMPORT_PATH;
+    $import_path = test_paths::IMPORT;
 
     foreach ($file_list as $json_test_filename) {
         $imf = new import_file();

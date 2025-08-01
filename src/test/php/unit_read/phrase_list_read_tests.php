@@ -32,10 +32,12 @@
 
 namespace unit_read;
 
-include_once SERVICE_PATH . 'config.php';
-include_once SHARED_CONST_PATH . 'formulas.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::SERVICE . 'config.php';
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\config;
 use cfg\phrase\phr_ids;

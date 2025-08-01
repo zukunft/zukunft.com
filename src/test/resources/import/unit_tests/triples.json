@@ -7,6 +7,31 @@
   ],
   "words": [
     {
+      "name": "second",
+      "description": "The second is defined by taking the fixed numerical value of the caesium frequency, ΔνCs, the unperturbed ground-state hyperfine transition frequency of the caesium 133 atom, to be 9192631770 when expressed in the unit Hz, which is equal to s−1.",
+      "plural": "seconds",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Second",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "hertz",
+      "description": "The hertz (symbol: Hz) is the unit of frequency in the International System of Units (SI), often described as being equivalent to one event (or cycle) per second",
+      "type": "measure",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Hertz",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "problem",
       "comment": "A problem is if someone is getting unhappy. This can be measured with \"happy time points\".",
       "refs": [
@@ -129,6 +154,21 @@
           "type": "wikidata"
         }
       ]
+    },
+    {
+      "name": "hertz per second",
+      "from": "hertz",
+      "verb": "per",
+      "to": "second",
+      "type": "measure",
+      "protection": "admin_protection"
+    },
+    {
+      "name": "Hz/s",
+      "verb": "is alias of",
+      "to": "hertz per second",
+      "type": "measure",
+      "protection": "admin_protection"
     },
     {
       "name": "System Test Triple",

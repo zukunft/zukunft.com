@@ -37,21 +37,24 @@
 
 namespace cfg\value;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_REF_PATH . 'source_db.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -65,6 +68,7 @@ use cfg\sandbox\sandbox_value;
 use cfg\ref\source;
 use cfg\ref\source_db;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use shared\enum\messages as msg_id;
 use shared\library;
@@ -85,14 +89,14 @@ class value_time_series extends sandbox_value
 
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
-        user::FLD_ID,
+        user_db::FLD_ID,
         group::FLD_ID
     );
 
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         source_db::FLD_ID,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
 
@@ -323,7 +327,7 @@ class value_time_series extends sandbox_value
         if ($log->id() > 0) {
             $db_con->set_class(value_time_series::class);
             $this->id = $db_con->insert_old(
-                array(group::FLD_ID, user::FLD_ID, self::FLD_LAST_UPDATE),
+                array(group::FLD_ID, user_db::FLD_ID, self::FLD_LAST_UPDATE),
                 array($this->grp()->id(), $this->user()->id(), sql::NOW));
             if ($this->id() > 0) {
                 // update the reference in the log
@@ -355,7 +359,7 @@ class value_time_series extends sandbox_value
      */
 
     /**
-     * temp overwrite of the id_field function of sandbox_value class until this class is revied
+     * temp overwrite of the id_field function of sandbox_value class until this class is reviewed
      *
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @return string|array the field name(s) of the prime database index of the object

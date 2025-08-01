@@ -32,16 +32,18 @@
 
 namespace html\system;
 
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_SYSTEM_PATH . 'sys_log.php';
-include_once WEB_USER_PATH . 'user.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'api.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SYSTEM . 'sys_log.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'api.php';
 
 use controller\api_message;
 use controller\controller;

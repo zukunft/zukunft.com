@@ -39,24 +39,29 @@
 
 namespace cfg\view;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_VIEW_PATH . 'view.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_VIEW . 'view.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_par;
@@ -69,6 +74,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\view\view;
 
 class term_view extends sandbox_link
@@ -93,14 +99,14 @@ class term_view extends sandbox_link
     );
     //
     const FLD_NAMES_USR = array(
-        sandbox_named::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // all database field names, excluding the id, used to identify if there are some user specific changes
     // TODO check if this is used in all relevant objects
     const ALL_SANDBOX_FLD_NAMES = array(
         view_link_type::FLD_ID,
-        sandbox_named::FLD_DESCRIPTION,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_DESCRIPTION,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -112,12 +118,12 @@ class term_view extends sandbox_link
     );
     // list of MANDATORY fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_STD_ONLY = array(
-        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CAN be CHANGEd by the user
     const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [view_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
-        [sandbox_named::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
 
 
@@ -174,7 +180,7 @@ class term_view extends sandbox_link
             $trm->set_id($db_row[term::FLD_ID]);
             $this->set_term($trm);
             $this->set_predicate_id($db_row[view_link_type::FLD_ID]);
-            $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
         }
         return $result;
     }
@@ -415,7 +421,7 @@ class term_view extends sandbox_link
             self::FLD_NAMES,
             self::FLD_NAMES_USR,
             self::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)));
+            array(user_db::FLD_ID)));
         if ($this->id() > 0) {
             $sc->add_where($this->id_field(), $this->id());
         } elseif ($this->view()->id() > 0 and $this->term()->id() != 0) {
@@ -450,7 +456,7 @@ class term_view extends sandbox_link
         return array_merge(
             parent::db_all_fields_link($sc_par_lst),
             [
-                sandbox_named::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
                 view_link_type::FLD_ID,
             ]
         );
@@ -479,15 +485,15 @@ class term_view extends sandbox_link
         if ($sbx->description <> $this->description) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sandbox_named::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
                 $this->description,
-                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $sbx->description
             );
         }

@@ -45,32 +45,34 @@
 
 namespace cfg\phrase;
 
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_db.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_VERB_PATH . 'verb_db.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'word_db.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_WORD_PATH . 'triple_db.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_db.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\formula\formula_db;
 use cfg\helper\combine_named;
@@ -83,7 +85,7 @@ use cfg\db\sql_field_type;
 use cfg\helper\db_object_seq_id;
 use cfg\formula\formula;
 use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\user\user;
@@ -122,14 +124,14 @@ class term extends combine_named
     // this is done because the total number of terms is expected to be less than 10 million
     // which database should be able to handle and only a few hundred are expected to be sent to via api at once
     const FLD_NAMES_USR = array(
-        sandbox_named::FLD_DESCRIPTION,
+        sql_db::FLD_DESCRIPTION,
         formula_db::FLD_FORMULA_TEXT,
         formula_db::FLD_FORMULA_USER_TEXT
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR = array(
         self::FLD_USAGE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -160,12 +162,12 @@ class term extends combine_named
     const TBL_FLD_LST_VIEW = [
         [word::class, [
             [word_db::FLD_ID, term::FLD_ID, self::FLD_WORD_ID_TO_TERM_ID],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [word_db::FLD_NAME, term::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
+            [sql_db::FLD_DESCRIPTION],
             [word_db::FLD_VALUES, self::FLD_USAGE],
             [phrase::FLD_TYPE, self::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
             ['', formula_db::FLD_FORMULA_TEXT],
@@ -173,12 +175,12 @@ class term extends combine_named
         ], [phrase::FLD_TYPE, word_db::FLD_ID]],
         [triple::class, [
             [triple_db::FLD_ID, term::FLD_ID, self::FLD_TRIPLE_ID_TO_TERM_ID],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [[triple_db::FLD_NAME, triple_db::FLD_NAME_GIVEN, triple_db::FLD_NAME_AUTO], term::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
+            [sql_db::FLD_DESCRIPTION],
             [triple_db::FLD_VALUES, self::FLD_USAGE],
             [phrase::FLD_TYPE, self::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
             ['', formula_db::FLD_FORMULA_TEXT],
@@ -186,12 +188,12 @@ class term extends combine_named
         ], ['', triple_db::FLD_ID]],
         [formula::class, [
             [formula_db::FLD_ID, term::FLD_ID, self::FLD_FORMULA_ID_TO_TERM_ID],
-            [user::FLD_ID],
+            [user_db::FLD_ID],
             [formula_db::FLD_NAME, term::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
+            [sql_db::FLD_DESCRIPTION],
             [formula_db::FLD_USAGE, self::FLD_USAGE],
             [formula_db::FLD_TYPE, self::FLD_TYPE],
-            [sandbox::FLD_EXCLUDED],
+            [sql_db::FLD_EXCLUDED],
             [sandbox::FLD_SHARE],
             [sandbox::FLD_PROTECT],
             [formula_db::FLD_FORMULA_TEXT],
@@ -199,14 +201,14 @@ class term extends combine_named
         ], ['', formula_db::FLD_ID]],
         [verb::class, [
             [verb_db::FLD_ID, term::FLD_ID, self::FLD_VERB_ID_TO_TERM_ID],
-            [sql::NULL_VALUE, user::FLD_ID, sql::FLD_CONST],
+            [sql::NULL_VALUE, user_db::FLD_ID, sql_db::FLD_CONST],
             [verb_db::FLD_NAME, term::FLD_NAME],
-            [sandbox_named::FLD_DESCRIPTION],
+            [sql_db::FLD_DESCRIPTION],
             [verb_db::FLD_WORDS, self::FLD_USAGE],
-            [sql::NULL_VALUE, self::FLD_TYPE, sql::FLD_CONST],
-            [sql::NULL_VALUE, sandbox::FLD_EXCLUDED, sql::FLD_CONST],
-            [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql::FLD_CONST],
-            [protect_type_shared::ADMIN_ID, sandbox::FLD_PROTECT, sql::FLD_CONST],
+            [sql::NULL_VALUE, self::FLD_TYPE, sql_db::FLD_CONST],
+            [sql::NULL_VALUE, sql_db::FLD_EXCLUDED, sql_db::FLD_CONST],
+            [share_type_shared::PUBLIC_ID, sandbox::FLD_SHARE, sql_db::FLD_CONST],
+            [protect_type_shared::ADMIN_ID, sandbox::FLD_PROTECT, sql_db::FLD_CONST],
             ['', formula_db::FLD_FORMULA_TEXT],
             ['', formula_db::FLD_FORMULA_USER_TEXT]
         ], ['', verb_db::FLD_ID]]
@@ -381,25 +383,25 @@ class term extends combine_named
             if ($class == word::class) {
                 if ($this->obj == null) {
                     $this->obj = new word($this->user());
-                    $this->obj->set_id($id);
+                    $this->obj()->set_id($id);
                 }
             } elseif ($class == triple::class) {
                 if ($this->obj == null) {
                     $this->obj = new triple($this->user());
-                    $this->obj->set_id($id);
+                    $this->obj()->set_id($id);
                 }
             } elseif ($class == formula::class) {
                 if ($this->obj == null) {
                     $this->obj = new formula($this->user());
-                    $this->obj->set_id($id);
+                    $this->obj()->set_id($id);
                 }
             } elseif ($class == verb::class) {
                 if ($this->obj == null) {
                     $this->obj = new verb();
-                    $this->obj->set_id($id);
+                    $this->obj()->set_id($id);
                 }
             }
-            $this->obj->set_id($id);
+            $this->obj()->set_id($id);
         }
     }
 
@@ -437,7 +439,7 @@ class term extends combine_named
         if ($class != '' and $this->obj == null) {
             $this->set_obj_by_class($class);
         }
-        $this->obj->set_name($name);
+        $this->obj()->set_name($name);
     }
 
     /**
@@ -453,7 +455,7 @@ class term extends combine_named
         if ($class != '' and $this->obj == null) {
             $this->set_obj_by_class($class);
         }
-        $this->obj->set_user($usr);
+        $this->obj()->set_user($usr);
     }
 
     /**
@@ -465,9 +467,9 @@ class term extends combine_named
     function set_usage(?int $usage): void
     {
         if ($usage == null) {
-            $this->obj->set_usage(0);
+            $this->obj()->set_usage(0);
         } else {
-            $this->obj->set_usage($usage);
+            $this->obj()->set_usage($usage);
         }
     }
 
@@ -517,8 +519,8 @@ class term extends combine_named
     function name(): string
     {
         $result = '';
-        if (isset($this->obj)) {
-            $result = $this->obj->name();
+        if ($this->obj() != null) {
+            $result = $this->obj()->name();
         }
         return $result;
     }
@@ -530,8 +532,8 @@ class term extends combine_named
     function user(): ?user
     {
         $result = new user();
-        if (isset($this->obj)) {
-            $result = $this->obj->user();
+        if ($this->obj() != null) {
+            $result = $this->obj()->user();
         }
         return $result;
     }
@@ -539,7 +541,7 @@ class term extends combine_named
     function type(): string
     {
         $result = '';
-        if (isset($this->obj)) {
+        if ($this->obj() != null) {
             $result = $this->obj::class;
         }
         return $result;
@@ -547,7 +549,7 @@ class term extends combine_named
 
     function usage(): int
     {
-        return $this->obj->usage();
+        return $this->obj()->usage();
     }
 
 
@@ -1003,9 +1005,9 @@ class term extends combine_named
     {
         $phr = null;
         if (get_class($this->obj) == word::class) {
-            $phr = $this->obj->phrase();
+            $phr = $this->obj()->phrase();
         } elseif (get_class($this->obj) == triple::class) {
-            $phr = $this->obj->phrase();
+            $phr = $this->obj()->phrase();
         }
         return $phr;
     }

@@ -31,12 +31,14 @@
 
 namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_SYSTEM_PATH . 'system_time_type.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type.php';
 
 use cfg\db\sql;
 use cfg\db\sql_field_default;

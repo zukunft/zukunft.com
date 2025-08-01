@@ -53,7 +53,7 @@
     or: word1 || word2 e.g. “GAAP[>is:US]” use word1 or word2 (maybe replace “||” with “or” for users)
     or: -word e.g. “-word” remove the word from the context
 
-    samples: next["->Timejump"] means next needs a time jump word
+    samples: next["->time_jump"] means next needs a time jump word
     db format: {f2}[->{}]
 
     Four steps to get the result
@@ -122,23 +122,25 @@
 
 namespace cfg\formula;
 
-include_once SHARED_CALC_PATH . 'expression.php';
-include_once MODEL_ELEMENT_PATH . 'element.php';
-include_once MODEL_ELEMENT_PATH . 'element_group.php';
-include_once MODEL_ELEMENT_PATH . 'element_group_list.php';
-include_once MODEL_ELEMENT_PATH . 'element_list.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_CALC_PATH . 'parameter_type.php';
-include_once SHARED_CONST_PATH . 'chars.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CALC . 'expression.php';
+include_once paths::MODEL_ELEMENT . 'element.php';
+include_once paths::MODEL_ELEMENT . 'element_group.php';
+include_once paths::MODEL_ELEMENT . 'element_group_list.php';
+include_once paths::MODEL_ELEMENT . 'element_list.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_CALC . 'parameter_type.php';
+include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\element\element;
 use cfg\element\element_group;
@@ -251,6 +253,16 @@ class expression extends shared_expression
         }
 
         return $phr_lst;
+    }
+
+    function is_valid(): bool
+    {
+        $is_valid = true;
+        if (($this->ref_text() == null or $this->ref_text() == '')
+        and ($this->user_text() == null or $this->user_text() == '')) {
+            $is_valid = false;
+        }
+        return $is_valid;
     }
 
     /**

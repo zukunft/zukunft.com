@@ -32,37 +32,40 @@
 
 namespace cfg\result;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_value_list.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_list.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_db.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_GROUP_PATH . 'group_list.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once MODEL_SYSTEM_PATH . 'job_list.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_WORD_PATH . 'triple_db.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_list.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_WORD_PATH . 'word_db.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_value_list.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_list.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_SYSTEM . 'job_list.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_list.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_WORD . 'word_db.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\formula\formula_db;
 use cfg\helper\data_object;
@@ -84,6 +87,7 @@ use cfg\phrase\term;
 use cfg\phrase\term_list;
 use cfg\system\job;
 use cfg\system\job_list;
+use cfg\user\user_db;
 use cfg\word\triple;
 use cfg\user\user;
 use cfg\user\user_list;
@@ -343,7 +347,7 @@ class result_list extends sandbox_value_list
         $pos_usr = $par_pos;
         $par_pos++;
         $par_name = $sc->par_name($par_pos);
-        $sc->add_where_par(user::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
+        $sc->add_where_par(user_db::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
 
         // remember the parameters
         $par_lst = clone $sc->par_list();
@@ -750,13 +754,13 @@ class result_list extends sandbox_value_list
     /**
      * return a list of the formula result names
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = array();
         $lib = new library();
         if (!$this->is_empty()) {
             foreach ($this->lst() as $res) {
-                $result[] = $res->name();
+                $result[] = $res->name($ignore_excluded);
 
                 // check user consistency (can be switched off once the program ist stable)
                 if (!isset($res->usr)) {
@@ -810,7 +814,7 @@ class result_list extends sandbox_value_list
         $phr->load_by_id($phr_id);
 
         $val_lst = new value_list($this->usr);
-        $value_lst = $val_lst->load_frm_related_grp_phrs($phr_id, $frm_phr_ids, $this->user()->id());
+        $value_lst = $val_lst->load_frm_related_grp_phrases($phr_id, $frm_phr_ids, $this->user()->id());
 
         foreach (array_keys($value_lst) as $val_id) {
             // maybe use for debugging

@@ -32,20 +32,22 @@
 
 namespace html\element;
 
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_FIGURE_PATH . 'figure.php';
-include_once WEB_FIGURE_PATH . 'figure_list.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_PHRASE_PATH . 'term_list.php';
-include_once WEB_RESULT_PATH . 'result.php';
-include_once WEB_SANDBOX_PATH . 'list_dsp.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_VALUE_PATH . 'value.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::FIGURE . 'figure.php';
+include_once html_paths::FIGURE . 'figure_list.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::PHRASE . 'term_list.php';
+include_once html_paths::RESULT . 'result.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::SHARED . 'library.php';
 
 use html\figure\figure as figure;
 use html\figure\figure_list;

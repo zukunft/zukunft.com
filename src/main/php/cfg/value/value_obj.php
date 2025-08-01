@@ -32,12 +32,14 @@
 
 namespace cfg\value;
 
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_time.php';
-include_once MODEL_VALUE_PATH . 'value_text.php';
-include_once MODEL_VALUE_PATH . 'value_geo.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_USER_PATH . 'user.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_time.php';
+include_once paths::MODEL_VALUE . 'value_text.php';
+include_once paths::MODEL_VALUE . 'value_geo.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_USER . 'user.php';
 
 use cfg\group\group;
 use cfg\user\user;

@@ -161,6 +161,9 @@ zukunft.com:
         table name:
           max phrase: 3
           tooltip-comment: "maximal number of phrases that can be included in the table name for a separate value table e.g. if the system detects that a separate table for the inhabitants at the end of the year of a city will increase speed and reduce time the table name can be inhabitants-city-year and each row has the city name and the columns have the year names"
+      triples:
+        max levels: 99
+        tooltip-comment: "the maximal number of levels that are allowed for a triple e.g. if math and const are combined this is level 1, if pi is a math const this is level 2 and so on"
     user:
       tooltip-comment: "settings that each user can set individually"
       default:
@@ -170,6 +173,11 @@ zukunft.com:
             daily:
               ip user: 1000
               tooltip-comment: "maximal number of changes that an user without login can do per day"
+        url:
+          tooltip-comment: "the setting for the url"
+          format:
+            sys-conf-value: "readable"
+            tooltip-comment: "either 'technical' for a shortest possible url which is not human readable or 'readable' for an url which is easier to understand for humans or 'moveable' for a pod independent url"
         frontend:
           tooltip-comment: "the setting for the user interface"
           language:

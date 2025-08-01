@@ -32,15 +32,17 @@
 
 namespace cfg\log;
 
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once DB_PATH . 'sql_db.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
 
 use cfg\helper\type_list;
 use cfg\helper\type_object;
@@ -54,7 +56,7 @@ class change_field_list extends type_list
 
 
     /**
-     * adding the system log stati used for unit tests to the dummy list
+     * adding the system log statuus used for unit tests to the dummy list
      * the field name starts always with the table id to make the field name unique
      * the table id is remove as one of the last steps if the real table field name is requested
      */

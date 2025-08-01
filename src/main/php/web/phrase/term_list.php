@@ -34,8 +34,10 @@
 
 namespace html\phrase;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once WEB_USER_PATH . 'user_message.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_list_named.php';
+include_once html_paths::USER . 'user_message.php';
 
 use html\sandbox\sandbox_list_named;
 use html\user\user_message;

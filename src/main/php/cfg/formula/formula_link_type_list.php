@@ -31,9 +31,11 @@
 
 namespace cfg\formula;
 
-include_once MODEL_HELPER_PATH . 'type_list.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_FORMULA_PATH . 'formula_link.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'type_list.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
 
 use cfg\helper\type_list;
 

@@ -32,8 +32,10 @@
 
 namespace html\types;
 
-include_once WEB_TYPES_PATH . 'type_list.php';
-include_once SHARED_TYPES_PATH . 'component_type.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::TYPES . 'type_list.php';
+include_once paths::SHARED_TYPES . 'component_type.php';
 
 use shared\types\component_type;
 

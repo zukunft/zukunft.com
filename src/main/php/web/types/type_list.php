@@ -35,16 +35,18 @@
 
 namespace html\types;
 
-include_once SHARED_PATH . 'api.php';
-include_once WEB_TYPES_PATH . 'protection.php';
-include_once WEB_HTML_PATH . 'html_selector.php';
-include_once WEB_TYPES_PATH . 'type_object.php';
-include_once WEB_USER_PATH . 'user_message.php';
-//include_once WEB_VERB_PATH . 'verb.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED . 'api.php';
+include_once html_paths::TYPES . 'protection.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::TYPES . 'type_object.php';
+include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::VERB . 'verb.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use html\user\user_message;
 use html\html_selector;

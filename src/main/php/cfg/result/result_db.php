@@ -35,19 +35,24 @@
 
 namespace cfg\result;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_db.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once MODEL_USER_PATH . 'user.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 
 use cfg\db\sql;
+use cfg\db\sql_db;
 use cfg\db\sql_field_default;
 use cfg\db\sql_field_type;
 use cfg\db\sql_type;
@@ -58,6 +63,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_multi;
 use cfg\sandbox\sandbox_value;
 use cfg\user\user;
+use cfg\user\user_db;
 
 class result_db
 {
@@ -91,19 +97,19 @@ class result_db
     // all database field names excluding the id and excluding the user specific fields
     const FLD_NAMES = array(
         formula_db::FLD_ID,
-        user::FLD_ID,
+        user_db::FLD_ID,
         self::FLD_SOURCE_GRP,
         sandbox_multi::FLD_VALUE,
         sandbox_multi::FLD_LAST_UPDATE
     );
     const FLD_NAMES_ALL = array(
-        user::FLD_ID,
+        user_db::FLD_ID,
         self::FLD_SOURCE_GRP,
         formula_db::FLD_ID,
         sandbox_multi::FLD_VALUE,
     );
     const FLD_NAMES_NON_STD = array(
-        user::FLD_ID,
+        user_db::FLD_ID,
         self::FLD_SOURCE_GRP,
         formula_db::FLD_ID,
     );
@@ -114,20 +120,20 @@ class result_db
     );
     // fields that are not part of the standard result table, but that needs to be included for a correct union field match
     const FLD_NAMES_STD_DUMMY = array(
-        user::FLD_ID,
+        user_db::FLD_ID,
         self::FLD_SOURCE_GRP,
     );
     const FLD_NAMES_STD_NON_DUMMY = array(
         formula_db::FLD_ID,
     );
     const FLD_NAMES_DUMMY = array(
-        user::FLD_ID,
+        user_db::FLD_ID,
         self::FLD_SOURCE_GRP,
         formula_db::FLD_ID,
     );
     // list of the user specific numeric database field names
     const FLD_NAMES_NUM_USR_EX_STD = array(
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // list of the user specific datetime database field names
@@ -138,7 +144,7 @@ class result_db
     const FLD_NAMES_NUM_USR = array(
         sandbox_multi::FLD_VALUE,
         sandbox_multi::FLD_LAST_UPDATE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
     );
     // list of field names that are only on the user sandbox row
@@ -233,10 +239,10 @@ class result_db
         [self::FLD_SOURCE . group::FLD_ID, sql_field_type::TEXT, sql_field_default::NULL, sql::INDEX, '', 'text reference to the sorted phrase list used to calculate this result'],
     );
     const FLD_ALL_OWNER = array(
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'the id of the user who has requested the calculation'],
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'the id of the user who has requested the calculation'],
     );
     const FLD_ALL_CHANGER = array(
-        [user::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, 'the id of the user who has requested the change of the '],
+        [user_db::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, 'the id of the user who has requested the change of the '],
     );
 
 }

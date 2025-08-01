@@ -34,15 +34,19 @@
 
 namespace html\result;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_value.php';
-include_once WEB_FIGURE_PATH . 'figure.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_GROUP_PATH . 'group.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_value.php';
+include_once html_paths::FIGURE . 'figure.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::GROUP . 'group.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use html\formula\formula;
 use html\group\group;
@@ -51,12 +55,31 @@ use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox\sandbox_value;
 use html\figure\figure as figure_dsp;
 use html\user\user_message;
+use shared\const\views;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\library;
 
 
 class result extends sandbox_value
 {
+
+    /*
+     * const
+     */
+
+    // curl views
+    const VIEW_EDIT = views::RESULT_EDIT;
+    const VIEW_DEL = views::RESULT_DEL;
+
+    // curl message id
+    const MSG_EDIT = msg_id::RESULT_EDIT;
+    const MSG_DEL = msg_id::RESULT_DEL;
+
+
+    /*
+     * object vars
+     */
 
     // the phrase group used that selected the numbers to calculate this result
     public ?group $src_grp = null;
@@ -152,6 +175,44 @@ class result extends sandbox_value
         //$vars[json_fields::PHRASES] = $this->grp()->phr_lst()->api_array();
         $vars[json_fields::NUMBER] = $this->number();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
+    /*
+     * buttons
+     */
+
+    /**
+     * overwrite because results should not be added via the user interface by the user
+     * @return string an empty string
+     */
+    function btn_add(string $back = ''): string
+    {
+        return '';
+    }
+
+    /**
+     * @return string the html code for a bottom
+     * to change a result e.g. to add a description as not
+     */
+    function btn_edit(string $back = ''): string
+    {
+        return $this->btn_edit_sbx(
+            $this::VIEW_EDIT,
+            $this::MSG_EDIT,
+            $back);
+    }
+
+    /**
+     * @return string the html code for a bottom
+     * to exclude a result from further usage
+     */
+    function btn_del(string $back = ''): string
+    {
+        return $this->btn_del_sbx(
+            $this::VIEW_DEL,
+            $this::MSG_DEL,
+            $back);
     }
 
 

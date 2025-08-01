@@ -31,19 +31,20 @@
 
 namespace unit;
 
-include_once SERVICE_PATH . 'config.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range.php';
-include_once MODEL_SYSTEM_PATH . 'ip_range_list.php';
-include_once MODEL_SYSTEM_PATH . 'session.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_list.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_ENUM_PATH . 'sys_log_statuus.php';
-include_once SHARED_CONST_PATH . 'refs.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_SYSTEM . 'ip_range.php';
+include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+include_once paths::MODEL_SYSTEM . 'session.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_CONST . 'refs.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\config;
-use cfg\const\paths;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_type;
@@ -58,6 +59,7 @@ use cfg\system\sys_log_status_list;
 use cfg\user\user_message;
 use cfg\verb\verb;
 use cfg\word\word;
+use const\paths as test_paths;
 use DateTime;
 use html\system\sys_log as sys_log_dsp;
 use html\system\sys_log_list as sys_log_list_dsp;
@@ -74,6 +76,14 @@ use const\files as test_files;
 
 class system_tests
 {
+
+    // use path that does not need to be included
+    const PATH_NO_INCLUDE = [
+        'PgSql\Connection',
+        'cfg\const\paths',
+        'html\const\paths'
+    ];
+
     function run(test_cleanup $t): void
     {
 
@@ -123,14 +133,14 @@ class system_tests
         $t->assert_dsp_id($t->triple_list(), '"π (unit symbol)" (triple_id 2) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->triple()->phrase(), '"constant" "is part of" "mathematics" (2,3,1 -> triple_id 1) for user 1 (zukunft.com system test) as phrase');
         $t->assert_dsp_id($t->phrase_list_prime(), '"mathematics","constant","mathematical constant","π (unit symbol)" (phrase_id 1,2,-1,-2) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id 1,2,5,18,139,4,157,159,-1,-44,-106,-108,-109) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->group(), '"Pi (math)" (group_id 32812) as "Pi (math)" for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->phrase_list_long(), '"mathematics","constant","π" ... total 13 (phrase_id 1,2,5,18,139,4,157,159,-1,-51,-128,-130,-131) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->group(), '"Pi (math)" (group_id 32819) as "Pi (math)" for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->group_list(), 'Pi (math)');
         $t->assert_dsp_id($t->group_list_long(), 'Pi (math) / Zurich City inhabitants (2019) / Zurich City inhabitants (2019) in million / System Test Word Increase in Switzerland\'s inhabitants from 2019 to 2020 in percent ... total 6');
         $t->assert_dsp_id($t->term(), '"mathematics" (word_id 1) for user 1 (zukunft.com system test) as term');
         $t->assert_dsp_id($t->term_list(), '"mathematical constant","mathematics","not set","scale minute to sec" (-2,-1,1,2)');
-        $t->assert_dsp_id($t->value(), 'Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -44,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->value_list(), 'Pi (math): 3.1415926535898 / Zurich City inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -44,,, / 271,267,139,) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->value(), 'Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,,) for user 1 (zukunft.com system test)');
+        $t->assert_dsp_id($t->value_list(), 'Pi (math): 3.1415926535898 / Zurich City inhabitants (2019): 415367 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,, / 271,267,139,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->source(), '"The International System of Units" (source_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->reference(), 'ref of "Pi" to "wikidata" (' . refs::PI_ID . ')');
         $t->assert_dsp_id($t->formula(), '"scale minute to sec" (formula_id 1) for user 1 (zukunft.com system test)');
@@ -141,8 +151,8 @@ class system_tests
         $t->assert_dsp_id($t->expression(), '""second" = "minute" * 60" ({w' . words::SECOND_ID . '}={w' . words::MINUTE_ID . '}*60)');
         $t->assert_dsp_id($t->result_simple_1(), 'mathematics: 123456 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,,) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->result_list(), 'mathematics: 123456 / ' . words::PERCENT . ': 0.01234 (formula_id, phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = 1,,, / 2,,,) for user 1 (zukunft.com system test)');
-        $t->assert_dsp_id($t->figure_value(), 'value figure Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -44,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');
-        $t->assert_dsp_id($t->figure_list(), ' 3.1415926535898 Pi (math)  123456 "mathematics"  (32812,-1)');
+        $t->assert_dsp_id($t->figure_value(), 'value figure Pi (math): 3.1415926535898 (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4 = -51,,,) for user 1 (zukunft.com system test) 2022-12-26 18:23:45');
+        $t->assert_dsp_id($t->figure_list(), ' 3.1415926535898 Pi (math)  123456 "mathematics"  (32819,-1)');
         $t->assert_dsp_id($t->view(), '"Start view" (view_id 1) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->view_list(), '"Start view","Add word" (view_id 1,3) for user 1 (zukunft.com system test)');
         $t->assert_dsp_id($t->component(), '"Word" (component_id 1) for user 1 (zukunft.com system test)');
@@ -155,7 +165,7 @@ class system_tests
         $t->assert_dsp_id($t->change_log_big(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t->change_log_list_named(), 'log add words,word_name mathematics (id ) in row 1 at 2022-12-26T18:23:45+01:00');
         $t->assert_dsp_id($t->change_log_link(), 'user_log_link for user zukunft.com system (1) action add (1) table triples (7)');
-        $t->assert_dsp_id($t->change_log_value(), 'log add values,numeric_value (-44,,,) 3.1415927');
+        $t->assert_dsp_id($t->change_log_value(), 'log add values,numeric_value (-51,,,) 3.1415927');
         $t->assert_dsp_id($t->change_log_value_prime(), 'log add words,word_name  3.1415927');
         $t->assert_dsp_id($t->change_log_value_big(), 'log add words,word_name  3.1415927');
         $t->assert_dsp_id($t->sys_log(), 'system log id 1 at 2023-01-03T20:59:59+01:00 row the log text that describes the problem for the user or system admin');
@@ -354,9 +364,9 @@ class system_tests
         $t->assert('system_consistency->missing_owner_sql by formula', $lib->trim($qp->sql), $lib->trim($expected_sql));
 
         $this->php_include_tests($t, paths::MODEL);
-        $this->php_include_tests($t, API_PATH);
-        $this->php_include_tests($t, WEB_PATH);
-        $this->php_class_section_tests($t, MODEL_COMPONENT_PATH);
+        $this->php_include_tests($t, paths::API);
+        $this->php_include_tests($t, paths::WEB);
+        $this->php_class_section_tests($t, paths::MODEL_COMPONENT);
 
         // ... and check if the prepared sql name is unique
         if (!in_array($qp->name, $sql_names)) {
@@ -471,16 +481,16 @@ class system_tests
         $log_lst_dsp = new sys_log_list_dsp($log_lst->api_json());
         $usr1_dsp = new user($t->usr1->api_json());
         $created = $log_lst_dsp->api_json([api_type::HEADER], $usr1_dsp);
-        $expected = file_get_contents(test_files::RESOURCE_PATH . 'api/sys_log_list/sys_log_list.json');
+        $expected = file_get_contents(test_files::SYS_LOG_LIST_API);
         $created = json_encode($t->json_remove_volatile(json_decode($created, true)));
         $t->assert('sys_log_list_dsp->get_json', $lib->trim_json($created), $lib->trim_json($expected));
 
         $created = $log_lst_dsp->get_html($usr1_dsp);
-        $expected = file_get_contents(test_files::RESOURCE_PATH . 'web/system/sys_log_list.html');
+        $expected = file_get_contents(test_files::SYS_LOG_LIST_HTML);
         $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
 
         $created = $log_lst_dsp->get_html_page($usr1_dsp);
-        $expected = file_get_contents(test_files::RESOURCE_PATH . 'web/system/sys_log_list_page.html');
+        $expected = file_get_contents(test_files::SYS_LOG_LIST_PAGE);
         $t->assert('sys_log_list_dsp->display', $lib->trim_html($created), $lib->trim_html($expected));
 
     }
@@ -517,13 +527,13 @@ class system_tests
                         $path_incl = $include[1];
                         if ($class == $class_incl) {
                             $path_conv = $lib->php_path_convert($path);
-                            if ($path_conv == $path_incl) {
+                            if ($path_conv == $path_incl or $path_conv == '') {
                                 $found = true;
                             }
                         }
                     }
                     if (!$found) {
-                        if (!in_array($path . '\\' . $class,PATH_NO_INCLUDE)) {
+                        if (!in_array($path . '\\' . $class,self::PATH_NO_INCLUDE)) {
                             $sub_path = $lib->str_right_of($base_path, '../');
                             $test_name = 'includes missing in ' . $path . '\\' . $class
                                 . ' in ' . $sub_path . $code_file

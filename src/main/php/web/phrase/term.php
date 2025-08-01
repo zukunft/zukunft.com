@@ -32,17 +32,19 @@
 
 namespace html\phrase;
 
-include_once WEB_SANDBOX_PATH . 'combine_named.php';
-include_once SHARED_PATH . 'api.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_SANDBOX_PATH . 'combine_named.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'combine_named.php';
+include_once paths::SHARED . 'api.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::VERB . 'verb.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use html\formula\formula;
 use html\verb\verb;
@@ -363,11 +365,11 @@ class term extends combine_named_dsp
                 $vars[json_fields::USER_TEXT] = $this->obj()->usr_text();
             }
             // TODO add exclude field and move to a parent object?
-            if ($this->obj()?->share_id != null) {
-                $vars[json_fields::SHARE] = $this->obj()?->share_id;
+            if ($this->obj()?->share_id() != null) {
+                $vars[json_fields::SHARE] = $this->obj()?->share_id();
             }
-            if ($this->obj()?->protection_id != null) {
-                $vars[json_fields::PROTECTION] = $this->obj()?->protection_id;
+            if ($this->obj()?->protection_id() != null) {
+                $vars[json_fields::PROTECTION] = $this->obj()?->protection_id();
             }
         }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');

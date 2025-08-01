@@ -34,15 +34,16 @@
 
 namespace html\user;
 
-include_once WEB_TYPES_PATH . 'type_list.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'html_selector.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once html_paths::TYPES . 'type_list.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
 
 use html\html_base;
 use html\html_selector;
 use html\types\type_list;
-use shared\library;
 
 class user_type_list extends type_list
 {

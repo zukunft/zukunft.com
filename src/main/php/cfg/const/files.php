@@ -88,6 +88,8 @@ class files
     const DB_ROLE_FILE = 'db_create_user' . self::SQL;
     const DB_CREATE_FILE = 'db_create_database' . self::SQL;
     const DB_STRUCTURE_FILE = 'zukunft_structure' . self::SQL;
+    const DB_UPGRADE_POSTGRES = 'upgrade_postgres' . self::SQL;
+    const DB_UPGRADE_MYSQL = 'upgrade_mysql' . self::SQL;
 
 
     /*

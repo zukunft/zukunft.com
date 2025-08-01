@@ -34,18 +34,22 @@
 
 namespace cfg\helper;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_type.php';
-include_once MODEL_DB_PATH . 'sql_where_type.php';
-include_once MODEL_HELPER_PATH . 'combine_object.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-//include_once MODEL_VERB_PATH . 'verb.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_where_type.php';
+include_once paths::MODEL_HELPER . 'combine_object.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
+use cfg\db\sql_db;
 use cfg\db\sql_type;
 use cfg\user\user;
 use cfg\user\user_message;
@@ -289,7 +293,7 @@ class combine_named extends combine_object
                     $sql_fld .= $this->sql_when($sc, $fld_name, $tbl_chr);
                 } else {
                     if (count($fld) > 2) {
-                        if ($fld[2] == sql::FLD_CONST) {
+                        if ($fld[2] == sql_db::FLD_CONST) {
                             if ($fld_name == '') {
                                 $sql_fld .= "''";
                             } else {
@@ -312,7 +316,7 @@ class combine_named extends combine_object
                 }
                 if (count($fld) > 1) {
                     if (count($fld) > 2) {
-                        if ($fld[2] != sql::FLD_CONST) {
+                        if ($fld[2] != sql_db::FLD_CONST) {
                             $sql_fld .= ' ' . $fld[2] . ' ' . sql::AS . ' ' . $sc->name_sql_esc($fld[1]);
                         } else {
                             $sql_fld .= ' ' . sql::AS . ' ' . $sc->name_sql_esc($fld[1]);

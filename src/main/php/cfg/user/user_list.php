@@ -32,31 +32,33 @@
 
 namespace cfg\user;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_HELPER_PATH . 'db_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_multi.php';
-//include_once MODEL_FORMULA_PATH . 'formula.php';
-//include_once MODEL_REF_PATH . 'ref.php';
-//include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
-//include_once MODEL_VALUE_PATH . 'value_base.php';
-//include_once MODEL_VALUE_PATH . 'value.php';
-//include_once MODEL_VALUE_PATH . 'value_time.php';
-//include_once MODEL_VALUE_PATH . 'value_text.php';
-//include_once MODEL_VALUE_PATH . 'value_geo.php';
-//include_once MODEL_VIEW_PATH . 'view.php';
-//include_once MODEL_WORD_PATH . 'triple.php';
-//include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'users.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+//include_once paths::MODEL_FORMULA . 'formula.php';
+//include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+//include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'users.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -154,7 +156,7 @@ class user_list
     ): sql_par
     {
         $qp = $this->load_sql($sc, 'ids');
-        $sc->add_where(user::FLD_ID, $ids);
+        $sc->add_where(user_db::FLD_ID, $ids);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -171,7 +173,7 @@ class user_list
     function load_sql_by_code_id(sql_creator $sc, string $code_id): sql_par
     {
         $qp = $this->load_sql($sc, 'code_id');
-        $sc->add_where(sql::FLD_CODE_ID, $code_id);
+        $sc->add_where(sql_db::FLD_CODE_ID, $code_id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -206,7 +208,7 @@ class user_list
     {
         $lib = new library();
         $class = $lib->class_to_name($dbo::class);
-        $sql = 'SELECT ' . user::FLD_ID . ',';
+        $sql = 'SELECT ' . user_db::FLD_ID . ',';
         $id_fields = $dbo->id_field();
         if (is_array($id_fields)) {
             $sql .= ' COUNT (*) AS ' . self::FLD_CHANGES;
@@ -214,7 +216,7 @@ class user_list
             $sql .= ' COUNT (' . $dbo->id_field() . ') AS ' . self::FLD_CHANGES;
         }
         $sql .= ' FROM ' . sql_db::TBL_USER_PREFIX . $class . sql_db::TABLE_EXTENSION;
-        $sql .= ' GROUP BY ' . user::FLD_ID;
+        $sql .= ' GROUP BY ' . user_db::FLD_ID;
         return $sql;
     }
 
@@ -242,10 +244,10 @@ class user_list
 
     private function load_sql_count_sum_changes(): string
     {
-        $sql = 'SELECT ' . sql_db::GRP_TBL . '.' . user::FLD_ID . ',';
+        $sql = 'SELECT ' . sql_db::GRP_TBL . '.' . user_db::FLD_ID . ',';
         $sql .= ' SUM (' . sql_db::GRP_TBL . '.' . self::FLD_CHANGES . ') AS ' . self::FLD_CHANGES;
         $sql .= ' FROM ( ' . $this->load_sql_count_all_changes() . ') ' . sql_db::GRP_TBL;
-        $sql .= ' GROUP BY ' . user::FLD_ID;
+        $sql .= ' GROUP BY ' . user_db::FLD_ID;
         return $sql;
     }
 
@@ -259,7 +261,7 @@ class user_list
     {
         $sub_sql = '(' . $this->load_sql_count_sum_changes() . ')';
         $qp = $this->load_sql($sc, 'count_changes');
-        $sc->set_join_sql($sub_sql, array(self::FLD_CHANGES), user::FLD_ID);
+        $sc->set_join_sql($sub_sql, array(self::FLD_CHANGES), user_db::FLD_ID);
         $sc->add_where(self::FLD_CHANGES, '', sql_par_type::NOT_NULL, sql_db::LNK_TBL);
         $sc->set_order(self::FLD_CHANGES, sql::ORDER_DESC, sql_db::LNK_TBL);
         $qp->sql = $sc->sql();
@@ -377,9 +379,9 @@ class user_list
         if ($db_usr_lst != null) {
             foreach ($db_usr_lst as $db_usr) {
                 $usr = new user;
-                $usr->set_id($db_usr[user::FLD_ID]);
+                $usr->set_id($db_usr[user_db::FLD_ID]);
                 $usr->name = $db_usr[user_db::FLD_NAME];
-                $usr->code_id = $db_usr[sql::FLD_CODE_ID];
+                $usr->code_id = $db_usr[sql_db::FLD_CODE_ID];
                 $this->lst[] = $usr;
             }
         }
@@ -651,9 +653,10 @@ class user_list
      * simple loop to save all users of the list
      * because there are probably not many users to save at once
      *
+     * @param user $usr_req the user who has requested the database update
      * @return user_message in case of an issue the problem description what has failed and a suggested solution
      */
-    function save(): user_message
+    function save(user $usr_req): user_message
     {
         $usr_msg = new user_message();
 
@@ -661,7 +664,14 @@ class user_list
             $usr_msg->add_info_text('no users to save');
         } else {
             foreach ($this->lst() as $usr) {
-                $usr_msg->add($usr->save());
+                if ($usr->excluded === true) {
+                    if ($usr->id() == 0 and $usr->name() != '') {
+                        $usr->load_by_name($usr->name());
+                    }
+                    $usr_msg->add($usr->del($usr_req));
+                } else {
+                    $usr_msg->add($usr->save($usr_req));
+                }
             }
         }
 

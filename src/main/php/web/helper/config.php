@@ -34,14 +34,16 @@
 
 namespace html\helper;
 
-include_once WEB_VALUE_PATH . 'value_list.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'Config.php';
-include_once SHARED_PATH . 'api.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::VALUE . 'value_list.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Config.php';
+include_once paths::SHARED . 'api.php';
 
 use html\rest_ctrl;
 use html\user\user_message;

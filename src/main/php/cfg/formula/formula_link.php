@@ -43,30 +43,33 @@
 
 namespace cfg\formula;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -86,6 +89,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
@@ -110,10 +114,10 @@ class formula_link extends sandbox_link
     const FLD_NAMES = array(
         formula_db::FLD_ID,
         phrase::FLD_ID,
-        user::FLD_ID,
+        user_db::FLD_ID,
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -126,7 +130,7 @@ class formula_link extends sandbox_link
     const FLD_NAMES_NUM_USR = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -134,7 +138,7 @@ class formula_link extends sandbox_link
     const ALL_SANDBOX_FLD_NAMES = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -295,7 +299,7 @@ class formula_link extends sandbox_link
     {
         $result = 0;
         if ($this->tob() != null) {
-            if ($this->tob()->id() > 0) {
+            if ($this->tob()->id() != 0) {
                 $result = $this->tob()->id();
             }
         }
@@ -540,7 +544,7 @@ class formula_link extends sandbox_link
         $db_con->usr_id = $this->user()->id();
         $db_row = $db_con->get1($qp);
         if ($db_row != null) {
-            if ($db_row[user::FLD_ID] > 0) {
+            if ($db_row[user_db::FLD_ID] > 0) {
                 $result = false;
             }
         }
@@ -591,7 +595,7 @@ class formula_link extends sandbox_link
         global $db_con;
         $db_con->set_class(self::class);
         return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user::FLD_ID, 'order_nbr'),
+            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID, 'order_nbr'),
             array($this->formula_id(), $this->phrase_id(), $this->user()->id(), $this->order_nbr));
     }
 
@@ -653,6 +657,12 @@ class formula_link extends sandbox_link
             $db_rec->load_by_id($this->id());
             $db_rec->load_objects();
             $db_con->set_class(formula_link::class);
+            // relevant is if there is a user config in the database
+            // so use this information to prevent
+            // the need to forward the db_rec to all functions
+            if ($db_rec->has_usr_cfg() and !$this->has_usr_cfg()) {
+                $this->usr_cfg_id = $db_rec->usr_cfg_id;
+            }
             log_debug("database formula loaded (" . $db_rec->id() . ")");
             $std_rec = new formula_link($this->user()); // must also be set to allow to take the ownership
             $std_rec->set_id($this->id());

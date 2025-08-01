@@ -33,7 +33,9 @@
 namespace shared\helper;
 
 use cfg\word\triple;
+use html\word\triple as triple_dsp;
 use cfg\word\word;
+use html\word\word as word_dsp;
 
 class CombineObject
 {
@@ -79,7 +81,7 @@ class CombineObject
         $this->obj = $obj;
     }
 
-    function obj(): IdObject|TextIdObject|word|triple|null
+    function obj(): IdObject|TextIdObject|word|word_dsp|triple|triple_dsp|null
     {
         return $this->obj;
     }

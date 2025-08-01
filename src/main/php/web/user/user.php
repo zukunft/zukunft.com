@@ -31,22 +31,42 @@
 
 namespace html\user;
 
+use cfg\const\paths;
+use html\const\paths as html_paths;
 // get the api const that are shared between the backend and the html frontend
 // get the pure html frontend objects
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once SHARED_ENUM_PATH . 'user_profiles.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_PATH . 'json_fields.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\html_base;
 use html\sandbox\db_object;
 use shared\const\views;
+use shared\enum\messages as msg_id;
 use shared\enum\user_profiles;
 use shared\json_fields;
 
 class user extends db_object
 {
+
+    /*
+     * const
+     */
+
+    // TODO allow only admin users to add or change other users
+    // curl views
+    const VIEW_ADD = views::USER_ADD;
+    const VIEW_EDIT = views::USER_EDIT;
+    const VIEW_DEL = views::USER_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::USER_ADD;
+    const MSG_EDIT = msg_id::USER_EDIT;
+    const MSG_DEL = msg_id::USER_DEL;
+
 
     /*
      * object vars

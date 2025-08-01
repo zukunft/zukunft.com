@@ -35,13 +35,15 @@
 
 namespace html\element;
 
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_FORMULA_PATH . 'formula.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\sandbox\db_object;
 use html\formula\formula;

@@ -32,18 +32,20 @@
 
 namespace html\figure;
 
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once SHARED_PATH . 'api.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_GROUP_PATH . 'group.php';
-include_once WEB_RESULT_PATH . 'result.php';
-include_once WEB_SANDBOX_PATH . 'combine_named.php';
-include_once WEB_VALUE_PATH . 'value.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::GROUP . 'group.php';
+include_once html_paths::RESULT . 'result.php';
+include_once html_paths::SANDBOX . 'combine_named.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use html\group\group;
 use html\html_base;

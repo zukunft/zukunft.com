@@ -32,7 +32,9 @@
 
 namespace html\user;
 
-include_once SHARED_ENUM_PATH . 'messages.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use shared\enum\messages as msg_id;
 
@@ -144,7 +146,7 @@ class user_message
             if (!in_array($msg_id, $this->msg_id_lst)) {
                 $this->msg_id_lst[] = $msg_id;
             }
-            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
             if ($this->is_ok()) {
                 $this->set_not_ok();
             }
@@ -182,7 +184,7 @@ class user_message
                 $key_lst)) {
                 $this->msg_var_lst[] = [$msg_id, $var_lst];
             }
-            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
             if ($this->is_ok() and !$ok) {
                 $this->set_not_ok();
             }
@@ -226,7 +228,7 @@ class user_message
     {
         if ($txt != '') {
             $this->add_message_text($txt);
-            // if a message text is added it is expected that the result was not ok, but other stati are not changed
+            // if a message text is added it is expected that the result was not ok, but other statuus are not changed
             if ($this->is_ok()) {
                 $this->set_not_ok();
             }

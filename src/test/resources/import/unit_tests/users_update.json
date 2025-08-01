@@ -5,10 +5,10 @@
   "selection": [
     "unit test message for adding a description to a user via data_object based import"
   ],
-  "verbs": [
+  "users": [
     {
       "name": "zukunft.com system write test user",
-      "description": "test description if it can be added to the verb via import"
+      "description": "test description if it can be added to the user via import"
     }
   ]
 }

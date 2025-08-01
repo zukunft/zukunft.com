@@ -32,11 +32,14 @@
 
 namespace unit;
 
-include_once MODEL_USER_PATH . 'user_message.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_USER . 'user_message.php';
 include_once TEST_CONST_PATH . 'files.php';
-include_once SHARED_CONST_PATH . 'users.php';
+include_once paths::SHARED_CONST . 'users.php';
 
 use cfg\user\user_message;
+use const\paths as test_paths;
 use DateTimeInterface;
 use shared\const\users;
 use shared\library;
@@ -628,7 +631,7 @@ class lib_tests
         $result = $lib->count_recursive($json_array, 20);
         $t->assert("count_recursive - count level 0", $result, 8);
 
-        $json_text = file_get_contents(test_files::IMPORT_PATH . 'wikipedia/democracy_index_table.json');
+        $json_text = file_get_contents(test_files::IMPORT_WIKI_DEMOCRACY);
         $json_array = json_decode($json_text, true);
         $result = $lib->count_recursive($json_array, 3);
         $t->assert("count_recursive - count level 0", $result, 177);

@@ -47,40 +47,42 @@
 
 namespace cfg\result;
 
-//include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_ELEMENT_PATH . 'element_list.php';
-include_once EXPORT_PATH . 'export.php';
-include_once MODEL_FORMULA_PATH . 'expression.php';
-include_once MODEL_FORMULA_PATH . 'figure.php';
-include_once MODEL_FORMULA_PATH . 'formula.php';
-include_once MODEL_FORMULA_PATH . 'formula_db.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_GROUP_PATH . 'group_list.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_multi.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once SHARED_CONST_PATH . 'chars.php';
-include_once SHARED_CALC_PATH . 'parameter_type.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+//include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_ELEMENT . 'element_list.php';
+include_once paths::MODEL_FORMULA . 'expression.php';
+include_once paths::MODEL_FORMULA . 'figure.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_FORMULA . 'formula_db.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_GROUP . 'group_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_CALC . 'parameter_type.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -105,6 +107,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_multi;
 use cfg\sandbox\sandbox_value;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use DateTime;
 use shared\calc\parameter_type;
@@ -212,7 +215,7 @@ class result extends sandbox_value
                 $this->src_grp->set_id($db_row[result_db::FLD_SOURCE_GRP]);
             }
             $this->set_number($db_row[sandbox_multi::FLD_VALUE]);
-            $this->set_owner_id($db_row[user::FLD_ID]);
+            $this->set_owner_id($db_row[user_db::FLD_ID]);
             $this->set_last_update($lib->get_datetime($db_row[sandbox_multi::FLD_LAST_UPDATE]));
             $this->last_val_update = $lib->get_datetime($db_row[sandbox_multi::FLD_LAST_UPDATE]);
 
@@ -479,7 +482,7 @@ class result extends sandbox_value
      */
     function load_standard_sql(sql_creator $sc, array $fld_lst = []): sql_par
     {
-        $fld_lst = array_merge(result_db::FLD_NAMES, array(user::FLD_ID));
+        $fld_lst = array_merge(result_db::FLD_NAMES, array(user_db::FLD_ID));
         return parent::load_standard_sql($sc, $fld_lst);
     }
 
@@ -554,7 +557,7 @@ class result extends sandbox_value
         $sc->set_class(self::class);
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $sc->set_id_field($this->id_field());
-        $sc->set_fields(array_merge(result_db::FLD_NAMES, array(user::FLD_ID)));
+        $sc->set_fields(array_merge(result_db::FLD_NAMES, array(user_db::FLD_ID)));
 
         $qp = $this->load_sql_by_grp_prepare($sc, $grp);
         return parent::load_standard_sql_by($sc, $qp);

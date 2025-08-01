@@ -36,38 +36,40 @@
 
 namespace html\types;
 
-include_once WEB_TYPES_PATH . 'type_object.php';
-include_once WEB_TYPES_PATH . 'type_list.php';
-include_once WEB_TYPES_PATH . 'change_action_list.php';
-include_once WEB_TYPES_PATH . 'change_table_list.php';
-include_once WEB_TYPES_PATH . 'change_field_list.php';
-include_once WEB_TYPES_PATH . 'sys_log_status_list.php';
-include_once WEB_TYPES_PATH . 'user_profile.php';
-include_once WEB_TYPES_PATH . 'job_type_list.php';
-include_once WEB_TYPES_PATH . 'languages.php';
-include_once WEB_TYPES_PATH . 'language_forms.php';
-include_once WEB_TYPES_PATH . 'share.php';
-include_once WEB_TYPES_PATH . 'protection.php';
-include_once WEB_TYPES_PATH . 'verbs.php';
-include_once WEB_TYPES_PATH . 'phrase_types.php';
-include_once WEB_TYPES_PATH . 'formula_type_list.php';
-include_once WEB_TYPES_PATH . 'formula_link_type_list.php';
-include_once WEB_TYPES_PATH . 'source_type_list.php';
-include_once WEB_TYPES_PATH . 'ref_type_list.php';
-include_once WEB_TYPES_PATH . 'view_type_list.php';
-include_once WEB_TYPES_PATH . 'view_style_list.php';
-include_once WEB_TYPES_PATH . 'view_link_type_list.php';
-include_once WEB_TYPES_PATH . 'component_type_list.php';
-include_once WEB_TYPES_PATH . 'component_link_type_list.php';
-include_once WEB_TYPES_PATH . 'position_type_list.php';
-//include_once WEB_VERB_PATH . 'verb.php';
-include_once WEB_VIEW_PATH . 'view_list.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::TYPES . 'type_object.php';
+include_once html_paths::TYPES . 'type_list.php';
+include_once html_paths::TYPES . 'change_action_list.php';
+include_once html_paths::TYPES . 'change_table_list.php';
+include_once html_paths::TYPES . 'change_field_list.php';
+include_once html_paths::TYPES . 'sys_log_status_list.php';
+include_once html_paths::TYPES . 'user_profile.php';
+include_once html_paths::TYPES . 'job_type_list.php';
+include_once html_paths::TYPES . 'languages.php';
+include_once html_paths::TYPES . 'language_forms.php';
+include_once html_paths::TYPES . 'share.php';
+include_once html_paths::TYPES . 'protection.php';
+include_once html_paths::TYPES . 'verbs.php';
+include_once html_paths::TYPES . 'phrase_types.php';
+include_once html_paths::TYPES . 'formula_type_list.php';
+include_once html_paths::TYPES . 'formula_link_type_list.php';
+include_once html_paths::TYPES . 'source_type_list.php';
+include_once html_paths::TYPES . 'ref_type_list.php';
+include_once html_paths::TYPES . 'view_type_list.php';
+include_once html_paths::TYPES . 'view_style_list.php';
+include_once html_paths::TYPES . 'view_link_type_list.php';
+include_once html_paths::TYPES . 'component_type_list.php';
+include_once html_paths::TYPES . 'component_link_type_list.php';
+include_once html_paths::TYPES . 'position_type_list.php';
+//include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'json_fields.php';
 
 // get the api const that are shared between the backend and the html frontend
-include_once SHARED_PATH . 'api.php';
+include_once paths::SHARED . 'api.php';
 
 use html\user\user_message;
 use html\verb\verb;
@@ -230,11 +232,11 @@ class type_lists
             //$usr_msg->add_err('Mandatory system_views missing in API JSON ' . json_encode($json_array));
             $this->set_system_views();
         }
-        if (array_key_exists(api::JSON_LIST_SYS_LOG_STATI, $json_array)) {
-            $this->set_sys_log_stati($json_array[api::JSON_LIST_SYS_LOG_STATI]);
+        if (array_key_exists(api::JSON_LIST_SYS_LOG_STATUUS, $json_array)) {
+            $this->set_sys_log_statuus($json_array[api::JSON_LIST_SYS_LOG_STATUUS]);
         } else {
-            $usr_msg->add_err('Mandatory sys_log_stati missing in API JSON ' . json_encode($json_array));
-            $this->set_sys_log_stati();
+            $usr_msg->add_err('Mandatory sys_log_statuus missing in API JSON ' . json_encode($json_array));
+            $this->set_sys_log_statuus();
         }
         if (array_key_exists(api::JSON_LIST_JOB_TYPES, $json_array)) {
             $this->set_job_types($json_array[api::JSON_LIST_JOB_TYPES]);
@@ -382,11 +384,11 @@ class type_lists
         $html_verbs->set_from_json_array($json_array, verb::class);
     }
 
-    function set_sys_log_stati(array $json_array = null): void
+    function set_sys_log_statuus(array $json_array = null): void
     {
-        global $html_sys_log_stati;
-        $html_sys_log_stati = new sys_log_status_list();
-        $html_sys_log_stati->set_from_json_array($json_array);
+        global $html_sys_log_statuus;
+        $html_sys_log_statuus = new sys_log_status_list();
+        $html_sys_log_statuus->set_from_json_array($json_array);
     }
 
     function set_job_types(array $json_array = null): void

@@ -45,23 +45,25 @@
 
 namespace html\view;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_code_id.php';
-include_once WEB_HTML_PATH . 'display_list.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_COMPONENT_PATH . 'component.php';
-include_once WEB_COMPONENT_PATH . 'component_list.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_VIEW_PATH . 'view_list.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once SHARED_CONST_PATH . 'components.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::HTML . 'display_list.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::COMPONENT . 'component_list.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::WORD . 'triple.php';
+include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use html\component\component_list;
 use html\sandbox\db_object;
@@ -76,6 +78,21 @@ use shared\json_fields;
 
 class view_base extends sandbox_code_id
 {
+
+    /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::VIEW_ADD;
+    const VIEW_EDIT = views::VIEW_EDIT;
+    const VIEW_DEL = views::VIEW_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::VIEW_ADD;
+    const MSG_EDIT = msg_id::VIEW_EDIT;
+    const MSG_DEL = msg_id::VIEW_DEL;
+
 
     /*
      * object vars
@@ -206,48 +223,6 @@ class view_base extends sandbox_code_id
     function title(db_object $dbo): string
     {
         return $this->name() . ' ' . $dbo->name();
-    }
-
-
-    /*
-     * buttons
-     */
-
-    /**
-     * @return string the html code for a bottom
-     * to create a new view for the current user
-     */
-    function btn_add(string $back = ''): string
-    {
-        return parent::btn_add_sbx(
-            views::VIEW_ADD,
-            msg_id::VIEW_ADD,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to change a view e.g. the name or the type
-     */
-    function btn_edit(string $back = ''): string
-    {
-        return parent::btn_edit_sbx(
-            views::VIEW_EDIT,
-            msg_id::VIEW_EDIT,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to exclude the view for the current user
-     * or if no one uses the view delete the complete view
-     */
-    function btn_del(string $back = ''): string
-    {
-        return parent::btn_del_sbx(
-            views::VERB_DEL,
-            msg_id::VALUE_DEL,
-            $back);
     }
 
 

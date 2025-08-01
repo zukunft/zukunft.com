@@ -31,8 +31,10 @@
 
 namespace html\hist;
 
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_WORD_PATH . 'word.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::WORD . 'word.php';
 
 use html\html_base;
 use html\word\word;

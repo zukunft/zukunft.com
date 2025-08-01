@@ -32,15 +32,18 @@
 
 namespace unit;
 
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'changes_norm.php';
-include_once MODEL_LOG_PATH . 'changes_big.php';
-include_once MODEL_LOG_PATH . 'change_link.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once MODEL_WORD_PATH . 'triple_db.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once html_paths::LOG . 'user_log_display.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'changes_norm.php';
+include_once paths::MODEL_LOG . 'changes_big.php';
+include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::MODEL_WORD . 'triple_db.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
@@ -57,7 +60,6 @@ use cfg\log\change_table_field;
 use cfg\log\change_value;
 use cfg\log\change_values_prime;
 use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_value;
 use cfg\user\user;
 use cfg\value\value;
 use cfg\word\triple;

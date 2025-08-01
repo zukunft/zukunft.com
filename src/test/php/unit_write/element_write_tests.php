@@ -32,7 +32,9 @@
 
 namespace unit_write;
 
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'verbs.php';
 
 use html\element\element;
 use shared\api;
@@ -55,10 +57,10 @@ class element_write_tests
 
         $t->subheader('prepare formula element write');
         $wrd_total = $t->test_word(words::TEST_TOTAL);
-        $frm_sector = $t->test_formula(formulas::SYSTEM_TEXT_SECTOR, formulas::SYSTEM_TEXT_SECTOR_EXP);
+        $frm_sector = $t->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
 
         // load increase formula for testing
-        $frm = $t->load_formula(formulas::SYSTEM_TEXT_SECTOR);
+        $frm = $t->load_formula(formulas::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
         $elm_lst = $exp->element_list();
 
@@ -138,10 +140,10 @@ class element_write_tests
 
         $t->subheader('prepare formula element write');
         $wrd_total = $t->test_word(words::TEST_TOTAL);
-        $frm_sector = $t->test_formula(formulas::SYSTEM_TEXT_SECTOR, formulas::SYSTEM_TEXT_SECTOR_EXP);
+        $frm_sector = $t->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
 
         // load increase formula for testing
-        $frm = $t->load_formula(formulas::SYSTEM_TEXT_SECTOR);
+        $frm = $t->load_formula(formulas::SYSTEM_TEST_SECTOR);
         $exp = $frm->expression();
         $elm_lst = $exp->element_list();
 

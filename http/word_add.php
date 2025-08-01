@@ -34,7 +34,7 @@
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
 /*
 
@@ -51,10 +51,12 @@ Delete a word (check if nothing is depending on the word to delete)
 
 */
 
+use cfg\const\paths;
+
 
 /* standard zukunft header for callable php files to allow debugging and lib loading */
 
-include_once SHARED_CONST_PATH . 'views.php';
+include_once paths::SHARED_CONST . 'views.php';
 
 use cfg\phrase\term;
 use cfg\user\user;

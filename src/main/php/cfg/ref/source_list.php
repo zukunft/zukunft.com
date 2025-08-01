@@ -32,18 +32,20 @@
 
 namespace cfg\ref;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_list_named.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once MODEL_IMPORT_PATH . 'import.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_REF_PATH . 'source_db.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_CONST_PATH . 'triples.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -51,10 +53,7 @@ use cfg\db\sql_par;
 use cfg\db\sql_par_type;
 use cfg\import\import;
 use cfg\sandbox\sandbox_list_named;
-use cfg\ref\source_db;
 use cfg\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\const\triples;
 use shared\const\words;
 
 class source_list extends sandbox_list_named
@@ -170,18 +169,6 @@ class source_list extends sandbox_list_named
     }
 
     /**
-     * load a list of sources by the names
-     * @param array $names a named object used for selection e.g. a source type
-     * @return bool true if at least one source found
-     */
-    function load_by_names(array $names = []): bool
-    {
-        global $db_con;
-        $qp = $this->load_sql_by_names($db_con->sql_creator(), $names);
-        return $this->load($qp);
-    }
-
-    /**
      * load the sources selected by the id
      *
      * @param array $ids of source ids that should be loaded
@@ -231,10 +218,10 @@ class source_list extends sandbox_list_named
     /**
      * store all sources from this list in the database using grouped calls of predefined sql functions
      *
-     * @param import $imp the import object with the estimate of the total save time
+     * @param import|null $imp the import object with the estimate of the total save time
      * @return user_message in case of an issue the problem description what has failed and a suggested solution
      */
-    function save(import $imp): user_message
+    function save(import $imp = null): user_message
     {
         // TODO create a test that fields not included in the import message are not updated, but e.g. an empty description is updated
         return parent::save_block_wise($imp, words::SOURCES, source::class, new source_list($this->user()));

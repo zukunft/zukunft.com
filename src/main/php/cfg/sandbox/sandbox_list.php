@@ -41,27 +41,29 @@
 
 namespace cfg\sandbox;
 
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-//include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_RESULT_PATH . 'result_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-//include_once MODEL_VALUE_PATH . 'value_list.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_HELPER_PATH . 'IdObject.php';
-include_once SHARED_HELPER_PATH . 'TextIdObject.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+//include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VALUE . 'value_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\helper\db_object_seq_id;
 use cfg\system\base_list;
@@ -133,8 +135,8 @@ class sandbox_list extends base_list
         if ($db_rows != null) {
             foreach ($db_rows as $db_row) {
                 $excluded = null;
-                if (array_key_exists(sandbox::FLD_EXCLUDED, $db_row)) {
-                    $excluded = $db_row[sandbox::FLD_EXCLUDED];
+                if (array_key_exists(sql_db::FLD_EXCLUDED, $db_row)) {
+                    $excluded = $db_row[sql_db::FLD_EXCLUDED];
                 }
                 if (is_null($excluded) or $excluded == 0 or $load_all) {
                     $obj_to_add = clone $sdb_obj;
@@ -532,20 +534,21 @@ class sandbox_list extends base_list
      */
     function name(int $limit = null): string
     {
-        return '"' . implode('","', $this->names($limit)) . '"';
+        return '"' . implode('","', $this->names(false, $limit)) . '"';
     }
 
     /**
+     * @param bool $ignore_excluded if true also the excluded names are included
      * @param ?int $limit the max number of ids to show
      * @return array with all names of the list
      */
-    function names(int $limit = null): array
+    function names(bool $ignore_excluded = false, int $limit = null): array
     {
         $result = [];
         $pos = 0;
         foreach ($this->lst() as $sbx_obj) {
             if ($pos <= $limit or $limit == null) {
-                $result[] = $sbx_obj->name();
+                $result[] = $sbx_obj->name($ignore_excluded);
                 $pos++;
             }
         }

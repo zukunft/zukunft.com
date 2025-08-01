@@ -32,7 +32,9 @@
 
 namespace unit_read;
 
-include_once SHARED_ENUM_PATH . 'source_types.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'source_types.php';
 
 use cfg\ref\source;
 use cfg\ref\source_list;

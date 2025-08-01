@@ -48,34 +48,36 @@
 
 namespace html\word;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once WEB_HTML_PATH . 'button.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'html_selector.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_HTML_PATH . 'styles.php';
-include_once SHARED_ENUM_PATH . 'foaf_direction.php';
-//include_once WEB_FORMULA_PATH . 'formula.php';
-//include_once WEB_HELPER_PATH . 'config.php';
-include_once WEB_LOG_PATH . 'change_log_named.php';
-//include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-//include_once WEB_PHRASE_PATH . 'term.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_code_id.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_VERB_PATH . 'verb_list.php';
-//include_once WEB_VIEW_PATH . 'view.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_typed.php';
+include_once paths::API_OBJECT . 'api_message.php';
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'styles.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
+//include_once html_paths::FORMULA . 'formula.php';
+//include_once html_paths::HELPER . 'config.php';
+include_once html_paths::LOG . 'change_log_named.php';
+//include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+//include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VERB . 'verb_list.php';
+//include_once html_paths::VIEW . 'view.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
 
 use controller\api_message;
 use html\button;
@@ -106,6 +108,21 @@ use shared\types\view_styles;
 
 class word extends sandbox_code_id
 {
+
+    /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::WORD_ADD;
+    const VIEW_EDIT = views::WORD_EDIT;
+    const VIEW_DEL = views::WORD_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::WORD_ADD;
+    const MSG_EDIT = msg_id::WORD_EDIT;
+    const MSG_DEL = msg_id::WORD_DEL;
+
 
     /*
      * object vars
@@ -143,6 +160,11 @@ class word extends sandbox_code_id
             if (array_key_exists(api::URL_VAR_VIEW, $url_array)) {
                 if ($url_array[api::URL_VAR_VIEW] != null) {
                     $this->set_view_id($url_array[api::URL_VAR_VIEW]);
+                }
+            }
+            if (array_key_exists(api::URL_VAR_VIEW_LONG, $url_array)) {
+                if ($url_array[api::URL_VAR_VIEW_LONG] != null) {
+                    $this->set_view_id($url_array[api::URL_VAR_VIEW_LONG]);
                 }
             }
         }
@@ -344,43 +366,6 @@ class word extends sandbox_code_id
     /*
      * buttons
      */
-
-    /**
-     * @return string the html code for a bottom
-     * to create a new word for the current user
-     */
-    function btn_add(string $back = ''): string
-    {
-        return parent::btn_add_sbx(
-            views::WORD_ADD,
-            msg_id::WORD_ADD,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to change a word e.g. the name or the type
-     */
-    function btn_edit(string $back = ''): string
-    {
-        return parent::btn_edit_sbx(
-            views::WORD_EDIT,
-            msg_id::WORD_EDIT,
-            $back);
-    }
-
-    /**
-     * @return string the html code for a bottom
-     * to exclude the word for the current user
-     * or if no one uses the word delete the complete word
-     */
-    function btn_del(string $back = ''): string
-    {
-        return parent::btn_del_sbx(
-            views::WORD_DEL,
-            msg_id::WORD_DEL,
-            $back);
-    }
 
     /**
      * @returns string the html code to display a bottom to edit the word link in a table cell
@@ -585,11 +570,7 @@ class word extends sandbox_code_id
      */
     function is_hidden(): bool
     {
-        $result = false;
-        if ($this->is_type(phrase_type::SCALING_HIDDEN)) {
-            $result = true;
-        }
-        return $result;
+        return $this->is_type(phrase_type::SCALING_HIDDEN);
     }
 
     /*

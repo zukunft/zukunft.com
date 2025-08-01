@@ -33,7 +33,9 @@
 
 namespace unit_write;
 
-include_once SHARED_CONST_PATH . 'triples.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'triples.php';
 
 use cfg\db\sql_type;
 use cfg\group\group;

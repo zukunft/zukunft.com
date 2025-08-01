@@ -39,17 +39,18 @@
 
 namespace test;
 
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_LOG_PATH . 'change_log_list.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once WEB_LOG_PATH . 'change_log_list.php';
-include_once EXPORT_PATH . 'export.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_log_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once html_paths::LOG . 'change_log_list.php';
 
 use cfg\db\sql_db;
 use cfg\element\element;
-use cfg\export\export;
 use cfg\formula\formula;
 use cfg\log\change_log_list;
 use cfg\system\job;
@@ -65,8 +66,6 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\word\word;
 use controller\controller;
-use DateTime;
-use Exception;
 use html\rest_ctrl;
 use html\log\change_log_list as change_log_list_dsp;
 use shared\api;
@@ -76,6 +75,8 @@ use shared\library;
 use shared\types\api_type;
 use shared\types\api_type_list;
 use unit\sys_log_tests;
+use DateTime;
+use Exception;
 
 class test_api extends create_test_objects
 {
@@ -164,7 +165,7 @@ class test_api extends create_test_objects
         $target = '"id":1,"excluded":true';
         // TODO Prio 2 deprecate this exception
         if ($class == element::class) {
-            $target = '"id":101,"excluded":true';
+            $target = '"id":104,"excluded":true';
         }
         $result = $this->assert_text_contains($test_name, $json_excluded, $target);
         if ($result) {
@@ -178,7 +179,7 @@ class test_api extends create_test_objects
             $target = self::JSON_ID_ONLY;
             // TODO Prio 2 deprecate this exception
             if ($class == element::class) {
-                $target = '{"id":101,"name":"minute","class":"word"}';
+                $target = '{"id":104,"name":"minute","class":"word"}';
             }
             $result = $this->assert($test_name, $json_empty, $target);
         }

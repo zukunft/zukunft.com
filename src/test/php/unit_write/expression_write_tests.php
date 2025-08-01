@@ -54,16 +54,16 @@ class expression_write_tests
         $wrd_price = $t->test_word(words::TEST_PRICE);
         $wrd_earning = $t->test_word(words::TEST_EARNING);
         $wrd_pe = $t->test_word(words::TEST_PE);
-        $frm_ratio = $t->test_formula(formulas::SYSTEM_TEXT_RATIO, formulas::SYSTEM_TEXT_RATIO_EXP);
+        $frm_ratio = $t->test_formula(formulas::SYSTEM_TEST_RATIO, formulas::SYSTEM_TEST_RATIO_EXP);
         $wrd_total = $t->test_word(words::TEST_TOTAL);
-        $frm_sector = $t->test_formula(formulas::SYSTEM_TEXT_SECTOR, formulas::SYSTEM_TEXT_SECTOR_EXP);
+        $frm_sector = $t->test_formula(formulas::SYSTEM_TEST_SECTOR, formulas::SYSTEM_TEST_SECTOR_EXP);
 
         $back = '';
 
         // load formulas for expression testing
-        $frm_this = $t->load_formula(formulas::SYSTEM_TEXT_THIS);
+        $frm_this = $t->load_formula(formulas::SYSTEM_TEST_THIS);
         $frm = $t->load_formula(formulas::INCREASE);
-        $frm_pe = $t->load_formula(formulas::SYSTEM_TEXT_RATIO);
+        $frm_pe = $t->load_formula(formulas::SYSTEM_TEST_RATIO);
 
         $result = $frm_sector->usr_text;
         $target = '= "' . words::COUNTRY . '" "differentiator" "' . words::CANTON . '" / "' . words::TEST_TOTAL . '"';

@@ -32,8 +32,10 @@
 
 namespace unit_read;
 
-include_once SHARED_CONST_PATH . 'formulas.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\word\word;
 use cfg\word\word_list;

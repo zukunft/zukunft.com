@@ -36,15 +36,17 @@
 
 namespace cfg\system;
 
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_SYSTEM_PATH . 'base_list.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_SYSTEM . 'base_list.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_par;

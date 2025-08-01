@@ -61,32 +61,35 @@
 
 namespace cfg\group;
 
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'groups.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'groups.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -105,6 +108,7 @@ use cfg\result\result;
 use cfg\sandbox\sandbox_multi;
 use cfg\sandbox\sandbox_value;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\word\word;
@@ -130,9 +134,6 @@ class group extends sandbox_multi
     const FLD_NAME_COM = 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
     const FLD_NAME = 'group_name';
     const FLD_NAME_SQL_TYP = sql_field_type::TEXT;
-    const FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
-    const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
 
     // comments used for the database creation
     const TBL_COMMENT = 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
@@ -151,12 +152,12 @@ class group extends sandbox_multi
     );
     const FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_NAME, self::FLD_NAME_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NAME_COM],
-        [self::FLD_DESCRIPTION, self::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
+        [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_DESCRIPTION_COM],
     );
 
     // all database field names excluding the id
     const FLD_NAMES = array(
-        self::FLD_DESCRIPTION
+        sql_db::FLD_DESCRIPTION
     );
     // list of fixed tables where a group name overwrite might be stored
     // TODO check if this can be used somewhere else means if there are unwanted repeating
@@ -233,7 +234,7 @@ class group extends sandbox_multi
         }
         if ($result) {
             $this->name = $db_row[self::FLD_NAME];
-            $this->description = $db_row[self::FLD_DESCRIPTION];
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->is_saved = true;
         }
         return $result;
@@ -914,7 +915,7 @@ class group extends sandbox_multi
     {
         $fld_lst = array_merge(
             $this::FLD_NAMES,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         );
         return parent::load_standard_sql($sc, $fld_lst);
     }
@@ -934,7 +935,7 @@ class group extends sandbox_multi
 
         $fld_lst = array_merge(
             $this::FLD_NAMES,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         );
 
         $sc->set_class($this::class, $sc_par_lst);
@@ -1598,7 +1599,7 @@ class group extends sandbox_multi
                 $db_con->set_class(group::class);
                 // TODO activate Prio 2
                 /*
-                if ($db_con->update_old($this->id(), self::FLD_DESCRIPTION, $group_name)) {
+                if ($db_con->update_old($this->id(), sql_db::FLD_DESCRIPTION, $group_name)) {
                     $result = $group_name;
                 }
                 log_debug('updated to ' . $group_name);
@@ -1756,9 +1757,9 @@ class group extends sandbox_multi
         $fvt_lst = new sql_par_field_list();
         $fvt_lst->set([
             [group::FLD_ID, $this->id(), $sc->get_sql_par_type($this->id())],
-            [user::FLD_ID, $this->user()->id(), sql_par_type::INT],
+            [user_db::FLD_ID, $this->user()->id(), sql_par_type::INT],
             [self::FLD_NAME, $this->name, sql_par_type::TEXT],
-            [self::FLD_DESCRIPTION, $this->description, sql_par_type::TEXT]
+            [sql_db::FLD_DESCRIPTION, $this->description, sql_par_type::TEXT]
         ]);
         $qp->sql = $sc->create_sql_insert($fvt_lst);
         $qp->par = $fvt_lst->values();
@@ -1786,7 +1787,7 @@ class group extends sandbox_multi
         if (count($fld_val_typ_lst) == 0) {
             $fld_val_typ_lst = [
                 [self::FLD_NAME, $this->name, self::FLD_NAME_SQL_TYP],
-                [self::FLD_DESCRIPTION, $this->description, self::FLD_DESCRIPTION_SQL_TYP]
+                [sql_db::FLD_DESCRIPTION, $this->description, sql_db::FLD_DESCRIPTION_SQL_TYP]
             ];
         }
         $fields = $sc->get_fields($fld_val_typ_lst);
@@ -1829,7 +1830,7 @@ class group extends sandbox_multi
      */
     function db_fields_all(sql_type_list $sc_par_lst = new sql_type_list()): array
     {
-        return array_merge([self::FLD_NAME, self::FLD_DESCRIPTION]);
+        return array_merge([self::FLD_NAME, sql_db::FLD_DESCRIPTION]);
     }
 
     /**
@@ -1850,9 +1851,9 @@ class group extends sandbox_multi
         }
         if ($grp->description <> $this->description) {
             $lst[] = [
-                self::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
                 $this->description,
-                self::FLD_DESCRIPTION_SQL_TYP
+                sql_db::FLD_DESCRIPTION_SQL_TYP
             ];
         }
         return $lst;

@@ -32,9 +32,12 @@
 
 namespace unit;
 
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once html_paths::PHRASE . 'phrase.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\db\sql_creator;
 use cfg\phrase\phrase;

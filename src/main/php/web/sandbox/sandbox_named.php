@@ -39,16 +39,18 @@
 
 namespace html\sandbox;
 
-include_once WEB_HTML_PATH . 'html_base.php';
-//include_once WEB_GROUP_PATH . 'group.php';
-include_once WEB_SANDBOX_PATH . 'sandbox.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::HTML . 'html_base.php';
+//include_once html_paths::GROUP . 'group.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\group\group;
 use html\html_base;
@@ -161,6 +163,9 @@ class sandbox_named extends sandbox
         } else {
             $this->set_name('');
             log_err('Mandatory field name missing in form array ' . json_encode($url_array));
+        }
+        if (array_key_exists(api::URL_VAR_DESCRIPTION, $url_array)) {
+            $this->set_description($url_array[api::URL_VAR_DESCRIPTION]);
         }
         return $usr_msg;
     }

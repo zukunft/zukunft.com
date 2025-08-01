@@ -32,8 +32,11 @@
 
 namespace unit;
 
-include_once WEB_VALUE_PATH . 'value_list.php';
-include_once MODEL_VALUE_PATH . 'value_list.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once html_paths::VALUE . 'value_list.php';
+include_once paths::MODEL_VALUE . 'value_list.php';
 
 use cfg\db\sql_creator;
 use cfg\db\sql_db;

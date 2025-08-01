@@ -2,7 +2,7 @@
 
 /*
 
-    model/system/job_time.php - to schedulea a job with predefined parameters
+    model/system/job_time.php - to scheduled a job with predefined parameters
     -------------------------
 
 
@@ -32,14 +32,17 @@
 
 namespace cfg\system;
 
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_USER_PATH . 'user.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
 
 use cfg\db\sql;
 use cfg\db\sql_field_default;
@@ -48,6 +51,7 @@ use cfg\helper\db_object_seq_id;
 use cfg\helper\type_object;
 use cfg\phrase\phrase;
 use cfg\user\user;
+use cfg\user\user_db;
 
 class job_time extends db_object_seq_id
 {
@@ -71,7 +75,7 @@ class job_time extends db_object_seq_id
     const FLD_LST_ALL = array(
         [self::FLD_SCHEDULE, sql_field_type::CRONTAB, sql_field_default::NULL, sql::INDEX, '', self::FLD_SCHEDULE_COM],
         [job_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, job_type::class, self::FLD_TYPE_COM],
-        [user::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
+        [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [self::FLD_START, sql_field_type::TIME, sql_field_default::NULL, '', '', self::FLD_START_COM],
         [self::FLD_PARAMETER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PARAMETER_COM, phrase::FLD_ID],
     );

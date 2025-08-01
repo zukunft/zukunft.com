@@ -34,7 +34,7 @@
 
 namespace cfg\group;
 
-//include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+//include_once paths::MODEL_PHRASE . 'phrase_list.php';
 
 use cfg\phrase\phrase_list;
 

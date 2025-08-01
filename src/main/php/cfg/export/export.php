@@ -43,12 +43,15 @@
 
 namespace cfg\export;
 
-include_once SHARED_PATH . 'library.php';
-include_once SERVICE_PATH . 'config.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once paths::SHARED . 'library.php';
+include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\config;
 use cfg\phrase\phrase_list;

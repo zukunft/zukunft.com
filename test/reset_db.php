@@ -37,7 +37,7 @@ global $debug;
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
 // path for the general tests and test setup
 const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
@@ -48,9 +48,9 @@ include_once TEST_PHP_UTIL_PATH . 'test_base.php';
 // load the main test control class
 include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
 
+use cfg\log_text\text_log_format;
 use cfg\user\user;
 use test\all_tests;
-use test\format;
 
 
 global $db_con;
@@ -76,11 +76,12 @@ if ($db_con->is_open()) {
             $t->header('drop and recreate zukunft.com database');
 
             // run the unit tests and reset the database
+            $t = new all_tests();
             $t->run_unit();
             $t->run_db_recreate();
 
             // display the test results
-            if ($t->format == format::HTML) {
+            if ($t->format == text_log_format::HTML) {
                 $t->dsp_result_html();
             } else {
                 $t->dsp_result();

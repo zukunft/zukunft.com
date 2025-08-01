@@ -32,14 +32,16 @@
 
 namespace html;
 
-include_once WEB_HELPER_PATH . 'data_object.php';
-include_once WEB_HTML_PATH . 'table.php';
-include_once WEB_HTML_PATH . 'scopes.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_WORD_PATH . 'triple.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'table.php';
+include_once html_paths::HTML . 'scopes.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use html\helper\data_object;
 use html\phrase\phrase;

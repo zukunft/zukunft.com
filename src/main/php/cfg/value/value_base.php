@@ -79,68 +79,70 @@
 
 namespace cfg\value;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once EXPORT_PATH . 'export.php';
-include_once MODEL_FORMULA_PATH . 'expression.php';
-include_once MODEL_FORMULA_PATH . 'figure.php';
-include_once MODEL_GROUP_PATH . 'group.php';
-include_once MODEL_GROUP_PATH . 'group_id.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_multi.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_LOG_PATH . 'change_log.php';
-include_once MODEL_LOG_PATH . 'changes_big.php';
-include_once MODEL_LOG_PATH . 'changes_norm.php';
-include_once MODEL_LOG_PATH . 'change_value.php';
-include_once MODEL_LOG_PATH . 'change_values_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_big.php';
-include_once MODEL_LOG_PATH . 'change_value_text.php';
-include_once MODEL_LOG_PATH . 'change_values_text_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_text_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_text_big.php';
-include_once MODEL_LOG_PATH . 'change_value_time.php';
-include_once MODEL_LOG_PATH . 'change_values_time_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_time_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_time_big.php';
-include_once MODEL_LOG_PATH . 'change_value_geo.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_prime.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_norm.php';
-include_once MODEL_LOG_PATH . 'change_values_geo_big.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_REF_PATH . 'source_db.php';
-include_once MODEL_RESULT_PATH . 'result_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_multi.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_value.php';
-include_once MODEL_SYSTEM_PATH . 'job.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'log.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once SHARED_CONST_PATH . 'chars.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'change_fields.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_FORMULA . 'expression.php';
+include_once paths::MODEL_FORMULA . 'figure.php';
+include_once paths::MODEL_GROUP . 'group.php';
+include_once paths::MODEL_GROUP . 'group_id.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_multi.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_log.php';
+include_once paths::MODEL_LOG . 'changes_big.php';
+include_once paths::MODEL_LOG . 'changes_norm.php';
+include_once paths::MODEL_LOG . 'change_value.php';
+include_once paths::MODEL_LOG . 'change_values_prime.php';
+include_once paths::MODEL_LOG . 'change_values_norm.php';
+include_once paths::MODEL_LOG . 'change_values_big.php';
+include_once paths::MODEL_LOG . 'change_value_text.php';
+include_once paths::MODEL_LOG . 'change_values_text_prime.php';
+include_once paths::MODEL_LOG . 'change_values_text_norm.php';
+include_once paths::MODEL_LOG . 'change_values_text_big.php';
+include_once paths::MODEL_LOG . 'change_value_time.php';
+include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+include_once paths::MODEL_LOG . 'change_values_time_big.php';
+include_once paths::MODEL_LOG . 'change_value_geo.php';
+include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
+include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+include_once paths::MODEL_SYSTEM . 'job.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_SYSTEM . 'log.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_par_field_list;
@@ -167,6 +169,7 @@ use cfg\ref\source;
 use cfg\sandbox\sandbox_multi;
 use cfg\ref\source_db;
 use cfg\system\log;
+use cfg\user\user_db;
 use shared\const\chars;
 use shared\enum\change_actions;
 use shared\enum\change_fields;
@@ -591,22 +594,6 @@ class value_base extends sandbox_value
         return $this->symbol;
     }
 
-    /**
-     * @return phrase_list the phrase list of the value
-     */
-    function phrase_list(): phrase_list
-    {
-        return $this->grp()->phrase_list();
-    }
-
-    /**
-     * @return array with the ids of the phrases
-     */
-    function ids(): array
-    {
-        return $this->phrase_list()->ids();
-    }
-
     function set_group_id_by_phrase_list(phrase_list $phr_lst): user_message
     {
         $usr_msg = new user_message();
@@ -812,34 +799,34 @@ class value_base extends sandbox_value
             $fld_lst = array_merge(
                 value_db::FLD_NAMES,
                 value_db::FLD_NAMES_NUM_USR,
-                array(user::FLD_ID)
+                array(user_db::FLD_ID)
             );
         } elseif ($this->is_time_value()) {
             $fld_lst = array_merge(
                 value_db::FLD_NAMES,
                 value_db::FLD_NAMES_NUM_USR_TIME,
-                array(user::FLD_ID)
+                array(user_db::FLD_ID)
             );
         } elseif ($this->is_text_value()) {
             $fld_lst = array_merge(
                 value_db::FLD_NAMES,
                 value_db::FLD_NAMES_USR_TEXT,
                 value_db::FLD_NAMES_NUM_USR_TEXT,
-                array(user::FLD_ID)
+                array(user_db::FLD_ID)
             );
         } elseif ($this->is_geo_value()) {
             $fld_lst = array_merge(
                 value_db::FLD_NAMES,
                 value_db::FLD_NAMES_USR_GEO,
                 value_db::FLD_NAMES_NUM_USR_GEO,
-                array(user::FLD_ID)
+                array(user_db::FLD_ID)
             );
         } else {
             // fallback option
             $fld_lst = array_merge(
                 value_db::FLD_NAMES,
                 value_db::FLD_NAMES_NUM_USR,
-                array(user::FLD_ID)
+                array(user_db::FLD_ID)
             );
         }
         return parent::load_standard_sql($sc, $fld_lst);
@@ -1650,7 +1637,7 @@ class value_base extends sandbox_value
         } else {
             $qp = $this->not_changed_sql($db_con->sql_creator());
             $db_row = $db_con->get1($qp);
-            if ($db_row[user::FLD_ID] > 0) {
+            if ($db_row[user_db::FLD_ID] > 0) {
                 $result = false;
             }
         }
@@ -2225,7 +2212,7 @@ class value_base extends sandbox_value
                 //    $this->set_id($ins_result->get_row_id());
                 //}
                 //$db_con->set_type(self::class);
-                //$this->set_id($db_con->insert(array(group::FLD_ID, user::FLD_ID, value_db::FLD_VALUE, sandbox_multi::FLD_LAST_UPDATE), array($this->grp()->id(), $this->user()->id, $this->number, sql::NOW)));
+                //$this->set_id($db_con->insert(array(group::FLD_ID, user_db::FLD_ID, value_db::FLD_VALUE, sandbox_multi::FLD_LAST_UPDATE), array($this->grp()->id(), $this->user()->id, $this->number, sql::NOW)));
                 if ($this->is_id_set()) {
                     // update the reference in the log
                     if ($this->grp()->is_prime()) {

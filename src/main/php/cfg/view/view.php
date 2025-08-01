@@ -52,42 +52,45 @@
 
 namespace cfg\view;
 
-include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component.php';
-include_once MODEL_COMPONENT_PATH . 'component_link.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_list.php';
-include_once MODEL_COMPONENT_PATH . 'position_type.php';
-include_once MODEL_COMPONENT_PATH . 'view_style.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_code_id.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_typed.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'term_view.php';
-include_once MODEL_VIEW_PATH . 'view_type.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'position_types.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_SANDBOX . 'sandbox_typed.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_COMPONENT . 'component_link.php';
+include_once paths::MODEL_COMPONENT . 'component_link_list.php';
+include_once paths::MODEL_COMPONENT . 'component_list.php';
+include_once paths::MODEL_COMPONENT . 'position_type.php';
+include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_typed.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'term_view.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'position_types.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -112,6 +115,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_code_id;
 use cfg\sandbox\sandbox_typed;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
@@ -716,7 +720,7 @@ class view extends sandbox_code_id
             view_db::FLD_NAMES,
             view_db::FLD_NAMES_USR,
             view_db::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         ));
 
         return parent::load_standard_sql($sc);
@@ -1062,10 +1066,10 @@ class view extends sandbox_code_id
      * check if the view in the database needs to be updated
      * e.g. for import if this view has only the name set, the protection should not be updated in the database
      *
-     * @param view|sandbox $db_obj the word as saved in the database
+     * @param view|CombineObject|db_object_seq_id $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(view|sandbox $db_obj): bool
+    function needs_db_update(view|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->style() != null) {

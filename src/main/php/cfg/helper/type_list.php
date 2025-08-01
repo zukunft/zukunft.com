@@ -32,71 +32,73 @@
 
 namespace cfg\helper;
 
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once MODEL_CONST_PATH . 'def.php';
-include_once MODEL_CONST_PATH . 'files.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_link_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'component_type.php';
-include_once MODEL_COMPONENT_PATH . 'component_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'position_type.php';
-include_once MODEL_COMPONENT_PATH . 'position_type_list.php';
-include_once MODEL_COMPONENT_PATH . 'view_style.php';
-include_once MODEL_COMPONENT_PATH . 'view_style_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once MODEL_ELEMENT_PATH . 'element_type.php';
-include_once MODEL_ELEMENT_PATH . 'element_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type_list.php';
-include_once MODEL_FORMULA_PATH . 'formula_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_type_list.php';
-include_once MODEL_REF_PATH . 'ref_type.php';
-include_once MODEL_REF_PATH . 'ref_type_list.php';
-include_once MODEL_REF_PATH . 'source_type.php';
-include_once MODEL_REF_PATH . 'source_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'job_type.php';
-include_once MODEL_SYSTEM_PATH . 'job_type_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language.php';
-include_once MODEL_LANGUAGE_PATH . 'language_form.php';
-include_once MODEL_LANGUAGE_PATH . 'language_form_list.php';
-include_once MODEL_LANGUAGE_PATH . 'language_list.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_action_list.php';
-include_once MODEL_LOG_PATH . 'change_field.php';
-include_once MODEL_LOG_PATH . 'change_field_list.php';
-include_once MODEL_LOG_PATH . 'change_table.php';
-include_once MODEL_LOG_PATH . 'change_table_field.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
-include_once MODEL_PHRASE_PATH . 'phrase_types.php';
-include_once MODEL_REF_PATH . 'ref.php';
-include_once MODEL_SANDBOX_PATH . 'protection_type_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_SANDBOX_PATH . 'share_type_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_function_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status_list.php';
-include_once MODEL_SYSTEM_PATH . 'sys_log_status.php';
-include_once MODEL_USER_PATH . 'user_profile.php';
-include_once MODEL_USER_PATH . 'user_profile_list.php';
-include_once MODEL_VERB_PATH . 'verb.php';
-include_once MODEL_VERB_PATH . 'verb_db.php';
-include_once MODEL_VERB_PATH . 'verb_list.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_link_type.php';
-include_once MODEL_VIEW_PATH . 'view_link_type_list.php';
-include_once MODEL_VIEW_PATH . 'view_type.php';
-include_once MODEL_VIEW_PATH . 'view_type_list.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
+include_once paths::MODEL_COMPONENT . 'component_type.php';
+include_once paths::MODEL_COMPONENT . 'component_type_list.php';
+include_once paths::MODEL_COMPONENT . 'position_type.php';
+include_once paths::MODEL_COMPONENT . 'position_type_list.php';
+include_once paths::MODEL_COMPONENT . 'view_style.php';
+include_once paths::MODEL_COMPONENT . 'view_style_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::MODEL_ELEMENT . 'element_type.php';
+include_once paths::MODEL_ELEMENT . 'element_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type_list.php';
+include_once paths::MODEL_FORMULA . 'formula_type.php';
+include_once paths::MODEL_FORMULA . 'formula_type_list.php';
+include_once paths::MODEL_REF . 'ref_type.php';
+include_once paths::MODEL_REF . 'ref_type_list.php';
+include_once paths::MODEL_REF . 'source_type.php';
+include_once paths::MODEL_REF . 'source_type_list.php';
+include_once paths::MODEL_SYSTEM . 'job_type.php';
+include_once paths::MODEL_SYSTEM . 'job_type_list.php';
+include_once paths::MODEL_LANGUAGE . 'language.php';
+include_once paths::MODEL_LANGUAGE . 'language_form.php';
+include_once paths::MODEL_LANGUAGE . 'language_form_list.php';
+include_once paths::MODEL_LANGUAGE . 'language_list.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_action_list.php';
+include_once paths::MODEL_LOG . 'change_field.php';
+include_once paths::MODEL_LOG . 'change_field_list.php';
+include_once paths::MODEL_LOG . 'change_table.php';
+include_once paths::MODEL_LOG . 'change_table_field.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::MODEL_PHRASE . 'phrase_types.php';
+include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_SANDBOX . 'protection_type_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_SANDBOX . 'share_type_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_function_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status_list.php';
+include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
+include_once paths::MODEL_USER . 'user_profile.php';
+include_once paths::MODEL_USER . 'user_profile_list.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_VERB . 'verb_db.php';
+include_once paths::MODEL_VERB . 'verb_list.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_link_type.php';
+include_once paths::MODEL_VIEW . 'view_link_type_list.php';
+include_once paths::MODEL_VIEW . 'view_type.php';
+include_once paths::MODEL_VIEW . 'view_type_list.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\component\component_link_type;
 use cfg\component\component_link_type_list;
@@ -306,9 +308,9 @@ class type_list
         if ($class == verb::class) {
             $sc->set_fields(verb_db::FLD_NAMES);
         } elseif ($class == ref_type::class) {
-            $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql::FLD_CODE_ID, ref_type_list::FLD_URL));
+            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID, ref_type_list::FLD_URL));
         } else {
-            $sc->set_fields(array(sandbox_named::FLD_DESCRIPTION, sql::FLD_CODE_ID));
+            $sc->set_fields(array(sql_db::FLD_DESCRIPTION, sql_db::FLD_CODE_ID));
         }
         if ($order_field == '') {
             $order_field = $sc->get_id_field_name($class);
@@ -401,7 +403,7 @@ class type_list
         if ($db_lst != null) {
             foreach ($db_lst as $db_row) {
                 $type_id = $db_row[$db_con->get_id_field_name($class)];
-                $type_code_id = strval($db_row[sql::FLD_CODE_ID]);
+                $type_code_id = strval($db_row[sql_db::FLD_CODE_ID]);
                 // database field name exceptions
                 if ($class == change_action::class) {
                     $type_name = strval($db_row[type_object::FLD_ACTION]);
@@ -417,9 +419,9 @@ class type_list
                     $type_name = strval($db_row[$db_con->get_name_field($class)]);
                 } else {
                     // TODO use a unique type name for each type
-                    $type_name = strval($db_row[sql::FLD_TYPE_NAME]);
+                    $type_name = strval($db_row[sql_db::FLD_TYPE_NAME]);
                 }
-                $type_comment = strval($db_row[sandbox_named::FLD_DESCRIPTION]);
+                $type_comment = strval($db_row[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new type_object($type_code_id, $type_name, $type_comment, $type_id);
                 $this->add($type_obj);
             }

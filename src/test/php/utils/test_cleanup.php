@@ -32,8 +32,10 @@
 
 namespace test;
 
-include_once SHARED_TYPES_PATH . 'verbs.php';
-include_once SHARED_CONST_PATH . 'words.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'words.php';
 
 use cfg\component\component;
 use cfg\component\component_link;
@@ -50,6 +52,8 @@ use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\triple;
 use cfg\word\word;
+use const\files as test_files;
+use const\paths as test_paths;
 use html\html_base;
 use shared\library;
 use shared\const\components;
@@ -520,13 +524,13 @@ class test_cleanup extends test_api
             $title = 'test ' . $title;
         }
         $created_html = $this->html_page($body, $title);
-        $expected_html = $t->file('web/html/' . $filename . '.html');
+        $expected_html = $t->file(test_paths::HTML . $filename . test_files::HTML);
         $t->display($filename, $lib->trim_html($expected_html), $lib->trim_html($created_html));
     }
 
     function html_view_test(string $body, string $filename, test_cleanup $t): void
     {
-        $this->html_test($body, 'view', 'views/' . $filename, $t);
+        $this->html_test($body, 'view', test_paths::VIEWS . $filename, $t);
     }
 
     private function html_page(string $body, string $title): string

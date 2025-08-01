@@ -54,9 +54,11 @@
 
 namespace cfg\group;
 
-include_once MODEL_GROUP_PATH . 'id.php';
-include_once DB_PATH . 'sql_type.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
+use cfg\const\paths;
+
+include_once paths::MODEL_GROUP . 'id.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
 
 use cfg\db\sql_type;
 use cfg\phrase\phrase_list;

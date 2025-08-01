@@ -63,46 +63,48 @@
 
 namespace cfg\ref;
 
+use cfg\const\paths;
+
 // include should also contain the files not shown by use to enable automatic java and rust translation
 // the order is first the extends and then in alphabetic order except word before triple
 // the order should in any case match the use order but with the additional files which does not need to be used
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_HELPER_PATH . 'combine_named.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_LOG_PATH . 'change_action.php';
-include_once MODEL_LOG_PATH . 'change_link.php';
-include_once MODEL_LOG_PATH . 'change_table_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_REF_PATH . 'ref_type.php';
-include_once MODEL_REF_PATH . 'ref_type_list.php';
-include_once MODEL_REF_PATH . 'source.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once WEB_REF_PATH . 'ref.php';
-include_once SHARED_ENUM_PATH . 'change_actions.php';
-include_once SHARED_ENUM_PATH . 'change_tables.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_HELPER . 'combine_named.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_LOG . 'change_action.php';
+include_once paths::MODEL_LOG . 'change_link.php';
+include_once paths::MODEL_LOG . 'change_table_list.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_REF . 'ref_type.php';
+include_once paths::MODEL_REF . 'ref_type_list.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 
 use cfg\db\sql;
@@ -124,6 +126,7 @@ use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use shared\enum\change_actions;
 use shared\enum\change_tables;
@@ -232,7 +235,7 @@ class ref extends sandbox_link
             $this->set_external_key($db_row[ref_db::FLD_EX_KEY]);
             $this->set_predicate_id($db_row[ref_db::FLD_TYPE]);
             $this->set_url($db_row[ref_db::FLD_URL]);
-            $this->description = $db_row[sandbox_named::FLD_DESCRIPTION];
+            $this->description = $db_row[sql_db::FLD_DESCRIPTION];
             $this->set_source_by_id($db_row[source_db::FLD_ID]);
             if ($this->load_objects()) {
                 $result = true;
@@ -604,7 +607,7 @@ class ref extends sandbox_link
             $usr_msg->add_id_with_vars(msg_id::NOT_ALLOWED_TO, [
                 msg_id::VAR_USER_NAME => $usr->name(),
                 msg_id::VAR_USER_PROFILE => $usr->profile_code_id(),
-                msg_id::VAR_NAME => sql::FLD_CODE_ID,
+                msg_id::VAR_NAME => sql_db::FLD_CODE_ID,
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
             ]);
         }
@@ -633,6 +636,27 @@ class ref extends sandbox_link
     function url(): ?string
     {
         return $this->url;
+    }
+
+    /**
+     * set the description of this reference which explains the object for the user
+     *
+     * @param string|null $description the name of this reference set in the related object
+     * @return void
+     */
+    function set_description(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * get the description of the reference
+     *
+     * @return string|null the description from the object e.g. word using the same function as the phrase and term
+     */
+    function description(): ?string
+    {
+        return $this->description;
     }
 
     /**
@@ -812,7 +836,7 @@ class ref extends sandbox_link
             ref_db::FLD_NAMES,
             ref_db::FLD_NAMES_USR,
             ref_db::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         ));
 
         return parent::load_standard_sql($sc);
@@ -947,10 +971,10 @@ class ref extends sandbox_link
      * check if the reference in the database needs to be updated
      * e.g. for import  if this reference has only the name set, the protection should not be updated in the database
      *
-     * @param ref|sandbox $db_obj the reference as saved in the database
+     * @param ref|CombineObject|db_object_seq_id $db_obj the reference as saved in the database
      * @return bool true if this reference has infos that should be saved in the database
      */
-    function needs_db_update(ref|sandbox $db_obj): bool
+    function needs_db_update(ref|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->external_key() != null) {
@@ -984,6 +1008,10 @@ class ref extends sandbox_link
         return $result;
     }
 
+    function needs_to(): bool
+    {
+        return false;
+    }
 
     /*
      * log
@@ -1127,7 +1155,7 @@ class ref extends sandbox_link
                 $log->new_value = $this->description;
                 $log->std_value = $std_rec->description;
                 $log->row_id = $this->id();
-                $log->set_field(sandbox_named::FLD_DESCRIPTION);
+                $log->set_field(sql_db::FLD_DESCRIPTION);
                 $usr_msg->add($this->save_field_user($db_con, $log));
             }
         }
@@ -1383,7 +1411,7 @@ class ref extends sandbox_link
                 ref_db::FLD_EX_KEY,
                 ref_db::FLD_URL,
                 source_db::FLD_ID,
-                sandbox_named::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
             ],
             parent::db_fields_all_sandbox()
         );
@@ -1500,15 +1528,15 @@ class ref extends sandbox_link
         if ($sbx->description <> $this->description) {
             if ($do_log) {
                 $lst->add_field(
-                    sql::FLD_LOG_FIELD_PREFIX . sandbox_named::FLD_DESCRIPTION,
-                    $cng_fld_cac->id($table_id . sandbox_named::FLD_DESCRIPTION),
+                    sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
+                    $cng_fld_cac->id($table_id . sql_db::FLD_DESCRIPTION),
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
             $lst->add_field(
-                sandbox_named::FLD_DESCRIPTION,
+                sql_db::FLD_DESCRIPTION,
                 $this->description,
-                sandbox_named::FLD_DESCRIPTION_SQL_TYP,
+                sql_db::FLD_DESCRIPTION_SQL_TYP,
                 $sbx->description
             );
         }

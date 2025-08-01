@@ -30,7 +30,9 @@
 
 */
 
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'phrase_type.php';
 
 use cfg\ref\source;
 use cfg\word\word;

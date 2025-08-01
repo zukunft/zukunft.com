@@ -32,7 +32,9 @@
 
 namespace unit_ui;
 
-include_once WEB_WORD_PATH . 'word_list.php';
+use html\const\paths as html_paths;
+
+include_once html_paths::WORD . 'word_list.php';
 
 use html\html_base;
 use html\word\word_list as word_list_dsp;

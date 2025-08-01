@@ -32,8 +32,10 @@
 
 namespace unit_write;
 
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_TYPES_PATH . 'verbs.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
 
 use cfg\group\group;
 use cfg\word\word_list;

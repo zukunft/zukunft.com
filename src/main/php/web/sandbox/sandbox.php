@@ -32,17 +32,19 @@
 
 namespace html\sandbox;
 
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_HTML_PATH . 'button.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once WEB_SANDBOX_PATH . 'db_object.php';
-include_once WEB_USER_PATH . 'user.php';
-include_once WEB_USER_PATH . 'user_message.php';
-//include_once WEB_VIEW_PATH . 'view_list.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
+//include_once html_paths::VIEW . 'view_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\button;
 use html\html_base;
@@ -104,7 +106,7 @@ class sandbox extends db_object_dsp
      */
     function url_mapper(array $url_array): user_message
     {
-        $usr_msg = parent::api_mapper($url_array);
+        $usr_msg = parent::url_mapper($url_array);
         if (array_key_exists(api::URL_VAR_SHARE, $url_array)) {
             $this->share_id = $url_array[api::URL_VAR_SHARE];
         } else {
@@ -147,67 +149,17 @@ class sandbox extends db_object_dsp
 
 
     /*
-     * buttons
+     * set and get
      */
 
-    /**
-     * create the html code to add a sandbox object for the current user
-     *
-     * @param int|string $msk_id the code id or database id of the view used to add the object
-     * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
-     * @param string $back the backtrace for the return page after adding the object and for undo actions
-     * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
-     * @return string the html code for a bottom
-     */
-    function btn_add_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
+    function share_id(): ?int
     {
-        $btn = $this->btn_sbx($msk_id, $back);
-        return $btn->add($msg_code_id, $explain);
+        return $this->share_id;
     }
 
-    /**
-     * html code to change a sandbox object e.g. the name or the type
-     *
-     * @param int|string $msk_id the code id or database id of the view used to add the object
-     * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
-     * @param string $back the backtrace for the return page after adding the object and for undo actions
-     * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
-     * @return string the html code for a bottom
-     */
-    function btn_edit_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
+    function protection_id(): ?int
     {
-        $btn = $this->btn_sbx($msk_id, $back);
-        return $btn->edit($msg_code_id, $explain);
-    }
-
-    /**
-     * html code to exclude the sandbox object for the current user
-     * or if no one uses the word delete the complete word
-     *
-     * @param int|string $msk_id the code id or database id of the view used to add the object
-     * @param msg_id $msg_code_id the code id of the message that should be shown to the user as a tooltip for the button
-     * @param string $back the backtrace for the return page after adding the object and for undo actions
-     * @param string $explain additional text created by the calling child to understand the action better e.g. the phrases used for a new value
-     * @return string the html code for a bottom
-     */
-    function btn_del_sbx(int|string $msk_id, msg_id $msg_code_id, string $back = '', string $explain = ''): string
-    {
-        $btn = $this->btn_sbx($msk_id, $back);
-        return $btn->del($msg_code_id, $explain);
-    }
-
-    /**
-     * create the html code for a button
-     *
-     * @param int|string $msk_id the code id or database id of the view used to add the object
-     * @param string $back the backtrace for the return page after adding the object and for undo actions
-     * @return button the filled bottom object
-     */
-    private function btn_sbx(int|string $msk_id, string $back = ''): button
-    {
-        $html = new html_base();
-        $url = $html->url_new($msk_id, $this->id(), '', $back);
-        return new button($url, $back);
+        return $this->protection_id;
     }
 
 

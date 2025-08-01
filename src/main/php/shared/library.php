@@ -32,10 +32,13 @@
 
 namespace shared;
 
-include_once SERVICE_PATH . 'config.php';
-include_once MODEL_CONST_PATH . 'def.php';
-include_once MODEL_REF_PATH . 'source_db.php';
-include_once MODEL_VALUE_PATH . 'value_db.php';
+use cfg\const\paths;
+
+include_once paths::SERVICE . 'config.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_REF . 'source_db.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_VALUE . 'value_db.php';
 
 use cfg\component\view_style;
 use cfg\const\def;
@@ -56,6 +59,7 @@ use cfg\system\sys_log_status;
 use cfg\system\sys_log_status_list;
 use cfg\system\sys_log_type;
 use cfg\system\system_time;
+use cfg\user\user_db;
 use cfg\user\user_official_type;
 use cfg\value\value;
 use cfg\value\value_db;
@@ -1074,8 +1078,8 @@ class library
     function php_path_convert(string $use_path): string
     {
         return match ($use_path) {
-            'api\result' => 'API_RESULT_PATH',
-            'api\word' => 'API_WORD_PATH',
+            'api\result' => 'paths::API_RESULT',
+            'api\word' => 'paths::API_WORD',
             'api\phrase' => 'API_PHRASE_PATH',
             'api\value' => 'API_VALUE_PATH',
             'api\ref' => 'API_REF_PATH',
@@ -1086,59 +1090,59 @@ class library
             'api\verb' => 'API_VERB_PATH',
             'api\view' => 'API_VIEW_PATH',
             'api\log' => 'API_LOG_PATH',
-            'controller', 'api' => 'API_OBJECT_PATH',
+            'controller', 'api' => 'paths::API_OBJECT',
             'controller\system', 'api\system' => 'API_SYSTEM_PATH',
-            'cfg' => 'SERVICE_PATH',
-            'cfg\db' => 'DB_PATH',
-            'cfg\log' => 'MODEL_LOG_PATH',
-            'cfg\const' => 'MODEL_CONST_PATH',
-            'cfg\system' => 'MODEL_SYSTEM_PATH',
-            'cfg\formula' => 'MODEL_FORMULA_PATH',
-            'cfg\element' => 'MODEL_ELEMENT_PATH',
-            'cfg\result' => 'MODEL_RESULT_PATH',
-            'cfg\phrase' => 'MODEL_PHRASE_PATH',
-            'cfg\sandbox' => 'MODEL_SANDBOX_PATH',
-            'cfg\helper' => 'MODEL_HELPER_PATH',
-            'cfg\group' => 'MODEL_GROUP_PATH',
-            'cfg\user' => 'MODEL_USER_PATH',
-            'cfg\word' => 'MODEL_WORD_PATH',
-            'cfg\ref' => 'MODEL_REF_PATH',
-            'cfg\view' => 'MODEL_VIEW_PATH',
-            'cfg\value' => 'MODEL_VALUE_PATH',
-            'cfg\import' => 'MODEL_IMPORT_PATH',
-            'cfg\language' => 'MODEL_LANGUAGE_PATH',
-            'cfg\verb' => 'MODEL_VERB_PATH',
-            'cfg\component' => 'MODEL_COMPONENT_PATH',
+            'cfg' => 'paths::SERVICE',
+            'cfg\db' => 'paths::DB',
+            'cfg\log' => 'paths::MODEL_LOG',
+            'cfg\const' => 'paths::MODEL_CONST',
+            'cfg\component' => 'paths::MODEL_COMPONENT',
             'cfg\component\sheet' => 'MODEL_SHEET_PATH',
-            'cfg\export' => 'EXPORT_PATH',
+            'cfg\system' => 'paths::MODEL_SYSTEM',
+            'cfg\formula' => 'paths::MODEL_FORMULA',
+            'cfg\element' => 'paths::MODEL_ELEMENT',
+            'cfg\result' => 'paths::MODEL_RESULT',
+            'cfg\phrase' => 'paths::MODEL_PHRASE',
+            'cfg\sandbox' => 'paths::MODEL_SANDBOX',
+            'cfg\helper' => 'paths::MODEL_HELPER',
+            'cfg\group' => 'paths::MODEL_GROUP',
+            'cfg\user' => 'paths::MODEL_USER',
+            'cfg\word' => 'paths::MODEL_WORD',
+            'cfg\ref' => 'paths::MODEL_REF',
+            'cfg\view' => 'paths::MODEL_VIEW',
+            'cfg\value' => 'paths::MODEL_VALUE',
+            'cfg\import' => 'paths::MODEL_IMPORT',
+            'cfg\language' => 'paths::MODEL_LANGUAGE',
+            'cfg\verb' => 'paths::MODEL_VERB',
+            'cfg\export' => 'paths::EXPORT',
             'const' => 'TEST_CONST_PATH',
-            'html' => 'WEB_HTML_PATH',
-            'html\log' => 'WEB_LOG_PATH',
-            'html\user' => 'WEB_USER_PATH',
-            'html\element' => 'WEB_ELEMENT_PATH',
-            'html\formula' => 'WEB_FORMULA_PATH',
-            'html\result' => 'WEB_RESULT_PATH',
-            'html\word' => 'WEB_WORD_PATH',
-            'html\figure' => 'WEB_FIGURE_PATH',
-            'html\group' => 'WEB_GROUP_PATH',
-            'html\phrase' => 'WEB_PHRASE_PATH',
-            'html\verb' => 'WEB_VERB_PATH',
-            'html\value' => 'WEB_VALUE_PATH',
-            'html\ref' => 'WEB_REF_PATH',
-            'html\system' => 'WEB_SYSTEM_PATH',
-            'html\types' => 'WEB_TYPES_PATH',
-            'html\helper' => 'WEB_HELPER_PATH',
-            'html\sandbox' => 'WEB_SANDBOX_PATH',
-            'html\view' => 'WEB_VIEW_PATH',
-            'html\component' => 'WEB_COMPONENT_PATH',
-            'html\component\sheet' => 'WEB_SHEET_PATH',
-            'html\component\form' => 'WEB_FORM_PATH',
-            'shared' => 'SHARED_PATH',
-            'shared\calc' => 'SHARED_CALC_PATH',
-            'shared\const' => 'SHARED_CONST_PATH',
-            'shared\enum' => 'SHARED_ENUM_PATH',
-            'shared\helper' => 'SHARED_HELPER_PATH',
-            'shared\types' => 'SHARED_TYPES_PATH',
+            'html' => 'html_paths::HTML',
+            'html\log' => 'html_paths::LOG',
+            'html\user' => 'html_paths::USER',
+            'html\element' => 'html_paths::ELEMENT',
+            'html\formula' => 'html_paths::FORMULA',
+            'html\result' => 'html_paths::RESULT',
+            'html\word' => 'html_paths::WORD',
+            'html\figure' => 'html_paths::FIGURE',
+            'html\group' => 'html_paths::GROUP',
+            'html\phrase' => 'html_paths::PHRASE',
+            'html\verb' => 'html_paths::VERB',
+            'html\value' => 'html_paths::VALUE',
+            'html\ref' => 'html_paths::REF',
+            'html\system' => 'html_paths::SYSTEM',
+            'html\types' => 'html_paths::TYPES',
+            'html\helper' => 'html_paths::HELPER',
+            'html\sandbox' => 'html_paths::SANDBOX',
+            'html\view' => 'html_paths::VIEW',
+            'html\component' => 'html_paths::COMPONENT',
+            'html\component\sheet' => 'html_paths::SHEET',
+            'html\component\form' => 'html_paths::FORM',
+            'shared' => 'paths::SHARED',
+            'shared\calc' => 'paths::SHARED_CALC',
+            'shared\const' => 'paths::SHARED_CONST',
+            'shared\enum' => 'paths::SHARED_ENUM',
+            'shared\helper' => 'paths::SHARED_HELPER',
+            'shared\types' => 'paths::SHARED_TYPES',
             default => 'missing path for ' . $use_path,
         };
     }
@@ -2509,10 +2513,10 @@ class library
         foreach ($sql_names as $name) {
             $result[] = match ($name) {
                 word_db::FLD_NAME => 'wrd',
-                sandbox_named::FLD_DESCRIPTION => 'des',
+                sql_db::FLD_DESCRIPTION => 'des',
                 phrase::FLD_TYPE => 'pty',
                 value_db::FLD_ID => 'grp',
-                user::FLD_ID => 'usr',
+                user_db::FLD_ID => 'usr',
                 source_db::FLD_ID => 'src',
                 sandbox_multi::FLD_VALUE => 'val',
                 sandbox_multi::FLD_LAST_UPDATE => 'upd',

@@ -39,18 +39,20 @@ global $debug;
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_CONST_PATH . 'words.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'api_type.php';
-include_once API_OBJECT_PATH . 'controller.php';
-include_once API_OBJECT_PATH . 'api_message.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_HELPER_PATH . 'config_numbers.php';
-include_once SHARED_CONST_PATH . 'users.php';
+use cfg\const\paths;
+
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'api_type.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once paths::API_OBJECT . 'api_message.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_HELPER . 'config_numbers.php';
+include_once paths::SHARED_CONST . 'users.php';
 
 use cfg\helper\config_numbers;
 use cfg\user\user_message;

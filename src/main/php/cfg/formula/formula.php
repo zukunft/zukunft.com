@@ -54,57 +54,60 @@
 
 namespace cfg\formula;
 
-include_once SHARED_TYPES_PATH . 'protection_type.php';
-include_once SHARED_TYPES_PATH . 'share_type.php';
-include_once MODEL_RESULT_PATH . 'result_list.php';
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once MODEL_ELEMENT_PATH . 'element.php';
-include_once MODEL_ELEMENT_PATH . 'element_list.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_HELPER_PATH . 'db_object_seq_id.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_PHRASE_PATH . 'phr_ids.php';
-include_once MODEL_PHRASE_PATH . 'phrase.php';
-include_once MODEL_PHRASE_PATH . 'phrase_list.php';
-include_once MODEL_PHRASE_PATH . 'phrase_type.php';
-include_once MODEL_PHRASE_PATH . 'term.php';
-include_once MODEL_PHRASE_PATH . 'term_list.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_code_id.php';
-include_once MODEL_SANDBOX_PATH . 'protection_type.php';
-include_once MODEL_SANDBOX_PATH . 'share_type.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_db.php';
-include_once MODEL_WORD_PATH . 'triple.php';
-include_once MODEL_WORD_PATH . 'word.php';
-include_once MODEL_RESULT_PATH . 'result.php';
-include_once MODEL_RESULT_PATH . 'result_list.php';
-include_once MODEL_VALUE_PATH . 'value.php';
-include_once MODEL_VALUE_PATH . 'value_base.php';
-include_once MODEL_FORMULA_PATH . 'formula_type.php';
-include_once MODEL_FORMULA_PATH . 'formula_link.php';
-include_once MODEL_FORMULA_PATH . 'formula_link_type.php';
-include_once MODEL_FORMULA_PATH . 'expression.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_CALC_PATH . 'parameter_type.php';
-include_once SHARED_CONST_PATH . 'chars.php';
-include_once SHARED_CONST_PATH . 'formulas.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_HELPER_PATH . 'CombineObject.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_TYPES_PATH . 'phrase_type.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::SHARED_TYPES . 'protection_type.php';
+include_once paths::SHARED_TYPES . 'share_type.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::MODEL_ELEMENT . 'element.php';
+include_once paths::MODEL_ELEMENT . 'element_list.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'phrase_list.php';
+include_once paths::MODEL_PHRASE . 'phrase_type.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_PHRASE . 'term_list.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_code_id.php';
+include_once paths::MODEL_SANDBOX . 'protection_type.php';
+include_once paths::MODEL_SANDBOX . 'share_type.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_RESULT . 'result_list.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_base.php';
+include_once paths::MODEL_FORMULA . 'formula_type.php';
+include_once paths::MODEL_FORMULA . 'formula_link.php';
+include_once paths::MODEL_FORMULA . 'formula_link_type.php';
+include_once paths::MODEL_FORMULA . 'expression.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_CALC . 'parameter_type.php';
+include_once paths::SHARED_CONST . 'chars.php';
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -130,6 +133,7 @@ use cfg\result\result_list;
 use cfg\sandbox\sandbox;
 use cfg\sandbox\sandbox_code_id;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\value\value;
 use cfg\view\view;
@@ -142,6 +146,7 @@ use math;
 use shared\calc\parameter_type;
 use shared\const\chars;
 use shared\const\formulas;
+use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\json_fields;
@@ -187,6 +192,8 @@ class formula extends sandbox_code_id
 
     // in memory only fields
     // list of phrase that link to this formula
+    private ?formula_link_list $lnk_lst = null;
+    // old list of phrase that link to this formula
     private ?phrase_list $phr_lst = null;
     public ?string $type_cl = '';          // the code id of the formula type
     public ?word $name_wrd = null;         // the triple object for the formula name:
@@ -228,6 +235,7 @@ class formula extends sandbox_code_id
         $this->last_update = null;
         $this->usage = null;
 
+        $this->lnk_lst = null;
         $this->phr_lst = null;
         $this->type_cl = '';
         $this->name_wrd = null;
@@ -387,6 +395,26 @@ class formula extends sandbox_code_id
             }
         }
 
+        // assign the phrases to the formula
+        if (key_exists(json_fields::ASSIGNED_WORD, $in_ex_json)) {
+            $phr_names = explode(",", $in_ex_json[json_fields::ASSIGNED_WORD]);
+            if ($dto != null) {
+                $phr_lst = $dto->phrase_list();
+                foreach ($phr_names as $name) {
+                    $phr = $phr_lst->get_by_name($name);
+                    if ($phr == null) {
+                        $usr_msg->add_id_with_vars(msg_id::IMPORT_FORMULA_ASSIGN_PHRASE_MISSING, [
+                            msg_id::VAR_FILE_NAME => json_encode($in_ex_json),
+                            msg_id::VAR_NAME => $name,
+                            msg_id::VAR_FORMULA => $this->name(),
+                        ]);
+                    } else {
+                        $this->link_phrase($phr);
+                    }
+                }
+            }
+        }
+
         // set the default type if no type is specified
         if ($this->type_id == 0) {
             $this->type_id = $frm_typ_cac->default_id();
@@ -504,7 +532,7 @@ class formula extends sandbox_code_id
         return $this->usr_text;
     }
 
-    function ref_text(): string
+    function ref_text(): ?string
     {
         if ($this->ref_text_dirty) {
             $this->generate_ref_text();
@@ -562,7 +590,7 @@ class formula extends sandbox_code_id
             formula_db::FLD_NAMES,
             formula_db::FLD_NAMES_USR,
             formula_db::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)
+            array(user_db::FLD_ID)
         ));
 
         return parent::load_standard_sql($sc);
@@ -637,8 +665,25 @@ class formula extends sandbox_code_id
      * word
      */
 
+
     /**
-     * create the corresponding name word for the formula name
+     * create the corresponding name word object for the formula name
+     * @return word with the name of the formula
+     */
+    function formula_word(): word
+    {
+        global $phr_typ_cac;
+
+        // if the formula word is missing, try a word creating as a kind of auto recovery
+        $name_wrd = new word($this->user());
+        $name_wrd->set_name($this->name());
+        $name_wrd->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
+        return $name_wrd;
+    }
+
+
+    /**
+     * add the corresponding name word for the formula name to the database
      * @return bool true if adding the word has been successful
      */
     function wrd_add(): bool
@@ -649,9 +694,7 @@ class formula extends sandbox_code_id
         $result = false;
 
         // if the formula word is missing, try a word creating as a kind of auto recovery
-        $name_wrd = new word($this->user());
-        $name_wrd->set_name($this->name());
-        $name_wrd->type_id = $phr_typ_cac->id(phrase_type_shared::FORMULA_LINK);
+        $name_wrd = $this->formula_word();
         $name_wrd->save()->get_last_message();
         if ($name_wrd->id() > 0) {
             $this->name_wrd = $name_wrd;
@@ -819,10 +862,10 @@ class formula extends sandbox_code_id
      * check if the formula in the database needs to be updated
      * e.g. for import  if this formula has only the name set, the protection should not be updated in the database
      *
-     * @param formula|sandbox $db_obj the formula as saved in the database
+     * @param formula|CombineObject|db_object_seq_id $db_obj the formula as saved in the database
      * @return bool true if this formula has infos that should be saved in the database
      */
-    function needs_db_update(formula|sandbox $db_obj): bool
+    function needs_db_update(formula|CombineObject|db_object_seq_id $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->ref_text() != null) {
@@ -1394,20 +1437,23 @@ class formula extends sandbox_code_id
             // the phrase left of the equation sign should be added to the result
             // e.g. percent for the increase formula
             $has_result_phrases = false;
-            $res_add_phr_lst = $exp->result_phrases();
-            if (isset($res_add_phr_lst)) {
-                log_debug('use words ' . $res_add_phr_lst->dsp_id() . ' for the result');
-                $has_result_phrases = true;
-            }
-            // use only the part right of the equation sign for the result calculation
-            $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
-            log_debug('->calc got result words of ' . $this->ref_text_r);
+            $res_lst = new result_list($this->user());
+            if ($exp->is_valid()) {
+                $res_add_phr_lst = $exp->result_phrases();
+                if (isset($res_add_phr_lst)) {
+                    log_debug('use words ' . $res_add_phr_lst->dsp_id() . ' for the result');
+                    $has_result_phrases = true;
+                }
+                // use only the part right of the equation sign for the result calculation
+                $this->ref_text_r = chars::CHAR_CALC . $exp->r_part();
+                log_debug('->calc got result words of ' . $this->ref_text_r);
 
-            // get the list of the numeric results
-            // $res_lst is a list of all results saved in the database
-            $res_lst = $this->to_num($phr_lst);
-            if (isset($res_add_phr_lst)) {
-                log_debug($lib->dsp_count($res_lst->lst()) . ' formula results to save');
+                // get the list of the numeric results
+                // $res_lst is a list of all results saved in the database
+                $res_lst = $this->to_num($phr_lst);
+                if (isset($res_add_phr_lst)) {
+                    log_debug($lib->dsp_count($res_lst->lst()) . ' formula results to save');
+                }
             }
 
             // save the numeric results
@@ -1565,17 +1611,7 @@ class formula extends sandbox_code_id
         $usr_msg = parent::import_obj($in_ex_json, $usr_req, $dto, $test_obj);
 
         // assign the formula to the words and triple
-        if ($usr_msg->is_ok()) {
-            $phr_lst = $this->phr_lst;
-            if ($phr_lst != null) {
-                if (!$phr_lst->is_empty()) {
-                    $usr_msg->add($phr_lst->save());
-                    foreach ($phr_lst as $phr) {
-                        $this->assign_phrase($phr);
-                    }
-                }
-            }
-        }
+        $this->assign_phrases($usr_msg);
 
         return $usr_msg;
     }
@@ -1589,6 +1625,52 @@ class formula extends sandbox_code_id
             $result .= $this->assign_phrase($phr);
         }
         return $result;
+    }
+
+    /**
+     * add a phrase link to this formula object without updating the database
+     * @param phrase $phr
+     * @return void
+     */
+    function link_phrase(phrase $phr): void
+    {
+        if ($this->lnk_lst == null) {
+            $this->lnk_lst = new formula_link_list($this->user());
+        }
+        $lnk = new formula_link($this->user());
+        $lnk->set_formula($this);
+        $lnk->set_phrase($phr);
+        $this->lnk_lst->add_link_by_key($lnk);
+    }
+
+    function save_links(user_message $usr_msg): void
+    {
+        if ($this->lnk_lst != null) {
+            foreach ($this->lnk_lst->lst() as $lnk) {
+                $usr_msg->add($lnk->save());
+            }
+        }
+    }
+
+    /**
+     * assign the formula to the words and triple
+     * TODO dismiss and use instead the link_phrase and save_links functions
+     * @param user_message $usr_msg to enrich with messages
+     * @return void
+     */
+    function assign_phrases(user_message $usr_msg = new user_message()): void
+    {
+        if ($usr_msg->is_ok()) {
+            $phr_lst = $this->phr_lst;
+            if ($phr_lst != null) {
+                if (!$phr_lst->is_empty()) {
+                    $usr_msg->add($phr_lst->save());
+                    foreach ($phr_lst as $phr) {
+                        $this->assign_phrase($phr);
+                    }
+                }
+            }
+        }
     }
 
     function assign_phrase(phrase $phr): string
@@ -1812,7 +1894,7 @@ class formula extends sandbox_code_id
             $field_values = array();
             $field_names[] = formula_db::FLD_ID;
             $field_values[] = $this->id();
-            $field_names[] = user::FLD_ID;
+            $field_names[] = user_db::FLD_ID;
             if ($frm_usr_id > 0) {
                 $field_values[] = $frm_usr_id;
             } else {
@@ -1843,7 +1925,7 @@ class formula extends sandbox_code_id
             $field_names[] = formula_db::FLD_ID;
             $field_values[] = $this->id();
             if ($frm_usr_id > 0) {
-                $field_names[] = user::FLD_ID;
+                $field_names[] = user_db::FLD_ID;
                 $field_values[] = $frm_usr_id;
             }
             $field_names[] = element::FLD_TYPE;
@@ -1900,19 +1982,19 @@ class formula extends sandbox_code_id
             foreach ($db_lst as $db_row) {
                 // update word links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[user::FLD_ID], $this->user()->id());
+                    $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[user_db::FLD_ID], $this->user()->id());
                 }
                 // update triple links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[user::FLD_ID], $this->user()->id());
+                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[user_db::FLD_ID], $this->user()->id());
                 }
                 // update verb links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[user::FLD_ID], $this->user()->id());
+                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[user_db::FLD_ID], $this->user()->id());
                 }
                 // update formula links of the standard formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, $db_row[user::FLD_ID], $this->user()->id());
+                    $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, $db_row[user_db::FLD_ID], $this->user()->id());
                 }
             }
         }
@@ -1968,17 +2050,22 @@ class formula extends sandbox_code_id
     /**
      * update the database reference text based on the user text
      * TODO check in not the left AND the right part needs to be transformed as expression
+     * TODO Prio 1 return a user message instead of a string
      *
      * @param term_list|null $trm_lst a list of preloaded terms that should be used for the transformation
+     * @param user_message $usr_msg to enrich with problems and suggested solution
      * @return string which is empty if the update of the reference text was successful and otherwise the error message that should be shown to the user
      */
-    function generate_ref_text(?term_list $trm_lst = null): string
+    function generate_ref_text(
+        ?term_list $trm_lst = null,
+        user_message $usr_msg = new user_message()
+    ): string
     {
         $result = '';
         if ($this->usr_text != null) {
             $exp = new expression($this->user());
             $exp->set_user_text($this->usr_text, $trm_lst);
-            $this->ref_text = $exp->ref_text($trm_lst);
+            $this->ref_text = $exp->ref_text($trm_lst, $usr_msg);
             $this->ref_text_dirty = false;
             $result .= $exp->err_text;
         }
@@ -2065,7 +2152,7 @@ class formula extends sandbox_code_id
             $qp = $this->not_changed_sql($db_con->sql_creator());
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
-                if ($db_row[user::FLD_ID] > 0) {
+                if ($db_row[user_db::FLD_ID] > 0) {
                     $result = false;
                 }
             }
@@ -2091,7 +2178,7 @@ class formula extends sandbox_code_id
         $qp->name = $class . '_user_sandbox';
         $db_con->set_name($qp->name);
         $db_con->set_usr($this->user()->id());
-        $db_con->set_fields(array_merge(array(user::FLD_ID), formula_db::FLD_NAMES_USR, formula_db::FLD_NAMES_NUM_USR));
+        $db_con->set_fields(array_merge(array(user_db::FLD_ID), formula_db::FLD_NAMES_USR, formula_db::FLD_NAMES_NUM_USR));
         $db_con->add_par(sql_par_type::INT, strval($this->id()));
         $qp->sql = $db_con->select_by_field(formula_db::FLD_ID);
         $qp->par = $db_con->get_par();
@@ -2139,7 +2226,7 @@ class formula extends sandbox_code_id
         $db_con->set_class(element::class);
         try {
             $msg = $db_con->delete_old(
-                array(formula_db::FLD_ID, user::FLD_ID),
+                array(formula_db::FLD_ID, user_db::FLD_ID),
                 array($this->id(), $this->user()->id()));
         } catch (Exception $e) {
             log_err($action . ' elements ' . $msg_failed . ' because ' . $e);
@@ -2150,7 +2237,7 @@ class formula extends sandbox_code_id
             $db_con->set_class(formula::class, true);
             try {
                 $msg = $db_con->delete_old(
-                    array(formula_db::FLD_ID, user::FLD_ID),
+                    array(formula_db::FLD_ID, user_db::FLD_ID),
                     array($this->id(), $this->user()->id()));
                 if ($msg == '') {
                     $this->usr_cfg_id = null;
@@ -2490,7 +2577,7 @@ class formula extends sandbox_code_id
                 $db_con->set_class(formula::class);
                 // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
                 $this->set_id($db_con->insert_old(
-                    array(formula_db::FLD_NAME, user::FLD_ID, formula_db::FLD_LAST_UPDATE, formula_db::FLD_FORMULA_TEXT, formula_db::FLD_FORMULA_USER_TEXT),
+                    array(formula_db::FLD_NAME, user_db::FLD_ID, formula_db::FLD_LAST_UPDATE, formula_db::FLD_FORMULA_TEXT, formula_db::FLD_FORMULA_USER_TEXT),
                     array($this->name(), $this->user()->id(), sql::NOW, $this->ref_text, $this->usr_text)));
                 if ($this->id() > 0) {
                     log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id());

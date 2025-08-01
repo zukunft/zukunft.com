@@ -43,34 +43,36 @@
 
 namespace html\formula;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_typed.php';
-include_once DB_PATH . 'sql_db.php';
-include_once WEB_HTML_PATH . 'button.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'html_selector.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_FORMULA_PATH . 'expression.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_PHRASE_PATH . 'term_list.php';
-include_once WEB_RESULT_PATH . 'result.php';
-include_once WEB_RESULT_PATH . 'result_list.php';
-include_once WEB_ELEMENT_PATH . 'element.php';
-include_once WEB_LOG_PATH . 'user_log_display.php';
-include_once WEB_PHRASE_PATH . 'phrase.php';
-include_once WEB_PHRASE_PATH . 'phrase_list.php';
-include_once WEB_PHRASE_PATH . 'term.php';
-include_once WEB_RESULT_PATH . 'result.php';
-include_once WEB_SANDBOX_PATH . 'sandbox_code_id.php';
-include_once WEB_SYSTEM_PATH . 'back_trace.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once WEB_WORD_PATH . 'word.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'api.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_typed.php';
+include_once paths::DB . 'sql_db.php';
+include_once html_paths::HTML . 'button.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'html_selector.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::FORMULA . 'expression.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::PHRASE . 'term_list.php';
+include_once html_paths::RESULT . 'result.php';
+include_once html_paths::RESULT . 'result_list.php';
+include_once html_paths::ELEMENT . 'element.php';
+include_once html_paths::LOG . 'user_log_display.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::PHRASE . 'term.php';
+include_once html_paths::RESULT . 'result.php';
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_db;
 use html\phrase\phrase;
@@ -94,6 +96,21 @@ use shared\enum\messages as msg_id;
 
 class formula extends sandbox_code_id
 {
+
+    /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::FORMULA_ADD;
+    const VIEW_EDIT = views::FORMULA_EDIT;
+    const VIEW_DEL = views::FORMULA_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::FORMULA_ADD;
+    const MSG_EDIT = msg_id::FORMULA_EDIT;
+    const MSG_DEL = msg_id::FORMULA_DEL;
+
 
     /*
      * object vars
@@ -228,19 +245,6 @@ class formula extends sandbox_code_id
      */
 
     /**
-     * create the HTML code for a button to create a new formula
-     * @param string $back the stack trace for the undo functionality
-     * @return string html code to change to formula
-     */
-    function btn_add(string $back = ''): string
-    {
-        return parent::btn_add_sbx(
-            views::VALUE_ADD,
-            msg_id::FORMULA_ADD,
-            $back);
-    }
-
-    /**
      * create the HTML code for a button to change the formula
      * @param string $back the stack trace for the undo functionality
      * @return string html code to change to formula
@@ -249,8 +253,8 @@ class formula extends sandbox_code_id
     {
         global $mtr;
         return parent::btn_edit_sbx(
-            views::FORMULA_EDIT,
-            msg_id::FORMULA_EDIT,
+            $this::VIEW_EDIT,
+            $this::MSG_EDIT,
             $back, $mtr->txt(msg_id::FOR) . $this->name);
     }
 
@@ -263,8 +267,8 @@ class formula extends sandbox_code_id
     {
         global $mtr;
         return parent::btn_del_sbx(
-            views::FORMULA_DEL,
-            msg_id::FORMULA_DEL,
+            $this::VIEW_DEL,
+            $this::MSG_DEL,
             $back, $mtr->txt(msg_id::OF) . $this->name);
     }
 

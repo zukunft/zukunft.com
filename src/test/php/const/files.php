@@ -32,6 +32,8 @@
 
 namespace const;
 
+use const\paths as test_paths;
+
 class files
 {
 
@@ -47,92 +49,75 @@ class files
 
 
     /*
-     * path of test files
-     */
-
-    // main path for the test resources
-    const RESOURCE_PATH = TEST_PATH . 'resources' . DIRECTORY_SEPARATOR;
-
-    // path for unit test resources
-    const UNIT_PATH = self::RESOURCE_PATH . 'unit' . DIRECTORY_SEPARATOR;
-    const SYSTEM_PATH = self::UNIT_PATH . 'system' . DIRECTORY_SEPARATOR;
-
-    // path for resources to test the api
-    const API_RES_PATH = self::RESOURCE_PATH . 'api' . DIRECTORY_SEPARATOR;
-    const API_SYSTEM_RES_PATH = self::API_RES_PATH . 'system' . DIRECTORY_SEPARATOR;
-    const DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
-    const DB_FORMULA_PATH = self::DB_PATH . 'formula' . DIRECTORY_SEPARATOR;
-    const DB_USER_PATH = self::DB_PATH . 'user' . DIRECTORY_SEPARATOR;
-    const EXPORT_PATH = self::RESOURCE_PATH . 'export' . DIRECTORY_SEPARATOR;
-    const EXPORT_WORD_PATH = self::EXPORT_PATH . 'word' . DIRECTORY_SEPARATOR;
-    const IMPORT_PATH = self::RESOURCE_PATH . 'import' . DIRECTORY_SEPARATOR;
-    const IMPORT_UNIT_PATH = self::IMPORT_PATH . 'unit_tests' . DIRECTORY_SEPARATOR;
-    const IMPORT_WIKIPEDIA_PATH = self::IMPORT_PATH . 'wikipedia' . DIRECTORY_SEPARATOR;
-
-    // path for resources to test the frontend
-    const WEB_RES_PATH = self::RESOURCE_PATH . 'web' . DIRECTORY_SEPARATOR;
-    const WEB_SYSTEM_RES_PATH = self::WEB_RES_PATH . 'system' . DIRECTORY_SEPARATOR;
-
-    // path for resources to test the user interface
-    const UI_RES_PATH = self::WEB_RES_PATH . 'ui' . DIRECTORY_SEPARATOR;
-
-
-    /*
      * unit test files
      */
 
-    const IP_BLACKLIST = self::SYSTEM_PATH . 'ip_blacklist' . self::JSON;
+    const IP_BLACKLIST = test_paths::SYSTEM . 'ip_blacklist' . self::JSON;
+
+
+    /*
+     * config
+     */
+
+    const SYSTEM_CONFIG_SAMPLE = test_paths::RESOURCE . 'config_sample' . self::YAML;
 
 
     /*
      * api test files
      */
 
-    const SYS_LOG = self::API_SYSTEM_RES_PATH . 'sys_log' . self::JSON;
-    const SYS_LOG_HTML = self::WEB_SYSTEM_RES_PATH . 'sys_log' . self::HTML;
-    const SYSTEM_CONFIG_SAMPLE = self::RESOURCE_PATH . 'config_sample' . self::YAML;
-    const SYS_LOG_ADMIN = self::WEB_SYSTEM_RES_PATH . 'sys_log_admin' . self::HTML;
-    const FORMULA_COUNT = self::DB_FORMULA_PATH . 'formula_count' . self::SQL;
-    const USER_COUNT = self::DB_USER_PATH . 'user_count' . self::SQL;
-    const WORD_LIST = self::EXPORT_WORD_PATH . 'word_list' . self::JSON;
+    const SYS_LOG = test_paths::API_SYSTEM_RES . 'sys_log' . self::JSON;
+    const SYS_LOG_HTML = test_paths::WEB_SYSTEM_RES . 'sys_log' . self::HTML;
+    const SYS_LOG_LIST_API = test_paths::API_SYS_LOG_RES . 'sys_log_list' . self::JSON;
+    const SYS_LOG_LIST_HTML = test_paths::WEB_SYSTEM_RES . 'sys_log_list' . self::HTML;
+    const SYS_LOG_LIST_PAGE = test_paths::WEB_SYSTEM_RES . 'sys_log_list_page' . self::HTML;
+    const SYS_LOG_ADMIN = test_paths::WEB_SYSTEM_RES . 'sys_log_admin' . self::HTML;
+    const FORMULA_COUNT = test_paths::DB_RES_FORMULA . 'formula_count' . self::SQL;
+    const USER_COUNT = test_paths::DB_USER . 'user_count' . self::SQL;
+    const WORD_LIST = test_paths::EXPORT_WORD . 'word_list' . self::JSON;
 
+
+    /*
+     * sql
+     */
+
+    const SQL_CREATE_EXT = '_create';
+    const SQL_INDEX_EXT = '_index';
+    const SQL_FOREIGN_KEY_EXT = '_foreign_key';
 
     /*
      * import test files
      */
 
-    const IMPORT_USERS = self::IMPORT_UNIT_PATH . 'users' . self::JSON;
-    const IMPORT_USERS_UPDATE = self::IMPORT_UNIT_PATH . 'users_update' . self::JSON;
-    const IMPORT_USERS_UNDO = self::IMPORT_UNIT_PATH . 'users_undo' . self::JSON;
-    const IMPORT_WORDS = self::IMPORT_UNIT_PATH . 'words' . self::JSON;
-    const IMPORT_WORDS_UPDATE = self::IMPORT_UNIT_PATH . 'words_update' . self::JSON;
-    const IMPORT_WORDS_UNDO = self::IMPORT_UNIT_PATH . 'words_undo' . self::JSON;
-    const IMPORT_VERBS = self::IMPORT_UNIT_PATH . 'verbs' . self::JSON;
-    const IMPORT_VERBS_UPDATE = self::IMPORT_UNIT_PATH . 'verbs_update' . self::JSON;
-    const IMPORT_VERBS_UNDO = self::IMPORT_UNIT_PATH . 'verbs_undo' . self::JSON;
-    const IMPORT_TRIPLES = self::IMPORT_UNIT_PATH . 'triples' . self::JSON;
-    const IMPORT_TRIPLES_UPDATE = self::IMPORT_UNIT_PATH . 'triples_update' . self::JSON;
-    const IMPORT_TRIPLES_UNDO = self::IMPORT_UNIT_PATH . 'triples_undo' . self::JSON;
-    const IMPORT_SOURCES = self::IMPORT_UNIT_PATH . 'sources' . self::JSON;
-    const IMPORT_SOURCES_UPDATE = self::IMPORT_UNIT_PATH . 'sources_update' . self::JSON;
-    const IMPORT_SOURCES_UNDO = self::IMPORT_UNIT_PATH . 'sources_undo' . self::JSON;
-    const IMPORT_VALUES = self::IMPORT_UNIT_PATH . 'values' . self::JSON;
-    const IMPORT_FORMULAS = self::IMPORT_UNIT_PATH . 'formulas' . self::JSON;
+    const IMPORT_USERS = test_paths::IMPORT_UNIT . 'users';
+    const IMPORT_WORDS = test_paths::IMPORT_UNIT . 'words';
+    const IMPORT_VERBS = test_paths::IMPORT_UNIT . 'verbs';
+    const IMPORT_TRIPLES = test_paths::IMPORT_UNIT . 'triples';
+    const IMPORT_SOURCES = test_paths::IMPORT_UNIT . 'sources';
+    const IMPORT_VALUES = test_paths::IMPORT_UNIT . 'values';
+    const IMPORT_FORMULAS = test_paths::IMPORT_UNIT . 'formulas';
+    const IMPORT_VIEWS = test_paths::IMPORT_UNIT . 'views';
+    const IMPORT_COMPONENTS = test_paths::IMPORT_UNIT . 'components';
+    const IMPORT_UPDATE_EXT = '_update';
+    const IMPORT_UNDO_EXT = '_undo';
 
-    const IMPORT_COUNTRIES = self::IMPORT_PATH . 'countries' . self::JSON;
-    const IMPORT_COMPANIES = self::IMPORT_PATH . 'companies' . self::JSON;
-    const IMPORT_WIND_INVESTMENT = self::IMPORT_PATH . 'wind_investment' . self::JSON;
-    const IMPORT_COUNTRY_ISO = self::IMPORT_WIKIPEDIA_PATH . 'country-ISO-3166' . self::JSON;
-    const IMPORT_COUNTRY_ISO_WIKI = self::IMPORT_WIKIPEDIA_PATH . 'country-ISO-3166-wiki' . self::JSON;
-    const IMPORT_COUNTRY_ISO_CONTEXT = self::IMPORT_WIKIPEDIA_PATH . 'country-ISO-3166-context' . self::JSON;
-    const IMPORT_DEMOCRACY_INDEX = self::IMPORT_WIKIPEDIA_PATH . 'democracy_index_table' . self::JSON;
-    const IMPORT_DEMOCRACY_INDEX_TXT = self::IMPORT_WIKIPEDIA_PATH . 'democracy_index_table' . self::TXT;
-    const IMPORT_CURRENCY = self::IMPORT_WIKIPEDIA_PATH . 'currency' . self::JSON;
-    const IMPORT_CURRENCY_CONVERT = self::IMPORT_WIKIPEDIA_PATH . 'currency-convert' . self::JSON;
-    const IMPORT_CURRENCY_WIKI = self::IMPORT_WIKIPEDIA_PATH . 'currency-wiki' . self::JSON;
-    const IMPORT_CURRENCY_CONTEXT = self::IMPORT_WIKIPEDIA_PATH . 'currency-context' . self::JSON;
-    const IMPORT_TRAVEL_SCORING = self::IMPORT_PATH . 'travel_scoring' . self::JSON;
-    const IMPORT_TRAVEL_SCORING_VALUE_LIST = self::IMPORT_PATH . 'travel_scoring_value_list' . self::JSON;
+    const IMPORT_WARNING = test_paths::IMPORT . 'warning_and_error_test' . self::JSON;
+
+    const IMPORT_COUNTRIES = test_paths::IMPORT . 'countries' . self::JSON;
+    const IMPORT_COMPANIES = test_paths::IMPORT . 'companies' . self::JSON;
+    const IMPORT_WIND_INVESTMENT = test_paths::IMPORT . 'wind_investment' . self::JSON;
+    const IMPORT_COUNTRY_ISO = test_paths::IMPORT_WIKIPEDIA . 'country-ISO-3166' . self::JSON;
+    const IMPORT_COUNTRY_ISO_WIKI = test_paths::IMPORT_WIKIPEDIA . 'country-ISO-3166-wiki' . self::JSON;
+    const IMPORT_COUNTRY_ISO_CONTEXT = test_paths::IMPORT_WIKIPEDIA . 'country-ISO-3166-context' . self::JSON;
+    const IMPORT_DEMOCRACY_INDEX = test_paths::IMPORT_WIKIPEDIA . 'democracy_index_table' . self::JSON;
+    const IMPORT_DEMOCRACY_INDEX_TXT = test_paths::IMPORT_WIKIPEDIA . 'democracy_index_table' . self::TXT;
+    const IMPORT_CURRENCY = test_paths::IMPORT_WIKIPEDIA . 'currency' . self::JSON;
+    const IMPORT_CURRENCY_CONVERT = test_paths::IMPORT_WIKIPEDIA . 'currency-convert' . self::JSON;
+    const IMPORT_CURRENCY_WIKI = test_paths::IMPORT_WIKIPEDIA . 'currency-wiki' . self::JSON;
+    const IMPORT_CURRENCY_CONTEXT = test_paths::IMPORT_WIKIPEDIA . 'currency-context' . self::JSON;
+    const IMPORT_TRAVEL_SCORING = test_paths::IMPORT . 'travel_scoring' . self::JSON;
+    const IMPORT_TRAVEL_SCORING_VALUE_LIST = test_paths::IMPORT . 'travel_scoring_value_list' . self::JSON;
+    const IMPORT_WIKI_DEMOCRACY = test_paths::IMPORT_WIKIPEDIA . 'democracy_index_table' . self::JSON;
 
     const TEST_IMPORT_FILE_LIST = [
         self::IMPORT_COUNTRIES,

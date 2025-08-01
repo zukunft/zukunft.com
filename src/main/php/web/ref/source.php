@@ -39,18 +39,22 @@
 
 namespace html\ref;
 
-include_once WEB_SANDBOX_PATH . 'sandbox_code_id.php';
-include_once WEB_HTML_PATH . 'html_base.php';
-include_once WEB_HTML_PATH . 'rest_ctrl.php';
-include_once WEB_USER_PATH . 'user_message.php';
-include_once SHARED_CONST_PATH . 'views.php';
-include_once SHARED_TYPES_PATH . 'view_styles.php';
-include_once SHARED_PATH . 'json_fields.php';
+use cfg\const\paths;
+use html\const\paths as html_paths;
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\html_base;
 use html\sandbox\sandbox_code_id;
 use html\user\user_message;
 use shared\const\views;
+use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\types\view_styles;
 
@@ -58,10 +62,25 @@ class source extends sandbox_code_id
 {
 
     /*
+     * const
+     */
+
+    // curl views
+    const VIEW_ADD = views::SOURCE_ADD;
+    const VIEW_EDIT = views::SOURCE_EDIT;
+    const VIEW_DEL = views::SOURCE_DEL;
+
+    // curl message id
+    const MSG_ADD = msg_id::SOURCE_ADD;
+    const MSG_EDIT = msg_id::SOURCE_EDIT;
+    const MSG_DEL = msg_id::SOURCE_DEL;
+
+
+    /*
      * object vars
      */
 
-    private ?string $url;
+    private ?string $url = null;
 
 
     /*

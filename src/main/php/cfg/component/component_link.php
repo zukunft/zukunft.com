@@ -50,31 +50,34 @@
 
 namespace cfg\component;
 
-include_once DB_PATH . 'sql.php';
-include_once DB_PATH . 'sql_creator.php';
-include_once DB_PATH . 'sql_db.php';
-include_once DB_PATH . 'sql_field_default.php';
-include_once DB_PATH . 'sql_field_type.php';
-include_once DB_PATH . 'sql_par.php';
-include_once DB_PATH . 'sql_par_field_list.php';
-include_once DB_PATH . 'sql_par_type.php';
-include_once DB_PATH . 'sql_type.php';
-include_once DB_PATH . 'sql_type_list.php';
-include_once MODEL_LOG_PATH . 'change.php';
-include_once MODEL_HELPER_PATH . 'data_object.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_link.php';
-include_once MODEL_SANDBOX_PATH . 'sandbox_named.php';
-include_once MODEL_HELPER_PATH . 'type_object.php';
-include_once MODEL_USER_PATH . 'user.php';
-include_once MODEL_USER_PATH . 'user_message.php';
-include_once MODEL_VIEW_PATH . 'view.php';
-include_once MODEL_VIEW_PATH . 'view_db.php';
-include_once SHARED_ENUM_PATH . 'messages.php';
-include_once SHARED_TYPES_PATH . 'position_types.php';
-include_once SHARED_TYPES_PATH . 'api_type_list.php';
-include_once SHARED_PATH . 'json_fields.php';
-include_once SHARED_PATH . 'library.php';
+use cfg\const\paths;
+
+include_once paths::DB . 'sql.php';
+include_once paths::DB . 'sql_creator.php';
+include_once paths::DB . 'sql_db.php';
+include_once paths::DB . 'sql_field_default.php';
+include_once paths::DB . 'sql_field_type.php';
+include_once paths::DB . 'sql_par.php';
+include_once paths::DB . 'sql_par_field_list.php';
+include_once paths::DB . 'sql_par_type.php';
+include_once paths::DB . 'sql_type.php';
+include_once paths::DB . 'sql_type_list.php';
+include_once paths::MODEL_LOG . 'change.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VIEW . 'view_db.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'position_types.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;
@@ -93,6 +96,7 @@ use cfg\sandbox\sandbox_link;
 use cfg\sandbox\sandbox_named;
 use cfg\helper\type_object;
 use cfg\user\user;
+use cfg\user\user_db;
 use cfg\user\user_message;
 use cfg\view\view;
 use cfg\view\view_db;
@@ -135,7 +139,7 @@ class component_link extends sandbox_link
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
         self::FLD_STYLE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -144,7 +148,7 @@ class component_link extends sandbox_link
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
         self::FLD_STYLE,
-        sandbox::FLD_EXCLUDED,
+        sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
         sandbox::FLD_PROTECT
     );
@@ -746,11 +750,11 @@ class component_link extends sandbox_link
         }
         $sc->set_name($qp->name);
         //TODO check if $db_con->set_usr($this->user()->id()); is needed
-        $sc->set_fields(array(user::FLD_ID));
+        $sc->set_fields(array(user_db::FLD_ID));
         $sc->set_fields(array_merge(
             self::FLD_NAMES,
             self::FLD_NAMES_NUM_USR,
-            array(user::FLD_ID)));
+            array(user_db::FLD_ID)));
         if ($this->id() > 0) {
             $sc->add_where($this->id_field(), $this->id());
         } elseif ($this->view()->id() > 0 and $this->component()->id() > 0) {
@@ -1186,7 +1190,7 @@ class component_link extends sandbox_link
         $lib = new library();
         $db_con->set_class(self::class);
         return $db_con->insert_old(
-            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user::FLD_ID, 'order_nbr'),
+            array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID, 'order_nbr'),
             array($this->view()->id(), $this->component()->id(), $this->user()->id(), $this->order_nbr));
     }
 

@@ -7,7 +7,7 @@ $debug = $_GET['debug'] ?? 0;
 //define('ROOT_PATH', dirname(__DIR__, 3) . DIRECTORY_SEPARATOR);
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
-include_once PHP_PATH . 'zu_lib.php';
+include_once PHP_PATH . 'init.php';
 
 // path for the general tests and test setup
 const TEST_PHP_UTIL_PATH = TEST_PHP_PATH . 'utils' . DIRECTORY_SEPARATOR;
@@ -19,7 +19,8 @@ include_once TEST_PHP_UTIL_PATH . 'test_base.php';
 include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
 
 // load the sql sequence check functions
-include_once MODEL_DB_PATH . 'sql_sync_sequences.php';
+use cfg\const\paths;
+include_once paths::DB . 'sql_sync_sequences.php';
 
 use cfg\db\sql_sync_sequences;
 use cfg\user\user;
