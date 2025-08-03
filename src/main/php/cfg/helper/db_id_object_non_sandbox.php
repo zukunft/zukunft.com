@@ -225,7 +225,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * @param user $usr_req the user who has requested the deletion
      * @returns user_message the message that should be shown to the user if something went wrong or an empty string if everything is fine
      */
-    private function del_exe(user $usr_req): user_message
+    protected function del_exe(user $usr_req): user_message
     {
         log_debug($this->dsp_id());
 

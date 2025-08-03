@@ -159,7 +159,9 @@ enum messages: string
     // messages with vars
     case MISSING_OVERWRITE = 'internal function overwrite of "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
-        . '" is missing';
+        . '" is missing in class '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . '.';
     case DIFF_ID = 'id is "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '" instead of "'
@@ -764,7 +766,7 @@ enum messages: string
         . ' failed';
 
     case VERB_ADD_FAILED = 'Adding verb '
-        .self::VAR_START . self::VAR_NAME . self::VAR_END
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' failed.';
 
 
@@ -979,11 +981,11 @@ enum messages: string
         . ' name';
 
     case FAILED_ADD_REFERENCE = 'Adding reference '
-    . self::VAR_START . self::VAR_ID . self::VAR_END
-    . ' failed.';
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed.';
     case FAILED_ADD_VALUE = 'Adding value '
-    . self::VAR_START . self::VAR_ID . self::VAR_END
-    . ' failed.';
+        . self::VAR_START . self::VAR_ID . self::VAR_END
+        . ' failed.';
 
     case FAILED_ADD_REFERENCE_LOG = 'Adding reference for '
         . self::VAR_START . self::VAR_ID . self::VAR_END

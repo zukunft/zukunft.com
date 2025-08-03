@@ -505,7 +505,8 @@ class db_object_seq_id extends db_object
     {
         $usr_msg = new user_message();
         $usr_msg->add_id_with_vars(msg_id::MISSING_OVERWRITE, [
-            msg_id::VAR_NAME => 'save in db_object_seq_id'
+            msg_id::VAR_NAME => 'save in db_object_seq_id',
+            msg_id::VAR_CLASS_NAME => $this::class
         ]);
         return $usr_msg;
     }
@@ -521,7 +522,8 @@ class db_object_seq_id extends db_object
     {
         $usr_msg = new user_message();
         $usr_msg->add_id_with_vars(msg_id::MISSING_OVERWRITE, [
-            msg_id::VAR_NAME => 'del in db_object_seq_id'
+            msg_id::VAR_NAME => 'del in db_object_seq_id',
+            msg_id::VAR_CLASS_NAME => $this::class
         ]);
         return $usr_msg;
     }

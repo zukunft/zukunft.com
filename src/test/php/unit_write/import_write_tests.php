@@ -82,7 +82,7 @@ class import_write_tests
         $t->header($ts);
 
         $this->assert_import_json_named($t, $ts, new user(),
-            users::TEST_USER_NAME, users::TEST_USER_COM, test_files::IMPORT_USERS);
+            users::TEST_USER_NAME, users::TEST_USER_COM, test_files::IMPORT_USERS, $t->system_user());
 
         $this->assert_import_json_named($t, $ts, new word($usr),
             words::TEST_ADD, words::TEST_ADD_COM, test_files::IMPORT_WORDS);
@@ -192,10 +192,15 @@ class import_write_tests
         sandbox_named|sandbox_link_named|type_object|user $sbx,
         string                                            $add_name,
         string                                            $description,
-        string                                            $filename
+        string                                            $filename,
+        user|null                                         $usr_req = null
     ): void
     {
         global $usr;
+
+        if ($usr_req == null) {
+            $usr_req = $usr;
+        }
 
         $lib = new library();
         $imf = new import_file();
@@ -204,21 +209,21 @@ class import_write_tests
         $t->subheader($ts . $name);
 
         $test_name = 'import the test ' . $name;
-        $imp_msg = $imf->json_file($filename . test_files::JSON, $usr, false);
+        $imp_msg = $imf->json_file($filename . test_files::JSON, $usr_req, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the ' . $name . ' has been added to the database';
         $sbx->load_by_name($add_name);
         $t->assert_greater_zero($test_name, $sbx->id());
 
         $test_name = 'add the description to the test ' . $name . ' via import';
-        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UPDATE_EXT . test_files::JSON, $usr, false);
+        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UPDATE_EXT . test_files::JSON, $usr_req, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the description has been added in the database';
         $sbx->load_by_name($add_name);
         $t->assert($test_name, $sbx->description(), $description);
 
         $test_name = 'remove the test ' . $name . ' via import';
-        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UNDO_EXT . test_files::JSON, $usr, false);
+        $imp_msg = $imf->json_file($filename . test_files::IMPORT_UNDO_EXT . test_files::JSON, $usr_req, false);
         $t->assert_true($test_name, $imp_msg->is_ok());
         $test_name = 'test if the test ' . $name . ' has been deleted from the database';
         $sbx->load_by_name($add_name);

@@ -139,6 +139,7 @@ use cfg\sandbox\sandbox_named;
 use cfg\ref\source;
 use cfg\verb\verb_list;
 use cfg\view\view_sys_list;
+use Exception;
 use shared\const\rest_ctrl;
 use shared\const\users;
 use shared\const\words;
@@ -2871,16 +2872,56 @@ class user extends db_id_object_non_sandbox
     /**
      * exclude, archive or delete this user
      *
+     * @param user|null $usr_req the user who has request the user adding or update
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      */
-    function del(): user_message
+    function del(user|null $usr_req = null): user_message
     {
         $usr_msg = new user_message();
         if ($this->never_used()) {
-            $usr_msg->add(parent::del());
+            $usr_msg = new user_message();
+            $lib = new library();
+            $class_name = $lib->class_to_name($this::class);
+            if ($this->id() == 0) {
+                $usr_msg->add_id_with_vars(msg_id::ID_MISSING_FOR_DEL, [
+                    msg_id::VAR_CLASS_NAME => $class_name,
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            } else {
+                // refresh the object with the database to include all updates utils now
+                $reloaded = false;
+                $reloaded_id = $this->load_by_id($this->id());
+                if ($reloaded_id != 0) {
+                    $reloaded = true;
+                }
+                if (!$reloaded) {
+                    log_warning('Reload of for deletion has failed',
+                        $class_name . '->del',
+                        'Reload of ' . $class_name . ' ' . $this->dsp_id()
+                        . ' for deletion has failed.',
+                        (new Exception)->getTraceAsString());
+                } else {
+                    log_debug('reloaded ' . $this->dsp_id());
+                    // check if the object is still valid
+                    if ($this->id() <= 0) {
+                        log_warning('Delete failed',
+                            $class_name . '->del',
+                            'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id()
+                            . ' has been deleted in the meantime.', (new Exception)->getTraceAsString());
+                    } else {
+                        if ($usr_req == null) {
+                            global $usr;
+                            $usr_req = $usr;
+                        }
+                        // TODO check if there are related log entries and if yes exclude it instead of delete
+                        $usr_msg->add(parent::del_exe($usr_req));
+                    }
+                }
+            }
+            return $usr_msg;
         } else {
             $usr_msg->add_id_with_vars(msg_id::USER_CANNOT_DEL, [
                 msg_id::VAR_USER_NAME => $this->name(),
