@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head><title>Start view (zukunft.com)</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+        <script src="/external_lib/bootstrap/js/bootstrap.js"></script>
+        <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css"/>
+        <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+        <script defer src="/external_lib/fontawesome/js/all.js"></script>
+    </head>
+    <body>
+    <div class="container">
+        <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
+                src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
+            <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="pattern"></label><input
+                    class="form-control mr-sm-2" type="search" name="pattern" id="pattern"
+                    placeholder="word or formula">
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
+            </form>
+            <div class="col-md-2">
+                <ul class="nav navbar-nav">
+                    <li class="active"></li>
+                    <li class="active"></li>
+                    <li class="active"><a href="/http/view.php?m=view_edit&id=1" title="adjust the view"><i
+                            class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=1"
+                                                           title="create a new view"><i class="far fa-plus-square"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <br><br><br><br><br>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Priority</th>
+                <th scope="col">Problem</th>
+                <th class="text-right" scope="col">Costs in<a href="/http/view.php?m=44" title=""></a><a
+                        href="/http/view.php?m=44" title=""></a></th>
+                <th scope="col">Solution</th>
+                <th class="text-right" scope="col">Gain in<a href="/http/view.php?m=44" title=""></a><a
+                        href="/http/view.php?m=44" title=""></a></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td><a href="/http/view.php?m=46&id=94" title="global warming">global warming</a></td>
+                <td class="text-right">31.5</td>
+                <td>reduce climate gas emissions</td>
+                <td class="text-right">35.2</td>
+            </tr>
+            <tr>
+                <th scope="row"></th>
+                <td><a href="/http/view.php?m=word_add&back=-91" title="add new word"><i class="far fa-plus-square"></i></a>
+                </td>
+                <td class="text-right"></td>
+                <td><a href="/http/view.php?m=word_add&back=-91" title="add new word"><i class="far fa-plus-square"></i></a>
+                </td>
+                <td class="text-right"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <footer>
+        <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot;<a
+                href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data
+            is available under the<a href="//creativecommons.org/publicdomain/zero/1.0/"
+                                     title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a>
+            License and the<a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under
+            the<a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License</small></div>
+    </footer>
+    </body>
+    </html>

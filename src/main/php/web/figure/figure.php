@@ -34,8 +34,9 @@ namespace html\figure;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -44,17 +45,18 @@ include_once html_paths::RESULT . 'result.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use html\group\group;
 use html\html_base;
 use html\phrase\phrase_list;
-use html\rest_ctrl as api_dsp;
 use html\result\result;
 use html\sandbox\combine_named as combine_named_dsp;
 use html\user\user_message;
 use html\value\value;
+use shared\const\rest_ctrl;
 use shared\json_fields;
 use shared\library;
 
@@ -214,9 +216,9 @@ class figure extends combine_named_dsp
         // TODO check if $result .= $this->obj->display_linked($back) can be used
         $html = new html_base();
         if ($this->is_result()) {
-            $url = $html->url(api_dsp::VALUE_EDIT, $this->obj_id(), $back);
+            $url = $html->url(rest_ctrl::VALUE_EDIT, $this->obj_id(), $back);
         } else {
-            $url = $html->url(api_dsp::RESULT_EDIT, $this->obj_id(), $back);
+            $url = $html->url(rest_ctrl::RESULT_EDIT, $this->obj_id(), $back);
         }
         return $html->ref($url, $this->val_formatted());
     }

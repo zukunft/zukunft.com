@@ -1312,6 +1312,7 @@ class ref extends sandbox_link
     /**
      * update a ref in the database or update the existing
      * TODO review by comparing with sandbox function
+     *
      * @param bool $use_func if true a predefined function is used that also creates the log entries
      * @return user_message the id of the updated or created reference
      */

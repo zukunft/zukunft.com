@@ -36,11 +36,13 @@ namespace html\sandbox;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::SANDBOX . 'combine_object.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\rest_ctrl as api_dsp;
+use html\rest_call as api_dsp;
 use shared\json_fields;
 
 class combine_named extends combine_object

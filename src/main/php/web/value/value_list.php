@@ -36,12 +36,12 @@ namespace html\value;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::HTML . 'button.php';
 // TODO move phr_ids to shared objects
-include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::RESULT . 'result_list.php';
 include_once html_paths::GROUP . 'group.php';
@@ -52,7 +52,9 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
+include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
@@ -66,7 +68,7 @@ use html\html_base;
 use html\group\group_list;
 use html\phrase\phrase;
 use html\phrase\phrase_list;
-use html\rest_ctrl;
+use html\rest_call;
 use html\result\result_list;
 use html\sandbox\list_dsp;
 use html\styles;
@@ -105,7 +107,7 @@ class value_list extends list_dsp
     function load_by_phr_lst(phrase_list $phr_lst): bool
     {
         $result = false;
-        $rest = new rest_ctrl();
+        $rest = new rest_call();
 
         $data = array();
         $data[api::JSON_LIST_PHRASE_IDS] = $phr_lst->ids();

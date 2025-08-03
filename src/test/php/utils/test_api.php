@@ -48,6 +48,7 @@ include_once paths::MODEL_LOG . 'change_field_list.php';
 include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
 include_once html_paths::LOG . 'change_log_list.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 
 use cfg\db\sql_db;
 use cfg\element\element;
@@ -66,9 +67,10 @@ use cfg\user\user_message;
 use cfg\value\value;
 use cfg\word\word;
 use controller\controller;
-use html\rest_ctrl;
+use html\rest_call;
 use html\log\change_log_list as change_log_list_dsp;
 use shared\api;
+use shared\const\rest_ctrl;
 use shared\const\users;
 use shared\json_fields;
 use shared\library;
@@ -212,7 +214,7 @@ class test_api extends create_test_objects
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data_string = json_encode($data);
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::PUT, $url . '/', $data), true);
         $actual_text = json_encode($actual);
         $expected_raw_text = $this->file('api/' . $class . '/' . $class . '_put_response.json');
@@ -268,7 +270,7 @@ class test_api extends create_test_objects
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array("id" => $id);
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::DELETE, $url, $data), true);
         if ($actual == null) {
             return false;
@@ -465,7 +467,7 @@ class test_api extends create_test_objects
     {
         // naming exception (to be removed?)
         $lib = new library();
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         $class_api = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         if ($levels > 0) {
@@ -511,7 +513,7 @@ class test_api extends create_test_objects
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         $data = array($field => $name);
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
         return $this->assert_api_compare($class, $actual);
     }
@@ -542,7 +544,7 @@ class test_api extends create_test_objects
         } else {
             $data = array($id_fld => $ids);
         }
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
 
         // TODO remove
@@ -616,6 +618,90 @@ class test_api extends create_test_objects
         }
 
         return $this->assert_api_compare($class, $actual, null, $filename, change_log_list::class);
+    }
+
+    /**
+     * check if the REST POST call returns a JSON message with the id of the object just added
+     * for testing the local deployments needs to be updated using an external script
+     *
+     * @param string $class the class name of the object to test
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_api_post(
+        string $class
+    ): bool
+    {
+        $lib = new library();
+        $test_name = 'add new ' . $lib->class_to_name($class) . ' via api post call';
+
+        $dbo = $this->class_to_add_object($class);
+        $name = $dbo->name();
+        $dbo_dsp = $this->class_to_ui_object($class);
+        $dbo_dsp->set_from_json($dbo->api_json());
+        $add_result = $dbo_dsp->add_via_api();
+
+        // TODO Prio 1 remove reloading and use $add_result instead
+        $dbo->load_by_name($name);
+        return $this->assert_greater_zero($test_name, $dbo->id());
+
+        //return $this->assert_greater_zero($test_name, $add_result->get_row_id());
+    }
+
+    /**
+     * check if the REST POST call returns a JSON message with the id of the object just added
+     * for testing the local deployments needs to be updated using an external script
+     *
+     * @param string $class the class name of the object to test
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_api_post_direct(
+        string $class,
+        user $usr,
+        string $msg = ''
+    ): bool
+    {
+        $lib = new library();
+        $ctrl = new controller();
+
+        $test_name = 'add new ' . $lib->class_to_name($class) . ' by simulation the post call';
+
+        $dbo = $this->class_to_add_object($class);
+        $dbo_dsp = $this->class_to_ui_object($class);
+        $dbo_dsp->set_from_json($dbo->api_json());
+        // replacement for the api call
+        $name = $dbo->name();
+        $ctrl->post_json($dbo_dsp->api_array(), $dbo, $usr, $msg);
+        $dbo->load_by_name($name);
+
+        return $this->assert_greater_zero($test_name, $dbo->id());
+    }
+
+    /**
+     * check if the REST DELETE call returns an empty JSON message if the excusion has been successful
+     * for testing the local deployments needs to be updated using an external script
+     *
+     * @param string $class the class name of the object to test
+     * @return bool true if the json has no relevant differences
+     */
+    function assert_api_del_direct(
+        string $class,
+        user $usr,
+        string $msg = ''
+    ): bool
+    {
+        $lib = new library();
+        $ctrl = new controller();
+
+        $test_name = 'del new ' . $lib->class_to_name($class) . ' by simulation the delete call';
+
+        $dbo = $this->class_to_add_object($class);
+        $dbo->load_by_name($dbo->name());
+        $dbo_dsp = $this->class_to_ui_object($class);
+        $dbo_dsp->set_from_json($dbo->api_json());
+        $ctrl->delete($dbo_dsp->id(), $dbo, $usr, $msg);
+
+        $dbo->load_by_name($dbo->name());
+        return $this->assert($test_name, $dbo->id(), 0);
     }
 
 

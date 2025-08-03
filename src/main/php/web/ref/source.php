@@ -43,7 +43,7 @@ use cfg\const\paths;
 use html\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';

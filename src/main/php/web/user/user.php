@@ -37,12 +37,14 @@ use html\const\paths as html_paths;
 // get the pure html frontend objects
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+//include_once html_paths::PHRASE . 'term.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use html\html_base;
+use html\phrase\term;
 use html\sandbox\db_object;
 use shared\const\views;
 use shared\enum\messages as msg_id;
@@ -81,6 +83,10 @@ class user extends db_object
     public ?string $first_name;
     public ?string $last_name;
 
+    // speed up cache
+    // the last term that the user has been looking at
+    public ?term $last_term = null;
+
 
     /*
      * construct and map
@@ -101,26 +107,7 @@ class user extends db_object
         $this->email = null;
         $this->first_name = null;
         $this->last_name = null;
-    }
-
-
-    /*
-     * set and get
-     */
-
-    function set_profile_id(int $profile_id): void
-    {
-        $this->profile_id = $profile_id;
-    }
-
-    function profile_id(int $profile_id): int
-    {
-        return $this->profile_id;
-    }
-
-    function name(): string
-    {
-        return $this->name;
+        $this->last_term = null;
     }
 
     /**
@@ -173,6 +160,31 @@ class user extends db_object
             $this->last_name = null;
         }
         return $usr_msg;
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function set_profile_id(int $profile_id): void
+    {
+        $this->profile_id = $profile_id;
+    }
+
+    function profile_id(int $profile_id): int
+    {
+        return $this->profile_id;
+    }
+
+    function name(): string
+    {
+        return $this->name;
+    }
+
+    function last_term(): term|null
+    {
+        return $this->last_term;
     }
 
 

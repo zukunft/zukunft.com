@@ -35,15 +35,16 @@
 namespace html;
 
 use cfg\const\paths;
-use html\const\paths as html_paths;
-include_once paths::SHARED . 'api.php';
+
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once html_paths::HTML . 'styles.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
 
+use shared\const\rest_ctrl;
+use shared\types\view_styles;
 use shared\api;
 use shared\library;
-use shared\types\view_styles;
 
 class html_base
 {

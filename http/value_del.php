@@ -44,7 +44,7 @@ use cfg\value\value;
 use cfg\view\view;
 use html\button;
 use html\html_base;
-use html\rest_ctrl;
+use html\rest_call;
 use html\view\view as view_dsp;
 use shared\api;
 use shared\const\views as view_shared;

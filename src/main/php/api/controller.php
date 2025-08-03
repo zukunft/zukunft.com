@@ -39,19 +39,187 @@ use cfg\const\paths;
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 
 use cfg\helper\combine_object;
+use cfg\helper\db_object;
+use cfg\helper\db_object_seq_id;
 use cfg\ref\source;
 use cfg\sandbox\sandbox;
+use cfg\user\user;
 use cfg\word\word;
+use html\rest_call;
 use shared\api;
+use shared\const\rest_ctrl;
+use shared\library;
+use shared\types\api_type;
 
 class controller
 {
 
     /*
-     * functions
+     * interface functions used by api
+     */
+
+    /**
+     * return a json that has been requested by a GET request to the
+     * REST controller
+     *
+     * @param string $api_json
+     * @param string $msg
+     * @return void
+     */
+    function get_json(string $api_json, string $msg): void
+    {
+        // return the api json or the error message
+        if ($msg == '') {
+            $this->get_response($api_json, $msg);
+        } else {
+            // tell the user e.g. that no products found
+            $this->get_response('', $msg);
+        }
+    }
+
+    /**
+     * execute an api post message to add a new object to the database
+     * and return the id of the object just added to the
+     * REST controller
+     *
+     * @param array $api_json the api json message
+     * @param db_object_seq_id $dbo the database object that should be used to add the database row
+     * @param user $usr the session user who has started the request
+     * @param string $msg the message text collected until now
+     * @return void
+     */
+    function post_json(
+        array            $api_json,
+        db_object_seq_id $dbo,
+        user             $usr,
+        string           $msg
+    ): void
+    {
+        $result = ''; // reset the json message string
+
+        $dbo->api_mapper($api_json);
+
+        // add the db object e.g. word
+        $add_result = $dbo->save();
+
+        // if update was fine ...
+        if ($add_result->is_ok()) {
+            $id = $add_result->get_row_id();
+            if ($id == 0) {
+                $id = $dbo->id();
+            }
+            // TODO Prio 1 return only the id of the added word?
+            $result = $dbo->api_json([api_type::HEADER], $usr);
+        } else {
+            // ... or in case of a problem prepare to show the message
+            $msg .= $add_result->all_message_text();
+        }
+        // return either the api json with the id of the created db object e.g. word
+        // or the message why the adding has failed
+        $ctrl = new controller();
+        $ctrl->curl_response($result, $msg, rest_ctrl::POST);
+    }
+
+    /**
+     * execute an api put message to update an object in the database
+     * and return the json of the updated database object to the
+     * REST controller
+     * e.g. if it is requested to update the description but the type is set already by someone else
+     * the returned json contains the updated description and the updated type
+     *
+     * @param int $id the unique id of the db row that should be deleted of excluded
+     * @param array $api_json the api json message
+     * @param db_object_seq_id $dbo the database object that should be used to add the database row
+     * @param user $usr the session user who has started the request
+     * @param string $msg the message text collected until now
+     * @return void
+     */
+    function put_json(
+        int              $id,
+        array            $api_json,
+        db_object_seq_id $dbo,
+        user             $usr,
+        string           $msg
+    ): void
+    {
+        $result = ''; // reset the json message string
+
+        $dbo->api_mapper($api_json);
+        $dbo->set_id($id);
+
+        // update the db object e.g. word
+        $upd_result = $dbo->save();
+
+        // if update was fine ...
+        if ($upd_result->is_ok()) {
+            // TODO Prio 1 return only the id of the added word?
+            $result = $dbo->api_json([api_type::HEADER], $usr);
+        } else {
+            // ... or in case of a problem prepare to show the message
+            $msg .= $upd_result->all_message_text();
+        }
+        // return either the api json with the id of the created word
+        // or the message why the adding of the word has failed
+        $ctrl = new controller();
+        $ctrl->curl_response($result, $msg, rest_ctrl::PUT, $id, $dbo);
+    }
+
+    /**
+     * execute an api delete message to delete or exclude an object
+     * and return the json of the excluded database object
+     * or an empty json if the object has completely been deleted to the
+     * REST controller
+     *
+     * @param int $id the unique id of the db row that should be deleted of excluded
+     * @param db_object_seq_id $dbo the database object that should be used to add the database row
+     * @param user $usr the session user who has started the request
+     * @param string $msg the message text collected until now
+     * @return void
+     */
+    function delete(
+        int              $id,
+        db_object_seq_id $dbo,
+        user             $usr,
+        string           $msg
+    ): void
+    {
+        $result = ''; // reset the json message string
+
+        if ($id > 0) {
+            $dbo->load_by_id($id);
+
+            // delete or exclude the word
+            $del_result = $dbo->del();
+
+            if ($del_result->is_ok()) {
+                $result = $dbo->api_json([api_type::HEADER], $usr);
+            } else {
+                // ... or in case of a problem prepare to show the message
+                $msg .= $del_result->all_message_text();
+            }
+        } else {
+            $lib = new library();
+            $msg = $lib->class_to_name($dbo::class) . ' id is missing';
+        }
+
+        // add, update or delete the word
+        $ctrl = new controller();
+        $ctrl->curl_response($result, $msg, rest_ctrl::DELETE, $id, $dbo);
+    }
+
+    function not_permitted(string $msg): void
+    {
+        http_response_code(401);
+        $this->curl_response('', $msg, rest_ctrl::GET);
+    }
+
+
+    /*
+     * internal functions
      */
 
     /**
@@ -64,9 +232,11 @@ class controller
     private function get_response(string $api_obj, string $msg): void
     {
         // required headers
-        header("Access-Control-Allow-Origin: *");
-        header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Methods: GET");
+        if (!headers_sent()) {
+            header("Access-Control-Allow-Origin: *");
+            header("Content-Type: application/json; charset=UTF-8");
+            header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE");
+        }
 
         // return the api json or the error message
         if ($msg == '') {
@@ -94,29 +264,32 @@ class controller
      *
      * @param string $api_obj the object as a json string that should be returned
      * @param string $msg the message as a json string that should be returned
+     * @param string $method the curl method from the controller
      * @param int $id the id of object that should be deleted
-     * @param sandbox|combine_object|null $obj
+     * @param db_object_seq_id|null $obj
      * @return void
      */
     private function curl_response(
-        string                      $api_obj,
-        string                      $msg,
-        int                         $id = 0,
-        sandbox|combine_object|null $obj = null
+        string                $api_obj,
+        string                $msg,
+        string                $method,
+        int                   $id = 0,
+        db_object_seq_id|null $obj = null
     ): void
     {
         // required headers
-        header("Access-Control-Allow-Origin: *");
-        header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Methods: POST,GET,PUT,DELETE");
+        if (!headers_sent()) {
+            header("Access-Control-Allow-Origin: *");
+            header("Content-Type: application/json; charset=UTF-8");
+            header("Access-Control-Allow-Methods: GET,POST,PUT,DELETE");
+        }
 
         // method switch
-        $method = $_SERVER['REQUEST_METHOD'];
         log_debug($method);
         switch ($method) {
-            case 'PUT':
+            case rest_ctrl::PUT:
                 // get json object body to put
-                $request_text = file_get_contents('php://input');
+                $request_text = file_get_contents(rest_ctrl::REQUEST_BODY_FILENAME);
                 $request_json = json_decode($request_text, true);
                 $request_body = $this->check_api_msg($request_json);
 
@@ -140,7 +313,7 @@ class controller
                     );
                 }
                 break;
-            case 'GET':
+            case rest_ctrl::GET:
                 // return the api json or the error message
                 if ($msg == '') {
 
@@ -161,10 +334,10 @@ class controller
                     );
                 }
                 break;
-            case 'POST':
+            case rest_ctrl::POST:
                 // return the api json or the error message
                 if ($msg == '') {
-                    $request_text = file_get_contents('php://input');
+                    $request_text = file_get_contents(rest_ctrl::REQUEST_BODY_FILENAME);
                     $request_json = json_decode($request_text, true);
                     $request_body = $this->check_api_msg($request_json);
 
@@ -188,12 +361,12 @@ class controller
                     }
                 }
                 break;
-            case 'DELETE':
+            case rest_ctrl::DELETE:
                 // return the api json or the error message
                 if ($msg == '') {
 
                     if ($id > 0) {
-                        $result = $obj->del($id);
+                        $result = $obj->del();
                         if ($result->is_ok()) {
                             // set response code - 200 OK
                             http_response_code(200);
@@ -225,34 +398,6 @@ class controller
                 // set response code - 400 Bad Request
                 http_response_code(400);
                 break;
-        }
-    }
-
-    public function not_permitted(string $msg): void
-    {
-        http_response_code(401);
-        $this->curl_response('', $msg);
-    }
-
-    function get_json(string $api_json, string $msg): void
-    {
-        // return the api json or the error message
-        if ($msg == '') {
-            $this->get_response($api_json, $msg);
-        } else {
-            // tell the user e.g. that no products found
-            $this->get_response('', $msg);
-        }
-    }
-
-    function get_export_json(string $json, string $msg): void
-    {
-        // return the api json or the error message
-        if ($msg == '') {
-            $this->get_response($json, $msg);
-        } else {
-            // tell the user e.g. that no products found
-            $this->get_response('', $msg);
         }
     }
 
@@ -315,11 +460,6 @@ class controller
     function post(array $request): string
     {
         return 'post';
-    }
-
-    function delete(array $request): string
-    {
-        return 'delete';
     }
 
 }

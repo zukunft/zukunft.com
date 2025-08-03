@@ -34,23 +34,25 @@ namespace html\log;
 use cfg\const\paths;
 use html\const\paths as html_paths;
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
 include_once html_paths::HTML . 'styles.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
 
 use html\html_base;
-use html\rest_ctrl;
+use html\rest_call;
 use html\sandbox\list_dsp;
 use html\styles;
 use html\system\back_trace;
 use html\user\user;
 use html\user\user_message;
 use shared\api;
+use shared\const\rest_ctrl;
 use shared\library;
 
 class change_log_list extends list_dsp
@@ -132,7 +134,7 @@ class change_log_list extends list_dsp
         $data[api::URL_VAR_CLASS] = $class;
         $data[api::URL_VAR_ID] = $id;
         $data[api::URL_VAR_FIELD] = $fld;
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         return $ctrl->api_call(rest_ctrl::GET, $url, $data);
     }
 

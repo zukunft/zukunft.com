@@ -42,7 +42,7 @@ include_once paths::MODEL_USER . 'user_db.php';
 
 use cfg\user\user_db;
 use controller\controller;
-use html\rest_ctrl;
+use html\rest_call;
 use html\html_base;
 use cfg\user\user;
 use shared\api;

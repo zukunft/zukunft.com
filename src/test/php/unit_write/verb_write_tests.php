@@ -74,7 +74,7 @@ class verb_write_tests
         $vrb->load_by_name(verbs::TEST_ADD_NAME);
         // TODO this setting of the user should actually not be needed
         $vrb->set_user($t->usr1);
-        $result = $vrb->del();
+        $result = $vrb->del()->all_message_text();
         $t->assert('verb->del ', $result);
 
         // ... test if deleting the verb is part of the change log

@@ -43,7 +43,7 @@ include_once html_paths::VIEW . 'view_base.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'display_list.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::LOG . 'user_log_display.php';

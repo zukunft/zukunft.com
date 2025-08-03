@@ -177,11 +177,11 @@ class db_id_object_non_sandbox extends db_object_seq_id
     /**
      * delete the related db row and log the deletion
      *
-     * @param user $usr_req the user who has requested the deletion
      * @return user_message if the deletion cannot be done the reason why for the user
      */
-    function del(user $usr_req): user_message
+    function del(): user_message
     {
+        global $usr;
         $usr_msg = new user_message();
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
@@ -202,7 +202,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
                     $class_name . '->del',
                     'Reload of ' . $class_name . ' ' . $this->dsp_id()
                     . ' for deletion has failed.',
-                    (new Exception)->getTraceAsString(), $usr_req);
+                    (new Exception)->getTraceAsString(), $usr);
             } else {
                 log_debug('reloaded ' . $this->dsp_id());
                 // check if the object is still valid
@@ -210,10 +210,10 @@ class db_id_object_non_sandbox extends db_object_seq_id
                     log_warning('Delete failed',
                         $class_name . '->del',
                         'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id()
-                        . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $usr_req);
+                        . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $usr);
                 } else {
                     // TODO check if there are related log entries and if yes exclude it instead of delete
-                    $usr_msg->add($this->del_exe($usr_req));
+                    $usr_msg->add($this->del_exe($usr));
                 }
             }
         }
@@ -225,7 +225,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
      * @param user $usr_req the user who has requested the deletion
      * @returns user_message the message that should be shown to the user if something went wrong or an empty string if everything is fine
      */
-    private function del_exe(user $usr_req): user_message
+    protected function del_exe(user $usr_req): user_message
     {
         log_debug($this->dsp_id());
 

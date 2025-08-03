@@ -50,6 +50,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log_status.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
+include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -69,6 +70,7 @@ use cfg\log\change;
 use cfg\sandbox\sandbox;
 use cfg\user\user;
 use cfg\user\user_db;
+use cfg\user\user_message;
 use shared\enum\change_actions;
 use shared\json_fields;
 use shared\library;
@@ -434,14 +436,15 @@ class sys_log extends db_object_seq_id
     }
 
     /**
-     * @return string either an empty string if saving has been successful or a message to the user with the reason, why it has failed
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @return user_message either an empty string if saving has been successful or a message to the user with the reason, why it has failed
      */
-    function save(): string
+    function save(?bool $use_func = null): user_message
     {
         log_debug();
 
         global $db_con;
-        $result = '';
+        $usr_msg = new user_message();
 
         // build the database object because the is anyway needed
         $db_con->set_usr($this->user()->id());
@@ -455,15 +458,15 @@ class sys_log extends db_object_seq_id
             }
 
             if (!$this->save_field_status($db_con, $db_rec)) {
-                $result .= 'saving the error log failed';
+                $usr_msg->add_message_text('saving the error log failed');
             }
         }
 
-        if ($result != '') {
-            log_err($result);
+        if (!$usr_msg->is_ok()) {
+            log_err($usr_msg->get_last_message());
         }
 
-        return $result;
+        return $usr_msg;
     }
 
 

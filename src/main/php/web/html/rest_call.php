@@ -2,8 +2,8 @@
 
 /*
 
-    web/html/api_const.php - constants used for the backend to frontend api of zukunft.com
-    ----------------------
+    web/html/rest_call.php - functions used by the frontend to call the backend api of zukunft.com
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -33,71 +33,19 @@
 namespace html;
 
 use cfg\const\paths;
-use html\const\paths as html_paths;
+
 //include_once paths::API_OBJECT . 'controller.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
 
 use controller\controller;
 use shared\api;
+use shared\const\rest_ctrl;
 use shared\library;
 
-class rest_ctrl
+class rest_call
 {
-
-    // methods used
-    const GET = 'GET';
-    const POST = 'POST';
-    const PUT = 'PUT';
-    const DELETE = 'DELETE';
-
-    // url path of the api
-    const PATH = 'api/';
-
-    // url path to the fixed views
-    const PATH_FIXED = '/http/';
-    const URL_MAIN_SCRIPT = 'view';
-
-    // url extension of the fixed views
-    const EXT = '.php';
-
-    // classes used to allow renaming of the API name independent of the class name
-    const WORD = 'word';
-    const VERB = 'verb';
-    const TRIPLE = 'triple';
-    const VALUE = 'value';
-    const FORMULA = 'formula';
-    const VIEW = 'view';
-    const LINK = 'link';
-    const SOURCE = 'source';
-    const LANGUAGE = 'language';
-
-    // class extensions of all possible the fixed views
-    const CREATE = '_add';
-    const UPDATE = '_edit';
-    const REMOVE = '_del';
-    const LIST = '';
-    const SEARCH = 'find';
-
-    // special api function independent of a class
-    const LOGIN_RESET = 'login_reset';
-    const ERROR_UPDATE = 'error_update';
-    const URL_ABOUT = 'about';
-
-    // view parameter names
-    const PAR_VIEW_VERBS = 'verbs';  // to select the verbs that should be display
-    const PAR_LOG_STATUS = 'status'; // to set the status of a log entry
-    const PAR_VIEW_SOURCES = 'sources';  // to select the formulas that should be display
-    const PAR_VIEW_LANGUAGES = 'languages';  // to select the formulas that should be display
-    const PAR_VIEW_NEW_ID = 'new_id'; // if the user has changed the view for this word, save it
-    const PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
-
-    // classes used
-    const CLASS_FORM_ROW = 'form-row';
-
-    // to be reviewed
-    const VALUE_EDIT = 'value_edit';
-    const RESULT_EDIT = 'result_edit';
 
     /**
      * create the class name as used for the api
@@ -140,7 +88,7 @@ class rest_ctrl
     }
 
     /**
-     * create and execute an api call for a database object
+     * create and execute an api get call to get a json message of a database object
      * by id
      * @param string $class the frontend class name that should be loaded
      * @param array $data with the parameter for the get call
@@ -148,13 +96,61 @@ class rest_ctrl
      */
     function api_get(string $class, array $data): array
     {
+        return $this->api_curl_call($class, $data, rest_ctrl::GET);
+    }
+
+    /**
+     * create and execute an api post call add an object to the database based on the given json
+     *
+     * @param string $class the frontend class name that should be loaded
+     * @param array $data with the parameter for the post call e.g. the json array for a new word
+     * @return array with the body json message from the backend
+     */
+    function api_post(string $class, array $data): array
+    {
+        return $this->api_curl_call($class, $data, rest_ctrl::POST);
+    }
+
+    /**
+     * create and execute an api put call update an object to the database based on the given json
+     *
+     * @param string $class the frontend class name that should be loaded
+     * @param array $data with the parameter for the post call e.g. the json array for a new word
+     * @return array with the body json message from the backend
+     */
+    function api_put(string $class, array $data): array
+    {
+        return $this->api_curl_call($class, $data, rest_ctrl::PUT);
+    }
+
+    /**
+     * create and execute an api delete call to exclude an object from the database selected by the given json with the id
+     *
+     * @param string $class the frontend class name that should be loaded
+     * @param array $data with the parameter for the post call e.g. the json array for a new word
+     * @return array with the body json message from the backend
+     */
+    function api_del(string $class, array $data): array
+    {
+        return $this->api_curl_call($class, $data, rest_ctrl::DELETE);
+    }
+
+    /**
+     * create and execute an api get, post, put or delete call for a database object
+     *
+     * @param string $class the frontend class name that should be loaded
+     * @param array $data with the parameter for the post call e.g. the json array for a new word
+     * @return array with the body json message from the backend
+     */
+    function api_curl_call(string $class, array $data, string $method): array
+    {
         $html = new html_base();
         $ctrl = new controller();
         $api_name = $this->class_to_api_name($class);
         $url = $html->url_api($api_name, []);
-        $json_str = $this->api_call(self::GET, $url, $data);
-        $jsom_msg = json_decode($json_str, true);
-        return $ctrl->check_api_msg($jsom_msg);
+        $json_str = $this->api_call($method, $url, $data);
+        $json_msg = json_decode($json_str, true);
+        return $ctrl->check_api_msg($json_msg);
     }
 
     /**
@@ -171,18 +167,18 @@ class rest_ctrl
         $data_json = json_encode($data);
 
         switch ($method) {
-            case self::POST:
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, self::POST);
+            case rest_ctrl::POST:
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, rest_ctrl::POST);
                 break;
-            case self::PUT:
+            case rest_ctrl::PUT:
                 curl_setopt($curl,
                     CURLOPT_HTTPHEADER,
                     array('Content-Type: application/json', 'Content-Length: ' . strlen($data_json)));
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, self::PUT);
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, rest_ctrl::PUT);
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $data_json);
                 break;
-            case self::DELETE:
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, self::DELETE);
+            case rest_ctrl::DELETE:
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, rest_ctrl::DELETE);
                 $url = sprintf("%s?%s", $url, http_build_query($data));
                 break;
             default:
@@ -190,19 +186,35 @@ class rest_ctrl
 
         }
 
-        // Optional Authentication:
+        // Authentication:
         curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($curl, CURLOPT_USERPWD, "username:password");
 
         curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 
         $result = curl_exec($curl);
 
+        if ($result === false) {
+            $error = curl_error($curl);
+        } else {
+            $error = '';
+        }
+
         curl_close($curl);
 
-        return $result;
+        if ($error != '') {
+            return $error;
+        } else {
+            return $result;
+        }
+    }
+
+    function request_json(): array
+    {
+        $request_text = file_get_contents(rest_ctrl::REQUEST_BODY_FILENAME);
+        return json_decode($request_text, true);
     }
 
 }

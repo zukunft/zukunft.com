@@ -32,13 +32,15 @@
 
 namespace unit;
 
+use cfg\const\paths;
 use html\const\paths as html_paths;
 
 include_once html_paths::FIGURE . 'figure.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 
 use cfg\result\results;
 use html\figure\figure as figure_dsp;
-use html\rest_ctrl;
+use shared\const\rest_ctrl;
 use shared\const\values;
 use shared\types\api_type;
 use test\test_cleanup;

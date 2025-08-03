@@ -478,7 +478,7 @@ class import
                     foreach ($json_obj as $user) {
                         // TODO check if the constructor is always used
                         $usr_import = new user;
-                        $import_result = $usr_import->import_obj($user, $this->usr);
+                        $import_result = $usr_import->import_obj($user, null, null, $this->usr);
                         if ($import_result->is_ok()) {
                             $this->users_done++;
                         } else {
@@ -533,7 +533,7 @@ class import
                 foreach ($json_obj as $verb) {
                     $vrb = new verb;
                     $vrb->set_user($this->usr);
-                    $import_result = $vrb->import_obj($verb, $this->usr);
+                    $import_result = $vrb->import_obj($verb);
                     if ($import_result->is_ok()) {
                         $this->verbs_done++;
                     } else {
@@ -548,7 +548,7 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, word::class);
                 foreach ($json_obj as $json_wrd) {
                     $wrd = new word($this->usr);
-                    $import_result = $wrd->import_obj($json_wrd, $this->usr);
+                    $import_result = $wrd->import_obj($json_wrd);
                     if ($import_result->is_ok()) {
                         $this->words_done++;
                     } else {
@@ -577,7 +577,7 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, triple::class);
                 foreach ($json_obj as $json_trp) {
                     $wrd_lnk = new triple($this->usr);
-                    $import_result = $wrd_lnk->import_obj($json_trp, $this->usr);
+                    $import_result = $wrd_lnk->import_obj($json_trp);
                     if ($import_result->is_ok()) {
                         $this->triples_done++;
                     } else {
@@ -591,7 +591,7 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, formula::class);
                 foreach ($json_obj as $json_frm) {
                     $frm = new formula($this->usr);
-                    $import_result = $frm->import_obj($json_frm, $this->usr);
+                    $import_result = $frm->import_obj($json_frm);
                     if ($import_result->is_ok()) {
                         $this->formulas_done++;
                         $frm_to_calc->add($frm);
@@ -606,7 +606,7 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, source::class);
                 foreach ($json_obj as $json_src) {
                     $src = new source($this->usr);
-                    $import_result = $src->import_obj($json_src, $this->usr);
+                    $import_result = $src->import_obj($json_src);
                     if ($import_result->is_ok()) {
                         $this->sources_done++;
                     } else {
@@ -620,7 +620,7 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, ref::class);
                 foreach ($json_obj as $json_ref) {
                     $ref = new ref($this->usr);
-                    $import_result = $ref->import_obj($json_ref, $this->usr);
+                    $import_result = $ref->import_obj($json_ref);
                     if ($import_result->is_ok()) {
                         $this->refs_done++;
                     } else {
@@ -648,7 +648,7 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, value::class);
                 foreach ($json_obj as $json_val) {
                     $val = new value($this->usr);
-                    $import_result = $val->import_obj($json_val, $this->usr);
+                    $import_result = $val->import_obj($json_val);
                     if ($import_result->is_ok()) {
                         $this->values_done++;
                     } else {
@@ -663,7 +663,7 @@ class import
                 // TODO add a unit test
                 foreach ($json_obj as $value) {
                     $val = new value_list($this->usr);
-                    $import_result = $val->import_obj($value, $this->usr);
+                    $import_result = $val->import_obj($value);
                     if ($import_result->is_ok()) {
                         $this->list_values_done++;
                     } else {
@@ -677,7 +677,7 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, view::class);
                 foreach ($json_obj as $json_msk) {
                     $view_obj = new view($this->usr);
-                    $import_result = $view_obj->import_obj($json_msk, $this->usr);
+                    $import_result = $view_obj->import_obj($json_msk);
                     if ($import_result->is_ok()) {
                         $this->views_done++;
                     } else {
@@ -691,7 +691,7 @@ class import
                 $this->step_start(msg_id::SAVE_SINGLE, component::class);
                 foreach ($json_obj as $json_cmp) {
                     $cmp_obj = new component($this->usr);
-                    $import_result = $cmp_obj->import_obj($json_cmp, $this->usr);
+                    $import_result = $cmp_obj->import_obj($json_cmp);
                     if ($import_result->is_ok()) {
                         $this->components_done++;
                     } else {
@@ -706,7 +706,7 @@ class import
                 // TODO add a unit test
                 foreach ($json_obj as $json_res) {
                     $res = new result($this->usr);
-                    $import_result = $res->import_obj($json_res, $this->usr);
+                    $import_result = $res->import_obj($json_res);
                     if ($import_result->is_ok()) {
                         $this->calc_validations_done++;
                         $res_to_validate->add($res);
@@ -723,7 +723,7 @@ class import
                 // TODO add a unit test
                 foreach ($json_obj as $value) {
                     $msk = new view($this->usr);
-                    $import_result = $msk->import_obj($value, $this->usr);
+                    $import_result = $msk->import_obj($value);
                     if ($import_result->is_ok()) {
                         $this->view_validations_done++;
                         $dsp_to_validate->add($msk);
@@ -739,7 +739,7 @@ class import
                 foreach ($json_obj as $ip_range) {
                     $ip_obj = new ip_range;
                     $ip_obj->set_user($this->usr);
-                    $import_result = $ip_obj->import_obj($ip_range, $this->usr);
+                    $import_result = $ip_obj->import_obj($ip_range);
                     if ($import_result->is_ok()) {
                         $this->system_done++;
                     } else {

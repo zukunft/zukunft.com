@@ -69,6 +69,11 @@ class api
     const URL_API_PATH = 'api/';
     const URL_VAR_ID = 'id'; // the internal database id of the main view object
 
+    // the url entry to select the url format
+    // if the next two are not set at least URL_VAR_MASK is expected to be set and if the short technical url is used
+    const URL_VAR_MASK_HUMAN = 'mask_id'; // if *_LONG is given the human-readable url format is used
+    const URL_VAR_MASK_POD = 'mask'; // if *_EXCHANGE is given the url that is interchangeable between pods is used thet does not contain pod specific database ids
+
     // the var names for the short url (in alphabetic order to detect duplicates)
     const URL_VAR_ACTION = 'a'; // the curl action
     const URL_VAR_VERB = 'b';
@@ -80,7 +85,6 @@ class api
     const URL_VAR_FIGURE = 'i';
     const URL_VAR_JOB = 'j'; // for system batch jobs
     const URL_VAR_MASK = 'm'; // the internal database id of the view used to format the object
-    const URL_VAR_CONFIRM = 'n'; // the action status (e.g. show, confirm)
     const URL_VAR_RESULT = 'r';
     const URL_VAR_SOURCE = 's';
     const URL_VAR_VIEW = 'v';
@@ -89,6 +93,7 @@ class api
     const URL_VAR_PHRASE = 'p'; // the id or name of one phrase
     const URL_VAR_VALUE = 'v';
     const URL_VAR_CONTEXT = 'x'; // list of terms to describe the context used for the view
+    const URL_VAR_STEP = 'z'; // the user process (proZess) step (e.g. show, to_confirm, confirmed)
     const URL_VAR_FORMULA_LINK = 'fl'; // to link a formula to a phrase
     const URL_VAR_VIEW_TERM_LINK = 'vl'; // to link a view to a term
     const URL_VAR_COMPONENT_LINK = 'cl'; // to link a component to a view
@@ -99,7 +104,8 @@ class api
 
     // the var names for the easy human-readable url (in content related order)
     const URL_VAR_ACTION_LONG = 'action'; // the curl action for the long url
-    const URL_VAR_CONFIRM_LONG = 'confirm';  // the action status for the long url
+    const URL_VAR_STEP_LONG = 'step_id';  // the action status for the long url
+    const URL_VAR_STEP_POD = 'step';  // the action status for the long url
 
     // enum for next step the action for URL_VAR_ACTION
     const URL_VAR_CURL_CREATE = 'add'; // the curl action code to add an object

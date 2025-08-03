@@ -41,12 +41,13 @@ namespace html\sandbox;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
-include_once html_paths::HTML . 'rest_ctrl.php';
+
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 
-use html\rest_ctrl as api_dsp;
+use html\rest_call as api_dsp;
 use html\user\user_message;
 use html\word\word;
 use shared\helper\CombineObject;

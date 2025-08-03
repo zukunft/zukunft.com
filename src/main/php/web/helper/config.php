@@ -37,7 +37,7 @@ namespace html\helper;
 use cfg\const\paths;
 use html\const\paths as html_paths;
 include_once html_paths::VALUE . 'value_list.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -45,7 +45,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED . 'api.php';
 
-use html\rest_ctrl;
+use html\rest_call;
 use html\user\user_message;
 use html\value\value_list;
 use shared\api;
@@ -90,7 +90,7 @@ class config extends value_list
         $data = [];
         $data[api::URL_VAR_CONFIG_PART] = $part;
         $data[api::URL_VAR_WITH_PHRASES] = api::URL_VAR_TRUE;
-        $rest = new rest_ctrl();
+        $rest = new rest_call();
         $json_body = $rest->api_get(config::class, $data);
         if (array_key_exists(api::URL_VAR_MSG, $json_body)) {
             $usr_msg->add_id_with_vars(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[api::URL_VAR_MSG]]);

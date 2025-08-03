@@ -316,13 +316,20 @@ class system_tests
 
         $t->subheader($ts . 'im- and export');
 
+
         $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
-        $ip_range->import_obj($json_in, $usr_sys, new data_object($usr), $t);
+        // switch to system user for import
+        $usr_tmp = $usr;
+        $usr = $usr_sys;
+        $ip_range->import_obj($json_in, new data_object($usr), $t);
+        // switch back to original user
+        $usr = $usr_tmp;
         $json_ex = $ip_range->export_json();
         $result = $lib->json_is_similar($json_in, $json_ex);
         $t->assert_true('ip_range->import check', $result);
+
 
 
         /*
@@ -331,13 +338,20 @@ class system_tests
 
         $t->subheader($ts . 'ip range');
 
+
         $json_in = json_decode(file_get_contents(test_files::IP_BLACKLIST), true);
         $ip_range = new ip_range();
         $ip_range->set_user($usr);
-        $ip_range->import_obj($json_in, $usr_sys, new data_object($usr), $t);
+        // switch to system user for import
+        $usr_tmp = $usr;
+        $usr = $usr_sys;
+        $ip_range->import_obj($json_in, new data_object($usr), $t);
+        // switch back to original user
+        $usr = $usr_tmp;
         $test_ip = '66.249.64.95';
         $result = $ip_range->includes($test_ip);
         $t->assert_true('ip_range->includes check', $result);
+
 
         // negative case before
         $test_ip = '66.249.64.94';
@@ -533,7 +547,7 @@ class system_tests
                         }
                     }
                     if (!$found) {
-                        if (!in_array($path . '\\' . $class,self::PATH_NO_INCLUDE)) {
+                        if (!in_array($path . '\\' . $class, self::PATH_NO_INCLUDE)) {
                             $sub_path = $lib->str_right_of($base_path, '../');
                             $test_name = 'includes missing in ' . $path . '\\' . $class
                                 . ' in ' . $sub_path . $code_file

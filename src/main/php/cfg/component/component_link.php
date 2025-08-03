@@ -345,7 +345,7 @@ class component_link extends sandbox_link
                 msg_id::VAR_COMPONENT_NAME => $in_ex_json[json_fields::NAME]
             ]);
             $cmp = new component($usr);
-            $cmp->import_obj($in_ex_json, $usr, $dto, $test_obj);
+            $cmp->import_obj($in_ex_json, $dto, $test_obj);
         }
 
         // set the link position and type

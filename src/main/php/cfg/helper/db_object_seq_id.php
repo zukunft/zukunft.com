@@ -96,7 +96,6 @@ class db_object_seq_id extends db_object
     const FLD_ID_SQL_TYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
 
 
-
     /*
      * construct and map
      */
@@ -124,6 +123,22 @@ class db_object_seq_id extends db_object
             }
         }
         return $result;
+    }
+
+    /**
+     * fill the vars with this database id object based on the given api json array
+     * @param array $api_json the api array with the word values that should be mapped
+     * @return user_message
+     */
+    function api_mapper(array $api_json): user_message
+    {
+        $usr_msg = new user_message();
+
+        if (array_key_exists(json_fields::ID, $api_json)) {
+            $this->set_id($api_json[json_fields::ID]);
+        }
+
+        return $usr_msg;
     }
 
 
@@ -289,7 +304,7 @@ class db_object_seq_id extends db_object
         if ($typ_lst->use_header()) {
             global $db_con;
             $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+            $msg = $api_msg->api_header_array($db_con, $this::class, $usr, $vars);
         } else {
             $msg = $vars;
         }
@@ -471,6 +486,46 @@ class db_object_seq_id extends db_object
         } else {
             return ' (' . $this->id_field() . ' no set)';
         }
+    }
+
+
+    /*
+     * overwrite
+     */
+
+    /**
+     * add or update an object to the database
+     * to be overwritten by the child object
+     *
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @return user_message the message that should be shown to the user in case something went wrong
+     */
+
+    function save(?bool $use_func = null): user_message
+    {
+        $usr_msg = new user_message();
+        $usr_msg->add_id_with_vars(msg_id::MISSING_OVERWRITE, [
+            msg_id::VAR_NAME => 'save in db_object_seq_id',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg;
+    }
+
+    /**
+     * delete or exclude an object from or in the database
+     * to be overwritten by the child object
+     *
+     * @return user_message the message that should be shown to the user in case something went wrong
+     */
+
+    function del(): user_message
+    {
+        $usr_msg = new user_message();
+        $usr_msg->add_id_with_vars(msg_id::MISSING_OVERWRITE, [
+            msg_id::VAR_NAME => 'del in db_object_seq_id',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg;
     }
 
 }

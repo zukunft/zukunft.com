@@ -86,6 +86,7 @@ class paths
     const DB = 'db' . DIRECTORY_SEPARATOR;
     const FORMULA = 'formula' . DIRECTORY_SEPARATOR;
     const VIEWS = 'views' . DIRECTORY_SEPARATOR;
+    const VIEWS_BY_ID = 'views_by_id' . DIRECTORY_SEPARATOR;
     const WEB = 'web' . DIRECTORY_SEPARATOR;
 
 }

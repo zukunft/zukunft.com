@@ -37,10 +37,10 @@ namespace html\value;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
-include_once html_paths::SANDBOX . 'sandbox_value.php';
+
 include_once paths::DB . 'sql_db.php';
+include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::USER . 'user_message.php';
@@ -52,6 +52,7 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
@@ -66,12 +67,12 @@ use html\log\user_log_display;
 use html\phrase\phrase;
 use html\phrase\phrase_list;
 use html\ref\source;
-use html\rest_ctrl as api_dsp;
 use html\sandbox\sandbox_value;
 use html\styles;
 use html\user\user_message;
 use html\word\word;
 use shared\api;
+use shared\const\rest_ctrl;
 use shared\const\views;
 use shared\enum\messages as msg_id;
 use shared\json_fields;
@@ -284,7 +285,8 @@ class value extends sandbox_value
     function value_link(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(api_dsp::VALUE, $this->id(), '', $back);
+        $lib = new library();
+        $url = $html->url_new($lib->class_to_name($this::class), $this->id(), '', $back);
         $txt = $this->value();
         return $html->ref($url, $txt);
     }
@@ -297,7 +299,7 @@ class value extends sandbox_value
     function value_edit(string $back = ''): string
     {
         $html = new html_base();
-        $url = $html->url_new(api_dsp::VALUE_EDIT, $this->id(), '', $back);
+        $url = $html->url_new(rest_ctrl::VALUE_EDIT, $this->id(), '', $back);
         $txt = $this->value();
         return $html->ref($url, $txt);
     }

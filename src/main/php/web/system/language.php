@@ -39,15 +39,12 @@ namespace html\system;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'sandbox_typed.php';
-include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\rest_ctrl as api_dsp;
-use html\html_base;
 use html\sandbox\sandbox_typed;
 use html\user\user_message;
 use shared\const\views;

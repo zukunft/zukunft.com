@@ -29,6 +29,8 @@ some sections are move to related classes to reduce the class size
 
 ## Object structure
 
+![zukunft.com Object Overview](zukunft_com_objects.svg)
+
 the target model object structure is:
 
     db_object - all database objects with the sql_table_create function

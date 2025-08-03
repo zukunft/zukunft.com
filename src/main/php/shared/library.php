@@ -1118,6 +1118,7 @@ class library
             'const' => 'TEST_CONST_PATH',
             'html' => 'html_paths::HTML',
             'html\log' => 'html_paths::LOG',
+            'html\const' => 'html_paths::CONST',
             'html\user' => 'html_paths::USER',
             'html\element' => 'html_paths::ELEMENT',
             'html\formula' => 'html_paths::FORMULA',

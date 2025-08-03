@@ -36,9 +36,11 @@ namespace html\result;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'list_value.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_call.php';
 //include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::GROUP . 'group_list.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -51,7 +53,7 @@ include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
 
-use html\rest_ctrl as api_dsp;
+use html\rest_call as api_dsp;
 use html\html_base;
 use html\formula\formula;
 use html\group\group_list;

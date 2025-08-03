@@ -37,7 +37,8 @@ use cfg\const\paths;
 use html\const\paths as html_paths;
 include_once paths::API_OBJECT . 'api_message.php';
 include_once html_paths::HTML . 'html_selector.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'rest_call.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
@@ -49,7 +50,7 @@ include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
 include_once paths::SHARED . 'api.php';
 
 use controller\api_message;
-use html\rest_ctrl as api_dsp;
+use html\rest_call as api_dsp;
 use html\html_selector;
 use html\user\user;
 use html\user\user_message;

@@ -45,6 +45,7 @@
 namespace test;
 
 use cfg\const\paths;
+use cfg\helper\db_object;
 use html\const\paths as html_paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
@@ -655,6 +656,54 @@ class create_test_objects extends test_base
     }
 
     /**
+     * get the object to test adding a new object e.g. via api to the database related to the given class
+     * @param string $class the given main class name
+     * @return triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox wit only a few vars filled
+     */
+    function class_to_add_object(string $class): triple|ref|value|result|sandbox|sandbox_value|type_object|db_id_object_non_sandbox
+    {
+        $obj = null;
+        switch ($class) {
+            case user::class;
+                $obj = $this->user_filled();
+                break;
+            case word::class;
+                $obj = $this->word_filled_add();
+                break;
+            case verb::class;
+                $obj = $this->verb_filled();
+                break;
+            case triple::class;
+                $obj = $this->triple_filled();
+                break;
+            case source::class;
+                $obj = $this->source_filled();
+                break;
+            case ref::class;
+                $obj = $this->reference_plus();
+                break;
+            case value::class;
+                $obj = $this->value_16_filled();
+                break;
+            case formula::class;
+                $obj = $this->formula_filled();
+                break;
+            case result::class;
+                $obj = $this->result_main_filled();
+                break;
+            case view::class;
+                $obj = $this->view_filled();
+                break;
+            case component::class;
+                $obj = $this->component_filled();
+                break;
+            default:
+                log_err('no add object defined for ' . $class);
+        }
+        return $obj;
+    }
+
+    /**
      * get the frontend object related to the given backend class
      * @param string $class the given main class name
      * @return word_dsp|sandbox_dsp|user_dsp|ref_dsp with only a few vars filled
@@ -705,11 +754,13 @@ class create_test_objects extends test_base
     /**
      * get the filled url object related to the given class
      * @param string $class the given main class name
+     * @param int $msk_id the id of the mask
      * @return string with only a few vars filled
      */
-    function class_to_url_add(string $class): string
+    function class_to_url_add(string $class, int $msk_id): string
     {
         $url = api::HOST_TESTING . api::MAIN_SCRIPT . api::URL_PAR;
+        $url .= $this->url_par(api::URL_VAR_MASK_HUMAN, $msk_id);
         switch ($class) {
             case user::class;
                 $obj = $this->user_filled();
@@ -806,9 +857,15 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
                 $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
                 break;
+            case db_object::class;
+                // for the start page no additional vars in the url are needed
+                $obj = new db_object();
+                break;
             default:
+                $obj = $this->word_filled();
                 log_err('no filled url object defined for ' . $class);
         }
+        $url .= $this->url_par(api::URL_VAR_ID, $obj->id());
         $url .= $this->url_par(api::URL_VAR_ACTION_LONG, api::URL_VAR_CURL_CREATE, true);
         return $url;
     }

@@ -84,6 +84,7 @@ include_once paths::MODEL_VIEW . 'view_link_type.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::REF . 'ref.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -161,7 +162,7 @@ use html\html_base;
 use html\log\change_log_named as change_dsp;
 use html\ref\ref as ref_dsp;
 use html\ref\source as source_dsp;
-use html\rest_ctrl;
+use html\rest_call;
 use html\result\result as result_dsp;
 use html\sandbox\db_object as db_object_dsp;
 use html\styles;
@@ -172,6 +173,7 @@ use html\view\view as view_dsp;
 use html\word\triple as triple_dsp;
 use html\word\word as word_dsp;
 use shared\api;
+use shared\const\rest_ctrl;
 use shared\const\users;
 use shared\const\words;
 use shared\enum\messages as msg_id;
@@ -254,6 +256,7 @@ include_once test_paths::UNIT . 'db_setup_tests.php';
 // load the testing functions for creating HTML code
 include_once test_paths::UNIT_UI . 'all_ui_tests.php';
 include_once test_paths::UNIT_UI . 'horizontal_ui_tests.php';
+include_once test_paths::UNIT_UI . 'start_ui_read_tests.php';
 
 // load the unit testing modules with database read only
 include_once test_paths::UNIT_READ . 'all_unit_read_tests.php';
@@ -267,6 +270,7 @@ include_once test_paths::UNIT_READ . 'change_log_read_tests.php';
 include_once test_paths::UNIT_READ . 'sys_log_read_tests.php';
 include_once test_paths::UNIT_READ . 'horizontal_read_tests.php';
 include_once test_paths::UNIT_READ . 'word_read_tests.php';
+include_once test_paths::UNIT_READ . 'word_ui_read_tests.php';
 include_once test_paths::UNIT_READ . 'word_list_read_tests.php';
 include_once test_paths::UNIT_READ . 'triple_read_tests.php';
 include_once test_paths::UNIT_READ . 'triple_list_read_tests.php';
@@ -292,9 +296,11 @@ include_once test_paths::UNIT_READ . 'share_read_tests.php';
 include_once test_paths::UNIT_READ . 'protection_read_tests.php';
 include_once test_paths::UNIT_READ . 'language_read_tests.php';
 include_once test_paths::UNIT_READ . 'export_read_tests.php';
+include_once test_paths::UNIT_READ . 'type_lists_ui_tests.php';
 
 // load the testing functions that save data to the database
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
+include_once test_paths::UNIT_WRITE . 'api_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'user_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'word_write_tests.php';
 include_once test_paths::UNIT_WRITE . 'word_list_write_tests.php';
@@ -804,7 +810,7 @@ class test_base
         $test_name = $lib->class_to_name($test_name);
         $url = api::HOST_TESTING . api::URL_API_PATH . 'json';
         $data = array($fld => $id);
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
         // TODO remove next line (added for faster debugging only)
         $json_actual = json_encode($actual);
@@ -909,23 +915,22 @@ class test_base
      *
      * @param object $usr_obj the object which json im- and export functions should be tested
      * @param string $json_file_name the resource path name to the json sample file
-     * @param user|null $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @return bool true if the json has no relevant differences
      */
     function assert_json_file(
         object $usr_obj,
-        string $json_file_name,
-        ?user  $usr_req = null
+        string $json_file_name
     ): bool
     {
-        if ($usr_req == null) {
-            $usr_req = $this->user_system();
+        global $usr;
+        if ($usr == null) {
+            $usr = $this->user_system();
         }
 
         $file_text = $this->file($json_file_name);
         $json_in = json_decode($file_text, true);
-        $dto = new data_object($usr_req);
-        $usr_obj->import_obj($json_in, $usr_req, $dto, $this);
+        $dto = new data_object($usr);
+        $usr_obj->import_obj($json_in, $dto, $this);
         $this->set_id_for_unit_tests($usr_obj);
         $json_ex = $usr_obj->export_json(false);
         // TODO remove, for faster debugging only
@@ -949,7 +954,7 @@ class test_base
         $new_obj = clone $obj;
         $new_obj->reset();
         $dto = new data_object($usr_req);
-        $new_obj->import_obj($json_ex, $usr_req, $dto, $this);
+        $new_obj->import_obj($json_ex, $dto, $this);
         $json_after = $obj->api_json([api_type::TEST_MODE]);
         return $this->assert_json_string(
             'ex- and import test for ' . $obj::class, $json_after, $json_before);
@@ -3034,7 +3039,8 @@ class test_base
         $class = $lib->class_to_name($obj::class);
         $name = $obj->unique_value();
         $test_name = 'add ' . $class . ' ' . $name . ' by user ' . $usr->dsp_id();
-        $result = $obj->save($usr)->get_last_message();
+        // TODO maybe add if ($obj::class = user::class) {
+        $result = $obj->save()->get_last_message();
         if ($this->assert($test_name, $result, '', $this::TIMEOUT_LIMIT_DB)) {
             return $obj->id();
         } else {
@@ -3577,7 +3583,7 @@ class test_base
      */
     function assert_greater_zero(
         string $name,
-        int $received,
+        int    $received,
         float  $exe_max_time = self::TIMEOUT_LIMIT
     ): bool
     {

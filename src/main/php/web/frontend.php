@@ -46,6 +46,15 @@ include_once paths::SHARED . 'api.php';
 // get the pure html frontend objects
 include_once html_paths::USER . 'user.php';
 
+include_once html_paths::HELPER . 'config.php';
+include_once html_paths::COMPONENT . 'component_exe.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::RESULT . 'result.php';
+include_once html_paths::REF . 'ref.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'change_action_list.php';
@@ -69,12 +78,36 @@ include_once html_paths::TYPES . 'component_type_list.php';
 include_once html_paths::TYPES . 'component_link_type_list.php';
 include_once html_paths::TYPES . 'position_type_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
-include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'api.php';
 
+use html\component\component_exe as component_dsp;
+use html\formula\formula as formula_dsp;
+use html\types\type_lists;
+use html\ref\ref as ref_dsp;
+use html\result\result as result_dsp;
+use html\ref\source as source_dsp;
+use html\sandbox\db_object as db_object_dsp;
+use html\sandbox\sandbox as sandbox_dsp;
+use html\sandbox\sandbox_named as sandbox_named_dsp;
+use html\user\user as user_dsp;
+use html\value\value as value_dsp;
+use html\verb\verb as verb_dsp;
+use html\view\view as view_dsp;
+use html\word\triple as triple_dsp;
+use html\word\word as word_dsp;
+use shared\const\rest_ctrl;
+use shared\const\views;
 use shared\library;
 use shared\api;
-use html\user\user;
-use html\types\type_lists;
+use Exception;
 
 class frontend
 {
@@ -186,10 +219,10 @@ class frontend
      * user
      */
 
-    function get_user(): user
+    function get_user(): user_dsp
     {
         global $usr;
-        $usr = new user();
+        $usr = new user_dsp();
         return $usr;
     }
 
@@ -197,6 +230,161 @@ class frontend
     /*
      * view
      */
+
+
+    /**
+     * create the HTML code based on the given url
+     *
+     * @param array $url_array the parsed url as an array
+     * @param user_dsp $usr the session user who has requested the view
+     * @return string the html code to show the page to the user
+     */
+    function url_to_html(array $url_array, user_dsp $usr): string
+    {
+        // detect the url format and get the view id or code id
+        $human_url = false;
+        $pod_url = false;
+        if (array_key_exists(api::URL_VAR_MASK_HUMAN, $url_array)) {
+            $human_url = true;
+            $view = $url_array[api::URL_VAR_MASK_HUMAN] ?? views::START_ID; // the database id of the view to display
+        } elseif (array_key_exists(api::URL_VAR_MASK_POD, $url_array)) {
+            $pod_url = true;
+            $view = $url_array[api::URL_VAR_MASK_POD] ?? views::START_CODE; // the database id of the view to display
+        } else {
+            $view = $url_array[api::URL_VAR_MASK] ?? views::START_ID; // the database id of the view to display
+        }
+
+        // get the general vars from the url
+        $id = $url_array[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
+        // TODO Prio 1 complete all url vars mappings for $human_url, $pod_url and $short_url
+        if ($human_url) {
+            $step = $url_array[api::URL_VAR_STEP_LONG] ?? 0; // the enum of the user process step to perform next
+        } elseif ($pod_url) {
+            $step = $url_array[api::URL_VAR_STEP_POD] ?? 0; // the enum of the user process step to perform next
+        } else {
+            $step = $url_array[api::URL_VAR_STEP] ?? 0; // the enum of the user process step to perform next
+        }
+
+        $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
+        $view_words = $url_array[api::URL_VAR_WORDS] ?? '';
+        $back = $url_array[api::URL_VAR_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
+
+        // init the view
+        global $sys_msk_cac;
+        $result = ''; // reset the html code var
+        $msg = ''; // to collect all messages that should be shown to the user immediately
+
+        // TODO move to the frontend __construct
+        // get the fixed frontend config
+        $api_msg = $this->api_get(type_lists::class);
+        $frontend_cache = new type_lists($api_msg);
+
+        // use default view if nothing is set
+        if (($view == 0 or $view == '' or $view == null or $view == 'null') and $id == 0) {
+            $view = views::START_ID;
+        }
+
+        // get the view id if the view code id is used
+        if (is_numeric($view)) {
+            $view_id = $view;
+        } else {
+            $view_id = $sys_msk_cac->id($view);
+        }
+
+        // select the main object to display
+        $dbo = $this->view_id_to_dbo_dsp($view_id);
+
+        // save form action
+        // if the save bottom has been pressed
+        if ($step > 0) {
+            $dbo->url_mapper($url_array);
+            $upd_result = $dbo->add_via_api();
+
+            // if update was fine ...
+            if ($upd_result->is_ok()) {
+                // TODO Prio 0 get the id from the result
+                //$id = $dbo->id();
+                $id = 0;
+                // ... display the calling page is switched off to keep the user on the edit view and see the implications of the change
+                // switched off because maybe staying on the edit page is the expected behaviour
+                if ($back == '' or $back == 0) {
+                    $view_id = views::START_ID;
+                }
+                //$result .= dsp_go_back($back, $usr);
+            } else {
+                // ... or in case of a problem prepare to show the message
+                $msg .= $upd_result->get_last_message();
+            }
+        }
+
+
+        // get the main object to display
+        if ($id != 0) {
+            $dbo->load_by_id($id);
+        } else {
+            // get last term used by the user or a default value
+            $wrd = $usr->last_term();
+        }
+
+        // select the view
+        if (in_array($view_id, views::EDIT_DEL_MASKS_IDS)) {
+            // TODO move as much a possible to backend functions
+            if ($dbo->id() > 0) {
+                // if the user has changed the view for this word, save it
+                if ($new_view_id != '') {
+                    $dbo->save_view($new_view_id);
+                    $view_id = $new_view_id;
+                } else {
+                    // if the user has selected a special view, use it
+                    if ($view_id == 0) {
+                        // if the user has set a view for this word, use it
+                        $view_id = $dbo->view_id();
+                        if ($view_id <= 0) {
+                            // if any user has set a view for this word, use the common view
+                            $view_id = $dbo->calc_view_id();
+                            if ($view_id <= 0) {
+                                // if no one has set a view for this word, use the fallback view
+                                $view_id = $sys_msk_cac->id(views::WORD);
+                            }
+                        }
+                    }
+                }
+            } else {
+                $result .= log_err("No word selected.", "view.php", '',
+                    (new Exception)->getTraceAsString());
+            }
+        }
+
+        // create a display object, select and load the view and display the word according to the view
+        if ($view_id != 0) {
+            // TODO first create the frontend object and call from the frontend object the api
+            // TODO for system views avoid the backend call by using the cache from the frontend
+            // TODO get the system view from the preloaded cache
+            $msk_dsp = new view_dsp();
+            $msk_dsp->load_by_id_with($view_id);
+            $title = $msk_dsp->title($dbo);
+            $dsp_text = $msk_dsp->show($dbo, null, $back);
+
+            // use a fallback if the view is empty
+            if ($dsp_text == '' or $msk_dsp->name() == '') {
+                $view_id = $sys_msk_cac->id(views::START);
+                $msk_dsp->load_by_id_with($view_id);
+                $dsp_text = $msk_dsp->name_tip($dbo, $back);
+            }
+            if ($dsp_text == '') {
+                $result .= 'Please add a component to the view by clicking on Edit on the top right.';
+            } else {
+                $html = new html_base();
+                $result .= $html->header($title, '');
+                $result .= $dsp_text;
+            }
+        } else {
+            $result .= log_err('No view for "' . $dbo->name() . '" found.',
+                "view.php", '', (new Exception)->getTraceAsString());
+        }
+
+        return $result;
+    }
 
     function show_view(int $id): string
     {
@@ -247,8 +435,41 @@ class frontend
         } else {
             $data = array($id_fld => $ids);
         }
-        $ctrl = new rest_ctrl();
+        $ctrl = new rest_call();
         return $ctrl->api_call(rest_ctrl::GET, $url, $data);
+    }
+
+    /*
+     * internal
+     */
+
+    private function view_id_to_dbo_dsp(int $view_id): sandbox_dsp|sandbox_named_dsp|db_object_dsp
+    {
+        // select the main object to display
+        if (in_array($view_id, views::WORD_MASKS_IDS)) {
+            $dbo_dsp = new word_dsp();
+        } elseif (in_array($view_id, views::VERB_MASKS_IDS)) {
+            $dbo_dsp = new verb_dsp();
+        } elseif (in_array($view_id, views::TRIPLE_MASKS_IDS)) {
+            $dbo_dsp = new triple_dsp();
+        } elseif (in_array($view_id, views::SOURCE_MASKS_IDS)) {
+            $dbo_dsp = new source_dsp();
+        } elseif (in_array($view_id, views::REF_MASKS_IDS)) {
+            $dbo_dsp = new ref_dsp();
+        } elseif (in_array($view_id, views::VALUE_MASKS_IDS)) {
+            $dbo_dsp = new value_dsp();
+        } elseif (in_array($view_id, views::FORMULA_MASKS_IDS)) {
+            $dbo_dsp = new formula_dsp();
+        } elseif (in_array($view_id, views::RESULT_MASKS_IDS)) {
+            $dbo_dsp = new result_dsp();
+        } elseif (in_array($view_id, views::VIEW_MASKS_IDS)) {
+            $dbo_dsp = new view_dsp();
+        } elseif (in_array($view_id, views::COMPONENT_MASKS_IDS)) {
+            $dbo_dsp = new component_dsp();
+        } else {
+            $dbo_dsp = new word_dsp();
+        }
+        return $dbo_dsp;
     }
 
 }

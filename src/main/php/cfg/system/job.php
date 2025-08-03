@@ -526,9 +526,14 @@ class job extends db_object_seq_id_user
         $db_con->set_class($db_type);
     }
 
-    // remove the old requests from the database if they are closed since a while
-    private function del()
+    /**
+     * remove the old requests from the database if they are closed since a while
+     * @returns user_message the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     */
+    function del(): user_message
     {
+        $usr_msg = new user_message();
+        return $usr_msg;
     }
 
 

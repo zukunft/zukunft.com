@@ -46,7 +46,7 @@ include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::LOG . 'user_log_display.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_HELPER . 'Config.php';
@@ -61,11 +61,11 @@ use html\button;
 use html\display_list;
 use html\html_base;
 use html\log\user_log_display;
-use html\rest_ctrl as api_dsp;
 use html\styles;
 use html\system\back_trace;
 use html\word\word;
 use shared\api;
+use shared\const\rest_ctrl;
 use shared\const\views;
 use shared\library;
 use shared\types\view_styles;
@@ -142,7 +142,7 @@ class view extends view_exe
             $result .= $this->dsp_view_name($back);
             $class = $lib->class_to_name(view::class);
             //$url_edit = $html->url($class . api_dsp::UPDATE, $this->id(), $back, '', word::class . '=' . $back);
-            $url_edit = $html->url($class . api_dsp::UPDATE, $this->id(), '', '');
+            $url_edit = $html->url($class . rest_ctrl::UPDATE, $this->id(), '', '');
             // TODO fix for frontend based version
             //echo 'button init';
             $result .= $this->btn_edit();
@@ -151,7 +151,7 @@ class view extends view_exe
             // TODO fix for frontend based version
             //$result .= $btn->edit(messages::VIEW_EDIT);
             //$url_add = $html->url($class . api_dsp::CREATE, 0, $back, '', word::class . '=' . $back);
-            $url_add = $html->url($class . api_dsp::CREATE, 0, '', '');
+            $url_add = $html->url($class . rest_ctrl::CREATE, 0, '', '');
             // TODO fix for frontend based version
             //$result .= (new button_dsp($url_add))->add(messages::VIEW_ADD);
             $result .= $this->btn_add();
@@ -252,7 +252,7 @@ class view extends view_exe
         $result = $this->html_navbar_start();
         $result .= '<td class="' . styles::STYLE_RIGHT . '">';
         if ($this->is_system() and !$usr->is_admin()) {
-            $url = $html->url(api_dsp::SEARCH);
+            $url = $html->url(rest_ctrl::SEARCH);
             $result .= (new button($url, $back))->find(msg_id::SEARCH_MAIN) . ' - ';
             $result .= $this->name . ' ';
         } else {

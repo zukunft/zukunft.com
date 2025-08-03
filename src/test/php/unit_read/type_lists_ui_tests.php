@@ -30,17 +30,9 @@
 
 */
 
-namespace unit_ui;
+namespace unit_read;
 
 use html\const\paths as html_paths;
-
-include_once html_paths::TYPES . 'type_list.php';
-include_once html_paths::TYPES . 'type_lists.php';
-include_once html_paths::TYPES . 'formula_type_list.php';
-include_once html_paths::TYPES . 'phrase_types.php';
-include_once html_paths::TYPES . 'view_style_list.php';
-include_once html_paths::TYPES . 'protection.php';
-
 use html\html_base;
 use html\types\component_type_list;
 use html\types\formula_link_type_list;
@@ -58,6 +50,13 @@ use html\types\view_type_list;
 use shared\api;
 use shared\const\views;
 use test\test_cleanup;
+
+include_once html_paths::TYPES . 'type_list.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'formula_type_list.php';
+include_once html_paths::TYPES . 'phrase_types.php';
+include_once html_paths::TYPES . 'view_style_list.php';
+include_once html_paths::TYPES . 'protection.php';
 
 class type_lists_ui_tests
 {
