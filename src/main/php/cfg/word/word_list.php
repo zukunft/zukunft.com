@@ -496,14 +496,12 @@ class word_list extends sandbox_list_named
      * import a word list object from a JSON array object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(
         array        $json_obj,
-        user         $usr_req,
         ?data_object $dto = null,
         object       $test_obj = null
     ): user_message
@@ -511,7 +509,7 @@ class word_list extends sandbox_list_named
         $usr_msg = new user_message();
         foreach ($json_obj as $value) {
             $wrd = new word($this->user());
-            $usr_msg->add($wrd->import_obj($value, $usr_req, $dto, $test_obj));
+            $usr_msg->add($wrd->import_obj($value, $dto, $test_obj));
             $this->add($wrd);
         }
 

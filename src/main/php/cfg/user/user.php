@@ -103,14 +103,15 @@ include_once paths::MODEL_USER . 'user_type.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 //include_once paths::MODEL_VIEW . 'view_sys_list.php';
 //include_once paths::MODEL_PHRASE . 'term.php';
-include_once paths::SHARED_HELPER . 'Config.php';
-include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
+include_once paths::SHARED_HELPER . 'Config.php';
+include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -138,6 +139,7 @@ use cfg\sandbox\sandbox_named;
 use cfg\ref\source;
 use cfg\verb\verb_list;
 use cfg\view\view_sys_list;
+use shared\const\rest_ctrl;
 use shared\const\users;
 use shared\const\words;
 use shared\enum\change_actions;
@@ -1117,8 +1119,8 @@ class user extends db_id_object_non_sandbox
      */
     private function get_ip(): string
     {
-        if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
-            $this->ip_addr = $_SERVER['REMOTE_ADDR'];
+        if (array_key_exists(rest_ctrl::REMOTE_ADDR, $_SERVER)) {
+            $this->ip_addr = $_SERVER[rest_ctrl::REMOTE_ADDR];
         }
         if ($this->ip_addr == null) {
             $this->ip_addr = users::SYSTEM_ADMIN_IP;
@@ -1164,10 +1166,11 @@ class user extends db_id_object_non_sandbox
 
                         // create the main system user upfront direct from the code
                         // but only if needed and allowed which is only the case directly after the database structure creation
+                        // TODO switch this fallback off because it should anyway never be called
                         $upd_result = $this->create_system_user();
 
                     } else {
-                        $upd_result = $this->save();
+                        $upd_result = $this->save_user();
                     }
                     $result = $upd_result->get_last_message();
                 }
@@ -1178,9 +1181,10 @@ class user extends db_id_object_non_sandbox
     }
 
     /**
-     * TODO move to system_user
+     * create the core system users
+     * BUT only if the user table is empty
      * fixed code to create the initial system user
-     * but only if the user table is empty
+     * TODO move to system_user
      * @return user_message ok if the system user have been created
      */
     function create_system_user(): user_message
@@ -1439,20 +1443,24 @@ class user extends db_id_object_non_sandbox
      * import a user from a json data user object
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @param user|null $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(
         array        $json_obj,
-        user         $usr_req,
         ?data_object $dto = null,
-        object       $test_obj = null
+        object       $test_obj = null,
+        ?user        $usr_req = null
     ): user_message
     {
         global $usr_pro_cac;
+        global $usr;
 
+        if ($usr_req == null) {
+            $usr_req = $usr;
+        }
         $profile_id = $usr_req->profile_id;
 
         log_debug();
@@ -1503,7 +1511,7 @@ class user extends db_id_object_non_sandbox
                 // the user profiles must always be in the order that the lower ID has same or less rights
                 // TODO use the right level of the profile
                 if ($profile_id >= $this->profile_id) {
-                    $usr_msg->add($this->save($usr_req));
+                    $usr_msg->add($this->save_user($usr_req));
                 }
             }
         }
@@ -1965,7 +1973,7 @@ class user extends db_id_object_non_sandbox
      * @return user_message the message that should be shown to the user in case something went wrong
      *                      or the database id of the user just added
      */
-    function save(user $usr_req = null): user_message
+    function save_user(user $usr_req = null): user_message
     {
         // all potential time intensive function should start with a log message to detect time improvement potential
         log_debug($this->dsp_id());
@@ -2731,7 +2739,7 @@ class user extends db_id_object_non_sandbox
 
         // TODO add user_db::FLD_LEVEL
 
-        if ($db_usr->excluded  <> $this->excluded) {
+        if ($db_usr->excluded <> $this->excluded) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
@@ -2863,17 +2871,16 @@ class user extends db_id_object_non_sandbox
     /**
      * exclude, archive or delete this user
      *
-     * @param user $usr_req the user who has requested the deletion
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user
      *                      including suggested solutions
      */
-    function del(user $usr_req): user_message
+    function del(): user_message
     {
         $usr_msg = new user_message();
         if ($this->never_used()) {
-            $usr_msg->add(parent::del($usr_req));
+            $usr_msg->add(parent::del());
         } else {
             $usr_msg->add_id_with_vars(msg_id::USER_CANNOT_DEL, [
                 msg_id::VAR_USER_NAME => $this->name(),

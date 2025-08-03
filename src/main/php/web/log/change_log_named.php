@@ -36,12 +36,13 @@ use html\const\paths as html_paths;
 
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 //include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::LOG . 'change_log.php';
 //include_once html_paths::HELPER . 'config.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
@@ -50,11 +51,11 @@ include_once paths::SHARED . 'json_fields.php';
 
 use html\formula\formula;
 use html\helper\config;
-use html\rest_ctrl;
 use html\button;
 use html\html_base;
 use html\system\back_trace;
 use html\user\user_message;
+use shared\const\rest_ctrl;
 use shared\enum\change_actions;
 use shared\enum\change_fields;
 use shared\enum\change_tables;

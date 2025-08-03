@@ -37,10 +37,11 @@ namespace html\sandbox;
 use cfg\const\paths;
 use html\button;
 use html\const\paths as html_paths;
+
 include_once paths::API_OBJECT . 'api_message.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once html_paths::HTML . 'rest_call.php';
 //include_once html_paths::PHRASE . 'phrase.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::USER . 'user_message.php';
@@ -52,9 +53,10 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use controller\api_message;
+use html\rest_call;
 use html\view\view_list;
 use shared\api;
-use html\rest_ctrl as api_dsp;
+use html\rest_call as api_dsp;
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\term as term_dsp;
@@ -71,12 +73,12 @@ class db_object extends TextIdObject
      * const
      */
 
-    // curl views
+    // the fallback curl views that are expected to be overwritten by the child objects
     const VIEW_ADD = views::WORD_ADD;
     const VIEW_EDIT = views::WORD_EDIT;
     const VIEW_DEL = views::WORD_DEL;
 
-    // curl message id
+    // the fallback curl message id that are expected to be overwritten by the child objects
     const MSG_ADD = msg_id::WORD_ADD;
     const MSG_EDIT = msg_id::WORD_EDIT;
     const MSG_DEL = msg_id::WORD_DEL;
@@ -242,7 +244,7 @@ class db_object extends TextIdObject
     }
 
     /**
-     * @return string the jsom message to the backend as a string
+     * @return string the json message to the backend as a string
      */
     function api_json(): string
     {
@@ -436,12 +438,64 @@ class db_object extends TextIdObject
      * load
      */
 
-
     function view_list(?string $pattern = null): view_list
     {
         $msk_lst = new view_list();
         $msk_lst->load_by_pattern($pattern);
         return $msk_lst;
+    }
+
+
+    /*
+     * curl
+     */
+
+    /**
+     * add the frontend object via api to the database
+     *
+     * @return user_message
+     */
+    function add_via_api(): user_message
+    {
+        $usr_msg = new user_message();
+        $rest = new rest_call();
+        $result = $rest->api_post($this::class, $this->api_array());
+        foreach ($result as $msg) {
+            $usr_msg->add_message_text($msg);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * update the frontend object via api in the database
+     *
+     * @return user_message
+     */
+    function update(): user_message
+    {
+        $usr_msg = new user_message();
+        $rest = new rest_call();
+        $result = $rest->api_put($this::class, $this->api_array());
+        foreach ($result as $msg) {
+            $usr_msg->add_message_text($msg);
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * exclude this frontend object via api from the database
+     *
+     * @return user_message
+     */
+    function del(): user_message
+    {
+        $usr_msg = new user_message();
+        $rest = new rest_call();
+        $result = $rest->api_del($this::class, $this->api_array());
+        foreach ($result as $msg) {
+            $usr_msg->add_message_text($msg);
+        }
+        return $usr_msg;
     }
 
 

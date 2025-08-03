@@ -43,7 +43,8 @@ use shared\const\words;
 use shared\types\verbs;
 use test\all_tests;
 use unit\all_unit_tests;
-use unit_ui\system_views_ui_tests;
+use unit_ui\start_ui_read_tests;
+use unit_ui\start_ui_tests;
 
 include_once paths::WEB . 'frontend.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -58,13 +59,16 @@ class all_unit_read_tests extends all_unit_tests
         global $db_con;
         global $usr;
 
-        $this->header('Start the zukunft.com unit database read only tests');
+        // start the test section (ts)
+        $ts = 'read db ';
+        $t->header($ts);
 
         // reload the setting lists after using dummy list for the unit tests
         $db_con->close();
         $db_con = prg_restart("reload cache after unit testing");
 
         // create the testing users
+        $t->subheader($ts . 'prepare');
         $this->set_users();
         $usr = $this->usr1;
 
@@ -76,6 +80,7 @@ class all_unit_read_tests extends all_unit_tests
         $this->usr1->load_usr_data();
 
         // do the database unit tests
+        $t->subheader($ts . 'general');
         (new system_read_tests)->run($this);
         (new system_views_read_tests)->run($t);
         (new sql_db_read_tests)->run($this);
@@ -83,6 +88,8 @@ class all_unit_read_tests extends all_unit_tests
         (new protection_read_tests)->run($this);
         (new share_read_tests)->run($this);
         (new horizontal_read_tests)->run($this);
+
+        $t->subheader($ts . 'objects');
         (new word_read_tests)->run($this);
         (new word_list_read_tests)->run($this);
         (new verb_read_tests)->run($this);
@@ -117,6 +124,12 @@ class all_unit_read_tests extends all_unit_tests
         $api_test = new api_tests();
         $api_test->run($this);
 
+        $t->subheader($ts . 'api based ui tests');
+        (new type_lists_ui_tests)->run($t);
+        (new word_ui_read_tests)->run($this);
+        (new start_ui_read_tests)->run($t);
+
+        $t->subheader($ts . 'export');
         (new export_read_tests())->run($this);
 
         // cleanup also before testing to remove any leftovers

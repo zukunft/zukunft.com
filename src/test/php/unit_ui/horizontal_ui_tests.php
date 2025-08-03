@@ -79,7 +79,7 @@ class horizontal_ui_tests
         $t->subheader($ts . 'url');
         foreach (def::MAIN_CLASSES as $class) {
             $test_name = 'add url of ' . $lib->class_to_name($class) . ' can reproduce the same backend object';
-            $url = $t->class_to_url_add($class);
+            $url = $t->class_to_url_add($class, 1);
             $url_part = parse_url($url);
             parse_str($url_part["query"], $url_array);
             $ui_obj = $t->class_to_ui_object($class);

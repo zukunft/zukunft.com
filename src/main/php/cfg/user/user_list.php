@@ -653,10 +653,9 @@ class user_list
      * simple loop to save all users of the list
      * because there are probably not many users to save at once
      *
-     * @param user $usr_req the user who has requested the database update
      * @return user_message in case of an issue the problem description what has failed and a suggested solution
      */
-    function save(user $usr_req): user_message
+    function save(): user_message
     {
         $usr_msg = new user_message();
 
@@ -668,9 +667,9 @@ class user_list
                     if ($usr->id() == 0 and $usr->name() != '') {
                         $usr->load_by_name($usr->name());
                     }
-                    $usr_msg->add($usr->del($usr_req));
+                    $usr_msg->add($usr->del());
                 } else {
-                    $usr_msg->add($usr->save($usr_req));
+                    $usr_msg->add($usr->save());
                 }
             }
         }

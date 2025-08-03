@@ -33,22 +33,24 @@ namespace html\view;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
-include_once html_paths::SANDBOX . 'list_dsp.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::SANDBOX . 'sandbox.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
-include_once paths::SHARED_CONST . 'views.php';
 
 use html\ref\source;
-use html\rest_ctrl;
+use html\rest_call;
 use html\sandbox\list_dsp;
 use html\sandbox\sandbox;
 use html\user\user_message;
@@ -99,7 +101,7 @@ class view_list extends list_dsp
         $result = false;
 
         $data = array(api::URL_VAR_PATTERN => $pattern);
-        $rest = new rest_ctrl();
+        $rest = new rest_call();
         $json_body = $rest->api_get(view_list::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
@@ -119,7 +121,7 @@ class view_list extends list_dsp
         $result = false;
 
         $data = array(api::URL_VAR_CMP_ID => $id);
-        $rest = new rest_ctrl();
+        $rest = new rest_call();
         $json_body = $rest->api_get(view_base::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {

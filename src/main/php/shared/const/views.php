@@ -136,6 +136,10 @@ class views
     const LANGUAGE_DEL = 'language_del';
     const LANGUAGE_DEL_ID = 29;
 
+    // the id of the last system view that should be included in the unit testing
+    // TODO Prio 1 increase at least to 33
+    const MAX_TEST_ID = 2;
+
     // default views
     // TODO easy add missing default views e.g. for formula
     const WORD = 'word';

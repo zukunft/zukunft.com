@@ -559,14 +559,12 @@ class verb extends type_object
      * add a verb in the database from an imported json object of external database from
      *
      * @param array $json_obj an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(
         array        $json_obj,
-        user         $usr_req,
         ?data_object $dto = null,
         object       $test_obj = null
     ): user_message
@@ -1111,8 +1109,10 @@ class verb extends type_object
      * TODO return a user message object, so that messages to the user like "use another name" does not case a error log entry
      * add or update a verb in the database (or create a user verb if the program settings allow this)
      *
+     * @param bool|null $use_func if true a predefined function is used that also creates the log entries
+     * @return user_message the message that should be shown to the user in case something went wrong
      */
-    function save(): user_message
+    function save(?bool $use_func = null): user_message
     {
         log_debug($this->dsp_id());
 
@@ -1188,14 +1188,14 @@ class verb extends type_object
 
     /**
      * exclude or delete a verb
-     * @returns string the message that should be shown to the user if something went wrong or an empty string if everything is fine
+     * @returns user_message the message that should be shown to the user if something went wrong or an empty string if everything is fine
      */
-    function del(): string
+    function del(): user_message
     {
         log_debug('verb->del');
 
         global $db_con;
-        $result = '';
+        $usr_msg = new user_message();
 
         // reload only if needed
         if ($this->name == '') {
@@ -1217,7 +1217,7 @@ class verb extends type_object
                 if ($log->id() > 0) {
                     $db_con->usr_id = $this->user()->id();
                     $db_con->set_class(verb::class);
-                    $result = $db_con->delete_old(verb_db::FLD_ID, $this->id());
+                    $usr_msg->add_message_text($db_con->delete_old(verb_db::FLD_ID, $this->id()));
                 }
             } else {
                 // TODO: create a new verb and request to delete the old
@@ -1225,7 +1225,7 @@ class verb extends type_object
             }
         }
 
-        return $result;
+        return $usr_msg;
     }
 
     /*

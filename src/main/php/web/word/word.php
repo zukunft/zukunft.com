@@ -50,14 +50,10 @@ namespace html\word;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
-include_once html_paths::SANDBOX . 'sandbox_typed.php';
-include_once paths::API_OBJECT . 'api_message.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
 include_once html_paths::HTML . 'styles.php';
-include_once paths::SHARED_ENUM . 'foaf_direction.php';
 //include_once html_paths::FORMULA . 'formula.php';
 //include_once html_paths::HELPER . 'config.php';
 include_once html_paths::LOG . 'change_log_named.php';
@@ -66,17 +62,21 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::SANDBOX . 'sandbox_typed.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VERB . 'verb_list.php';
 //include_once html_paths::VIEW . 'view.php';
+include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use controller\api_message;
@@ -90,7 +90,6 @@ use html\log\user_log_display;
 use html\phrase\phrase;
 use html\phrase\phrase_list;
 use html\phrase\term;
-use html\rest_ctrl;
 use html\sandbox\sandbox_code_id;
 use html\styles;
 use html\system\back_trace;
@@ -98,6 +97,7 @@ use html\user\user_message;
 use html\verb\verb_list;
 use html\view\view;
 use shared\api;
+use shared\const\rest_ctrl;
 use shared\enum\foaf_direction;
 use shared\json_fields;
 use shared\const\views;
@@ -338,7 +338,15 @@ class word extends sandbox_code_id
         return $lst;
     }
 
-    function children(): phrase_list
+    /**
+     * get all child phrases related to the given word
+     * e.g. for city at least Zurich, Bern and Geneva are returned
+     *
+     * @param phrase_list|null $phr_lst if the cache list is given only phrase from this list are returned
+     * @param int $levels
+     * @return phrase_list
+     */
+    function children(?phrase_list $phr_lst = null, int $levels = 1): phrase_list
     {
         $lst = new phrase_list();
         $lst->load_related($this->phrase(), foaf_direction::DOWN);

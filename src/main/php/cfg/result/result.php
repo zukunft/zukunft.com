@@ -924,14 +924,12 @@ class result extends sandbox_value
      * validate a formulas value by comparing the external object result with the calculated result
      *
      * @param array $in_ex_json an array with the data of the json object
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(
         array $in_ex_json,
-        user         $usr_req,
         ?data_object $dto = null,
         object $test_obj = null
     ): user_message
@@ -1400,6 +1398,7 @@ class result extends sandbox_value
      * save the formula result to the database
      * TODO check if user specific result needs to be added
      * for the word selection the id list is the lead, not the object list and not the group
+     *
      * @param bool|null $use_func if true a predefined function is used that also creates the log entries
      * @return user_message the message that should be shown to the user in case something went wrong
      */

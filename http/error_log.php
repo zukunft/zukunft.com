@@ -43,7 +43,7 @@ use html\const\paths as html_paths;
 
 // load what is used here
 include_once paths::API_OBJECT . 'controller.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::VIEW . 'view.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VIEW . 'view.php';

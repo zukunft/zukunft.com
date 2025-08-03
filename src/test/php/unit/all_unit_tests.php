@@ -64,6 +64,7 @@ use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
 use cfg\view\view_type_list;
 use html\types\formula_type_list as formula_type_list_web;
+use html\types\type_lists as type_list_dsp;
 use shared\const\users;
 use shared\enum\user_profiles;
 use test\all_tests;
@@ -73,6 +74,7 @@ use unit_read\api_tests;
 use unit_ui\all_ui_tests;
 use unit_ui\base_ui_tests;
 use unit_ui\horizontal_ui_tests;
+use unit_write\api_write_tests;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -253,6 +255,7 @@ class all_unit_tests extends test_cleanup
              */
 
             // run the selected db write tests
+            (new api_write_tests())->run($t);
             //(new user_write_tests)->run($this);
             //(new word_write_tests)->run($this);
             //(new word_list_write_tests)->run($this);
@@ -381,6 +384,10 @@ class all_unit_tests extends test_cleanup
         // do the UI unit tests
         (new api_tests)->run_openapi_test($this);
         (new base_ui_tests)->run($this);
+
+        // load the types from the api message
+        $api_msg = $this->type_lists_api($this->usr1);
+        new type_list_dsp($api_msg);
 
         // test the html ui on localhost without api
         (new all_ui_tests())->run($this);

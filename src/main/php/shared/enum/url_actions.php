@@ -36,8 +36,8 @@ enum url_actions: string
 {
 
     // possible url values for URL_VAR_CONFIRM field
-    const SHOW_ONLY = 'show_only'; // create the html frontend code based only on the url without loading addition data from the database or via api
-    const API_RELOAD = 'api'; // reload the object via api before creating the html code
-    const CONFIRM = 'confirm'; // ask the user for confirmation of the changes
+    case SHOW_ONLY = 'show_only'; // create the html frontend code based only on the url without loading addition data from the database or via api
+    case API_RELOAD = 'api'; // reload the object via api before creating the html code
+    case CONFIRM = 'confirm'; // ask the user for confirmation of the changes
 
 }

@@ -88,7 +88,7 @@ class import_file
      * TODO return a user message instead of a string
      *
      * @param string $filename
-     * @param user $usr the user who has requested the import
+     * @param user $usr the user who has requested the import (only used for direct import of the system users)
      * @param bool $direct true if each object should be saved separate in the database
      * @return user_message
      */

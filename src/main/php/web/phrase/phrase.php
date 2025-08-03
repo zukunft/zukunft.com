@@ -37,7 +37,7 @@ use html\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::HTML . 'rest_ctrl.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
@@ -50,9 +50,6 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\button;
-use html\html_base;
-use html\rest_ctrl as api_dsp;
 use html\sandbox\combine_named;
 use html\user\user_message;
 use html\verb\verb;
@@ -61,7 +58,6 @@ use html\word\triple;
 use html\word\word;
 use html\word\word_list;
 use shared\enum\foaf_direction;
-use shared\enum\messages as msg_id;
 use shared\json_fields;
 use shared\types\verbs;
 
@@ -283,39 +279,6 @@ class phrase extends combine_named
             $result .= $wrd->td('', '', $intent);
         }
         return $result;
-    }
-
-    /**
-     * @returns string the html code that allows the user to unlink this phrase
-     */
-    function dsp_unlink(int $link_id): string
-    {
-        $result = '    <td>' . "\n";
-        $result .= $this->btn_del();
-        $result .= '    </td>' . "\n";
-
-        return $result;
-    }
-
-    /*
-     * buttons
-     */
-
-    /**
-     * @returns string the html code to display a bottom to exclude the word for the current user
-     *                 or if no one uses the word delete the complete word
-     */
-    function btn_del(): string
-    {
-        if ($this->is_word()) {
-            $obj_name = api_dsp::WORD;
-            $ui_msg_id = msg_id::WORD_DEL;
-        } else {
-            $obj_name = api_dsp::TRIPLE;
-            $ui_msg_id = msg_id::TRIPLE_DEL;
-        }
-        $url = (new html_base())->url($obj_name . api_dsp::REMOVE, $this->id(), $this->id());
-        return (new button($url))->del($ui_msg_id);
     }
 
 

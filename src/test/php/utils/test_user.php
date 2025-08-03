@@ -34,8 +34,12 @@
 // start testing the user permission functionality
 // -----------------------------------------------
 
-use cfg\user\user;
+use cfg\const\paths;
+
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+
 use html\user\user as user_dsp;
+use shared\const\rest_ctrl;
 use shared\const\users;
 use test\all_tests;
 
@@ -57,9 +61,9 @@ function run_user_test(all_tests $t): void
     // display system usernames
     echo "based on<br>";
     if (isset($_SERVER)) {
-        if (in_array('PHP_AUTH_USER', $_SERVER)) {
-            echo 'php user: ' . $_SERVER['PHP_AUTH_USER'] . '<br>';
-            echo 'remote user: ' . $_SERVER['REMOTE_USER'] . '<br>';
+        if (in_array(rest_ctrl::PHP_AUTH_USER, $_SERVER)) {
+            echo 'php user: ' . $_SERVER[rest_ctrl::PHP_AUTH_USER] . '<br>';
+            echo 'remote user: ' . $_SERVER[rest_ctrl::REMOTE_USER] . '<br>';
         }
     }
     echo 'user id: ' . $usr->id() . '<br>';

@@ -400,16 +400,13 @@ class sandbox extends db_object_seq_id_user
      */
     function api_mapper(array $api_json): user_message
     {
-        $usr_msg = new user_message();
-
         // make sure that there are no unexpected leftovers
         $usr = $this->user();
         $this->reset();
         $this->set_user($usr);
 
-        if (array_key_exists(json_fields::ID, $api_json)) {
-            $this->set_id($api_json[json_fields::ID]);
-        }
+        $usr_msg = parent::api_mapper($api_json);
+
         if (array_key_exists(json_fields::SHARE, $api_json)) {
             $this->share_id = $api_json[json_fields::SHARE];
         }
@@ -507,22 +504,22 @@ class sandbox extends db_object_seq_id_user
      * set the vars of this sandbox object based on an import json array
      *
      * @param array $in_ex_json an array with the data of the json object but without any database ids
-     * @param user $usr_req the user how has initiated the import mainly used to prevent any user to gain additional rights
      * @param data_object|null $dto cache of the objects imported until now for the primary references
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(
         array        $in_ex_json,
-        user         $usr_req,
         ?data_object $dto = null,
         object       $test_obj = null
     ): user_message
     {
+        global $usr; // must always be the user who has initiated the import
+
         log_debug();
 
         if (in_array( $this::class, def::CODE_ID_CLASSES)) {
-            $usr_msg = $this->import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
+            $usr_msg = $this->import_mapper_user($in_ex_json, $usr, $dto, $test_obj);
         } else {
             $usr_msg = $this->import_mapper($in_ex_json, $dto, $test_obj);
         }
@@ -2841,6 +2838,7 @@ class sandbox extends db_object_seq_id_user
 
     /**
      * exclude or delete an object
+     *
      * @return user_message with status ok
      *                      or if something went wrong
      *                      the message that should be shown to the user

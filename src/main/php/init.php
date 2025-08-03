@@ -58,6 +58,7 @@ use cfg\user\user_profile;
 use cfg\user\user_profile_list;
 use cfg\user\user_type;
 use html\html_base;
+use shared\const\rest_ctrl;
 use shared\const\users;
 use shared\helper\Translator;
 use shared\library;
@@ -683,8 +684,8 @@ function prg_end_write_time($db_con): void
         $milliseconds = $interval;
 
         //$db_con->insert();
-        if (in_array('REQUEST_URI', $_SERVER)) {
-            $calling_uri = $_SERVER['REQUEST_URI'];
+        if (in_array(rest_ctrl::REQUEST_URI, $_SERVER)) {
+            $calling_uri = $_SERVER[rest_ctrl::REQUEST_URI];
         } else {
             $calling_uri = 'localhost';
         }

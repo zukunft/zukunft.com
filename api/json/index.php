@@ -81,7 +81,7 @@ if ($db_con->is_open()) {
     }
 
     $ctrl = new controller();
-    $ctrl->get_export_json($result, $msg);
+    $ctrl->get_json($result, $msg);
 
 
     prg_end_api($db_con);

@@ -157,6 +157,9 @@ enum messages: string
     case NONE = '';
 
     // messages with vars
+    case MISSING_OVERWRITE = 'internal function overwrite of "'
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . '" is missing';
     case DIFF_ID = 'id is "'
         . self::VAR_START . self::VAR_ID . self::VAR_END
         . '" instead of "'

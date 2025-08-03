@@ -45,21 +45,50 @@
 
 namespace unit;
 
+use cfg\component\component;
 use cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once paths::MODEL_SYSTEM . 'system_time_list.php';
+include_once paths::MODEL_SYSTEM . 'system_time_type.php';
+include_once paths::MODEL_HELPER . 'db_object.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_FORMULA . 'formula.php';
+include_once paths::MODEL_REF . 'ref.php';
+include_once paths::MODEL_REF . 'source.php';
+include_once paths::MODEL_RESULT . 'result.php';
+include_once paths::MODEL_SANDBOX . 'sandbox.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_VERB . 'verb.php';
+include_once paths::MODEL_WORD . 'triple.php';
+include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED . 'api.php';
+
 
 use cfg\const\def;
-use cfg\db\sql_creator;
-use cfg\db\sql_type;
 use cfg\formula\formula;
+use cfg\helper\db_object;
+use cfg\ref\source;
+use cfg\sandbox\sandbox;
+use cfg\user\user;
+use cfg\verb\verb;
+use cfg\view\view;
+use cfg\word\word;
+use const\paths as test_paths;
 use cfg\helper\data_object;
 use cfg\ref\ref;
 use cfg\result\result;
-use cfg\user\user;
 use cfg\value\value;
-use cfg\view\view;
 use cfg\word\triple;
+use html\user\user as user_dsp;
+use html\frontend;
+use shared\api;
+use shared\const\views;
+use shared\const\views as view_shared;
 use shared\library;
 use shared\types\api_type;
 use test\test_api;
@@ -90,7 +119,7 @@ class horizontal_tests
             $filled_obj = $t->class_to_filled_object($class);
             $filled_obj->reset();
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
-            $t->assert_json_string($test_name, $api_json,  test_api::JSON_ID_ONLY);
+            $t->assert_json_string($test_name, $api_json, test_api::JSON_ID_ONLY);
         }
 
         $t->subheader($ts . 'sql');
@@ -155,12 +184,12 @@ class horizontal_tests
             }
             $ex_json = $filled_obj->export_json(false);
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
-            $t->assert_not($test_name, $ex_json,  test_api::JSON_ID_ONLY);
+            $t->assert_not($test_name, $ex_json, test_api::JSON_ID_ONLY);
             $test_name = 'cleared ' . $lib->class_to_name($class) . ' lead to an empty export json';
             $filled_obj->reset();
             $empty_json = json_encode($filled_obj->export_json(false));
             $empty_target_json = $lib->class_to_empty_json($class);
-            $t->assert_json_string($test_name, $empty_json,  $empty_target_json);
+            $t->assert_json_string($test_name, $empty_json, $empty_target_json);
             $test_name = 'after import ' . $lib->class_to_name($class) . ' the export json matches the original json';
             if (in_array($class, def::CODE_ID_CLASSES)) {
                 // special case and more cases are covered in the separate user unit testing
@@ -172,9 +201,71 @@ class horizontal_tests
             // set the remembered id again , because the db id is never included in the export
             $filled_obj->set_id($id);
             $final_json = $filled_obj->api_json([api_type::TEST_MODE]);
-            $t->assert_json_string($test_name,  $final_json, $api_json);
+            $t->assert_json_string($test_name, $final_json, $api_json);
         }
 
+        /*
+         TODO Prio 0 activate (is already fien for the first 2 masks)
+        $t->subheader($ts . 'system views');
+        $ui = new frontend('unit test');
+        for ($id = 1; $id <= views::MAX_TEST_ID; $id++) {
+            $dbo = $this->view_id_to_dbo($id, $t->usr1);
+            $url = $t->class_to_url_add($dbo::class, $id);
+            $url_part = parse_url($url);
+            parse_str($url_part["query"], $url_array);
+            $usr_dsp = new user_dsp();
+            $usr_dsp->set_from_json($t->usr1->api_json());
+            $html = $ui->url_to_html($url_array, $usr_dsp);
+            $test_name = 'add ' . $lib->class_to_name($dbo::class) . ' view';
+            // create the filename of the expected result
+            $dbo_name = $id . '_';
+            if ($dbo::class == db_object::class) {
+                $folder = 'start_page' . DIRECTORY_SEPARATOR;
+                $dbo_name .= 'start_page';
+            } else {
+                $class = $lib->class_to_name($dbo::class);
+                $folder = $class . DIRECTORY_SEPARATOR;
+                $dbo_name .= $class;
+                $dbo_id = $url_array[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
+                if ($dbo_id != 0) {
+                    $dbo_name .= '_' . $dbo_id;
+                }
+            }
+            $filename = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
+            $t->assert_html($test_name, $html, $filename);
+        }
+        */
+
+    }
+
+
+    private function view_id_to_dbo(int $view_id, user $usr): sandbox|user|db_object
+    {
+        // select the backend object to display
+        if (in_array($view_id, view_shared::WORD_MASKS_IDS)) {
+            $dbo = new word($usr);
+        } elseif (in_array($view_id, view_shared::VERB_MASKS_IDS)) {
+            $dbo = new verb();
+        } elseif (in_array($view_id, view_shared::TRIPLE_MASKS_IDS)) {
+            $dbo = new triple($usr);
+        } elseif (in_array($view_id, view_shared::SOURCE_MASKS_IDS)) {
+            $dbo = new source($usr);
+        } elseif (in_array($view_id, view_shared::REF_MASKS_IDS)) {
+            $dbo = new ref($usr);
+        } elseif (in_array($view_id, view_shared::VALUE_MASKS_IDS)) {
+            $dbo = new value($usr);
+        } elseif (in_array($view_id, view_shared::FORMULA_MASKS_IDS)) {
+            $dbo = new formula($usr);
+        } elseif (in_array($view_id, view_shared::RESULT_MASKS_IDS)) {
+            $dbo = new result($usr);
+        } elseif (in_array($view_id, view_shared::VIEW_MASKS_IDS)) {
+            $dbo = new view($usr);
+        } elseif (in_array($view_id, view_shared::COMPONENT_MASKS_IDS)) {
+            $dbo = new component($usr);
+        } else {
+            $dbo = new db_object();
+        }
+        return $dbo;
     }
 
 }

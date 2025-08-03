@@ -35,9 +35,11 @@
 namespace unit_write;
 
 use cfg\const\paths;
+use html\const\paths as html_paths;
 
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SERVICE . 'config.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once TEST_CONST_PATH . 'files.php';
 
 use cfg\import\import_file;
@@ -46,6 +48,7 @@ use cfg\system\job;
 use cfg\system\job_type_list;
 use cfg\user\user;
 use const\files as test_files;
+use html\rest_call;
 use shared\const\users;
 use shared\enum\user_profiles;
 use shared\library;
@@ -72,8 +75,8 @@ class all_unit_write_tests extends all_unit_read_tests
 
             // but only from localhost
             $ip_addr = '';
-            if (array_key_exists("REMOTE_ADDR", $_SERVER)) {
-                $ip_addr = $_SERVER['REMOTE_ADDR'];
+            if (array_key_exists(rest_ctrl::REMOTE_ADDR, $_SERVER)) {
+                $ip_addr = $_SERVER[rest_ctrl::REMOTE_ADDR];
             }
             if ($ip_addr == users::SYSTEM_ADMIN_IP) {
                 $db_con->import_system_users();
@@ -144,6 +147,7 @@ class all_unit_write_tests extends all_unit_read_tests
                 (new component_write_tests)->run($t);
                 (new component_link_write_tests)->run($t);
 
+                (new api_write_tests())->run($t);
                 (new import_write_tests())->run($t);
 
                 // TODO activate Prio 2

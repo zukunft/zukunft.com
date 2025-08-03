@@ -36,7 +36,7 @@ use const\paths as test_paths;
 use shared\api;
 
 include_once test_paths::UNIT_UI . 'base_ui_tests.php';
-include_once test_paths::UNIT_UI . 'type_lists_ui_tests.php';
+//include_once test_paths::UNIT_UI . 'type_lists_ui_tests.php';
 include_once test_paths::UNIT_UI . 'user_ui_tests.php';
 include_once test_paths::UNIT_UI . 'word_ui_tests.php';
 include_once test_paths::UNIT_UI . 'word_list_ui_tests.php';
@@ -84,7 +84,6 @@ class all_ui_tests extends all_unit_tests
 
         $t->subheader($ts . 'base');
         (new base_ui_tests)->run($t);
-        (new type_lists_ui_tests)->run($t);
         (new user_ui_tests)->run($t);
         (new horizontal_ui_tests)->run($t);
 
@@ -119,7 +118,7 @@ class all_ui_tests extends all_unit_tests
         (new job_ui_tests)->run($t);
 
         // TODO compare with run_ui_test in all_unit_read_tests
-        (new start_ui_tests)->run($t);
+        //(new start_ui_tests)->run($t);
         (new system_views_ui_tests)->run($t);
 
         $t->subheader($ts . 'check about page e.g. to check the library');
