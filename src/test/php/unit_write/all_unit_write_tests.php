@@ -48,7 +48,7 @@ use cfg\system\job;
 use cfg\system\job_type_list;
 use cfg\user\user;
 use const\files as test_files;
-use html\rest_call;
+use shared\const\rest_ctrl;
 use shared\const\users;
 use shared\enum\user_profiles;
 use shared\library;
