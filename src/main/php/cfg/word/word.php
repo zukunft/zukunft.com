@@ -225,7 +225,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * map the database fields to the object fields
+     * map the database fields to this word object fields
      *
      * this is the pure mapping function which also maps the field 'exclude'
      * the 'exclude check' needs to be done in the calling function
@@ -246,13 +246,10 @@ class word extends sandbox_code_id
         string $name_fld = word_db::FLD_NAME,
         string $type_fld = phrase::FLD_TYPE): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             if (array_key_exists(word_db::FLD_PLURAL, $db_row)) {
                 $this->set_plural($db_row[word_db::FLD_PLURAL]);
-            }
-            if (array_key_exists($type_fld, $db_row)) {
-                $this->type_id = $db_row[$type_fld];
             }
             if (array_key_exists(word_db::FLD_VIEW, $db_row)) {
                 if ($db_row[word_db::FLD_VIEW] != null) {
@@ -451,17 +448,22 @@ class word extends sandbox_code_id
      */
 
     /**
-     * set the phrase type of this word
+     * set the phrase type of this word by the given code id or name
      *
-     * @param string $code_id the code id that should be added to this word
+     * @param string $code_id_or_name the code id or name that should be added to this word
      * @param user $usr_req the user who wants to change the type
      * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $code_id, user $usr_req = new user()): user_message
+    function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
         global $phr_typ_cac;
-        return parent::set_type_by_code_id(
-            $code_id, $phr_typ_cac, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
+        if ($phr_typ_cac->has_code_id($code_id_or_name)) {
+            return parent::set_type_by_code_id(
+                $code_id_or_name, $phr_typ_cac, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
+        } else {
+            return parent::set_type_by_name(
+                $code_id_or_name, $phr_typ_cac, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
+        }
     }
 
     function set_plural(?string $plural): void
@@ -535,6 +537,7 @@ class word extends sandbox_code_id
     {
         return $this->ref_lst;
     }
+
     function ref_list(): ref_list
     {
         $ref_lst = new ref_list($this->user());
@@ -550,8 +553,8 @@ class word extends sandbox_code_id
      */
 
     /**
-     * get the name of the word type
-     * @return string the name of the word type
+     * get the name of the phrase type
+     * @return string the name of the phrase type of this word
      */
     function type_name(): string
     {
@@ -570,10 +573,10 @@ class word extends sandbox_code_id
     }
 
     /**
-     * get the code_id of the word type
-     * @return string the code_id of the word type
+     * get the code_id of the phrase type
+     * @return string|null the code_id of the phrase type of this word
      */
-    function type_code_id(): string
+    function type_code_id(): string|null
     {
         global $phr_typ_cac;
         return $phr_typ_cac->code_id($this->type_id);

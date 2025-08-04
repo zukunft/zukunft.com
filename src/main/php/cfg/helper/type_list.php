@@ -515,7 +515,7 @@ class type_list
         if ($typ_lst->use_header()) {
             global $db_con;
             $api_msg = new api_message();
-            $msg = $api_msg->api_header_array($db_con,  $this::class, $usr, $vars);
+            $msg = $api_msg->api_header_array($db_con, $this::class, $usr, $vars);
         } else {
             $msg = $vars;
         }
@@ -679,6 +679,30 @@ class type_list
     }
 
     /**
+     * return the database row id based on the name
+     *
+     * @param string $name of the type
+     * @return int the database id for the given code_id
+     */
+    function id_by_name(string $name): int
+    {
+        $lib = new library();
+        $result = 0;
+        if ($name != '' and $name != null) {
+            if ($this->has_name($name)) {
+                $result = $this->name_hash[$name];
+            } else {
+                $result = self::CODE_ID_NOT_FOUND;
+                log_err('Type id not found for name "' . $name . '" in ' . $lib->dsp_array_keys($this->name_hash));
+            }
+        } else {
+            log_debug('Type code id not not set');
+        }
+
+        return $result;
+    }
+
+    /**
      * return user specific type name based on the database row id
      *
      * @param int|null $id
@@ -755,6 +779,16 @@ class type_list
         return $this->get($this->id($code_id));
     }
 
+    /**
+     * true if the name exists in this type list
+     * @param string $name the name of the type
+     * @return bool true if the name exists in this type list
+     */
+    function has_name(string $name): bool
+    {
+        return array_key_exists($name, $this->name_hash);
+    }
+
     function get_by_name(string $name): ?type_object
     {
         $result = null;
@@ -764,14 +798,16 @@ class type_list
         return $result;
     }
 
-    function code_id(int $id): string
+    function code_id(?int $id): ?string
     {
-        $result = '';
-        $type = $this->get($id);
-        if ($type != null) {
-            $result = $type->code_id;
-        } else {
-            log_err('Type code id not found for ' . $id . ' in ' . $this->dsp_id());
+        $result = null;
+        if ($id != null) {
+            $type = $this->get($id);
+            if ($type != null) {
+                $result = $type->code_id;
+            } else {
+                log_err('Type code id not found for ' . $id . ' in ' . $this->dsp_id());
+            }
         }
         return $result;
     }

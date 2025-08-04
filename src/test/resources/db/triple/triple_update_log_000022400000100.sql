@@ -60,7 +60,7 @@ SELECT triple_update_log_000022400000100
          'constant'::text,
          17::smallint,
          null::text,
-         0::smallint,
+         null::smallint,
          21::smallint,
          null::smallint,
          1::smallint);

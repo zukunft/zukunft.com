@@ -1563,7 +1563,7 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_const()->phrase());
         $trp->set_verb($this->verb_part());
         $trp->set_to($this->word()->phrase());
-        $trp->set_type(phrase_type_shared::MATH_CONST);
+        $trp->set_type(phrase_type_shared::MATH_CONST, $this->usr1);
         global $ptc_typ_cac;
         $trp->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $trp;

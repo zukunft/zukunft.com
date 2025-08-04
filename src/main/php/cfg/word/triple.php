@@ -254,6 +254,8 @@ class triple extends sandbox_link_named
      * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @param string $name_fld the name of the name field as defined in this child class
+     * @param string $type_fld the name of the type field as defined in this child class
      * @return bool true if the triple is loaded and valid
      */
     function row_mapper_sandbox(
@@ -262,9 +264,10 @@ class triple extends sandbox_link_named
         bool   $allow_usr_protect = true,
         string $id_fld = triple_db::FLD_ID,
         string $name_fld = triple_db::FLD_NAME,
-        string $type_fld = phrase::FLD_TYPE): bool
+        string $type_fld = phrase::FLD_TYPE
+    ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             if (array_key_exists(triple_db::FLD_FROM, $db_row)) {
                 $phr_id = $db_row[triple_db::FLD_FROM];
@@ -289,9 +292,6 @@ class triple extends sandbox_link_named
             }
             if (array_key_exists(triple_db::FLD_NAME_AUTO, $db_row)) {
                 $this->set_name_generated($db_row[triple_db::FLD_NAME_AUTO]);
-            }
-            if (array_key_exists($type_fld, $db_row)) {
-                $this->type_id = $db_row[$type_fld];
             }
             if (array_key_exists(triple_db::FLD_VALUES, $db_row)) {
                 $this->values = $db_row[triple_db::FLD_VALUES];
@@ -363,6 +363,11 @@ class triple extends sandbox_link_named
 
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
 
+        if (key_exists(json_fields::TYPE_CODE_ID, $in_ex_json)) {
+            $this->set_type($in_ex_json[json_fields::TYPE_CODE_ID]);
+        } elseif (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
+            $this->set_type($in_ex_json[json_fields::TYPE_NAME]);
+        }
         if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
             $this->type_id = $phr_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
         }
@@ -887,16 +892,23 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * set the phrase type of this triple
+     * set the phrase type of this triple by the given code id or name
      * if the type id is null or 0 the phrase type from the "to" phrase is returned
      *
-     * @param string $type_code_id the code id that should be added to this triple
-     * @return void
+     * @param string $code_id_or_name the code id that should be added to this triple
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the phrase type code id is not found
      */
-    function set_type(string $type_code_id): void
+    function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
         global $phr_typ_cac;
-        $this->type_id = $phr_typ_cac->id($type_code_id);
+        if ($phr_typ_cac->has_code_id($code_id_or_name)) {
+            return parent::set_type_by_code_id(
+                $code_id_or_name, $phr_typ_cac, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
+        } else {
+            return parent::set_type_by_name(
+                $code_id_or_name, $phr_typ_cac, msg_id::PHRASE_TYPE_NOT_FOUND, $usr_req);
+        }
     }
 
     /**

@@ -267,11 +267,8 @@ class formula extends sandbox_code_id
     {
         global $frm_typ_cac;
         $lib = new library();
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
-            if (array_key_exists($type_fld, $db_row)) {
-                $this->type_id = $db_row[$type_fld];
-            }
             if (array_key_exists(formula_db::FLD_FORMULA_TEXT, $db_row)) {
                 $this->ref_text = $db_row[formula_db::FLD_FORMULA_TEXT];
             }
@@ -455,17 +452,22 @@ class formula extends sandbox_code_id
      */
 
     /**
-     * set the predefined type of this formula
+     * set the predefined type of this formula by the given code id or name
      *
-     * @param string $code_id the code id that should be added to this formula
+     * @param string $code_id_or_name the code id or name that should be added to this formula
      * @param user $usr_req the user who wants to change the type
      * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $code_id, user $usr_req = new user()): user_message
+    function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
         global $frm_typ_cac;
-        return parent::set_type_by_code_id(
-            $code_id, $frm_typ_cac, msg_id::FORMULA_TYPE_NOT_FOUND, $usr_req);
+        if ($frm_typ_cac->has_code_id($code_id_or_name)) {
+            return parent::set_type_by_code_id(
+                $code_id_or_name, $frm_typ_cac, msg_id::FORMULA_TYPE_NOT_FOUND, $usr_req);
+        } else {
+            return parent::set_type_by_name(
+                $code_id_or_name, $frm_typ_cac, msg_id::FORMULA_TYPE_NOT_FOUND, $usr_req);
+        }
     }
 
     /**
@@ -546,7 +548,15 @@ class formula extends sandbox_code_id
      */
 
     /**
-     * get the name of the formula type
+     * @return string|null the code_id of the formula type
+     */
+    function type_code_id(): string|null
+    {
+        global $frm_typ_cac;
+        return $frm_typ_cac->code_id($this->type_id);
+    }
+
+    /**
      * @return string the name of the formula type
      */
     function type_name(): string

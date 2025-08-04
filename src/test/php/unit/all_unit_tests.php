@@ -137,14 +137,15 @@ class all_unit_tests extends test_cleanup
     function run_single(all_tests $t): void
     {
 
+        global $db_con;
+        global $sql_names;
+        global $usr;
+
         /*
          * unit testing - prepare
          */
 
         // remember the global var for restore after the unit tests
-        global $db_con;
-        global $sql_names;
-        global $usr;
         $global_db_con = $db_con;
         $global_sql_names = $sql_names;
         $global_usr = $usr;
@@ -155,7 +156,7 @@ class all_unit_tests extends test_cleanup
         $this->init_unit_tests();
 
         /*
-         * unit testing - run
+         * unit testing - without users
          */
 
         // run the selected unit tests
@@ -191,6 +192,13 @@ class all_unit_tests extends test_cleanup
             $sys_usr->load_by_id(users::SYSTEM_ID);
             //$import = new import_file();
             //$import->import_config_yaml($sys_usr);
+
+
+            /*
+             * unit testing - with system users
+             */
+
+            (new horizontal_tests)->run($t);
 
             /*
              * prepare db testing
@@ -294,7 +302,7 @@ class all_unit_tests extends test_cleanup
         $imf->set_start_time($this->start_time());
         $usr_msg = $imf->json_file($filename, $usr, false);
         if (!$usr_msg->is_ok()) {
-            log_warning($filename .  ' imported failed because ' . $usr_msg->all_message_text());
+            log_warning($filename . ' imported failed because ' . $usr_msg->all_message_text());
         }
 
     }

@@ -50,6 +50,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -67,6 +68,7 @@ use cfg\db\sql_type;
 use cfg\db\sql_type_list;
 use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
+use cfg\helper\type_list;
 use cfg\log\change_log_list;
 use cfg\user\user;
 use cfg\user\user_message;
@@ -92,7 +94,7 @@ class sandbox_link_named extends sandbox_link
     public ?string $description = null;
 
     // database id of the type used for named link user sandbox objects with predefined functionality
-    // which is actually only triple
+    // which is actually only triple at the moment
     // repeating _sandbox_typed, because php 8.1 does not yet allow multi extends
     public ?int $type_id = null;
 
@@ -117,6 +119,7 @@ class sandbox_link_named extends sandbox_link
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
      * @param string $name_fld the name of the name field as set in the child class
+     * @param string $type_fld the name of the type field as defined in this child class
      * @return bool true if the word is loaded and valid
      */
     function row_mapper_sandbox(
@@ -124,7 +127,8 @@ class sandbox_link_named extends sandbox_link
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = '',
-        string $name_fld = ''
+        string $name_fld = '',
+        string $type_fld = ''
     ): bool
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
@@ -136,6 +140,9 @@ class sandbox_link_named extends sandbox_link
             }
             if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            }
+            if (array_key_exists($type_fld, $db_row)) {
+                $this->type_id = $db_row[$type_fld];
             }
         }
         return $result;
@@ -165,29 +172,6 @@ class sandbox_link_named extends sandbox_link
         return $msg;
     }
 
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = parent::api_json_array($typ_lst, $usr);
-
-        $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
-        $vars[json_fields::TYPE] = $this->type_id();
-
-        return $vars;
-    }
-
     /**
      * set the vars of this named link object based on the given json without writing to the database
      * import the name and description of a sandbox link object
@@ -211,6 +195,29 @@ class sandbox_link_named extends sandbox_link
         }
 
         return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::TYPE] = $this->type_id();
+
+        return $vars;
     }
 
 
@@ -339,6 +346,72 @@ class sandbox_link_named extends sandbox_link
     function type_id(): ?int
     {
         return $this->type_id;
+    }
+
+    /**
+     * set the type based on the given code id and type list
+     *
+     * @param string|null $code_id the code id that should be added to this view
+     * @param type_list $typ_lst the parent object specific preloaded list of types
+     * @param msg_id $msg_id the id of the message used to report a missing type
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
+     */
+    function set_type_by_code_id(
+        ?string   $code_id,
+        type_list $typ_lst,
+        msg_id    $msg_id,
+        user      $usr_req = new user()
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        if ($code_id == null) {
+            $this->type_id = null;
+        } else {
+            if ($typ_lst->has_code_id($code_id)) {
+                $this->set_type_id($typ_lst->id($code_id), $usr_req);
+            } else {
+                $usr_msg->add_id_with_vars($msg_id, [
+                    msg_id::VAR_NAME => $code_id
+                ]);
+                $this->type_id = null;
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the type based on the given name and type list
+     * should only be used if the code id is missing
+     * TODO Prio 2 if the code id is given and the type name differs rename the type for the user
+     *
+     * @param string|null $name the code id that should be added to this view
+     * @param type_list $typ_lst the parent object specific preloaded list of types
+     * @param msg_id $msg_id the id of the message used to report a missing type
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
+     */
+    function set_type_by_name(
+        ?string   $name,
+        type_list $typ_lst,
+        msg_id    $msg_id,
+        user      $usr_req = new user()
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        if ($name == null) {
+            $this->type_id = null;
+        } else {
+            if ($typ_lst->has_name($name)) {
+                $this->set_type_id($typ_lst->id_by_name($name), $usr_req);
+            } else {
+                $usr_msg->add_id_with_vars($msg_id, [
+                    msg_id::VAR_NAME => $name
+                ]);
+                $this->type_id = null;
+            }
+        }
+        return $usr_msg;
     }
 
 

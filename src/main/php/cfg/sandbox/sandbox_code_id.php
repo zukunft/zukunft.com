@@ -119,17 +119,19 @@ class sandbox_code_id extends sandbox_typed
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
      * @param string $name_fld the name of the name field as set in the child class
-     * @return bool true if the word is loaded and valid
+     * @param string $type_fld the name of the type field as defined in this child class
+     * @return bool true if this object is loaded and valid
      */
     function row_mapper_sandbox(
         ?array $db_row,
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = '',
-        string $name_fld = ''
+        string $name_fld = '',
+        string $type_fld = ''
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
                 $this->set_code_id_db($db_row[sql_db::FLD_CODE_ID]);
@@ -175,7 +177,7 @@ class sandbox_code_id extends sandbox_typed
         object      $test_obj = null
     ): user_message
     {
-        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+        $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
 
         if (key_exists(json_fields::CODE_ID, $in_ex_json)) {
             if ($in_ex_json[json_fields::CODE_ID] <> '') {

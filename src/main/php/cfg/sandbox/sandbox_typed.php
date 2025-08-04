@@ -48,8 +48,8 @@ namespace cfg\sandbox;
 use cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
-include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
+include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_HELPER . 'type_list.php';
 //include_once paths::MODEL_REF . 'source.php';
@@ -62,8 +62,8 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
 use cfg\db\sql_db;
+use cfg\helper\data_object;
 use cfg\helper\db_object_seq_id;
 use cfg\helper\type_list;
 use cfg\ref\source;
@@ -103,6 +103,35 @@ class sandbox_typed extends sandbox_named
     }
 
     /**
+     * map the database fields to the object fields
+     *
+     * @param array|null $db_row with the data directly from the database
+     * @param bool $load_std true if only the standard user sandbox object is loaded
+     * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
+     * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @param string $name_fld the name of the name field as defined in this child class
+     * @param string $type_fld the name of the type field as defined in this child class
+     * @return bool true if this object is loaded and valid
+     */
+    function row_mapper_sandbox(
+        ?array $db_row,
+        bool   $load_std = false,
+        bool   $allow_usr_protect = true,
+        string $id_fld = '',
+        string $name_fld = '',
+        string $type_fld = ''): bool
+    {
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        if ($result) {
+            // TODO easy use set_type_by_id function
+            if (array_key_exists($type_fld, $db_row)) {
+                $this->type_id = $db_row[$type_fld];
+            }
+        }
+        return $result;
+    }
+
+    /**
      * set the type based on the api json
      * @param array $api_json the api json array with the values that should be mapped
      */
@@ -115,6 +144,34 @@ class sandbox_typed extends sandbox_named
             $this->set_type_id($api_json[json_fields::TYPE], $usr);
         }
         return $msg;
+    }
+
+    /**
+     * function to import the core user sandbox object values from a json string
+     * e.g. the share and protection settings
+     *
+     * @param array $in_ex_json an array with the data of the json object
+     * @param user $usr_req the user who has initiated the import mainly used to add the type to the database
+     * @param data_object|null $dto cache of the objects imported until now for the primary references
+     * @param object|null $test_obj if not null the unit test object to get a dummy seq id
+     * @return user_message the status of the import and if needed the error messages that should be shown to the user
+     */
+    function import_mapper_user(
+        array       $in_ex_json,
+        user        $usr_req,
+        data_object $dto = null,
+        object      $test_obj = null
+    ): user_message
+    {
+        $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
+
+        if (key_exists(json_fields::TYPE_CODE_ID, $in_ex_json)) {
+            $this->set_type($in_ex_json[json_fields::TYPE_CODE_ID], $usr_req);
+        } elseif (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
+            $this->set_type($in_ex_json[json_fields::TYPE_NAME], $usr_req);
+        }
+
+        return $usr_msg;
     }
 
 
@@ -168,6 +225,24 @@ class sandbox_typed extends sandbox_named
     }
 
     /**
+     * set the predefined type of this object by the given code id or name
+     * must be overwritten by the child objects
+     *
+     * @param string $code_id_or_name the code id or the name of the type that should be added to this object
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
+     */
+    function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
+    {
+        $usr_msg = new user_message();
+        $usr_msg->add_id_with_vars(msg_id::MISSING_OVERWRITE, [
+            msg_id::VAR_NAME => 'set_type in sandbox_typed',
+            msg_id::VAR_CLASS_NAME => $this::class
+        ]);
+        return $usr_msg;
+    }
+
+    /**
      * set the type based on the given code id and type list
      *
      * @param string|null $code_id the code id that should be added to this view
@@ -200,21 +275,45 @@ class sandbox_typed extends sandbox_named
     }
 
     /**
+     * set the type based on the given name and type list
+     * should only be used if the code id is missing
+     * TODO Prio 2 if the code id is given and the type name differs rename the type for the user
+     *
+     * @param string|null $name the code id that should be added to this view
+     * @param type_list $typ_lst the parent object specific preloaded list of types
+     * @param msg_id $msg_id the id of the message used to report a missing type
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
+     */
+    function set_type_by_name(
+        ?string   $name,
+        type_list $typ_lst,
+        msg_id    $msg_id,
+        user      $usr_req = new user()
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        if ($name == null) {
+            $this->type_id = null;
+        } else {
+            if ($typ_lst->has_name($name)) {
+                $this->set_type_id($typ_lst->id_by_name($name), $usr_req);
+            } else {
+                $usr_msg->add_id_with_vars($msg_id, [
+                    msg_id::VAR_NAME => $name
+                ]);
+                $this->type_id = null;
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
      * @return int|null the database id of the type
      */
     function type_id(): ?int
     {
         return $this->type_id;
-    }
-
-    /**
-     * dummy function that should be overwritten by the child object
-     * @return string the name of the object type
-     */
-    function type_name(): string
-    {
-        $msg = 'ERROR: the type name function should have been overwritten by the child object';
-        return log_err($msg);
     }
 
 
@@ -225,11 +324,22 @@ class sandbox_typed extends sandbox_named
     /**
      * the code id of the type for the export json
      * must be overwritten by the child objects
-     * @return string with the code id of the type
+     * @return string|null with the code id of the type
      */
-    private function type_code_id(): string
+    function type_code_id(): string|null
     {
-        return 'type_code_id() function not overwritten by the ' . $this::class . ' object';
+        $msg = 'the type_code_id() function is not overwritten by the ' . $this::class . ' object';
+        return log_err($msg);
+    }
+
+    /**
+     * dummy function that should be overwritten by the child object
+     * @return string the name of the object type
+     */
+    function type_name(): string
+    {
+        $msg = 'the type_name() function is not overwritten by the ' . $this::class . ' object';
+        return log_err($msg);
     }
 
 
@@ -261,7 +371,10 @@ class sandbox_typed extends sandbox_named
     {
         $vars = parent::export_json($do_load);
 
-        // TODO check for which object the code id should be used and why
+        // TODO use the code id additional to the name where ever possible
+        if ($this->type_code_id() <> '') {
+            $vars[json_fields::TYPE_CODE_ID] = $this->type_code_id();
+        }
         if ($this->type_name() <> '') {
             $vars[json_fields::TYPE_NAME] = $this->type_name();
         }

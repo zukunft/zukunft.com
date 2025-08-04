@@ -63,6 +63,12 @@ class json_fields
     // the database id (or in some cases still the code id) of an object type
     // e.g. for the word api message it contains the id of the phrase type
     const TYPE = 'type_id';
+    // the json field name in the im- and export json message which is supposed to contain
+    // the code id of an object type
+    const TYPE_CODE_ID = 'type_code_id';
+    // the json field name in the im- and export json message which is supposed to contain
+    // the name of an object type which is used if the object type has not yet a code id
+    // or the type name has been changed by the user
     const TYPE_NAME = 'type';
 
     // object lists

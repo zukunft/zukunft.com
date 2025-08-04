@@ -57,7 +57,7 @@ SELECT triple_update_log_000022400000100
         'constant',
         17,
         null,
-        0,
+        null,
         21,
         null,
         1);

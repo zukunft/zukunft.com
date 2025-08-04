@@ -201,6 +201,7 @@ class view extends sandbox_code_id
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @param string $name_fld the name of the name field as defined in this child class
+     * @param string $type_fld the name of the type field as defined in this child class
      * @return bool true if the view is loaded and valid
      */
     function row_mapper_sandbox(
@@ -208,14 +209,12 @@ class view extends sandbox_code_id
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = view_db::FLD_ID,
-        string $name_fld = view_db::FLD_NAME
+        string $name_fld = view_db::FLD_NAME,
+        string $type_fld = view_db::FLD_TYPE
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
-            if (array_key_exists(view_db::FLD_TYPE, $db_row)) {
-                $this->type_id = $db_row[view_db::FLD_TYPE];
-            }
             if (array_key_exists(view_db::FLD_STYLE, $db_row)) {
                 $this->set_style_by_id($db_row[view_db::FLD_STYLE]);
             }
@@ -459,17 +458,22 @@ class view extends sandbox_code_id
      */
 
     /**
-     * set the view type
+     * set the view type by the given code id or name
      *
-     * @param string|null $code_id the code id that should be added to this view
+     * @param string|null $code_id_or_name the code id or name that should be added to this view
      * @param user $usr_req the user who wants to change the type
      * @return user_message a warning if the view type code id is not found
      */
-    function set_type(?string $code_id, user $usr_req = new user()): user_message
+    function set_type(?string $code_id_or_name, user $usr_req = new user()): user_message
     {
         global $msk_typ_cac;
-        return parent::set_type_by_code_id(
-            $code_id, $msk_typ_cac, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
+        if ($msk_typ_cac->has_code_id($code_id_or_name)) {
+            return parent::set_type_by_code_id(
+                $code_id_or_name, $msk_typ_cac, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
+        } else {
+            return parent::set_type_by_name(
+                $code_id_or_name, $msk_typ_cac, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
+        }
     }
 
     /**
@@ -579,22 +583,22 @@ class view extends sandbox_code_id
      */
 
     /**
+     * get the view type code id based on the database id set in this object
+     * @return string|null the code_id of the view type
+     */
+    function type_code_id(): string|null
+    {
+        global $msk_typ_cac;
+        return $msk_typ_cac->code_id($this->type_id);
+    }
+
+    /**
      * @return string the name of the view type
      */
     function type_name(): string
     {
         global $msk_typ_cac;
         return $msk_typ_cac->name($this->type_id);
-    }
-
-    /**
-     * get the view type code id based on the database id set in this object
-     * @return string
-     */
-    private function type_code_id(): string
-    {
-        global $msk_typ_cac;
-        return $msk_typ_cac->code_id($this->type_id);
     }
 
     /**

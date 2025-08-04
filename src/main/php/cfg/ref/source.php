@@ -164,6 +164,8 @@ class source extends sandbox_code_id
      * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @param string $name_fld the name of the name field as defined in this child class
+     * @param string $type_fld the name of the type field as defined in this child class
      * @return bool true if the source is loaded and valid
      */
     function row_mapper_sandbox(
@@ -171,13 +173,13 @@ class source extends sandbox_code_id
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = source_db::FLD_ID,
-        string $name_fld = source_db::FLD_NAME
+        string $name_fld = source_db::FLD_NAME,
+        string $type_fld = source_db::FLD_TYPE
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             $this->set_url($db_row[source_db::FLD_URL]);
-            $this->type_id = $db_row[source_db::FLD_TYPE];
         }
         return $result;
     }
@@ -221,9 +223,6 @@ class source extends sandbox_code_id
 
         if (key_exists(json_fields::URL, $in_ex_json)) {
             $this->set_url($in_ex_json[json_fields::URL]);
-        }
-        if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $this->type_id = $src_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
         }
 
         return $usr_msg;
@@ -306,17 +305,22 @@ class source extends sandbox_code_id
      */
 
     /**
-     * set the predefined type of this source
+     * set the predefined source type by the given code id or name
      *
-     * @param string $code_id the code id that should be added to this source
+     * @param string $code_id_or_name the code id or name of the source type that should be added to this source
      * @param user $usr_req the user who wants to change the type
      * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $code_id, user $usr_req = new user()): user_message
+    function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
         global $src_typ_cac;
-        return parent::set_type_by_code_id(
-            $code_id, $src_typ_cac, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
+        if ($src_typ_cac->has_code_id($code_id_or_name)) {
+            return parent::set_type_by_code_id(
+                $code_id_or_name, $src_typ_cac, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
+        } else {
+            return parent::set_type_by_name(
+                $code_id_or_name, $src_typ_cac, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
+        }
     }
 
     function set_url(?string $url): void
@@ -335,6 +339,15 @@ class source extends sandbox_code_id
      */
 
     /**
+     * @return string|null the code_id of the source type
+     */
+    function type_code_id(): string|null
+    {
+        global $src_typ_cac;
+        return $src_typ_cac->code_id($this->type_id);
+    }
+
+    /**
      * @return string the source type name from the array preloaded from the database
      */
     function type_name(): string
@@ -346,16 +359,6 @@ class source extends sandbox_code_id
             $type_name = $src_typ_cac->name($this->type_id);
         }
         return $type_name;
-    }
-
-    /**
-     * get the code_id of the source type
-     * @return string the code_id of the source type
-     */
-    function type_code_id(): string
-    {
-        global $src_typ_cac;
-        return $src_typ_cac->code_id($this->type_id);
     }
 
 
