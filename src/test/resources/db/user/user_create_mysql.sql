@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS users
     password           varchar(255) DEFAULT NULL COMMENT 'the hash value of the password',
     description        text         DEFAULT NULL COMMENT 'for system users the description to explain the profile to human users',
     code_id            varchar(100) DEFAULT NULL COMMENT 'to select e.g. the system batch user',
-    user_profile_id    bigint       DEFAULT NULL COMMENT 'to define the user roles and read and write rights',
-    user_type_id       bigint       DEFAULT NULL COMMENT 'to set the confirmation level of a user',
+    user_profile_id    smallint     DEFAULT NULL COMMENT 'to define the user roles and read and write rights',
+    user_type_id       smallint     DEFAULT NULL COMMENT 'to set the confirmation level of a user',
     excluded           smallint     DEFAULT NULL COMMENT 'true if the user is deactivated but cannot be deleted due to log entries',
     right_level        smallint     DEFAULT NULL COMMENT 'the access right level to prevent not permitted right gaining',
     email              varchar(255) DEFAULT NULL COMMENT 'the primary email for verification',
@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS users
     user_status_id     smallint     DEFAULT NULL COMMENT 'e.g. to exclude inactive users',
     created            timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_login         timestamp    DEFAULT NULL,
-    last_logoff        timestamp    DEFAULT NULL
+    last_logoff        timestamp    DEFAULT NULL,
+    PRIMARY KEY (user_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -47,4 +48,4 @@ CREATE TABLE IF NOT EXISTS users
 -- AUTO_INCREMENT for table users
 --
 ALTER TABLE users
-    MODIFY user_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY user_id bigint NOT NULL AUTO_INCREMENT;

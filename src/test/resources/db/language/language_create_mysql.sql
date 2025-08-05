@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS languages
     language_name  varchar(255)     NOT NULL,
     code_id        varchar(100) DEFAULT NULL,
     description    text         DEFAULT NULL,
-    wikimedia_code varchar(100) DEFAULT NULL
+    wikimedia_code varchar(100) DEFAULT NULL,
+    PRIMARY KEY (language_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -20,4 +21,4 @@ CREATE TABLE IF NOT EXISTS languages
 -- AUTO_INCREMENT for table languages
 --
 ALTER TABLE languages
-    MODIFY language_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY language_id smallint NOT NULL AUTO_INCREMENT;

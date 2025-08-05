@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS sys_log
     sys_log_trace       text   DEFAULT NULL COMMENT 'the generated code trace to local the path to the error cause',
     user_id             bigint DEFAULT NULL COMMENT 'the id of the user who has caused the log entry',
     solver_id           bigint DEFAULT NULL COMMENT 'user id of the user that is trying to solve the problem',
-    sys_log_status_id   bigint     NOT NULL DEFAULT 1
+    sys_log_status_id   smallint   NOT NULL DEFAULT 1,
+    PRIMARY KEY (sys_log_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -25,4 +26,4 @@ CREATE TABLE IF NOT EXISTS sys_log
 -- AUTO_INCREMENT for table sys_log
 --
 ALTER TABLE sys_log
-    MODIFY sys_log_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY sys_log_id bigint NOT NULL AUTO_INCREMENT;

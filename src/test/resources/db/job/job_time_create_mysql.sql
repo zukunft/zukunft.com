@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS job_times
     job_type_id smallint        NOT NULL COMMENT 'the id of the job type that should be started',
     user_id     bigint          NOT NULL COMMENT 'the id of the user who edit the scheduler the last time',
     start       timestamp   DEFAULT NULL COMMENT 'the last start of the job',
-    parameter   bigint      DEFAULT NULL COMMENT 'the phrase id that contains all parameters for the next job start'
+    parameter   bigint      DEFAULT NULL COMMENT 'the phrase id that contains all parameters for the next job start',
+    PRIMARY KEY (job_time_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -21,4 +22,4 @@ CREATE TABLE IF NOT EXISTS job_times
 -- AUTO_INCREMENT for table job_times
 --
 ALTER TABLE job_times
-    MODIFY job_time_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY job_time_id bigint NOT NULL AUTO_INCREMENT;

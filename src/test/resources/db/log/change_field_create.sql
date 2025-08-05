@@ -7,7 +7,7 @@
 CREATE TABLE IF NOT EXISTS change_fields
 (
     change_field_id   SERIAL PRIMARY KEY,
-    table_id          bigint           NOT NULL,
+    table_id          smallint         NOT NULL,
     change_field_name varchar(255)     NOT NULL,
     code_id           varchar(255) DEFAULT NULL,
     description       text         DEFAULT NULL

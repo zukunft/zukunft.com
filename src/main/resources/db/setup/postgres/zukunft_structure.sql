@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS sys_log
     sys_log_trace       text   DEFAULT NULL,
     user_id             bigint DEFAULT NULL,
     solver_id           bigint DEFAULT NULL,
-    sys_log_status_id   bigint     NOT NULL DEFAULT 1
+    sys_log_status_id   smallint   NOT NULL DEFAULT 1
 );
 
 COMMENT ON TABLE sys_log IS 'for system error tracking and to measure execution times';
@@ -314,8 +314,8 @@ CREATE TABLE IF NOT EXISTS users
     password           varchar(255) DEFAULT NULL,
     description        text         DEFAULT NULL,
     code_id            varchar(100) DEFAULT NULL,
-    user_profile_id    bigint       DEFAULT NULL,
-    user_type_id       bigint       DEFAULT NULL,
+    user_profile_id    smallint     DEFAULT NULL,
+    user_type_id       smallint     DEFAULT NULL,
     excluded           smallint     DEFAULT NULL,
     right_level        smallint     DEFAULT NULL,
     email              varchar(255) DEFAULT NULL,
@@ -449,7 +449,7 @@ COMMENT ON COLUMN change_tables.description IS 'the user readable name';
 CREATE TABLE IF NOT EXISTS change_fields
 (
     change_field_id   SERIAL PRIMARY KEY,
-    table_id          bigint           NOT NULL,
+    table_id          smallint         NOT NULL,
     change_field_name varchar(255)     NOT NULL,
     code_id           varchar(255) DEFAULT NULL,
     description       text         DEFAULT NULL
@@ -849,7 +849,7 @@ CREATE TABLE IF NOT EXISTS change_links
     user_id          bigint     NOT NULL,
     change_action_id smallint   NOT NULL,
     row_id           bigint DEFAULT NULL,
-    change_table_id  bigint     NOT NULL,
+    change_table_id  smallint   NOT NULL,
     old_from_id      bigint DEFAULT NULL,
     old_link_id      bigint DEFAULT NULL,
     old_to_id        bigint DEFAULT NULL,
@@ -1007,7 +1007,7 @@ CREATE TABLE IF NOT EXISTS language_forms
     language_form_name varchar(255) DEFAULT NULL,
     code_id            varchar(100) DEFAULT NULL,
     description        text         DEFAULT NULL,
-    language_id        bigint       DEFAULT NULL
+    language_id        smallint     DEFAULT NULL
 );
 
 COMMENT ON TABLE language_forms IS 'for language forms like plural';
@@ -1060,7 +1060,7 @@ CREATE TABLE IF NOT EXISTS user_words
 (
     word_id        bigint   NOT NULL,
     user_id        bigint   NOT NULL,
-    language_id    bigint   NOT NULL DEFAULT 1,
+    language_id    smallint NOT NULL DEFAULT 1,
     word_name      varchar(255)      DEFAULT NULL,
     plural         varchar(255)      DEFAULT NULL,
     description    text              DEFAULT NULL,
@@ -1125,7 +1125,7 @@ CREATE TABLE IF NOT EXISTS triples
 (
     triple_id           BIGSERIAL PRIMARY KEY,
     from_phrase_id      bigint            DEFAULT NULL,
-    verb_id             bigint                NOT NULL,
+    verb_id             smallint              NOT NULL,
     to_phrase_id        bigint                NOT NULL,
     user_id             bigint            DEFAULT NULL,
     triple_name         varchar(255)      DEFAULT NULL,
@@ -1171,7 +1171,7 @@ CREATE TABLE IF NOT EXISTS user_triples
 (
     triple_id           bigint   NOT NULL,
     user_id             bigint   NOT NULL,
-    language_id         bigint   NOT NULL DEFAULT 1,
+    language_id         smallint NOT NULL DEFAULT 1,
     triple_name         varchar(255)      DEFAULT NULL,
     name_given          varchar(255)      DEFAULT NULL,
     name_generated      varchar(255)      DEFAULT NULL,
@@ -1230,9 +1230,9 @@ COMMENT ON COLUMN phrase_table_status.description IS 'text to explain the type t
 CREATE TABLE IF NOT EXISTS phrase_tables
 (
     phrase_table_id BIGSERIAL PRIMARY KEY,
-    phrase_id              bigint NOT NULL,
-    pod_id                 bigint NOT NULL,
-    phrase_table_status_id bigint NOT NULL
+    phrase_id                bigint NOT NULL,
+    pod_id                   bigint NOT NULL,
+    phrase_table_status_id smallint NOT NULL
 );
 
 COMMENT ON TABLE phrase_tables IS 'remember which phrases are stored in which table and pod';
@@ -1493,7 +1493,7 @@ CREATE TABLE IF NOT EXISTS refs
     source_id     bigint    DEFAULT NULL,
     description   text      DEFAULT NULL,
     phrase_id     bigint    DEFAULT NULL,
-    ref_type_id   bigint        NOT NULL,
+    ref_type_id   smallint      NOT NULL,
     excluded      smallint  DEFAULT NULL,
     share_type_id smallint  DEFAULT NULL,
     protect_id    smallint  DEFAULT NULL
@@ -2663,7 +2663,7 @@ CREATE TABLE IF NOT EXISTS formulas
     formula_text      text     DEFAULT NULL,
     resolved_text     text     DEFAULT NULL,
     description       text     DEFAULT NULL,
-    formula_type_id   bigint   DEFAULT NULL,
+    formula_type_id   smallint DEFAULT NULL,
     all_values_needed smallint DEFAULT NULL,
     last_update       timestamp DEFAULT NULL,
     view_id           bigint   DEFAULT NULL,
@@ -2701,7 +2701,7 @@ CREATE TABLE IF NOT EXISTS user_formulas
     formula_text      text         DEFAULT NULL,
     resolved_text     text         DEFAULT NULL,
     description       text         DEFAULT NULL,
-    formula_type_id   bigint       DEFAULT NULL,
+    formula_type_id   smallint     DEFAULT NULL,
     all_values_needed smallint     DEFAULT NULL,
     last_update       timestamp    DEFAULT NULL,
     view_id           bigint       DEFAULT NULL,
@@ -4408,7 +4408,7 @@ CREATE TABLE IF NOT EXISTS user_views
 (
     view_id       bigint   NOT NULL,
     user_id       bigint   NOT NULL,
-    language_id   bigint   NOT NULL DEFAULT 1,
+    language_id   smallint NOT NULL DEFAULT 1,
     view_name     varchar(255)      DEFAULT NULL,
     description   text              DEFAULT NULL,
     view_type_id  smallint          DEFAULT NULL,

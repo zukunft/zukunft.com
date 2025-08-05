@@ -4262,12 +4262,18 @@ class sql_creator
         // loop over the fields
         $sql .= '(';
         $sql_fields = '';
+        $key_field = '';
+        $key_field_unique = true;
+        $prime_keys = [];
         foreach ($fields as $field) {
             if ($sql_fields != '') {
                 $sql_fields .= ', ';
             }
             $name = $this->name_sql_esc($field[self::FLD_POS_NAME]);
             $type = $field[self::FLD_POS_TYPE];
+            if ($type->is_key() or $type->is_key_part()) {
+                $prime_keys[] = $name;
+            }
             if ($this->db_type() == sql_db::POSTGRES) {
                 $type_used = $type->pg_type();
             } elseif ($this->db_type() == sql_db::MYSQL) {
@@ -4297,10 +4303,28 @@ class sql_creator
                     }
                     $comment_used .= "'";
                 }
+                if ($type->is_key()) {
+                    if ($key_field_unique) {
+                        $key_field = $name;
+                        $key_field_unique = false;
+                    } else {
+                        $key_field = '';
+                    }
+                }
             }
             $sql_fields .= '    ' . $name . ' ' . $type_used . ' ' . $default_used . $comment_used;
         }
-        $sql .= $sql_fields . ')';
+        $sql .= $sql_fields;
+        if ($this->db_type() == sql_db::MYSQL) {
+            if (count($prime_keys) > 0) {
+                $sql .= ', ' . sql::PRIMARY_KEY . ' (' . implode(', ', $prime_keys) . ')';
+            } else {
+                if ($key_field != '') {
+                    $sql .= ', ' . sql::PRIMARY_KEY . ' (' . $key_field . ')';
+                }
+            }
+        }
+        $sql .= ')';
         if ($this->db_type() == sql_db::MYSQL) {
             $sql .= ' ENGINE = InnoDB DEFAULT CHARSET = utf8 ';
             $sql .= "COMMENT '" . $tbl_comment . "'";
@@ -4400,7 +4424,10 @@ class sql_creator
                     $sql .= '); ';
                 }
             } elseif ($this->db_type() == sql_db::MYSQL) {
-                $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table);
+                if (count($index_fields) > 0) {
+                    $sql .= 'ALTER TABLE ' . $this->name_sql_esc($this->table) . ' ';
+                }
+                /* moved to table creation by using MariaDB 15.1
                 $sql .= ' ADD PRIMARY KEY (';
                 $sql .= implode(', ', $prime_keys);
                 if (count($index_fields) > 0) {
@@ -4408,6 +4435,7 @@ class sql_creator
                 } else {
                     $sql .= '); ';
                 }
+                */
             }
         } else {
             if ($this->db_type() == sql_db::MYSQL) {
@@ -4478,10 +4506,18 @@ class sql_creator
     {
         $sql = '';
         $id_fld = '';
+        $type_used = '';
         foreach ($fields as $field) {
             $type = $field[self::FLD_POS_TYPE];
             if ($type->is_auto_increment()) {
                 $id_fld = $field[self::FLD_POS_NAME];
+                if ($this->db_type() == sql_db::POSTGRES) {
+                    $type_used = $type->pg_type();
+                } elseif ($this->db_type() == sql_db::MYSQL) {
+                    $type_used = $type->mysql_type();
+                } else {
+                    $type_used = 'field type for ' . $this->db_type() . ' missing';
+                }
             }
         }
         if ($id_fld != '') {
@@ -4489,7 +4525,7 @@ class sql_creator
             $sql .= '-- AUTO_INCREMENT for table ' . $this->table . ' ' . "\n";
             $sql .= '-- ' . "\n";
             $sql .= 'ALTER ' . 'TABLE ' . $this->name_sql_esc($this->table) . ' ' . "\n";
-            $sql .= '    MODIFY ' . $this->name_sql_esc($id_fld) . ' int(11) NOT NULL AUTO_INCREMENT; ' . "\n";
+            $sql .= '    MODIFY ' . $this->name_sql_esc($id_fld) . ' ' . $type_used . ' NOT NULL AUTO_INCREMENT; ' . "\n";
             $sql .= ' ' . "\n";
         }
         return $sql;

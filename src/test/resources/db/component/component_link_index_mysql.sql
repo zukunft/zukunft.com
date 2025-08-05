@@ -5,7 +5,6 @@
 --
 
 ALTER TABLE component_links
-    ADD PRIMARY KEY (component_link_id),
     ADD KEY component_links_view_idx (view_id),
     ADD KEY component_links_component_idx (component_id),
     ADD KEY component_links_user_idx (user_id),
@@ -18,7 +17,6 @@ ALTER TABLE component_links
 --
 
 ALTER TABLE user_component_links
-    ADD PRIMARY KEY (component_link_id,user_id),
     ADD KEY user_component_links_component_link_idx (component_link_id),
     ADD KEY user_component_links_user_idx (user_id),
     ADD KEY user_component_links_component_link_type_idx (component_link_type_id),

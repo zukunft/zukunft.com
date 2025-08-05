@@ -8,7 +8,7 @@ CREATE PROCEDURE formula_insert_log_011101111151111
  _field_id_description       smallint,
  _description                text,
  _field_id_formula_type_id   smallint,
- _formula_type_id            bigint,
+ _formula_type_id            smallint,
  _field_id_formula_text      smallint,
  _formula_text               text,
  _field_id_resolved_text     smallint,

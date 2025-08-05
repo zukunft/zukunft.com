@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS changes_big
     old_value        text   DEFAULT NULL,
     new_value        text   DEFAULT NULL,
     old_id           text   DEFAULT NULL COMMENT 'old value id',
-    new_id           text   DEFAULT NULL COMMENT 'new value id'
+    new_id           text   DEFAULT NULL COMMENT 'new value id',
+    PRIMARY KEY (change_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -25,4 +26,4 @@ CREATE TABLE IF NOT EXISTS changes_big
 -- AUTO_INCREMENT for table changes_big
 --
 ALTER TABLE changes_big
-    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY change_id bigint NOT NULL AUTO_INCREMENT;

@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS language_forms
     language_form_name varchar(255) DEFAULT NULL,
     code_id            varchar(100) DEFAULT NULL,
     description        text         DEFAULT NULL,
-    language_id        bigint       DEFAULT NULL
+    language_id        smallint     DEFAULT NULL
 );
 
 COMMENT ON TABLE language_forms IS 'for language forms like plural';

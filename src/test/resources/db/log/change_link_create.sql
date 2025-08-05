@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS change_links
     user_id          bigint     NOT NULL,
     change_action_id smallint   NOT NULL,
     row_id           bigint DEFAULT NULL,
-    change_table_id  bigint     NOT NULL,
+    change_table_id  smallint   NOT NULL,
     old_from_id      bigint DEFAULT NULL,
     old_link_id      bigint DEFAULT NULL,
     old_to_id        bigint DEFAULT NULL,

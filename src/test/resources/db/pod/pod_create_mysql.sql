@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS pods
     pod_type_id     smallint     DEFAULT NULL,
     pod_url         varchar(255)     NOT NULL,
     pod_status_id   smallint     DEFAULT NULL,
-    param_triple_id bigint       DEFAULT NULL
+    param_triple_id bigint       DEFAULT NULL,
+    PRIMARY KEY (pod_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -23,4 +24,4 @@ CREATE TABLE IF NOT EXISTS pods
 -- AUTO_INCREMENT for table pods
 --
 ALTER TABLE pods
-    MODIFY pod_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY pod_id bigint NOT NULL AUTO_INCREMENT;
