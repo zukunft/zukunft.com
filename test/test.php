@@ -57,7 +57,7 @@ use test\all_tests;
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("unit and integration testing", '', false);
+$db_con = prg_start("unit and integration testing", '', false, true);
 
 if ($db_con->is_open()) {
 

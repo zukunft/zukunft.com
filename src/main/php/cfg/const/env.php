@@ -86,6 +86,13 @@ const ENV_VARS = [
     ENV_WWW_ROOT,
 ];
 
+const ENV_SECRETS = [
+    ENV_PGSQL_PASSWORD,
+    ENV_PGSQL_ADMIN_PASSWORD,
+    ENV_MYSQL_PASSWORD,
+    ENV_MYSQL_ADMIN_PASSWORD,
+];
+
 // the possible environments
 const ENV_OS_DEBIAN = 'debian';
 const ENV_PROD = 'prod';
@@ -162,7 +169,7 @@ foreach ($env as $line) {
 
 // SYSTEM configuration from environment variables or the default fallback value
 // fixed IP of the main system admin as a second line of defence to prevent remote manipulation
-define('SYSTEM_ADMIN_IP', getenv('IP_ADMIN') ?: SYSTEM_ADMIN_IP_FALLBACK);
+define('SYSTEM_ADMIN_IP', getenv(ENV_IP_ADMIN) ?: SYSTEM_ADMIN_IP_FALLBACK);
 
 // Database configuration from environment variables or the default fallback value
 define('SQL_DB_TYPE', getenv(ENV_DB) ?: POSTGRES);

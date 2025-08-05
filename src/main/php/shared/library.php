@@ -913,6 +913,26 @@ class library
         return substr($ret, 0, 0 - strlen($sep));
     }
 
+
+    /*
+     * env
+     */
+
+
+    function env_to_log(): string
+    {
+        $result = '';
+        foreach (ENV_VARS as $var) {
+            if (!in_array($var, ENV_SECRETS)) {
+                if ($result != '') {
+                    $result .= ', ';
+                }
+                $result .= $var . '=' . getenv($var);
+            }
+        }
+        return $result;
+    }
+
     /*
      * file
      */

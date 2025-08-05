@@ -56,7 +56,7 @@ use test\all_tests;
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("db reset", '', false);
+$db_con = prg_start("db reset", '', false, true);
 
 if ($db_con->is_open()) {
 
