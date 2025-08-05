@@ -311,6 +311,11 @@ class sandbox_named extends sandbox
     function set_name(?string $name): user_message
     {
         $usr_msg = new user_message();
+
+        if(!is_string($name)) {
+            $name = '';
+        }
+
         if (trim($name) <> $name) {
             $usr_msg->add_id_with_vars(msg_id::TRIM_NAME,
                 [msg_id::VAR_NAME => $name]);
