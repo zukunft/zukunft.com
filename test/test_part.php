@@ -56,7 +56,7 @@ use test\all_tests;
 global $db_con;
 
 // open database and display header
-$db_con = prg_start("selected tests", '', false);
+$db_con = prg_start("selected tests", '', false, true);
 
 // load the session user parameters
 $start_usr = new user;

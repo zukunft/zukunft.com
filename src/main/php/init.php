@@ -490,9 +490,16 @@ const DB_TABLE_LIST = [
  *
  * @param string $code_name the place that is displayed to the user e.g. add word
  * @param string $style the display style used to show the place
+ * @param bool $echo_header if true start with a html header
+ * @param bool $echo_env if true log the environment
  * @return sql_db the open database connection
  */
-function prg_start(string $code_name, string $style = "", $echo_header = true): sql_db
+function prg_start(
+    string $code_name,
+    string $style = "",
+    bool $echo_header = true,
+    bool $echo_env = false
+): sql_db
 {
     global $sys_time_start, $sys_script, $errors;
     global $sys_times;
@@ -509,11 +516,11 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
     */
 
     // check if environment is loaded
-    $env = getenv('ENV');
+    $env = getenv(ENVIRONMENT);
     if (!$env) {
         log_warning('no environment found using fallback values');
     } else {
-        log_info('environment ' . getenv('ENV'));
+        log_info('environment ' . getenv(ENVIRONMENT));
     }
 
     $sys_time_start = time();
@@ -528,6 +535,13 @@ function prg_start(string $code_name, string $style = "", $echo_header = true): 
     if ($echo_header) {
         $html = new html_base();
         echo $html->header("", $style);
+    }
+
+    // log environment
+    if ($echo_env) {
+        $lib = new library();
+        echo $lib->env_to_log() . "\n";
+        phpinfo(INFO_GENERAL);
     }
 
     return prg_restart($code_name);
