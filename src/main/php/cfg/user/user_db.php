@@ -197,8 +197,8 @@ class user_db extends db_object_seq_id
         // description and type
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, sql::INDEX, '', self::FLD_CODE_ID_COM],
-        [self::FLD_PROFILE, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_profile::class, self::FLD_PROFILE_COM],
-        [self::FLD_TYPE_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user_type::class, self::FLD_TYPE_ID_COM],
+        [self::FLD_PROFILE, sql_field_type::INT_SMALL, sql_field_default::NULL, sql::INDEX, user_profile::class, self::FLD_PROFILE_COM],
+        [self::FLD_TYPE_ID, sql_field_type::INT_SMALL, sql_field_default::NULL, sql::INDEX, user_type::class, self::FLD_TYPE_ID_COM],
         [sql_db::FLD_EXCLUDED, sql_db::FLD_EXCLUDED_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_EXCLUDED_COM],
         [self::FLD_LEVEL, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_LEVEL_COM],
         // online verification

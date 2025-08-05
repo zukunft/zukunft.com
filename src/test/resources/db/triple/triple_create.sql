@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS triples
 (
     triple_id           BIGSERIAL PRIMARY KEY,
     from_phrase_id      bigint            DEFAULT NULL,
-    verb_id             bigint                NOT NULL,
+    verb_id             smallint              NOT NULL,
     to_phrase_id        bigint                NOT NULL,
     user_id             bigint            DEFAULT NULL,
     triple_name         varchar(255)      DEFAULT NULL,
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS user_triples
 (
     triple_id           bigint   NOT NULL,
     user_id             bigint   NOT NULL,
-    language_id         bigint   NOT NULL DEFAULT 1,
+    language_id         smallint NOT NULL DEFAULT 1,
     triple_name         varchar(255)      DEFAULT NULL,
     name_given          varchar(255)      DEFAULT NULL,
     name_generated      varchar(255)      DEFAULT NULL,

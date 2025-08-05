@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION formula_insert_log_011001110100000
      _field_id_formula_name    smallint,
      _field_id_user_id         smallint,
      _field_id_formula_type_id smallint,
-     _formula_type_id          bigint,
+     _formula_type_id          smallint,
      _field_id_formula_text    smallint,
      _formula_text             text,
      _field_id_resolved_text   smallint,
@@ -43,7 +43,7 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE formula_insert_log_011001110100000_call
-        (text, bigint, smallint, smallint, smallint, smallint, bigint, smallint, text, smallint, text) AS
+        (text, bigint, smallint, smallint, smallint, smallint, smallint, smallint, text, smallint, text) AS
     SELECT formula_insert_log_011001110100000
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);
 
@@ -54,7 +54,7 @@ SELECT formula_insert_log_011001110100000 (
                30::smallint,
                173::smallint,
                31::smallint,
-               1::bigint,
+               1::smallint,
                33::smallint,
                '{w24}={w104}*60'::text,
                32::smallint,

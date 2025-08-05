@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS values_standard_prime
     phrase_id_3   smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a numeric value',
     phrase_id_4   smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a numeric value',
     numeric_value double       NOT NULL COMMENT 'the numeric value given by the user',
-    source_id     bigint   DEFAULT NULL COMMENT 'the source of the value as given by the user'
+    source_id     bigint   DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for public unprotected numeric values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
 
 --
@@ -23,7 +24,8 @@ CREATE TABLE IF NOT EXISTS values_standard
 (
     group_id      char(112) NOT NULL COMMENT 'the 512-bit prime index to find the numeric value',
     numeric_value double    NOT NULL COMMENT 'the numeric value given by the user',
-    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user'
+    source_id     bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    PRIMARY KEY (group_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for public unprotected numeric values that have never changed the owner, does not have a description and are rarely updated';
 
 -- --------------------------------------------------------
@@ -41,7 +43,8 @@ CREATE TABLE IF NOT EXISTS `values`
     user_id       bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for numeric values related to up to 16 phrases';
 
 --
@@ -57,7 +60,8 @@ CREATE TABLE IF NOT EXISTS user_values
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id, user_id, source_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for user specific changes of numeric values related to up to 16 phrases';
 
 -- --------------------------------------------------------
@@ -78,7 +82,8 @@ CREATE TABLE IF NOT EXISTS values_prime
     user_id       bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for the most often requested numeric values related up to four prime phrase';
 
 --
@@ -97,7 +102,8 @@ CREATE TABLE IF NOT EXISTS user_values_prime
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes for the most often requested numeric values related up to four prime phrase';
 
 -- --------------------------------------------------------
@@ -115,7 +121,8 @@ CREATE TABLE IF NOT EXISTS values_big
     user_id       bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for numeric values related to more than 16 phrases';
 
 --
@@ -131,7 +138,8 @@ CREATE TABLE IF NOT EXISTS user_values_big
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id, user_id, source_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes of numeric values related to more than 16 phrases';
 
 -- --------------------------------------------------------
@@ -147,7 +155,8 @@ CREATE TABLE IF NOT EXISTS values_text_standard_prime
     phrase_id_3 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a text value',
     phrase_id_4 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a text value',
     text_value  text         NOT NULL COMMENT 'the text value given by the user',
-    source_id   bigint   DEFAULT NULL COMMENT 'the source of the value as given by the user'
+    source_id   bigint   DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for public unprotected text values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
 
 --
@@ -158,7 +167,8 @@ CREATE TABLE IF NOT EXISTS values_text_standard
 (
     group_id   char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the text value',
     text_value text          NOT NULL COMMENT 'the text value given by the user',
-    source_id  bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user'
+    source_id  bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    PRIMARY KEY (group_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for public unprotected text values that have never changed the owner, does not have a description and are rarely updated';
 
 -- --------------------------------------------------------
@@ -176,7 +186,8 @@ CREATE TABLE IF NOT EXISTS values_text
     user_id       bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for text values related to up to 16 phrases';
 
 --
@@ -192,7 +203,8 @@ CREATE TABLE IF NOT EXISTS user_values_text
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id, user_id, source_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for user specific changes of text values related to up to 16 phrases';
 
 -- --------------------------------------------------------
@@ -213,7 +225,8 @@ CREATE TABLE IF NOT EXISTS values_text_prime
     user_id       bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for the most often requested text values related up to four prime phrase';
 
 --
@@ -232,7 +245,8 @@ CREATE TABLE IF NOT EXISTS user_values_text_prime
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes for the most often requested text values related up to four prime phrase';
 
 -- --------------------------------------------------------
@@ -250,7 +264,8 @@ CREATE TABLE IF NOT EXISTS values_text_big
     user_id       bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for text values related to more than 16 phrases';
 
 --
@@ -266,7 +281,8 @@ CREATE TABLE IF NOT EXISTS user_values_text_big
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id, user_id, source_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes of text values related to more than 16 phrases';
 
 -- --------------------------------------------------------
@@ -282,7 +298,8 @@ CREATE TABLE IF NOT EXISTS values_time_standard_prime
     phrase_id_3 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time value',
     phrase_id_4 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a time value',
     time_value  timestamp    NOT NULL COMMENT 'the timestamp given by the user',
-    source_id   bigint   DEFAULT NULL COMMENT 'the source of the value as given by the user'
+    source_id   bigint   DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for public unprotected time values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
 
 --
@@ -293,7 +310,8 @@ CREATE TABLE IF NOT EXISTS values_time_standard
 (
     group_id   char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the time value',
     time_value timestamp     NOT NULL COMMENT 'the timestamp given by the user',
-    source_id  bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user'
+    source_id  bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    PRIMARY KEY (group_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for public unprotected time values that have never changed the owner, does not have a description and are rarely updated';
 
 -- --------------------------------------------------------
@@ -311,7 +329,8 @@ CREATE TABLE IF NOT EXISTS values_time
     user_id       bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for time values related to up to 16 phrases';
 
 --
@@ -327,7 +346,8 @@ CREATE TABLE IF NOT EXISTS user_values_time
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id, user_id, source_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for user specific changes of time values related to up to 16 phrases';
 
 -- --------------------------------------------------------
@@ -348,7 +368,8 @@ CREATE TABLE IF NOT EXISTS values_time_prime
     user_id       bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for the most often requested time values related up to four prime phrase';
 
 --
@@ -367,7 +388,8 @@ CREATE TABLE IF NOT EXISTS user_values_time_prime
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes for the most often requested time values related up to four prime phrase';
 
 -- --------------------------------------------------------
@@ -385,7 +407,8 @@ CREATE TABLE IF NOT EXISTS values_time_big
     user_id       bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for time values related to more than 16 phrases';
 
 --
@@ -401,7 +424,8 @@ CREATE TABLE IF NOT EXISTS user_values_time_big
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id, user_id, source_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes of time values related to more than 16 phrases';
 
 -- --------------------------------------------------------
@@ -417,7 +441,8 @@ CREATE TABLE IF NOT EXISTS values_geo_standard_prime
     phrase_id_3 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a geo value',
     phrase_id_4 smallint DEFAULT 0    COMMENT 'phrase id that is part of the prime key for a geo value',
     geo_value   point        NOT NULL COMMENT 'the geolocation given by the user',
-    source_id   bigint   DEFAULT NULL COMMENT 'the source of the value as given by the user'
+    source_id   bigint   DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for public unprotected geo values related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
 
 --
@@ -428,7 +453,8 @@ CREATE TABLE IF NOT EXISTS values_geo_standard
 (
     group_id   char(112)     NOT NULL COMMENT 'the 512-bit prime index to find the geo value',
     geo_value  point         NOT NULL COMMENT 'the geolocation given by the user',
-    source_id  bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user'
+    source_id  bigint    DEFAULT NULL COMMENT 'the source of the value as given by the user',
+    PRIMARY KEY (group_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for public unprotected geo values that have never changed the owner, does not have a description and are rarely updated';
 
 -- --------------------------------------------------------
@@ -446,7 +472,8 @@ CREATE TABLE IF NOT EXISTS values_geo
     user_id       bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for geo values related to up to 16 phrases';
 
 --
@@ -462,7 +489,8 @@ CREATE TABLE IF NOT EXISTS user_values_geo
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id, user_id, source_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for user specific changes of geo values related to up to 16 phrases';
 
 -- --------------------------------------------------------
@@ -483,7 +511,8 @@ CREATE TABLE IF NOT EXISTS values_geo_prime
     user_id       bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for the most often requested geo values related up to four prime phrase';
 
 --
@@ -502,7 +531,8 @@ CREATE TABLE IF NOT EXISTS user_values_geo_prime
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes for the most often requested geo values related up to four prime phrase';
 
 -- --------------------------------------------------------
@@ -520,7 +550,8 @@ CREATE TABLE IF NOT EXISTS values_geo_big
     user_id       bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'for geo values related to more than 16 phrases';
 
 --
@@ -536,7 +567,8 @@ CREATE TABLE IF NOT EXISTS user_values_geo_big
     last_update   timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded      smallint  DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id, user_id, source_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COMMENT 'to store the user specific changes of geo values related to more than 16 phrases';
 
 -- --------------------------------------------------------
@@ -554,7 +586,8 @@ CREATE TABLE IF NOT EXISTS values_time_series
     user_id              bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -573,7 +606,8 @@ CREATE TABLE IF NOT EXISTS user_values_time_series
     last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id, user_id, source_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -597,7 +631,8 @@ CREATE TABLE IF NOT EXISTS values_time_series_prime
     user_id              bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -619,7 +654,8 @@ CREATE TABLE IF NOT EXISTS user_values_time_series_prime
     last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (phrase_id_1, phrase_id_2, phrase_id_3, phrase_id_4, user_id, source_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -640,7 +676,8 @@ CREATE TABLE IF NOT EXISTS values_time_series_big
     user_id              bigint    DEFAULT NULL COMMENT 'the owner / creator of the value',
     excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -659,7 +696,8 @@ CREATE TABLE IF NOT EXISTS user_values_time_series_big
     last_update          timestamp DEFAULT NULL COMMENT 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation',
     excluded             smallint  DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id        smallint  DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id           smallint  DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (group_id, user_id, source_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8

@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS elements
     element_type_id smallint   NOT NULL,
     user_id         bigint DEFAULT NULL,
     ref_id          bigint DEFAULT NULL COMMENT 'either a term,verb or formula id',
-    resolved_text   varchar(255) DEFAULT NULL
+    resolved_text   varchar(255) DEFAULT NULL,
+    PRIMARY KEY (element_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -22,4 +23,4 @@ CREATE TABLE IF NOT EXISTS elements
 -- AUTO_INCREMENT for table elements
 --
 ALTER TABLE elements
-    MODIFY element_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY element_id bigint NOT NULL AUTO_INCREMENT;

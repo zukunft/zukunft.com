@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS term_views
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id     smallint DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id        smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id        smallint DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (term_view_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -24,7 +25,7 @@ CREATE TABLE IF NOT EXISTS term_views
 -- AUTO_INCREMENT for table term_views
 --
 ALTER TABLE term_views
-    MODIFY term_view_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY term_view_id bigint NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes to link view to a word,triple,verb or formula with an n:m relation
@@ -38,7 +39,8 @@ CREATE TABLE IF NOT EXISTS user_term_views
     description       text     DEFAULT NULL,
     excluded          smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id     smallint DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id        smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id        smallint DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (term_view_id, user_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8

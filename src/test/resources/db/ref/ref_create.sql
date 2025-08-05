@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS refs
     source_id     bigint    DEFAULT NULL,
     description   text      DEFAULT NULL,
     phrase_id     bigint    DEFAULT NULL,
-    ref_type_id   bigint        NOT NULL,
+    ref_type_id   smallint      NOT NULL,
     excluded      smallint  DEFAULT NULL,
     share_type_id smallint  DEFAULT NULL,
     protect_id    smallint  DEFAULT NULL

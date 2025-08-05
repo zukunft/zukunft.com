@@ -64,7 +64,7 @@ class language_form extends type_object
     const FLD_LST_ALL = array(
         [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
-        [language::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, language::class, ''],
+        [language::FLD_ID, sql_field_type::INT_SMALL, sql_field_default::NULL, sql::INDEX, language::class, ''],
     );
 
     /*

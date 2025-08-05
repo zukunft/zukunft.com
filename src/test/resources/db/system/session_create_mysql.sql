@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS sessions
     expire_date timestamp        NOT NULL,
     ip          varchar(46)      NOT NULL,
     agent       varchar(255) DEFAULT NULL,
-    cookie_crc  text         DEFAULT NULL
+    cookie_crc  text         DEFAULT NULL,
+    PRIMARY KEY (session_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -22,4 +23,4 @@ CREATE TABLE IF NOT EXISTS sessions
 -- AUTO_INCREMENT for table sessions
 --
 ALTER TABLE sessions
-    MODIFY session_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY session_id bigint NOT NULL AUTO_INCREMENT;

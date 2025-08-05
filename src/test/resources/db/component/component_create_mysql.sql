@@ -23,7 +23,8 @@ CREATE TABLE IF NOT EXISTS components
     ui_msg_code_id         varchar(255) DEFAULT NULL COMMENT 'used for system components the id to select the language specific user interface message e.g. "add word"',
     excluded               smallint     DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id          smallint     DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id             smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id             smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (component_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -33,7 +34,7 @@ CREATE TABLE IF NOT EXISTS components
 -- AUTO_INCREMENT for table components
 --
 ALTER TABLE components
-    MODIFY component_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY component_id bigint NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes for the single components of a view
@@ -56,7 +57,8 @@ CREATE TABLE IF NOT EXISTS user_components
     link_type_id           smallint     DEFAULT NULL COMMENT 'e.g. for type 4 to select possible terms',
     excluded               smallint     DEFAULT NULL COMMENT 'true if a user, but not all, have removed it',
     share_type_id          smallint     DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id             smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id             smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (component_id, user_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8

@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS change_values_norm
     group_id         char(112)  NOT NULL,
     change_field_id  smallint   NOT NULL,
     old_value        double DEFAULT NULL,
-    new_value        double DEFAULT NULL
+    new_value        double DEFAULT NULL,
+    PRIMARY KEY (change_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -23,4 +24,4 @@ CREATE TABLE IF NOT EXISTS change_values_norm
 -- AUTO_INCREMENT for table change_values_norm
 --
 ALTER TABLE change_values_norm
-    MODIFY change_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY change_id bigint NOT NULL AUTO_INCREMENT;

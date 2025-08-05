@@ -145,7 +145,7 @@ class change_link extends change_log
     );
     // field list to log the actual change of the value with a standard group id
     const FLD_LST_CHANGE = array(
-        [self::FLD_TABLE_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', change_table::class, ''],
+        [self::FLD_TABLE_ID, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', change_table::class, ''],
         [self::FLD_OLD_FROM_ID, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
         [self::FLD_OLD_LINK_ID, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
         [self::FLD_OLD_TO_ID, sql_field_type::INT, sql_field_default::NULL, '', '', ''],

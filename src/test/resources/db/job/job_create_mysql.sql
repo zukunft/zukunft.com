@@ -16,7 +16,8 @@ CREATE TABLE IF NOT EXISTS jobs
     change_field_id smallint  DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the field that should be changed',
     row_id          bigint    DEFAULT NULL COMMENT 'e.g. for undo jobs the id of the row that should be changed',
     source_id       bigint    DEFAULT NULL COMMENT 'used for import to link the source',
-    ref_id          bigint    DEFAULT NULL COMMENT 'used for import to link the reference'
+    ref_id          bigint    DEFAULT NULL COMMENT 'used for import to link the reference',
+    PRIMARY KEY (job_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -26,4 +27,4 @@ CREATE TABLE IF NOT EXISTS jobs
 -- AUTO_INCREMENT for table jobs
 --
 ALTER TABLE jobs
-    MODIFY job_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY job_id bigint NOT NULL AUTO_INCREMENT;
