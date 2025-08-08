@@ -33,7 +33,7 @@ SELECT word_insert_log_111000500001_user
          1,
          10,
          'company',
-         184,
+         188,
          85,
          '',
          51,

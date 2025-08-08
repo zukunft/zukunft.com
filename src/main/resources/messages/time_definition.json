@@ -12,6 +12,42 @@
       "protection": "admin_protection"
     },
     {
+      "name": "day",
+      "plural": "days",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Day",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "week",
+      "plural": "weeks",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Week",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
+      "name": "month",
+      "plural": "months",
+      "type": "time",
+      "protection": "admin_protection",
+      "refs": [
+        {
+          "name": "Month",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "Year",
       "plural": "Years",
       "type": "time",

@@ -5907,7 +5907,7 @@ class sql_db
             foreach (config_numbers::HIDDEN_KEY_TRIPLES as $trp_lst) {
                 $from_name = $trp_lst[0];
                 $to_name = $trp_lst[1];
-                $vrb = $vrb_cac->get_verb(verbs::CAN_USE);
+                $vrb = $vrb_cac->get_verb(verbs::AND);
                 $trp = new triple($usr);
                 $from = new phrase($usr);
                 $from->load_by_name($from_name);

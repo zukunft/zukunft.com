@@ -1,24 +1,24 @@
 {
-  "id": 97391750704038039,
+  "id": 59673571249324124,
   "description": "the geolocation of the initial development of zukunft.com",
   "phrases": [
     {
-      "id": 346,
+      "id": 212,
       "name": "zukunft.com",
       "class": "word"
     },
     {
-      "id": 151,
+      "id": 92,
       "name": "system configuration",
       "class": "triple"
     },
     {
-      "id": 328,
+      "id": 203,
       "name": "pod",
       "class": "word"
     },
     {
-      "id": 196,
+      "id": 204,
       "name": "point",
       "class": "word"
     }
