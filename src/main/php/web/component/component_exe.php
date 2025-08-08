@@ -39,13 +39,16 @@ namespace html\component;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::FORM . 'system_form.php';
 include_once html_paths::HELPER . 'data_object.php';
-include_once html_paths::PHRASE . 'phrase.php';
-include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::HTML . 'sheet.php';
-include_once html_paths::FORM . 'system_form.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
 
@@ -53,6 +56,7 @@ use html\helper\data_object;
 use html\helper\data_object as data_object_dsp;
 use html\list_sort;
 use html\phrase\phrase;
+use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
 use html\sheet;
 use html\component\form\system_form;
@@ -67,7 +71,10 @@ class component_exe extends component
      */
 
     /**
-     * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
+     * create the html code of this component filled with the data from the given database object ($dbo)
+     * TODO the html form field name should always be an url var name
+     *
+     * @param db_object_dsp|null $dbo the word, triple, formula or ... object that should be shown to the user
      * @param string $form_name the name of the view which is also used for the html form name
      * @param int $msk_id the database id of the calling view
      * @param data_object_dsp|null $cfg the context used to create the view
@@ -95,36 +102,45 @@ class component_exe extends component
 
         $result = '';
 
+        // get the default values
+        $phr_lst = new phrase_list();
+        $phr_lst->load_fallback();
+        if ($cfg != null) {
+            if ($cfg->has_phrases()) {
+                $phr_lst = $cfg->phrase_list();
+            }
+        }
+
         $form = new system_form();
 
         // list of all possible view components
-        $result .= match ($this->type_code_id()) {
+        $result .= match ($this->type_code_id($cfg->typ_lst_cache)) {
             // start page
             component_type::TEXT => $this->text(),
             // TODO Prio 2 use the spreadsheet for the start view
             //component_type::CALC_SHEET => $this->calc_sheet(),
-            component_type::CALC_SHEET => $this->start_list(),
+            component_type::CALC_SHEET => $this->start_list($cfg),
 
             // system form - usage only allowed for internal system forms
             component_type::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
             component_type::FORM_BACK => $form->form_back($msk_id, $dbo->id(), $back),
             component_type::FORM_CONFIRM => $form->form_confirm(),
             component_type::SHOW_NAME => $form->show_name($dbo),
-            component_type::FORM_NAME => $form->form_name($dbo, $this->style_text()),
-            component_type::FORM_PLURAL => $form->form_plural($dbo, $this->style_text()),
+            component_type::FORM_NAME => $form->form_name($dbo, $this->style_text($cfg->typ_lst_cache)),
+            component_type::FORM_PLURAL => $form->form_plural($dbo, $this->style_text($cfg->typ_lst_cache)),
             component_type::FORM_DESCRIPTION => $form->form_description($dbo),
-            component_type::FORM_PHRASE => $form->form_phrase($dbo, $test_mode, $this->name),
-            component_type::FORM_VERB_SELECTOR => $form->form_verb($dbo, $form_name),
-            component_type::FORM_PHRASE_TYPE => $form->form_phrase_type($dbo, $form_name),
-            component_type::FORM_SOURCE_TYPE => $form->form_source_type($dbo, $form_name),
-            component_type::FORM_REF_TYPE => $form->form_ref_type($dbo, $form_name),
-            component_type::FORM_FORMULA_TYPE => $form->form_formula_type($dbo, $form_name),
+            component_type::FORM_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
+            component_type::FORM_VERB_SELECTOR => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_PHRASE_TYPE => $form->form_phrase_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SOURCE_TYPE => $form->form_source_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_REF_TYPE => $form->form_ref_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_FORMULA_TYPE => $form->form_formula_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_FORMULA_EXPRESSION => $form->form_formula_expression($dbo, $form_name),
             component_type::FORM_FORMULA_ALL_FIELDS => $form->form_formula_all_fields($dbo, $form_name),
-            component_type::FORM_VIEW_TYPE => $form->form_view_type($dbo, $form_name),
-            component_type::FORM_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name),
-            component_type::FORM_SHARE_TYPE => $form->form_share_type($dbo, $form_name),
-            component_type::FORM_PROTECTION_TYPE => $form->form_protection_type($dbo, $form_name),
+            component_type::FORM_VIEW_TYPE => $form->form_view_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SHARE_TYPE => $form->form_share_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_PROTECTION_TYPE => $form->form_protection_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_CANCEL => $form->form_cancel($msk_id, $dbo->id()),
             component_type::FORM_SAVE => $form->form_save(),
             component_type::FORM_DEL => $form->form_del(),

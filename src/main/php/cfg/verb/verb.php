@@ -63,7 +63,6 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
 use cfg\db\sql_creator;
 use cfg\db\sql_db;
 use cfg\db\sql_par;
@@ -73,7 +72,6 @@ use cfg\helper\type_object;
 use cfg\log\change;
 use cfg\phrase\term;
 use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
 use cfg\user\user;
 use cfg\user\user_message;
 use cfg\word\word;
@@ -1261,27 +1259,6 @@ class verb extends type_object
     function display(?string $back = ''): string
     {
         return '<a href="/http/verb_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->name . '</a>';
-    }
-
-    // returns the html code to select a verb link type
-    // database link must be open
-    function dsp_selector($side, $form, $class, $back): string
-    {
-        global $html_verbs;
-
-        $result = "Verb:";
-        $result .= $html_verbs->selector('verb', $form, $this->id(), $class);
-
-        log_debug('admin id ' . $this->id());
-        if ($this->user() != null) {
-            if ($this->user()->is_admin()) {
-                // admin users should always have the possibility to create a new verb / link type
-                $result .= \html\btn_add('add new verb', '/http/verb_add.php?back=' . $back);
-            }
-        }
-
-        log_debug('done verb id ' . $this->id());
-        return $result;
     }
 
 }

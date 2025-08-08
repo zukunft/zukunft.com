@@ -943,7 +943,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * @return phrase_list list of phrases that are related to this phrase list
-     * e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
+     * e.g. for "ABB" and "Daimler" it will return "company" (but not "ABB"???)
      */
     function is(): phrase_list
     {
@@ -2304,7 +2304,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * load a list of phrases by a given phrase, verb and direction
-     * e.g. for "Zurich" "is a" and "UP" the result is "Canton", "City" and "Company"
+     * e.g. for "Zurich" "is a" and "UP" the result is "Canton", "City" and "company"
      *
      * @param phrase $phr the phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection

@@ -71,9 +71,12 @@ include_once paths::SHARED . 'api.php';
 
 use cfg\const\def;
 use cfg\formula\formula;
+use cfg\group\group;
 use cfg\helper\db_object;
 use cfg\ref\source;
 use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_multi;
+use cfg\sandbox\sandbox_value;
 use cfg\user\user;
 use cfg\verb\verb;
 use cfg\view\view;
@@ -84,11 +87,13 @@ use cfg\ref\ref;
 use cfg\result\result;
 use cfg\value\value;
 use cfg\word\triple;
+use html\types\type_lists;
 use html\user\user as user_dsp;
 use html\frontend;
 use shared\api;
 use shared\const\views;
 use shared\const\views as view_shared;
+use shared\enum\change_actions;
 use shared\library;
 use shared\types\api_type;
 use test\test_api;
@@ -204,42 +209,45 @@ class horizontal_tests
             $t->assert_json_string($test_name, $final_json, $api_json);
         }
 
-        /*
-         TODO Prio 0 activate (is already fien for the first 2 masks)
         $t->subheader($ts . 'system views');
         $ui = new frontend('unit test');
-        for ($id = 1; $id <= views::MAX_TEST_ID; $id++) {
+        $ui->load_dummy_cache_from_test_resources();
+        for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
             $dbo = $this->view_id_to_dbo($id, $t->usr1);
-            $url = $t->class_to_url_add($dbo::class, $id);
+            $action = $this->view_id_to_url_action($id);
+            $url = $t->class_to_filled_url($dbo::class, $id, $action);
             $url_part = parse_url($url);
             parse_str($url_part["query"], $url_array);
             $usr_dsp = new user_dsp();
             $usr_dsp->set_from_json($t->usr1->api_json());
             $html = $ui->url_to_html($url_array, $usr_dsp);
-            $test_name = 'add ' . $lib->class_to_name($dbo::class) . ' view';
+            $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
             // create the filename of the expected result
             $dbo_name = $id . '_';
             if ($dbo::class == db_object::class) {
                 $folder = 'start_page' . DIRECTORY_SEPARATOR;
                 $dbo_name .= 'start_page';
+                $test_name = 'start_page view';
             } else {
                 $class = $lib->class_to_name($dbo::class);
                 $folder = $class . DIRECTORY_SEPARATOR;
                 $dbo_name .= $class;
                 $dbo_id = $url_array[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
+                if ($action != change_actions::SHOW) {
+                    $dbo_name .= '_' . $action;
+                }
                 if ($dbo_id != 0) {
-                    $dbo_name .= '_' . $dbo_id;
+                    $dbo_name .= '_' . $lib->str_to_file($dbo_id);
                 }
             }
             $filename = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
-            $t->assert_html($test_name, $html, $filename);
+            $t->assert_html_page($test_name, $html, $filename);
         }
-        */
 
     }
 
 
-    private function view_id_to_dbo(int $view_id, user $usr): sandbox|user|db_object
+    private function view_id_to_dbo(int $view_id, user $usr): sandbox|sandbox_multi|user|db_object
     {
         // select the backend object to display
         if (in_array($view_id, view_shared::WORD_MASKS_IDS)) {
@@ -254,6 +262,8 @@ class horizontal_tests
             $dbo = new ref($usr);
         } elseif (in_array($view_id, view_shared::VALUE_MASKS_IDS)) {
             $dbo = new value($usr);
+        } elseif (in_array($view_id, view_shared::GROUP_MASKS_IDS)) {
+            $dbo = new group($usr);
         } elseif (in_array($view_id, view_shared::FORMULA_MASKS_IDS)) {
             $dbo = new formula($usr);
         } elseif (in_array($view_id, view_shared::RESULT_MASKS_IDS)) {
@@ -266,6 +276,24 @@ class horizontal_tests
             $dbo = new db_object();
         }
         return $dbo;
+    }
+
+
+    private function view_id_to_url_action(int $view_id): string
+    {
+        // select the backend object to display
+        if (in_array($view_id, view_shared::SHOW_MASKS_IDS)) {
+            $action = change_actions::SHOW;
+        } elseif (in_array($view_id, view_shared::ADD_MASKS_IDS)) {
+            $action = change_actions::ADD;
+        } elseif (in_array($view_id, view_shared::EDIT_MASKS_IDS)) {
+            $action = change_actions::UPDATE;
+        } elseif (in_array($view_id, view_shared::DEL_MASKS_IDS)) {
+            $action = change_actions::DELETE;
+        } else {
+            $action = 'unknown';
+        }
+        return $action;
     }
 
 }

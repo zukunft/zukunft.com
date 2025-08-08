@@ -45,7 +45,7 @@ use cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'messages.php';
 
-//include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'library.php';
 
 use shared\enum\messages as msg_id;
 use shared\library;

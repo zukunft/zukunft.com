@@ -42,7 +42,7 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_where_type.php';
 include_once paths::MODEL_HELPER . 'combine_object.php';
-include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::SHARED . 'library.php';

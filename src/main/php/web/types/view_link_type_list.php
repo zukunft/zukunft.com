@@ -32,8 +32,9 @@
 
 namespace html\types;
 
-use cfg\const\paths;
 use html\const\paths as html_paths;
+
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::TYPES . 'type_list.php';
 
 class view_link_type_list extends type_list
@@ -42,12 +43,12 @@ class view_link_type_list extends type_list
     const NAME = 'view link type';
 
     /**
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
+    function selector(string $form = '', int $selected = 0, string $name = self::NAME, ?type_lists $typ_lst = null): string
     {
-        global $html_view_link_types;
-        return parent::type_selector($html_view_link_types->lst_key(), $name, $form, $selected);
+        return parent::type_selector($typ_lst->html_view_link_types->lst_key(), $name, $form, $selected);
     }
 
 }

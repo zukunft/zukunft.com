@@ -87,7 +87,7 @@ include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_field_list.php';
 include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
-include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -310,17 +310,17 @@ class api_tests
      *
      * add key word test
      * assume
-     * ABB (Company),Employees, 2021: 15'000
+     * ABB (company),Employees, 2021: 15'000
      * ABBN (Ticker),Employees, 2021: 15'100
      *
      *
-     * ABBN (Ticker) is ABB (Company)
+     * ABBN (Ticker) is ABB (company)
      * -> ask the user which value to use for Employees, 2021
      * -> until the user has closed the open task 15'000 is used
      *
      * if Ticker is defined as a key for companies
      * -> create a normal table with a unique key
-     * -> and fields like Employees (of a Company)
+     * -> and fields like Employees (of a company)
      *
      * the advantage compared to a classic table setup is
      * that a smooth creation and reverse is supported

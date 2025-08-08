@@ -144,14 +144,14 @@ function run_word_display_test(all_tests $t): void
     //$t->display('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
     //$t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
-    // the value table for Company
+    // the value table for company
     /*
     $wrd_company = New word_dsp;
     $wrd_company->name = "TEST_WORD";
     $wrd_company->set_user($usr);
     $wrd_company->load();
     $wrd_ratios = New word_dsp;
-    $wrd_ratios->name = "Company main ratio";
+    $wrd_ratios->name = "company main ratio";
     $wrd_ratios->set_user($usr);
     $wrd_ratios->load();
     $target = zut_dsp_list_wrd_val($wrd_company->id, $wrd_ratios->id, $usr->id());

@@ -59,6 +59,7 @@ class paths
     // path for resources to test the api
     const API_RES = self::RESOURCE . 'api' . DIRECTORY_SEPARATOR;
     const API_SYSTEM_RES = self::API_RES . 'system' . DIRECTORY_SEPARATOR;
+    const API_TYPE_LIST_RES = self::API_RES . 'type_lists' . DIRECTORY_SEPARATOR;
     const API_SYS_LOG_RES = self::API_RES . 'sys_log_list' . DIRECTORY_SEPARATOR;
     const DB_FORMULA = self::DB . self::FORMULA;
     const DB_RES = self::RESOURCE . self::DB;

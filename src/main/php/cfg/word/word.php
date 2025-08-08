@@ -1047,7 +1047,7 @@ class word extends sandbox_code_id
 
     /**
      * returns a list of words (actually phrases) that are related to this word
-     * e.g. for "Zurich" it will return "Canton", "City" and "Company", but not "Zurich" itself
+     * e.g. for "Zurich" it will return "Canton", "City" and "company", but not "Zurich" itself
      */
     function parents(): phrase_list
     {
@@ -1062,7 +1062,7 @@ class word extends sandbox_code_id
     /**
      * TODO maybe collect the single words or this is a third case
      * returns a list of words that are related to this word
-     * e.g. for "Zurich" it will return "Canton", "City" and "Company" and "Zurich" itself
+     * e.g. for "Zurich" it will return "Canton", "City" and "company" and "Zurich" itself
      *      to be able to collect all relations to the given word e.g. Zurich
      */
     function is(): phrase_list
@@ -1074,7 +1074,7 @@ class word extends sandbox_code_id
     }
 
     /**
-     * returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
+     * returns the best guess category for a word  e.g. for "ABB" it will return only "company"
      */
     function is_mainly(): phrase
     {
@@ -1373,7 +1373,7 @@ class word extends sandbox_code_id
      */
 
     /**
-     * returns a list of the link types related to this word e.g. for "Company" the link "are" will be returned, because "ABB" "is a" "Company"
+     * returns a list of the link types related to this word e.g. for "company" the link "are" will be returned, because "ABB" "is a" "company"
      */
     function link_types(foaf_direction $direction): verb_list
     {

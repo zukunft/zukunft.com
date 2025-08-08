@@ -9,7 +9,7 @@
         check triple
 
     mainly to check the term consistency of all objects
-    a term must be unique for word, verb and triple e.g. "Company" is a word "is a" is a verb and "Kanton Zurich" is a triple
+    a term must be unique for word, verb and triple e.g. "company" is a word "is a" is a verb and "Kanton Zurich" is a triple
     all terms are the same for each user
     if a user changes a term and the term has been used already
     a new term is created and the deletion of the existing term is requested

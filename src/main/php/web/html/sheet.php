@@ -35,6 +35,7 @@ namespace html;
 use cfg\const\paths;
 use html\const\paths as html_paths;
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SHEET . 'position_list.php';

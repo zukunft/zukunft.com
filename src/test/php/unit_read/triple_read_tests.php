@@ -99,7 +99,7 @@ class triple_read_tests
 
         $test_name = 'triple generated name of ' . triples::COMPANY_ZURICH . ' via function';
         $lnk_company->set_name('');
-        $target = 'Zurich (Company)';
+        $target = 'Zurich (company)';
         $result = $lnk_company->name_generated();
         $t->assert($test_name, $result, $target);
 

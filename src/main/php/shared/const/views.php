@@ -55,17 +55,17 @@ class views
     const WORD_DEL = 'word_del';
     const WORD_DEL_ID = 4;
     const VERB_ADD = 'verb_add';
-    const VERB_ADD_ID = 4;
+    const VERB_ADD_ID = 5;
     const VERB_EDIT = 'verb_edit';
-    const VERB_EDIT_ID = 4;
+    const VERB_EDIT_ID = 6;
     const VERB_DEL = 'verb_del';
-    const VERB_DEL_ID = 4;
+    const VERB_DEL_ID = 7;
     const TRIPLE_ADD = 'triple_add';
-    const TRIPLE_ADD_ID = 4;
+    const TRIPLE_ADD_ID = 8;
     const TRIPLE_EDIT = 'triple_edit';
-    const TRIPLE_EDIT_ID = 4;
+    const TRIPLE_EDIT_ID = 9;
     const TRIPLE_DEL = 'triple_del';
-    const TRIPLE_DEL_ID = 4;
+    const TRIPLE_DEL_ID = 10;
     const SOURCE_ADD = 'source_add';
     const SOURCE_ADD_ID = 11;
     const SOURCE_EDIT = 'source_edit';
@@ -104,6 +104,7 @@ class views
     const RESULT_EDIT_ID = 26;
     const RESULT_DEL = 'result_del';
     const RESULT_DEL_ID = 27;
+
     const VERBS = 'verbs';
     const USER = 'user';
     const USER_ADD = 'user_add';
@@ -112,6 +113,7 @@ class views
     const ERR_LOG = 'error_log';
     const ERR_UPD = 'error_update';
     const IMPORT = 'import';
+
     // views to edit views
     const VIEW_ADD = 'view_add';
     const VIEW_ADD_ID = 28;
@@ -137,24 +139,28 @@ class views
     const LANGUAGE_DEL_ID = 29;
 
     // the id of the last system view that should be included in the unit testing
-    // TODO Prio 1 increase at least to 33
-    const MAX_TEST_ID = 2;
+    // TODO Prio 1 set to 1
+    const MIN_TEST_ID = 2;
+    const MAX_TEST_ID = 33;
 
     // default views
     // TODO easy add missing default views e.g. for formula
-    const WORD = 'word';
+    const WORD = 'Word';
     const WORD_ID = 44;
     const WORD_CODE_ID = 'word';
-    const VERB = 'verb';
+    const VERB = 'Verb';
     const VERB_ID = 45;
-    const TRIPLE = 'triple';
+    const VERB_CODE_ID = 'verb';
+    const TRIPLE = 'Triple';
     const TRIPLE_ID = 46;
-    const SOURCE = 'source';
+    const SOURCE = 'Source';
     const SOURCE_ID = 47;
-    const VALUE_DISPLAY = 'value';
+    const REF = 'Reference';
+    const REF_ID = 48;
+    const VALUE_DISPLAY = 'Display Number';
     const FORMULA = 'source';
     const FORMULA_ID = 48;
-    const LANGUAGE = 'language';
+    const LANGUAGE = 'Language';
     const LANGUAGE_ID = 49;
 
     // functional views
@@ -208,7 +214,7 @@ class views
     const SIMPLE_COM = 'show mainly related words that are relevant in sciences';
     const SIMPLE_ID = 56;
 
-    const COMPANY_RATIO_NAME = 'Company ratios';
+    const COMPANY_RATIO_NAME = 'company ratios';
     const NESN_2016_FS_NAME = 'Nestlé Financial Statement 2016';
     const LINK_COM = 'System Test description for a view term link';
 
@@ -282,6 +288,13 @@ class views
         self::REF_DEL_ID
     ];
 
+    // system masks that have a group as the main object
+    const GROUP_MASKS_IDS = [
+        self::GROUP_ADD_ID,
+        self::GROUP_EDIT_ID,
+        self::GROUP_DEL_ID
+    ];
+
     // system masks that have a value as the main object
     const VALUE_MASKS_IDS = [
         self::VALUE_ADD_ID,
@@ -317,17 +330,66 @@ class views
         self::COMPONENT_DEL_ID
     ];
 
-    // system masks that change or delete a sandbox object
-    const EDIT_DEL_MASKS_IDS = [
+    // system masks that only used to display a sandbox object
+    const SHOW_MASKS_IDS = [
+        self::START_ID,
+    ];
+
+    // system masks that add a sandbox object
+    const ADD_MASKS_IDS = [
+        self::WORD_ADD_ID,
+        self::VERB_ADD_ID,
+        self::TRIPLE_ADD_ID,
+        self::SOURCE_ADD_ID,
+        self::REF_ADD_ID,
+        self::VALUE_ADD_ID,
+        self::GROUP_ADD_ID,
+        self::FORMULA_ADD_ID,
+        self::RESULT_ADD_ID,
+        self::VIEW_ADD_ID,
+        self::COMPONENT_ADD_ID,
+    ];
+
+    // system masks that change a sandbox object
+    const EDIT_MASKS_IDS = [
         self::WORD_EDIT_ID,
-        self::WORD_DEL_ID,
+        self::VERB_EDIT_ID,
+        self::TRIPLE_EDIT_ID,
         self::SOURCE_EDIT_ID,
+        self::REF_EDIT_ID,
+        self::VALUE_EDIT_ID,
+        self::GROUP_EDIT_ID,
+        self::FORMULA_EDIT_ID,
+        self::RESULT_EDIT_ID,
+        self::VIEW_EDIT_ID,
+        self::COMPONENT_EDIT_ID,
+    ];
+
+    // system masks that delete a sandbox object
+    const DEL_MASKS_IDS = [
+        self::WORD_DEL_ID,
+        self::VERB_DEL_ID,
+        self::TRIPLE_DEL_ID,
         self::SOURCE_DEL_ID,
+        self::REF_DEL_ID,
+        self::VALUE_DEL_ID,
+        self::GROUP_DEL_ID,
+        self::FORMULA_DEL_ID,
+        self::RESULT_DEL_ID,
+        self::VIEW_DEL_ID,
+        self::COMPONENT_DEL_ID,
+    ];
+
+    // system masks that change or delete a sandbox object (see https://wiki.php.net/rfc/spread_operator_for_array )
+    const EDIT_DEL_MASKS_IDS = [
+        self::EDIT_MASKS_IDS,
+        self::DEL_MASKS_IDS,
     ];
 
     /**
      * returns the code id of the base view that is used to show the changeable object
      * e.g. for word_edit the word view is returned
+     * TODO easy add missing default views e.g. for component
      *
      * @param string $msk_ci
      * @return string
@@ -339,6 +401,12 @@ class views
             self::VERB_ADD, self::VERB_EDIT, self::VERB_DEL => self::VERB,
             self::TRIPLE_ADD, self::TRIPLE_EDIT, self::TRIPLE_DEL => self::TRIPLE,
             self::SOURCE_ADD, self::SOURCE_EDIT, self::SOURCE_DEL => self::SOURCE,
+            self::REF_ADD, self::REF_EDIT, self::REF_DEL => self::REF,
+            self::VALUE_ADD, self::VALUE_EDIT, self::VALUE_DEL => self::VALUE_DISPLAY,
+            //self::GROUP_ADD, self::GROUP_EDIT, self::GROUP_DEL => self::GROUP,
+            self::FORMULA_ADD, self::FORMULA_EDIT, self::FORMULA_DEL => self::FORMULA,
+            //self::VIEW_ADD, self::VIEW_EDIT, self::VIEW_DEL => self::VIEW,
+            //self::COMPONENT_ADD, self::COMPONENT_EDIT, self::COMPONENT_DEL => self::COMPONENT,
             default => ''
         };
     }
@@ -359,6 +427,27 @@ class views
             self::SOURCE_ADD => self::SOURCE_ADD_ID,
             self::SOURCE_EDIT => self::SOURCE_EDIT_ID,
             self::SOURCE_DEL => self::SOURCE_DEL_ID,
+            self::REF_ADD => self::REF_ADD_ID,
+            self::REF_EDIT => self::REF_EDIT_ID,
+            self::REF_DEL => self::REF_DEL_ID,
+            self::VALUE_ADD => self::VALUE_ADD_ID,
+            self::VALUE_EDIT => self::VALUE_EDIT_ID,
+            self::VALUE_DEL => self::VALUE_DEL_ID,
+            self::GROUP_ADD => self::GROUP_ADD_ID,
+            self::GROUP_EDIT => self::GROUP_EDIT_ID,
+            self::GROUP_DEL => self::GROUP_DEL_ID,
+            self::FORMULA_ADD => self::FORMULA_ADD_ID,
+            self::FORMULA_EDIT => self::FORMULA_EDIT_ID,
+            self::FORMULA_DEL => self::FORMULA_DEL_ID,
+            self::RESULT_ADD => self::RESULT_ADD_ID,
+            self::RESULT_EDIT => self::RESULT_EDIT_ID,
+            self::RESULT_DEL => self::RESULT_DEL_ID,
+            self::VIEW_ADD => self::VIEW_ADD_ID,
+            self::VIEW_EDIT => self::VIEW_EDIT_ID,
+            self::VIEW_DEL => self::VIEW_DEL_ID,
+            self::COMPONENT_ADD => self::COMPONENT_ADD_ID,
+            self::COMPONENT_EDIT => self::COMPONENT_EDIT_ID,
+            self::COMPONENT_DEL => self::COMPONENT_DEL_ID,
             self::WORD => self::WORD_ID,
             self::VERB => self::VERB_ID,
             self::TRIPLE => self::TRIPLE_ID,
@@ -383,6 +472,27 @@ class views
             self::SOURCE_ADD_ID => self::SOURCE_ADD,
             self::SOURCE_EDIT_ID => self::SOURCE_EDIT,
             self::SOURCE_DEL_ID => self::SOURCE_DEL,
+            self::REF_ADD_ID => self::REF_ADD,
+            self::REF_EDIT_ID => self::REF_EDIT,
+            self::REF_DEL_ID => self::REF_DEL,
+            self::VALUE_ADD_ID => self::VALUE_ADD,
+            self::VALUE_EDIT_ID => self::VALUE_EDIT,
+            self::VALUE_DEL_ID => self::VALUE_DEL,
+            self::GROUP_ADD_ID => self::GROUP_ADD,
+            self::GROUP_EDIT_ID => self::GROUP_EDIT,
+            self::GROUP_DEL_ID => self::GROUP_DEL,
+            self::FORMULA_ADD_ID => self::FORMULA_ADD,
+            self::FORMULA_EDIT_ID => self::FORMULA_EDIT,
+            self::FORMULA_DEL_ID => self::FORMULA_DEL,
+            self::RESULT_ADD_ID => self::RESULT_ADD,
+            self::RESULT_EDIT_ID => self::RESULT_EDIT,
+            self::RESULT_DEL_ID => self::RESULT_DEL,
+            self::VIEW_ADD_ID => self::VIEW_ADD,
+            self::VIEW_EDIT_ID => self::VIEW_EDIT,
+            self::VIEW_DEL_ID => self::VIEW_DEL,
+            self::COMPONENT_ADD_ID => self::COMPONENT_ADD,
+            self::COMPONENT_EDIT_ID => self::COMPONENT_EDIT,
+            self::COMPONENT_DEL_ID => self::COMPONENT_DEL,
             self::WORD_ID => self::WORD,
             self::VERB_ID => self::VERB,
             self::TRIPLE_ID => self::TRIPLE,

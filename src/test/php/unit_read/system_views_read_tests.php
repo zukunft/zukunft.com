@@ -44,6 +44,7 @@ use cfg\verb\verb;
 use cfg\view\view;
 use cfg\word\triple;
 use cfg\word\word;
+use html\frontend;
 use html\helper\data_object as data_object_dsp;
 use html\html_base;
 use shared\const\views;
@@ -64,25 +65,29 @@ class system_views_read_tests
     function run(test_cleanup $t): void
     {
         // create the stable test context that is not based on the database so that the test results rarely change
+        $ui = new frontend('system_views_read_tests');
+        $ui->load_cache();
         $cfg = new data_object_dsp();
+        $cfg->typ_lst_cache = $ui->typ_lst_cache;
+        //$cfg = new data_object_dsp();
         $cfg->set_view_list($t->view_list_dsp());
         // create the test pages
-        $t->assert_view(views::WORD, $t->usr1, new word($t->usr1), 1);
+        $t->assert_view(views::WORD_CODE_ID, $t->usr1, new word($t->usr1), 1, $cfg);
         $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));
         $t->assert_view(views::WORD_EDIT, $t->usr1, new word($t->usr1), 1, $cfg);
-        $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), 1);
-        $t->assert_view(views::VERB, $t->usr1, new verb(), 1);
+        $t->assert_view(views::WORD_DEL, $t->usr1, new word($t->usr1), 1, $cfg);
+        $t->assert_view(views::VERB_CODE_ID, $t->usr1, new verb(), 1, $cfg);
         $t->assert_view(views::VERB_ADD, $t->usr1, new verb());
-        $t->assert_view(views::VERB_EDIT, $t->usr1, new verb(), 1);
-        $t->assert_view(views::VERB_DEL, $t->usr1, new verb(), 1);
-        //$t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), 1);
+        $t->assert_view(views::VERB_EDIT, $t->usr1, new verb(), 1, $cfg);
+        $t->assert_view(views::VERB_DEL, $t->usr1, new verb(), 1, $cfg);
+        //$t->assert_view(views::TRIPLE, $t->usr1, new triple($t->usr1), 1, $cfg);
         $t->assert_view(views::TRIPLE_ADD, $t->usr1, new triple($t->usr1));
-        $t->assert_view(views::TRIPLE_EDIT, $t->usr1, new triple($t->usr1), 1);
-        $t->assert_view(views::TRIPLE_DEL, $t->usr1, new triple($t->usr1), 1);
-        //$t->assert_view(views::SOURCE, $t->usr1, new source($t->usr1), 1);
+        $t->assert_view(views::TRIPLE_EDIT, $t->usr1, new triple($t->usr1), 1, $cfg);
+        $t->assert_view(views::TRIPLE_DEL, $t->usr1, new triple($t->usr1), 1, $cfg);
+        //$t->assert_view(views::SOURCE, $t->usr1, new source($t->usr1), 1, $cfg);
         $t->assert_view(views::SOURCE_ADD, $t->usr1, new source($t->usr1));
-        $t->assert_view(views::SOURCE_EDIT, $t->usr1, new source($t->usr1), 1);
-        $t->assert_view(views::SOURCE_DEL, $t->usr1, new source($t->usr1), 1);
+        $t->assert_view(views::SOURCE_EDIT, $t->usr1, new source($t->usr1), 1, $cfg);
+        $t->assert_view(views::SOURCE_DEL, $t->usr1, new source($t->usr1), 1, $cfg);
         // TODO add:
         // REF
         $t->assert_view(views::REF_ADD, $t->usr1, new ref($t->usr1));
@@ -91,18 +96,18 @@ class system_views_read_tests
         //$t->assert_view(views::GROUP_ADD, $t->usr1, new group($t->usr1));
         // FORMULA
         $t->assert_view(views::FORMULA_ADD, $t->usr1, new formula($t->usr1));
-        $t->assert_view(views::FORMULA_EDIT, $t->usr1, new formula($t->usr1), 1);
-        $t->assert_view(views::FORMULA_DEL, $t->usr1, new formula($t->usr1), 1);
+        $t->assert_view(views::FORMULA_EDIT, $t->usr1, new formula($t->usr1), 1, $cfg);
+        $t->assert_view(views::FORMULA_DEL, $t->usr1, new formula($t->usr1), 1, $cfg);
         // FORMULA TEST
         // RESULT
         // VIEW
         $t->assert_view(views::VIEW_ADD, $t->usr1, new view($t->usr1));
-        $t->assert_view(views::VIEW_EDIT, $t->usr1, new view($t->usr1), 1);
-        $t->assert_view(views::VIEW_DEL, $t->usr1, new view($t->usr1), 1);
+        $t->assert_view(views::VIEW_EDIT, $t->usr1, new view($t->usr1), 1, $cfg);
+        $t->assert_view(views::VIEW_DEL, $t->usr1, new view($t->usr1), 1, $cfg);
         // COMPONENT
         $t->assert_view(views::COMPONENT_ADD, $t->usr1, new component($t->usr1));
-        $t->assert_view(views::COMPONENT_EDIT, $t->usr1, new component($t->usr1), 1);
-        $t->assert_view(views::COMPONENT_DEL, $t->usr1, new component($t->usr1), 1);
+        $t->assert_view(views::COMPONENT_EDIT, $t->usr1, new component($t->usr1), 1, $cfg);
+        $t->assert_view(views::COMPONENT_DEL, $t->usr1, new component($t->usr1), 1, $cfg);
         // USER
         // LANGUAGE
         // SYS LOG
@@ -111,7 +116,7 @@ class system_views_read_tests
         // EXPORT
         // PROCESS
         // FIND
-        //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1);
+        //$t->assert_view(view_shared::DSP_COMPONENT_ADD, $t->usr1, new component($t->usr1), 1, $cfg);
         // TODO add the frontend reaction tests e.g. call the view.php script with the reaction to add a word
 
 

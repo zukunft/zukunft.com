@@ -48,7 +48,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
-//include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

@@ -8,7 +8,7 @@
     actually only used for phrase splitting; in most other cases phrase_list is used
 
     TODO: check the consistence usage of the parameter $back
-    TODO: add bool $incl_is to include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a Company" is true
+    TODO: add bool $incl_is to include all words that are of the category id e.g. $ids contains the id for "company" than "ABB" should be included, if "ABB is a company" is true
     TODO: add bool $incl_alias to include all alias words that are of the ids
     TODO: look at a word list and remove the general word, if there is a more specific word also part of the list
           e.g. remove "Country", but keep "Switzerland"
@@ -623,7 +623,7 @@ class word_list extends sandbox_list_named
     }
 
     /**
-     * returns a list of words, that characterises the given word e.g. for the "ABB Ltd." it will return "Company" if the verb_id is "is"
+     * returns a list of words, that characterises the given word e.g. for the "ABB Ltd." it will return "company" if the verb_id is "is"
      *
      * @param verb|null $vrb id of the verb that is used to select the parents
      * @returns word_list the accumulated list of added words
@@ -689,7 +689,7 @@ class word_list extends sandbox_list_named
 
     /**
      * returns a list of words that are related to this word list
-     * e.g. for "ABB" and "Daimler" it will return "Company", but not "ABB"
+     * e.g. for "ABB" and "Daimler" it will return "company", but not "ABB"
      * @returns word_list with the added words
      */
     function is(): word_list
@@ -702,7 +702,7 @@ class word_list extends sandbox_list_named
 
     /**
      * returns a list of words that are related to this word list
-     * e.g. for "Company" it will return "ABB" and "Daimler" and "Company"
+     * e.g. for "company" it will return "ABB" and "Daimler" and "company"
      * e.g. to get all related values
      * @returns word_list with the added words
      */

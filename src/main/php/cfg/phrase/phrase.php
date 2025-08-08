@@ -1032,7 +1032,7 @@ class phrase extends combine_named
 
 
     /**
-     * returns a list of phrase that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
+     * returns a list of phrase that are related to this word e.g. for "ABB" it will return "company" (but not "ABB"???)
      */
     function is(): phrase_list
     {
@@ -1183,7 +1183,7 @@ class phrase extends combine_named
         return strcmp($a->name(), $b->name());
     }
 
-    // returns a list of words that are related to this word e.g. for "ABB" it will return "Company" (but not "ABB"???)
+    // returns a list of words that are related to this word e.g. for "ABB" it will return "company" (but not "ABB"???)
     /*  function is () {
         if ($this->id() > 0) {
           $wrd_lst = $this->parents();
@@ -1338,7 +1338,7 @@ class phrase extends combine_named
      */
 
 
-    // returns the best guess category for a word  e.g. for "ABB" it will return only "Company"
+    // returns the best guess category for a word  e.g. for "ABB" it will return only "company"
     function is_mainly()
     {
         $result = null;

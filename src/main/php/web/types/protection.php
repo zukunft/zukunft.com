@@ -54,8 +54,7 @@ class protection extends type_list
         string $label = ''
     ): string
     {
-        global $html_protection_types;
-        return parent::type_selector($html_protection_types->lst_key(), $name, $form, $selected, $bs_class, $label);
+        return parent::type_selector($this->lst_key(), $name, $form, $selected, $bs_class, $label);
     }
 
     /*

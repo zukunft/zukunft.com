@@ -31,8 +31,10 @@
 
 namespace controller;
 
+use cfg\const\paths;
+
 //include_once paths::SERVICE . 'config.php';
-//include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\config;
 use cfg\db\sql_db;

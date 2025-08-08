@@ -157,6 +157,7 @@ use const\files as test_files;
 use Exception;
 use html\component\component_exe as component_dsp;
 use html\formula\formula as formula_dsp;
+use html\frontend;
 use html\helper\data_object as data_object_dsp;
 use html\html_base;
 use html\log\change_log_named as change_dsp;
@@ -858,7 +859,11 @@ class test_base
         // load the view from the database
         $msk = new view($usr);
         $msk->load_by_code_id($dsp_code_id);
-        $msk->load_components();
+        if ($msk->id() > 0) {
+            $msk->load_components();
+        } else {
+            log_err('view with code id ' . $dsp_code_id . ' not found');
+        }
 
         // create the api message that send to the frontend
         $api_msg = $msk->api_json();
@@ -877,10 +882,16 @@ class test_base
         // create the view for the user
         $dsp_html = new view_dsp;
         $dsp_html->set_from_json($api_msg);
+        if ($cfg == null) {
+            $ui = new frontend('');
+            $ui->load_cache();
+            $cfg = new data_object_dsp();
+            $cfg->typ_lst_cache = $ui->typ_lst_cache;
+        }
         $actual = $dsp_html->show($dbo_dsp, $cfg, '', true);
 
         // check if the created view matches the expected view
-        return $this->assert_html(
+        return $this->assert_html_body(
             $this->name . ' view ' . $dsp_code_id,
             $actual, $filename);
     }
@@ -1009,13 +1020,29 @@ class test_base
      * @param string $filename the filename of the expected html page
      * @return bool true if the html has no relevant differences
      */
-    function assert_html(string $test_name, string $body, string $filename): bool
+    function assert_html_body(string $test_name, string $body, string $filename): bool
     {
         $lib = new library();
 
         $actual = $this->html_page($body);
         $expected = $this->file('web/html/' . $filename . test_files::HTML);
         return $this->assert($test_name, $lib->trim_html($actual), $lib->trim_html($expected));
+    }
+
+    /**
+     * check if the created html matches a defined html file
+     *
+     * @param string $test_name the description of the test
+     * @param string $html the html code of a html page
+     * @param string $filename the filename of the expected html page
+     * @return bool true if the html has no relevant differences
+     */
+    function assert_html_page(string $test_name, string $html, string $filename): bool
+    {
+        $lib = new library();
+
+        $expected = $this->file('web/html/' . $filename . test_files::HTML);
+        return $this->assert($test_name, $lib->trim_html($html), $lib->trim_html($expected));
     }
 
 

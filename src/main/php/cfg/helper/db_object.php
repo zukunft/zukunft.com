@@ -37,7 +37,7 @@ use cfg\const\paths;
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
-include_once paths::DB . 'sql_db.php';
+//include_once paths::DB . 'sql_db.php';
 //include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
@@ -47,7 +47,7 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
-//include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

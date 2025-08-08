@@ -77,6 +77,9 @@ class files
     const SYSTEM_VIEWS = self::MESSAGE_PATH . self::SYSTEM_VIEWS_FILE;
     const TRANSLATION_PATH = self::RESOURCE_PATH . 'translations' . DIRECTORY_SEPARATOR;
 
+    // initial configuration of some often used words and triples that the user can change
+    const BASE_PHRASES_FILE = 'base_phrases' . self::JSON;
+
     // initial configuration of some views that the user can change
     const BASE_VIEWS_FILE = 'base_views' . self::JSON;
 
@@ -135,6 +138,7 @@ class files
         self::SCALING_FILE,
         self::IP_BLACKLIST_FILE,
         self::TIME_FILE,
+        self::BASE_PHRASES_FILE,
         self::BASE_VIEWS_FILE,
         self::START_PAGE_DATA_FILE,
         self::COMPANY_FILE,

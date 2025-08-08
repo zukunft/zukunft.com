@@ -34,6 +34,7 @@ namespace html\types;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::TYPES . 'type_list.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
 
@@ -50,8 +51,7 @@ class component_type_list extends type_list
      */
     function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
     {
-        global $html_component_types;
-        return parent::type_selector($html_component_types->lst_key(), $name, $form, $selected);
+        return parent::type_selector($this->lst_key(), $name, $form, $selected);
     }
 
 

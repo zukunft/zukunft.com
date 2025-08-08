@@ -34,6 +34,7 @@ namespace html;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'table.php';
 include_once html_paths::HTML . 'scopes.php';
@@ -73,7 +74,7 @@ class list_sort
 
         // get the phrases for the rows
         // from "global problem" to e.g. "climate change"
-        $phr_lst = $phr->is_or_can_be($dbo?->phrase_list());
+        $phr_lst = $phr->is_or_can_be($dbo?->phrase_list(), $dbo->typ_lst_cache);
 
         // TODO remove temp hardcoded solution
         if ($phr_lst->is_empty()) {

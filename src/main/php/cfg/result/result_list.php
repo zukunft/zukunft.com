@@ -785,7 +785,7 @@ class result_list extends sandbox_value_list
      * - the formula ($frm_row) to provide parameters, but not for selection
      * - the user ($this->user()->id) to filter the results
      * and request on formula result for each word group
-     * e.g. the formula is assigned to Company ($phr_id) and the "operating income" formula result should be calculated
+     * e.g. the formula is assigned to company ($phr_id) and the "operating income" formula result should be calculated
      *      so sales and Cost are words of the formula
      *      if sales and Cost for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. ABB)
      *      the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
@@ -903,13 +903,13 @@ class result_list extends sandbox_value_list
         }
 
         // loop over the word categories assigned to the formulas
-        // get the words where the formula is used including the based on the assigned word e.g. Company or year
+        // get the words where the formula is used including the based on the assigned word e.g. company or year
         //$sql_result = zuf_wrd_lst ($frm_lst->ids, $this->user()->id());
         //zu_debug('res_lst->frm_upd_lst_usr -> number of formula assigned words '. mysqli_num_rows ($sql_result));
         //while ($frm_row = mysqli_fetch_array($sql_result, MySQLi_ASSOC)) {
         //zu_debug('res_lst->frm_upd_lst_usr -> formula '.$frm_row['formula_name'].' ('.$frm_row['resolved_text'].') linked to '.zut_name($frm_row['word_id'], $this->user()->id()));
 
-        // also use the formula for all related words e.g. if the formula should be used for "Company" use it also for "ABB"
+        // also use the formula for all related words e.g. if the formula should be used for "company" use it also for "ABB"
         //$is_word_ids = zut_ids_are($frm_row['word_id'], $this->user()->id()); // should later be taken from the original array to increase speed
 
         // include also the main word in the testing
@@ -1015,7 +1015,7 @@ class result_list extends sandbox_value_list
 
         // get a list of all words and triples where the formula should be used (assigned words)
         // including all child phrases that should also be included in the assignment e.g. for "Year" include "2018"
-        // e.g. if the formula is assigned to "Company" and "ABB is a Company" include ABB in the phrase list
+        // e.g. if the formula is assigned to "company" and "ABB is a company" include ABB in the phrase list
         // check in frm_upd_lst_usr only if the user has done any modifications that may influence the word list
         $phr_lst_frm_assigned = $frm->assign_phr_lst();
         log_debug('formula "' . $frm->name() . '" is assigned to ' . $phr_lst_frm_assigned->dsp_name() . ' for user ' . $phr_lst_frm_assigned->user()->name . '');

@@ -52,6 +52,8 @@ include_once html_paths::VERB . 'verb_list.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
@@ -70,6 +72,8 @@ use html\word\triple;
 use html\word\word;
 use html\word\word_list;
 use shared\api;
+use shared\const\triples;
+use shared\const\words;
 use shared\enum\foaf_direction;
 use shared\library;
 
@@ -139,6 +143,43 @@ class phrase_list extends sandbox_list_named
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * if the phrase list is empty fill it with some general suggested phrases
+     * to offer to the user at least a basic selection even if the backend connection is temporary lost
+     * @return bool
+     */
+    function load_fallback(): bool
+    {
+        $result = false;
+        if ($this->is_empty()) {
+            // TODO Prio 3 replace with an frequently generated preloaded list
+            $this->set_lst($this->phrases_often_used()->lst());
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list with the most often used phrases as a frontend fallback list
+     */
+    private function phrases_often_used(): phrase_list
+    {
+        $lst = new phrase_list();
+        foreach (words::BASE_WORDS as $wrd_array) {
+            $wrd = new word();
+            $wrd->set_name($wrd_array[0]);
+            $wrd->set_id($wrd_array[1]);
+            $lst->add($wrd->phrase());
+        }
+        foreach (triples::BASE_TRIPLES as $trp_array) {
+            $trp = new triple();
+            $trp->set_name($trp_array[0]);
+            $trp->set_id($trp_array[1]);
+            $lst->add($trp->phrase());
+        }
+        return $lst;
     }
 
 

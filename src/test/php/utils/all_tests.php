@@ -23,7 +23,7 @@
 
     TODO
     - move the tests to classes and call all tests with test.php but stop in case of an error
-    - use for testing only data that is supposed never to be used by any user e.g. use "TestWord" instead of "Company"
+    - use for testing only data that is supposed never to be used by any user e.g. use "TestWord" instead of "company"
     - before starting the system test, check that really no user has used any test name and if create a warning and stop the test
     - use YAML export and import for testing the base sets
     - check that the order of the view items cannot be changed by another user

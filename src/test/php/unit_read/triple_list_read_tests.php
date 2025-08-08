@@ -68,7 +68,7 @@ class triple_list_read_tests
         $trp_lst->load_by_ids(array(triples::MATH_CONST_ID,triples::PI_SYMBOL_ID));
         $target = array(triples::MATH_CONST, triples::PI_SYMBOL_NAME); // order adjusted based on the number of usage
         $t->assert_contains($test_name, $trp_lst->names(), $target);
-        /* TODO activate
+        /* TODO Prio 1 activate
         $test_name = 'load triples by names';
         $wrd_lst = new triple_list($t->usr1);
         $wrd_lst->load_by_names(array(triples::TN_READ,triples::TN_PI));

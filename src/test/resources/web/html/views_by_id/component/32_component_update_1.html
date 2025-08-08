@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Change view component Word (zukunft.com)</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
+    <script src="/external_lib/bootstrap/js/bootstrap.js"></script>
+    <link rel="stylesheet" type="text/css" href="/src/main/resources/style/style_bs.css"/>
+    <link rel="stylesheet" href="/external_lib/fontawesome/css/all.css">
+    <script defer src="/external_lib/fontawesome/js/all.js"></script>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
+            src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
+        <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="pattern"></label><input
+                class="form-control mr-sm-2" type="search" name="pattern" id="pattern" placeholder="word or formula">
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
+        </form>
+        <div class="col-md-2">
+            <ul class="nav navbar-nav">
+                <li class="active"></li>
+                <li class="active"></li>
+                <li class="active"><a href="/http/view.php?m=view_edit&id=32" title="adjust the view"><i
+                        class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=32" title="create a new view"><i
+                        class="far fa-plus-square"></i></a></li>
+            </ul>
+        </div>
+    </nav>
+    <br><br><br><br><br><h4>Change element</h4>
+    <form action="/http/view.php" id="component_edit"><input class="form-control" type="hidden" name="m" id="m"
+                                                             value="32"><input class="form-control" type="hidden"
+                                                                               name="id" id="id" value="0"><input
+            class="form-control" type="hidden" name="back" id="back" value="0"><input class="form-control" type="hidden"
+                                                                                      name="confirm" id="confirm"
+                                                                                      value="1">
+        <div class="row col-md-12">
+            <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
+                                                                                  name="name" id="name" value="Word">
+            </div>
+            <div class="form-group col-md-4"><label for="component type">type:</label><select class="form-control"
+                                                                                              name="component type"
+                                                                                              form="component_edit"
+                                                                                              id="component type">
+                <option value="1">word selector</option>
+                <option value="2">view selector</option>
+                <option value="3" selected>text</option>
+                <option value="4">fixed word</option>
+                <option value="5">linked word</option>
+                <option value="6">formula results</option>
+                <option value="7">word list up</option>
+                <option value="8">word name</option>
+                <option value="9">word list down</option>
+                <option value="10">all relations</option>
+                <option value="11">values related to</option>
+                <option value="12">formulas</option>
+                <option value="13">word value list</option>
+                <option value="14">XML export</option>
+                <option value="15">CSV export</option>
+                <option value="16">JSON Export</option>
+                <option value="17">system form title</option>
+                <option value="18">system form hidden back stack</option>
+                <option value="19">system form confirm status</option>
+                <option value="20">show name</option>
+                <option value="21">form field name</option>
+                <option value="22">form field description</option>
+                <option value="23">form select phrase</option>
+                <option value="24">form select verb</option>
+                <option value="25">form field phrase type</option>
+                <option value="26">form field share type</option>
+                <option value="27">form field protection type</option>
+                <option value="28">button cancel</option>
+                <option value="29">button save</option>
+                <option value="30">button delete</option>
+                <option value="31">form end</option>
+                <option value="32">row start</option>
+                <option value="33">row right</option>
+                <option value="34">row end</option>
+                <option value="35">spreadsheet</option>
+                <option value="36">term name</option>
+                <option value="37">verb name</option>
+                <option value="38">main value</option>
+                <option value="39">system form select source type</option>
+                <option value="40">system form select view</option>
+                <option value="41">system form ref list</option>
+                <option value="42">system form link list</option>
+                <option value="43">system usage</option>
+                <option value="44">system change log</option>
+                <option value="45">ranking parameters</option>
+                <option value="46">ranking list</option>
+                <option value="47">related triples</option>
+                <option value="48">system form select reference type</option>
+                <option value="49">system form select formula type</option>
+                <option value="50">system form select view type</option>
+                <option value="51">system form select component type</option>
+                <option value="52">system form field formula text</option>
+                <option value="53">form field name</option>
+                <option value="54">form field plural</option>
+                <option value="55">word results</option>
+                <option value="56">triple name</option>
+                <option value="57">source name</option>
+                <option value="58">reference name</option>
+                <option value="59">language name</option>
+                <option value="60">results related to</option>
+                <option value="61">expression</option>
+            </select></div>
+        </div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
+                                                                                                 type="text"
+                                                                                                 name="description"
+                                                                                                 id="description"
+                                                                                                 value="simply show the word or triple name">
+            </div>
+        </div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-4"><label for="share">share:</label><select class="form-control" name="share"
+                                                                                      form="component_edit" id="share">
+                <option value="1">public</option>
+                <option value="2">personal</option>
+                <option value="3" selected>group</option>
+                <option value="4">private</option>
+            </select></div>
+            <div class="form-group col-md-4"><label for="protection">protection:</label><select class="form-control"
+                                                                                                name="protection"
+                                                                                                form="component_edit"
+                                                                                                id="protection">
+                <option value="1">no protection</option>
+                <option value="2" selected>user</option>
+                <option value="3">admin</option>
+                <option value="4">no change</option>
+            </select></div>
+        </div>
+        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=0" title="Cancel"
+                                                          class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
+            <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
+        </div>
+    </form>
+</div>
+<footer>
+    <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot; <a
+            href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data is
+        available under the <a href="//creativecommons.org/publicdomain/zero/1.0/"
+                               title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License
+        and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the <a
+                href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License</small></div>
+</footer>
+</body>
+</html>

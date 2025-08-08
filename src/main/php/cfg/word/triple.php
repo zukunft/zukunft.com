@@ -6,7 +6,7 @@
     ---------------------
 
     A link can also be used in replacement for a word
-    e.g. "Zurich (Company)" where the link "Zurich is a company" is used
+    e.g. "Zurich (company)" where the link "Zurich is a company" is used
 
     The main sections of this object are
     - db const:          const for the database link
@@ -2041,7 +2041,7 @@ class triple extends sandbox_link_named
 
     /**
      * set the log entry parameter for a new value
-     * e.g. that the user can see "added ABB is a Company"
+     * e.g. that the user can see "added ABB is a company"
      */
     function log_link_add(): change_link
     {
@@ -2076,7 +2076,7 @@ class triple extends sandbox_link_named
 
     /**
      * set the log entry parameter to delete a triple
-     * e.g. that the user can see "ABB is a Company not anymore"
+     * e.g. that the user can see "ABB is a company not anymore"
      */
     function log_del_link(): change_link
     {

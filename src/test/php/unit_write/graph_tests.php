@@ -92,9 +92,9 @@ class graph_tests
         /*
         $target = '' . words::TN_CITY_AS_CATEGORY . ' has a balance sheet';
         $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
-        $target = 'Company has a forecast';
+        $target = 'company has a forecast';
         $t->dsp_contains(', triple_list->load for ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
-        $target = 'Company uses employee';
+        $target = 'company uses employee';
         $t->dsp_contains(', word ' . $phr_lst->dsp_id(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
         */
 
@@ -117,7 +117,7 @@ class graph_tests
         // load all types of Zurich e.g. Zurich Insurance
         $zh_lst = new phrase_list($usr);
         $zh_lst->load_by_phr($ZH->phrase(), $t->verb_is(), foaf_direction::UP);
-        // load the type names of the Zurich types e.g. Company
+        // load the type names of the Zurich types e.g. company
         $trp_lst = $zh_lst->triples();
         $zh_types = $trp_lst->phrase_parts();
         // create the HTML code to display the type names

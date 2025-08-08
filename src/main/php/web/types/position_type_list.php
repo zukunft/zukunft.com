@@ -32,16 +32,20 @@
 
 namespace html\types;
 
+use html\const\paths as html_paths;
+
+include_once html_paths::TYPES . 'type_lists.php';
+
 class position_type_list extends type_list
 {
 
     /**
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = 'position type'): string
+    function selector(string $form = '', int $selected = 0, string $name = 'position type', ?type_lists $typ_lst = null): string
     {
-        global $html_position_types;
-        return parent::type_selector($html_position_types->lst_key(), $name, $form, $selected);
+        return parent::type_selector($typ_lst->html_position_types->lst_key(), $name, $form, $selected);
     }
 
 }

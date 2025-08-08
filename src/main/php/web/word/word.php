@@ -50,6 +50,8 @@ namespace html\word;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
@@ -93,6 +95,7 @@ use html\phrase\term;
 use html\sandbox\sandbox_code_id;
 use html\styles;
 use html\system\back_trace;
+use html\types\type_lists;
 use html\user\user_message;
 use html\verb\verb_list;
 use html\view\view;
@@ -251,7 +254,7 @@ class word extends sandbox_code_id
     function set_view_id(?int $view_id): void
     {
         $msk = new view();
-        $msk->load_by_id($view_id);
+        $msk->set_id($view_id);
         $this->set_view($msk);
     }
 
@@ -326,7 +329,7 @@ class word extends sandbox_code_id
      * if a phrase list is given get only the parent phrases within the list
      * if no phrase list is given get the phrases from the api
      * e.g. for Zurich the list is City and Canton based on a phrase list with City, Canton and Country
-     * but  for Zurich the list is City, Canton and Company based on a phrase list with Company, City, Canton and Country
+     * but  for Zurich the list is City, Canton and company based on a phrase list with company, City, Canton and Country
      * @param phrase_list|null $phr_lst
      * @param int $levels the number of parent levels
      * @return phrase_list
@@ -394,16 +397,18 @@ class word extends sandbox_code_id
      * to prevent type changes of internal formula words
      * as a second line of defence
      * @param string $form the name of the html form
+     * @param string $style the CSS style that should be used
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    function dsp_type_selector(string $form): string
+    function dsp_type_selector(string $form, string $style = '', ?type_lists $typ_lst = null): string
     {
         global $phr_typ_cac;
         $result = '';
         if ($phr_typ_cac->code_id($this->type_id()) == phrase_type::FORMULA_LINK) {
             $result .= ' type: ' . $phr_typ_cac->name($this->type_id());
         } else {
-            $result .= $this->phrase_type_selector($form);
+            $result .= $this->phrase_type_selector($form, $typ_lst);
         }
         return $result;
     }
@@ -412,16 +417,16 @@ class word extends sandbox_code_id
      * create the HTML code to select a phrase type
      * and select the phrase type of this word
      * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    public function phrase_type_selector(string $form): string
+    public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $html_phrase_types;
         $used_phrase_id = $this->type_id();
         if ($used_phrase_id == null) {
-            $used_phrase_id = $html_phrase_types->default_id();
+            $used_phrase_id = $typ_lst->html_phrase_types->default_id();
         }
-        return $html_phrase_types->selector($form, $used_phrase_id);
+        return $typ_lst->html_phrase_types->selector($form, $used_phrase_id);
     }
 
 
@@ -669,7 +674,7 @@ class word extends sandbox_code_id
     /**
      * @return string HTML code to edit all word fields
      */
-    function dsp_add(int $wrd_id, int $wrd_to, int $vrb_id, $back): string
+    function dsp_add(int $wrd_id, int $wrd_to, int $vrb_id, string $back): string
     {
         log_debug('word_dsp->dsp_add ' . $this->dsp_id() . ' or link the existing word with id ' . $wrd_id . ' to ' . $wrd_to . ' by verb ' . $vrb_id . ' (called by ' . $back . ')');
         $result = '';
@@ -725,7 +730,7 @@ class word extends sandbox_code_id
             $dsp_graph,
             $dsp_log,
             $this->dsp_formula($back),
-            $this->dsp_type_selector(views::WORD_EDIT, $back),
+            $this->dsp_type_selector(views::WORD_EDIT),
             $back);
     }
 
@@ -742,8 +747,9 @@ class word extends sandbox_code_id
      * returns the html code to select a word link type
      * database link must be open
      * TODO: similar to verb->dsp_selector maybe combine???
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      */
-    function selector_link($id, $form, $back): string
+    function selector_link($id, $form, $back, ?type_lists $typ_lst): string
     {
         /*
         log_debug('verb id ' . $id);
@@ -780,9 +786,8 @@ class word extends sandbox_code_id
         $sel->dummy_text = '';
         */
         global $usr;
-        global $html_verbs;
         // TODO add $id to the parameters
-        $result = $html_verbs->selector($form);
+        $result = $typ_lst->html_verbs->selector($form);
 
         if ($usr->is_admin()) {
             // admin users should always have the possibility to create a new link type

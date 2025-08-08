@@ -34,13 +34,15 @@ namespace html\helper;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
-include_once paths::SHARED . 'json_fields.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view_list.php';
-include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::WORD . 'word_list.php';
+include_once paths::SHARED . 'json_fields.php';
 
 use html\phrase\phrase_list;
+use html\types\type_lists;
 use html\user\user_message;
 use html\view\view_list;
 use html\word\word_list;
@@ -56,6 +58,7 @@ class data_object
     private word_list $wrd_lst;
     private phrase_list $phr_lst;
     private view_list $msk_lst;
+    public ?type_lists $typ_lst_cache = null;
 
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
@@ -134,6 +137,18 @@ class data_object
     function has_view_list(): bool
     {
         if ($this->msk_lst->count() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool true if this context object contains at least some phrases
+     */
+    function has_phrases(): bool
+    {
+        if ($this->phr_lst->count() > 0) {
             return true;
         } else {
             return false;

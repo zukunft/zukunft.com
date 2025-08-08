@@ -159,6 +159,6 @@ Fixed server splitting (if not hadoop is used as the backend)
 To split the load between to several servers it is suggested to move one word and all it's related values and results to a second server
 further splitting can be done by another word to split in hierarchy order
 e.g. use company as the first splitter and than ABB, Daimler, ... as the second or CO2 as the second tree
-in this case the CO2 balance of ABB will be on the "Company ABB server", but all other CO2 data will be on en "environment server"
+in this case the CO2 balance of ABB will be on the "company ABB server", but all other CO2 data will be on en "environment server"
 the word graph should stay on the main server for consistency reasons
 

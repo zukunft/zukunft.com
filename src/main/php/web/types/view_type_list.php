@@ -49,8 +49,7 @@ class view_type_list extends type_list
      */
     function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
     {
-        global $html_view_types;
-        return parent::type_selector($html_view_types->lst_key(), $name, $form, $selected);
+        return parent::type_selector($this->lst_key(), $name, $form, $selected);
     }
 
     function default_id(): int

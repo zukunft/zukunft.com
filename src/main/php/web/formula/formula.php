@@ -45,12 +45,13 @@ namespace html\formula;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
-include_once html_paths::SANDBOX . 'sandbox_typed.php';
+
 include_once paths::DB . 'sql_db.php';
+//include_once html_paths::SANDBOX . 'sandbox_typed.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::FORMULA . 'expression.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -68,6 +69,7 @@ include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
@@ -75,6 +77,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use cfg\db\sql_db;
+use html\types\type_lists;
 use html\phrase\phrase;
 use html\phrase\phrase_list;
 use html\phrase\term_list;
@@ -281,20 +284,23 @@ class formula extends sandbox_code_id
      * @param string $form_name the name of the html form
      * @return string the html code to select the formula type
      */
-    function dsp_type_selector(string $form_name): string
+    function dsp_type_selector(string $form_name, ?type_lists $typ_lst): string
     {
-        global $html_formula_types;
-        return $html_formula_types->selector($form_name);
+        return $typ_lst->html_formula_types->selector($form_name);
     }
 
-    public function formula_type_selector(string $form_name): string
+    /**
+     * @param string $form_name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string
+     */
+    public function formula_type_selector(string $form_name, ?type_lists $typ_lst): string
     {
-        global $html_formula_types;
         $used_formula_type_id = $this->type_id();
         if ($used_formula_type_id == null) {
-            $used_formula_type_id = $html_formula_types->default_id();
+            $used_formula_type_id = $typ_lst->html_formula_types->default_id();
         }
-        return $html_formula_types->selector($form_name, $used_formula_type_id);
+        return $typ_lst->html_formula_types->selector($form_name, $used_formula_type_id);
     }
 
 

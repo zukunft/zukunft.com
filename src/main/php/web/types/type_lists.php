@@ -38,6 +38,7 @@ namespace html\types;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'change_action_list.php';
@@ -63,6 +64,7 @@ include_once html_paths::TYPES . 'component_type_list.php';
 include_once html_paths::TYPES . 'component_link_type_list.php';
 include_once html_paths::TYPES . 'position_type_list.php';
 //include_once html_paths::VERB . 'verb.php';
+include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::USER . 'user_message.php';
@@ -73,6 +75,7 @@ include_once paths::SHARED . 'api.php';
 
 use html\user\user_message;
 use html\verb\verb;
+use html\view\view;
 use html\view\view_list as view_list_dsp;
 use html\word\word as word_dsp;
 use shared\api;
@@ -80,6 +83,35 @@ use shared\json_fields;
 
 class type_lists
 {
+
+    /*
+     * object vars
+     */
+
+    public ?user_profile $html_user_profiles = null;
+    public ?phrase_types $html_phrase_types = null;
+    public ?formula_type_list $html_formula_types = null;
+    public ?formula_link_type_list $html_formula_link_types = null;
+    public ?view_type_list $html_view_types = null;
+    public ?view_style_list $html_view_styles = null;
+    public ?view_link_type_list $html_view_link_types = null;
+    public ?component_type_list $html_component_types = null;
+    public ?component_link_type_list $html_component_link_types = null;
+    public ?position_type_list $html_position_types = null;
+    public ?source_type_list $html_source_types = null;
+    public ?ref_type_list $html_ref_types = null;
+    public ?share $html_share_types = null;
+    public ?protection $html_protection_types = null;
+    public ?languages $html_languages = null;
+    public ?language_forms $html_language_forms = null;
+    public ?verbs $html_verbs = null;
+    public ?sys_log_status_list $html_sys_log_statuus = null;
+    public ?job_type_list $html_job_types = null;
+    public ?change_action_list $html_change_action_list = null;
+    public ?change_table_list $html_change_table_list = null;
+    public ?change_field_list $html_change_field_list = null;
+    public ?view_list_dsp $html_system_views = null;
+
 
     /*
      * construct and map
@@ -171,6 +203,7 @@ class type_lists
             $this->set_component_types();
         }
         /*
+         * TODO Prio 1 activate
         if (array_key_exists(api::JSON_LIST_VIEW_COMPONENT_LINK_TYPES, $json_array)) {
             $this->set_component_link_types($json_array[api::JSON_LIST_VIEW_COMPONENT_LINK_TYPES]);
         } else {
@@ -184,17 +217,17 @@ class type_lists
             $usr_msg->add_err('Mandatory position_types missing in API JSON ' . json_encode($json_array));
             $this->set_position_types();
         }
-        if (array_key_exists(api::JSON_LIST_REF_TYPES, $json_array)) {
-            $this->set_ref_types($json_array[api::JSON_LIST_REF_TYPES]);
-        } else {
-            $usr_msg->add_err('Mandatory ref_types missing in API JSON ' . json_encode($json_array));
-            $this->set_ref_types();
-        }
         if (array_key_exists(api::JSON_LIST_SOURCE_TYPES, $json_array)) {
             $this->set_source_types($json_array[api::JSON_LIST_SOURCE_TYPES]);
         } else {
             $usr_msg->add_err('Mandatory source_types missing in API JSON ' . json_encode($json_array));
             $this->set_source_types();
+        }
+        if (array_key_exists(api::JSON_LIST_REF_TYPES, $json_array)) {
+            $this->set_ref_types($json_array[api::JSON_LIST_REF_TYPES]);
+        } else {
+            $usr_msg->add_err('Mandatory ref_types missing in API JSON ' . json_encode($json_array));
+            $this->set_ref_types();
         }
         if (array_key_exists(api::JSON_LIST_SHARE_TYPES, $json_array)) {
             $this->set_share_types($json_array[api::JSON_LIST_SHARE_TYPES]);
@@ -267,178 +300,162 @@ class type_lists
 
     function set_user_profiles(array $json_array = null): void
     {
-        global $html_user_profiles;
-        $html_user_profiles = new user_profile();
-        $html_user_profiles->set_from_json_array($json_array);
+        $this->html_user_profiles = new user_profile();
+        $this->html_user_profiles->set_from_json_array($json_array);
     }
 
     function set_phrase_types(array $json_array = null): void
     {
-        global $html_phrase_types;
-        $html_phrase_types = new phrase_types();
-        $html_phrase_types->set_from_json_array($json_array);
+        $this->html_phrase_types = new phrase_types();
+        $this->html_phrase_types->set_from_json_array($json_array);
     }
 
     function set_formula_types(array $json_array = null): void
     {
-        global $html_formula_types;
-        $html_formula_types = new formula_type_list();
-        $html_formula_types->set_from_json_array($json_array);
+        $this->html_formula_types = new formula_type_list();
+        $this->html_formula_types->set_from_json_array($json_array);
     }
 
     function set_formula_link_types(array $json_array = null): void
     {
-        global $html_formula_link_types;
-        $html_formula_link_types = new formula_link_type_list();
-        $html_formula_link_types->set_from_json_array($json_array);
+        $this->html_formula_link_types = new formula_link_type_list();
+        $this->html_formula_link_types->set_from_json_array($json_array);
     }
 
     function set_view_types(array $json_array = null): void
     {
-        global $html_view_types;
-        $html_view_types = new view_type_list();
-        $html_view_types->set_from_json_array($json_array);
+        $this->html_view_types = new view_type_list();
+        $this->html_view_types->set_from_json_array($json_array);
     }
 
     function set_view_styles(array $json_array = null): void
     {
-        global $html_view_styles;
-        $html_view_styles = new view_style_list();
-        $html_view_styles->set_from_json_array($json_array);
+        $this->html_view_styles = new view_style_list();
+        $this->html_view_styles->set_from_json_array($json_array);
     }
 
     function set_view_link_types(array $json_array = null): void
     {
-        global $html_view_link_types;
-        $html_view_link_types = new view_link_type_list();
-        $html_view_link_types->set_from_json_array($json_array);
+        $this->html_view_link_types = new view_link_type_list();
+        $this->html_view_link_types->set_from_json_array($json_array);
     }
 
     function set_component_types(array $json_array = null): void
     {
-        global $html_component_types;
-        $html_component_types = new component_type_list();
-        $html_component_types->set_from_json_array($json_array);
+        $this->html_component_types = new component_type_list();
+        $this->html_component_types->set_from_json_array($json_array);
     }
 
     function set_component_link_types(array $json_array = null): void
     {
-        global $html_component_link_types;
-        $html_component_link_types = new component_link_type_list();
-        $html_component_link_types->set_from_json_array($json_array);
+        $this->html_component_link_types = new component_link_type_list();
+        $this->html_component_link_types->set_from_json_array($json_array);
     }
 
     function set_position_types(array $json_array = null): void
     {
-        global $html_position_types;
-        $html_position_types = new position_type_list();
-        $html_position_types->set_from_json_array($json_array);
-    }
-
-    function set_ref_types(array $json_array = null): void
-    {
-        global $html_ref_types;
-        $html_ref_types = new ref_type_list();
-        $html_ref_types->set_from_json_array($json_array);
+        $this->html_position_types = new position_type_list();
+        $this->html_position_types->set_from_json_array($json_array);
     }
 
     function set_source_types(array $json_array = null): void
     {
-        global $html_source_types;
-        $html_source_types = new source_type_list();
-        $html_source_types->set_from_json_array($json_array);
+        $this->html_source_types = new source_type_list();
+        $this->html_source_types->set_from_json_array($json_array);
+    }
+
+    function set_ref_types(array $json_array = null): void
+    {
+        $this->html_ref_types = new ref_type_list();
+        $this->html_ref_types->set_from_json_array($json_array);
     }
 
     function set_share_types(array $json_array = null): void
     {
-        global $html_share_types;
-        $html_share_types = new share();
-        $html_share_types->set_from_json_array($json_array);
+        $this->html_share_types = new share();
+        $this->html_share_types->set_from_json_array($json_array);
     }
 
     function set_protection_types(array $json_array = null): void
     {
-        global $html_protection_types;
-        $html_protection_types = new protection();
-        $html_protection_types->set_from_json_array($json_array);
+        $this->html_protection_types = new protection();
+        $this->html_protection_types->set_from_json_array($json_array);
     }
 
     function set_languages(array $json_array = null): void
     {
-        global $html_languages;
-        $html_languages = new languages();
-        $html_languages->set_from_json_array($json_array);
+        $this->html_languages = new languages();
+        $this->html_languages->set_from_json_array($json_array);
     }
 
     function set_language_forms(array $json_array = null): void
     {
-        global $html_language_forms;
-        $html_language_forms = new language_forms();
-        $html_language_forms->set_from_json_array($json_array);
+        $this->html_language_forms = new language_forms();
+        $this->html_language_forms->set_from_json_array($json_array);
     }
 
     function set_verbs(array $json_array = null): void
     {
-        global $html_verbs;
-        $html_verbs = new verbs();
-        $html_verbs->set_from_json_array($json_array, verb::class);
+        $this->html_verbs = new verbs();
+        $this->html_verbs->set_from_json_array($json_array, verb::class);
     }
 
     function set_sys_log_statuus(array $json_array = null): void
     {
-        global $html_sys_log_statuus;
-        $html_sys_log_statuus = new sys_log_status_list();
-        $html_sys_log_statuus->set_from_json_array($json_array);
+        $this->html_sys_log_statuus = new sys_log_status_list();
+        $this->html_sys_log_statuus->set_from_json_array($json_array);
     }
 
     function set_job_types(array $json_array = null): void
     {
-        global $html_job_types;
-        $html_job_types = new job_type_list();
-        $html_job_types->set_from_json_array($json_array);
+        $this->html_job_types = new job_type_list();
+        $this->html_job_types->set_from_json_array($json_array);
     }
 
     function set_change_action_list(array $json_array = null): void
     {
-        global $html_change_action_list;
-        $html_change_action_list = new change_action_list();
-        $html_change_action_list->set_from_json_array($json_array);
+        $this->html_change_action_list = new change_action_list();
+        $this->html_change_action_list->set_from_json_array($json_array);
     }
 
     function set_change_table_list(array $json_array = null): void
     {
-        global $html_change_table_list;
-        $html_change_table_list = new change_table_list();
-        $html_change_table_list->set_from_json_array($json_array);
+        $this->html_change_table_list = new change_table_list();
+        $this->html_change_table_list->set_from_json_array($json_array);
     }
 
     function set_change_field_list(array $json_array = null): void
     {
-        global $html_change_field_list;
-        $html_change_field_list = new change_field_list();
-        $html_change_field_list->set_from_json_array($json_array);
+        $this->html_change_field_list = new change_field_list();
+        $this->html_change_field_list->set_from_json_array($json_array);
     }
 
     function set_system_views(array $json_array = null): void
     {
-        global $html_system_views;
-        $html_system_views = new view_list_dsp();
-        $html_system_views->api_mapper($json_array);
+        $this->html_system_views = new view_list_dsp();
+        $this->html_system_views->api_mapper($json_array);
     }
 
     // TODO add similar functions for all cache types
-    function get_view_by_id(int $id): string
+    function get_html_by_id(int $id): string
     {
-        global $html_system_views;
-        $msk = $html_system_views->get_by_id($id);
+        $msk = $this->get_view_by_id($id);
         $wrd = new word_dsp();
         return $msk->show($wrd);
     }
 
-    function get_view(string $code_id): string
+    function get_view_by_id(int $id): view
     {
-        global $html_system_views;
-        $msk = $html_system_views->get_by_id($code_id);
+        return $this->html_system_views->get_by_id($id);
+    }
+
+    function get_view(string $code_id): view
+    {
+        return $this->html_system_views->get_by_id($code_id);
+    }
+    function get_html(string $code_id): string
+    {
+        $msk = $this->get_view($code_id);
         $wrd = new word_dsp();
         return $msk->show($wrd);
     }

@@ -752,12 +752,38 @@ class create_test_objects extends test_base
     }
 
     /**
+     * get the filled url object related to the given class and action
+     * @param string $class the given main class name
+     * @param int $msk_id the id of the mask
+     * @param string $action
+     * @return string with only a few vars filled
+     */
+    function class_to_filled_url(string $class, int $msk_id, string $action): string
+    {
+        if ($action == change_actions::SHOW) {
+            $result = $this->class_to_url_show($class, $msk_id);
+        } elseif ($action == change_actions::ADD) {
+            $result = $this->class_to_url_add($class, $msk_id);
+        } elseif ($action == change_actions::UPDATE) {
+            $result = $this->class_to_url_edit($class, $msk_id);
+        } elseif ($action == change_actions::DELETE) {
+            $result = $this->class_to_url_del($class, $msk_id);
+        } else {
+            $msg = 'unknow action ' . $action . ' for view id ' . $msk_id;
+            log_err($msg);
+            $result = $msg;
+        }
+        return $result;
+    }
+
+    /**
+     * TODO Prio 1 review
      * get the filled url object related to the given class
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
      * @return string with only a few vars filled
      */
-    function class_to_url_add(string $class, int $msk_id): string
+    function class_to_url_show(string $class, int $msk_id): string
     {
         $url = api::HOST_TESTING . api::MAIN_SCRIPT . api::URL_PAR;
         $url .= $this->url_par(api::URL_VAR_MASK_HUMAN, $msk_id);
@@ -870,6 +896,344 @@ class create_test_objects extends test_base
         return $url;
     }
 
+    /**
+     * get the filled url object related to the given class
+     * @param string $class the given main class name
+     * @param int $msk_id the id of the mask
+     * @return string with only a few vars filled
+     */
+    function class_to_url_add(string $class, int $msk_id): string
+    {
+        $url = api::HOST_TESTING . api::MAIN_SCRIPT . api::URL_PAR;
+        $url .= $this->url_par(api::URL_VAR_MASK_HUMAN, $msk_id);
+        switch ($class) {
+            case user::class;
+                $obj = $this->user_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_IP, $obj->ip_addr);
+                break;
+            case word::class;
+                $obj = $this->word_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_PLURAL, $obj->plural());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(api::URL_VAR_VIEW_LONG, $obj->view_id());
+                break;
+            case verb::class;
+                $obj = $this->verb_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                break;
+            case triple::class;
+                $obj = $this->triple_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_FROM_ID_LONG, $obj->from_id());
+                $url .= $this->url_par(api::URL_VAR_VERB_ID_LONG, $obj->verb_id());
+                $url .= $this->url_par(api::URL_VAR_TO_ID_LONG, $obj->to_id());
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name_given());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(api::URL_VAR_VIEW_LONG, $obj->view_id());
+                break;
+            case source::class;
+                $obj = $this->source_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_URL, $obj->url());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case ref::class;
+                $obj = $this->reference_plus();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_PHRASE_LONG, $obj->from_id());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->predicate_id());
+                $url .= $this->url_par(api::URL_VAR_URL, $obj->url());
+                $url .= $this->url_par(api::URL_VAR_EXTERNAL_KEY, $obj->external_key());
+                $url .= $this->url_par(api::URL_VAR_SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case value::class;
+                $obj = $this->value_16_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_PHRASE_LIST_LONG, implode(',',$obj->ids()));
+                $url .= $this->url_par(api::URL_VAR_NUMERIC_VALUE_LONG, $obj->value());
+                $url .= $this->url_par(api::URL_VAR_SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case group::class;
+                $obj = $this->group_zh_2020();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case formula::class;
+                $obj = $this->formula_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case result::class;
+                $obj = $this->result_main_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_PHRASE_LIST_LONG, implode(',',$obj->ids()));
+                $url .= $this->url_par(api::URL_VAR_NUMERIC_VALUE_LONG, $obj->value());
+                $url .= $this->url_par(api::URL_VAR_FORMULA_LONG, $obj->formula_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case view::class;
+                $obj = $this->view_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case component::class;
+                $obj = $this->component_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case db_object::class;
+                // for the start page no additional vars in the url are needed
+                $obj = new db_object();
+                break;
+            default:
+                $obj = $this->word_filled();
+                log_err('no filled url object defined for ' . $class);
+        }
+        $url .= $this->url_par(api::URL_VAR_ID, $obj->id());
+        $url .= $this->url_par(api::URL_VAR_ACTION_LONG, api::URL_VAR_CURL_CREATE, true);
+        return $url;
+    }
+
+    /**
+     * TODO review
+     * get the filled url object related to the given class
+     * @param string $class the given main class name
+     * @param int $msk_id the id of the mask
+     * @return string with only a few vars filled
+     */
+    function class_to_url_edit(string $class, int $msk_id): string
+    {
+        $url = api::HOST_TESTING . api::MAIN_SCRIPT . api::URL_PAR;
+        $url .= $this->url_par(api::URL_VAR_MASK_HUMAN, $msk_id);
+        switch ($class) {
+            case user::class;
+                $obj = $this->user_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_IP, $obj->ip_addr);
+                break;
+            case word::class;
+                $obj = $this->word_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_PLURAL, $obj->plural());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(api::URL_VAR_VIEW_LONG, $obj->view_id());
+                break;
+            case verb::class;
+                $obj = $this->verb_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                break;
+            case triple::class;
+                $obj = $this->triple_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_FROM_ID_LONG, $obj->from_id());
+                $url .= $this->url_par(api::URL_VAR_VERB_ID_LONG, $obj->verb_id());
+                $url .= $this->url_par(api::URL_VAR_TO_ID_LONG, $obj->to_id());
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name_given());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(api::URL_VAR_VIEW_LONG, $obj->view_id());
+                break;
+            case source::class;
+                $obj = $this->source_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_URL, $obj->url());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case ref::class;
+                $obj = $this->reference_plus();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_PHRASE_LONG, $obj->from_id());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->predicate_id());
+                $url .= $this->url_par(api::URL_VAR_URL, $obj->url());
+                $url .= $this->url_par(api::URL_VAR_EXTERNAL_KEY, $obj->external_key());
+                $url .= $this->url_par(api::URL_VAR_SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case value::class;
+                $obj = $this->value_16_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_PHRASE_LIST_LONG, implode(',',$obj->ids()));
+                $url .= $this->url_par(api::URL_VAR_NUMERIC_VALUE_LONG, $obj->value());
+                $url .= $this->url_par(api::URL_VAR_SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case group::class;
+                $obj = $this->group_zh_2020();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case formula::class;
+                $obj = $this->formula_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case result::class;
+                $obj = $this->result_main_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_PHRASE_LIST_LONG, implode(',',$obj->ids()));
+                $url .= $this->url_par(api::URL_VAR_NUMERIC_VALUE_LONG, $obj->value());
+                $url .= $this->url_par(api::URL_VAR_FORMULA_LONG, $obj->formula_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case view::class;
+                $obj = $this->view_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case component::class;
+                $obj = $this->component_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
+                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
+                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                break;
+            case db_object::class;
+                // for the start page no additional vars in the url are needed
+                $obj = new db_object();
+                break;
+            default:
+                $obj = $this->word_filled();
+                log_err('no filled url object defined for ' . $class);
+        }
+        $url .= $this->url_par(api::URL_VAR_ID, $obj->id());
+        $url .= $this->url_par(api::URL_VAR_ACTION_LONG, api::URL_VAR_CURL_CREATE, true);
+        return $url;
+    }
+
+    /**
+     * TODO Prio 2 review
+     * get the filled url object related to the given class
+     * @param string $class the given main class name
+     * @param int $msk_id the id of the mask
+     * @return string with only a few vars filled
+     */
+    function class_to_url_del(string $class, int $msk_id): string
+    {
+        $url = api::HOST_TESTING . api::MAIN_SCRIPT . api::URL_PAR;
+        $url .= $this->url_par(api::URL_VAR_MASK_HUMAN, $msk_id);
+        switch ($class) {
+            case user::class;
+                $obj = $this->user_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                break;
+            case word::class;
+                $obj = $this->word_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                break;
+            case verb::class;
+                $obj = $this->verb_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                break;
+            case triple::class;
+                $obj = $this->triple_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name_given());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                break;
+            case source::class;
+                $obj = $this->source_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                break;
+            case ref::class;
+                $obj = $this->reference_plus();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                break;
+            case value::class;
+                $obj = $this->value_16_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                break;
+            case group::class;
+                $obj = $this->group_zh_2020();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                break;
+            case formula::class;
+                $obj = $this->formula_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                break;
+            case result::class;
+                $obj = $this->result_main_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                break;
+            case view::class;
+                $obj = $this->view_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                break;
+            case component::class;
+                $obj = $this->component_filled();
+                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
+                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                break;
+            case db_object::class;
+                // for the start page no additional vars in the url are needed
+                $obj = new db_object();
+                break;
+            default:
+                $obj = $this->word_filled();
+                log_err('no filled url object defined for ' . $class);
+        }
+        $url .= $this->url_par(api::URL_VAR_ID, $obj->id());
+        $url .= $this->url_par(api::URL_VAR_ACTION_LONG, api::URL_VAR_CURL_CREATE, true);
+        return $url;
+    }
+
     private function url_par(string $name, ?string $par, bool $last = false): string
     {
         if ($par == null) {
@@ -908,7 +1272,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return word "Company" with a suggested view
+     * @return word "company" with a suggested view
      */
     function word_view_set(): word
     {

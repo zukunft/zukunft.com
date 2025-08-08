@@ -51,7 +51,7 @@ namespace cfg\helper;
 
 use cfg\const\paths;
 
-include_once paths::API_OBJECT . 'api_message.php';
+//include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_field_default.php';

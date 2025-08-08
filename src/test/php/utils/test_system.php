@@ -69,7 +69,7 @@ function run_system_test(all_tests $t): void
 
     $t->header('Test the blocked IP addresses');
 
-    // check the first predefined word "Company"
+    // check the first predefined word "company"
     // load by id
     $usr_test = new user;
     $usr_test->ip_addr = users::TEST_IP;

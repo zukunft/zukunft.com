@@ -55,7 +55,7 @@ class sandbox_list extends list_dsp
     /**
      * to show the list name to the user in the most simple form (without any ids)
      * this function is called from dsp_id, so no other call is allowed
-     * e.g. >Company Zurich< can be either >"Company Zurich"< or >"Company" "Zurich"<, means either a triple or two words
+     * e.g. >company Zurich< can be either >"company Zurich"< or >"company" "Zurich"<, means either a triple or two words
      *      but this "short" form probably confuses the user less and
      *      if the user cannot change the tags anyway the saving of a related value is possible
      *

@@ -41,8 +41,7 @@ class formula_link_type_list extends type_list
      */
     function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
     {
-        global $html_formula_link_types;
-        return parent::type_selector($html_formula_link_types->lst_key(), $name, $form, $selected);
+        return parent::type_selector($this->lst_key(), $name, $form, $selected);
     }
 
 }

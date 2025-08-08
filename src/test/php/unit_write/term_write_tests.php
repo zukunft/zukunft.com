@@ -62,7 +62,7 @@ class term_write_tests
         // load the main test word
         $wrd_zh = $t->test_word(words::ZH);
 
-        // check that adding the predefined word "Company" creates an error message
+        // check that adding the predefined word "company" creates an error message
         $term = new term($usr);
         $term->load_by_obj_name(words::ZH);
         $target = 'A word with the name "' . words::ZH . '" already exists. '

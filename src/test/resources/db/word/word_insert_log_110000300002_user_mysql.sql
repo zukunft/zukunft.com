@@ -35,7 +35,7 @@ SELECT word_insert_log_110000300002_user
          51,
          null,
          null,
-         272,
+         184,
          87,
          3,
          null);

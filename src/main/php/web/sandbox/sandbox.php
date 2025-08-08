@@ -35,27 +35,28 @@ namespace html\sandbox;
 use cfg\const\paths;
 use html\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::TYPES . 'type_lists.php';
+//include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\button;
-use html\html_base;
-use shared\enum\messages as msg_id;
+use html\helper\data_object;
+use html\types\type_lists;
 use html\view\view_list;
-use shared\api;
 use html\sandbox\db_object as db_object_dsp;
 use html\user\user as user_dsp;
 use html\user\user_message;
 use shared\types\view_styles;
 use shared\json_fields;
+use shared\api;
 
 class sandbox extends db_object_dsp
 {
@@ -171,9 +172,16 @@ class sandbox extends db_object_dsp
      * create the HTML code to select a view
      * @param string $form the name of the html form
      * @param view_list $msk_lst with the suggested views
+     * @param string|null $name the name of
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select a view
      */
-    public function view_selector(string $form, view_list $msk_lst, string $name = null): string
+    public function view_selector(
+        string $form,
+        view_list $msk_lst,
+        string $name = null,
+        ?type_lists $typ_lst = null
+    ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
@@ -188,18 +196,18 @@ class sandbox extends db_object_dsp
 
     /**
      * @param string $form_name the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the share type
      */
-    public function share_type_selector(string $form_name): string
+    public function share_type_selector(string $form_name, ?type_lists $typ_lst): string
     {
         global $usr;
-        global $html_share_types;
         $used_share_id = $this->share_id;
         if ($used_share_id == null) {
-            $used_share_id = $html_share_types->default_id();
+            $used_share_id = $typ_lst->html_share_types->default_id();
         }
         if ($usr === $this->owner or $this->owner == null) {
-            return $html_share_types->selector($form_name, $used_share_id, 'share', view_styles::COL_SM_4, 'share:');
+            return $typ_lst->html_share_types->selector($form_name, $used_share_id, 'share', view_styles::COL_SM_4, 'share:');
         } else {
             return '';
         }
@@ -207,18 +215,18 @@ class sandbox extends db_object_dsp
 
     /**
      * @param string $form_name the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the share type
      */
-    public function protection_type_selector(string $form_name): string
+    public function protection_type_selector(string $form_name, ?type_lists $typ_lst): string
     {
         global $usr;
-        global $html_protection_types;
         $used_protection_id = $this->protection_id;
         if ($used_protection_id == null) {
-            $used_protection_id = $html_protection_types->default_id();
+            $used_protection_id = $typ_lst->html_protection_types->default_id();
         }
         if ($usr === $this->owner or $this->owner == null) {
-            return $html_protection_types->selector($form_name, $used_protection_id, 'protection', view_styles::COL_SM_4, 'protection:');
+            return $typ_lst->html_protection_types->selector($form_name, $used_protection_id, 'protection', view_styles::COL_SM_4, 'protection:');
         } else {
             return '';
         }

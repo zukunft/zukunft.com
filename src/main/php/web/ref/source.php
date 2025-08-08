@@ -41,15 +41,18 @@ namespace html\ref;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use html\types\type_lists;
 use html\html_base;
 use html\sandbox\sandbox_code_id;
 use html\user\user_message;
@@ -161,12 +164,12 @@ class source extends sandbox_code_id
 
     /**
      * @param string $form_name the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the source type
      */
-    private function dsp_select_type(string $form_name): string
+    private function dsp_select_type(string $form_name, ?type_lists $typ_lst): string
     {
-        global $html_source_types;
-        return $html_source_types->selector($form_name);
+        return $typ_lst->html_source_types->selector($form_name);
     }
 
     /**
@@ -237,14 +240,18 @@ class source extends sandbox_code_id
         return $result;
     }
 
-    public function source_type_selector(string $form_name): string
+    /**
+     * @param string $form_name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string
+     */
+    public function source_type_selector(string $form_name, ?type_lists $typ_lst): string
     {
-        global $html_source_types;
         $used_source_type_id = $this->type_id();
         if ($used_source_type_id == null) {
-            $used_source_type_id = $html_source_types->default_id();
+            $used_source_type_id = $typ_lst->html_source_types->default_id();
         }
-        return $html_source_types->selector($form_name, $used_source_type_id, 'type', view_styles::COL_SM_4, 'type:');
+        return $typ_lst->html_source_types->selector($form_name, $used_source_type_id, 'type', view_styles::COL_SM_4, 'type:');
     }
 
 }

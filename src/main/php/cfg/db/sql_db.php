@@ -3275,7 +3275,7 @@ class sql_db
     /**
      * returns the id field of a standard table
      * which means that the table name ends with 's', the name field is the table name plus '_name' and prim index ends with '_id'
-     * $name is the unique text that identifies one row e.g. for the $name "Company" the word id "1" is returned
+     * $name is the unique text that identifies one row e.g. for the $name "company" the word id "1" is returned
      */
     function get_id($name): string
     {

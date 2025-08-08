@@ -64,8 +64,7 @@ class phrase_types extends type_list
         string $name = api::URL_VAR_PHRASE_TYPE
     ): string
     {
-        global $html_phrase_types;
-        return parent::type_selector($html_phrase_types->lst_key(), $name, $form, $selected, $bs_class, $label);
+        return parent::type_selector($this->lst_key(), $name, $form, $selected, $bs_class, $label);
     }
 
 

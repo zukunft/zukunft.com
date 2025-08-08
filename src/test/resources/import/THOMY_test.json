@@ -18,10 +18,10 @@
   ],
   "triples": [
     {
-      "name": "Nestlé (Company)",
+      "name": "Nestlé (company)",
       "from": "Nestlé",
       "verb": "is a",
-      "to": "Company"
+      "to": "company"
     },
     {
       "from": "Nestlé",

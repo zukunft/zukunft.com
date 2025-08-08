@@ -103,7 +103,7 @@ class verb_read_tests
 
 
         // TODO add to phrase and triple the methode
-        //      ->all_parents to get Canton, City and Company for Zurich (Canton)
+        //      ->all_parents to get Canton, City and company for Zurich (Canton)
         //      whereas ->parents just return Canton for Zurich (Canton) because the word splitting is not done
 
 

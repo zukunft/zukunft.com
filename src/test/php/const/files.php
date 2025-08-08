@@ -66,6 +66,7 @@ class files
      * api test files
      */
 
+    const TYPE_LISTS_CACHE = test_paths::API_TYPE_LIST_RES . 'type_lists' . self::JSON;
     const SYS_LOG = test_paths::API_SYSTEM_RES . 'sys_log' . self::JSON;
     const SYS_LOG_HTML = test_paths::WEB_SYSTEM_RES . 'sys_log' . self::HTML;
     const SYS_LOG_LIST_API = test_paths::API_SYS_LOG_RES . 'sys_log_list' . self::JSON;

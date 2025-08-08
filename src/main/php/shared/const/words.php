@@ -71,9 +71,9 @@ class words
 
     // for the system setup and all pods of zukunft.com
     const POD = 'pod';
-    const POD_ID = 313;
+    const POD_ID = 328;
     const MASTER_POD_NAME = 'zukunft.com';
-    const MASTER_POD_NAME_ID = 331;
+    const MASTER_POD_NAME_ID = 346;
     const JOB = 'job';
     const USER = 'user';
     const FRONTEND = 'frontend';
@@ -83,10 +83,10 @@ class words
 
     // e.g. one instance / pod of zukunft.com
     const URL = 'url';
-    const URL_ID = 326;
+    const URL_ID = 341;
     // e.g. the launch date of the first beta version of zukunft.com
     const LAUNCH = 'launch';
-    const LAUNCH_ID = 376;
+    const LAUNCH_ID = 390;
 
     // for the user settings
     const ROW = 'row';
@@ -114,7 +114,7 @@ class words
 
     // e.g. the geolocation of the development of zukunft.com
     const POINT = 'point';
-    const POINT_ID = 377;
+    const POINT_ID = 196;
 
     // general words used also for the system configuration that have a fixed tooltip
     const TIME = 'time';
@@ -246,92 +246,126 @@ class words
     const PRIOR_NAME = 'prior';
     const PRIOR_ID = 181;
 
+    // words from import file base_phrases.json used for the offline phrase selection
+    const DAY = 'day';
+    const DAY_ID = 183;
+    const FACT = 'fact';
+    const FACT_ID = 186;
+    const GOVERNMENT = 'government';
+    const GOVERNMENT_ID = 187;
+    const GROUP = 'group';
+    const GROUP_ID = 189;
+    const HAND = 'hand';
+    const HAND_ID = 190;
+    const LIFE = 'life';
+    const LIFE_ID = 12;
+    const MAN = 'man';
+    const MAN_ID = 191;
+    const NUMBER = 'number';
+    const NUMBER_ID = 192;
+    const PART = 'part';
+    const PART_ID = 193;
+    const PERSON = 'person';
+    const PERSON_ID = 194;
+    const PLACE = 'place';
+    const PLACE_ID = 195;
+    const WAY = 'way';
+    const WAY_ID = 198;
+    const WEEK = 'week';
+    const WEEK_ID = 107;
+    const WOMAN = 'woman';
+    const WOMAN_ID = 199;
+    const WORK = 'work';
+    const WORK_ID = 200;
+    const WORLD = 'world';
+    const WORLD_ID = 201;
+
     // words from import file solution_prio.json used for the start page in order of appearance
     const PROBLEM = 'problem';
-    const PROBLEM_ID = 183;
+    const PROBLEM_ID = 197;
     const GLOBAL = 'global';
-    const GLOBAL_ID = 184;
+    const GLOBAL_ID = 188;
     const POTENTIAL = 'potential';
-    const POTENTIAL_ID = 187;
+    const POTENTIAL_ID = 204;
     const CLIMATE = 'climate';
-    const CLIMATE_ID = 190;
+    const CLIMATE_ID = 207;
     const WARMER = 'warmer';
-    const WARMER_ID = 193;
+    const WARMER_ID = 210;
     const POPULISM = 'populism';
-    const POPULISM_ID = 197;
+    const POPULISM_ID = 214;
     const HEALTH = 'health';
-    const HEALTH_ID = 213;
+    const HEALTH_ID = 230;
     const POVERTY = 'poverty';
-    const POVERTY_ID = 215;
+    const POVERTY_ID = 232;
     const EDUCATION = 'education';
-    const EDUCATION_ID = 217;
+    const EDUCATION_ID = 234;
     const HAPPY = 'happy';
-    const HAPPY_ID = 220;
+    const HAPPY_ID = 237;
     const POINTS = 'points';
-    const POINTS_ID = 222;
+    const POINTS_ID = 239;
     const HTP = 'htp';
-    const HTP_ID = 225;
+    const HTP_ID = 242;
     const TRILLION = 'trillion';
-    const TRILLION_ID = 226;
+    const TRILLION_ID = 243;
     const CHF = 'CHF';
-    const CHF_ID = 228;
+    const CHF_ID = 245;
     const USD = 'USD';
-    const USD_ID = 229;
+    const USD_ID = 246;
 
     // words from import file company.json used for the start page in order of appearance
     const SALES = 'sales';
-    const SALES_ID = 252;
+    const SALES_ID = 268;
     const CASH = 'cash';
-    const CASH_ID = 254;
+    const CASH_ID = 270;
     const STATEMENT = 'statement';
-    const STATEMENT_ID = 255;
+    const STATEMENT_ID = 271;
     const PARTS = 'parts';
-    const PARTS_ID = 257;
+    const PARTS_ID = 273;
     const TOTAL_PRE = 'total';
-    const TOTAL_ID = 258;
+    const TOTAL_ID = 274;
     const INCOME = 'income';
-    const INCOME_ID = 259;
+    const INCOME_ID = 275;
     const TAX = 'tax';
-    const TAX_ID = 260;
+    const TAX_ID = 276;
 
     // words from import file country.json used for the start page in order of appearance
     const COUNTRY = 'Country';
     const CH = 'Switzerland';
-    const CH_ID = 264;
+    const CH_ID = 280;
     const GERMANY = 'Germany';
     const CANTON = 'Canton';
-    const CANTON_ID = 265;
+    const CANTON_ID = 281;
     const CITY = 'City';
-    const CITY_ID = 266;
+    const CITY_ID = 282;
     const ZH = 'Zurich';
-    const ZH_ID = 267;
+    const ZH_ID = 283;
     const BE = 'Bern';
-    const BE_ID = 268;
+    const BE_ID = 284;
     const GE = 'Geneva';
-    const GE_ID = 269;
-    const INHABITANT_ID = 271;
+    const GE_ID = 285;
+    const INHABITANT_ID = 287;
     // TODO add test to search for words in all language forms e.g. plural
     const INHABITANTS = 'inhabitants';
-    const COMPANY = 'Company';
-    const COMPANY_ID = 272;
     const YEAR_2013 = '2013';
-    const YEAR_2013_ID = 273;
+    const YEAR_2013_ID = 288;
     const YEAR_2014 = '2014';
-    const YEAR_2014_ID = 274;
+    const YEAR_2014_ID = 289;
     const YEAR_2015 = '2015';
-    const YEAR_2015_ID = 275;
+    const YEAR_2015_ID = 290;
     const YEAR_2016 = '2016';
-    const YEAR_2016_ID = 276;
+    const YEAR_2016_ID = 291;
     const YEAR_2017 = '2017';
-    const YEAR_2017_ID = 277;
+    const YEAR_2017_ID = 292;
     const YEAR_2018 = '2018';
-    const YEAR_2018_ID = 278;
+    const YEAR_2018_ID = 293;
 
     // words from import test file companies.json used for the start page in order of appearance
+    const COMPANY = 'company';
+    const COMPANY_ID = 184;
     const ABB = 'ABB';
-    const ABB_ID = 1010;
+    const ABB_ID = 1023;
     const VESTAS = 'Vestas';
-    const VESTAS_ID = 1013;
+    const VESTAS_ID = 1026;
 
     // for the config.yaml
     const TEST = 'test';
@@ -399,6 +433,81 @@ class words
     const TEST_UPD_API_COM = 'System Test Word API Description Renamed';
     const TEST_ADD_VALUE = 'System Test Word for value curl testing';
 
+
+    // list of often used words used as a default selection e.g. for the phrase selection
+    // TODO Prio 2 to be filled up
+    const BASE_WORDS = [
+        [self::MATH, self::MATH_ID],
+        [self::ABB, self::ABB_ID],
+        [self::BE, self::BE_ID],
+        [self::BILLION, self::BILLION_ID],
+        [self::CANTON, self::CANTON_ID],
+        [self::CASH, self::CASH_ID],
+        [self::CH, self::CH_ID],
+        [self::CHF, self::CHF_ID],
+        [self::CIRCUMFERENCE, self::CIRCUMFERENCE_ID],
+        [self::CITY, self::CITY_ID],
+        [self::CLIMATE, self::CLIMATE_ID],
+        [self::COMPANY, self::COMPANY_ID],
+        [self::DAY, self::DAY_ID],
+        [self::DIAMETER, self::DIAMETER_ID],
+        [self::E, self::E_ID],
+        [self::E_SYMBOL, self::E_SYMBOL_ID],
+        [self::EDUCATION, self::EDUCATION_ID],
+        [self::FACT, self::FACT_ID],
+        [self::FLOW, self::FLOW_ID],
+        [self::GE, self::GE_ID],
+        [self::GLOBAL, self::GLOBAL_ID],
+        [self::GOVERNMENT, self::GOVERNMENT_ID],
+        [self::GROUP, self::GROUP_ID],
+        [self::HAND, self::HAND_ID],
+        [self::HAPPY, self::HAPPY_ID],
+        [self::HEALTH, self::HEALTH_ID],
+        [self::HTP, self::HTP_ID],
+        [self::INCOME, self::INCOME_ID],
+        [self::INHABITANTS, self::INHABITANT_ID],
+        [self::LIFE, self::LIFE_ID],
+        [self::MAN, self::MAN_ID],
+        [self::MINUTE, self::MINUTE_ID],
+        [self::MIO, self::MIO_ID],
+        [self::NUMBER, self::NUMBER_ID],
+        [self::ONE, self::ONE_ID],
+        [self::PART, self::PART_ID],
+        [self::PARTS, self::PARTS_ID],
+        [self::PCT, self::PCT_ID],
+        [self::PERSON, self::PERSON_ID],
+        [self::PI, self::PI_ID],
+        [self::PI_SYMBOL, self::PI_SYMBOL_ID],
+        [self::PLACE, self::PLACE_ID],
+        [self::POINTS, self::POINTS_ID],
+        [self::POPULISM, self::POPULISM_ID],
+        [self::POTENTIAL, self::POTENTIAL_ID],
+        [self::POVERTY, self::POVERTY_ID],
+        [self::PROBLEM, self::PROBLEM_ID],
+        [self::SALES, self::SALES_ID],
+        [self::SECOND, self::SECOND_ID],
+        [self::STATEMENT, self::STATEMENT_ID],
+        [self::TAX, self::TAX_ID],
+        [self::TOTAL_PRE, self::TOTAL_ID],
+        [self::TRILLION, self::TRILLION_ID],
+        [self::USD, self::USD_ID],
+        [self::VESTAS, self::VESTAS_ID],
+        [self::WARMER, self::WARMER_ID],
+        [self::WAY, self::WAY_ID],
+        [self::WEEK, self::WEEK_ID],
+        [self::WOMAN, self::WOMAN_ID],
+        [self::WORK, self::WORK_ID],
+        [self::WORLD, self::WORLD_ID],
+        [self::YEAR_2013, self::YEAR_2013_ID],
+        [self::YEAR_2014, self::YEAR_2014_ID],
+        [self::YEAR_2015, self::YEAR_2015_ID],
+        [self::YEAR_2016, self::YEAR_2016_ID],
+        [self::YEAR_2017, self::YEAR_2017_ID],
+        [self::YEAR_2018, self::YEAR_2018_ID],
+        [self::YEAR_2019, self::YEAR_2019_ID],
+        [self::YEAR_2020, self::YEAR_2020_ID],
+        [self::ZH, self::ZH_ID],
+    ];
 
     // list of predefined word names used for system testing that are expected to be never renamed
     const RESERVED_NAMES = array(

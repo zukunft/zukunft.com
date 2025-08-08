@@ -63,6 +63,7 @@ use cfg\verb\verb_list;
 use cfg\view\view_link_type_list;
 use cfg\view\view_sys_list;
 use cfg\view\view_type_list;
+use html\frontend;
 use html\types\formula_type_list as formula_type_list_web;
 use html\types\type_lists as type_list_dsp;
 use shared\const\users;
@@ -71,6 +72,8 @@ use test\all_tests;
 use test\test_cleanup;
 use unit\import_tests as import_tests;
 use unit_read\api_tests;
+use unit_read\triple_list_read_tests;
+use unit_read\word_list_read_tests;
 use unit_ui\all_ui_tests;
 use unit_ui\base_ui_tests;
 use unit_ui\horizontal_ui_tests;
@@ -185,6 +188,14 @@ class all_unit_tests extends test_cleanup
         if ($usr->id() > 0) {
 
             /*
+             * db read
+             */
+
+            // preferred tests to check upfront the words::*_ID and triples::*_ID
+            (new word_list_read_tests())->run($this);
+            (new triple_list_read_tests())->run($this);
+
+            /*
              * part of system setup testing
              */
 
@@ -238,12 +249,13 @@ class all_unit_tests extends test_cleanup
              * db read
              */
 
+            // preferred tests to check upfront the words::*_ID and triples::*_ID
+            (new word_list_read_tests())->run($this);
+            (new triple_list_read_tests())->run($this);
             // run the selected db read tests
             //(new api_tests())->run($this);
             //(new word_read_tests())->run($this);
-            //(new word_list_read_tests())->run($this);
             //(new triple_read_tests())->run($this);
-            //(new triple_list_read_tests())->run($this);
             //(new source_read_tests())->run($this);
             //(new formula_read_tests())->run($this);
             //(new view_read_tests())->run($this);
@@ -398,7 +410,9 @@ class all_unit_tests extends test_cleanup
         new type_list_dsp($api_msg);
 
         // test the html ui on localhost without api
-        (new all_ui_tests())->run($this);
+        $ui = new frontend('unit ui tests');
+        $ui->load_dummy_cache_from_test_resources();
+        (new all_ui_tests())->run($this, $ui);
 
         // test the html ui on localhost with api
         // (new all_ui_api_tests())->run($this);

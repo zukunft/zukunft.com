@@ -749,9 +749,9 @@ class type_list
     /**
      * pick a type from the preloaded object list
      * @param int $id the database id of the expected type
-     * @return type_object|null the type object
+     * @return type_object|view|null the type object or the system view
      */
-    function get(int $id): ?type_object
+    function get(int $id): type_object|view|null
     {
         $result = null;
         if ($id > 0) {

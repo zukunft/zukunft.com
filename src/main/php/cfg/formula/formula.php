@@ -1056,7 +1056,7 @@ class formula extends sandbox_code_id
 
     /**
      * returns a list of all words that the formula is assigned to
-     * e.g. if the formula is assigned to "Company" and "ABB is a Company" include ABB in the word list
+     * e.g. if the formula is assigned to "company" and "ABB is a company" include ABB in the word list
      */
     function assign_phr_glst($sbx): phrase_list
     {

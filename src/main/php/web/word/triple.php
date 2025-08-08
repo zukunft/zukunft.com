@@ -46,11 +46,11 @@ use cfg\const\paths;
 use html\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_selector.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
@@ -58,6 +58,7 @@ include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
@@ -71,6 +72,7 @@ use html\html_base;
 use html\html_selector;
 use html\phrase\phrase_list as phrase_list_dsp;
 use html\sandbox\sandbox_code_id;
+use html\types\type_lists;
 use html\user\user_message;
 use html\word\word as word_dsp;
 use html\word\triple as triple_dsp;
@@ -293,7 +295,7 @@ class triple extends sandbox_code_id
         return $phr;
     }
 
-    function from(): phrase_dsp
+    function from(): ?phrase_dsp
     {
         return $this->from;
     }
@@ -303,7 +305,7 @@ class triple extends sandbox_code_id
         return $this->verb;
     }
 
-    function to(): phrase_dsp
+    function to(): ?phrase_dsp
     {
         return $this->to;
     }
@@ -432,63 +434,33 @@ class triple extends sandbox_code_id
      * create the HTML code to select a phrase type
      * and select the phrase type of this word
      * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    public function phrase_type_selector(string $form): string
+    public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $html_phrase_types;
         $used_phrase_id = $this->type_id();
         if ($used_phrase_id == null) {
-            $used_phrase_id = $html_phrase_types->default_id();
+            $used_phrase_id = $typ_lst->html_phrase_types->default_id();
         }
-        return $html_phrase_types->selector($form, $used_phrase_id);
+        return $typ_lst->html_phrase_types->selector($form, $used_phrase_id);
     }
 
     /**
      * to select the from phrase
      * @param string $form the name of the html form
-     * @param phrase_list_dsp|null $phr_lst a preloaded phrase list for the selection
-     * @return string the html code to select the phrase
-     */
-    function phrase_selector_from(
-        string $form,
-        ?phrase_list $phr_lst = null,
-        string $name = ''
-    ): string
-    {
-        $name = html_names::PHRASE . html_names::SEP . html_names::FROM;
-        return $this->phrase_selector(
-            $form, $this->from()->id(), $phr_lst, $name);
-    }
-
-    /**
-     * to select the to phrase
-     * @param string $form the name of the html form
-     * @param phrase_list_dsp|null $phr_lst a preloaded phrase list for the selection
-     * @return string the html code to select the phrase
-     */
-    function phrase_selector_to(
-        string $form,
-        ?phrase_list $phr_lst = null
-    ): string
-    {
-        $name = html_names::PHRASE . html_names::SEP . html_names::TO;
-        return $this->phrase_selector(
-            $form, $this->to()->id(), $phr_lst, $name);
-    }
-
-    /**
-     * to select the from phrase
-     * @param string $form the name of the html form
-     * @param phrase_list_dsp|null $phr_lst a preloaded phrase list for the selection
+     * @param int $id the row id of the suggested phrase or the already selected phrase
+     * @param phrase_list_dsp|null $phr_lst a preloaded list of suggested phrases for the selection if no additional input is given from the user
      * @param string $name the unique name within the html form for this selector
      * @return string the html code to select the phrase
      */
-    private function phrase_selector(
+    function phrase_selector(
         string $form,
         int $id,
         ?phrase_list $phr_lst = null,
-        string $name = ''
+        string $name = '',
+        string $label = '',
+        string $style = view_styles::COL_SM_4
     ): string
     {
         if ($phr_lst == null) {
@@ -496,7 +468,7 @@ class triple extends sandbox_code_id
         }
         return $phr_lst->selector(
             $form, $id, $name,
-            '', view_styles::COL_SM_4,
+            $label, $style,
             html_selector::TYPE_DATALIST);
     }
 
@@ -531,17 +503,17 @@ class triple extends sandbox_code_id
 
     /**
      * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select a phrase
      */
-    public function verb_selector(string $form): string
+    public function verb_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $html_verbs;
         if ($this->verb != null) {
             $id = $this->verb()->id();
         } else {
             $id = 0;
         }
-        return $html_verbs->selector($form, $id, 'verb', view_styles::COL_SM_4, 'verb:');
+        return $typ_lst->html_verbs->selector($form, $id, 'verb', view_styles::COL_SM_4, 'verb:');
     }
 
 

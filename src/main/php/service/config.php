@@ -50,7 +50,7 @@ include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql.php';
-include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user.php';
 
 use cfg\db\sql;
 use cfg\db\sql_creator;

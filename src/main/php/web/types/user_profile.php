@@ -42,8 +42,7 @@ class user_profile extends type_list
      */
     function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
     {
-        global $html_user_profiles;
-        return parent::type_selector($html_user_profiles->lst_key(), $name, $form, $selected);
+        return parent::type_selector($this->lst_key(), $name, $form, $selected);
     }
 
 }

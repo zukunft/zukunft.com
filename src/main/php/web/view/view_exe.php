@@ -39,20 +39,22 @@ namespace html\view;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
-include_once html_paths::VIEW . 'view_base.php';
+
+include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'display_list.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once html_paths::COMPONENT . 'component.php';
-include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::VIEW . 'view_base.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
@@ -69,6 +71,7 @@ use html\html_base;
 use html\log\user_log_display;
 use html\sandbox\db_object;
 use html\system\back_trace;
+use html\types\type_lists;
 use html\word\word;
 use shared\api;
 use shared\const\triples;
@@ -156,7 +159,7 @@ class view_exe extends view_base
             foreach ($this->cmp_lst->lst() as $cmp) {
                 // add previous collected components to the final result
                 if ($row != '') {
-                    if ($cmp->pos_type_code_id() == position_types::BELOW) {
+                    if ($cmp->pos_type_code_id($cfg->typ_lst_cache) == position_types::BELOW) {
                         if ($button_only) {
                             $result .= $row;
                         } else {
@@ -169,7 +172,10 @@ class view_exe extends view_base
                         $button_only = true;
                     }
                 }
-                if (!$cmp->is_button_or_hidden()) {
+                if ($cfg == null) {
+                    $this->log_err('frontend data object is missing');
+                }
+                if (!$cmp->is_button_or_hidden($cfg->typ_lst_cache)) {
                     $button_only = false;
                 }
                 $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $back, $test_mode);
@@ -335,14 +341,14 @@ class view_exe extends view_base
 
     /**
      * @param string $script the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code for the view type selector
      */
-    private function dsp_type_selector(string $script, string $class, string $attribute): string
+    private function dsp_type_selector(string $script, string $class, string $attribute, ?type_lists $typ_lst): string
     {
-        global $html_view_types;
         //$sel->bs_class = $class;
         //$sel->attribute = $attribute;
-        return $html_view_types->selector($script);
+        return $typ_lst->html_view_types->selector($script);
     }
 
     /**

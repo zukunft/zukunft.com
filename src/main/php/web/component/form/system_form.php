@@ -39,11 +39,17 @@ namespace html\component\form;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
-include_once html_paths::COMPONENT . 'component.php';
+
 include_once paths::DB . 'sql_db.php';
+include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'view_style_list.php';
+include_once html_paths::WORD . 'triple.php';
+include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -52,9 +58,14 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'library.php';
 
 use html\component\component;
+use html\html_names;
+use html\phrase\phrase_list;
+use html\types\type_lists;
 use html\html_base;
 use html\sandbox\db_object as db_object_dsp;
+use html\word\triple;
 use shared\api;
+use shared\const\components;
 use shared\library;
 use shared\const\views;
 use shared\const\words;
@@ -169,71 +180,95 @@ class system_form extends component
     }
 
     /**
-     * TODO replace _add with a parameter value
      * TODO move form_field_triple_phrase_to to a const
      * TODO remove fixed pattern
+     * @param db_object_dsp|triple $dbo the frontend phrase object with the id used until now
+     * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to request the description from the user
      */
-    function form_phrase(db_object_dsp $dbo, bool $test_mode = false, string $name = ''): string
+    function form_phrase(
+        db_object_dsp|triple $dbo,
+        string $form_name,
+        string $code_id = '',
+        phrase_list $phr_lst = null,
+        bool $test_mode = false
+    ): string
     {
         $lib = new library();
-        $form_name = $lib->class_to_name($dbo::class) . '_add';
         // TODO use a pattern base on user entry
         $pattern = '';
         if ($test_mode) {
             $pattern = words::MATH;
         }
-        // TODO activate Prio 3
-        //if ($this->code_id == 'form_field_triple_phrase_from') {
-        if ($name == 'system form triple phrase from') {
-            return $dbo->phrase_selector_old('from', $form_name, 'from:', '', $dbo->id(), $pattern);
-        } else {
-            return $dbo->phrase_selector_old('to', $form_name, 'to:', '', $dbo->id(), $pattern);
+
+        // get the selected phrase id
+        $id = $dbo->id();
+        $name = html_names::PHRASE;
+        // TODO Prio 2 use a frontend language specific const for the label
+        $label = 'word / triple';
+        if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
+            $id = $dbo->from()?->id();
+            $name .= html_names::SEP . html_names::FROM;
+            $label = 'from word / triple';
+        } elseif ($code_id == components::FORM_PHRASE_TO_CODE_ID) {
+            $id = $dbo->to()?->id();
+            $name .= html_names::SEP . html_names::TO;
+            $label = 'to word / triple';
         }
+        if ($id == null) {
+            $id = 0;
+            log_warning('id missing in ' . $dbo->dsp_id());
+        }
+
+        return $dbo->phrase_selector($form_name, $id, $phr_lst, $name, $label);
     }
 
     /**
      * create the html code for the form element to select the phrase type
      * @param db_object_dsp $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the verb
      */
-    function form_verb(db_object_dsp $dbo, string $form_name): string
+    function form_verb(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
-        return $dbo->verb_selector($form_name);
+        return $dbo->verb_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the phrase type
      * @param db_object_dsp $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    function form_phrase_type(db_object_dsp $dbo, string $form_name): string
+    function form_phrase_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
-        return $dbo->phrase_type_selector($form_name);
+        return $dbo->phrase_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the source type
      * @param db_object_dsp $dbo the frontend source object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the source type
      */
-    function form_source_type(db_object_dsp $dbo, string $form_name): string
+    function form_source_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
-        return $dbo->source_type_selector($form_name);
+        return $dbo->source_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the reference type
      * @param db_object_dsp $dbo the frontend reference object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the reference type
      */
-    function form_ref_type(db_object_dsp $dbo, string $form_name): string
+    function form_ref_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
-        return $dbo->ref_type_selector($form_name);
+        return $dbo->ref_type_selector($form_name, $typ_lst);
     }
 
     /**
@@ -242,53 +277,57 @@ class system_form extends component
      * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to select the formula type
      */
-    function form_formula_type(db_object_dsp $dbo, string $form_name): string
+    function form_formula_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
-        return $dbo->formula_type_selector($form_name);
+        return $dbo->formula_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the view type
      * @param db_object_dsp $dbo the frontend view object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    function form_view_type(db_object_dsp $dbo, string $form_name): string
+    function form_view_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
-        return $dbo->view_type_selector($form_name);
+        return $dbo->view_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the component type
      * @param db_object_dsp $dbo the frontend component object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component type
      */
-    function form_component_type(db_object_dsp $dbo, string $form_name): string
+    function form_component_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
-        return $dbo->component_type_selector($form_name);
+        return $dbo->component_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the share type
      * @param db_object_dsp $dbo the frontend object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the share type
      */
-    function form_share_type(db_object_dsp $dbo, string $form_name): string
+    function form_share_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
-        return $dbo->share_type_selector($form_name);
+        return $dbo->share_type_selector($form_name, $typ_lst);
     }
 
     /**
      * create the html code for the form element to select the protection type
      * @param db_object_dsp $dbo the frontend object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the protection type
      */
-    function form_protection_type(db_object_dsp $dbo, string $form_name): string
+    function form_protection_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
-        return $dbo->protection_type_selector($form_name);
+        return $dbo->protection_type_selector($form_name, $typ_lst);
     }
 
     /**

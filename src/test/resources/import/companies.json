@@ -4,12 +4,12 @@
   "time": "2020-03-08 19:05:57",
   "user": "timon",
   "selection": [
-    "Company"
+    "company"
   ],
   "words": [
     {
-      "name": "Company",
-      "view": "Company list with main ratios",
+      "name": "company",
+      "view": "company list with main ratios",
       "protection": "admin_protection"
     },
     {
@@ -269,44 +269,44 @@
   ],
   "triples": [
     {
-      "from": "Company",
+      "from": "company",
       "verb": "has a",
       "to": "balance sheet"
     },
     {
-      "from": "Company",
+      "from": "company",
       "verb": "has a",
       "to": "forecast"
     },
     {
-      "name": "ABB (Company)",
+      "name": "ABB (company)",
       "from": "ABB",
       "verb": "is a",
-      "to": "Company"
+      "to": "company"
     },
     {
-      "name": "Danone (Company)",
+      "name": "Danone (company)",
       "from": "Danone",
       "verb": "is a",
-      "to": "Company"
+      "to": "company"
     },
     {
-      "name": "Nestlé (Company)",
+      "name": "Nestlé (company)",
       "from": "Nestlé",
       "verb": "is a",
-      "to": "Company"
+      "to": "company"
     },
     {
       "name": "Vestas SA",
       "from": "Vestas",
       "verb": "is a",
-      "to": "Company"
+      "to": "company"
     },
     {
       "name": "Zurich Insurance",
       "from": "Zurich",
       "verb": "is a",
-      "to": "Company"
+      "to": "company"
     },
     {
       "name": "Zurich (City)",
@@ -513,14 +513,14 @@
       "to": "sector"
     },
     {
-      "name": "Company uses employee",
-      "from": "Company",
+      "name": "company uses employee",
+      "from": "company",
       "verb": "uses",
       "to": "employee"
     },
     {
-      "name": "Company uses Energy",
-      "from": "Company",
+      "name": "company uses Energy",
+      "from": "company",
       "verb": "uses",
       "to": "Energy"
     },
@@ -546,67 +546,67 @@
     {
       "name": "Operating income",
       "expression": "=\"Revenues\"",
-      "assigned_word": "\"Company\""
+      "assigned_word": "\"company\""
     },
     {
       "name": "Operating expenses",
       "expression": "=\"Selling expenses\" + \"General administrative expenses\" + \"Other operating expense\"",
-      "assigned_word": "\"Company\""
+      "assigned_word": "\"company\""
     },
     {
       "name": "Other trading net",
       "expression": "= \"Other trading income\" + \"Other trading expenses\" + \"Other revenues\"",
-      "assigned_word": "\"Company\""
+      "assigned_word": "\"company\""
     },
     {
       "name": "Cost of sales",
       "expression": "= \"Cost of sales (reported)\" + \"Cost of goods sold\"",
-      "assigned_word": "\"Company\""
+      "assigned_word": "\"company\""
     },
     {
       "name": "Operating Profit",
       "expression": "= \"sales\" + \"Other trading net\" + \"Other operating net\" + \"Cost of sales\" + \"Distribution costs\" + \"Research costs\"",
-      "assigned_word": "\"Company\""
+      "assigned_word": "\"company\""
     },
     {
       "name": "Financial income/expense, net",
       "expression": "\"Profit/loss on equity method investments, net\" + \"Other financial income/expense, net\" + \"Financial income\" + \"Financial expense\"",
-      "assigned_word": "\"Company\""
+      "assigned_word": "\"company\""
     },
     {
       "name": "Interest income/expense, net",
       "expression": "\"Interest income\" + \"Interest expense\"",
-      "assigned_word": "\"Company\""
+      "assigned_word": "\"company\""
     },
     {
       "name": "Profit before income taxes",
       "expression": "=\"Operating Profit\" + \"Operating expenses\"  + \"Operating income\" + \"Financial income/expense, net\" + \"Interest income/expense, net\"",
-      "assigned_word": "\"Company\""
+      "assigned_word": "\"company\""
     },
     {
       "name": "Net profit",
       "expression": "=\"Profit before income taxes\" + \"income taxes\" + \"Income from associates and joint ventures\"",
-      "assigned_word": "\"Company\""
+      "assigned_word": "\"company\""
     },
     {
       "name": "Profit attributable to shareholders",
       "expression": "=\"Net profit\" - \"Profit attributable to non-controlling interests\"",
-      "assigned_word": "\"Company\""
+      "assigned_word": "\"company\""
     },
     {
       "name": "Earnings per share",
       "expression": "= \"Profit attributable to shareholders\" / \"Number of shares\"",
-      "assigned_word": "\"Company\""
+      "assigned_word": "\"company\""
     },
     {
       "name": "Price Earning ratio",
       "expression": "= \"Share price\" / \"Earnings per share\"",
-      "assigned_word": "\"Company\""
+      "assigned_word": "\"company\""
     },
     {
       "name": "Target Price",
       "expression": "= \"Earnings per share\" * \"Target Price Earning Ratio\"",
-      "assigned_word": "\"Company\""
+      "assigned_word": "\"company\""
     },
     {
       "name": "increase",
@@ -657,7 +657,7 @@
   ],
   "views": [
     {
-      "name": "Company sheet",
+      "name": "company sheet",
       "comment": "The income statement, balance sheet or cash flow sheet of a big company",
       "type": "detail_view",
       "components": [
@@ -705,16 +705,16 @@
       ]
     },
     {
-      "name": "Company list with main ratios",
+      "name": "company list with main ratios",
       "comment": "List the most interesting companies with the main ratios",
       "type": "detail_view",
       "components": [
         {
           "position": "1",
-          "name": "Company with ratios",
+          "name": "company with ratios",
           "type": "word_value_list",
-          "row": "Company",
-          "column": "Company main ratio"
+          "row": "company",
+          "column": "company main ratio"
         }
       ]
     }

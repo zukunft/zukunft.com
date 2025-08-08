@@ -34,7 +34,9 @@ namespace html\phrase;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'combine_named.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -50,6 +52,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use html\types\type_lists;
 use html\sandbox\combine_named;
 use html\user\user_message;
 use html\verb\verb;
@@ -290,15 +293,15 @@ class phrase extends combine_named
      * get the phrases that are related to this phrase be the verbs "is" of "can be"
      * if a phrase list id given only this cache is used for the selection
      * @param phrase_list|null $phr_lst_cac
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return phrase_list
      */
-    function is_or_can_be(phrase_list $phr_lst_cac = null): phrase_list
+    function is_or_can_be(phrase_list $phr_lst_cac = null, ?type_lists $typ_lst = null): phrase_list
     {
-        global $html_verbs;
         $result = new phrase_list();
         if ($phr_lst_cac != null) {
-            $result->merge($phr_lst_cac->parents($this, $html_verbs->get_by_code_id(verbs::IS)));
-            $result->merge($phr_lst_cac->parents($this, $html_verbs->get_by_code_id(verbs::CAN_BE)));
+            $result->merge($phr_lst_cac->parents($this, $typ_lst->html_verbs->get_by_code_id(verbs::IS)));
+            $result->merge($phr_lst_cac->parents($this, $typ_lst->html_verbs->get_by_code_id(verbs::CAN_BE)));
         }
         return $result;
     }

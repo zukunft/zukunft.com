@@ -47,9 +47,10 @@ namespace html\view;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'display_list.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
@@ -59,6 +60,7 @@ include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'triple.php';
 include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
@@ -66,6 +68,7 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use html\component\component_list;
+use html\types\type_lists;
 use html\sandbox\db_object;
 use html\sandbox\sandbox_code_id;
 use html\user\user_message;
@@ -233,21 +236,21 @@ class view_base extends sandbox_code_id
     /**
      * create the HTML code to select a view type
      * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    function type_selector(string $form): string
+    function type_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $html_view_types;
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
-            $used_type_id = $html_view_types->default_id();
+            $used_type_id = $typ_lst->html_view_types->default_id();
         }
-        return $html_view_types->selector($form, $used_type_id);
+        return $typ_lst->html_view_types->selector($form, $used_type_id);
     }
 
-    public function view_type_selector(string $form_name): string
+    public function view_type_selector(string $form_name, ?type_lists $typ_lst): string
     {
-        return $this->type_selector($form_name);
+        return $this->type_selector($form_name, $typ_lst);
     }
 
     /**

@@ -35,6 +35,7 @@
 namespace unit_read;
 
 use cfg\const\paths;
+use html\frontend;
 use html\types\type_lists as type_list_dsp;
 use shared\const\groups;
 use shared\const\triples;
@@ -125,9 +126,11 @@ class all_unit_read_tests extends all_unit_tests
         $api_test->run($this);
 
         $t->subheader($ts . 'api based ui tests');
-        (new type_lists_ui_tests)->run($t);
-        (new word_ui_read_tests)->run($this);
-        (new start_ui_read_tests)->run($t);
+        $ui = new frontend('api based ui tests');
+        $ui->load_cache();
+        (new type_lists_ui_tests)->run($t, $ui);
+        (new word_ui_read_tests)->run($this, $ui);
+        (new start_ui_read_tests)->run($t, $ui);
 
         $t->subheader($ts . 'export');
         (new export_read_tests())->run($this);

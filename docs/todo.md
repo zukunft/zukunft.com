@@ -584,7 +584,7 @@ features
 Bugs
 - solve the view sorting issue by combining the user settings for view, link and components
   e.g. if a user changes the mask, he probably wants that the complete mask is unchanged
-- bug: display linked words does not display the downward words e.g. "Company main ratio" does not show "Target Price"
+- bug: display linked words does not display the downward words e.g. "company main ratio" does not show "Target Price"
 - don't write the same log message several times during the same call
 - don't write too many log message in on php script call
 - fix error when linking an existing formula to a phase

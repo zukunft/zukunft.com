@@ -39,23 +39,25 @@ namespace html\view;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::VIEW . 'view_exe.php';
+include_once html_paths::HELPER . 'config.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'display_list.php';
-include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::LOG . 'user_log_display.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::WORD . 'word.php';
-include_once paths::SHARED_HELPER . 'Config.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'library.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_TYPES . 'view_type.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'library.php';
 
 use html\button;
 use html\display_list;
@@ -63,6 +65,7 @@ use html\html_base;
 use html\log\user_log_display;
 use html\styles;
 use html\system\back_trace;
+use html\types\type_lists;
 use html\word\word;
 use shared\api;
 use shared\const\rest_ctrl;
@@ -447,14 +450,14 @@ class view extends view_exe
 
     /**
      * @param string $script the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code for the view type selector
      */
-    private function dsp_type_selector(string $script, string $class, string $attribute): string
+    private function dsp_type_selector(string $script, string $class, string $attribute, ?type_lists $typ_lst = null): string
     {
-        global $html_view_types;
         //$sel->bs_class = $class;
         //$sel->attribute = $attribute;
-        return $html_view_types->selector($script);
+        return $typ_lst->html_view_types->selector($script);
     }
 
     /**

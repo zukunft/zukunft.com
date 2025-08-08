@@ -34,11 +34,11 @@ namespace shared;
 
 use cfg\const\paths;
 
-include_once paths::SERVICE . 'config.php';
-include_once paths::MODEL_CONST . 'def.php';
-include_once paths::MODEL_REF . 'source_db.php';
-include_once paths::MODEL_USER . 'user_db.php';
-include_once paths::MODEL_VALUE . 'value_db.php';
+//include_once paths::SERVICE . 'config.php';
+//include_once paths::MODEL_CONST . 'def.php';
+//include_once paths::MODEL_REF . 'source_db.php';
+//include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_VALUE . 'value_db.php';
 
 use cfg\component\view_style;
 use cfg\const\def;
@@ -319,6 +319,9 @@ class library
     function trim_html(string $html_string): string
     {
         $result = $this->trim_lines($html_string);
+        // to keep spaces before links
+        $result = preg_replace('/ <a /', '<as ', $result);
+
         // special case: replace system test winter time with daylight saving time
         $result = str_replace('2023-01-03T20:59:59+00:00', '2023-01-03T20:59:59+01:00', $result);
         $result = preg_replace('/ <td>/', '<td>', $result);
@@ -337,7 +340,12 @@ class library
         $result = preg_replace('/" </', '"<', $result);
         $result = preg_replace('/ >/', '>', $result);
         $result = preg_replace('/ </', '<', $result);
-        return preg_replace('/> </', '><', $result);
+
+        // remove spaces not needed
+        $result = preg_replace('/> </', '><', $result);
+
+        // restore the spaces that are needed
+        return preg_replace('/<as /', ' <a ', $result);
     }
 
     function escape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
@@ -494,6 +502,17 @@ class library
     function camelize_ex_1(string $input, string $separator = '_'): string
     {
         return str_replace($separator, '', lcfirst(ucwords($input, $separator)));
+    }
+
+    /**
+     * @param string $text
+     * @return string
+     */
+    function str_to_file(string $text): string
+    {
+        $text = str_replace('.', '', $text);
+        $text = str_replace('/', '', $text);
+        return substr($text, 0, 32);
     }
 
 

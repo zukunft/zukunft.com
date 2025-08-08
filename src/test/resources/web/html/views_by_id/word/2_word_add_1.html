@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>Add new word (zukunft.com)</title>
+<head><title>Add new word mathematics (zukunft.com)</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
     <script src="/external_lib/bootstrap/js/bootstrap.js"></script>
@@ -13,8 +13,7 @@
     <nav class="navbar bg-light fixed-top"><a class="navbar-brand" href="/http/view.php" title="zukunft.com"><img
             src="/src/main/resources/images/ZUKUNFT_logo.svg" alt="zukunft.com" style="height: 4em;"></a>
         <form action="/http/find.php" class="form-inline my-2 my-lg-0"><label for="pattern"></label><input
-                class="form-control mr-sm-2" type="search" name="pattern" id="pattern"
-                placeholder="word or formula">
+                class="form-control mr-sm-2" type="search" name="pattern" id="pattern" placeholder="word or formula">
             <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Get numbers</button>
         </form>
         <div class="col-md-2">
@@ -30,25 +29,27 @@
     </nav>
     <br><br><br><br><br><h4>Add word</h4>
     <form action="/http/view.php" id="word_add"><input class="form-control" type="hidden" name="m" id="m"
-                                                       value="2"><input
-            class="form-control" type="hidden" name="id" id="id" value="0"><input class="form-control" type="hidden"
-                                                                                  name="back" id="back"
-                                                                                  value="0"><input
+                                                       value="2"><input class="form-control" type="hidden" name="id"
+                                                                        id="id" value="0"><input class="form-control"
+                                                                                                 type="hidden"
+                                                                                                 name="back" id="back"
+                                                                                                 value="0"><input
             class="form-control" type="hidden" name="confirm" id="confirm" value="1">
         <div class="row col-md-12">
             <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
-                                                                                  name="name" id="name"></div>
+                                                                                  name="name" id="name"
+                                                                                  value="mathematics"></div>
             <div class="form-group col-md-4"><label for="phrase_type">type:</label><select class="form-control"
                                                                                            name="phrase_type"
                                                                                            form="word_add"
                                                                                            id="phrase_type">
-                <option value="1" selected>standard</option>
+                <option value="1">standard</option>
                 <option value="2">time</option>
                 <option value="3">measure type</option>
                 <option value="4">time jump</option>
                 <option value="5">calc</option>
                 <option value="6">format percent</option>
-                <option value="7">scaling</option>
+                <option value="7" selected>scaling</option>
                 <option value="8">hidden scaling</option>
                 <option value="9">view / layer</option>
                 <option value="10">formula link</option>
@@ -72,27 +73,30 @@
             </select></div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-12"><label for="description">description</label><input
-                    class="form-control" type="text" name="description" id="description"></div>
+            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
+                                                                                                 type="text"
+                                                                                                 name="description"
+                                                                                                 id="description"
+                                                                                                 value="Mathematics is an area of knowledge that includes the topics of numbers and formulas">
+            </div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="plural">plural</label><input class="form-control"
-                                                                                      type="text" name="plural"
-                                                                                      id="plural"></div>
-            <div class="form-group col-md-4"><label for="share">share:</label><select class="form-control"
-                                                                                      name="share" form="word_add"
-                                                                                      id="share">
-                <option value="1" selected>public</option>
+            <div class="form-group col-md-4"><label for="plural">plural</label><input class="form-control" type="text"
+                                                                                      name="plural" id="plural"
+                                                                                      value="mathematics"></div>
+            <div class="form-group col-md-4"><label for="share">share:</label><select class="form-control" name="share"
+                                                                                      form="word_add" id="share">
+                <option value="1">public</option>
                 <option value="2">personal</option>
-                <option value="3">group</option>
+                <option value="3" selected>group</option>
                 <option value="4">private</option>
             </select></div>
             <div class="form-group col-md-4"><label for="protection">protection:</label><select class="form-control"
                                                                                                 name="protection"
                                                                                                 form="word_add"
                                                                                                 id="protection">
-                <option value="1" selected>no protection</option>
-                <option value="2">user</option>
+                <option value="1">no protection</option>
+                <option value="2" selected>user</option>
                 <option value="3">admin</option>
                 <option value="4">no change</option>
             </select></div>
@@ -104,12 +108,12 @@
     </form>
 </div>
 <footer>
-    <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot; <a
-            href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data
-        is available under the <a href="//creativecommons.org/publicdomain/zero/1.0/"
-                                  title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a>
-        License and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under
-        the <a href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License</small></div>
+    <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot;<a
+            href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data is
+        available under the <a href="//creativecommons.org/publicdomain/zero/1.0/"
+                              title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License
+        and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the <a
+                href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License</small></div>
 </footer>
 </body>
 </html>

@@ -389,7 +389,7 @@ class group_list extends sandbox_list
     including the user specific exceptions based on the formula expression
 
     used to request an update for a formula result for each phrase group
-    e.g. the formula is assigned to "Company" ($frm_linked) and the "operating income" formula result should be calculated
+    e.g. the formula is assigned to "company" ($frm_linked) and the "operating income" formula result should be calculated
          so "sales" and "Cost" are words of the formula
          if "sales" and "Cost" for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. "ABB")
          the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"

@@ -62,8 +62,7 @@ class verbs extends type_list
         string $name = self::NAME
     ): string
     {
-        global $html_verbs;
-        return parent::type_selector($html_verbs->lst_key(), $name, $form, $selected, $bs_class, $label);
+        return parent::type_selector($this->lst_key(), $name, $form, $selected, $bs_class, $label);
     }
 
 

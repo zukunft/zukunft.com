@@ -144,6 +144,7 @@ class type_lists
 
     function load(sql_db $db_con, ?user $usr): bool
     {
+        // TODO Prio 1 use one type_list object instead
         global $sys_log_sta_cac;
         global $system_users;
         global $usr_pro_cac;

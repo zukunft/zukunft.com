@@ -42,18 +42,19 @@ use html\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_typed.php';
 include_once paths::DB . 'sql_db.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
-include_once html_paths::USER . 'user_message.php';
-include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::TYPES . 'view_style_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::VIEW . 'view_list.php';
-include_once html_paths::TYPES . 'view_style_list.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -62,6 +63,7 @@ include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use html\helper\data_object;
 use html\helper\data_object as data_object_dsp;
 use html\html_base;
 use html\html_selector;
@@ -71,6 +73,7 @@ use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
 use html\sandbox\sandbox_code_id;
 use html\system\back_trace;
+use html\types\type_lists;
 use html\user\user_message;
 use html\view\view_list;
 use html\word\word;
@@ -214,16 +217,16 @@ class component extends sandbox_code_id
     /**
      * create the HTML code to select a component type
      * @param string $form_name the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    function component_type_selector(string $form_name): string
+    function component_type_selector(string $form_name, ?type_lists $typ_lst): string
     {
-        global $html_component_types;
         $used_type_id = $this->type_id();
         if ($used_type_id == null) {
-            $used_type_id = $html_component_types->default_id();
+            $used_type_id = $typ_lst->html_component_types->default_id();
         }
-        return $html_component_types->selector($form_name, $used_type_id);
+        return $typ_lst->html_component_types->selector($form_name, $used_type_id);
     }
 
 
@@ -231,47 +234,59 @@ class component extends sandbox_code_id
      * info
      */
 
-    protected function type_code_id(): string
+    protected function type_code_id(?type_lists $typ_lst): string
     {
-        global $html_component_types;
+
         $type_code_id = '';
-        $err_msg = 'Component type code id for ' . $this->dsp_id()
-            . ' and type id ' . $this->type_id() . ' missing';
-        if ($this->type_id() == null) {
-            $this->log_err($err_msg);
+        if ($typ_lst->html_component_types == null) {
+            $this->log_err('html_component_types are empty');
         } else {
-            $type_code_id = $html_component_types->code_id($this->type_id());
-            if ($type_code_id == '') {
+            $err_msg = 'Component type code id for ' . $this->dsp_id()
+                . ' and type id ' . $this->type_id() . ' missing';
+            if ($this->type_id() == null) {
                 $this->log_err($err_msg);
+            } else {
+                $type_code_id = $typ_lst->html_component_types->code_id($this->type_id());
+                if ($type_code_id == '') {
+                    $this->log_err($err_msg);
+                }
             }
         }
+
         return $type_code_id;
     }
 
-    function pos_type_code_id(): string
+    function pos_type_code_id(?type_lists $typ_lst): string
     {
-        global $html_position_types;
         $pos_type_code_id = '';
-        $err_msg = 'Position type code id for ' . $this->dsp_id() . ' missing';
-        if ($this->pos_type_id == null) {
-            $this->log_err($err_msg);
+        if ($typ_lst->html_position_types == null) {
+            $this->log_err('html_position_types are empty');
         } else {
-            $pos_type_code_id = $html_position_types->code_id($this->pos_type_id);
-            if ($pos_type_code_id == '') {
+            $err_msg = 'Position type code id for ' . $this->dsp_id() . ' missing';
+            if ($this->pos_type_id == null) {
                 $this->log_err($err_msg);
+            } else {
+                $pos_type_code_id = $typ_lst->html_position_types->code_id($this->pos_type_id);
+                if ($pos_type_code_id == '') {
+                    $this->log_err($err_msg);
+                }
             }
         }
+
         return $pos_type_code_id;
     }
 
-    function style_text(): string
+    function style_text(?type_lists $typ_lst): string
     {
-        global $html_view_styles;
-        if ($this->style_id != null) {
-            return $html_view_styles->name($this->style_id);
+        $style_name = '';
+        if ($typ_lst->html_view_styles == null) {
+            $this->log_err('html_view_styles are empty');
         } else {
-            return '';
+            if ($this->style_id != null) {
+                $style_name = $typ_lst->html_view_styles->name($this->style_id);
+            }
         }
+        return $style_name;
     }
 
 
@@ -282,9 +297,9 @@ class component extends sandbox_code_id
     /**
      * @return bool true if the component is a system form button
      */
-    function is_button(): bool
+    function is_button(?type_lists $typ_lst): bool
     {
-        if (in_array($this->type_code_id(), component_type::BUTTON_TYPES)) {
+        if (in_array($this->type_code_id($typ_lst), component_type::BUTTON_TYPES)) {
             return true;
         } else {
             return false;
@@ -294,9 +309,9 @@ class component extends sandbox_code_id
     /**
      * @return bool true if the component is a hidden system form element
      */
-    function is_hidden(): bool
+    function is_hidden(?type_lists $typ_lst): bool
     {
-        if (in_array($this->type_code_id(), component_type::HIDDEN_TYPES)) {
+        if (in_array($this->type_code_id($typ_lst), component_type::HIDDEN_TYPES)) {
             return true;
         } else {
             return false;
@@ -306,9 +321,9 @@ class component extends sandbox_code_id
     /**
      * @return bool true if the component is a system form button or a hidden form element
      */
-    function is_button_or_hidden(): bool
+    function is_button_or_hidden(?type_lists $typ_lst): bool
     {
-        if ($this->is_button() or $this->is_hidden()) {
+        if ($this->is_button($typ_lst) or $this->is_hidden($typ_lst)) {
             return true;
         } else {
             return false;
@@ -324,10 +339,9 @@ class component extends sandbox_code_id
      * @param string $form_name the name of the html form
      * @return string the html code to select the component type
      */
-    private function dsp_type_selector(string $form_name): string
+    private function dsp_type_selector(string $form_name, ?type_lists $typ_lst): string
     {
-        global $html_component_types;
-        return $html_component_types->selector($form_name);
+        return $typ_lst->html_component_types->selector($form_name);
     }
 
 

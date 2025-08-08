@@ -135,12 +135,12 @@ class view_read_tests
         $t->assert('load', $result, true);
 
         // ... and check if at least the most critical is loaded
-        $result = $sys_msk_cac->id(view_shared::WORD);
+        $result = $sys_msk_cac->id(view_shared::WORD_CODE_ID);
         $target = 0;
         if ($result > 0) {
             $target = $result; // just check if the id is found
         }
-        $t->assert('check' . view_shared::WORD, $result, $target);
+        $t->assert('check view with code id ' . view_shared::WORD_CODE_ID, $result, $target);
 
         // check all system views
         // TODO activate Prio 2

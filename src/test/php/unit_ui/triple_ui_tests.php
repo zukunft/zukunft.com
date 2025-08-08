@@ -36,7 +36,9 @@ use cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'words.php';
 
+use html\frontend;
 use html\html_base;
+use html\html_names;
 use html\phrase\phrase_list;
 use html\word\triple;
 use shared\const\views;
@@ -44,7 +46,7 @@ use test\test_cleanup;
 
 class triple_ui_tests
 {
-    function run(test_cleanup $t): void
+    function run(test_cleanup $t, frontend $ui): void
     {
         $html = new html_base();
 
@@ -63,10 +65,10 @@ class triple_ui_tests
         $test_page .= 'edit button: ' . $trp->btn_edit() . '<br>';
         $test_page .= 'del button: ' . $trp->btn_del() . '<br>';
         $test_page .= $html->text_h2('select');
-        $from_rows = $trp->phrase_type_selector(views::TRIPLE_EDIT) . '<br>';
-        $from_rows .= $trp->verb_selector(views::TRIPLE_EDIT) . '<br>';
-        $from_rows .= $trp->phrase_selector_from(views::TRIPLE_EDIT, $phr_lst) . '<br>';
-        $from_rows .= $trp->phrase_selector_to(views::TRIPLE_EDIT, $phr_lst) . '<br>';
+        $from_rows = $trp->phrase_type_selector(views::TRIPLE_EDIT, $ui->typ_lst_cache) . '<br>';
+        $from_rows .= $trp->verb_selector(views::TRIPLE_EDIT, $ui->typ_lst_cache) . '<br>';
+        $from_rows .= $trp->phrase_selector(views::TRIPLE_EDIT, $trp->from()->id(), $phr_lst, html_names::PHRASE. html_names::SEP . html_names::FROM) . '<br>';
+        $from_rows .= $trp->phrase_selector(views::TRIPLE_EDIT, $trp->to()->id(), $phr_lst, html_names::PHRASE. html_names::SEP . html_names::TO) . '<br>';
         $test_page .= $html->form(views::TRIPLE_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($trp->tr()));

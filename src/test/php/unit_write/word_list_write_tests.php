@@ -133,7 +133,7 @@ class word_list_write_tests
         $target = "million,sales,wrd"; // order adjusted based on the number of usage
         $t->assert('word_list->load by word group id for "'.$wrd_grp_id.'"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI); */
 
-        // test add by verb e.g. "Zurich" "is a" "Canton", "City" or "Company"
+        // test add by verb e.g. "Zurich" "is a" "Canton", "City" or "company"
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::ZH));
         $wrd_lst_linked = $wrd_lst->load_linked_words($vrb_cac->get_verb(verbs::IS), foaf_direction::UP);

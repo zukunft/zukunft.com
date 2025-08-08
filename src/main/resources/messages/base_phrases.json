@@ -1,0 +1,110 @@
+{
+  "version": "0.0.3",
+  "time": "2025-08-07 12:38:00",
+  "user": "timon",
+  "selection": [
+    "the most often used phrase as an initial preload for the phrase selection if the backend connection is delayed"
+  ],
+  "words": [
+    {
+      "name": "child",
+      "refs": [
+        {
+          "name": "Child",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q7569",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "company"
+    },
+    {
+      "name": "day"
+    },
+    {
+      "name": "eye"
+    },
+    {
+      "name": "fact"
+    },
+    {
+      "name": "government"
+    },
+    {
+      "name": "global"
+    },
+    {
+      "name": "group"
+    },
+    {
+      "name": "hand"
+    },
+    {
+      "name": "life"
+    },
+    {
+      "name": "man"
+    },
+    {
+      "name": "number"
+    },
+    {
+      "name": "part"
+    },
+    {
+      "name": "person"
+    },
+    {
+      "name": "place"
+    },
+    {
+      "name": "point"
+    },
+    {
+      "name": "problem"
+    },
+    {
+      "name": "time"
+    },
+    {
+      "name": "way"
+    },
+    {
+      "name": "week"
+    },
+    {
+      "name": "woman"
+    },
+    {
+      "name": "work"
+    },
+    {
+      "name": "world"
+    },
+    {
+      "name": "year"
+    }
+  ],
+  "triples": [
+    {
+      "name": "global problem",
+      "from": "problem",
+      "verb": "can be",
+      "to": "global",
+      "refs": [
+        {
+          "name": "List_of_global_issues",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q65117122",
+          "type": "wikidata"
+        }
+      ]
+    }
+  ]
+}

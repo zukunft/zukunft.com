@@ -33,7 +33,7 @@ use cfg\const\paths;
 use cfg\user\user_db;
 use html\const\paths as html_paths;
 
-include_once paths::DB . 'sql_db.php';
+//include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_function.php';
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
