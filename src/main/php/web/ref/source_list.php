@@ -2,7 +2,7 @@
 
 /*
 
-    web\ref\source_list.php - create the HTML code to display a source list
+    web/ref/source_list.php - create the HTML code to display a source list
     -----------------------
 
     This file is part of zukunft.com - calc with words

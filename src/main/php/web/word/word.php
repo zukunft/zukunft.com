@@ -49,7 +49,34 @@
 namespace html\word;
 
 use cfg\const\paths;
+use controller\api_message;
+use html\button;
 use html\const\paths as html_paths;
+use html\formula\formula;
+use html\helper\config;
+use html\html_base;
+use html\html_selector;
+use html\log\change_log_named;
+use html\log\user_log_display;
+use html\phrase\phrase;
+use html\phrase\phrase_list;
+use html\phrase\term;
+use html\sandbox\sandbox_code_id;
+use html\styles;
+use html\system\back_trace;
+use html\types\type_lists;
+use html\user\user_message;
+use html\verb\verb_list;
+use html\view\view;
+use shared\const\rest_ctrl;
+use shared\const\views;
+use shared\const\words;
+use shared\enum\foaf_direction;
+use shared\enum\messages as msg_id;
+use shared\json_fields;
+use shared\types\phrase_type;
+use shared\types\view_styles;
+use shared\url_var;
 
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
@@ -78,36 +105,9 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
-
-use controller\api_message;
-use html\button;
-use html\formula\formula;
-use html\helper\config;
-use html\html_base;
-use html\html_selector;
-use html\log\change_log_named;
-use html\log\user_log_display;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\phrase\term;
-use html\sandbox\sandbox_code_id;
-use html\styles;
-use html\system\back_trace;
-use html\types\type_lists;
-use html\user\user_message;
-use html\verb\verb_list;
-use html\view\view;
-use shared\api;
-use shared\const\rest_ctrl;
-use shared\enum\foaf_direction;
-use shared\json_fields;
-use shared\const\views;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\types\phrase_type;
-use shared\types\view_styles;
 
 class word extends sandbox_code_id
 {
@@ -155,19 +155,19 @@ class word extends sandbox_code_id
     {
         $usr_msg = parent::url_mapper($url_array);
         if ($usr_msg->is_ok()) {
-            if (array_key_exists(api::URL_VAR_PLURAL, $url_array)) {
-                $this->set_plural($url_array[api::URL_VAR_PLURAL]);
+            if (array_key_exists(url_var::PLURAL, $url_array)) {
+                $this->set_plural($url_array[url_var::PLURAL]);
             } else {
                 $this->set_plural(null);
             }
-            if (array_key_exists(api::URL_VAR_VIEW, $url_array)) {
-                if ($url_array[api::URL_VAR_VIEW] != null) {
-                    $this->set_view_id($url_array[api::URL_VAR_VIEW]);
+            if (array_key_exists(url_var::VIEW, $url_array)) {
+                if ($url_array[url_var::VIEW] != null) {
+                    $this->set_view_id($url_array[url_var::VIEW]);
                 }
             }
-            if (array_key_exists(api::URL_VAR_VIEW_LONG, $url_array)) {
-                if ($url_array[api::URL_VAR_VIEW_LONG] != null) {
-                    $this->set_view_id($url_array[api::URL_VAR_VIEW_LONG]);
+            if (array_key_exists(url_var::VIEW_LONG, $url_array)) {
+                if ($url_array[url_var::VIEW_LONG] != null) {
+                    $this->set_view_id($url_array[url_var::VIEW_LONG]);
                 }
             }
         }
@@ -620,7 +620,7 @@ class word extends sandbox_code_id
             $title = '';
             if ($is_part_of != null) {
                 if ($is_part_of->name() <> '' and $is_part_of->name() <> 'not set') {
-                    $url = $html->url(rest_ctrl::VIEW, $is_part_of->id(), '', api::URL_VAR_WORDS);
+                    $url = $html->url(rest_ctrl::VIEW, $is_part_of->id(), '', url_var::WORDS);
                     $title .= ' (' . $html->ref($url, $is_part_of->name()) . ')';
                 }
             }

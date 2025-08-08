@@ -34,7 +34,20 @@
 namespace html\sandbox;
 
 use cfg\const\paths;
+use controller\api_message;
 use html\const\paths as html_paths;
+use html\html_selector;
+use html\rest_call as api_dsp;
+use html\user\user;
+use html\user\user_message;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\ListOfIdObjects;
+use shared\helper\TextIdObject;
+use shared\types\api_type_list;
+use shared\types\view_styles;
+use shared\url_var;
+
 include_once paths::API_OBJECT . 'api_message.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
@@ -48,19 +61,7 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
 include_once paths::SHARED . 'api.php';
-
-use controller\api_message;
-use html\rest_call as api_dsp;
-use html\html_selector;
-use html\user\user;
-use html\user\user_message;
-use shared\api;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\ListOfIdObjects;
-use shared\helper\TextIdObject;
-use shared\types\api_type_list;
-use shared\types\view_styles;
+include_once paths::SHARED . 'url_var.php';
 
 class list_dsp extends ListOfIdObjects
 {
@@ -194,7 +195,7 @@ class list_dsp extends ListOfIdObjects
 
         $api = new api_dsp();
         $data = array();
-        $data[api::URL_VAR_PATTERN] = $pattern;
+        $data[url_var::PATTERN] = $pattern;
         $json_body = $api->api_get($this::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {

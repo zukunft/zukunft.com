@@ -2,8 +2,8 @@
 
 /*
 
-    selector.php - to select a word (or formula or verb)
-    ------------
+    web/html/selector.php - to select a word (or formula or verb)
+    ---------------------
 
     this should be as easy as possible that's why it got its own class
 

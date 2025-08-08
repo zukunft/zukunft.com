@@ -36,16 +36,15 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
-
-include_once paths::SHARED_CONST . 'views.php';
-
 use cfg\user\user;
 use cfg\view\view;
 use cfg\word\triple;
 use html\html_base;
 use html\view\view as view_dsp;
-use shared\api;
 use shared\const\views as view_shared;
+use shared\url_var;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $db_con = prg_start("link_del");
@@ -67,10 +66,10 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(view_shared::TRIPLE_DEL);
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change if finished
+    $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change if finished
 
     // get the parameters
-    $link_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $link_id = $_GET[url_var::ID] ?? 0;
     $confirm = $_GET['confirm'];
 
     // delete the link or ask for confirmation

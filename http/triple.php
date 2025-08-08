@@ -30,9 +30,9 @@
 
 */
 
-use cfg\word\triple;
 use cfg\user\user;
-use shared\api;
+use cfg\word\triple;
+use shared\url_var;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -47,7 +47,7 @@ $db_con = prg_start("triple");
 if (!$db_con->connected()) {
     $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER_MYSQL, "find.php");
 } else {
-    $back = $_GET[api::URL_VAR_BACK] = '';
+    $back = $_GET[url_var::BACK] = '';
     $id = $_GET['triples'];
 
     // load the session user parameters

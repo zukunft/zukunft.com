@@ -36,16 +36,15 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
-
-include_once paths::SHARED_CONST . 'views.php';
-
 use cfg\user\user;
 use cfg\view\view;
 use cfg\word\word;
 use html\html_base;
 use html\view\view as view_dsp;
-use shared\api;
 use shared\const\views as view_shared;
+use shared\url_var;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $db_con = prg_start("view_add");
@@ -68,17 +67,17 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_id($sys_msk_cac->id(view_shared::VIEW_ADD));
-    $back = $_GET[api::URL_VAR_BACK] = ''; //
+    $back = $_GET[url_var::BACK] = ''; //
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
     $msk_add = new view($usr);
 
     // load the parameters to the view object to display the user input again in case of an error
-    if (isset($_GET[api::URL_VAR_NAME])) {
-        $msk_add->set_name($_GET[api::URL_VAR_NAME]);
+    if (isset($_GET[url_var::NAME])) {
+        $msk_add->set_name($_GET[url_var::NAME]);
     }    // name of the new view to add
-    if (isset($_GET[api::URL_VAR_COMMENT])) {
-        $msk_add->description = $_GET[api::URL_VAR_COMMENT];
+    if (isset($_GET[url_var::COMMENT])) {
+        $msk_add->description = $_GET[url_var::COMMENT];
     }
     if (isset($_GET['type'])) {
         $msk_add->type_id = $_GET['type'];
@@ -87,7 +86,7 @@ if ($usr->id() > 0) {
     if ($_GET['confirm'] > 0) {
 
         // check essential parameters
-        if ($_GET[api::URL_VAR_NAME] == "") {
+        if ($_GET[url_var::NAME] == "") {
             $msg .= 'Name missing; Please press back and enter a name for the new view.';
         } else {
 

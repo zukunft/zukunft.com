@@ -2,8 +2,9 @@
 
 /*
 
-    word_list_dsp.php - a list function to create the HTML code to display a word list
-    -----------------
+    web/word/word_list_dsp.php - a list function to create the HTML code to display a word list
+    --------------------------
+
 
     This file is part of zukunft.com - calc with words
 

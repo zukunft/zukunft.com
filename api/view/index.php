@@ -37,18 +37,18 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
+use cfg\user\user;
+use cfg\view\view;
+use controller\controller;
+use shared\url_var;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VIEW . 'view.php';
-
-use controller\controller;
-use cfg\user\user;
-use cfg\view\view;
-use shared\api;
 
 // open database
 $db_con = prg_start("api/view", "", false);
@@ -56,9 +56,9 @@ $db_con = prg_start("api/view", "", false);
 if ($db_con->is_open()) {
 
     // get the parameters
-    $dsp_id = $_GET[api::URL_VAR_ID] ?? 0;
-    $dsp_name = $_GET[api::URL_VAR_NAME] ?? '';
-    $cmp_lvl = $_GET[api::URL_VAR_CHILDREN] ?? 0;
+    $dsp_id = $_GET[url_var::ID] ?? 0;
+    $dsp_name = $_GET[url_var::NAME] ?? '';
+    $cmp_lvl = $_GET[url_var::CHILDREN] ?? 0;
 
     $msg = '';
     $result = ''; // reset the json message string

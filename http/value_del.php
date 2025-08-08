@@ -46,7 +46,7 @@ use html\button;
 use html\html_base;
 use html\rest_call;
 use html\view\view as view_dsp;
-use shared\api;
+use shared\url_var;
 use shared\const\views as view_shared;
 use shared\enum\messages as msg_id;
 
@@ -72,10 +72,10 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(view_shared::VALUE_DEL);
-    $back = $_GET[api::URL_VAR_BACK] = '';  // the page from which the value deletion has been called
+    $back = $_GET[url_var::BACK] = '';  // the page from which the value deletion has been called
 
     // get the parameters
-    $val_id = $_GET[api::URL_VAR_ID];
+    $val_id = $_GET[url_var::ID];
     $confirm = $_GET['confirm'];
 
     if ($val_id > 0) {

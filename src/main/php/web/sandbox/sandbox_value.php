@@ -35,7 +35,15 @@
 namespace html\sandbox;
 
 use cfg\const\paths;
+use DateTime;
 use html\const\paths as html_paths;
+use html\group\group;
+use html\phrase\phrase;
+use html\phrase\phrase_list;
+use html\user\user_message;
+use shared\json_fields;
+use shared\url_var;
+
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::GROUP . 'group.php';
@@ -43,15 +51,8 @@ include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
-
-use DateTime;
-use html\group\group;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\user\user_message;
-use shared\api;
-use shared\json_fields;
 
 class sandbox_value extends sandbox
 {
@@ -93,15 +94,15 @@ class sandbox_value extends sandbox
     {
         $usr_msg = parent::url_mapper($url_array);
         if ($usr_msg->is_ok()) {
-            if (array_key_exists(api::URL_VAR_PHRASE_LIST_LONG, $url_array)) {
-                $id_lst = explode(',', $url_array[api::URL_VAR_PHRASE_LIST_LONG]);
+            if (array_key_exists(url_var::PHRASE_LIST_LONG, $url_array)) {
+                $id_lst = explode(',', $url_array[url_var::PHRASE_LIST_LONG]);
                 if (count($id_lst) > 0) {
                     $this->set_phrases_by_is_list($id_lst);
                 }
             }
-            if (array_key_exists(api::URL_VAR_NUMERIC_VALUE_LONG, $url_array)) {
-                if ($url_array[api::URL_VAR_NUMERIC_VALUE_LONG] != null) {
-                    $this->set_number($url_array[api::URL_VAR_NUMERIC_VALUE_LONG]);
+            if (array_key_exists(url_var::NUMERIC_VALUE_LONG, $url_array)) {
+                if ($url_array[url_var::NUMERIC_VALUE_LONG] != null) {
+                    $this->set_number($url_array[url_var::NUMERIC_VALUE_LONG]);
                 }
             }
         }

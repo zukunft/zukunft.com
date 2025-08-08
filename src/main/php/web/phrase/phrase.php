@@ -2,8 +2,8 @@
 
 /*
 
-    web/phrase.php - to create the html code to display a word or triple
-    --------------
+    web/phrase/phrase.php - to create the html code to display a word or triple
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words

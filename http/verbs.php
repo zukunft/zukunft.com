@@ -37,24 +37,23 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
+use cfg\user\user;
+use cfg\verb\verb_list;
+use cfg\view\view;
 use html\const\paths as html_paths;
+use html\verb\verb_list as verb_list_dsp;
+use html\view\view as view_dsp;
+use shared\const\views as view_shared;
+use shared\url_var;
 
 include_once html_paths::VERB . 'verb_list.php';
 include_once paths::SHARED_CONST . 'views.php';
-
-use cfg\user\user;
-use cfg\verb\verb_list;
-use html\verb\verb_list as verb_list_dsp;
-use cfg\view\view;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("verbs");
 
 $result = ''; // reset the html code var
-$back = $_GET[api::URL_VAR_BACK] = ''; // the word id from which this value change has been called (maybe later any page)
+$back = $_GET[url_var::BACK] = ''; // the word id from which this value change has been called (maybe later any page)
 
 // load the session user parameters
 $usr = new user;

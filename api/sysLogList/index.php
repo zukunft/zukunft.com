@@ -39,6 +39,7 @@ include_once PHP_PATH . 'init.php';
 use cfg\const\paths;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::API_OBJECT . 'api_message.php';

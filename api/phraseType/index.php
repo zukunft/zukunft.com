@@ -40,8 +40,14 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
+use cfg\phrase\phrase_type;
+use cfg\user\user;
+use controller\controller;
+use shared\types\phrase_type as phrase_type_shared;
+use shared\url_var;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::API_OBJECT . 'api_message.php';
@@ -49,19 +55,13 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 
-use controller\controller;
-use cfg\user\user;
-use cfg\phrase\phrase_type;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\api;
-
 // open database
 $db_con = prg_start("api/phraseType", "", false);
 
 if ($db_con->is_open()) {
 
     // get the parameters
-    $phr_typ_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $phr_typ_id = $_GET[url_var::ID] ?? 0;
 
     $msg = '';
     $result = ''; // reset the json message string

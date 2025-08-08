@@ -37,17 +37,16 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
-
-include_once paths::SHARED_CONST . 'views.php';
-
 use cfg\user\user;
 use cfg\view\view;
 use cfg\word\word_list;
 use html\html_base;
 use html\view\view as view_dsp;
 use html\word\word_list as word_list_dsp;
-use shared\api;
 use shared\const\views as view_shared;
+use shared\url_var;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 global $sys_msk_cac;
 
@@ -63,7 +62,7 @@ $html = new html_base();
 if (!$db_con->connected()) {
     $result = log_fatal("Cannot connect to " . SQL_DB_TYPE . " database with user " . SQL_DB_USER_MYSQL, "find.php");
 } else {
-    $back = $_GET[api::URL_VAR_BACK] ?? '';
+    $back = $_GET[url_var::BACK] ?? '';
 
     // load the session user parameters
     $usr = new user;

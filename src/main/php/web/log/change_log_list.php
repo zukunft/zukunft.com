@@ -2,7 +2,7 @@
 
 /*
 
-    api/log/change_log_list.php - a list function to create the HTML code to display a list of user changes
+    web/log/change_log_list.php - a list function to create the HTML code to display a list of user changes
     ---------------------------
 
     This file is part of zukunft.com - calc with words
@@ -33,17 +33,6 @@ namespace html\log;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
-include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::HTML . 'rest_call.php';
-include_once html_paths::SANDBOX . 'list_dsp.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
-include_once html_paths::USER . 'user.php';
-include_once html_paths::USER . 'user_message.php';
-include_once html_paths::HTML . 'styles.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'library.php';
-
 use html\html_base;
 use html\rest_call;
 use html\sandbox\list_dsp;
@@ -54,6 +43,19 @@ use html\user\user_message;
 use shared\api;
 use shared\const\rest_ctrl;
 use shared\library;
+use shared\url_var;
+
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_call.php';
+include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::HTML . 'styles.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED . 'library.php';
 
 class change_log_list extends list_dsp
 {
@@ -128,12 +130,12 @@ class change_log_list extends list_dsp
     {
         $lib = new library();
         $log_class = $lib->class_to_name(change_log_list::class);
-        $url = api::HOST_TESTING . api::URL_API_PATH . $lib->camelize_ex_1($log_class);
+        $url = api::HOST_TESTING . url_var::API_PATH . $lib->camelize_ex_1($log_class);
         $class = $lib->class_to_api_name($class);
         $data = [];
-        $data[api::URL_VAR_CLASS] = $class;
-        $data[api::URL_VAR_ID] = $id;
-        $data[api::URL_VAR_FIELD] = $fld;
+        $data[url_var::CLASS_NAME] = $class;
+        $data[url_var::ID] = $id;
+        $data[url_var::FIELD] = $fld;
         $ctrl = new rest_call();
         return $ctrl->api_call(rest_ctrl::GET, $url, $data);
     }

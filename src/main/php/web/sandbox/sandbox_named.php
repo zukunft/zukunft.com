@@ -2,8 +2,8 @@
 
 /*
 
-    api/sandbox/user_sandbox_named_api.php - extends the frontend API superclass for named objects such as formulas
-    --------------------------------------
+    web/sandbox/sandbox_named.php - extends the frontend API superclass for named objects such as formulas
+    -----------------------------
 
     The main sections of this object are
     - object vars:       the variables of this word object
@@ -41,6 +41,15 @@ namespace html\sandbox;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+use html\group\group;
+use html\html_base;
+use html\rest_call as api_dsp;
+use html\user\user_message;
+use shared\const\views;
+use shared\enum\messages as msg_id;
+use shared\json_fields;
+use shared\url_var;
+
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
 //include_once html_paths::GROUP . 'group.php';
@@ -51,16 +60,8 @@ include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
-
-use html\group\group;
-use html\html_base;
-use shared\api;
-use html\rest_call as api_dsp;
-use html\user\user_message;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
 
 class sandbox_named extends sandbox
 {
@@ -159,14 +160,14 @@ class sandbox_named extends sandbox
     function url_mapper(array $url_array): user_message
     {
         $usr_msg = parent::url_mapper($url_array);
-        if (array_key_exists(api::URL_VAR_NAME, $url_array)) {
-            $this->set_name($url_array[api::URL_VAR_NAME]);
+        if (array_key_exists(url_var::NAME, $url_array)) {
+            $this->set_name($url_array[url_var::NAME]);
         } else {
             $this->set_name('');
             log_err('Mandatory field name missing in form array ' . json_encode($url_array));
         }
-        if (array_key_exists(api::URL_VAR_DESCRIPTION, $url_array)) {
-            $this->set_description($url_array[api::URL_VAR_DESCRIPTION]);
+        if (array_key_exists(url_var::DESCRIPTION, $url_array)) {
+            $this->set_description($url_array[url_var::DESCRIPTION]);
         }
         return $usr_msg;
     }

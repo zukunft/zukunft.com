@@ -2,8 +2,8 @@
 
 /*
 
-    html_base.php - function to create the basic HTML elements used for zukunft.com
-    -------------
+    web/html/html_base.php - function to create the basic HTML elements used for zukunft.com
+    ----------------------
 
     depending on the settings either pure HTML, BOOTSTRAP HTML or vue.js code is created
 
@@ -35,16 +35,17 @@
 namespace html;
 
 use cfg\const\paths;
+use shared\api;
+use shared\const\rest_ctrl;
+use shared\library;
+use shared\types\view_styles;
+use shared\url_var;
 
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
-
-use shared\const\rest_ctrl;
-use shared\types\view_styles;
-use shared\api;
-use shared\library;
 
 class html_base
 {
@@ -339,7 +340,7 @@ class html_base
     ): string
     {
         $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
-        $result .= api::URL_VAR_MASK . '=' . $view;
+        $result .= url_var::MASK . '=' . $view;
         if (is_string($id)) {
             $result .= '&id=' . $id;
         } elseif ($id <> 0) {

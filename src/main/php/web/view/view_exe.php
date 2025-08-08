@@ -38,7 +38,23 @@
 namespace html\view;
 
 use cfg\const\paths;
+use html\button;
 use html\const\paths as html_paths;
+use html\display_list;
+use html\helper\data_object;
+use html\html_base;
+use html\log\user_log_display;
+use html\sandbox\db_object;
+use html\system\back_trace;
+use html\types\type_lists;
+use html\word\word;
+use shared\api;
+use shared\const\triples;
+use shared\const\words;
+use shared\enum\messages as msg_id;
+use shared\types\position_types;
+use shared\types\view_styles;
+use shared\types\view_type;
 
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::HELPER . 'data_object.php';
@@ -61,25 +77,9 @@ include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_TYPES . 'view_type.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
-
-use html\button;
-use html\display_list;
-use html\helper\data_object;
-use html\html_base;
-use html\log\user_log_display;
-use html\sandbox\db_object;
-use html\system\back_trace;
-use html\types\type_lists;
-use html\word\word;
-use shared\api;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\types\position_types;
-use shared\types\view_styles;
-use shared\types\view_type;
 
 class view_exe extends view_base
 {

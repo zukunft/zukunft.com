@@ -33,21 +33,19 @@
 namespace unit_write;
 
 use cfg\const\paths;
-
-include_once paths::SHARED_TYPES . 'verbs.php';
-include_once paths::SHARED_CONST . 'triples.php';
-
 use cfg\phrase\phrase;
 use cfg\word\triple;
-use cfg\word\word;
 use html\phrase\phrase as phrase_dsp;
-use shared\api;
-use shared\library;
 use shared\const\triples;
 use shared\const\views;
 use shared\const\words;
+use shared\library;
 use shared\types\verbs;
+use shared\url_var;
 use test\test_cleanup;
+
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_CONST . 'triples.php';
 
 class phrase_write_tests
 {
@@ -85,7 +83,7 @@ class phrase_write_tests
 
         $phr_dsp = new phrase_dsp($phr->api_json());
         $result = $lib->trim_html($phr_dsp->dsp_tbl());
-        $url = '<td><a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::WORD_ID . '&' . api::URL_VAR_ID . '=';
+        $url = '<td><a href="/http/view.php?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
         $target = $lib->trim_html($url . $company_id . '" title="' .
             words::COMPANY . '">' . words::COMPANY . '</a></td> ');
         $t->assert('phrase->dsp_tbl word for ' . words::COMPANY, $result, $target);

@@ -32,22 +32,23 @@
 namespace html\system;
 
 use cfg\const\paths;
+use DateTime;
+use DateTimeInterface;
+use Exception;
 use html\const\paths as html_paths;
+use html\html_base;
+use html\sandbox\db_object as db_object_dsp;
+use html\user\user_message;
+use shared\json_fields;
+use shared\url_var;
+
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
-
-use DateTime;
-use DateTimeInterface;
-use Exception;
-use shared\api;
-use html\sandbox\db_object as db_object_dsp;
-use html\html_base;
-use html\user\user_message;
-use shared\json_fields;
 
 class job extends db_object_dsp
 {
@@ -289,7 +290,7 @@ class job extends db_object_dsp
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(\html\rest_ctrl::VIEW, $this->id(), $back, api::URL_VAR_WORDS);
+        $url = $html->url(\html\rest_ctrl::VIEW, $this->id(), $back, url_var::WORDS);
         return $html->ref($url, $this->name(), $this->description(), $style);
     }
 

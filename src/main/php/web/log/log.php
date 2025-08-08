@@ -37,6 +37,7 @@ include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
 

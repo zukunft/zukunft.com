@@ -37,8 +37,13 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
+use cfg\system\job;
+use cfg\user\user;
+use controller\controller;
+use shared\url_var;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::API_OBJECT . 'api_message.php';
@@ -47,18 +52,13 @@ include_once paths::MODEL_SYSTEM . 'job_type.php';
 include_once paths::MODEL_SYSTEM . 'job_time.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
 
-use controller\controller;
-use cfg\user\user;
-use cfg\system\job;
-use shared\api;
-
 // open database
 $db_con = prg_start("api/job", "", false);
 
 if ($db_con->is_open()) {
 
     // get the parameters
-    $job_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $job_id = $_GET[url_var::ID] ?? 0;
 
     $msg = '';
     $result = ''; // reset the json message string

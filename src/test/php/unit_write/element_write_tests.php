@@ -33,16 +33,15 @@
 namespace unit_write;
 
 use cfg\const\paths;
-
-include_once paths::SHARED_TYPES . 'verbs.php';
-
 use html\element\element;
-use shared\api;
 use shared\const\formulas;
 use shared\const\views;
 use shared\const\words;
 use shared\types\verbs;
+use shared\url_var;
 use test\test_cleanup;
+
+include_once paths::SHARED_TYPES . 'verbs.php';
 
 class element_write_tests
 {
@@ -105,7 +104,7 @@ class element_write_tests
 
                 $elm_dsp = new element($elm->api_json());
                 $result = $elm_dsp->link($back);
-                $url = '<a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::WORD_ID . '&' . api::URL_VAR_ID . '=';
+                $url = '<a href="/http/view.php?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
                 if ($pos == 0) {
                     $target = $url . $wrd_country->id() . '&back=0" title="Country">Country</a>';
                 } elseif ($pos == 1) {

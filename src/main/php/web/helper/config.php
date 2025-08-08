@@ -36,6 +36,14 @@ namespace html\helper;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+use html\rest_call;
+use html\user\user_message;
+use html\value\value_list;
+use shared\api;
+use shared\enum\messages as msg_id;
+use shared\helper\Config as shared_config;
+use shared\url_var;
+
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -44,13 +52,7 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED . 'api.php';
-
-use html\rest_call;
-use html\user\user_message;
-use html\value\value_list;
-use shared\api;
-use shared\enum\messages as msg_id;
-use shared\helper\Config as shared_config;
+include_once paths::SHARED . 'url_var.php';
 
 class config extends value_list
 {
@@ -88,12 +90,12 @@ class config extends value_list
         $usr_msg = new user_message();
 
         $data = [];
-        $data[api::URL_VAR_CONFIG_PART] = $part;
-        $data[api::URL_VAR_WITH_PHRASES] = api::URL_VAR_TRUE;
+        $data[url_var::CONFIG_PART] = $part;
+        $data[url_var::WITH_PHRASES] = url_var::TRUE;
         $rest = new rest_call();
         $json_body = $rest->api_get(config::class, $data);
-        if (array_key_exists(api::URL_VAR_MSG, $json_body)) {
-            $usr_msg->add_id_with_vars(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[api::URL_VAR_MSG]]);
+        if (array_key_exists(url_var::MSG, $json_body)) {
+            $usr_msg->add_id_with_vars(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[url_var::MSG]]);
         }
         if ($usr_msg->is_ok()) {
             $this->api_mapper($json_body);

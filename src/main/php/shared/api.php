@@ -57,136 +57,13 @@ class api
     const EXT_LIB_PATH = 'external_lib' . DIRECTORY_SEPARATOR;
     const HOST_SYS_LOG = '';
 
-    // the url name of the main script that is used in combination with the host url
-    const MAIN_SCRIPT = 'http/view.php';
-
-    // TODO always use these const instead e.g. of the controller const
-    // TODO allow to use the object names instead of the id for human readable urls
-    // the parameter names used in the url or in the result json
-    const URL_PAR = '?';
-    const URL_ADD = '&';
-    const URL_EQ = '=';
-    const URL_API_PATH = 'api/';
-    const URL_VAR_ID = 'id'; // the internal database id of the main view object
-
-    // the url entry to select the url format
-    // if the next two are not set at least URL_VAR_MASK is expected to be set and if the short technical url is used
-    const URL_VAR_MASK_HUMAN = 'mask_id'; // if *_LONG is given the human-readable url format is used
-    const URL_VAR_MASK_POD = 'mask'; // if *_EXCHANGE is given the url that is interchangeable between pods is used thet does not contain pod specific database ids
-
-    // the var names for the short url (in alphabetic order to detect duplicates)
-    const URL_VAR_ACTION = 'a'; // the curl action
-    const URL_VAR_VERB = 'b';
-    const URL_VAR_COMPONENT = 'c';
-    const URL_VAR_TERM = 'e';
-    const URL_VAR_FORMULA = 'f';
-    const URL_VAR_GROUP = 'g';
-    const URL_VAR_LOG = 'h'; // h for history of the object
-    const URL_VAR_FIGURE = 'i';
-    const URL_VAR_JOB = 'j'; // for system batch jobs
-    const URL_VAR_MASK = 'm'; // the internal database id of the view used to format the object
-    const URL_VAR_RESULT = 'r';
-    const URL_VAR_SOURCE = 's';
-    const URL_VAR_VIEW = 'v';
-    const URL_VAR_WORD = 'w';
-    const URL_VAR_TRIPLE = 't';
-    const URL_VAR_PHRASE = 'p'; // the id or name of one phrase
-    const URL_VAR_VALUE = 'v';
-    const URL_VAR_CONTEXT = 'x'; // list of terms to describe the context used for the view
-    const URL_VAR_STEP = 'z'; // the user process (proZess) step (e.g. show, to_confirm, confirmed)
-    const URL_VAR_FORMULA_LINK = 'fl'; // to link a formula to a phrase
-    const URL_VAR_VIEW_TERM_LINK = 'vl'; // to link a view to a term
-    const URL_VAR_COMPONENT_LINK = 'cl'; // to link a component to a view
-    const URL_VAR_VALUE_TIME_SERIES = 'ts';
-    const URL_VAR_LOG_LINK = 'hl'; // history of a link object
-    const URL_VAR_SYS_LOG = 'hs'; // history of a system event
-    const URL_VAR_IP = 'ip'; // for ip ranges (for admin only)
-
-    // the var names for the easy human-readable url (in content related order)
-    const URL_VAR_ACTION_LONG = 'action'; // the curl action for the long url
-    const URL_VAR_STEP_LONG = 'step_id';  // the action status for the long url
-    const URL_VAR_STEP_POD = 'step';  // the action status for the long url
-
-    // enum for next step the action for URL_VAR_ACTION
-    const URL_VAR_CURL_CREATE = 'add'; // the curl action code to add an object
-    const URL_VAR_CURL_UPDATE = 'edit'; // the curl action to change an object
-    const URL_VAR_CURL_REMOVE = 'del'; // the curl action to delete an object
-    const URL_VAR_CURL_LOAD = 'show'; // the curl action to show object with the most relevant fields
-    const URL_VAR_CURL_FULL = 'full'; // to show object with all fields
-    const URL_VAR_CURL_POPUP = 'popup'; // to show object with only a few fields as a popup window
-    const URL_VAR_CURL_CELL = 'cell'; // to show object with only the name or key as table cell
-
-    const URL_VAR_PHRASE_LONG = 'phrase_id';
-    const URL_VAR_PHRASE_LIST_LONG = 'phrase_ids';
-    const URL_VAR_SOURCE_LONG = 'source_id';
-    const URL_VAR_REF = 'l'; // l for data link to external
-    const URL_VAR_NUMERIC_VALUE_LONG = 'number';
-    const URL_VAR_FORMULA_LONG = 'formula_id';
-    const URL_VAR_VIEW_LONG = 'view_id';
-    const URL_VAR_ID_LST = 'ids'; // a comma separated list of internal database ids
-    const URL_VAR_NAME = 'name'; // the unique name of a term, view, component, user, source, language or type
-    const URL_VAR_PATTERN = 'pattern'; // part of a name to select a named object such as word, triple, ...
-
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
-    const URL_VAR_CONFIG_PART = 'part';
-    const URL_VAR_WITH_PHRASES = 'incl_phrases';
-    const URL_VAR_TRUE = '1';
     const CONFIG_ALL = 'all';
     const CONFIG_FRONTEND = 'frontend';
     const CONFIG_USER = 'user';
-    const URL_VAR_COMMENT = 'comment';
-    const URL_VAR_DESCRIPTION = 'description';
-    const URL_VAR_DEBUG = 'debug'; // to force the output of debug messages
-    const URL_VAR_CODE_ID = 'code_id';
-    const URL_VAR_WORDS = 'words'; // to select the words that should be displayed
-    const URL_VAR_VERBS = 'verbs';  // to select the verbs that should be displayed
-    const URL_VAR_TRIPLES = 'triples'; // to select the triples that should be displayed
-    const URL_VAR_FORMULAS = 'formulas';  // to select the formulas that should be displayed
-    const URL_VAR_DIRECTION = 'dir'; // 'up' to get the parents and 'down' for the children
-    const URL_VAR_LEVELS = 'levels'; // the number of search levels'
-    const URL_VAR_MSG = 'message';
-    const URL_VAR_EMAIL = 'email';
-    const URL_VAR_VIEW_ID = 'view_id'; //
-    const URL_VAR_CMP_ID = 'component_id';
-    const URL_VAR_CHILDREN = 'levels'; // number of component levels that should be included
-    const URL_VAR_USER = 'user';
-    const URL_VAR_BACK = 'back';
 
-    // to be sorted
-    const URL_VAR_NEED_ALL = 'need_all_val';
-    const URL_VAR_USER_EXPRESSION = 'formula_text';
-    const URL_VAR_LINK_VIEW = 'link_view';
-    const URL_VAR_UNLINK_VIEW = 'unlink_view';
-    const URL_VAR_TYPE = 'type';
-    const URL_VAR_SHARE = 'share';
-    const URL_VAR_PROTECTION = 'protection';
-    const URL_REF = 'reference';
-    const URL_VAR_PHRASE_TYPE = 'phrase_type';
-    const URL_VAR_FORMULA_TYPE = 'formula_type';
-    const URL_VAR_USER_PROFILE = 'user_profile';
-    const URL_VAR_PLURAL = 'plural';
-    const URL_VAR_REVERSE = 'reverse';
-    const URL_VAR_REVERSE_PLURAL = 'plural_reverse';
-    const URL_VAR_URL = 'url';
-    const URL_VAR_EXTERNAL_KEY = 'external_key';
-
-    // for triple link selections
-    const URL_VAR_FROM_ID_LONG = 'from_id';
-    const URL_VAR_TO_ID_LONG = 'to_id';
-    const URL_VAR_VERB_ID_LONG = 'verb_id';
-
-    // used for the change log
-    // the short name of the object class name e.g. word instead of cfg/word
-    const URL_VAR_CLASS = 'class';
-    // the name of the field to filter the changes which might be more than one database field
-    const URL_VAR_FIELD = 'field';
-    const URL_VAR_WORD_ID = 'word_id';
-    const URL_VAR_WORD_FLD = 'word_field';
-    const URL_VAR_LINK_PHRASE = 'link_phrase';
-    const URL_VAR_UNLINK_PHRASE = 'unlink_phrase';
-
-    // used for languages
-    const URL_VAR_LANGUAGE_FORM = 'languageForm';
+    // the url name of the main script that is used in combination with the host url
+    const MAIN_SCRIPT = 'http/view.php';
 
 
     /*
@@ -287,7 +164,7 @@ class api
     {
         $lib = new library();
         $class = $lib->class_to_name($class);
-        return self::HOST_DEV . self::URL_API_PATH . $lib->camelize_ex_1($class);
+        return self::HOST_DEV . url_var::API_PATH . $lib->camelize_ex_1($class);
     }
 
 }

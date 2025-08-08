@@ -37,8 +37,14 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
+use cfg\ref\source;
+use cfg\user\user;
+use controller\controller;
+use shared\types\api_type;
+use shared\url_var;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::API_OBJECT . 'api_message.php';
@@ -46,21 +52,15 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 
-use controller\controller;
-use cfg\user\user;
-use cfg\ref\source;
-use shared\api;
-use shared\types\api_type;
-
 // open database
 $db_con = prg_start("api/ref", "", false);
 
 if ($db_con->is_open()) {
 
     // get the parameters
-    $src_id = $_GET[api::URL_VAR_ID] ?? 0;
-    $src_name = $_GET[api::URL_VAR_NAME] ?? '';
-    $src_code_id = $_GET[api::URL_VAR_CODE_ID] ?? '';
+    $src_id = $_GET[url_var::ID] ?? 0;
+    $src_name = $_GET[url_var::NAME] ?? '';
+    $src_code_id = $_GET[url_var::CODE_ID] ?? '';
 
     // load the session user parameters
     $msg = '';

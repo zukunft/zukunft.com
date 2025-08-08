@@ -20,6 +20,18 @@
       ]
     },
     {
+      "name": "Bern"
+    },
+    {
+      "name": "Canton"
+    },
+    {
+      "name": "configuration"
+    },
+    {
+      "name": "City"
+    },
+    {
       "name": "company"
     },
     {
@@ -32,6 +44,9 @@
       "name": "fact"
     },
     {
+      "name": "Geneva"
+    },
+    {
       "name": "government"
     },
     {
@@ -42,6 +57,12 @@
     },
     {
       "name": "hand"
+    },
+    {
+      "name": "inhabitants"
+    },
+    {
+      "name": "launch"
     },
     {
       "name": "life"
@@ -62,13 +83,25 @@
       "name": "place"
     },
     {
+      "name": "pod"
+    },
+    {
       "name": "point"
     },
     {
       "name": "problem"
     },
     {
+      "name": "Switzerland"
+    },
+    {
+      "name": "system"
+    },
+    {
       "name": "time"
+    },
+    {
+      "name": "url"
     },
     {
       "name": "way"
@@ -87,6 +120,12 @@
     },
     {
       "name": "year"
+    },
+    {
+      "name": "zukunft.com"
+    },
+    {
+      "name": "Zurich"
     }
   ],
   "triples": [
@@ -105,6 +144,56 @@
           "type": "wikidata"
         }
       ]
+    },
+    {
+      "name": "system configuration",
+      "from": "system",
+      "verb": "and",
+      "to": "configuration"
+    },
+    {
+      "name": "Zurich (City)",
+      "from": "Zurich",
+      "verb": "is a",
+      "to": "City",
+      "refs": [
+        {
+          "name": "Zürich",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q72",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Zurich (Canton)",
+      "from": "Zurich",
+      "verb": "is a",
+      "to": "Canton",
+      "refs": [
+        {
+          "name": "Canton_of_Zürich",
+          "type": "wikipedia"
+        },
+        {
+          "name": "Q11943",
+          "type": "wikidata"
+        }
+      ]
+    },
+    {
+      "name": "Bern (City)",
+      "from": "Bern",
+      "verb": "is a",
+      "to": "City"
+    },
+    {
+      "name": "Geneva (City)",
+      "from": "Geneva",
+      "verb": "is a",
+      "to": "City"
     }
   ]
 }

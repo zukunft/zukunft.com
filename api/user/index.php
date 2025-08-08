@@ -44,6 +44,7 @@ include_once PHP_PATH . 'init.php';
 use cfg\const\paths;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::API_OBJECT . 'api_message.php';
@@ -51,7 +52,7 @@ include_once paths::MODEL_USER . 'user.php';
 
 use controller\controller;
 use cfg\user\user;
-use shared\api;
+use shared\url_var;
 
 // open database
 $db_con = prg_start("api/user", "", false);
@@ -59,9 +60,9 @@ $db_con = prg_start("api/user", "", false);
 if ($db_con->is_open()) {
 
     // get the parameters
-    $usr_id = $_GET[api::URL_VAR_ID] ?? 0;
-    $usr_name = $_GET[api::URL_VAR_NAME] ?? '';
-    $usr_email = $_GET[api::URL_VAR_EMAIL] ?? '';
+    $usr_id = $_GET[url_var::ID] ?? 0;
+    $usr_name = $_GET[url_var::NAME] ?? '';
+    $usr_email = $_GET[url_var::EMAIL] ?? '';
 
     $msg = '';
     $result = ''; // reset the json message string

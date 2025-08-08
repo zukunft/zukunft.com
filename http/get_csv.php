@@ -33,7 +33,7 @@
 use cfg\formula\formula_list;
 use cfg\user\user;
 use cfg\word\word_list;
-use shared\api;
+use shared\url_var;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -53,7 +53,7 @@ if ($usr->id() > 0) {
     $usr->load_usr_data();
 
     // sample "Nestlé 2 country weight"
-    $words = $_GET[api::URL_VAR_WORDS];
+    $words = $_GET[url_var::WORDS];
     log_debug("get_csv(" . $words . ")");
     $word_names = explode(",", $words);
 

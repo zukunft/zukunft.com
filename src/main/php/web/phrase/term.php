@@ -36,6 +36,7 @@ use cfg\const\paths;
 use html\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::USER . 'user_message.php';

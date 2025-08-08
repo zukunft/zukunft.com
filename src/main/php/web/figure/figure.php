@@ -38,6 +38,7 @@ use html\const\paths as html_paths;
 include_once html_paths::HTML . 'html_base.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::GROUP . 'group.php';

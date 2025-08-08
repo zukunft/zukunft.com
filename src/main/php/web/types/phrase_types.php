@@ -34,13 +34,14 @@ namespace html\types;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+use shared\types\phrase_type;
+use shared\types\view_styles;
+use shared\url_var;
+
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
-
-use shared\api;
-use shared\types\phrase_type;
-use shared\types\view_styles;
+include_once paths::SHARED . 'url_var.php';
 
 class phrase_types extends type_list
 {
@@ -61,7 +62,7 @@ class phrase_types extends type_list
         int    $selected = 1,
         string $label = 'type:',
         string $bs_class = view_styles::COL_SM_4,
-        string $name = api::URL_VAR_PHRASE_TYPE
+        string $name = url_var::PHRASE_TYPE
     ): string
     {
         return parent::type_selector($this->lst_key(), $name, $form, $selected, $bs_class, $label);

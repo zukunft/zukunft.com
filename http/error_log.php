@@ -39,7 +39,14 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
+use cfg\system\sys_log;
+use cfg\user\user;
+use cfg\view\view;
 use html\const\paths as html_paths;
+use html\system\sys_log as sys_log_dsp;
+use html\view\view as view_dsp;
+use shared\const\views;
+use shared\url_var;
 
 // load what is used here
 include_once paths::API_OBJECT . 'controller.php';
@@ -50,22 +57,14 @@ include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 
-use cfg\system\sys_log;
-use cfg\user\user;
-use cfg\view\view;
-use html\system\sys_log as sys_log_dsp;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views;
-
 $db_con = prg_start("error_log");
 
 global $sys_msk_cac;
 
 $result = ''; // reset the html code var
 
-$err_id = $_GET[api::URL_VAR_ID] ?? 0;
-$back = $_GET[api::URL_VAR_BACK] ?? '';
+$err_id = $_GET[url_var::ID] ?? 0;
+$back = $_GET[url_var::BACK] ?? '';
 
 // load the session user parameters
 $usr = new user;

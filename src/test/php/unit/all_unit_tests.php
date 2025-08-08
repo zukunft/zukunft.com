@@ -201,8 +201,8 @@ class all_unit_tests extends test_cleanup
 
             $sys_usr = new user;
             $sys_usr->load_by_id(users::SYSTEM_ID);
-            //$import = new import_file();
-            //$import->import_config_yaml($sys_usr);
+            $import = new import_file();
+            $import->import_config_yaml($sys_usr);
 
 
             /*

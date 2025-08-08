@@ -34,6 +34,15 @@ namespace html\sandbox;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+use html\sandbox\db_object as db_object_dsp;
+use html\types\type_lists;
+use html\user\user as user_dsp;
+use html\user\user_message;
+use html\view\view_list;
+use shared\json_fields;
+use shared\types\view_styles;
+use shared\url_var;
+
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::HELPER . 'data_object.php';
@@ -46,17 +55,8 @@ include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
-
-use html\helper\data_object;
-use html\types\type_lists;
-use html\view\view_list;
-use html\sandbox\db_object as db_object_dsp;
-use html\user\user as user_dsp;
-use html\user\user_message;
-use shared\types\view_styles;
-use shared\json_fields;
-use shared\api;
 
 class sandbox extends db_object_dsp
 {
@@ -108,13 +108,13 @@ class sandbox extends db_object_dsp
     function url_mapper(array $url_array): user_message
     {
         $usr_msg = parent::url_mapper($url_array);
-        if (array_key_exists(api::URL_VAR_SHARE, $url_array)) {
-            $this->share_id = $url_array[api::URL_VAR_SHARE];
+        if (array_key_exists(url_var::SHARE, $url_array)) {
+            $this->share_id = $url_array[url_var::SHARE];
         } else {
             $this->share_id = null;
         }
-        if (array_key_exists(api::URL_VAR_PROTECTION, $url_array)) {
-            $this->protection_id = $url_array[api::URL_VAR_PROTECTION];
+        if (array_key_exists(url_var::PROTECTION, $url_array)) {
+            $this->protection_id = $url_array[url_var::PROTECTION];
         } else {
             $this->protection_id = null;
         }

@@ -35,18 +35,17 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
-
-include_once paths::SHARED_CONST . 'views.php';
-
 use cfg\component\component;
+use cfg\const\paths;
 use cfg\user\user;
 use cfg\view\view;
 use cfg\word\word;
 use html\html_base;
 use html\view\view as view_dsp;
-use shared\api;
 use shared\const\views as view_shared;
+use shared\url_var;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $db_con = prg_start("view_edit");
@@ -68,11 +67,11 @@ if ($usr->id() > 0) {
     // prepare the display to edit the view
     $msk = new view($usr);
     $msk->load_by_code_id(view_shared::VIEW_ADD);
-    $back = $_GET[api::URL_VAR_BACK] = '';
+    $back = $_GET[url_var::BACK] = '';
 
     // create the view object that the user can change
     $msk_edit = new view($usr);
-    $result .= $msk_edit->load_by_id($_GET[api::URL_VAR_ID]);
+    $result .= $msk_edit->load_by_id($_GET[url_var::ID]);
 
     // get the view id to adjust
     if ($msk_edit->id() <= 0) {
@@ -138,16 +137,16 @@ if ($usr->id() > 0) {
         }
 
         // if the save button has been pressed (an empty view name should never be saved; instead the view should be deleted)
-        $dsp_name = $_GET[api::URL_VAR_NAME];
+        $dsp_name = $_GET[url_var::NAME];
         if ($dsp_name <> '') {
 
 
             // get other field parameters that should be saved
-            if (isset($_GET[api::URL_VAR_NAME])) {
-                $msk_edit->set_name($_GET[api::URL_VAR_NAME]);
+            if (isset($_GET[url_var::NAME])) {
+                $msk_edit->set_name($_GET[url_var::NAME]);
             }
-            if (isset($_GET[api::URL_VAR_COMMENT])) {
-                $msk_edit->description = $_GET[api::URL_VAR_COMMENT];
+            if (isset($_GET[url_var::COMMENT])) {
+                $msk_edit->description = $_GET[url_var::COMMENT];
             }
             if (isset($_GET['type'])) {
                 $msk_edit->type_id = $_GET['type'];

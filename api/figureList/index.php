@@ -40,8 +40,14 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
+use cfg\formula\fig_ids;
+use cfg\formula\figure_list;
+use cfg\user\user;
+use controller\controller;
+use shared\url_var;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::API_OBJECT . 'api_message.php';
@@ -49,19 +55,13 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_FORMULA . 'fig_ids.php';
 include_once paths::MODEL_FORMULA . 'figure_list.php';
 
-use cfg\formula\fig_ids;
-use controller\controller;
-use cfg\user\user;
-use cfg\formula\figure_list;
-use shared\api;
-
 // open database
 $db_con = prg_start("api/figureList", "", false);
 
 if ($db_con->is_open()) {
 
     // get the parameters
-    $frm_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
+    $frm_ids = $_GET[url_var::ID_LST] ?? '';
 
     $msg = '';
     $result = ''; // reset the json message string

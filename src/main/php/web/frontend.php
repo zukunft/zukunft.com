@@ -2,8 +2,8 @@
 
 /*
 
-    frontend.php - the main html frontend application
-    ------------
+    web/frontend.php - the main html frontend application
+    ----------------
 
     This file is part of zukunft.com - calc with words
 
@@ -32,16 +32,39 @@
 namespace html;
 
 use cfg\const\paths;
+use const\files as test_files;
+use Exception;
+use html\component\component_exe as component_dsp;
+use html\const\paths as html_paths;
+use html\formula\formula as formula_dsp;
+use html\helper\data_object;
+use html\ref\ref as ref_dsp;
+use html\ref\source as source_dsp;
+use html\result\result as result_dsp;
+use html\sandbox\db_object as db_object_dsp;
+use html\sandbox\sandbox as sandbox_dsp;
+use html\sandbox\sandbox_named as sandbox_named_dsp;
+use html\types\type_lists;
+use html\user\user as user_dsp;
+use html\value\value as value_dsp;
+use html\verb\verb as verb_dsp;
+use html\view\view as view_dsp;
+use html\word\triple as triple_dsp;
+use html\word\word as word_dsp;
+use shared\api;
+use shared\const\rest_ctrl;
+use shared\const\views;
+use shared\library;
+use shared\url_var;
 
 include_once paths::WEB_CONST . 'paths.php';
-
-use html\const\paths as html_paths;
 
 // get library that is shared between the backend and the html frontend
 include_once paths::SHARED . 'library.php';
 
 // get the api const that are shared between the backend and the html frontend
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 
 // get the pure html frontend objects
 include_once html_paths::USER . 'user.php';
@@ -90,29 +113,7 @@ include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'api.php';
-
-use const\files as test_files;
-use html\component\component_exe as component_dsp;
-use html\formula\formula as formula_dsp;
-use html\helper\data_object;
-use html\types\type_lists;
-use html\ref\ref as ref_dsp;
-use html\result\result as result_dsp;
-use html\ref\source as source_dsp;
-use html\sandbox\db_object as db_object_dsp;
-use html\sandbox\sandbox as sandbox_dsp;
-use html\sandbox\sandbox_named as sandbox_named_dsp;
-use html\user\user as user_dsp;
-use html\value\value as value_dsp;
-use html\verb\verb as verb_dsp;
-use html\view\view as view_dsp;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
-use shared\const\rest_ctrl;
-use shared\const\views;
-use shared\library;
-use shared\api;
-use Exception;
+include_once paths::SHARED . 'url_var.php';
 
 class frontend
 {
@@ -290,30 +291,30 @@ class frontend
         // detect the url format and get the view id or code id
         $human_url = false;
         $pod_url = false;
-        if (array_key_exists(api::URL_VAR_MASK_HUMAN, $url_array)) {
+        if (array_key_exists(url_var::MASK_HUMAN, $url_array)) {
             $human_url = true;
-            $view = $url_array[api::URL_VAR_MASK_HUMAN] ?? views::START_ID; // the database id of the view to display
-        } elseif (array_key_exists(api::URL_VAR_MASK_POD, $url_array)) {
+            $view = $url_array[url_var::MASK_HUMAN] ?? views::START_ID; // the database id of the view to display
+        } elseif (array_key_exists(url_var::MASK_POD, $url_array)) {
             $pod_url = true;
-            $view = $url_array[api::URL_VAR_MASK_POD] ?? views::START_CODE; // the database id of the view to display
+            $view = $url_array[url_var::MASK_POD] ?? views::START_CODE; // the database id of the view to display
         } else {
-            $view = $url_array[api::URL_VAR_MASK] ?? views::START_ID; // the database id of the view to display
+            $view = $url_array[url_var::MASK] ?? views::START_ID; // the database id of the view to display
         }
 
         // get the general vars from the url
-        $id = $url_array[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
+        $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
         // TODO Prio 1 complete all url vars mappings for $human_url, $pod_url and $short_url
         if ($human_url) {
-            $step = $url_array[api::URL_VAR_STEP_LONG] ?? 0; // the enum of the user process step to perform next
+            $step = $url_array[url_var::STEP_LONG] ?? 0; // the enum of the user process step to perform next
         } elseif ($pod_url) {
-            $step = $url_array[api::URL_VAR_STEP_POD] ?? 0; // the enum of the user process step to perform next
+            $step = $url_array[url_var::STEP_POD] ?? 0; // the enum of the user process step to perform next
         } else {
-            $step = $url_array[api::URL_VAR_STEP] ?? 0; // the enum of the user process step to perform next
+            $step = $url_array[url_var::STEP] ?? 0; // the enum of the user process step to perform next
         }
 
         $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
-        $view_words = $url_array[api::URL_VAR_WORDS] ?? '';
-        $back = $url_array[api::URL_VAR_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
+        $view_words = $url_array[url_var::WORDS] ?? '';
+        $back = $url_array[url_var::BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
 
         // TODO move to the frontend __construct
         // get the fixed frontend config
@@ -479,7 +480,7 @@ class frontend
     {
         $lib = new library();
         $class = $lib->class_to_name_pur($class);
-        $url = self::HOST_DEV . api::URL_API_PATH . $lib->camelize_ex_1($class);
+        $url = self::HOST_DEV . url_var::API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
             $data = array($id_fld => implode(",", $ids));
         } else {

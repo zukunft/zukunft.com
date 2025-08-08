@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/const/env.php - read the environment and fill up missing const with default values
-    -----------------
+    model/const/env.php - read the environment and fill up missing const with default values
+    -------------------
 
 
     This file is part of zukunft.com - calc with words

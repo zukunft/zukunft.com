@@ -35,6 +35,8 @@ namespace unit_ui;
 use const\paths as test_paths;
 use html\frontend;
 use shared\api;
+use test\test_cleanup;
+use unit\all_unit_tests;
 
 include_once test_paths::UNIT_UI . 'base_ui_tests.php';
 //include_once test_paths::UNIT_UI . 'type_lists_ui_tests.php';
@@ -69,9 +71,6 @@ include_once test_paths::UNIT_UI . 'sys_log_ui_tests.php';
 include_once test_paths::UNIT_UI . 'job_ui_tests.php';
 include_once test_paths::UNIT_UI . 'system_views_ui_tests.php';
 include_once test_paths::UNIT_UI . 'start_ui_tests.php';
-
-use test\test_cleanup;
-use unit\all_unit_tests;
 
 class all_ui_tests extends all_unit_tests
 {

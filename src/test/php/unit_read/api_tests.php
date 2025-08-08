@@ -64,8 +64,6 @@ use cfg\word\word;
 use cfg\word\word_list;
 use html\const\paths as html_paths;
 use html\helper\config;
-use html\helper\data_object as data_object_dsp;
-use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\word\word as word_dsp;
 use shared\api;
@@ -80,6 +78,7 @@ use shared\const\words;
 use shared\enum\change_fields;
 use shared\library;
 use shared\types\verbs;
+use shared\url_var;
 use test\test_cleanup;
 
 include_once paths::MODEL_LOG . 'change_log.php';
@@ -120,9 +119,9 @@ class api_tests
 
         $t->assert_api_get(user::class, users::SYSTEM_TEST_ID);
         $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_NAME);
-        $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_EMAIL, api::URL_VAR_EMAIL);
+        $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_EMAIL, url_var::EMAIL);
         $t->assert_api_get(word::class);
-        $t->assert_api_get_json(word::class, api::URL_VAR_WORD_ID);
+        $t->assert_api_get_json(word::class, url_var::WORD_ID);
         $t->assert_api_get_by_text(word::class, words::MATH);
         $t->assert_api_get(verb::class);
         $t->assert_api_get_by_text(verb::class, verbs::NOT_SET_NAME);
@@ -151,12 +150,12 @@ class api_tests
 
         $t->assert_api_get_list(type_lists::class);
         $t->assert_api_get_list(word_list::class, [1, 2, words::PI_ID]);
-        $t->assert_api_get_list(word_list::class, words::MATH, api::URL_VAR_PATTERN);
+        $t->assert_api_get_list(word_list::class, words::MATH, url_var::PATTERN);
         $t->assert_api_get_list(phrase_list::class, [words::MATH_ID, words::CONST_ID, words::PI_SYMBOL_ID, -1, -2]);
-        $t->assert_api_get_list(phrase_list::class, words::MATH, api::URL_VAR_PATTERN);
+        $t->assert_api_get_list(phrase_list::class, words::MATH, url_var::PATTERN);
         $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $t->assert_api_get_list(formula_list::class, [1]);
-        $t->assert_api_get_list(view_list::class, views::START_NAME, api::URL_VAR_PATTERN);
+        $t->assert_api_get_list(view_list::class, views::START_NAME, url_var::PATTERN);
         $t->assert_api_get_list(component_list::class, 2, 'view_id');
 
         $t->assert_api_chg_list(word::class,words::MATH_ID);

@@ -2,7 +2,7 @@
 
 /*
 
-    export.php - create an object to export data - the object can be converted to a json, yaml or XML message
+    model/export.php - create an object to export data - the object can be converted to a json, yaml or XML message
     ----------
 
     offer the user the long or the short version

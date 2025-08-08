@@ -2,8 +2,8 @@
 
 /*
 
-    test/php/utils/enum/format.php - enum for the test output format
-    ------------------------------
+    model/log_text/text_log_format.php - enum for the test output format
+    ----------------------------------
 
 
     This file is part of zukunft.com - calc with words

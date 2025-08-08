@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/db/db_check.php - test if the database exists and start the creation or upgrade process
-    -------------------
+    model/db/db_check.php - test if the database exists and start the creation or upgrade process
+    ---------------------
   
 
     This file is part of zukunft.com - calc with words

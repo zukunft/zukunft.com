@@ -47,7 +47,7 @@ use cfg\user\user;
 use cfg\view\view;
 use html\html_base;
 use html\view\view as view_dsp;
-use shared\api;
+use shared\url_var;
 use shared\const\views as view_shared;
 use shared\enum\user_profiles;
 
@@ -60,9 +60,9 @@ global $usr_pro_cac;
 $result = ''; // reset the html code var
 
 // get the parameters
-$log_id = $_GET[api::URL_VAR_ID];
+$log_id = $_GET[url_var::ID];
 $status_id = $_GET['status'];
-$back = $_GET[api::URL_VAR_BACK] = '';
+$back = $_GET[url_var::BACK] = '';
 
 // load the session user parameters
 $usr = new user;

@@ -33,16 +33,16 @@
 namespace html;
 
 use cfg\const\paths;
+use controller\controller;
+use shared\const\rest_ctrl;
+use shared\library;
+use shared\url_var;
 
 //include_once paths::API_OBJECT . 'controller.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
-
-use controller\controller;
-use shared\api;
-use shared\const\rest_ctrl;
-use shared\library;
 
 class rest_call
 {
@@ -69,7 +69,7 @@ class rest_call
      */
     function api_call_id(string $class, int|string $id, array $data = []): array
     {
-        $data[api::URL_VAR_ID] = $id;
+        $data[url_var::ID] = $id;
         return $this->api_get($class, $data);
     }
 
@@ -83,7 +83,7 @@ class rest_call
     function api_call_name(string $class, string $name): array
     {
         $data = array();
-        $data[api::URL_VAR_NAME] = $name;
+        $data[url_var::NAME] = $name;
         return $this->api_get($class, $data);
     }
 

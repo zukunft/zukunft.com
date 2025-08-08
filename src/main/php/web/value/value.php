@@ -37,6 +37,24 @@ namespace html\value;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+use html\figure\figure;
+use html\group\group;
+use html\helper\config;
+use html\html_base;
+use html\log\user_log_display;
+use html\phrase\phrase;
+use html\phrase\phrase_list;
+use html\ref\source;
+use html\sandbox\sandbox_value;
+use html\styles;
+use html\user\user_message;
+use html\word\word;
+use shared\const\rest_ctrl;
+use shared\const\views;
+use shared\enum\messages as msg_id;
+use shared\json_fields;
+use shared\library;
+use shared\url_var;
 
 include_once paths::DB . 'sql_db.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
@@ -56,27 +74,9 @@ include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
-
-use html\group\group;
-use html\figure\figure;
-use html\helper\config;
-use html\html_base;
-use html\log\user_log_display;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\ref\source;
-use html\sandbox\sandbox_value;
-use html\styles;
-use html\user\user_message;
-use html\word\word;
-use shared\api;
-use shared\const\rest_ctrl;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
 
 class value extends sandbox_value
 {
@@ -116,9 +116,9 @@ class value extends sandbox_value
     {
         $usr_msg = parent::url_mapper($url_array);
         if ($usr_msg->is_ok()) {
-            if (array_key_exists(api::URL_VAR_SOURCE_LONG, $url_array)) {
-                if ($url_array[api::URL_VAR_SOURCE_LONG] != null) {
-                    $this->set_source_id($url_array[api::URL_VAR_SOURCE_LONG]);
+            if (array_key_exists(url_var::SOURCE_LONG, $url_array)) {
+                if ($url_array[url_var::SOURCE_LONG] != null) {
+                    $this->set_source_id($url_array[url_var::SOURCE_LONG]);
                 }
             }
         }
@@ -663,7 +663,7 @@ class value extends sandbox_value
         if (count($this->ids()) > 0) {
             $url_pos = 1; // the phrase position (combined number for fixed, type and free phrases)
             // if the form is confirmed, save the value or the other way round: if with the plus sign only a new phrase is added, do not yet save the value
-            $result .= $html->input(\shared\api::URL_VAR_ID, $this->id(), html_base::INPUT_HIDDEN);
+            $result .= $html->input(\shared\url_var::ID, $this->id(), html_base::INPUT_HIDDEN);
             $result .= $html->input('confirm', '1', html_base::INPUT_HIDDEN);
 
             // reset the phrase sample settings

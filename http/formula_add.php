@@ -38,9 +38,6 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
-
-include_once paths::SHARED_CONST . 'views.php';
-
 use cfg\formula\formula;
 use cfg\user\user;
 use cfg\view\view;
@@ -48,8 +45,10 @@ use cfg\word\word;
 use html\formula\formula as formula_dsp;
 use html\html_base;
 use html\view\view as view_dsp;
-use shared\api;
 use shared\const\views as view_shared;
+use shared\url_var;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $db_con = prg_start("formula_add");
@@ -70,7 +69,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(view_shared::FORMULA_ADD);
-    $back = $_GET[api::URL_VAR_BACK] = '';
+    $back = $_GET[url_var::BACK] = '';
 
     // init the formula object
     $frm = new formula($usr);
@@ -79,16 +78,16 @@ if ($usr->id() > 0) {
     if (isset($_GET['formula_name'])) {
         $frm->set_name($_GET['formula_name']);
     } // the new formula name
-    if (isset($_GET[api::URL_VAR_USER_EXPRESSION])) {
-        $frm->set_user_text($_GET[api::URL_VAR_USER_EXPRESSION]);
+    if (isset($_GET[url_var::USER_EXPRESSION])) {
+        $frm->set_user_text($_GET[url_var::USER_EXPRESSION]);
     } // the new formula text in the user format
-    if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
-        $frm->description = $_GET[api::URL_VAR_DESCRIPTION];
+    if (isset($_GET[url_var::DESCRIPTION])) {
+        $frm->description = $_GET[url_var::DESCRIPTION];
     }
     if (isset($_GET['type'])) {
         $frm->type_id = $_GET['type'];
     }
-    if ($_GET[api::URL_VAR_NEED_ALL] == 'on') {
+    if ($_GET[url_var::NEED_ALL] == 'on') {
         $frm->need_all_val = true;
     } else {
         $frm->need_all_val = false;

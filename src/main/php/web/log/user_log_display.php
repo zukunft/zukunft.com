@@ -2,8 +2,8 @@
 
 /*
 
-    user_log_display.php - a combined object to display single value changes or changes of links by the user
-    --------------------
+    web/log/user_log_display.php - a combined object to display single value changes or changes of links by the user
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 

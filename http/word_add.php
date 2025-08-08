@@ -52,12 +52,6 @@ Delete a word (check if nothing is depending on the word to delete)
 */
 
 use cfg\const\paths;
-
-
-/* standard zukunft header for callable php files to allow debugging and lib loading */
-
-include_once paths::SHARED_CONST . 'views.php';
-
 use cfg\phrase\term;
 use cfg\user\user;
 use cfg\view\view;
@@ -66,8 +60,13 @@ use cfg\word\word;
 use html\html_base;
 use html\view\view as view_dsp;
 use html\word\word as word_dsp;
-use shared\api;
 use shared\const\views as view_shared;
+use shared\url_var;
+
+
+/* standard zukunft header for callable php files to allow debugging and lib loading */
+
+include_once paths::SHARED_CONST . 'views.php';
 
 /* open database */
 $db_con = prg_start(view_shared::WORD_ADD);
@@ -88,7 +87,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(view_shared::WORD_ADD);
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the calling page which should be displayed after saving
+    $back = $_GET[url_var::BACK] = ''; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);

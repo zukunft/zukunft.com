@@ -71,9 +71,9 @@ class words
 
     // for the system setup and all pods of zukunft.com
     const POD = 'pod';
-    const POD_ID = 328;
+    const POD_ID = 203;
     const MASTER_POD_NAME = 'zukunft.com';
-    const MASTER_POD_NAME_ID = 346;
+    const MASTER_POD_NAME_ID = 212;
     const JOB = 'job';
     const USER = 'user';
     const FRONTEND = 'frontend';
@@ -83,10 +83,10 @@ class words
 
     // e.g. one instance / pod of zukunft.com
     const URL = 'url';
-    const URL_ID = 341;
+    const URL_ID = 207;
     // e.g. the launch date of the first beta version of zukunft.com
     const LAUNCH = 'launch';
-    const LAUNCH_ID = 390;
+    const LAUNCH_ID = 197;
 
     // for the user settings
     const ROW = 'row';
@@ -114,7 +114,7 @@ class words
 
     // e.g. the geolocation of the development of zukunft.com
     const POINT = 'point';
-    const POINT_ID = 196;
+    const POINT_ID = 204;
 
     // general words used also for the system configuration that have a fixed tooltip
     const TIME = 'time';
@@ -248,120 +248,120 @@ class words
 
     // words from import file base_phrases.json used for the offline phrase selection
     const DAY = 'day';
-    const DAY_ID = 183;
+    const DAY_ID = 106;
     const FACT = 'fact';
-    const FACT_ID = 186;
+    const FACT_ID = 190;
     const GOVERNMENT = 'government';
-    const GOVERNMENT_ID = 187;
+    const GOVERNMENT_ID = 192;
     const GROUP = 'group';
-    const GROUP_ID = 189;
+    const GROUP_ID = 194;
     const HAND = 'hand';
-    const HAND_ID = 190;
+    const HAND_ID = 195;
     const LIFE = 'life';
     const LIFE_ID = 12;
     const MAN = 'man';
-    const MAN_ID = 191;
+    const MAN_ID = 198;
     const NUMBER = 'number';
-    const NUMBER_ID = 192;
+    const NUMBER_ID = 199;
     const PART = 'part';
-    const PART_ID = 193;
+    const PART_ID = 200;
     const PERSON = 'person';
-    const PERSON_ID = 194;
+    const PERSON_ID = 201;
     const PLACE = 'place';
-    const PLACE_ID = 195;
+    const PLACE_ID = 202;
     const WAY = 'way';
-    const WAY_ID = 198;
+    const WAY_ID = 208;
     const WEEK = 'week';
     const WEEK_ID = 107;
     const WOMAN = 'woman';
-    const WOMAN_ID = 199;
+    const WOMAN_ID = 209;
     const WORK = 'work';
-    const WORK_ID = 200;
+    const WORK_ID = 210;
     const WORLD = 'world';
-    const WORLD_ID = 201;
+    const WORLD_ID = 211;
 
     // words from import file solution_prio.json used for the start page in order of appearance
     const PROBLEM = 'problem';
-    const PROBLEM_ID = 197;
+    const PROBLEM_ID = 205;
     const GLOBAL = 'global';
-    const GLOBAL_ID = 188;
+    const GLOBAL_ID = 193;
     const POTENTIAL = 'potential';
-    const POTENTIAL_ID = 204;
+    const POTENTIAL_ID = 216;
     const CLIMATE = 'climate';
-    const CLIMATE_ID = 207;
+    const CLIMATE_ID = 219;
     const WARMER = 'warmer';
-    const WARMER_ID = 210;
+    const WARMER_ID = 222;
     const POPULISM = 'populism';
-    const POPULISM_ID = 214;
+    const POPULISM_ID = 226;
     const HEALTH = 'health';
-    const HEALTH_ID = 230;
+    const HEALTH_ID = 242;
     const POVERTY = 'poverty';
-    const POVERTY_ID = 232;
+    const POVERTY_ID = 244;
     const EDUCATION = 'education';
-    const EDUCATION_ID = 234;
+    const EDUCATION_ID = 246;
     const HAPPY = 'happy';
-    const HAPPY_ID = 237;
+    const HAPPY_ID = 249;
     const POINTS = 'points';
-    const POINTS_ID = 239;
+    const POINTS_ID = 251;
     const HTP = 'htp';
-    const HTP_ID = 242;
+    const HTP_ID = 254;
     const TRILLION = 'trillion';
-    const TRILLION_ID = 243;
+    const TRILLION_ID = 255;
     const CHF = 'CHF';
-    const CHF_ID = 245;
+    const CHF_ID = 257;
     const USD = 'USD';
-    const USD_ID = 246;
+    const USD_ID = 258;
 
     // words from import file company.json used for the start page in order of appearance
     const SALES = 'sales';
-    const SALES_ID = 268;
+    const SALES_ID = 280;
     const CASH = 'cash';
-    const CASH_ID = 270;
+    const CASH_ID = 282;
     const STATEMENT = 'statement';
-    const STATEMENT_ID = 271;
+    const STATEMENT_ID = 283;
     const PARTS = 'parts';
-    const PARTS_ID = 273;
+    const PARTS_ID = 285;
     const TOTAL_PRE = 'total';
-    const TOTAL_ID = 274;
+    const TOTAL_ID = 286;
     const INCOME = 'income';
-    const INCOME_ID = 275;
+    const INCOME_ID = 287;
     const TAX = 'tax';
-    const TAX_ID = 276;
+    const TAX_ID = 288;
 
     // words from import file country.json used for the start page in order of appearance
     const COUNTRY = 'Country';
     const CH = 'Switzerland';
-    const CH_ID = 280;
+    const CH_ID = 206;
     const GERMANY = 'Germany';
     const CANTON = 'Canton';
-    const CANTON_ID = 281;
+    const CANTON_ID = 185;
     const CITY = 'City';
-    const CITY_ID = 282;
+    const CITY_ID = 187;
     const ZH = 'Zurich';
-    const ZH_ID = 283;
+    const ZH_ID = 213;
     const BE = 'Bern';
-    const BE_ID = 284;
+    const BE_ID = 184;
     const GE = 'Geneva';
-    const GE_ID = 285;
-    const INHABITANT_ID = 287;
+    const GE_ID = 191;
+    const INHABITANT_ID = 196;
     // TODO add test to search for words in all language forms e.g. plural
     const INHABITANTS = 'inhabitants';
     const YEAR_2013 = '2013';
-    const YEAR_2013_ID = 288;
+    const YEAR_2013_ID = 293;
     const YEAR_2014 = '2014';
-    const YEAR_2014_ID = 289;
+    const YEAR_2014_ID = 294;
     const YEAR_2015 = '2015';
-    const YEAR_2015_ID = 290;
+    const YEAR_2015_ID = 295;
     const YEAR_2016 = '2016';
-    const YEAR_2016_ID = 291;
+    const YEAR_2016_ID = 296;
     const YEAR_2017 = '2017';
-    const YEAR_2017_ID = 292;
+    const YEAR_2017_ID = 297;
     const YEAR_2018 = '2018';
-    const YEAR_2018_ID = 293;
+    const YEAR_2018_ID = 298;
 
     // words from import test file companies.json used for the start page in order of appearance
     const COMPANY = 'company';
-    const COMPANY_ID = 184;
+    const COMPANY_ID = 188;
     const ABB = 'ABB';
     const ABB_ID = 1023;
     const VESTAS = 'Vestas';

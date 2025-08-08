@@ -45,9 +45,6 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
-
-include_once paths::SHARED_CONST . 'views.php';
-
 use cfg\formula\formula_list;
 use cfg\phrase\phr_ids;
 use cfg\phrase\phrase_list;
@@ -56,11 +53,13 @@ use cfg\user\user;
 use cfg\view\view;
 use html\html_base;
 use html\view\view as view_dsp;
-use shared\api;
 use shared\const\triples;
+use shared\const\views as view_shared;
 use shared\const\words;
 use shared\library;
-use shared\const\views as view_shared;
+use shared\url_var;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $db_con = prg_start("start formula_test.php");
@@ -81,12 +80,12 @@ if ($session_usr->id() > 0) {
     // show the header even if all parameters are wrong
     $msk = new view($session_usr);
     $msk->set_id($sys_msk_cac->id(view_shared::FORMULA_TEST));
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the page (or phrase id) from which formula testing has been called
+    $back = $_GET[url_var::BACK] = ''; // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_dsp($msk->api_json());
     echo $msk_dsp->dsp_navbar($back);
 
     // get all parameters
-    $frm_id = $_GET[api::URL_VAR_ID];
+    $frm_id = $_GET[url_var::ID];
     $phr_ids_txt = $_GET['phrases'];
     $usr_id = $_GET['user'];    // to force another user view for testing the formula calculation
     $refresh = $_GET['refresh']; // delete all results for this formula and calculate the results again

@@ -36,13 +36,9 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
-
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'user_profiles.php';
-
 use cfg\component\component;
 use cfg\component\component_link;
+use cfg\const\paths;
 use cfg\formula\formula;
 use cfg\formula\formula_link;
 use cfg\user\user;
@@ -53,9 +49,12 @@ use cfg\word\word;
 use html\html_base;
 use html\user\user as user_dsp;
 use html\view\view as view_dsp;
-use shared\api;
 use shared\const\views as view_shared;
 use shared\enum\user_profiles;
+use shared\url_var;
+
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'user_profiles.php';
 
 $db_con = prg_start("user");
 $html = new html_base();
@@ -65,8 +64,8 @@ global $usr_pro_cac;
 $result = ''; // reset the html code var
 
 // get the parameters
-$id = $_GET[api::URL_VAR_ID];
-$back = $_GET[api::URL_VAR_BACK] = '';
+$id = $_GET[url_var::ID];
+$back = $_GET[url_var::BACK] = '';
 $undo_val = $_GET['undo_value'];
 $undo_wrd = $_GET['undo_word'];
 $undo_lnk = $_GET['undo_triple'];

@@ -36,6 +36,24 @@ namespace html\phrase;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+use html\formula\formula;
+use html\helper\config;
+use html\html_base;
+use html\phrase\phrase as phrase_dsp;
+use html\phrase\phrase_list as phrase_list_dsp;
+use html\rest_call as api_dsp;
+use html\sandbox\sandbox_list_named;
+use html\user\user_message;
+use html\verb\verb;
+use html\verb\verb_list;
+use html\word\triple;
+use html\word\word;
+use html\word\word_list;
+use shared\const\triples;
+use shared\const\words;
+use shared\enum\foaf_direction;
+use shared\library;
+use shared\url_var;
 
 //include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 //include_once html_paths::HELPER . 'config.php';
@@ -56,26 +74,8 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
-
-use html\formula\formula;
-use html\helper\config;
-use html\html_base;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\rest_call as api_dsp;
-use html\sandbox\sandbox_list_named;
-use html\user\user_message;
-use html\verb\verb;
-use html\verb\verb_list;
-use html\word\triple;
-use html\word\word;
-use html\word\word_list;
-use shared\api;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\foaf_direction;
-use shared\library;
 
 class phrase_list extends sandbox_list_named
 {
@@ -113,9 +113,9 @@ class phrase_list extends sandbox_list_named
         // TODO move the
         $api = new api_dsp();
         $data = array();
-        $data[api::URL_VAR_PHRASE] = $phr->id();
-        $data[api::URL_VAR_DIRECTION] = $direction->value;
-        $data[api::URL_VAR_LEVELS] = 1;
+        $data[url_var::PHRASE] = $phr->id();
+        $data[url_var::DIRECTION] = $direction->value;
+        $data[url_var::LEVELS] = 1;
         $json_body = $api->api_get(self::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
@@ -136,7 +136,7 @@ class phrase_list extends sandbox_list_named
         // TODO move the
         $api = new api_dsp();
         $data = array();
-        $data[api::URL_VAR_FORMULAS] = $frm->id();
+        $data[url_var::FORMULAS] = $frm->id();
         $json_body = $api->api_get(self::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {

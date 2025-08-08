@@ -37,8 +37,16 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
+use cfg\phrase\phr_ids;
+use cfg\phrase\phrase;
+use cfg\phrase\phrase_list;
+use cfg\user\user;
+use controller\controller;
+use shared\enum\foaf_direction;
+use shared\url_var;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::API_OBJECT . 'controller.php';
@@ -48,25 +56,17 @@ include_once paths::MODEL_PHRASE . 'phr_ids.php';
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 
-use cfg\phrase\phrase;
-use controller\controller;
-use cfg\user\user;
-use cfg\phrase\phr_ids;
-use cfg\phrase\phrase_list;
-use shared\api;
-use shared\enum\foaf_direction;
-
 // open database
 $db_con = prg_start("api/phraseList", "", false);
 
 if ($db_con->is_open()) {
 
     // get the parameters
-    $phr_ids = $_GET[api::URL_VAR_ID_LST] ?? '';
-    $phr_id = $_GET[api::URL_VAR_PHRASE] ?? '';
-    $direction_text = $_GET[api::URL_VAR_DIRECTION] ?? '';
-    $levels = $_GET[api::URL_VAR_LEVELS] ?? '';
-    $pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
+    $phr_ids = $_GET[url_var::ID_LST] ?? '';
+    $phr_id = $_GET[url_var::PHRASE] ?? '';
+    $direction_text = $_GET[url_var::DIRECTION] ?? '';
+    $levels = $_GET[url_var::LEVELS] ?? '';
+    $pattern = $_GET[url_var::PATTERN] ?? '';
 
     $msg = '';
     $result = ''; // reset the json message string

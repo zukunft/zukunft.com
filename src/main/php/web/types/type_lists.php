@@ -38,6 +38,13 @@ namespace html\types;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+use html\user\user_message;
+use html\verb\verb;
+use html\view\view;
+use html\view\view_list as view_list_dsp;
+use html\word\word as word_dsp;
+use shared\api;
+use shared\json_fields;
 
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'type_list.php';
@@ -72,14 +79,7 @@ include_once paths::SHARED . 'json_fields.php';
 
 // get the api const that are shared between the backend and the html frontend
 include_once paths::SHARED . 'api.php';
-
-use html\user\user_message;
-use html\verb\verb;
-use html\view\view;
-use html\view\view_list as view_list_dsp;
-use html\word\word as word_dsp;
-use shared\api;
-use shared\json_fields;
+include_once paths::SHARED . 'url_var.php';
 
 class type_lists
 {

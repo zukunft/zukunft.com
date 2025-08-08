@@ -34,14 +34,15 @@ namespace html\sandbox;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
-include_once html_paths::SANDBOX . 'sandbox_named.php';
-include_once paths::SHARED . 'api.php';
-include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED . 'json_fields.php';
-
-use shared\api;
 use html\user\user_message;
 use shared\json_fields;
+use shared\url_var;
+
+include_once html_paths::SANDBOX . 'sandbox_named.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED . 'json_fields.php';
 
 class sandbox_typed extends sandbox_named
 {
@@ -65,8 +66,8 @@ class sandbox_typed extends sandbox_named
     function url_mapper(array $url_array): user_message
     {
         $usr_msg = parent::url_mapper($url_array);
-        if (array_key_exists(api::URL_VAR_TYPE, $url_array)) {
-            $this->set_type_id($url_array[api::URL_VAR_TYPE]);
+        if (array_key_exists(url_var::TYPE, $url_array)) {
+            $this->set_type_id($url_array[url_var::TYPE]);
         } else {
             $this->set_type_id();
         }

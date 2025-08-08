@@ -2,8 +2,8 @@
 
 /*
 
-    html_names.php - const names used to make the html names unique
-    --------------
+    web/html/html_names.php - const names used to make the html names unique
+    -----------------------
 
 
     This file is part of zukunft.com - calc with words

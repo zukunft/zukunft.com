@@ -46,7 +46,19 @@
 namespace html\view;
 
 use cfg\const\paths;
+use html\component\component_list;
 use html\const\paths as html_paths;
+use html\sandbox\db_object;
+use html\sandbox\sandbox_code_id;
+use html\types\type_lists;
+use html\user\user_message;
+use html\word\triple;
+use html\word\word;
+use shared\api;
+use shared\const\views;
+use shared\enum\messages as msg_id;
+use shared\json_fields;
+use shared\url_var;
 
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -64,20 +76,9 @@ include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
-
-use html\component\component_list;
-use html\types\type_lists;
-use html\sandbox\db_object;
-use html\sandbox\sandbox_code_id;
-use html\user\user_message;
-use html\word\triple;
-use html\word\word;
-use shared\api;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
 
 class view_base extends sandbox_code_id
 {
@@ -202,7 +203,7 @@ class view_base extends sandbox_code_id
     function load_by_id_with(int $id): bool
     {
         $data = [];
-        $data[api::URL_VAR_CHILDREN] = 1;
+        $data[url_var::CHILDREN] = 1;
         return parent::load_by_id($id, $data);
     }
 

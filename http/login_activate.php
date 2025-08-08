@@ -36,11 +36,11 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use html\html_base;
 use cfg\db\sql_db;
 use cfg\user\user;
-use shared\api;
+use html\html_base;
 use shared\const\users;
+use shared\url_var;
 
 // open database
 $db_con = prg_start("login_activate", "center_form");
@@ -56,7 +56,7 @@ if ($db_con->is_open()) {
     if (isset($_POST['submit'])) {
         $html = new html_base();
 
-        $usr_id = $_POST[api::URL_VAR_ID];
+        $usr_id = $_POST[url_var::ID];
         $debug = $_POST['debug'];
         log_debug("login_activate (user: " . $usr_id . ")");
 
@@ -134,10 +134,10 @@ if ($db_con->is_open()) {
     }
 
     if (!$_SESSION['logged']) {
-        $usr_id = $_GET[api::URL_VAR_ID];
+        $usr_id = $_GET[url_var::ID];
         if ($usr_id <= 0) {
             if (isset($_POST['submit'])) {
-                $usr_id = $_POST[api::URL_VAR_ID];
+                $usr_id = $_POST[url_var::ID];
             }
         }
         if ($usr_id > 0) {

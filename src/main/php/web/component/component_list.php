@@ -31,7 +31,6 @@
 
 namespace html\component;
 
-use cfg\const\paths;
 use html\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::COMPONENT . 'component_exe.php';

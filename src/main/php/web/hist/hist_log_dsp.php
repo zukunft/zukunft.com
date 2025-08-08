@@ -2,8 +2,8 @@
 
 /*
 
-    word_log_dsp.php - display the past changes of an object
-    ----------------
+    web/word_log_dsp.php - display the past changes of an object
+    --------------------
 
     This file is part of the frontend of zukunft.com - calc with words
 

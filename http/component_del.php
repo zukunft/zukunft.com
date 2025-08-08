@@ -44,7 +44,7 @@ use cfg\user\user;
 use cfg\view\view;
 use html\html_base;
 use html\view\view as view_dsp;
-use shared\api;
+use shared\url_var;
 use shared\const\views as view_shared;
 
 // open database
@@ -66,10 +66,10 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(view_shared::VIEW_DEL);
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change if finished
+    $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change if finished
 
     // get the parameters
-    $cmp_del_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $cmp_del_id = $_GET[url_var::ID] ?? 0;
     $confirm = $_GET['confirm'];
 
     if ($cmp_del_id > 0) {

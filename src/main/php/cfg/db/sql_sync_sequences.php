@@ -2,8 +2,8 @@
 
 /*
 
-    cfg/db/sql_sync_sequences.php - check and fix the sql sequences in all database dialects
-    -----------------------------
+    model/db/sql_sync_sequences.php - check and fix the sql sequences in all database dialects
+    -------------------------------
 
     This file is part of zukunft.com - calc with words
 

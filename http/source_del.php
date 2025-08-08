@@ -36,16 +36,15 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
-
-include_once paths::SHARED_CONST . 'views.php';
-
 use cfg\ref\source;
 use cfg\user\user;
 use cfg\view\view;
 use html\html_base;
 use html\view\view as view_dsp;
-use shared\api;
 use shared\const\views as view_shared;
+use shared\url_var;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 // open database
 $db_con = prg_start("source_del");
@@ -68,10 +67,10 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_id($sys_msk_cac->id(view_shared::SOURCE_DEL));
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change if finished
+    $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change if finished
 
     // get the parameters
-    $src_id = $_GET[api::URL_VAR_ID];
+    $src_id = $_GET[url_var::ID];
     $confirm = $_GET['confirm'];
 
     if ($src_id > 0) {

@@ -2,8 +2,8 @@
 
 /*
 
-    user_dsp.php - functions to create the HTML code to display the user setup and log information
-    ------------
+    web/user/user.php - functions to create the HTML code to display the user setup and log information
+    -----------------
 
     This file is part of zukunft.com - calc with words
 

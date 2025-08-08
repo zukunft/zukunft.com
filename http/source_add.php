@@ -46,7 +46,7 @@ use cfg\view\view;
 use html\html_base;
 use html\ref\source as source_dsp;
 use html\view\view as view_dsp;
-use shared\api;
+use shared\url_var;
 use shared\const\views as view_shared;
 
 /* open database */
@@ -72,20 +72,20 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_id($sys_msk_cac->id(view_shared::SOURCE_ADD));
-    $back = $_GET[api::URL_VAR_BACK] = '';      // the calling word which should be displayed after saving
+    $back = $_GET[url_var::BACK] = '';      // the calling word which should be displayed after saving
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
     $src = new source($usr);
 
     // load the parameters to the view object to display the user input again in case of an error
-    if (isset($_GET[api::URL_VAR_NAME])) {
-        $src->set_name($_GET[api::URL_VAR_NAME]);
+    if (isset($_GET[url_var::NAME])) {
+        $src->set_name($_GET[url_var::NAME]);
     }    // name of the new source to add
-    if (isset($_GET[api::URL_VAR_URL])) {
-        $src->set_url($_GET[api::URL_VAR_URL]);
+    if (isset($_GET[url_var::URL])) {
+        $src->set_url($_GET[url_var::URL]);
     }     // url of the new source to add
-    if (isset($_GET[api::URL_VAR_COMMENT])) {
-        $src->description = $_GET[api::URL_VAR_COMMENT];
+    if (isset($_GET[url_var::COMMENT])) {
+        $src->description = $_GET[url_var::COMMENT];
     }
 
     // if the user has pressed save at least once

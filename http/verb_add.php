@@ -37,20 +37,19 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
-use html\const\paths as html_paths;
-
-include_once paths::SHARED_CONST . 'views.php';
-include_once html_paths::VERB . 'verb.php';
-
 use cfg\phrase\term;
 use cfg\user\user;
 use cfg\verb\verb;
 use cfg\view\view;
+use html\const\paths as html_paths;
 use html\html_base;
 use html\verb\verb as verb_dsp;
 use html\view\view as view_dsp;
-use shared\api;
 use shared\const\views as view_shared;
+use shared\url_var;
+
+include_once paths::SHARED_CONST . 'views.php';
+include_once html_paths::VERB . 'verb.php';
 
 /* open database */
 $db_con = prg_start("link_type_add");
@@ -71,7 +70,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(view_shared::VERB_ADD);
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the calling word which should be displayed after saving
+    $back = $_GET[url_var::BACK] = ''; // the calling word which should be displayed after saving
 
     if (!$usr->is_admin()) {
         $result .= log_err("Only user with the administrator profile can add verbs (triple types).", "verb_add.php");
@@ -82,17 +81,17 @@ if ($usr->id() > 0) {
         $vrb->set_user($usr);
 
         // load the parameters to the verb object to display it again in case of an error
-        if ($_GET[api::URL_VAR_NAME] != null) {
-            $vrb->set_name($_GET[api::URL_VAR_NAME]);
+        if ($_GET[url_var::NAME] != null) {
+            $vrb->set_name($_GET[url_var::NAME]);
         }
-        if ($_GET[api::URL_VAR_PLURAL] != null) {
-            $vrb->set_plural($_GET[api::URL_VAR_PLURAL]);
+        if ($_GET[url_var::PLURAL] != null) {
+            $vrb->set_plural($_GET[url_var::PLURAL]);
         }
-        if (isset($_GET[api::URL_VAR_REVERSE])) {
-            $vrb->set_reverse($_GET[api::URL_VAR_REVERSE]);
+        if (isset($_GET[url_var::REVERSE])) {
+            $vrb->set_reverse($_GET[url_var::REVERSE]);
         }
-        if (isset($_GET[api::URL_VAR_REVERSE_PLURAL])) {
-            $vrb->set_reverse_plural($_GET[api::URL_VAR_REVERSE_PLURAL]);
+        if (isset($_GET[url_var::REVERSE_PLURAL])) {
+            $vrb->set_reverse_plural($_GET[url_var::REVERSE_PLURAL]);
         }
 
         if ($_GET['confirm'] > 0) {

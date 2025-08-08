@@ -40,6 +40,7 @@ include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use html\html_base;

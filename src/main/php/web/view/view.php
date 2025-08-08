@@ -38,7 +38,23 @@
 namespace html\view;
 
 use cfg\const\paths;
+use html\button;
 use html\const\paths as html_paths;
+use html\display_list;
+use html\html_base;
+use html\log\user_log_display;
+use html\styles;
+use html\system\back_trace;
+use html\types\type_lists;
+use html\word\word;
+use shared\api;
+use shared\const\rest_ctrl;
+use shared\const\views;
+use shared\enum\messages as msg_id;
+use shared\helper\Config as shared_config;
+use shared\library;
+use shared\types\view_styles;
+use shared\types\view_type;
 
 include_once html_paths::VIEW . 'view_exe.php';
 include_once html_paths::HELPER . 'config.php';
@@ -57,24 +73,8 @@ include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_TYPES . 'view_type.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
-
-use html\button;
-use html\display_list;
-use html\html_base;
-use html\log\user_log_display;
-use html\styles;
-use html\system\back_trace;
-use html\types\type_lists;
-use html\word\word;
-use shared\api;
-use shared\const\rest_ctrl;
-use shared\const\views;
-use shared\library;
-use shared\types\view_styles;
-use shared\types\view_type;
-use shared\enum\messages as msg_id;
-use shared\helper\Config as shared_config;
 
 class view extends view_exe
 {

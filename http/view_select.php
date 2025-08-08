@@ -30,12 +30,12 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use html\view\view as view_dsp;
-use html\word\word as word_dsp;
 use cfg\user\user;
 use cfg\view\view;
 use cfg\word\word;
-use shared\api;
+use html\view\view as view_dsp;
+use html\word\word as word_dsp;
+use shared\url_var;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -62,15 +62,15 @@ if ($usr->id() > 0) {
     // in view edit views the view cannot be changed
     $msk = new view($usr);
     //$dsp->set_id(cl(SQL_VIEW_FORMULA_EXPLAIN));
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change if finished
+    $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change if finished
     $msk_dsp = new view_dsp($msk->api_json());
     $result .= $msk_dsp->dsp_navbar_no_view($back);
     $view_id = 0;
     $word_id = $back;
 
     // get the view id used utils now and the word id
-    if (isset($_GET[api::URL_VAR_ID])) {
-        $view_id = $_GET[api::URL_VAR_ID];
+    if (isset($_GET[url_var::ID])) {
+        $view_id = $_GET[url_var::ID];
     }
     if (isset($_GET['word'])) {
         $word_id = $_GET['word'];

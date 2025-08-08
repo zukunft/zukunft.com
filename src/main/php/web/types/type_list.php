@@ -38,6 +38,7 @@ namespace html\types;
 use cfg\const\paths;
 use html\const\paths as html_paths;
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once html_paths::TYPES . 'protection.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::TYPES . 'type_object.php';

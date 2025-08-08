@@ -2,8 +2,8 @@
 
 /*
 
-    component_link_dsp.php - create HTML code to display a view component links
-    ---------------------
+    web/view/component_link.php - create HTML code to display a view component links
+    ---------------------------
 
     This file is part of zukunft.com - calc with words
 

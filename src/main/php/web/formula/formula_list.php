@@ -2,8 +2,8 @@
 
 /*
 
-    formula_list_dsp.php - a list function to create the HTML code to display a formula list
-    -----------------
+    web/formula/formula_list.php - a list function to create the HTML code to display a formula list
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -31,8 +31,8 @@
 
 namespace html\formula;
 
-use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';

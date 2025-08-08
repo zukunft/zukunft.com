@@ -2,7 +2,7 @@
 
 /*
 
-    model/element/element_list.php - a list of formula elements to place the name function
+    web/element/element_list.php - a list of formula elements to place the name function
     ----------------------------
 
     The main sections of this object are
@@ -37,7 +37,6 @@
 
 namespace html\element;
 
-use cfg\const\paths;
 use html\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'list_dsp.php';
 

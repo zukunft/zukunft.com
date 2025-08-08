@@ -36,9 +36,6 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
-
-include_once paths::SHARED_CONST . 'views.php';
-
 use cfg\phrase\term;
 use cfg\user\user;
 use cfg\view\view;
@@ -47,9 +44,10 @@ use cfg\word\word;
 use html\html_base;
 use html\view\view as view_dsp;
 use html\word\word as word_dsp;
-use shared\api;
-use shared\const\views;
 use shared\const\views as view_shared;
+use shared\url_var;
+
+include_once paths::SHARED_CONST . 'views.php';
 
 /* open database */
 $db_con = prg_start("phrase_list");
@@ -72,7 +70,7 @@ if ($usr->id() > 0) {
     $msk_db = new view($usr);
     $msk_db->load_by_code_id(view_shared::WORD_ADD);
     $msk = new view_dsp($msk_db->api_json());
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the calling page which should be displayed after saving
+    $back = $_GET[url_var::BACK] = ''; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);

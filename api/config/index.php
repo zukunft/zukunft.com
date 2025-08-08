@@ -42,8 +42,17 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
+use cfg\helper\config_numbers;
+use cfg\user\user;
+use cfg\user\user_message;
+use controller\controller;
+use shared\api;
+use shared\enum\messages as msg_id;
+use shared\types\api_type;
+use shared\url_var;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
@@ -54,22 +63,14 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::SHARED_CONST . 'users.php';
 
-use cfg\helper\config_numbers;
-use cfg\user\user_message;
-use controller\controller;
-use cfg\user\user;
-use shared\enum\messages as msg_id;
-use shared\api;
-use shared\types\api_type;
-
 // open database
 $db_con = prg_start("api/config", "", false);
 
 if ($db_con->is_open()) {
 
     // get the parameter which config part is requested
-    $part = $_GET[api::URL_VAR_CONFIG_PART] ?? '';
-    $with_phr = $_GET[api::URL_VAR_WITH_PHRASES] ?? '';
+    $part = $_GET[url_var::CONFIG_PART] ?? '';
+    $with_phr = $_GET[url_var::WITH_PHRASES] ?? '';
 
     $usr_msg = new user_message();
     $result = ''; // reset the html code var
@@ -98,7 +99,7 @@ if ($db_con->is_open()) {
                 $usr_msg->add_id(msg_id::CONFIG_EMPTY);
             }
         }
-        if ($with_phr == api::URL_VAR_TRUE) {
+        if ($with_phr == url_var::TRUE) {
             $result = $cfg_lst->api_json([api_type::INCL_PHRASES]);
         } else {
             $result = $cfg_lst->api_json([api_type::NO_KEY_FILL]);

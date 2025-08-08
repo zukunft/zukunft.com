@@ -46,14 +46,14 @@ use cfg\view\view;
 use html\formula\formula as formula_dsp;
 use html\html_base;
 use html\view\view as view_dsp;
-use shared\api;
+use shared\url_var;
 use shared\const\views as view_shared;
 
 $db_con = prg_start("formula_edit");
 $html = new html_base();
 
 // get the parameters
-$frm_id = $_GET[api::URL_VAR_ID] ?? 0;
+$frm_id = $_GET[url_var::ID] ?? 0;
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately
@@ -70,7 +70,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(view_shared::FORMULA_EDIT);
-    $back = $_GET[api::URL_VAR_BACK] = '';
+    $back = $_GET[url_var::BACK] = '';
 
     // create the formula object to have a place to update the parameters
     $frm = new formula($usr);
@@ -80,23 +80,23 @@ if ($usr->id() > 0) {
     if (isset($_GET['formula_name'])) {
         $frm->set_name($_GET['formula_name']);
     } // the new formula name
-    if (isset($_GET[api::URL_VAR_USER_EXPRESSION])) {
-        $frm->usr_text = $_GET[api::URL_VAR_USER_EXPRESSION];
+    if (isset($_GET[url_var::USER_EXPRESSION])) {
+        $frm->usr_text = $_GET[url_var::USER_EXPRESSION];
     } // the new formula text in the user format
-    if (isset($_GET[api::URL_VAR_DESCRIPTION])) {
-        $frm->description = $_GET[api::URL_VAR_DESCRIPTION];
+    if (isset($_GET[url_var::DESCRIPTION])) {
+        $frm->description = $_GET[url_var::DESCRIPTION];
     }
     if (isset($_GET['type'])) {
         $frm->type_id = $_GET['type'];
     }
-    if ($_GET[api::URL_VAR_NEED_ALL] == 'on') {
+    if ($_GET[url_var::NEED_ALL] == 'on') {
         $frm->need_all_val = true;
     } else {
         if ($_GET['confirm'] == 1) {
             $frm->need_all_val = false;
         }
     }
-    //if (isset($_GET[api::URL_VAR_NEED_ALL]))  { if ($_GET[api::URL_VAR_NEED_ALL] == 'on') { $frm->need_all_val = true; } else { $frm->need_all_val = false; } }
+    //if (isset($_GET[url_var::NEED_ALL]))  { if ($_GET[url_var::NEED_ALL] == 'on') { $frm->need_all_val = true; } else { $frm->need_all_val = false; } }
 
     if ($frm->id() <= 0) {
         $result .= log_err("No formula found to change because the id is missing.", "/http/formula_edit.php");
@@ -104,7 +104,7 @@ if ($usr->id() > 0) {
 
         // do the direct changes initiated by other buttons than the save button
         // to link the formula to another word
-        $link_phr_id = $_GET[api::URL_VAR_LINK_PHRASE] ?? 0;
+        $link_phr_id = $_GET[url_var::LINK_PHRASE] ?? 0;
         if ($link_phr_id != 0) {
             $phr = new phrase($usr);
             $phr->load_by_id($link_phr_id);
@@ -112,7 +112,7 @@ if ($usr->id() > 0) {
         }
 
         // to unlink a word from the formula
-        $unlink_phr_id = $_GET[api::URL_VAR_UNLINK_PHRASE] ?? 0;
+        $unlink_phr_id = $_GET[url_var::UNLINK_PHRASE] ?? 0;
         if ($unlink_phr_id > 0) {
             $phr = new phrase($usr);
             $phr->load_by_id($unlink_phr_id);

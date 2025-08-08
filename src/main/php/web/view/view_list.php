@@ -2,8 +2,8 @@
 
 /*
 
-    view_list_dsp.php - a list function to create the HTML code to display a view list
-    -----------------
+    web/view/view_list.php - a list function to create the HTML code to display a view list
+    ----------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -33,6 +33,18 @@ namespace html\view;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+use html\ref\source;
+use html\rest_call;
+use html\sandbox\list_dsp;
+use html\sandbox\sandbox;
+use html\user\user_message;
+use html\verb\verb;
+use html\view\view as view_dsp;
+use html\word\triple;
+use html\word\word;
+use shared\const\views;
+use shared\types\view_styles;
+use shared\url_var;
 
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::REF . 'source.php';
@@ -48,19 +60,7 @@ include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
-
-use html\ref\source;
-use html\rest_call;
-use html\sandbox\list_dsp;
-use html\sandbox\sandbox;
-use html\user\user_message;
-use html\verb\verb;
-use html\view\view as view_dsp;
-use html\word\triple;
-use html\word\word;
-use shared\api;
-use shared\const\views;
-use shared\types\view_styles;
+include_once paths::SHARED . 'url_var.php';
 
 class view_list extends list_dsp
 {
@@ -100,7 +100,7 @@ class view_list extends list_dsp
     {
         $result = false;
 
-        $data = array(api::URL_VAR_PATTERN => $pattern);
+        $data = array(url_var::PATTERN => $pattern);
         $rest = new rest_call();
         $json_body = $rest->api_get(view_list::class, $data);
         $this->api_mapper($json_body);
@@ -120,7 +120,7 @@ class view_list extends list_dsp
     {
         $result = false;
 
-        $data = array(api::URL_VAR_CMP_ID => $id);
+        $data = array(url_var::CMP_ID => $id);
         $rest = new rest_call();
         $json_body = $rest->api_get(view_base::class, $data);
         $this->api_mapper($json_body);

@@ -49,8 +49,8 @@ use html\types\user_profile;
 use html\types\verbs;
 use html\types\view_style_list;
 use html\types\view_type_list;
-use shared\api;
 use shared\const\views;
+use shared\url_var;
 use test\test_cleanup;
 
 include_once html_paths::TYPES . 'type_list.php';
@@ -93,7 +93,7 @@ class type_lists_ui_tests
         $test_page .= $html->label(verbs::NAME, verbs::NAME);
         $test_page .= $ui_cache->html_verbs->selector($form_name) . '<br>';
 
-        $test_page .= $html->label(phrase_types::NAME, api::URL_VAR_PHRASE_TYPE);
+        $test_page .= $html->label(phrase_types::NAME, url_var::PHRASE_TYPE);
         $test_page .= $ui_cache->html_phrase_types->selector($form_name) . '<br>';
 
         $test_page .= $html->label(formula_type_list::NAME, formula_type_list::NAME);

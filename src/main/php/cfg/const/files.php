@@ -77,7 +77,9 @@ class files
     const SYSTEM_VIEWS = self::MESSAGE_PATH . self::SYSTEM_VIEWS_FILE;
     const TRANSLATION_PATH = self::RESOURCE_PATH . 'translations' . DIRECTORY_SEPARATOR;
 
-    // initial configuration of some often used words and triples that the user can change
+    // initial loading of words and triples used for unit, ui and db read tests
+    // so that they have a low database id that does hopefully neven change
+    // including some often used words and triples that are used for the offline phrase selection
     const BASE_PHRASES_FILE = 'base_phrases' . self::JSON;
 
     // initial configuration of some views that the user can change
@@ -109,7 +111,7 @@ class files
     // sources used for the initial pod setup and for system testing
     const SOURCES_FILE = 'sources' . self::JSON;
 
-    // some basic units e.g. kilogram
+    // some basic units including the SI units e.g. kilogram
     const UNITS_FILE = 'units' . self::JSON;
 
     // some basic scaling formulas e.g. to scale millions to one

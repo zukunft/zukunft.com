@@ -33,6 +33,15 @@
 namespace cfg\helper;
 
 use cfg\const\paths;
+use cfg\phrase\phrase;
+use cfg\user\user;
+use cfg\user\user_message;
+use cfg\value\value_list;
+use shared\api;
+use shared\const\triples;
+use shared\const\words;
+use shared\enum\language_codes;
+use shared\enum\messages as msg_id;
 
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -43,16 +52,7 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
-
-use cfg\phrase\phrase;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value_list;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\language_codes;
-use shared\api;
-use shared\enum\messages as msg_id;
+include_once paths::SHARED . 'url_var.php';
 
 
 class config_numbers extends value_list

@@ -35,7 +35,27 @@
 namespace html\value;
 
 use cfg\const\paths;
+use cfg\phrase\phr_ids;
+use html\button;
 use html\const\paths as html_paths;
+use html\group\group;
+use html\group\group_list;
+use html\html_base;
+use html\phrase\phrase;
+use html\phrase\phrase_list;
+use html\rest_call;
+use html\result\result_list;
+use html\sandbox\list_dsp;
+use html\styles;
+use html\user\user_message;
+use html\word\word;
+use html\word\word_list;
+use shared\api;
+use shared\const\views as view_shared;
+use shared\helper\CombineObject;
+use shared\helper\IdObject;
+use shared\helper\TextIdObject;
+use shared\library;
 
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::HTML . 'button.php';
@@ -59,28 +79,8 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
-
-use html\button;
-use cfg\phrase\phr_ids;
-use html\group\group;
-use html\html_base;
-use html\group\group_list;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\rest_call;
-use html\result\result_list;
-use html\sandbox\list_dsp;
-use html\styles;
-use html\user\user_message;
-use html\word\word;
-use html\word\word_list;
-use shared\api;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
-use shared\library;
-use shared\const\views as view_shared;
 
 class value_list extends list_dsp
 {

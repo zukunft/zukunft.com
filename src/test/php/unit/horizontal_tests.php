@@ -46,7 +46,34 @@
 namespace unit;
 
 use cfg\component\component;
+use cfg\const\def;
 use cfg\const\paths;
+use cfg\formula\formula;
+use cfg\group\group;
+use cfg\helper\data_object;
+use cfg\helper\db_object;
+use cfg\ref\ref;
+use cfg\ref\source;
+use cfg\result\result;
+use cfg\sandbox\sandbox;
+use cfg\sandbox\sandbox_multi;
+use cfg\user\user;
+use cfg\value\value;
+use cfg\verb\verb;
+use cfg\view\view;
+use cfg\word\triple;
+use cfg\word\word;
+use const\paths as test_paths;
+use html\frontend;
+use html\user\user as user_dsp;
+use shared\const\views;
+use shared\const\views as view_shared;
+use shared\enum\change_actions;
+use shared\library;
+use shared\types\api_type;
+use shared\url_var;
+use test\test_api;
+use test\test_cleanup;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::API_OBJECT . 'controller.php';
@@ -67,37 +94,8 @@ include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 
-
-use cfg\const\def;
-use cfg\formula\formula;
-use cfg\group\group;
-use cfg\helper\db_object;
-use cfg\ref\source;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_value;
-use cfg\user\user;
-use cfg\verb\verb;
-use cfg\view\view;
-use cfg\word\word;
-use const\paths as test_paths;
-use cfg\helper\data_object;
-use cfg\ref\ref;
-use cfg\result\result;
-use cfg\value\value;
-use cfg\word\triple;
-use html\types\type_lists;
-use html\user\user as user_dsp;
-use html\frontend;
-use shared\api;
-use shared\const\views;
-use shared\const\views as view_shared;
-use shared\enum\change_actions;
-use shared\library;
-use shared\types\api_type;
-use test\test_api;
-use test\test_cleanup;
 
 class horizontal_tests
 {
@@ -232,7 +230,7 @@ class horizontal_tests
                 $class = $lib->class_to_name($dbo::class);
                 $folder = $class . DIRECTORY_SEPARATOR;
                 $dbo_name .= $class;
-                $dbo_id = $url_array[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
+                $dbo_id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
                 if ($action != change_actions::SHOW) {
                     $dbo_name .= '_' . $action;
                 }

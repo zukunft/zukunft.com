@@ -37,8 +37,14 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 use cfg\const\paths;
+use cfg\result\result;
+use cfg\user\user;
+use cfg\value\value;
+use controller\controller;
+use shared\url_var;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::API_OBJECT . 'api_message.php';
@@ -46,19 +52,13 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_RESULT . 'result.php';
 include_once paths::MODEL_VALUE . 'value.php';
 
-use cfg\value\value;
-use controller\controller;
-use cfg\result\result;
-use cfg\user\user;
-use shared\api;
-
 // open database
 $db_con = prg_start("api/figure", "", false);
 
 if ($db_con->is_open()) {
 
     // get the parameters
-    $fig_id = $_GET[api::URL_VAR_ID] ?? 0;
+    $fig_id = $_GET[url_var::ID] ?? 0;
 
     $msg = '';
     $result = ''; // reset the json message string

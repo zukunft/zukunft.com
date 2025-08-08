@@ -30,11 +30,11 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use html\html_base;
-use html\view\view as view_dsp;
 use cfg\user\user;
 use cfg\word\word;
-use shared\api;
+use html\html_base;
+use html\view\view as view_dsp;
+use shared\url_var;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -46,13 +46,13 @@ $db_con = prg_start("view_confirm");
 $html = new html_base();
 
 $result = ''; // reset the html code var
-$back = $_GET[api::URL_VAR_BACK] = ''; // the word id from which this value change has been called (maybe later any page)
+$back = $_GET[url_var::BACK] = ''; // the word id from which this value change has been called (maybe later any page)
 $word_id = $back;
 $view_id = 0;
 
 // get the view id used utils now and the word id
-if (isset($_GET[api::URL_VAR_ID])) {
-    $view_id = $_GET[api::URL_VAR_ID];
+if (isset($_GET[url_var::ID])) {
+    $view_id = $_GET[url_var::ID];
 }
 if (isset($_GET['word'])) {
     $word_id = $_GET['word'];

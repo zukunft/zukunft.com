@@ -2,34 +2,34 @@
 
 /*
 
-  sql_db.php - the SQL database link and abstraction layer
-  ----------
-  
-  the database link is reduced to a very few basic functions that exists on all databases
-  this way an apache droid or hadoop adapter should also be possible
-  at the moment adapter to MySQL and Postgres are working
-  
-  This file is part of zukunft.com - calc with words
+    model/db/sql_db.php - the SQL database link and abstraction layer
+    -------------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    the database link is reduced to a very few basic functions that exists on all databases
+    this way an apache droid or hadoop adapter should also be possible
+    at the moment adapter to MySQL and Postgres are working
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2018 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
@@ -5907,7 +5907,7 @@ class sql_db
             foreach (config_numbers::HIDDEN_KEY_TRIPLES as $trp_lst) {
                 $from_name = $trp_lst[0];
                 $to_name = $trp_lst[1];
-                $vrb = $vrb_cac->get_verb(verbs::CAN_USE);
+                $vrb = $vrb_cac->get_verb(verbs::AND);
                 $trp = new triple($usr);
                 $from = new phrase($usr);
                 $from->load_by_name($from_name);

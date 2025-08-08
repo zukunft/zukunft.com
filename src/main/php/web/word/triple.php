@@ -44,6 +44,25 @@ namespace html\word;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+use html\html_base;
+use html\html_selector;
+use html\phrase\phrase as phrase_dsp;
+use html\phrase\phrase_list;
+use html\phrase\phrase_list as phrase_list_dsp;
+use html\phrase\term as term_dsp;
+use html\sandbox\sandbox_code_id;
+use html\types\type_lists;
+use html\user\user_message;
+use html\verb\verb as verb_dsp;
+use html\word\triple as triple_dsp;
+use html\word\word as word_dsp;
+use shared\const\views;
+use shared\enum\messages as msg_id;
+use shared\json_fields;
+use shared\types\phrase_type;
+use shared\types\phrase_type as phrase_type_shared;
+use shared\types\view_styles;
+use shared\url_var;
 
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -64,28 +83,8 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
-
-use html\html_names;
-use html\phrase\phrase_list;
-use html\html_base;
-use html\html_selector;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\sandbox\sandbox_code_id;
-use html\types\type_lists;
-use html\user\user_message;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\term as term_dsp;
-use html\verb\verb as verb_dsp;
-use shared\api;
-use shared\const\views;
-use shared\json_fields;
-use shared\enum\messages as msg_id;
-use shared\types\phrase_type;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\types\view_styles;
 
 class triple extends sandbox_code_id
 {
@@ -131,18 +130,18 @@ class triple extends sandbox_code_id
     {
         $usr_msg = parent::url_mapper($url_array);
         if ($usr_msg->is_ok()) {
-            if (array_key_exists(api::URL_VAR_FROM_ID_LONG, $url_array)) {
-                $this->set_from_by_id($url_array[api::URL_VAR_FROM_ID_LONG]);
+            if (array_key_exists(url_var::FROM_ID_LONG, $url_array)) {
+                $this->set_from_by_id($url_array[url_var::FROM_ID_LONG]);
             }
-            if (array_key_exists(api::URL_VAR_VERB_ID_LONG, $url_array)) {
-                $this->set_verb_by_id($url_array[api::URL_VAR_VERB_ID_LONG]);
+            if (array_key_exists(url_var::VERB_ID_LONG, $url_array)) {
+                $this->set_verb_by_id($url_array[url_var::VERB_ID_LONG]);
             }
-            if (array_key_exists(api::URL_VAR_TO_ID_LONG, $url_array)) {
-                $this->set_to_by_id($url_array[api::URL_VAR_TO_ID_LONG]);
+            if (array_key_exists(url_var::TO_ID_LONG, $url_array)) {
+                $this->set_to_by_id($url_array[url_var::TO_ID_LONG]);
             }
             // TODO Prio 2 use the languages forms
-            if (array_key_exists(api::URL_VAR_PLURAL, $url_array)) {
-                $this->set_plural($url_array[api::URL_VAR_PLURAL]);
+            if (array_key_exists(url_var::PLURAL, $url_array)) {
+                $this->set_plural($url_array[url_var::PLURAL]);
             } else {
                 $this->set_plural(null);
             }

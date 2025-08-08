@@ -38,7 +38,22 @@
 namespace html\component\form;
 
 use cfg\const\paths;
+use html\component\component;
 use html\const\paths as html_paths;
+use html\html_base;
+use html\html_names;
+use html\phrase\phrase_list;
+use html\sandbox\db_object as db_object_dsp;
+use html\types\type_lists;
+use html\word\triple;
+use shared\api;
+use shared\const\components;
+use shared\const\views;
+use shared\const\words;
+use shared\enum\messages as msg_id;
+use shared\library;
+use shared\types\view_styles;
+use shared\url_var;
 
 include_once paths::DB . 'sql_db.php';
 include_once html_paths::COMPONENT . 'component.php';
@@ -55,22 +70,8 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
-
-use html\component\component;
-use html\html_names;
-use html\phrase\phrase_list;
-use html\types\type_lists;
-use html\html_base;
-use html\sandbox\db_object as db_object_dsp;
-use html\word\triple;
-use shared\api;
-use shared\const\components;
-use shared\library;
-use shared\const\views;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\types\view_styles;
 
 class system_form extends component
 {
@@ -106,9 +107,9 @@ class system_form extends component
     {
         $result = '';
         $html = new html_base();
-        $result .= $html->input(api::URL_VAR_MASK, $msk_id, html_base::INPUT_HIDDEN);
-        $result .= $html->input(api::URL_VAR_ID, $id, html_base::INPUT_HIDDEN);
-        $result .= $html->input(api::URL_VAR_BACK, $back, html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::MASK, $msk_id, html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::ID, $id, html_base::INPUT_HIDDEN);
+        $result .= $html->input(url_var::BACK, $back, html_base::INPUT_HIDDEN);
         return $result;
     }
 
@@ -138,7 +139,7 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->form_field(
-            api::URL_VAR_NAME,
+            url_var::NAME,
             $dbo->name(),
             html_base::INPUT_TEXT,
             '', $style_text
@@ -152,7 +153,7 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->form_field(
-            api::URL_VAR_DESCRIPTION,
+            url_var::DESCRIPTION,
             $dbo->description(),
             html_base::INPUT_TEXT,
             '',
@@ -172,7 +173,7 @@ class system_form extends component
             $plural = '';
         }
         return $html->form_field(
-            api::URL_VAR_PLURAL,
+            url_var::PLURAL,
             $plural,
             html_base::INPUT_TEXT,
             '', $style_text
@@ -340,7 +341,7 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->dsp_form_fld(
-            api::URL_VAR_NEED_ALL,
+            url_var::NEED_ALL,
             $dbo->user_expression(),
             "Expression:",
             view_styles::COL_SM_12);
@@ -356,7 +357,7 @@ class system_form extends component
     {
         $html = new html_base();
         return $html->dsp_form_fld_checkbox(
-            api::URL_VAR_NEED_ALL,
+            url_var::NEED_ALL,
             $dbo->need_all(),
             "calculate only if all values used in the formula exist");
     }
@@ -373,9 +374,9 @@ class system_form extends component
         $base_id = $views->code_id_to_id($base_ci);
         $result = '';
         $url = api::HOST_SAME . api::MAIN_SCRIPT
-            . api::URL_PAR . api::URL_VAR_MASK . api::URL_EQ . $base_id;
+            . url_var::PAR . url_var::MASK . url_var::EQ . $base_id;
         if ($id != 0) {
-            $url .= api::URL_ADD . api::URL_VAR_ID . api::URL_EQ . $id;
+            $url .= url_var::ADD . url_var::ID . url_var::EQ . $id;
         }
         $result .= $html->ref($url, 'Cancel', '', html_base::BS_BTN . ' ' . html_base::BS_BTN_CANCEL);
         return $result;
