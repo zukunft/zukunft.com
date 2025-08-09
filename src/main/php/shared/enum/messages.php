@@ -127,6 +127,7 @@ enum messages: string
     const VAR_IP_RANGE = 'VarIpRange';
     const VAR_SUMMARY = 'VarSummary';
     const VAR_PART = 'VarPart';
+    const VAR_REQUEST = 'VarRequest';
     const VAR_ERROR_TEXT = 'VarErrorText';
 
     // for the object main parameters created by the dsp_id function
@@ -488,6 +489,9 @@ enum messages: string
     case CONFIG_PART = 'configuration part '
         . self::VAR_START . self::VAR_PART . self::VAR_END
         . ' cannot yet be selected';
+    case API_MESSAGE_EMPTY = 'request '
+        . self::VAR_START . self::VAR_REQUEST . self::VAR_END
+        . ' has not returned any response';
     case API_MESSAGE = self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
     case MANDATORY_FIELD_NAME_MISSING = 'Mandatory field name missing in API JSON '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;

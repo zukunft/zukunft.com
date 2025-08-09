@@ -249,6 +249,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO additional to the git concept of merge allow also subscribe or auto merge
     TODO create a simple value table with the compressed phrase ids as a key and the value as a key-value table
     TODO check that all class function follow the setup suggested in user_message
+    TODO use the user_message object to collect all messages to the user and present the result to the user
+    TODO use log only for unexpected errors an warnings where the user has probably no chance ti fix it
     TODO move all tests to a class that is extended step by step e.g. test_unit extends test_base, ...
     TODO make sure that no word, phrase, verb and formula have the same name by using a name view table for each user
     TODO add JSON tests that check if a just imported JSON file can be exactly recreated with export

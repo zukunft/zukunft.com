@@ -32,30 +32,7 @@
 namespace html;
 
 use cfg\const\paths;
-use const\files as test_files;
-use Exception;
-use html\component\component_exe as component_dsp;
 use html\const\paths as html_paths;
-use html\formula\formula as formula_dsp;
-use html\helper\data_object;
-use html\ref\ref as ref_dsp;
-use html\ref\source as source_dsp;
-use html\result\result as result_dsp;
-use html\sandbox\db_object as db_object_dsp;
-use html\sandbox\sandbox as sandbox_dsp;
-use html\sandbox\sandbox_named as sandbox_named_dsp;
-use html\types\type_lists;
-use html\user\user as user_dsp;
-use html\value\value as value_dsp;
-use html\verb\verb as verb_dsp;
-use html\view\view as view_dsp;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
-use shared\api;
-use shared\const\rest_ctrl;
-use shared\const\views;
-use shared\library;
-use shared\url_var;
 
 include_once paths::WEB_CONST . 'paths.php';
 
@@ -103,6 +80,7 @@ include_once html_paths::TYPES . 'component_type_list.php';
 include_once html_paths::TYPES . 'component_link_type_list.php';
 include_once html_paths::TYPES . 'position_type_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
@@ -111,9 +89,36 @@ include_once html_paths::WORD . 'word.php';
 include_once TEST_CONST_PATH . 'files.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+
+use const\files as test_files;
+use html\component\component_exe as component_dsp;
+use html\formula\formula as formula_dsp;
+use html\helper\data_object;
+use html\ref\ref as ref_dsp;
+use html\ref\source as source_dsp;
+use html\result\result as result_dsp;
+use html\sandbox\db_object as db_object_dsp;
+use html\sandbox\sandbox as sandbox_dsp;
+use html\sandbox\sandbox_named as sandbox_named_dsp;
+use html\types\type_lists;
+use html\user\user as user_dsp;
+use html\user\user_message;
+use html\value\value as value_dsp;
+use html\verb\verb as verb_dsp;
+use html\view\view as view_dsp;
+use html\word\triple as triple_dsp;
+use html\word\word as word_dsp;
+use shared\api;
+use shared\const\rest_ctrl;
+use shared\const\views;
+use shared\enum\messages as msg_id;
+use shared\library;
+use shared\url_var;
+use Exception;
 
 class frontend
 {
@@ -221,14 +226,22 @@ class frontend
 
     /**
      * load the frontend cache once upfront via api
-     * @return void
+     * @return user_message
      */
-    function load_cache(): void
+    function load_cache(): user_message
     {
+        $usr_msg = new user_message();
         if ($this->typ_lst_cache == null) {
             $api_msg = $this->api_get(type_lists::class);
-            $this->set_cache($api_msg);
+            if ($api_msg == '' or $api_msg == null) {
+                $usr_msg->add_id_with_vars(msg_id::API_MESSAGE_EMPTY, [
+                    msg_id::VAR_REQUEST => 'load cache'
+                ]);
+            } else {
+                $this->set_cache($api_msg);
+            }
         }
+        return $usr_msg;
     }
 
     /**
