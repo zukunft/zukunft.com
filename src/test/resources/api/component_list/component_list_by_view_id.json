@@ -46,15 +46,15 @@
     "ui_msg_code_id": "form_field_description"
   },
   {
-    "id": 71,
+    "id": 72,
     "name": "system form field plural",
     "description": "the plural language form field in a form (to be move to languages forms)",
-    "type_id": 54,
+    "type_id": 55,
     "code_id": "form_field_plural",
     "ui_msg_code_id": "form_field_plural"
   },
   {
-    "id": 50,
+    "id": 51,
     "name": "system form select share type",
     "description": "selector for the share type",
     "type_id": 26,
@@ -62,7 +62,7 @@
     "ui_msg_code_id": "form_select_share"
   },
   {
-    "id": 51,
+    "id": 52,
     "name": "system form select protection type",
     "description": "selector for the protection type",
     "type_id": 27,
@@ -70,13 +70,13 @@
     "ui_msg_code_id": "form_select_protection"
   },
   {
-    "id": 59,
+    "id": 60,
     "name": "system formatter row right",
     "type_id": 33,
     "code_id": "row_right"
   },
   {
-    "id": 54,
+    "id": 55,
     "name": "system form button cancel",
     "description": "button to cancel the form action and go back to the previous view",
     "type_id": 28,
@@ -84,7 +84,7 @@
     "ui_msg_code_id": "form_button_cancel"
   },
   {
-    "id": 55,
+    "id": 56,
     "name": "system form button save",
     "description": "button to save the form field into the database",
     "type_id": 29,
@@ -92,13 +92,13 @@
     "ui_msg_code_id": "form_button_save"
   },
   {
-    "id": 60,
+    "id": 61,
     "name": "system formatter row end",
     "type_id": 34,
     "code_id": "row_end"
   },
   {
-    "id": 57,
+    "id": 58,
     "name": "system form end",
     "type_id": 31,
     "code_id": "form_end"

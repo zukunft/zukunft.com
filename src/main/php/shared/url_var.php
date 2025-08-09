@@ -132,6 +132,7 @@ class url_var
     const LINK_VIEW = 'link_view';
     const UNLINK_VIEW = 'unlink_view';
     const TYPE = 'type';
+    const STYLE = 'style';
     const SHARE = 'share';
     const PROTECTION = 'protection';
     const REFERENCE = 'reference';

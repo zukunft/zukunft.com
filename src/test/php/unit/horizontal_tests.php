@@ -161,6 +161,8 @@ class horizontal_tests
             $diff = $check_obj->diff_msg($filled_obj);
             if (!$diff->is_ok()) {
                 log_err($diff->all_message_text());
+            } else {
+                $t->assert_json_string($test_name, $ui_json, $api_json);
             }
             $t->assert_true($test_name, $diff->is_ok());
         }

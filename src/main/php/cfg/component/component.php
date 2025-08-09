@@ -301,6 +301,9 @@ class component extends sandbox_code_id
             global $mtr;
             $this->ui_msg_code_id = $mtr->get($api_json[json_fields::UI_MSG_CODE_ID]);
         }
+        if (array_key_exists(json_fields::STYLE, $api_json)) {
+            $this->set_style_by_id($api_json[json_fields::STYLE]);
+        }
         if (array_key_exists(json_fields::FORMULA_ID, $api_json)) {
             $frm = $this->formula_from_api_json($api_json[json_fields::FORMULA_ID]);
             $this->set_formula($frm);
@@ -373,6 +376,9 @@ class component extends sandbox_code_id
             if ($this->ui_msg_code_id != null) {
                 $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
             }
+            if ($this->style_id() > 0) {
+                $vars[json_fields::STYLE] = $this->style_id();
+            }
             if ($this->frm != null) {
                 $vars[json_fields::FORMULA_ID] = $this->formula_id();
             }
@@ -421,6 +427,9 @@ class component extends sandbox_code_id
         }
         if ($this->ui_msg_code_id != null) {
             $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id->value;
+        }
+        if ($this->style != null) {
+            $vars[json_fields::STYLE] = $this->style->code_id();
         }
 
         // add the phrases used
@@ -1008,6 +1017,9 @@ class component extends sandbox_code_id
         $usr_msg = parent::fill($obj, $usr_req);
         if ($obj->ui_msg_code_id != null) {
             $usr_msg->add($this->set_ui_msg_code_id($obj->ui_msg_code_id, $usr_req));
+        }
+        if ($obj->style_id() != null) {
+            $this->set_style_by_id($obj->style_id());
         }
         if ($obj->formula_id() != null) {
             $this->set_formula($obj->formula());

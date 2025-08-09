@@ -343,6 +343,13 @@
       "ui_msg_code_id": "form_select_component_type"
     },
     {
+      "name": "system form select view style",
+      "description": "selector for the style used in views and components e.g. to define the width",
+      "type": "system_form_select_view_style",
+      "code_id": "form_field_view_style",
+      "ui_msg_code_id": "form_select_view_style"
+    },
+    {
       "name": "system form select share type",
       "description": "selector for the share type",
       "type": "system_form_select_share",
@@ -1682,6 +1689,10 @@
         {
           "position": "6",
           "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system form select style"
         },
         {
           "position": "7",

@@ -8,15 +8,13 @@
     to create the HTML code to display a view
 
     The main sections of this object are
-    - object vars:       the variables of this word object
-    - construct and map: including the mapping of the db row to this word object
-    - set and get:       to capsule the vars from unexpected changes
+    - object vars:       the variables of this view base object used to use (view_exe.php) or change a view (view.php)
+    - construct and map: the mapping of a url to this object or an api json message
     - api:               set the object vars based on the api json message and create a json for the backend
+    - set and get:       to capsule the vars from unexpected changes
     - load:              get an api json from the backend and
     - base:              html code for the single object vars
-    - buttons:           html code for the buttons e.g. to add, edit, del, link or unlink
     - select:            html code to select parameter like the type
-    - execute:           create the html code for an object view
 
 
     This file is part of zukunft.com - calc with words
@@ -45,40 +43,34 @@
 
 namespace html\view;
 
-use cfg\const\paths;
-use html\component\component_list;
 use html\const\paths as html_paths;
+use cfg\const\paths;
+
+include_once html_paths::COMPONENT . 'component_list.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::USER . 'user_message.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED . 'json_fields.php';
+
+use html\component\component_list;
 use html\sandbox\db_object;
 use html\sandbox\sandbox_code_id;
 use html\types\type_lists;
 use html\user\user_message;
 use html\word\triple;
 use html\word\word;
-use shared\api;
 use shared\const\views;
 use shared\enum\messages as msg_id;
-use shared\json_fields;
+use shared\api;
 use shared\url_var;
-
-include_once html_paths::SANDBOX . 'sandbox_code_id.php';
-include_once html_paths::TYPES . 'type_lists.php';
-include_once html_paths::HTML . 'display_list.php';
-include_once html_paths::COMPONENT . 'component.php';
-include_once html_paths::COMPONENT . 'component_list.php';
-include_once html_paths::SANDBOX . 'db_object.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
-include_once html_paths::USER . 'user_message.php';
-include_once html_paths::VIEW . 'view_list.php';
-include_once html_paths::WORD . 'word.php';
-include_once html_paths::WORD . 'triple.php';
-include_once paths::SHARED_CONST . 'components.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once paths::SHARED . 'library.php';
+use shared\json_fields;
 
 class view_base extends sandbox_code_id
 {
@@ -109,6 +101,9 @@ class view_base extends sandbox_code_id
     // the word, triple or formula object that should be shown to the user
     protected ?db_object $dbo;
 
+    // the style e.g. to define the width
+    protected ?int $style_id = null;
+
 
     /*
      * construct and map
@@ -119,23 +114,23 @@ class view_base extends sandbox_code_id
         $this->set_code_id(null);
         $this->cmp_lst = new component_list();
         $this->dbo = null;
+        $this->style_id = null;
         parent::__construct($api_json);
     }
 
-
-    /*
-     * set and get
+    /**
+     * set the vars of this view bases on the url array
+     * @param array $url_array an array based on $_GET from a form submit
+     * @return user_message ok or a warning e.g. if the server version does not match
      */
-
-    function component_list(): component_list
+    function url_mapper(array $url_array): user_message
     {
-        return $this->cmp_lst;
+        $usr_msg = parent::url_mapper($url_array);
+        if (array_key_exists(url_var::STYLE, $url_array)) {
+            $this->set_style_id($url_array[url_var::STYLE]);
+        }
+        return $usr_msg;
     }
-
-
-    /*
-     * api
-     */
 
     /**
      * set the vars this view bases on the api json array
@@ -147,6 +142,9 @@ class view_base extends sandbox_code_id
     {
         // the root view object
         $usr_msg = parent::api_mapper($json_array);
+        if (array_key_exists(json_fields::STYLE, $json_array)) {
+            $this->set_style_id($json_array[json_fields::STYLE]);
+        }
         // set the components
         $cmp_lst = new component_list();
         if (array_key_exists(json_fields::COMPONENTS, $json_array)) {
@@ -179,6 +177,11 @@ class view_base extends sandbox_code_id
         return $usr_msg;
     }
 
+
+    /*
+     * api
+     */
+
     /**
      * @return array the json message array to send the updated data to the backend
      * an array is used (instead of a string) to enable combinations of api_array() calls
@@ -186,8 +189,29 @@ class view_base extends sandbox_code_id
     function api_array(): array
     {
         $vars = parent::api_array();
+        $vars[json_fields::STYLE] = $this->style_id();
         $vars[json_fields::COMPONENTS] = $this->cmp_lst->api_array();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
+    }
+
+
+    /*
+     * set and get
+     */
+
+    function component_list(): component_list
+    {
+        return $this->cmp_lst;
+    }
+
+    function set_style_id(?int $style_id = null): void
+    {
+        $this->style_id = $style_id;
+    }
+
+    function style_id(): ?int
+    {
+        return $this->style_id;
     }
 
 
@@ -252,6 +276,15 @@ class view_base extends sandbox_code_id
     public function view_type_selector(string $form_name, ?type_lists $typ_lst): string
     {
         return $this->type_selector($form_name, $typ_lst);
+    }
+
+    public function view_style_selector(string $form_name, ?type_lists $typ_lst): string
+    {
+        $used_style_id = $this->style_id();
+        if ($used_style_id == null) {
+            $used_style_id = $typ_lst->html_view_styles->default_id();
+        }
+        return $typ_lst->html_view_styles->selector($form_name, $used_style_id);
     }
 
     /**

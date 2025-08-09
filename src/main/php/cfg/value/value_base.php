@@ -230,9 +230,11 @@ class value_base extends sandbox_value
      * object vars
      */
 
-    // related database objects
-    public ?source $source;    // the source object
-    private string $symbol = '';               // the symbol of the related formula element
+    // related to database fields
+    // the source object from where the value is taken
+    public ?source $source;
+    // the symbol of the related formula element
+    private string $symbol = '';
 
     // deprecated fields
     public ?DateTime $time_stamp = null;  // the time stamp for this value (if this is set, the time wrd is supposed to be empty and the value is saved in the time_series table)
@@ -1029,13 +1031,24 @@ class value_base extends sandbox_value
 
     /**
      * create human-readable messages of the differences between the value objects
-     * TODO add time_stamp, symbol and user value if needed
+     * TODO add time_stamp and user value if needed
      * @param value_base|db_object_multi $obj which might be different to this value object
      * @return user_message the human-readable messages of the differences between the value objects
      */
     function diff_msg(value_base|db_object_multi $obj): user_message
     {
         $usr_msg = parent::diff_msg($obj);
+        if ($this->value() != $obj->value()
+            and $obj->value() != null
+            and $this->value() != null) {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::DIFF_VALUE, [
+                msg_id::VAR_VALUE => $obj->value(),
+                msg_id::VAR_VALUE_CHK => $this->value(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_VAL_ID => $this->name(),
+            ]);
+        }
         if ($this->source_id() != $obj->source_id()
             and $obj->source() != null
             and $this->source() != null) {
@@ -1043,6 +1056,17 @@ class value_base extends sandbox_value
             $usr_msg->add_id_with_vars(msg_id::DIFF_SOURCE, [
                 msg_id::VAR_SOURCE => $obj->source()?->dsp_id(),
                 msg_id::VAR_SOURCE_CHK => $this->source()?->dsp_id(),
+                msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
+                msg_id::VAR_VAL_ID => $this->name(),
+            ]);
+        }
+        if ($this->symbol() != $obj->symbol()
+            and $obj->symbol() != null
+            and $this->symbol() != null) {
+            $lib = new library();
+            $usr_msg->add_id_with_vars(msg_id::DIFF_SYMBOL, [
+                msg_id::VAR_SYMBOL => $obj->symbol(),
+                msg_id::VAR_SYMBOL_CHK => $this->symbol(),
                 msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class),
                 msg_id::VAR_VAL_ID => $this->name(),
             ]);

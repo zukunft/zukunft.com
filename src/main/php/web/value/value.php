@@ -100,7 +100,7 @@ class value extends sandbox_value
      * object vars
      */
 
-    public ?source $src;
+    public ?source $src = null;
 
 
     /*
@@ -109,6 +109,7 @@ class value extends sandbox_value
 
     /**
      * set the vars of this value frontend object bases on the url array
+     * TODO do the mapping always on normal, long and pod vars
      * @param array $url_array an array based on $_GET from a form submit
      * @return user_message ok or a warning e.g. if the server version does not match
      */
@@ -116,6 +117,11 @@ class value extends sandbox_value
     {
         $usr_msg = parent::url_mapper($url_array);
         if ($usr_msg->is_ok()) {
+            if (array_key_exists(url_var::SOURCE, $url_array)) {
+                if ($url_array[url_var::SOURCE] != null) {
+                    $this->set_source_id($url_array[url_var::SOURCE]);
+                }
+            }
             if (array_key_exists(url_var::SOURCE_LONG, $url_array)) {
                 if ($url_array[url_var::SOURCE_LONG] != null) {
                     $this->set_source_id($url_array[url_var::SOURCE_LONG]);
@@ -125,18 +131,44 @@ class value extends sandbox_value
         return $usr_msg;
     }
 
+    /**
+     * set the vars of this value object bases on the api json array
+     * @param array $json_array an api json message
+     * @return user_message ok or a warning e.g. if the server version does not match
+     */
+    function api_mapper(array $json_array): user_message
+    {
+        $usr_msg = parent::api_mapper($json_array);
+
+        if (array_key_exists(json_fields::SOURCE, $json_array)) {
+            $this->set_source_id($json_array[json_fields::SOURCE]);
+        }
+
+        return $usr_msg;
+    }
+
 
     /*
      * set and get
      */
 
-    function set_source_id(int $id): void
+    function set_source_id(?int $id): void
     {
-        if ($id > 0) {
-            $src = new source();
-            $src->id = $id;
-            $this->src = $src;
+        if ($id == null) {
+            $this->src = null;
+        } else {
+            if ($id > 0) {
+                if ($this->src == null) {
+                    $this->src = new source();
+                }
+                $this->src->id = $id;
+            }
         }
+    }
+
+    function source_id(): ?int
+    {
+        return $this->src?->id;
     }
 
     /**
@@ -207,6 +239,9 @@ class value extends sandbox_value
         $vars = parent::api_array();
         $vars[json_fields::PHRASES] = $this->grp()->phr_lst()->api_array();
         $vars[json_fields::NUMBER] = $this->number();
+        if ($this->src != null) {
+            $vars[json_fields::SOURCE] = $this->source_id();
+        }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

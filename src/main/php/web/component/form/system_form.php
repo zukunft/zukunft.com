@@ -296,6 +296,20 @@ class system_form extends component
     }
 
     /**
+     * create the html code for the form element to select the view style
+     * used by the view and the component
+     *
+     * @param db_object_dsp $dbo the frontend view object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the view type
+     */
+    function form_view_style(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    {
+        return $dbo->view_type_selector($form_name, $typ_lst);
+    }
+
+    /**
      * create the html code for the form element to select the component type
      * @param db_object_dsp $dbo the frontend component object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name

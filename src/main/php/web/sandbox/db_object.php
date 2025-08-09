@@ -579,6 +579,21 @@ class db_object extends TextIdObject
     }
 
     /**
+     * create the html code to select the view style
+     * used by the view and the component
+     *
+     * @param string $form_name the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the view type
+     */
+    public function view_style_selector(string $form_name, ?type_lists $typ_lst): string
+    {
+        $msg = 'view style selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
      * create the html code to select the component type
      * @param string $form_name the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects

@@ -252,6 +252,9 @@ class user extends db_object
     {
         $vars[json_fields::NAME] = $this->name;
         $vars[json_fields::DESCRIPTION] = $this->description;
+        if ($this->is_profile_valid()) {
+            $vars[json_fields::PROFILE_ID] = $this->profile_id;
+        }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

@@ -32,8 +32,8 @@
 
 namespace html\types;
 
-use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::TYPES . 'type_list.php';
 
 class view_style_list extends type_list
@@ -47,6 +47,14 @@ class view_style_list extends type_list
     function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
     {
         return parent::type_selector($this->lst_key(), $name, $form, $selected);
+    }
+
+    /**
+     * @return int|null null because the default is to use no additional style definition
+     */
+    function default_id(): ?int
+    {
+        return null;
     }
 
 }

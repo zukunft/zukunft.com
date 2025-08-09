@@ -103,6 +103,9 @@ enum messages: string
     const VAR_SOURCE = 'VarSource';
     // the source of a compare value
     const VAR_SOURCE_CHK = 'VarSourceCheck';
+    const VAR_SYMBOL = 'VarSymbol';
+    // the symbol of a compare value
+    const VAR_SYMBOL_CHK = 'VarSymbolCheck';
     const VAR_FORMULA_CHK = 'VarFormulaCheck';
     // the name of a class
     const VAR_CLASS_NAME = 'VarClassName';
@@ -260,6 +263,15 @@ enum messages: string
         . self::VAR_START . self::VAR_SOURCE . self::VAR_END
         . '" instead of "'
         . self::VAR_START . self::VAR_SOURCE_CHK . self::VAR_END
+        . '" for '
+        . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
+        . ' "'
+        . self::VAR_START . self::VAR_VAL_ID . self::VAR_END
+        . '"';
+    case DIFF_SYMBOL = 'symbol is "'
+        . self::VAR_START . self::VAR_SYMBOL . self::VAR_END
+        . '" instead of "'
+        . self::VAR_START . self::VAR_SYMBOL_CHK . self::VAR_END
         . '" for '
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' "'
@@ -927,6 +939,7 @@ enum messages: string
     case FORM_SELECT_REF_TYPE = 'form_select_ref_type';
     case FORM_SELECT_FORMULA_TYPE = 'form_select_formula_type';
     case FORM_SELECT_VIEW_TYPE = 'form_select_view_type';
+    case FORM_SELECT_VIEW_STYLE = 'form_select_view_style';
     case FORM_SELECT_COMPONENT_TYPE = 'form_select_component_type';
     case SELECT_VIEW = 'select_view';
     case FORM_SELECT_SHARE = 'form_select_share';

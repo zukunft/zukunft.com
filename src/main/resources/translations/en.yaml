@@ -87,6 +87,7 @@ messages:
   form_select_ref_type: "Select a reference type"
   form_select_formula_type: "Select a formula type"
   form_select_view_type: "Select a view type"
+  form_select_view_style: "Select a view style"
   form_select_component_type: "Select a component type"
   form_phrase_type_from: "from type"
   form_phrase_type_to: "to type"

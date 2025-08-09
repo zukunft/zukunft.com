@@ -139,6 +139,7 @@ class component_exe extends component
             component_type::FORM_FORMULA_ALL_FIELDS => $form->form_formula_all_fields($dbo, $form_name),
             component_type::FORM_VIEW_TYPE => $form->form_view_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_VIEW_STYLE => $form->form_view_style($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SHARE_TYPE => $form->form_share_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_PROTECTION_TYPE => $form->form_protection_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_CANCEL => $form->form_cancel($msk_id, $dbo->id()),
