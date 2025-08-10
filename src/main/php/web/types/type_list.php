@@ -37,6 +37,7 @@ namespace html\types;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once html_paths::TYPES . 'protection.php';
@@ -276,7 +277,7 @@ class type_list
         array  $key_lst,
         string $name = '',
         string $form = '',
-        int    $selected = 0,
+        ?int   $selected = null,
         string $col_class = view_styles::COL_SM_4,
         string $label = 'type: '
     ): string

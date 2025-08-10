@@ -273,12 +273,7 @@ class view_base extends sandbox_code_id
         return $typ_lst->html_view_types->selector($form, $used_type_id);
     }
 
-    public function view_type_selector(string $form_name, ?type_lists $typ_lst): string
-    {
-        return $this->type_selector($form_name, $typ_lst);
-    }
-
-    public function view_style_selector(string $form_name, ?type_lists $typ_lst): string
+    public function style_selector(string $form_name, ?type_lists $typ_lst): string
     {
         $used_style_id = $this->style_id();
         if ($used_style_id == null) {

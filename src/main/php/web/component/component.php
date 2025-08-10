@@ -332,6 +332,42 @@ class component extends sandbox_code_id
 
 
     /*
+     * select
+     */
+
+    /**
+     * create the HTML code to select a view type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the phrase type
+     */
+    function type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $used_type_id = $this->type_id();
+        if ($used_type_id == null) {
+            $used_type_id = $typ_lst->html_component_types->default_id();
+        }
+        return $typ_lst->html_component_types->selector($form, $used_type_id);
+    }
+
+    /**
+     * create the HTML code to select a view style
+     * @param string $form_name the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the phrase type
+     */
+    function style_selector(string $form_name, ?type_lists $typ_lst): string
+    {
+        $used_type_id = $this->type_id();
+        if ($used_type_id == null) {
+            $used_type_id = $typ_lst->html_view_styles->default_id();
+        }
+        return $typ_lst->html_view_styles->selector($form_name, $used_type_id);
+    }
+
+
+
+    /*
      * internal
      */
 

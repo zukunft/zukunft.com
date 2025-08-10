@@ -38,13 +38,6 @@ namespace html\types;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
-use html\user\user_message;
-use html\verb\verb;
-use html\view\view;
-use html\view\view_list as view_list_dsp;
-use html\word\word as word_dsp;
-use shared\api;
-use shared\json_fields;
 
 include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::TYPES . 'type_list.php';
@@ -75,11 +68,18 @@ include_once html_paths::VIEW . 'view.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'json_fields.php';
 
-// get the api const that are shared between the backend and the html frontend
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
+use html\user\user_message;
+use html\verb\verb;
+use html\view\view;
+use html\view\view_list as view_list_dsp;
+use html\word\word as word_dsp;
+use shared\enum\messages as msg_id;
+use shared\api;
+use shared\json_fields;
 
 class type_lists
 {
@@ -142,8 +142,16 @@ class type_lists
     {
         $ctrl = new api();
         $json_array = json_decode($json_api_msg, true);
-        $type_lists_json = $ctrl->check_api_msg($json_array, json_fields::BODY);
-        return $this->set_from_json_array($type_lists_json);
+        if ($json_array == null) {
+            $usr_msg = new user_message();
+            $usr_msg->add_id_with_vars(msg_id::API_MESSAGE_EMPTY, [
+                msg_id::VAR_REQUEST => 'type_lists'
+            ]);
+            return $usr_msg;
+        } else {
+            $type_lists_json = $ctrl->check_api_msg($json_array, json_fields::BODY);
+            return $this->set_from_json_array($type_lists_json);
+        }
     }
 
     /**
@@ -453,6 +461,7 @@ class type_lists
     {
         return $this->html_system_views->get_by_id($code_id);
     }
+
     function get_html(string $code_id): string
     {
         $msk = $this->get_view($code_id);

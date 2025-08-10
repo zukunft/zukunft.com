@@ -292,7 +292,7 @@ class system_form extends component
      */
     function form_view_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
-        return $dbo->view_type_selector($form_name, $typ_lst);
+        return $dbo->type_selector($form_name, $typ_lst);
     }
 
     /**
@@ -306,7 +306,7 @@ class system_form extends component
      */
     function form_view_style(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
-        return $dbo->view_type_selector($form_name, $typ_lst);
+        return $dbo->style_selector($form_name, $typ_lst);
     }
 
     /**

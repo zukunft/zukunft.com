@@ -9566,8 +9566,12 @@
           },
           {
             "link_id": 229,
-            "id": 73,
-            "name": "system form select style",
+            "id": 50,
+            "name": "system form select view style",
+            "description": "selector for the style used in views and components e.g. to define the width",
+            "type_id": 51,
+            "code_id": "form_field_view_style",
+            "ui_msg_code_id": "form_select_view_style",
             "position": 7,
             "position_type": 1
           },
@@ -9954,7 +9958,7 @@
           },
           {
             "link_id": 265,
-            "id": 85,
+            "id": 84,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -9972,7 +9976,7 @@
         "components": [
           {
             "link_id": 266,
-            "id": 75,
+            "id": 74,
             "name": "Verb",
             "description": "simply show the verb name",
             "type_id": 37,
@@ -9981,7 +9985,7 @@
           },
           {
             "link_id": 267,
-            "id": 76,
+            "id": 75,
             "name": "related triples",
             "description": "triples where this verb is used",
             "type_id": 47,
@@ -9999,7 +10003,7 @@
         "components": [
           {
             "link_id": 268,
-            "id": 77,
+            "id": 76,
             "name": "triple name",
             "description": "simply show the name of a triple",
             "type_id": 57,
@@ -10008,7 +10012,7 @@
           },
           {
             "link_id": 269,
-            "id": 85,
+            "id": 84,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -10026,7 +10030,7 @@
         "components": [
           {
             "link_id": 270,
-            "id": 78,
+            "id": 77,
             "name": "source name",
             "description": "simply show the name of a source",
             "type_id": 58,
@@ -10035,7 +10039,7 @@
           },
           {
             "link_id": 271,
-            "id": 85,
+            "id": 84,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -10053,7 +10057,7 @@
         "components": [
           {
             "link_id": 272,
-            "id": 79,
+            "id": 78,
             "name": "reference name",
             "description": "simply show the name of a reference",
             "type_id": 59,
@@ -10062,7 +10066,7 @@
           },
           {
             "link_id": 273,
-            "id": 85,
+            "id": 84,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -10080,7 +10084,7 @@
         "components": [
           {
             "link_id": 274,
-            "id": 80,
+            "id": 79,
             "name": "language name",
             "description": "simply show the name of a language",
             "type_id": 60,
@@ -10089,7 +10093,7 @@
           },
           {
             "link_id": 275,
-            "id": 85,
+            "id": 84,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -10107,7 +10111,7 @@
         "components": [
           {
             "link_id": 276,
-            "id": 84,
+            "id": 83,
             "name": "main value",
             "description": "show one most relevant value",
             "type_id": 38,
@@ -10125,7 +10129,7 @@
         "components": [
           {
             "link_id": 280,
-            "id": 86,
+            "id": 85,
             "name": "related results",
             "description": "show the most relevant and related results",
             "type_id": 61,
@@ -10143,7 +10147,7 @@
         "components": [
           {
             "link_id": 281,
-            "id": 87,
+            "id": 86,
             "name": "phrase",
             "description": "simply show the name of a word or triple",
             "type_id": 8,
@@ -10152,7 +10156,7 @@
           },
           {
             "link_id": 282,
-            "id": 88,
+            "id": 87,
             "name": "ranking parameters",
             "description": "the parameters used to calculate a ranking",
             "type_id": 45,
@@ -10161,7 +10165,7 @@
           },
           {
             "link_id": 283,
-            "id": 89,
+            "id": 88,
             "name": "ranking list",
             "description": "list sorted by the calculated ranking",
             "type_id": 46,

@@ -44,7 +44,7 @@ class view_style_list extends type_list
     /**
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
+    function selector(string $form = '', ?int $selected = null, string $name = self::NAME): string
     {
         return parent::type_selector($this->lst_key(), $name, $form, $selected);
     }
