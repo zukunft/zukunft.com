@@ -2,9 +2,8 @@
 
 /*
 
-    web/html/html_names.php - HTML language const used for the html zukunft.com frontend
-    -----------------------
-
+    web/formula/formula_link_list.php - create the html code for a list of formula links
+    ---------------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,18 +29,32 @@
 
 */
 
-namespace html;
+namespace formula;
 
+use html\const\paths as html_paths;
 
-class html_names
+include_once html_paths::SANDBOX . 'list_dsp.php';
+
+use html\sandbox\list_dsp;
+
+class formula_link_list extends list_dsp
 {
 
-    // html const used in zukunft.com
+    /*
+     * display
+     */
 
-    // html base elements
-    const SPAN = 'span';
-    const HTML_CLASS = 'class';
-    const TITLE = 'title';
-    const INPUT = 'input';
+    /**
+     * @return string with a list of the formula names with html links
+     * ex. names_linked
+     */
+    function name_tip(): string
+    {
+        $names = array();
+        foreach ($this->lst() as $lnk) {
+            $names[] = $lnk->name_tip();
+        }
+        return implode(', ', $names);
+    }
 
 }

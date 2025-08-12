@@ -91,7 +91,7 @@ SELECT component_link_insert_log_01558185111
         'side',
         2,
         781,
-        'col-md-4',
+        '1/3 width',
         1,
         49,
         1,

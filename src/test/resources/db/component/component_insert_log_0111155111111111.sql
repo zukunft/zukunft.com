@@ -126,7 +126,7 @@ SELECT component_insert_log_0111155111111111 (
                'text'::text,
                3::smallint,
                779::smallint,
-               'col-md-4'::text,
+               '1/3 width'::text,
                1::smallint,
                64::smallint,
                'please_select'::text,

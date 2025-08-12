@@ -48,13 +48,13 @@
         </div>
         <div class="row col-md-12">
             <div class="row col-md-12">
-                <div class="form-group col-md-4"><label for="phrase_from">from word / triple</label><input type="text"
-                                                                                                           list="phrase_from_list"
-                                                                                                           class="form-control"
-                                                                                                           name="phrase_from"
-                                                                                                           form="triple_edit"
-                                                                                                           id="phrase_from">
-                    <datalist id="phrase_from_list">
+                <div class="form-group col-md-4"><label for="phrase_row">from word / triple</label><input type="text"
+                                                                                                          list="phrase_row_list"
+                                                                                                          class="form-control"
+                                                                                                          name="phrase_row"
+                                                                                                          form="triple_edit"
+                                                                                                          id="phrase_row">
+                    <datalist id="phrase_row_list">
                         <option data-value="1">mathematics</option>
                         <option data-value="1023">ABB</option>
                         <option data-value="184">Bern</option>
@@ -150,9 +150,10 @@
                 </div>
             </div>
             <div class="row col-md-12">
-                <div class="form-group col-md-4"><label for="verb:">verb</label><select class="form-control"
-                                                                                        name="verb:" form="triple_edit"
-                                                                                        id="verb:">
+                <div class="form-group col-md-4"><label for="verb_id">verb</label><select class="form-control"
+                                                                                          name="verb_id"
+                                                                                          form="triple_edit"
+                                                                                          id="verb_id">
                     <option value="1">not set</option>
                     <option value="2">is a</option>
                     <option value="3" selected>is part of</option>
@@ -187,13 +188,13 @@
                 </select></div>
             </div>
             <div class="row col-md-12">
-                <div class="form-group col-md-4"><label for="phrase">word / triple</label><input type="text"
-                                                                                                 list="phrase_list"
-                                                                                                 class="form-control"
-                                                                                                 name="phrase"
-                                                                                                 form="triple_edit"
-                                                                                                 id="phrase">
-                    <datalist id="phrase_list">
+                <div class="form-group col-md-4"><label for="phrase_id">word / triple</label><input type="text"
+                                                                                                    list="phrase_id_list"
+                                                                                                    class="form-control"
+                                                                                                    name="phrase_id"
+                                                                                                    form="triple_edit"
+                                                                                                    id="phrase_id">
+                    <datalist id="phrase_id_list">
                         <option data-value="1" selected>mathematics</option>
                         <option data-value="1023">ABB</option>
                         <option data-value="184">Bern</option>
@@ -291,9 +292,9 @@
         </div>
         <div class="row col-md-12">
             <div class="row col-md-12">
-                <div class="form-group col-md-4"><label for="share">share:</label><select class="form-control"
-                                                                                          name="share"
-                                                                                          form="triple_edit" id="share">
+                <div class="form-group col-md-4"><label for="share">share</label><select class="form-control"
+                                                                                         name="share" form="triple_edit"
+                                                                                         id="share">
                     <option value="1" selected>public</option>
                     <option value="2">personal</option>
                     <option value="3">group</option>
@@ -301,10 +302,10 @@
                 </select></div>
             </div>
             <div class="row col-md-12">
-                <div class="form-group col-md-4"><label for="protection">protection:</label><select class="form-control"
-                                                                                                    name="protection"
-                                                                                                    form="triple_edit"
-                                                                                                    id="protection">
+                <div class="form-group col-md-4"><label for="protection">protection</label><select class="form-control"
+                                                                                                   name="protection"
+                                                                                                   form="triple_edit"
+                                                                                                   id="protection">
                     <option value="1">no protection</option>
                     <option value="2">user</option>
                     <option value="3" selected>admin</option>

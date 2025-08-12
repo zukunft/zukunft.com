@@ -693,7 +693,7 @@ class word extends sandbox_code_id
         $result .= '</div>';
         $result .= 'which ';
         $result .= '<div class="form-row">';
-        $result .= $this->selector_link($vrb_id, $form, $back);
+        //$result .= $this->selector_link($vrb_id, $form, $back);
         $result .= $this->selector_word($wrd_to, 0, $form);
         $result .= '</div>';
         $result .= $html->dsp_form_end('', $back);
@@ -801,16 +801,13 @@ class word extends sandbox_code_id
     /**
      * to select an existing word to be added
      */
-    private function selector_add($id, $form, $bs_class): string
+    private function selector_add($id, $form): string
     {
         $pattern = '';
         $phr_lst = new word_list();
         $phr_lst->load_like($pattern);
-        $field_name = 'add';
-        $label = "Word:";
-        //$sel->bs_class = $bs_class;
         //$sel->dummy_text = '... or select an existing word to link it';
-        return $phr_lst->selector($form, $id, $field_name, $label, '');
+        return $phr_lst->selector($form, $id, url_var::WORD_LONG, msg_id::LABEL_WORD);
     }
 
     /*
@@ -818,55 +815,20 @@ class word extends sandbox_code_id
      */
 
     /**
-     * TODO review
-     *
-     * select a phrase based on a given context
-     *
-     * @param string $name the unique name inside the form for this selector
-     * @param string $form the name of the html form
-     * @param string $label the text show to the user
-     * @param string $col_class the formatting code to adjust the formatting
-     * @param int $selected the id of the preselected phrase
-     * @param string $pattern the pattern to filter the phrases
-     * @param phrase|null $phr the context to select the phrases, which is until now just the phrase
-     * @return string the html code to select a phrase
-     */
-    public function phrase_selector_old(
-        string      $name,
-        string      $form,
-        string      $label = '',
-        string      $col_class = '',
-        int         $selected = 0,
-        string      $pattern = '',
-        ?phrase $phr = null
-    ): string
-    {
-        $result = '';
-        $phr_lst = new phrase_list();
-        if ($pattern != '') {
-            $phr_lst->load_like($pattern);
-            $result = $phr_lst->selector($form, $selected, $name, $label, view_styles::COL_SM_4, html_selector::TYPE_DATALIST);
-        } else {
-            $result = $this->name();
-        }
-        return $result;
-    }
-
-    /**
      * @returns string the html code to select a word
      */
-    function selector_word(int $id, int $pos, string $form_name): string
+    function selector_word(int $id, int $pos, string $form): string
     {
         $pattern = '';
         $phr_lst = new word_list();
         $phr_lst->load_like($pattern);
 
         if ($pos > 0) {
-            $field_name = "word" . $pos;
+            $name = url_var::WORD_POS_LONG . $pos;
         } else {
-            $field_name = "word";
+            $name = url_var::WORD_LONG;
         }
-        return $phr_lst->selector($form_name, $id, $field_name, '');
+        return $phr_lst->selector($form, $id, $name, msg_id::LABEL_WORD);
     }
 
     /**

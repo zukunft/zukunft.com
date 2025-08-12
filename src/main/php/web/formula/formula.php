@@ -44,27 +44,7 @@
 namespace html\formula;
 
 use cfg\const\paths;
-use cfg\db\sql_db;
-use html\button;
 use html\const\paths as html_paths;
-use html\html_base;
-use html\html_selector;
-use html\log\user_log_display;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\phrase\term;
-use html\phrase\term_list;
-use html\result\result_list;
-use html\sandbox\sandbox_code_id;
-use html\system\back_trace;
-use html\types\type_lists;
-use html\user\user_message;
-use shared\const\rest_ctrl;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\types\view_styles;
-use shared\url_var;
 
 include_once paths::DB . 'sql_db.php';
 //include_once html_paths::SANDBOX . 'sandbox_typed.php';
@@ -73,6 +53,7 @@ include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::FORMULA . 'expression.php';
+include_once html_paths::FORMULA . 'formula_link_list.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::PHRASE . 'term_list.php';
@@ -96,6 +77,27 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+
+use cfg\db\sql_db;
+use html\button;
+use html\html_base;
+use html\html_selector;
+use html\log\user_log_display;
+use html\phrase\phrase;
+use html\phrase\phrase_list;
+use html\phrase\term;
+use html\phrase\term_list;
+use html\result\result_list;
+use html\sandbox\sandbox_code_id;
+use html\system\back_trace;
+use html\types\type_lists;
+use html\user\user_message;
+use shared\const\rest_ctrl;
+use shared\const\views;
+use shared\enum\messages as msg_id;
+use shared\json_fields;
+use shared\types\view_styles;
+use shared\url_var;
 
 class formula extends sandbox_code_id
 {
@@ -281,26 +283,26 @@ class formula extends sandbox_code_id
      */
 
     /**
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @return string the html code to select the formula type
      */
-    function dsp_type_selector(string $form_name, ?type_lists $typ_lst): string
+    function dsp_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        return $typ_lst->html_formula_types->selector($form_name);
+        return $typ_lst->html_formula_types->selector($form);
     }
 
     /**
-     * @param string $form_name
+     * @param string $form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string
      */
-    public function formula_type_selector(string $form_name, ?type_lists $typ_lst): string
+    public function formula_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $used_formula_type_id = $this->type_id();
         if ($used_formula_type_id == null) {
             $used_formula_type_id = $typ_lst->html_formula_types->default_id();
         }
-        return $typ_lst->html_formula_types->selector($form_name, $used_formula_type_id);
+        return $typ_lst->html_formula_types->selector($form, $used_formula_type_id);
     }
 
 
@@ -388,9 +390,11 @@ class formula extends sandbox_code_id
         return $result;
     }
 
-    // create the HTML code for the form to adjust a formula
-    // $add is the number of new words to be linked
-    // $wrd is the word that should be linked (used for a new formula)
+    /**
+     * create the HTML code for the form to adjust a formula
+     * $add is the number of new words to be linked
+     * $wrd is the word that should be linked (used for a new formula)
+     */
     function dsp_edit($add, $wrd, $back): string
     {
         global $usr;
@@ -403,10 +407,10 @@ class formula extends sandbox_code_id
 
         // add new or change an existing formula
         if ($this->id() <= 0) {
-            $script = "formula_add";
+            $form_name = views::FORMULA_ADD;
             $result .= $html->dsp_text_h2('Add new formula for ' . $wrd->dsp_tbl_row() . ' ');
         } else {
-            $script = "formula_edit";
+            $form_name = views::FORMULA_EDIT;
             $result .= $html->dsp_text_h2('Formula "' . $this->name . '"');
         }
         $result .= '<div class="row">';
@@ -417,7 +421,7 @@ class formula extends sandbox_code_id
         }
 
         // formula fields
-        $result .= $html->dsp_form_start($script);
+        $result .= $html->dsp_form_start($form_name);
         $result .= $html->dsp_form_hidden("id", $this->id());
         $result .= $html->dsp_form_hidden("word", $wrd->id());
         $result .= $html->dsp_form_hidden("confirm", 1);
@@ -426,7 +430,7 @@ class formula extends sandbox_code_id
         }
         $result .= '<div class="form-row">';
         $result .= $html->dsp_form_fld("formula_name", $this->name, "Formula name:", view_styles::COL_SM_8);
-        $result .= $this->dsp_type_selector($script);
+        $result .= $this->dsp_type_selector($form_name);
         $result .= '</div>';
         $result .= $html->dsp_form_fld("description", $this->description, "Description:", view_styles::COL_SM_8);
         // predefined formulas like "this" or "next" should only be changed by an admin
@@ -443,6 +447,8 @@ class formula extends sandbox_code_id
             $result .= '</div>';
 
             // list all words linked to the formula and allow to unlink or add new words
+            // TODO Prio 1 create the HTML code for a formula link list
+            //$lnk_lst = new formula_link_list();
             $comp_html = $this->dsp_used4words($add, $wrd, $back);
             // allow to test and refresh the formula and show some sample values
             $numbers_html = $this->dsp_test_and_samples($back);
@@ -521,8 +527,14 @@ class formula extends sandbox_code_id
             } else {
                 $selected = 0;
             }
+            // TODO Prio 0 create the html code for formula links and add it to the formula mask
+            // TODO Prio 1 fill phrase list with ui fallback list
+            /*
+            $phr_lst = new phrase_list();
+            $result .= $this->phrase_selector($phr_lst, url_var::PHRASE_LINK_FORMULA_LONG, $selected);
             $result .= $this->phrase_selector_old('link_phrase', "formula_edit",
                     '', $selected) . ' ';
+            */
         } else {
             if ($this->id() > 0) {
                 $url = $this->obj_url(views::FORMULA_ADD);
@@ -539,33 +551,6 @@ class formula extends sandbox_code_id
         return $result;
     }
 
-    /**
-     * HTML code of a phrase selector
-     * TODO move load to calling function
-     *
-     * @param string $name the unique name inside the form for this selector
-     * @param string $form the name of the html form
-     * @param string $label the text show to the user
-     * @param string $col_class the formatting code to adjust the formatting
-     * @param int $selected the id of the preselected phrase
-     * @param string $pattern the pattern to filter the phrases
-     * @param phrase|null $phr phrase to preselect the phrases e.g. use Country to narrow the selection
-     * @return string with the HTML code to show the phrase selector
-     */
-    public function phrase_selector_old(
-        string      $name,
-        string      $form,
-        string      $label = '',
-        string      $col_class = '',
-        int         $selected = 0,
-        string      $pattern = '',
-        ?phrase $phr = null
-    ): string
-    {
-        $phr_lst = new phrase_list();
-        $phr_lst->load_like($pattern);
-        return $phr_lst->selector($form, $selected, $name, $label, '', html_selector::TYPE_DATALIST);
-    }
 
     // test and refresh the formula and show some sample values by returning the HTML code
 

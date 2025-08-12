@@ -893,7 +893,7 @@ class value extends sandbox_value
                     $result .= '    <td colspan="2">';
 
                     $phr_new = new phrase();
-                    $result .= $phr_new->dsp_selector(null, $script, $url_pos, '', $back);
+                    //$result .= $phr_new->dsp_selector(null, $script, $url_pos, '', $back);
                     $url_pos++;
 
                     $result .= '    </td>';
@@ -927,7 +927,8 @@ class value extends sandbox_value
         $src = $this->load_source();
         if (isset($src)) {
             $scr_dsp = new source($src->api_json());
-            $result .= $scr_dsp->dsp_select($script, $back);
+            // TODO Prio 0 add the source selector to the value mask
+            //$result .= $scr_dsp->dsp_select($script, $back);
             $result .= '<br><br>';
         }
 

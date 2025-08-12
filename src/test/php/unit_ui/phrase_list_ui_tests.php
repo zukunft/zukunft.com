@@ -39,6 +39,9 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 use html\html_base;
 use html\phrase\phrase as phrase_dsp;
 use html\phrase\phrase_list as phrase_list_dsp;
+use shared\enum\messages;
+use shared\enum\messages as msg_id;
+use shared\url_var;
 use test\test_cleanup;
 
 class phrase_list_ui_tests
@@ -58,6 +61,7 @@ class phrase_list_ui_tests
         $t->assert('HTML phrase list names match backend names', $lst->names(), $db_lst->names());
 
         // create the phrase list test set
+        $form = 'phrase_list_ui_test';
         $lst = new phrase_list_dsp();
         $phr_city = $t->zh_city()->phrase();
         $phr_canton = $t->zh_canton()->phrase();
@@ -78,7 +82,7 @@ class phrase_list_ui_tests
         */
 
         $test_page .= 'selector: ' . '<br>';
-        $test_page .= $lst->selector('', 0, 'phrase list test selector', 'please select') . '<br>';
+        $test_page .= $lst->selector($form, 0, url_var::PHRASE_LONG, msg_id::LABEL_PHRASE) . '<br>';
 
         $t->html_test($test_page, 'phrase_list', 'phrase_list', $t);
 

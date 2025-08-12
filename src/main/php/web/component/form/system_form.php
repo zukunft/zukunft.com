@@ -41,7 +41,6 @@ use cfg\const\paths;
 use html\component\component;
 use html\const\paths as html_paths;
 use html\html_base;
-use html\html_names;
 use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
 use html\types\type_lists;
@@ -181,8 +180,15 @@ class system_form extends component
     }
 
     /**
+     * create the HTML code to select a word or triple
+     * selected by the component type system_form_select_phrase
+     * in this case there can be more than only component with the type system_form_select_phrase
+     * all are used to select a phrase
+     * but depending on the code_id different url fields and labels are used
+     *
      * TODO move form_field_triple_phrase_to to a const
      * TODO remove fixed pattern
+     *
      * @param db_object_dsp|triple $dbo the frontend phrase object with the id used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @return string the html code to request the description from the user
@@ -204,24 +210,41 @@ class system_form extends component
 
         // get the selected phrase id
         $id = $dbo->id();
-        $name = html_names::PHRASE;
-        // TODO Prio 2 use a frontend language specific const for the label
-        $label = 'word / triple';
+        $name = url_var::PHRASE_LONG;
+        $label_id = msg_id::LABEL_PHRASE;
         if ($code_id == components::FORM_PHRASE_FROM_CODE_ID) {
             $id = $dbo->from()?->id();
-            $name .= html_names::SEP . html_names::FROM;
-            $label = 'from word / triple';
+            $name = url_var::PHRASE_FROM;
+            $label_id = msg_id::LABEL_PHRASE_FROM;
         } elseif ($code_id == components::FORM_PHRASE_TO_CODE_ID) {
             $id = $dbo->to()?->id();
-            $name .= html_names::SEP . html_names::TO;
-            $label = 'to word / triple';
+            $name = url_var::PHRASE_TO;
+            $label_id = msg_id::LABEL_PHRASE_TO;
+        } elseif ($code_id == components::FORM_PHRASE_ROW) {
+            // TODO Prio 1 activate
+            // $id = $dbo->phr_row?->id();
+            $id = 1;
+            $name = url_var::PHRASE_ROW;
+            $label_id = msg_id::LABEL_PHRASE_ROW;
+        } elseif ($code_id == components::FORM_PHRASE_COL) {
+            // TODO Prio 1 activate
+            //$id = $dbo->phr_col?->id();
+            $id = 1;
+            $name = url_var::PHRASE_COL;
+            $label_id = msg_id::LABEL_PHRASE_COL;
+        } elseif ($code_id == components::FORM_PHRASE_COL_SUB) {
+            // TODO Prio 1 activate
+            //$id = $dbo->phr_col2?->id();
+            $id = 1;
+            $name = url_var::PHRASE_COL_SUB;
+            $label_id = msg_id::LABEL_PHRASE_COL_SUB;
         }
         if ($id == null) {
             $id = 0;
             log_warning('id missing in ' . $dbo->dsp_id());
         }
 
-        return $dbo->phrase_selector($form_name, $id, $phr_lst, $name, $label);
+        return $dbo->phrase_selector($phr_lst, $name, $form_name, $id, $pattern, $label_id);
     }
 
     /**

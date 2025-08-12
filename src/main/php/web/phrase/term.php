@@ -60,6 +60,7 @@ use html\word\triple as triple_dsp;
 use shared\types\phrase_type;
 use shared\json_fields;
 use shared\library;
+use shared\url_var;
 
 class term extends combine_named_dsp
 {
@@ -503,13 +504,13 @@ class term extends combine_named_dsp
      * if one form contains more than one selector, $pos is used for identification
      *
      * @param term $type is a word to preselect the list to only those phrases matching this type
-     * @param string $form_name
+     * @param string $form
      * @param int $pos
      * @param string $class
      * @param string $back
      * @return string
      */
-    function dsp_selector(term $type, string $form_name, int $pos, string $class, string $back = ''): string
+    function dsp_selector(term $type, string $form, int $pos, string $class, string $back = ''): string
     {
         // TODO include pattern in the call
         $pattern = '';
@@ -517,12 +518,12 @@ class term extends combine_named_dsp
         $trm_lst->load_like($pattern);
 
         if ($pos > 0) {
-            $field_name = "term" . $pos;
+            $name = url_var::TERM_POS_LONG . $pos;
         } else {
-            $field_name = "term";
+            $name = url_var::TERM_LONG;
         }
         $label = "";
-        if ($form_name != "value_add" and $form_name != "value_edit") {
+        if ($form != "value_add" and $form != "value_edit") {
             if ($pos == 1) {
                 $label = "From:";
             } elseif ($pos == 2) {
@@ -534,7 +535,7 @@ class term extends combine_named_dsp
         // TODO activate Prio 3
         // $sel->bs_class = $class;
 
-        return $trm_lst->selector($form_name, $this->id(), $field_name, $label, '');
+        return $trm_lst->selector($form, $this->id(), $name);
     }
 
 }

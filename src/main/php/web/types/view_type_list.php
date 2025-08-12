@@ -34,23 +34,41 @@ namespace html\types;
 
 use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::TYPES . 'type_list.php';
 include_once paths::SHARED_TYPES . 'view_type.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'url_var.php';
 
 use shared\types\view_type;
+use shared\enum\messages as msg_id;
+use shared\url_var;
 
 class view_type_list extends type_list
 {
 
-    const NAME = 'view type';
+    const NAME = url_var::VIEW_TYPE;
 
     /**
+     * create the HTML code to select a view type
+     * @param string $form the unique name of the html form
+     * @param int|null $selected the id of the preselected view type
+     * @param string $name the unique name inside the form for this selector
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
+    function selector(
+        string   $form = '',
+        int|null $selected = null,
+        string   $name = self::NAME
+    ): string
     {
-        return parent::type_selector($this->lst_key(), $name, $form, $selected);
+        return parent::type_selector($form, $selected, $name, msg_id::LABEL_VIEW_TYPE);
     }
+
+
+    /*
+     * set and get
+     */
 
     function default_id(): int
     {

@@ -340,15 +340,15 @@ class view_exe extends view_base
     }
 
     /**
-     * @param string $script the name of the html form
+     * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code for the view type selector
      */
-    private function dsp_type_selector(string $script, string $class, string $attribute, ?type_lists $typ_lst): string
+    private function dsp_type_selector(string $form, string $class, string $attribute, ?type_lists $typ_lst): string
     {
         //$sel->bs_class = $class;
         //$sel->attribute = $attribute;
-        return $typ_lst->html_view_types->selector($script);
+        return $typ_lst->html_view_types->selector($form);
     }
 
     /**

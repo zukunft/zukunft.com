@@ -265,30 +265,31 @@ class type_list
 
     /**
      * create the HTML code to select a type
-     * @param array $key_lst the key value list for the selector
-     * @param string $name the unique name inside the form for this selector
+     * TODO Prio 0 use this var order for all selectors
+     * TODO use the label_id for all function calls
      * @param string $form the unique name of the html form
-     * @param int $selected the id of the preselected phrase
-     * @param string $col_class the formatting code to adjust the formatting
-     * @param string $label the text show to the user
+     * @param int|null $selected the id of the preselected phrase
+     * @param string $name the unique name inside the form for this selector
+     * @param string $style the formatting code to adjust the formatting
+     * @param msg_id $label_id the text show to the user
      * @returns string the html code to select a type from this list
      */
     function type_selector(
-        array  $key_lst,
-        string $name = '',
-        string $form = '',
+        string $form,
         ?int   $selected = null,
-        string $col_class = view_styles::COL_SM_4,
-        string $label = 'type: '
+        string $name,
+        msg_id $label_id = msg_id::LABEL_TYPE,
+        string $style = view_styles::COL_SM_4
     ): string
     {
         $sel = new html_selector();
+        $sel->lst = $this->lst_key();
         $sel->name = $name;
         $sel->form = $form;
-        $sel->label = $label;
-        $sel->lst = $key_lst;
         $sel->selected = $selected;
-        $sel->bs_class = $col_class;
+        $sel->label_id = $label_id;
+        $sel->style = $style;
+        $sel->type = html_selector::TYPE_SELECT;
         return $sel->display();
     }
 

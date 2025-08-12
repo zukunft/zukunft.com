@@ -87,6 +87,9 @@ class components
     const FORM_PHRASE_TYPE_COM = 'the phrase type field in a form';
     const FORM_PHRASE_FROM_CODE_ID = 'form_field_triple_phrase_from';
     const FORM_PHRASE_TO_CODE_ID = 'form_field_triple_phrase_from';
+    const FORM_PHRASE_ROW = 'form_field_select_phrase_row';
+    const FORM_PHRASE_COL = 'form_field_select_phrase_col';
+    const FORM_PHRASE_COL_SUB = 'form_field_select_phrase_col_sub';
     const FORM_SHARE_TYPE = 'form_field_share_type';
     const FORM_SHARE_TYPE_NAME = 'form field share type';
     const FORM_SHARE_TYPE_COM = 'the share type field in a form';

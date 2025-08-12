@@ -280,17 +280,17 @@ class ref extends db_object_dsp
      */
 
     /**
-     * @param string $form_name
+     * @param string $form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string
      */
-    public function ref_type_selector(string $form_name, ?type_lists $typ_lst): string
+    public function ref_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $used_ref_type_id = $this->predicate_id();
         if ($used_ref_type_id == null) {
             $used_ref_type_id = $typ_lst->html_ref_types->default_id();
         }
-        return $typ_lst->html_ref_types->selector($form_name, $used_ref_type_id);
+        return $typ_lst->html_ref_types->selector($form, $used_ref_type_id);
     }
 
 }

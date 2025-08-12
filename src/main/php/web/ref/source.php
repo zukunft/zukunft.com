@@ -51,6 +51,7 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
 use html\types\type_lists;
 use html\html_base;
@@ -58,8 +59,9 @@ use html\sandbox\sandbox_code_id;
 use html\user\user_message;
 use shared\const\views;
 use shared\enum\messages as msg_id;
-use shared\json_fields;
 use shared\types\view_styles;
+use shared\json_fields;
+use shared\url_var;
 
 class source extends sandbox_code_id
 {
@@ -163,25 +165,25 @@ class source extends sandbox_code_id
      */
 
     /**
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the source type
      */
-    private function dsp_select_type(string $form_name, ?type_lists $typ_lst): string
+    private function dsp_select_type(string $form, ?type_lists $typ_lst): string
     {
-        return $typ_lst->html_source_types->selector($form_name);
+        return $typ_lst->html_source_types->selector($form);
     }
 
     /**
-     * @param string $form_name
+     * @param string $form
      * @param string $pattern
      * @return string
      */
-    private function source_selector(string $form_name, string $pattern): string
+    private function source_selector(string $form, string $pattern): string
     {
         $src_lst = new source_list();
         $src_lst->load_like($pattern);
-        return $src_lst->selector($form_name, $this->id(), 'source', 'please define a source', '');
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE_LONG,  msg_id::LABEL_STYLE);
     }
 
 
@@ -241,17 +243,17 @@ class source extends sandbox_code_id
     }
 
     /**
-     * @param string $form_name
+     * @param string $form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string
      */
-    public function source_type_selector(string $form_name, ?type_lists $typ_lst): string
+    public function source_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $used_source_type_id = $this->type_id();
         if ($used_source_type_id == null) {
             $used_source_type_id = $typ_lst->html_source_types->default_id();
         }
-        return $typ_lst->html_source_types->selector($form_name, $used_source_type_id, 'type', view_styles::COL_SM_4, 'type:');
+        return $typ_lst->html_source_types->selector($form, $used_source_type_id);
     }
 
 }

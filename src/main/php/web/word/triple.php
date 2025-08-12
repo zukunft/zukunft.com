@@ -133,8 +133,8 @@ class triple extends sandbox_code_id
             if (array_key_exists(url_var::FROM_ID_LONG, $url_array)) {
                 $this->set_from_by_id($url_array[url_var::FROM_ID_LONG]);
             }
-            if (array_key_exists(url_var::VERB_ID_LONG, $url_array)) {
-                $this->set_verb_by_id($url_array[url_var::VERB_ID_LONG]);
+            if (array_key_exists(url_var::VERB_LONG, $url_array)) {
+                $this->set_verb_by_id($url_array[url_var::VERB_LONG]);
             }
             if (array_key_exists(url_var::TO_ID_LONG, $url_array)) {
                 $this->set_to_by_id($url_array[url_var::TO_ID_LONG]);
@@ -446,58 +446,30 @@ class triple extends sandbox_code_id
     }
 
     /**
-     * to select the from phrase
-     * @param string $form the name of the html form
-     * @param int $id the row id of the suggested phrase or the already selected phrase
-     * @param phrase_list_dsp|null $phr_lst a preloaded list of suggested phrases for the selection if no additional input is given from the user
+     * to select the word or triple
+     * @param phrase_list_dsp $phr_lst a preloaded list of suggested phrases for the selection if no additional input is given from the user
      * @param string $name the unique name within the html form for this selector
+     * @param string $form the name of the html form
+     * @param int|null $selected the row id of the suggested phrase or the already selected phrase
+     * @param string $pattern the pattern to filter the phrases
+     * @param msg_id $label_id the translation id for the text show to the user
+     * @param string $style the style code e.g. to define the target width
      * @return string the html code to select the phrase
      */
     function phrase_selector(
-        string $form,
-        int $id,
-        ?phrase_list $phr_lst = null,
-        string $name = '',
-        string $label = '',
-        string $style = view_styles::COL_SM_4
+        phrase_list $phr_lst,
+        string      $name,
+        string      $form,
+        ?int        $selected = null,
+        string      $pattern = '',
+        msg_id      $label_id = msg_id::LABEL_PHRASE,
+        string      $style = view_styles::COL_SM_4
     ): string
     {
         if ($phr_lst == null) {
             $phr_lst = new phrase_list();
         }
-        return $phr_lst->selector(
-            $form, $id, $name,
-            $label, $style,
-            html_selector::TYPE_DATALIST);
-    }
-
-    /**
-     * TODO review
-     *
-     * select a phrase based on a given context
-     *
-     * @param string $name the unique name inside the form for this selector
-     * @param string $form the name of the html form
-     * @param string $label the text show to the user
-     * @param string $col_class the formatting code to adjust the formatting
-     * @param int $selected the id of the preselected phrase
-     * @param string $pattern the pattern to filter the phrases
-     * @param phrase_dsp|null $phr the context to select the phrases, which is until now just the phrase
-     * @return string the html code to select a phrase
-     */
-    public function phrase_selector_old(
-        string      $name,
-        string      $form,
-        string      $label = '',
-        string      $col_class = '',
-        int         $selected = 0,
-        string      $pattern = '',
-        ?phrase_dsp $phr = null
-    ): string
-    {
-        $phr_lst = new phrase_list_dsp();
-        $phr_lst->load_like($pattern);
-        return $phr_lst->selector($form, $selected, $name, $label, view_styles::COL_SM_4, html_selector::TYPE_DATALIST);
+        return $phr_lst->selector($form, $selected, $name, $label_id, $style, html_selector::TYPE_DATALIST);
     }
 
     /**
@@ -512,7 +484,7 @@ class triple extends sandbox_code_id
         } else {
             $id = 0;
         }
-        return $typ_lst->html_verbs->selector($form, $id, 'verb', view_styles::COL_SM_4, 'verb:');
+        return $typ_lst->html_verbs->selector($form, $id, url_var::VERB_LONG);
     }
 
 
@@ -585,43 +557,6 @@ class triple extends sandbox_code_id
         }
         $result .= '      ' . $this->name_link() . "\n";
         $result .= '    </td>' . "\n";
-        return $result;
-    }
-
-
-    /*
-     * views
-     */
-
-    /**
-     * display a form to adjust the link between too words or triples
-     */
-    function form_edit(string $back = ''): string
-    {
-        $html = new html_base();
-        $result = ''; // reset the html code var
-
-        // prepare to show the word link
-        if ($this->id() > 0) {
-            $header = $html->text_h2('Change "' . $this->from()->name() . ' ' . $this->verb()->name() . ' ' . $this->to()->name() . '"');
-            $hidden_fields = $html->form_hidden("id", $this->id());
-            $hidden_fields .= $html->form_hidden("back", $back);
-            $hidden_fields .= $html->form_hidden("confirm", '1');
-            $detail_fields = $html->form_text("name", $this->name());
-            $detail_fields .= $html->form_text("description", $this->description);
-            $detail_fields .= 'from: ' . $this->phrase_selector_old(
-                    'from', views::TRIPLE_EDIT, 'from:', '', $this->from()->id(), '', $this->from());
-            /* TODO
-            if (isset($this->verb)) {
-                $result .= $this->verb->dsp_selector('forward', $form_name, view_styles::COL_SM_4, $back);
-            }
-            */
-            $detail_fields .= 'to: ' . $this->phrase_selector_old(
-                    'to', views::TRIPLE_EDIT, 'to:', '', $this->to()->id(), '', $this->to());
-            $detail_row = $html->fr($detail_fields) . '<br>';
-            $result = $header . $html->form(views::TRIPLE_EDIT, $hidden_fields . $detail_row);
-        }
-
         return $result;
     }
 

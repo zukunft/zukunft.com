@@ -46,6 +46,7 @@ use html\button;
 use html\html_base;
 use html\rest_call;
 use html\view\view as view_dsp;
+use shared\const\rest_ctrl;
 use shared\url_var;
 use shared\const\views as view_shared;
 use shared\enum\messages as msg_id;

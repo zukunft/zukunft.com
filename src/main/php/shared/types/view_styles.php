@@ -39,9 +39,10 @@ class view_styles
 
     const COL_SM_2 = 'col-md-2';
     // just to display a fixed text
-    const COL_SM_4_COM = 'use 1/3 of the width';
+    const COL_SM_4_COM = 'use 1/3 of the width (col-md-4)';
     const COL_SM_4 = 'col-md-4';
     const COL_SM_5 = 'col-md-5';
+    const COL_SM_6_COM = 'use half of the width (col-md-6)';
     const COL_SM_6 = 'col-md-6';
     const COL_SM_7 = 'col-md-7';
     const COL_SM_8 = 'col-md-8';

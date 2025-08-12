@@ -32,8 +32,16 @@
 
 namespace unit_ui;
 
+use cfg\const\paths;
+use html\const\paths as html_paths;
+
+include_once html_paths::FORMULA . 'formula_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+
+use shared\enum\messages as msg_id;
 use html\html_base;
 use html\formula\formula_list as formula_list_dsp;
+use shared\url_var;
 use test\test_cleanup;
 
 class formula_list_ui_tests
@@ -48,13 +56,14 @@ class formula_list_ui_tests
         $t->header($ts);
 
         // test the formula list display functions
+        $form = 'formula_list_ui_test';
         $lst = new formula_list_dsp($t->formula_list()->api_json());
         $test_page = $html->text_h2('formula list display test');
         $test_page .= 'formula list with tooltip: ' . $lst->name_tip() . '<br>';
         $test_page .= 'formula list with link: ' . $lst->name_link() . '<br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst->selector('', 0, 'test_selector', 'No formula selected') . '<br>';
+        $test_page .= $lst->selector($form, 0, url_var::FORMULA_LONG, msg_id::LABEL_FORMULA) . '<br>';
 
         $t->html_test($test_page, 'formula_list', 'formula_list', $t);
     }

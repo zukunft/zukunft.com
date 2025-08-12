@@ -32,20 +32,35 @@
 
 namespace html\types;
 
+use cfg\const\paths;
 use html\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'type_lists.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'url_var.php';
+
+use shared\enum\messages as msg_id;
+use shared\url_var;
 
 class position_type_list extends type_list
 {
 
+    const NAME = url_var::POSITION_TYPE;
+
     /**
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * create the HTML code to select a position type
+     * @param string $form the unique name of the html form
+     * @param int|null $selected the id of the preselected position type
+     * @param string $name the unique name inside the form for this selector
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = 'position type', ?type_lists $typ_lst = null): string
+    function selector(
+        string   $form = '',
+        int|null $selected = null,
+        string   $name = self::NAME
+    ): string
     {
-        return parent::type_selector($typ_lst->html_position_types->lst_key(), $name, $form, $selected);
+        return parent::type_selector($form, $selected, $name, msg_id::LABEL_POSITION_TYPE);
     }
 
 }

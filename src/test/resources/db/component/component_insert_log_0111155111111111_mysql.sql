@@ -122,7 +122,7 @@ SELECT component_insert_log_0111155111111111 (
                'text',
                3,
                779,
-               'col-md-4',
+               '1/3 width',
                1,
                64,
                'please_select',

@@ -311,45 +311,6 @@ class phrase extends combine_named
      * to review
      */
 
-    /**
-     * create a selector that contains the words and triples
-     * if one form contains more than one selector, $pos is used for identification
-     *
-     * @param phrase $type is a word to preselect the list to only those phrases matching this type
-     * @param string $form_name
-     * @param int $pos
-     * @param string $class
-     * @param string $back
-     * @return string
-     */
-    function dsp_selector(phrase $type, string $form_name, int $pos, string $class, string $back = ''): string
-    {
-        // TODO include pattern in the call
-        $pattern = '';
-        $phr_lst = new phrase_list();
-        $phr_lst->load_like($pattern);
-
-        if ($pos > 0) {
-            $field_name = "phrase" . $pos;
-        } else {
-            $field_name = "phrase";
-        }
-        $label = "";
-        if ($form_name != "value_add" and $form_name != "value_edit") {
-            if ($pos == 1) {
-                $label = "From:";
-            } elseif ($pos == 2) {
-                $label = "To:";
-            } else {
-                $label = "Word:";
-            }
-        }
-        // TODO activate Prio 3
-        // $sel->bs_class = $class;
-
-        return $phr_lst->selector($form_name, $this->id(), $field_name, $label, '');
-    }
-
     function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
     {
         $phr_lst = new phrase_list();

@@ -17,10 +17,10 @@
     button: <a href="/http/view.php?m=triple_del&id=1" title="delete word"><i class="far fa-times-circle"></i></a><br>
     <h4>select</h4>
     <form action="/http/view.php" id="triple_edit">
-        <div class="form-group col-md-4"><label for="phrase_type">type:</label><select class="form-control"
-                                                                                       name="phrase_type"
-                                                                                       form="triple_edit"
-                                                                                       id="phrase_type">
+        <div class="form-group col-md-4"><label for="phrase_type">type</label><select class="form-control"
+                                                                                      name="phrase_type"
+                                                                                      form="triple_edit"
+                                                                                      id="phrase_type">
             <option value="1">standard</option>
             <option value="2">time</option>
             <option value="3">measure type</option>
@@ -50,8 +50,8 @@
             <option value="27">ignore</option>
         </select></div>
         <br>
-        <div class="form-group col-md-4"><label for="verb:">verb</label><select class="form-control" name="verb:"
-                                                                                form="triple_edit" id="verb:">
+        <div class="form-group col-md-4"><label for="verb_id">verb</label><select class="form-control" name="verb_id"
+                                                                                  form="triple_edit" id="verb_id">
             <option value="1">not set</option>
             <option value="2">is a</option>
             <option value="3" selected>is part of</option>
@@ -85,9 +85,13 @@
             <option value="31">on</option>
         </select></div>
         <br>
-        <div class="form-group col-md-4"><input type="text" list="phrase_from_list" class="form-control"
-                                                name="phrase_from" form="triple_edit" id="phrase_from">
-            <datalist id="phrase_from_list">
+        <div class="form-group col-md-4"><label for="phrase_row">word / triple</label><input type="text"
+                                                                                             list="phrase_row_list"
+                                                                                             class="form-control"
+                                                                                             name="phrase_row"
+                                                                                             form="triple_edit"
+                                                                                             id="phrase_row">
+            <datalist id="phrase_row_list">
                 <option data-value="1">mathematics</option>
                 <option data-value="2" selected>constant</option>
                 <option data-value="5">π</option>
@@ -96,9 +100,13 @@
             </datalist>
         </div>
         <br>
-        <div class="form-group col-md-4"><input type="text" list="phrase_to_list" class="form-control" name="phrase_to"
-                                                form="triple_edit" id="phrase_to">
-            <datalist id="phrase_to_list">
+        <div class="form-group col-md-4"><label for="phrase_row">word / triple</label><input type="text"
+                                                                                             list="phrase_row_list"
+                                                                                             class="form-control"
+                                                                                             name="phrase_row"
+                                                                                             form="triple_edit"
+                                                                                             id="phrase_row">
+            <datalist id="phrase_row_list">
                 <option data-value="1" selected>mathematics</option>
                 <option data-value="2">constant</option>
                 <option data-value="5">π</option>

@@ -90,7 +90,7 @@ SELECT view_insert_log_0111155111 (
                'entry view'::text,
                2::smallint,
                777::smallint,
-               'col-md-4'::text,
+               '1/3 width'::text,
                1::smallint,
                72::smallint,
                1::smallint,

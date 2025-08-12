@@ -160,6 +160,41 @@ enum messages: string
     case ERROR = 'error';
     case NONE = '';
 
+    // labels used for views
+    // the fallback label for selections
+    case LABEL = 'name';
+    // the label for type selections
+    case LABEL_TYPE = 'type';
+    case LABEL_WORD = 'word';
+    case LABEL_VERB = 'verb';
+    // the label for style selections
+    case LABEL_STYLE = 'style';
+    case LABEL_SOURCE = 'source';
+    case LABEL_VIEW = 'view';
+    case LABEL_PHRASE = 'word / triple';
+    case LABEL_PHRASE_FROM = 'from word / triple';
+    case LABEL_PHRASE_TO = 'to word / triple';
+    case LABEL_PHRASE_ROW = 'take rows from';
+    case LABEL_PHRASE_COL = 'take columns from';
+    case LABEL_PHRASE_COL_SUB = 'take sub columns from';
+
+    case LABEL_FORMULA = 'formula';
+    case LABEL_FORMULA_TYPE = 'formula type';
+    case LABEL_FORMULA_LINK_TYPE = 'formula link';
+    case LABEL_TERM = 'word, verb, triple or formula';
+    case LABEL_VIEW_TYPE = 'view type';
+    case LABEL_VIEW_LINK_TYPE = 'view link type';
+    case LABEL_COMPONENT = 'component';
+    case LABEL_COMPONENT_TYPE = 'component type';
+    case LABEL_COMPONENT_LINK_TYPE = 'link type';
+    case LABEL_POSITION_TYPE = 'position';
+    case LABEL_SOURCE_TYPE = 'source type';
+    case LABEL_REF_TYPE = 'reference type';
+    case LABEL_LANGUAGE = 'language';
+    case LABEL_USER_PROFILE = 'user profile';
+    case LABEL_SHARE = 'share';
+    case LABEL_PROTECTION = 'protection';
+
     // messages with vars
     case MISSING_OVERWRITE = 'internal function overwrite of "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
@@ -931,6 +966,9 @@ enum messages: string
     case FORM_FIELD_FORMULA_ALL_VARS = 'form_field_formula_all_vars';
     case FORM_TRIPLE_PHRASE_FROM = 'form_triple_phrase_from';
     case FORM_TRIPLE_PHRASE_TO = 'form_triple_phrase_to';
+    case FORM_TRIPLE_PHRASE_ROW = 'form_select_phrase_row';
+    case FORM_TRIPLE_PHRASE_COL = 'form_select_phrase_col';
+    case FORM_TRIPLE_PHRASE_COL_SUB = 'form_select_phrase_col_sub';
     case FORM_TRIPLE_VERB = 'form_triple_verb';
     case FORM_PHRASE_TYPE_FROM = 'form_phrase_type_from';
     case FORM_PHRASE_TYPE_TO = 'form_phrase_type_to';

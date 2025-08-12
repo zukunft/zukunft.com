@@ -67,6 +67,7 @@ use html\user\user_message;
 use html\word\triple;
 use html\word\word;
 use shared\const\views;
+use shared\enum\messages;
 use shared\enum\messages as msg_id;
 use shared\api;
 use shared\url_var;
@@ -273,26 +274,26 @@ class view_base extends sandbox_code_id
         return $typ_lst->html_view_types->selector($form, $used_type_id);
     }
 
-    public function style_selector(string $form_name, ?type_lists $typ_lst): string
+    public function style_selector(string $form, ?type_lists $typ_lst): string
     {
         $used_style_id = $this->style_id();
         if ($used_style_id == null) {
             $used_style_id = $typ_lst->html_view_styles->default_id();
         }
-        return $typ_lst->html_view_styles->selector($form_name, $used_style_id);
+        return $typ_lst->html_view_styles->selector($form, $used_style_id);
     }
 
     /**
-     * @param string $form_name
+     * @param string $form
      * @param string $pattern
      * @param int $id
      * @return string
      */
-    function component_selector(string $form_name, string $pattern, int $id): string
+    function component_selector(string $form, string $pattern, int $id): string
     {
         $cmp_lst = new component_list;
         $cmp_lst->load_like($pattern);
-        return $cmp_lst->selector($form_name, $id, 'add_component', 'please define a component', '');
+        return $cmp_lst->selector($form, $id, url_var::COMPONENT,  msg_id::LABEL_COMPONENT_TYPE);
     }
 
     function log_err(string $msg): void

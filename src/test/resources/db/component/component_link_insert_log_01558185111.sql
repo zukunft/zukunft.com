@@ -96,7 +96,7 @@ SELECT component_link_insert_log_01558185111
      'side'::text,
      2::smallint,
      781::smallint,
-     'col-md-4'::text,
+     '1/3 width'::text,
      1::smallint,
      49::smallint,
      1::smallint,

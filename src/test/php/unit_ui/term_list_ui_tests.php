@@ -34,6 +34,8 @@ namespace unit_ui;
 
 use html\html_base;
 use html\phrase\term_list as term_list_dsp;
+use shared\enum\messages as msg_id;
+use shared\url_var;
 use test\test_cleanup;
 
 class term_list_ui_tests
@@ -48,13 +50,14 @@ class term_list_ui_tests
         $t->header($ts);
 
         // test the term list display functions
+        $form = 'term_list_ui_test';
         $lst = new term_list_dsp($t->term_list()->api_json());
         $test_page = $html->text_h2('term list display test');
         $test_page .= 'term list with tooltip: ' . $lst->name_tip() . '<br>';
         $test_page .= 'term list with link: ' . $lst->name_link() . '<br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst->selector('', 0, 'test_selector', 'No term selected') . '<br>';
+        $test_page .= $lst->selector($form, 0, url_var::TERM_LONG, msg_id::LABEL_TERM) . '<br>';
 
         $t->html_test($test_page, 'term_list', 'term_list', $t);
     }

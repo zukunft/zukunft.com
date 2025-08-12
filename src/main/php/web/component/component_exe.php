@@ -50,7 +50,9 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED . 'url_var.php';
 
 use html\helper\data_object;
 use html\helper\data_object as data_object_dsp;
@@ -62,6 +64,7 @@ use html\sheet;
 use html\component\form\system_form;
 use shared\const\triples;
 use shared\types\component_type;
+use shared\url_var;
 
 class component_exe extends component
 {
@@ -103,6 +106,7 @@ class component_exe extends component
         $result = '';
 
         // get the default values
+        // TODO call only when needed
         $phr_lst = new phrase_list();
         $phr_lst->load_fallback();
         if ($cfg != null) {
@@ -126,8 +130,8 @@ class component_exe extends component
             component_type::FORM_BACK => $form->form_back($msk_id, $dbo->id(), $back),
             component_type::FORM_CONFIRM => $form->form_confirm(),
             component_type::SHOW_NAME => $form->show_name($dbo),
-            component_type::FORM_NAME => $form->form_name($dbo, $this->style_text($cfg->typ_lst_cache)),
-            component_type::FORM_PLURAL => $form->form_plural($dbo, $this->style_text($cfg->typ_lst_cache)),
+            component_type::FORM_NAME => $form->form_name($dbo, $this->style_code_id($cfg->typ_lst_cache)),
+            component_type::FORM_PLURAL => $form->form_plural($dbo, $this->style_code_id($cfg->typ_lst_cache)),
             component_type::FORM_DESCRIPTION => $form->form_description($dbo),
             component_type::FORM_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
             component_type::FORM_VERB_SELECTOR => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
@@ -171,7 +175,7 @@ class component_exe extends component
 
             // select
             component_type::VIEW_SELECT => $this->view_select($dbo, $form_name, $cfg),
-            component_type::PHRASE_SELECT => $this->phrase_select($dbo, $form_name),
+            component_type::PHRASE_SELECT => $this->phrase_select($dbo, $form_name, $phr_lst,),
 
             // table
             component_type::VALUES_ALL => $this->all($dbo, $back),
@@ -221,17 +225,25 @@ class component_exe extends component
     /**
      * @return string the name of a phrase and give the user the possibility to change the phrase name
      */
-    function phrase_select(db_object_dsp $phr, string $form_name): string
+    function phrase_select(
+        db_object_dsp $phr,
+        string $form_name,
+        phrase_list $phr_lst
+    ): string
     {
-        return $phr->phrase_selector_old('phrase', $form_name, 'word:', '', $phr->id());
+        return $phr->phrase_selector($phr_lst, url_var::PHRASE_LONG, $form_name, $phr->id());
     }
 
     /**
      * @return string show a list of phrases with a suggested link type that might be linked to the object
      */
-    function phrase_link(db_object_dsp $phr, string $form_name): string
+    function phrase_link(
+        db_object_dsp $phr,
+        string $form_name,
+        phrase_list $phr_lst
+    ): string
     {
-        return $phr->phrase_selector_old('phrase', $form_name, 'word:', '', $phr->id());
+        return $phr->phrase_selector($phr_lst, url_var::PHRASE_LONG, $form_name, $phr->id());
     }
 
     /**

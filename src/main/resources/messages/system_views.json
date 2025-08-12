@@ -343,6 +343,27 @@
       "ui_msg_code_id": "form_select_component_type"
     },
     {
+      "name": "system form select row phrase",
+      "description": "selector phrase that should be used to select the primary row names of a table",
+      "type": "system_form_select_phrase",
+      "code_id": "form_field_select_phrase_row",
+      "ui_msg_code_id": "form_select_phrase_row"
+    },
+    {
+      "name": "system form select column phrase",
+      "description": "selector phrase that should be used to select the primary column names of a table",
+      "type": "system_form_select_phrase",
+      "code_id": "form_field_select_phrase_col",
+      "ui_msg_code_id": "form_select_phrase_col"
+    },
+    {
+      "name": "system form select secondary column phrase",
+      "description": "selector phrase that should be used to select the secondary column names of a table",
+      "type": "system_form_select_phrase",
+      "code_id": "form_field_select_phrase_col_sub",
+      "ui_msg_code_id": "form_select_phrase_col_sub"
+    },
+    {
       "name": "system form select view style",
       "description": "selector for the style used in views and components e.g. to define the width",
       "type": "system_form_select_view_style",
@@ -1692,35 +1713,50 @@
         },
         {
           "position": "7",
-          "name": "system form select view style"
-        },
-        {
-          "position": "7",
-          "name": "system form select share type"
+          "name": "system form select row phrase"
         },
         {
           "position": "8",
-          "name": "system form select protection type",
+          "name": "system form select column phrase",
           "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system formatter row right"
+          "name": "system form select secondary column phrase",
+          "position_type": "side"
         },
         {
           "position": "10",
-          "name": "system form button cancel"
+          "name": "system form select view style"
         },
         {
           "position": "11",
-          "name": "system form button save"
+          "name": "system form select share type",
+          "position_type": "side"
         },
         {
           "position": "12",
-          "name": "system formatter row end"
+          "name": "system form select protection type",
+          "position_type": "side"
         },
         {
           "position": "13",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "14",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "15",
+          "name": "system form button save"
+        },
+        {
+          "position": "16",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "17",
           "name": "system form end"
         }
       ]
@@ -1760,31 +1796,50 @@
         },
         {
           "position": "7",
-          "name": "system form select share type"
+          "name": "system form select row phrase"
         },
         {
           "position": "8",
-          "name": "system form select protection type",
+          "name": "system form select column phrase",
           "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system formatter row right"
+          "name": "system form select secondary column phrase",
+          "position_type": "side"
         },
         {
           "position": "10",
-          "name": "system form button cancel"
+          "name": "system form select view style"
         },
         {
           "position": "11",
-          "name": "system form button save"
+          "name": "system form select share type",
+          "position_type": "side"
         },
         {
           "position": "12",
-          "name": "system formatter row end"
+          "name": "system form select protection type",
+          "position_type": "side"
         },
         {
           "position": "13",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "14",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "15",
+          "name": "system form button save"
+        },
+        {
+          "position": "16",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "17",
           "name": "system form end"
         }
       ]

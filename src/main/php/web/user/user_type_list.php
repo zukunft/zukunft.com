@@ -58,9 +58,17 @@ class user_type_list extends type_list
     }
 
     /**
+     * create the HTML code to select a user type
+     * @param string $form the unique name of the html form
+     * @param int $selected the id of the preselected user type
+     * @param string $name the unique name inside the form for this selector
      * @returns string the html code to select a type from this list
      */
-    function selector(string $name = '', string $form = '', int $selected = 0): string
+    function selector(
+        string $form = '',
+        int $selected = 0,
+        string $name = ''
+    ): string
     {
         $sel = new html_selector();
         $sel->name = $name;

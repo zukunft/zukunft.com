@@ -84,46 +84,46 @@ class type_lists_ui_tests
         $test_page = $msk->show($wrd, $cfg, '') . '<br><br>';
 
         // test the type list selectors
-        $form_name = 'view';
-        $test_page .= $html->form_start($form_name);
+        $form = 'view';
+        $test_page .= $html->form_start($form);
 
         $test_page .= $html->label(user_profile::NAME, user_profile::NAME);
-        $test_page .= $ui_cache->html_user_profiles->selector($form_name) . '<br>';
+        $test_page .= $ui_cache->html_user_profiles->selector($form) . '<br>';
 
         $test_page .= $html->label(verbs::NAME, verbs::NAME);
-        $test_page .= $ui_cache->html_verbs->selector($form_name) . '<br>';
+        $test_page .= $ui_cache->html_verbs->selector($form) . '<br>';
 
         $test_page .= $html->label(phrase_types::NAME, url_var::PHRASE_TYPE);
-        $test_page .= $ui_cache->html_phrase_types->selector($form_name) . '<br>';
+        $test_page .= $ui_cache->html_phrase_types->selector($form) . '<br>';
 
         $test_page .= $html->label(formula_type_list::NAME, formula_type_list::NAME);
-        $test_page .= $ui_cache->html_formula_types->selector($form_name) . '<br>';
+        $test_page .= $ui_cache->html_formula_types->selector($form) . '<br>';
 
         $test_page .= $html->label(formula_link_type_list::NAME, formula_link_type_list::NAME);
-        $test_page .= $ui_cache->html_formula_link_types->selector($form_name) . '<br>';
+        $test_page .= $ui_cache->html_formula_link_types->selector($form) . '<br>';
 
         $test_page .= $html->label(view_type_list::NAME, view_type_list::NAME);
-        $test_page .= $ui_cache->html_view_types->selector($form_name) . '<br>';
+        $test_page .= $ui_cache->html_view_types->selector($form) . '<br>';
 
         $test_page .= $html->label(view_style_list::NAME, view_style_list::NAME);
-        $test_page .= $ui_cache->html_view_styles->selector($form_name) . '<br>';
+        $test_page .= $ui_cache->html_view_styles->selector($form) . '<br>';
 
         $test_page .= $html->label(component_type_list::NAME, component_type_list::NAME);
-        $test_page .= $ui_cache->html_component_types->selector($form_name) . '<br>';
+        $test_page .= $ui_cache->html_component_types->selector($form) . '<br>';
 
         $test_page .= $html->label(ref_type_list::NAME, ref_type_list::NAME);
-        $test_page .= $ui_cache->html_ref_types->selector($form_name) . '<br>';
+        $test_page .= $ui_cache->html_ref_types->selector($form) . '<br>';
 
         $test_page .= $html->label(source_type_list::NAME, source_type_list::NAME);
-        $test_page .= $ui_cache->html_source_types->selector($form_name) . '<br>';
+        $test_page .= $ui_cache->html_source_types->selector($form) . '<br>';
 
         $test_page .= $html->label(protection::NAME, protection::NAME);
-        $test_page .= $ui_cache->html_protection_types->selector($form_name) . '<br>';
+        $test_page .= $ui_cache->html_protection_types->selector($form) . '<br>';
 
         $test_page .= $html->label(share::NAME, share::NAME);
-        $test_page .= $ui_cache->html_share_types->selector($form_name) . '<br>';
+        $test_page .= $ui_cache->html_share_types->selector($form) . '<br>';
 
-        $test_page .= $html->form_end_with_submit($form_name, '');
+        $test_page .= $html->form_end_with_submit($form, '');
 
         $t->html_test($test_page, 'types', 'types', $t);
     }

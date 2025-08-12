@@ -528,11 +528,11 @@ class db_object extends TextIdObject
 
     /**
      * create the html code to select the source type
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the source type
      */
-    public function source_type_selector(string $form_name, ?type_lists $typ_lst): string
+    public function source_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'source type selector not defined for ' . $this::class;
         log_err($msg);
@@ -541,11 +541,11 @@ class db_object extends TextIdObject
 
     /**
      * create the html code to select the reference type
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the reference type
      */
-    public function ref_type_selector(string $form_name, ?type_lists $typ_lst): string
+    public function ref_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'reference type selector not defined for ' . $this::class;
         log_err($msg);
@@ -554,11 +554,11 @@ class db_object extends TextIdObject
 
     /**
      * create the html code to select the formula type
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the formula type
      */
-    public function formula_type_selector(string $form_name, ?type_lists $typ_lst): string
+    public function formula_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'formula type selector not defined for ' . $this::class;
         log_err($msg);
@@ -569,11 +569,11 @@ class db_object extends TextIdObject
      * create the html code to select the view style
      * used by the view and the component
      *
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the view type
      */
-    public function style_selector(string $form_name, ?type_lists $typ_lst): string
+    public function style_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'view style selector not defined for ' . $this::class;
         log_err($msg);
@@ -582,11 +582,11 @@ class db_object extends TextIdObject
 
     /**
      * create the html code to select the component type
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the component type
      */
-    public function component_type_selector(string $form_name, ?type_lists $typ_lst): string
+    public function component_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'component type selector not defined for ' . $this::class;
         log_err($msg);
@@ -595,11 +595,11 @@ class db_object extends TextIdObject
 
     /**
      * the html code to select a share type
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the share type
      */
-    public function share_type_selector(string $form_name, ?type_lists $typ_lst): string
+    public function share_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'share type selector not defined for ' . $this::class;
         log_err($msg);
@@ -608,11 +608,11 @@ class db_object extends TextIdObject
 
     /**
      * the html code to select a protection type
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the protection type
      */
-    public function protection_type_selector(string $form_name, ?type_lists $typ_lst): string
+    public function protection_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'protection type selector not defined for ' . $this::class;
         log_err($msg);
@@ -645,24 +645,28 @@ class db_object extends TextIdObject
     }
 
     /**
-     * to select the from phrase
-     * @param string $form the name of the html form
-     * @param int $id the row id of the suggested phrase or the already selected phrase
-     * @param phrase_list|null $phr_lst a preloaded phrase list for the selection
+     * html code for a form field to select a word or triple
+     *
+     * @param phrase_list $phr_lst a preloaded phrase list for the selection
      * @param string $name the unique html field name that matches the resulting url field name
+     * @param string $form the name of the html form
+     * @param int|null $selected the row id of the suggested phrase or the already selected phrase
+     * @param string $pattern the pattern to filter the phrases
+     * @param msg_id $label_id the translation id for the text show to the user
      * @param string $style the style code e.g. to define the target width
      * @return string the html code to select the phrase
      */
     function phrase_selector(
-        string $form,
-        int $id,
-        ?phrase_list $phr_lst = null,
-        string $name = '',
-        string $label = '',
-        string $style = view_styles::COL_SM_4
+        phrase_list $phr_lst,
+        string      $name,
+        string      $form,
+        ?int        $selected = null,
+        string      $pattern = '',
+        msg_id      $label_id = msg_id::LABEL,
+        string      $style = view_styles::COL_SM_4
     ): string
     {
-        $msg = $name . ' from phrase selector not defined for ' . $this::class;
+        $msg = 'phrase selector ' . $name . ' for ' . $form . ' not defined in class ' . $this::class;
         log_err($msg);
         return $msg;
     }
@@ -671,15 +675,13 @@ class db_object extends TextIdObject
      * create the HTML code to select a view
      * @param string $form the name of the html form
      * @param view_list $msk_lst with the suggested views
-     * @param string|null $name the suggested name of the view
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param string $name the unique html field name for the selection of the view
      * @return string the html code to select a view
      */
     public function view_selector(
-        string $form,
-        view_list $msk_lst,
-        string $name = null,
-        ?type_lists $typ_lst = null
+        string      $form,
+        view_list   $msk_lst,
+        string      $name = url_var::VIEW_ID
     ): string
     {
         $msg = 'view selector not defined for ' . $this::class;

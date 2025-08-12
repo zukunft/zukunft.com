@@ -55,8 +55,9 @@ use html\types\type_lists;
 use html\user\user as user_dsp;
 use html\user\user_message;
 use html\view\view_list;
+use shared\enum\messages;
 use shared\json_fields;
-use shared\types\view_styles;
+use shared\enum\messages as msg_id;
 use shared\url_var;
 
 class sandbox extends db_object_dsp
@@ -173,34 +174,28 @@ class sandbox extends db_object_dsp
      * create the HTML code to select a view
      * @param string $form the name of the html form
      * @param view_list $msk_lst with the suggested views
-     * @param string|null $name the name of
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param string $name the unique html field name for the selection of the view
      * @return string the html code to select a view
      */
     public function view_selector(
-        string $form,
+        string    $form,
         view_list $msk_lst,
-        string $name = null,
-        ?type_lists $typ_lst = null
+        string    $name = url_var::VIEW_ID
     ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        if ($name == null) {
-            return $msk_lst->selector($form, $view_id);
-        } else {
-            return $msk_lst->selector($form, $view_id, $name);
-        }
+        return $msk_lst->selector($form, $view_id, $name, msg_id::LABEL_VIEW);
     }
 
     /**
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the share type
      */
-    public function share_type_selector(string $form_name, ?type_lists $typ_lst): string
+    public function share_type_selector(string $form, ?type_lists $typ_lst): string
     {
         global $usr;
         $used_share_id = $this->share_id;
@@ -208,18 +203,18 @@ class sandbox extends db_object_dsp
             $used_share_id = $typ_lst->html_share_types->default_id();
         }
         if ($usr === $this->owner or $this->owner == null) {
-            return $typ_lst->html_share_types->selector($form_name, $used_share_id, 'share', view_styles::COL_SM_4, 'share:');
+            return $typ_lst->html_share_types->selector($form, $used_share_id);
         } else {
             return '';
         }
     }
 
     /**
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the share type
      */
-    public function protection_type_selector(string $form_name, ?type_lists $typ_lst): string
+    public function protection_type_selector(string $form, ?type_lists $typ_lst): string
     {
         global $usr;
         $used_protection_id = $this->protection_id;
@@ -227,7 +222,7 @@ class sandbox extends db_object_dsp
             $used_protection_id = $typ_lst->html_protection_types->default_id();
         }
         if ($usr === $this->owner or $this->owner == null) {
-            return $typ_lst->html_protection_types->selector($form_name, $used_protection_id, 'protection', view_styles::COL_SM_4, 'protection:');
+            return $typ_lst->html_protection_types->selector($form, $used_protection_id);
         } else {
             return '';
         }

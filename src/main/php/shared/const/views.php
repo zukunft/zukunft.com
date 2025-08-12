@@ -166,6 +166,9 @@ class views
     // functional views
     const WORD_FIND = 'word_find';
 
+    // TODO to be created
+    const WORD_LIST = 'word_list'; //
+
     /*
      * const for system testing
      */

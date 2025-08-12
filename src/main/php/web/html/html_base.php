@@ -50,12 +50,7 @@ include_once paths::SHARED . 'library.php';
 class html_base
 {
 
-    // html const used in zukunft.com
-
-    // html base elements
-    const SPAN = 'span';
-    const HTML_CLASS = 'class';
-    const TITLE = 'title';
+    // TODO move all html const used in zukunft.com to html_names
 
     // fixed elements
     const TOGGLE_TOOLTIP = 'data-toggle="tooltip"';
@@ -266,14 +261,14 @@ class html_base
      */
     function span(string $text, string $style = '', string $title = ''): string
     {
-        $result = '<' . self::SPAN;
+        $result = '<' . html_names::SPAN;
         if ($style != '') {
-            $result .= ' ' . self::HTML_CLASS . '="' . $style . '"';
+            $result .= ' ' . html_names::HTML_CLASS . '="' . $style . '"';
         }
         if ($title != '') {
-            $result .= ' ' . self::TITLE . '="' . $title . '" ' . self::TOGGLE_TOOLTIP;
+            $result .= ' ' . html_names::TITLE . '="' . $title . '" ' . self::TOGGLE_TOOLTIP;
         }
-        $result .= '>' . $text . '</' . self::SPAN . '>';
+        $result .= '>' . $text . '</' . html_names::SPAN . '>';
         return $result;
     }
 

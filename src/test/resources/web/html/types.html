@@ -88,10 +88,11 @@
         </tbody>
     </table>
     <br><br>
-    <form action="/http/view.php" id="view"><label for="user profile">user profile</label>
-        <div class="form-group col-md-4"><label for="user profile">type:</label><select class="form-control"
-                                                                                        name="user profile" form="view"
-                                                                                        id="user profile">
+    <form action="/http/view.php" id="view"><label for="user_profile">user_profile</label>
+        <div class="form-group col-md-4"><label for="user_profile">user profile</label><select class="form-control"
+                                                                                               name="user_profile"
+                                                                                               form="view"
+                                                                                               id="user_profile">
             <option value="0" selected>please select ...</option>
             <option value="1">ip only</option>
             <option value="2">username selected</option>
@@ -112,9 +113,9 @@
             <option value="17">benevolent dictator</option>
             <option value="18">system</option>
         </select></div>
-        <br><label for="verb">verb</label>
-        <div class="form-group col-md-4"><label for="verb">verb:</label><select class="form-control" name="verb"
-                                                                                form="view" id="verb">
+        <br><label for="b">b</label>
+        <div class="form-group col-md-4"><label for="b">verb</label><select class="form-control" name="b" form="view"
+                                                                            id="b">
             <option value="1" selected>not set</option>
             <option value="2">is a</option>
             <option value="4">of</option>
@@ -130,10 +131,10 @@
             <option value="29">is symbol for</option>
             <option value="30">and</option>
         </select></div>
-        <br><label for="phrase_type">phrase type</label>
-        <div class="form-group col-md-4"><label for="phrase_type">type:</label><select class="form-control"
-                                                                                       name="phrase_type" form="view"
-                                                                                       id="phrase_type">
+        <br><label for="phrase_type">phrase_type</label>
+        <div class="form-group col-md-4"><label for="phrase_type">type</label><select class="form-control"
+                                                                                      name="phrase_type" form="view"
+                                                                                      id="phrase_type">
             <option value="1" selected>standard</option>
             <option value="2">time</option>
             <option value="3">measure type</option>
@@ -163,9 +164,10 @@
             <option value="27">ignore</option>
         </select></div>
         <br><label for="formula type">formula type</label>
-        <div class="form-group col-md-4"><label for="formula type">type:</label><select class="form-control"
-                                                                                        name="formula type" form="view"
-                                                                                        id="formula type">
+        <div class="form-group col-md-4"><label for="formula type">formula type</label><select class="form-control"
+                                                                                               name="formula type"
+                                                                                               form="view"
+                                                                                               id="formula type">
             <option value="0" selected>please select ...</option>
             <option value="1">calc</option>
             <option value="2">next</option>
@@ -174,18 +176,19 @@
             <option value="5">reversible</option>
             <option value="6">scaling</option>
         </select></div>
-        <br><label for="link type">link type</label>
-        <div class="form-group col-md-4"><label for="link type">type:</label><select class="form-control"
-                                                                                     name="link type" form="view"
-                                                                                     id="link type">
+        <br><label for="formula_type">formula_type</label>
+        <div class="form-group col-md-4"><label for="formula_type">formula link</label><select class="form-control"
+                                                                                               name="formula_type"
+                                                                                               form="view"
+                                                                                               id="formula_type">
             <option value="0" selected>please select ...</option>
             <option value="1">default</option>
             <option value="2">time period based</option>
         </select></div>
-        <br><label for="view type">view type</label>
-        <div class="form-group col-md-4"><label for="view type">type:</label><select class="form-control"
-                                                                                     name="view type" form="view"
-                                                                                     id="view type">
+        <br><label for="view_type">view_type</label>
+        <div class="form-group col-md-4"><label for="view_type">view type</label><select class="form-control"
+                                                                                         name="view_type" form="view"
+                                                                                         id="view_type">
             <option value="0" selected>please select ...</option>
             <option value="1">standard</option>
             <option value="2">entry view</option>
@@ -195,19 +198,18 @@
             <option value="6">details</option>
             <option value="7">system</option>
         </select></div>
-        <br><label for="view style">view style</label>
-        <div class="form-group col-md-4"><label for="view style">type:</label><select class="form-control"
-                                                                                      name="view style" form="view"
-                                                                                      id="view style">
+        <br><label for="style">style</label>
+        <div class="form-group col-md-4"><label for="style">style</label><select class="form-control" name="style"
+                                                                                 form="view" id="style">
             <option value="0" selected>please select ...</option>
             <option value="1">col-md-4</option>
             <option value="2">col-md-8</option>
         </select></div>
-        <br><label for="component type">component type</label>
-        <div class="form-group col-md-4"><label for="component type">type:</label><select class="form-control"
-                                                                                          name="component type"
-                                                                                          form="view"
-                                                                                          id="component type">
+        <br><label for="component_type">component_type</label>
+        <div class="form-group col-md-4"><label for="component_type">component type</label><select class="form-control"
+                                                                                                   name="component_type"
+                                                                                                   form="view"
+                                                                                                   id="component_type">
             <option value="0" selected>please select ...</option>
             <option value="1">phrase_select</option>
             <option value="2">view_select</option>
@@ -250,16 +252,20 @@
             <option value="43">usage</option>
             <option value="44">change_log</option>
         </select></div>
-        <br><label for="ref type">ref type</label>
-        <div class="form-group col-md-4"><label for="ref type">type:</label><select class="form-control" name="ref type"
-                                                                                    form="view" id="ref type">
+        <br><label for="ref_type">ref_type</label>
+        <div class="form-group col-md-4"><label for="ref_type">reference type</label><select class="form-control"
+                                                                                             name="ref_type" form="view"
+                                                                                             id="ref_type">
             <option value="0" selected>please select ...</option>
             <option value="1">wikipedia</option>
             <option value="2">wikidata</option>
             <option value="3">conceptnet</option>
         </select></div>
-        <br><label for="source type">source type</label>
-        <div class="form-group col-md-4"><select class="form-control" name="source type" form="view" id="source type">
+        <br><label for="source_type">source_type</label>
+        <div class="form-group col-md-4"><label for="source_type">source type</label><select class="form-control"
+                                                                                             name="source_type"
+                                                                                             form="view"
+                                                                                             id="source_type">
             <option value="0" selected>please select ...</option>
             <option value="1">System Test Type Name</option>
             <option value="2">xbrl</option>
@@ -267,7 +273,9 @@
             <option value="4">pdf</option>
         </select></div>
         <br><label for="protection">protection</label>
-        <div class="form-group "><select class="form-control" name="protection" form="view" id="protection">
+        <div class="form-group col-md-4"><label for="protection">protection</label><select class="form-control"
+                                                                                           name="protection" form="view"
+                                                                                           id="protection">
             <option value="0" selected>please select ...</option>
             <option value="1">no protection</option>
             <option value="2">user</option>
@@ -275,7 +283,8 @@
             <option value="4">no change</option>
         </select></div>
         <br><label for="share">share</label>
-        <div class="form-group "><select class="form-control" name="share" form="view" id="share">
+        <div class="form-group col-md-4"><label for="share">share</label><select class="form-control" name="share"
+                                                                                 form="view" id="share">
             <option value="0" selected>please select ...</option>
             <option value="1">public</option>
             <option value="2">personal</option>

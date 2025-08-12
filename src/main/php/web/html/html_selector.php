@@ -34,7 +34,7 @@
 namespace html;
 
 use cfg\const\paths;
-use html\const\paths as html_paths;
+
 include_once paths::SHARED_ENUM . 'messages.php';
 
 use shared\enum\messages as msg_id;
@@ -45,13 +45,13 @@ class html_selector
     const TYPE_DATALIST = "datalist";
 
     // the parameters
+    public ?array $lst = null;      // list of objects from which the user can select
     public string $name = '';       // the HTML form field name
     public string $form = '';       // the name of the HTML form
-    public string $label = '';      // the label of the HTML form
-    public string $bs_class = '';   // to add addition class information for the bootstrap version
+    public msg_id $label_id = msg_id::LABEL;  // the label of the HTML form
+    public string $style = '';      // to add addition class information for the bootstrap version
     public string $attribute = '';  // to add addition attribute information for the bootstrap version e.g. display an disabled selector
     public string $sql = '';        // to deprecate: the list should be filled by the calling object with min objects: query to select the items
-    public ?array $lst = null;      // list of objects from which the user can select
     public ?int $selected = null;   // id of the selected object
     public string $dummy_text = ''; // text for the NULL result if allowed
     public string $type = self::TYPE_SELECT;  // the selector type
@@ -97,6 +97,8 @@ class html_selector
      */
     private function start_selector(): string
     {
+        global $mtr;
+
         $result = '';
         // 06.11.2019: removed, check the calling functions
         /*
@@ -104,10 +106,12 @@ class html_selector
           $label == $this->name;
         }
         */
+        $label = $mtr->txt($this->label_id);
+
         if (html_base::UI_USE_BOOTSTRAP) {
-            $result .= '<div class="form-group ' . $this->bs_class . '">';
-            if ($this->label != "") {
-                $result .= '<label for="' . $this->name . '">' . $this->label . '</label>';
+            $result .= '<div class="form-group ' . $this->style . '">';
+            if ($label != "") {
+                $result .= '<label for="' . $this->name . '">' . $label . '</label>';
             }
             $bs_class = 'form-control';
             /*
@@ -116,7 +120,7 @@ class html_selector
             }
             */
             if ($this->type == self::TYPE_DATALIST) {
-                $result .= '<input type="' . html_base::INPUT_TEXT . '" list="' . $this->name . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute . '>';
+                $result .= '<' . html_names::INPUT . ' type="' . html_base::INPUT_TEXT . '" list="' . $this->name . '_list" class="' . $bs_class . '" name="' . $this->name . '" form="' . $this->form . '" id="' . $this->name . '" ' . $this->attribute . '>';
                 $result .= '<datalist id="' . $this->name . '_list">';
             } else {
                 if ($this->form != "") {
@@ -126,7 +130,7 @@ class html_selector
                 }
             }
         } else {
-            $result .= $this->label . ' <select name="' . $this->name . '" form="' . $this->form . '">';
+            $result .= $label . ' <select name="' . $this->name . '" form="' . $this->form . '">';
         }
         return $result;
     }

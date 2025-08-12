@@ -812,7 +812,7 @@ class create_test_objects extends test_base
                 $obj = $this->triple_filled();
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::FROM_ID_LONG, $obj->from_id());
-                $url .= $this->url_par(url_var::VERB_ID_LONG, $obj->verb_id());
+                $url .= $this->url_par(url_var::VERB_LONG, $obj->verb_id());
                 $url .= $this->url_par(url_var::TO_ID_LONG, $obj->to_id());
                 $url .= $this->url_par(url_var::NAME, $obj->name_given());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
@@ -931,7 +931,7 @@ class create_test_objects extends test_base
                 $obj = $this->triple_filled();
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::FROM_ID_LONG, $obj->from_id());
-                $url .= $this->url_par(url_var::VERB_ID_LONG, $obj->verb_id());
+                $url .= $this->url_par(url_var::VERB_LONG, $obj->verb_id());
                 $url .= $this->url_par(url_var::TO_ID_LONG, $obj->to_id());
                 $url .= $this->url_par(url_var::NAME, $obj->name_given());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
@@ -1059,7 +1059,7 @@ class create_test_objects extends test_base
                 $obj = $this->triple_filled();
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::FROM_ID_LONG, $obj->from_id());
-                $url .= $this->url_par(url_var::VERB_ID_LONG, $obj->verb_id());
+                $url .= $this->url_par(url_var::VERB_LONG, $obj->verb_id());
                 $url .= $this->url_par(url_var::TO_ID_LONG, $obj->to_id());
                 $url .= $this->url_par(url_var::NAME, $obj->name_given());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
