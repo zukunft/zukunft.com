@@ -79,8 +79,9 @@ if ($db_con->is_open()) {
         $cfg = new config();
         $cfg->load();
 
-        $main = new frontend('view');
-        $html_str .= $main->url_to_html($_GET, $usr_dsp);
+        $ui = new frontend('view');
+        $ui->load_cache();
+        $html_str .= $ui->url_to_html($_GET, $usr_dsp);
     }
 
     // close the database
