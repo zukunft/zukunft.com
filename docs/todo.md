@@ -11,6 +11,11 @@ A proper issue ticket should be created for these TODOs notes:
     TODO complete and test the url mapper in the frontend
     TODO clean up import_mapper and move all mapping from import_obj to the mapper
 
+    TODO object chart 
+         - add legend with object types and that dotted line is inheritance   
+         - move result towards value
+         - keep object inheritance tree
+         - keep highlight of word, value formula
 
     TODO Substeps: create insert, update and delete sql create tests for the main objects (TODO activate db write)
                    include the log in the prepared sql write statement
