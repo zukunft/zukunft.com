@@ -41,12 +41,30 @@
 
 namespace html\sandbox;
 
-use cfg\const\paths;
 use html\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::USER . 'user_message.php';
+
+use html\user\user_message;
 
 class sandbox_list extends list_dsp
 {
+
+    /*
+     * sort
+     */
+
+    function sort_by_relevance(): user_message
+    {
+        $usr_msg = new user_message();
+        if ($this->count() > 0) {
+            $lst = $this->lst();
+            $sbx = $lst[0];
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * debug

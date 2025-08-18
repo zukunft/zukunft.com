@@ -183,6 +183,15 @@ zukunft.com:
           language:
             sys-conf-value: en
             tooltip-comment: "the language of the user frontend"
+          lists:
+            tooltip-comment: "general parameters for lists e.g. the number of default entries"
+            limits:
+              name list:
+                sys-conf-value: 10
+                tooltip-comment: "number of initial entries to show in a list names"
+              link list:
+                sys-conf-value: 8
+                tooltip-comment: "number of initial entries to show in a list of links"
           row limit:
             tooltip-comment: "number of rows to be shown"
             word changes: 20

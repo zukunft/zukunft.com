@@ -127,7 +127,7 @@ if ($usr->id() > 0) {
                 }
             }
         } else {
-            $result .= log_err("Adding " . $new_val . " for phrases " . $val->grp->dsp_id() . " failed (" . $upd_result . ").", "value_add");
+            $result .= log_err("Adding " . $new_val . " for phrases " . $val->grp()->dsp_id() . " failed (" . $upd_result . ").", "value_add");
         }
 
         log_debug("go back to " . $back . ".");

@@ -882,6 +882,12 @@ enum messages: string
 
     case ADD_USER_CONFIG_FAILED = 'adding of user configuration failed';
 
+    // text to be shown in frontend
+    // TODO add translation
+    case AND_MORE_BEFORE = 'and';
+    case AND_MORE_AFTER = 'more';
+    case THREE_POINTS = '...';
+
     // text to be shown in buttons
     case ADD = 'add';
     case EDIT = 'edit';

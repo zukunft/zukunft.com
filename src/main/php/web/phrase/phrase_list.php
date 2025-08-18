@@ -319,22 +319,6 @@ class phrase_list extends sandbox_list_named
      */
 
     /**
-     * @returns string the html code to display the phrases with the most useful link
-     */
-    function name_link(): string
-    {
-        $result = '';
-        $this->sort_by_name();
-        foreach ($this->lst() as $phr) {
-            if ($result != '' and $phr->name_link() != '') {
-                $result .= ', ';
-            }
-            $result .= $phr->name_link();
-        }
-        return $result;
-    }
-
-    /**
      * @returns string the html code to display the plural of the phrases with the most useful link
      * TODO replace adding the s with a language specific functions that can include exceptions
      */

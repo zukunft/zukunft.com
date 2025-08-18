@@ -36,11 +36,14 @@ class Config
 {
 
     // fallback config values e.g. if the backend connection is lost
-    const ROW_LIMIT = 20;
-    const DEFAULT_DEC_POINT = ".";
-    const DEFAULT_PERCENT_DECIMALS = 2;
-    const DEFAULT_THOUSAND_SEP = "'";
-    const DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
+    const int ROW_LIMIT = 20;
+    const string DEFAULT_DEC_POINT = ".";
+    const int DEFAULT_PERCENT_DECIMALS = 2;
+    const string DEFAULT_THOUSAND_SEP = "'";
+    const string DEFAULT_DATE_TIME_FORMAT = 'd-m-Y H:i';
+
+    // number of entries initial to show in a named list
+    const int LIMIT_NAME_LIST = 10;
 
 
 }

@@ -66,36 +66,6 @@ class term_list extends sandbox_list_named
      */
 
     /**
-     * @returns string the html code to display the phrases with the most useful link
-     */
-    function name_tip(): string
-    {
-        $result = '';
-        foreach ($this->lst() as $trm) {
-            if ($result != '' and $trm->name_tip() != '') {
-                $result .= ', ';
-            }
-            $result .= $trm->name_tip();
-        }
-        return $result;
-    }
-
-    /**
-     * @returns string the html code to display the phrases with the most useful link
-     */
-    function name_link(): string
-    {
-        $result = '';
-        foreach ($this->lst() as $trm) {
-            if ($result != '' and $trm->name_link() != '') {
-                $result .= ', ';
-            }
-            $result .= $trm->name_link();
-        }
-        return $result;
-    }
-
-    /**
      * get a term from the term list selected by the word, triple, formula or verb id
      *
      * @param int $id the word, triple, formula or verb id (not the term id!)

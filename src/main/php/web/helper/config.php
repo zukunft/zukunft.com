@@ -57,6 +57,17 @@ include_once paths::SHARED . 'url_var.php';
 class config extends value_list
 {
 
+    /*
+     * const
+     */
+
+    const int LIMIT_NAME_LIST = shared_config::LIMIT_NAME_LIST;
+
+
+    /*
+     * interface
+     */
+
     // TODO add the user setting as default
     function percent_decimals(): int
     {
@@ -80,6 +91,11 @@ class config extends value_list
     {
         return shared_config::DEFAULT_DATE_TIME_FORMAT;
     }
+
+
+    /*
+     * load
+     */
 
     /**
      * request the user specific frontend configuration from the backend
