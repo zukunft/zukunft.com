@@ -356,20 +356,20 @@
       },
       {
         "id": 14,
-        "code_id": "xml_export",
-        "name": "XML export",
+        "code_id": "export_xml",
+        "name": "Export XML",
         "comment": "offer to configure and start the XML export of a phrase and all related words, numbers and formulas"
       },
       {
         "id": 15,
-        "code_id": "csv_export",
-        "name": "CSV export",
+        "code_id": "export_csv",
+        "name": "Export CSV",
         "comment": "to define the main phrase, the column and row for the CSV export"
       },
       {
         "id": 16,
-        "code_id": "json_export",
-        "name": "JSON Export",
+        "code_id": "export_json",
+        "name": "Export JSON",
         "comment": "To start or configure the JSON export"
       },
       {

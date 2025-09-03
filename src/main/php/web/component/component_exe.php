@@ -146,6 +146,7 @@ class component_exe extends component
             component_type::FORM_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SHARE_TYPE => $form->form_share_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_PROTECTION_TYPE => $form->form_protection_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name),
             component_type::FORM_CANCEL => $form->form_cancel($msk_id, $dbo->id()),
             component_type::FORM_SAVE => $form->form_save(),
             component_type::FORM_DEL => $form->form_del(),

@@ -23,6 +23,9 @@ zukunft.com:
         tooltip-comment: "initial number of page rows"
         default: 20
       import:
+        limits:
+          tooltip-comment: "the maximal file size for each import files; bigger files are expected the be split into several parts"
+          file size MB: 10
         time percent:
           tooltip-comment: "the expected execution time for the database import in percent of the total process"
           file read: 0.4

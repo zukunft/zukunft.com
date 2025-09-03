@@ -63,6 +63,7 @@ $db_con = prg_start("view", '', false);
 if ($db_con->is_open()) {
 
     // load the session user parameters
+    // TODO Prio 2 create a session object and include the user in the prg_start return object
     $usr = new user;
     $html_str .= $usr->get();
 

@@ -290,6 +290,8 @@ class frontend
 
     /**
      * create the HTML code based on the given url
+     * TODO for the confirm action highlight the changes
+     * TODO add the db update via api
      *
      * @param array $url_array the parsed url as an array
      * @param user_dsp $usr the session user who has requested the view

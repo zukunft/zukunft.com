@@ -98,6 +98,7 @@ class json_fields
     const URL = 'url';
 
     // the order number e.g. of the component within the view
+    // is needed in the json because the json format does not support ordered lists by definition
     const POSITION = 'position';
 
     // language forms

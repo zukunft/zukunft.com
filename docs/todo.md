@@ -6,10 +6,14 @@ A proper issue ticket should be created for these TODOs notes:
     but first this needs to be prioritized:
 
     TODO Release 0.0.3
+    TODO note what has to be changed based on the old http scripts (done: about)
+    TODO complete and test the db write via api
     TODO complete the import db write tests (pending: )
     TODO make main backend object vars private (pending: ref, value, formula, result, view, component, user)
     TODO complete and test the url mapper in the frontend
     TODO clean up import_mapper and move all mapping from import_obj to the mapper
+
+    TODO complete system view with: about, async_process, calculate
 
     TODO object chart 
          - add legend with object types and that dotted line is inheritance   
@@ -56,6 +60,7 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO set the vars of the backend objects to private e.g. to make sure that missing db updates can be detected
     TODO set vars in the frontend object to public and reduce the set and get function because frontend objects never save directly to the database
+    TODO add a component group for easier linking of more than one component to more than one view 
 
     TODO api review
     TODO all api messages should be optional with or without header

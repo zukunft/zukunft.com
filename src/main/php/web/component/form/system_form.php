@@ -44,6 +44,7 @@ use html\html_base;
 use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
 use html\types\type_lists;
+use html\view\view_list;
 use html\word\triple;
 use shared\api;
 use shared\const\components;
@@ -366,6 +367,19 @@ class system_form extends component
     function form_protection_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->protection_type_selector($form_name, $typ_lst);
+    }
+
+    /**
+     * TODO Prio 0 review
+     * create the html code for the form element to select the protection type
+     * @param db_object_dsp $dbo the frontend object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param view_list|null $msk_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the protection type
+     */
+    function form_table_linked_view(db_object_dsp $dbo, string $form_name, ?view_list $msk_lst): string
+    {
+        return $dbo->protection_type_selector($form_name, $msk_lst);
     }
 
     /**

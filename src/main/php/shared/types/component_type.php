@@ -98,17 +98,19 @@ class component_type
     const FORM_SHARE_TYPE_ID = 26;
     const FORM_PROTECTION_TYPE = "system_form_select_protection";
     const FORM_PROTECTION_TYPE_ID = 27;
+    const FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
+    const FORM_TABLE_LINKED_VIEWS_ID = 28;
     const FORM_CANCEL = "system_button_cancel";
-    const FORM_CANCEL_ID = 28;
+    const FORM_CANCEL_ID = 29;
     const FORM_SAVE = "system_button_save";
-    const FORM_SAVE_ID = 29;
+    const FORM_SAVE_ID = 30;
     const FORM_DEL = "system_button_del";
-    const FORM_DEL_ID = 30;
+    const FORM_DEL_ID = 31;
     // simple close the form section
     const FORM_END = "form_end";
-    const FORM_END_ID = 31;
+    const FORM_END_ID = 32;
     const FORM_VIEW_SELECT = "form_view_select";
-    const FORM_VIEW_SELECT_ID = 40;
+    const FORM_VIEW_SELECT_ID = 41;
 
 
     /*
@@ -117,11 +119,11 @@ class component_type
 
     // internal components used for formatting
     const ROW_START = "row_start";
-    const ROW_START_ID = 32;
+    const ROW_START_ID = 33;
     const ROW_RIGHT = "row_right";
-    const ROW_RIGHT_ID = 33;
+    const ROW_RIGHT_ID = 34;
     const ROW_END = "row_end";
-    const ROW_END_ID = 34;
+    const ROW_END_ID = 35;
 
 
     /*
@@ -133,15 +135,15 @@ class component_type
     const VIEW_SELECT_ID = 2;
     // show a list of external references
     const REF_LIST_WORD = "ref_list";
-    const REF_LIST_WORD_ID = 41;
+    const REF_LIST_WORD_ID = 42;
     const LINK_LIST_WORD = "link_list";
-    const LINK_LIST_WORD_ID = 42;
+    const LINK_LIST_WORD_ID = 43;
     const USAGE_WORD = "usage";
-    const USAGE_WORD_ID = 43;
+    const USAGE_WORD_ID = 44;
     const SYSTEM_CHANGE_LOG = "change_log";
-    const SYSTEM_CHANGE_LOG_ID = 44;
+    const SYSTEM_CHANGE_LOG_ID = 45;
     const TRIPLE_LIST = "triples_related";
-    const TRIPLE_LIST_ID = 47;
+    const TRIPLE_LIST_ID = 48;
 
     // show the user specific name of a word or triple with the description on mouseover without allowing to change it
     const PHRASE = "phrase";
@@ -166,11 +168,11 @@ class component_type
     // show a list of formula results related to a word
     const FORMULA_RESULTS = "formula_results";
     // offer to configure and create an JSON file
-    const JSON_EXPORT = "json_export";
+    const JSON_EXPORT = "export_json";
     // offer to configure and create an XML file
-    const XML_EXPORT = "xml_export";
+    const XML_EXPORT = "export_xml";
     // offer to configure and create an CSV file
-    const CSV_EXPORT = "csv_export";
+    const CSV_EXPORT = "export_csv";
     // show a list of words and triples with a link type selector
     const LINK = "link";
 
@@ -205,6 +207,7 @@ class component_type
         self::FORM_SOURCE_TYPE,
         self::FORM_SHARE_TYPE,
         self::FORM_PROTECTION_TYPE,
+        self::FORM_TABLE_LINKED_VIEWS,
         self::FORM_CANCEL,
         self::FORM_SAVE,
         self::FORM_DEL,
@@ -255,6 +258,7 @@ class component_type
         [self::FORM_PHRASE_TYPE, self::FORM_PHRASE_TYPE_ID],
         [self::FORM_SHARE_TYPE, self::FORM_SHARE_TYPE_ID],
         [self::FORM_PROTECTION_TYPE, self::FORM_PROTECTION_TYPE_ID],
+        [self::FORM_TABLE_LINKED_VIEWS, self::FORM_TABLE_LINKED_VIEWS_ID],
         [self::FORM_CANCEL, self::FORM_CANCEL_ID],
         [self::FORM_SAVE, self::FORM_SAVE_ID],
         [self::FORM_DEL, self::FORM_DEL_ID],

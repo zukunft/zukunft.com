@@ -445,6 +445,15 @@ enum messages: string
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END
         . '"';
     case JSON_STRING_EMPTY = 'JSON string is empty';
+    case JSON_ORDER_POS_COMPONENT = 'Unexpected position '
+        . self::VAR_START . self::VAR_VALUE . self::VAR_END
+        . ' instead of '
+        . self::VAR_START . self::VAR_VALUE_CHK . self::VAR_END
+        . ' for component "'
+        . self::VAR_START . self::VAR_COMPONENT_NAME . self::VAR_END
+        . '" in view "'
+        . self::VAR_START . self::VAR_VIEW_NAME . self::VAR_END
+        . '"';
     case IMPORT_VERSION_NEWER = 'Import file has been created with version "'
         . self::VAR_START . self::VAR_VALUE . self::VAR_END
         . '", which is newer than this, which is "'

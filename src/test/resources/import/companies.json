@@ -675,7 +675,7 @@
         },
         {
           "position": "3",
-          "name": "JSON Export"
+          "name": "Export JSON"
         }
       ]
     },
@@ -696,11 +696,11 @@
         },
         {
           "position": "3",
-          "name": "JSON Export"
+          "name": "Export JSON"
         },
         {
           "position": "4",
-          "name": "XML Export"
+          "name": "Export XML"
         }
       ]
     },

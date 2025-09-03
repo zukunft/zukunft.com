@@ -120,6 +120,7 @@ use cfg\user\user_message;
 use shared\enum\messages as msg_id;
 use shared\helper\CombineObject;
 use shared\json_fields;
+
 use shared\library;
 use shared\const\views;
 use shared\types\api_type_list;
@@ -287,6 +288,7 @@ class view extends sandbox_code_id
                 $lnk = new component_link($usr);
                 $lnk->import_mapper($json_cmp, $dto, $test_obj);
                 $this->add_component($lnk, $cmp_pos);
+                $this->check_component_position($json_cmp, $cmp_pos, $usr_msg);
                 $cmp_pos++;
             }
         }
@@ -313,6 +315,38 @@ class view extends sandbox_code_id
         }
 
         return $usr_msg;
+    }
+
+    /**
+     * check if the position in the json is reasonable
+     * TODO add unit test case
+     * @param array $cmp_lnk_json the part of the json array which contains one component link
+     * @param int $pos the expected position
+     * @param user_message $usr_msg the user message object where the potential warning should be added
+     * @return void just enriches the given user message object with the warning message
+     */
+    private function check_component_position(
+        array $cmp_lnk_json,
+        int $pos,
+        user_message $usr_msg
+    ): void
+    {
+        if (in_array(json_fields::POSITION, $cmp_lnk_json)) {
+            $json_pos = $cmp_lnk_json[json_fields::POSITION];;
+            if ($pos !== $json_pos) {
+                $cmp_name = 'component name missing';
+                if (in_array(json_fields::NAME, $cmp_lnk_json)) {
+                    $json_pos = $cmp_lnk_json[json_fields::NAME];;
+                }
+                $usr_msg->add_id_with_vars(msg_id::JSON_ORDER_POS_COMPONENT, [
+                    msg_id::VAR_VALUE => $json_pos,
+                    msg_id::VAR_VALUE_CHK => $pos,
+                    msg_id::VAR_COMPONENT_NAME => $cmp_name,
+                    msg_id::VAR_VIEW_NAME => $this->name()
+                ]);
+            }
+        }
+
     }
 
 
