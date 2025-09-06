@@ -38,8 +38,28 @@
 namespace html\component\form;
 
 use cfg\const\paths;
-use html\component\component;
 use html\const\paths as html_paths;
+
+include_once paths::DB . 'sql_db.php';
+include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::HTML . 'html_names.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::TYPES . 'view_style_list.php';
+include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::WORD . 'triple.php';
+include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
+include_once paths::SHARED . 'library.php';
+
+use html\component\component;
 use html\html_base;
 use html\phrase\phrase_list;
 use html\sandbox\db_object as db_object_dsp;
@@ -54,24 +74,6 @@ use shared\enum\messages as msg_id;
 use shared\library;
 use shared\types\view_styles;
 use shared\url_var;
-
-include_once paths::DB . 'sql_db.php';
-include_once html_paths::COMPONENT . 'component.php';
-include_once html_paths::TYPES . 'type_lists.php';
-include_once html_paths::HTML . 'html_names.php';
-include_once html_paths::HTML . 'html_base.php';
-include_once html_paths::SANDBOX . 'db_object.php';
-include_once html_paths::PHRASE . 'phrase_list.php';
-include_once html_paths::TYPES . 'view_style_list.php';
-include_once html_paths::WORD . 'triple.php';
-include_once paths::SHARED_CONST . 'components.php';
-include_once paths::SHARED_CONST . 'views.php';
-include_once paths::SHARED_CONST . 'words.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED . 'api.php';
-include_once paths::SHARED . 'url_var.php';
-include_once paths::SHARED . 'library.php';
 
 class system_form extends component
 {

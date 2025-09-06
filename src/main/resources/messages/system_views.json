@@ -387,6 +387,27 @@
       "ui_msg_code_id": "form_triple_verb"
     },
     {
+      "name": "system form field group",
+      "description": "the group name field in a form",
+      "type": "system_form_field_group",
+      "code_id": "form_field_group",
+      "ui_msg_code_id": "form_field_group"
+    },
+    {
+      "name": "system form field group or phrase list",
+      "description": "a form field for the group name or a list of prase names",
+      "type": "system_form_field_group_or_phrase_list",
+      "code_id": "form_field_group_or_phrase_list",
+      "ui_msg_code_id": "form_field_group_or_phrase_list"
+    },
+    {
+      "name": "system form field url",
+      "description": "the url field in a form",
+      "type": "system_form_field_url",
+      "code_id": "form_field_url",
+      "ui_msg_code_id": "form_field_url"
+    },
+    {
       "name": "system form selection name",
       "description": "the unique name of a selection",
       "type": "system_form_selection_name",
@@ -1062,14 +1083,30 @@
         },
         {
           "position": "6",
-          "name": "system form button cancel"
+          "name": "system form field verb type"
         },
         {
           "position": "7",
-          "name": "system form button save"
+          "name": "system form field plural"
         },
         {
           "position": "8",
+          "name": "system form field reverse"
+        },
+        {
+          "position": "9",
+          "name": "system form field plural reverse"
+        },
+        {
+          "position": "10",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "11",
+          "name": "system form button save"
+        },
+        {
+          "position": "12",
           "name": "system form end"
         }
       ]
@@ -1103,14 +1140,30 @@
         },
         {
           "position": "6",
-          "name": "system form button cancel"
+          "name": "system form field verb type"
         },
         {
           "position": "7",
-          "name": "system form button save"
+          "name": "system form field plural"
         },
         {
           "position": "8",
+          "name": "system form field reverse"
+        },
+        {
+          "position": "9",
+          "name": "system form field plural reverse"
+        },
+        {
+          "position": "10",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "11",
+          "name": "system form button save"
+        },
+        {
+          "position": "12",
           "name": "system form end"
         }
       ]
@@ -1392,36 +1445,40 @@
         },
         {
           "position": "5",
-          "name": "system form field description"
+          "name": "system form field url"
         },
         {
           "position": "6",
-          "name": "system form select source type"
+          "name": "system form field description"
         },
         {
           "position": "7",
-          "name": "system form select view"
+          "name": "system form select source type"
         },
         {
           "position": "8",
+          "name": "system form select view"
+        },
+        {
+          "position": "9",
           "name": "system form select share type",
           "position_type": "side"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form button cancel"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system form button save"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "system form end"
         }
       ]
@@ -1451,36 +1508,40 @@
         },
         {
           "position": "5",
-          "name": "system form field description"
+          "name": "system form field url"
         },
         {
           "position": "6",
-          "name": "system form select source type"
+          "name": "system form field description"
         },
         {
           "position": "7",
-          "name": "system form select view"
+          "name": "system form select source type"
         },
         {
           "position": "8",
+          "name": "system form select view"
+        },
+        {
+          "position": "9",
           "name": "system form select share type",
           "position_type": "side"
         },
         {
-          "position": "9",
+          "position": "10",
           "name": "system form select protection type",
           "position_type": "side"
         },
         {
-          "position": "10",
+          "position": "11",
           "name": "system form button cancel"
         },
         {
-          "position": "11",
+          "position": "12",
           "name": "system form button save"
         },
         {
-          "position": "12",
+          "position": "13",
           "name": "system form end"
         }
       ]
@@ -1572,35 +1633,311 @@
       "description": "Change then link to external system",
       "code_id": "ref_edit",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title reference edit"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system form select reference type"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button save"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Delete reference",
       "description": "To confirm the exclusion or deleting of a reference",
       "code_id": "ref_del",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title source del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field name"
+        },
+        {
+          "position": "5",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "6",
+          "name": "system form button del"
+        },
+        {
+          "position": "7",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Value detail",
+      "description": "show all details of one value",
+      "code_id": "value_detail",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title value detail"
+        },
+        {
+          "position": "2",
+          "name": "system form body value detail"
+        }
+      ]
     },
     {
       "name": "Add new number",
       "description": "Create a new value",
       "code_id": "value_add",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title value add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field group or phrase list"
+        },
+        {
+          "position": "5",
+          "name": "system form field value"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system form field select source"
+        },
+        {
+          "position": "8",
+          "name": "system form field select ref"
+        },
+        {
+          "position": "9",
+          "name": "system form select value type"
+        },
+        {
+          "position": "10",
+          "name": "system form select view"
+        },
+        {
+          "position": "11",
+          "name": "system form select share type",
+          "position_type": "side"
+        },
+        {
+          "position": "12",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "13",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "14",
+          "name": "system form button save"
+        },
+        {
+          "position": "15",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Change number",
       "description": "Change a number",
       "code_id": "value_edit",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title value add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field group or phrase list"
+        },
+        {
+          "position": "5",
+          "name": "system form field value"
+        },
+        {
+          "position": "6",
+          "name": "system form field description"
+        },
+        {
+          "position": "7",
+          "name": "system form field select source"
+        },
+        {
+          "position": "8",
+          "name": "system form field select ref"
+        },
+        {
+          "position": "9",
+          "name": "system form select value type"
+        },
+        {
+          "position": "10",
+          "name": "system form select view"
+        },
+        {
+          "position": "11",
+          "name": "system form select share type",
+          "position_type": "side"
+        },
+        {
+          "position": "12",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "13",
+          "name": "system show value usage"
+        },
+        {
+          "position": "14",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "15",
+          "name": "system form button save"
+        },
+        {
+          "position": "16",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Delete number",
       "description": "Exclude or delete a number",
       "code_id": "value_del",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title value del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field group or phrase list"
+        },
+        {
+          "position": "5",
+          "name": "system show field number"
+        },
+        {
+          "position": "6",
+          "name": "system show value usage"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Paste table",
+      "description": "add more than one values by pasting a table",
+      "code_id": "paste_table",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title paste table"
+        },
+        {
+          "position": "2",
+          "name": "system form field context"
+        },
+        {
+          "position": "3",
+          "name": "system form body paste table"
+        }
+      ]
     },
     {
       "name": "Add a group name",
@@ -1648,14 +1985,78 @@
       "description": "Change a group name",
       "code_id": "group_edit",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title group edit"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field name"
+        },
+        {
+          "position": "5",
+          "name": "system form field description"
+        },
+        {
+          "position": "6",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "7",
+          "name": "system form button save"
+        },
+        {
+          "position": "8",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Delete group",
       "description": "Exclude or delete a group name",
       "code_id": "group_del",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title group del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field group"
+        },
+        {
+          "position": "5",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "6",
+          "name": "system form button del"
+        },
+        {
+          "position": "7",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Add new formula",
@@ -2071,213 +2472,6 @@
       ]
     },
     {
-      "name": "Add component link",
-      "description": "Create a new link between a component and a view",
-      "code_id": "component_link_add",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title component link add"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form select view",
-          "position_type": "side"
-        },
-        {
-          "position": "5",
-          "name": "system form select component",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
-          "name": "system form select component position type",
-          "position_type": "side"
-        },
-        {
-          "position": "7",
-          "name": "system form select component link type",
-          "position_type": "side"
-        },
-        {
-          "position": "8",
-          "name": "system form select component style",
-          "position_type": "side"
-        },
-        {
-          "position": "9",
-          "name": "system form component link order number"
-        },
-        {
-          "position": "10",
-          "name": "system form select share type",
-          "position_type": "side"
-        },
-        {
-          "position": "11",
-          "name": "system form select protection type",
-          "position_type": "side"
-        },
-        {
-          "position": "12",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "13",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "14",
-          "name": "system form button save"
-        },
-        {
-          "position": "15",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "16",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "Change component link",
-      "description": "Change a link between a component and a phrase",
-      "code_id": "component_link_add",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title component link edit"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form select view",
-          "position_type": "side"
-        },
-        {
-          "position": "5",
-          "name": "system form select component",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
-          "name": "system form select component position type",
-          "position_type": "side"
-        },
-        {
-          "position": "7",
-          "name": "system form select component link type",
-          "position_type": "side"
-        },
-        {
-          "position": "8",
-          "name": "system form select component style",
-          "position_type": "side"
-        },
-        {
-          "position": "9",
-          "name": "system form component link order number"
-        },
-        {
-          "position": "10",
-          "name": "system form select share type",
-          "position_type": "side"
-        },
-        {
-          "position": "11",
-          "name": "system form select protection type",
-          "position_type": "side"
-        },
-        {
-          "position": "12",
-          "name": "system formatter row right"
-        },
-        {
-          "position": "13",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "14",
-          "name": "system form button save"
-        },
-        {
-          "position": "15",
-          "name": "system formatter row end"
-        },
-        {
-          "position": "15",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
-      "name": "Delete component link",
-      "description": "To confirm the exclusion or deleting of a component link",
-      "code_id": "component_link_del",
-      "type": "system",
-      "protection": "admin_protection",
-      "components": [
-        {
-          "position": "1",
-          "name": "system form title component link del"
-        },
-        {
-          "position": "2",
-          "name": "system form hidden back stack"
-        },
-        {
-          "position": "3",
-          "name": "system form hidden confirm status"
-        },
-        {
-          "position": "4",
-          "name": "system form select view",
-          "position_type": "side"
-        },
-        {
-          "position": "5",
-          "name": "system form select component",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
-          "name": "system show view diff list"
-        },
-        {
-          "position": "7",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "8",
-          "name": "system form button del"
-        },
-        {
-          "position": "9",
-          "name": "system form end"
-        }
-      ]
-    },
-    {
       "name": "Explain result",
       "description": "explains one formula result",
       "code_id": "result_explain",
@@ -2299,14 +2493,62 @@
       "description": "Overwrite a result",
       "code_id": "result_edit",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title result overwrite"
+        },
+        {
+          "position": "2",
+          "name": "system form body result overwrite"
+        }
+      ]
     },
     {
       "name": "Delete result",
       "description": "Exclude or delete a result",
       "code_id": "result_del",
       "type": "system",
-      "protection": "admin_protection"
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title result exclude"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system show field group or phrase list"
+        },
+        {
+          "position": "5",
+          "name": "system show field number"
+        },
+        {
+          "position": "6",
+          "name": "system show value usage"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
     },
     {
       "name": "Add view",
@@ -2343,31 +2585,36 @@
         },
         {
           "position": "7",
-          "name": "system form select share type"
+          "name": "system form select view style"
         },
         {
           "position": "8",
-          "name": "system form select protection type",
+          "name": "system form select share type",
           "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system formatter row right"
+          "name": "system form select protection type",
+          "position_type": "side"
         },
         {
           "position": "10",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "11",
-          "name": "system form button save"
+          "name": "system form button cancel"
         },
         {
           "position": "12",
-          "name": "system formatter row end"
+          "name": "system form button save"
         },
         {
           "position": "13",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "14",
           "name": "system form end"
         }
       ]
@@ -2407,31 +2654,81 @@
         },
         {
           "position": "7",
-          "name": "system form select share type"
+          "name": "system form select view style"
         },
         {
           "position": "8",
-          "name": "system form select protection type",
+          "name": "system form select share type",
           "position_type": "side"
         },
         {
           "position": "9",
-          "name": "system formatter row right"
+          "name": "system form select protection type",
+          "position_type": "side"
         },
         {
           "position": "10",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "11",
-          "name": "system form button save"
+          "name": "system form button cancel"
         },
         {
           "position": "12",
-          "name": "system formatter row end"
+          "name": "system form button save"
         },
         {
           "position": "13",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "14",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Change confirm view",
+      "description": "show the old and the new view and let the user confirm the change",
+      "code_id": "view_preview",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title view preview"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form field select view"
+        },
+        {
+          "position": "5",
+          "name": "system show view new"
+        },
+        {
+          "position": "6",
+          "name": "system show view old"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
           "name": "system form end"
         }
       ]
@@ -2689,6 +2986,213 @@
       ]
     },
     {
+      "name": "Add component link",
+      "description": "Create a new link between a component and a view",
+      "code_id": "component_link_add",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title component link add"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form select view",
+          "position_type": "side"
+        },
+        {
+          "position": "5",
+          "name": "system form select component",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form select component position type",
+          "position_type": "side"
+        },
+        {
+          "position": "7",
+          "name": "system form select component link type",
+          "position_type": "side"
+        },
+        {
+          "position": "8",
+          "name": "system form select component style",
+          "position_type": "side"
+        },
+        {
+          "position": "9",
+          "name": "system form component link order number"
+        },
+        {
+          "position": "10",
+          "name": "system form select share type",
+          "position_type": "side"
+        },
+        {
+          "position": "11",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "12",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "13",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "14",
+          "name": "system form button save"
+        },
+        {
+          "position": "15",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "16",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Change component link",
+      "description": "Change a link between a component and a phrase",
+      "code_id": "component_link_add",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title component link edit"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form select view",
+          "position_type": "side"
+        },
+        {
+          "position": "5",
+          "name": "system form select component",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system form select component position type",
+          "position_type": "side"
+        },
+        {
+          "position": "7",
+          "name": "system form select component link type",
+          "position_type": "side"
+        },
+        {
+          "position": "8",
+          "name": "system form select component style",
+          "position_type": "side"
+        },
+        {
+          "position": "9",
+          "name": "system form component link order number"
+        },
+        {
+          "position": "10",
+          "name": "system form select share type",
+          "position_type": "side"
+        },
+        {
+          "position": "11",
+          "name": "system form select protection type",
+          "position_type": "side"
+        },
+        {
+          "position": "12",
+          "name": "system formatter row right"
+        },
+        {
+          "position": "13",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "14",
+          "name": "system form button save"
+        },
+        {
+          "position": "15",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "15",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
+      "name": "Delete component link",
+      "description": "To confirm the exclusion or deleting of a component link",
+      "code_id": "component_link_del",
+      "type": "system",
+      "protection": "admin_protection",
+      "components": [
+        {
+          "position": "1",
+          "name": "system form title component link del"
+        },
+        {
+          "position": "2",
+          "name": "system form hidden back stack"
+        },
+        {
+          "position": "3",
+          "name": "system form hidden confirm status"
+        },
+        {
+          "position": "4",
+          "name": "system form select view",
+          "position_type": "side"
+        },
+        {
+          "position": "5",
+          "name": "system form select component",
+          "position_type": "side"
+        },
+        {
+          "position": "6",
+          "name": "system show view diff list"
+        },
+        {
+          "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
+          "name": "system form end"
+        }
+      ]
+    },
+    {
       "name": "Confirm adding",
       "description": "Ask the user for confirmation of the changes to be written to the database",
       "code_id": "confirm_add",
@@ -2876,6 +3380,38 @@
       ]
     },
     {
+      "name": "Search detail",
+      "description": "The full search page for all words, triples, verbs and formulas",
+      "code_id": "search_full",
+      "type": "system",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title search full"
+        },
+        {
+          "position": "2",
+          "name": "system body search full"
+        }
+      ]
+    },
+    {
+      "name": "Setup",
+      "description": "The initial setup form to request the admin password, to select the parent pod and the main phrase for this pod e.g. the name of an organisation",
+      "code_id": "setup",
+      "type": "system",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title setup"
+        },
+        {
+          "position": "2",
+          "name": "system body setup"
+        }
+      ]
+    },
+    {
       "name": "Explain Formula Result",
       "description": "Explain the formula result",
       "code_id": "formula_explain"
@@ -2891,9 +3427,65 @@
       "code_id": "verbs"
     },
     {
+      "name": "Sandbox",
+      "description": "show the differences between the user sandbox and the standard and offer a selective switch to the standard",
+      "code_id": "sandbox",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title sandbox"
+        },
+        {
+          "position": "2",
+          "name": "system body sandbox"
+        }
+      ]
+    },
+    {
+      "name": "Undo",
+      "description": "show the last changes of the user and offer selective undo",
+      "code_id": "undo",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title undo"
+        },
+        {
+          "position": "2",
+          "name": "system body undo"
+        }
+      ]
+    },
+    {
       "name": "User Settings",
       "description": "to change the user settings",
-      "code_id": "user"
+      "code_id": "user",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title user settings"
+        },
+        {
+          "position": "2",
+          "name": "system body user settings"
+        }
+      ]
+    },
+    {
+      "name": "Signup",
+      "description": "the system signup form",
+      "type": "system",
+      "code_id": "signup",
+      "components": [
+        {
+          "position": "1",
+          "name": "system title signup"
+        },
+        {
+          "position": "2",
+          "name": "system body signup"
+        }
+      ]
     },
     {
       "name": "Login",
