@@ -30,22 +30,22 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_IMPORT . 'import.php';
 include_once paths::MODEL_IMPORT . 'convert_wikipedia_table.php';
 include_once paths::MODEL_CONST . 'files.php';
 include_once TEST_CONST_PATH . 'files.php';
 
-use cfg\db\sql_creator;
-use cfg\import\convert_wikipedia_table;
-use cfg\import\import;
-use const\paths as test_paths;
-use test\test_base;
-use test\test_cleanup;
-use const\files as test_files;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\import\convert_wikipedia_table;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\utils\test_base;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class import_tests
 {

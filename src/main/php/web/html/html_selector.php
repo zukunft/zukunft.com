@@ -31,13 +31,13 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'messages.php';
 
-use shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 class html_selector
 {

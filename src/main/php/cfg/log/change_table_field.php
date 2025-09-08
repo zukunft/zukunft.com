@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
@@ -40,11 +40,11 @@ include_once paths::DB . 'sql_creator.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\sandbox\sandbox_named;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class change_table_field
 {

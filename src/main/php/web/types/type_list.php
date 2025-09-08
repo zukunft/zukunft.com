@@ -33,10 +33,10 @@
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
@@ -50,14 +50,14 @@ include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use html\user\user_message;
-use html\html_selector;
-use html\types\type_object as type_object_dsp;
-use html\verb\verb;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
-use shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\types\type_object as type_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 
 class type_list
 {

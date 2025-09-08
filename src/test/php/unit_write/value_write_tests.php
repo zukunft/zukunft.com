@@ -30,31 +30,31 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 
-use cfg\log\change_values_big;
-use cfg\log\change_values_norm;
-use cfg\log\change_values_prime;
-use cfg\phrase\phrase_list;
-use cfg\user\user;
-use cfg\value\value;
-use html\figure\figure as figure_dsp;
-use html\value\value as value_dsp;
-use shared\const\users;
-use shared\enum\change_fields;
-use shared\helper\Config as shared_config;
-use shared\library;
-use shared\const\triples;
-use shared\const\values;
-use shared\const\words;
-use shared\types\api_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class value_write_tests
 {

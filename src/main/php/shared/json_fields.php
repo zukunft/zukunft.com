@@ -32,7 +32,7 @@
 
 */
 
-namespace shared;
+namespace Zukunft\ZukunftCom\main\php\shared;
 
 class json_fields
 {

@@ -30,15 +30,15 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'sources.php';
 
-use cfg\ref\source;
-use shared\const\sources;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class source_write_tests
 {

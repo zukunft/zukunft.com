@@ -30,12 +30,12 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\html_base;
-use html\value\value;
-use shared\types\api_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class value_ui_tests
 {

@@ -32,10 +32,10 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
 use math;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 global $db_con;
 

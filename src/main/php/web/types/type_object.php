@@ -39,7 +39,7 @@
 
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
 class type_object
 {

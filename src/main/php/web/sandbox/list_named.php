@@ -30,14 +30,14 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 
-use html\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
 
 class list_named extends list_dsp
 {

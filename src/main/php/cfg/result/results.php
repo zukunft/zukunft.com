@@ -30,7 +30,7 @@
 
 */
 
-namespace cfg\result;
+namespace Zukunft\ZukunftCom\main\php\cfg\result;
 
 class results
 {

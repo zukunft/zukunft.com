@@ -30,9 +30,9 @@
 
 */
 
-use cfg\word\word_list;
-use shared\const\words;
-use test\all_tests;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_math_test(all_tests $t): void
 {

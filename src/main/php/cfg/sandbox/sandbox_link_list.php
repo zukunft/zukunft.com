@@ -33,9 +33,9 @@
 
 */
 
-namespace cfg\sandbox;
+namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 //include_once paths::MODEL_COMPONENT . 'component.php';
@@ -52,18 +52,18 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\formula\formula_link;
-use cfg\phrase\term;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\view\view;
-use cfg\view\term_view;
-use shared\enum\value_types;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 
 class sandbox_link_list extends sandbox_list
 {

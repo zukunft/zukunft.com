@@ -30,7 +30,7 @@
 
 */
 
-namespace shared\enum;
+namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
 enum messages: string
 {
@@ -980,7 +980,7 @@ enum messages: string
     case FORM_COMPONENT_LINK_ADD_TITLE = 'form_title_component_link_add';
     case FORM_COMPONENT_LINK_EDIT_TITLE = 'form_title_component_link_edit';
     case FORM_COMPONENT_LINK_DEL_TITLE = 'form_title_component_link_del';
-    case FORM_TITLE_ABOUT = 'form_title_about';
+    case SYSTEM_TITLE_ABOUT = 'system_title_about';
     case FORM_TITLE_ERROR_LOG = 'form_title_error_log';
     case FORM_TITLE_ERROR_UPDATE = 'form_title_error_update';
     case FORM_TITLE_PROCESS_ASYNC = 'form_title_process_async';

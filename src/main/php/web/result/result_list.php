@@ -32,23 +32,23 @@
 
 */
 
-namespace html\result;
+namespace Zukunft\ZukunftCom\main\php\web\result;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-use html\formula\formula;
-use html\group\group_list;
-use html\html_base;
-use html\phrase\phrase_list;
-use html\rest_call as api_dsp;
-use html\sandbox\list_value;
-use html\system\back_trace;
-use html\user\user_message;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
-use shared\library;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\group\group_list;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_value;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::SANDBOX . 'list_value.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';

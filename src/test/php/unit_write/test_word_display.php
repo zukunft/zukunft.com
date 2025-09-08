@@ -34,20 +34,20 @@
 // start testing the system functionality 
 // --------------------------------------
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
 
-use cfg\word\word;
-use html\word\word as word_dsp;
-use html\verb\verb_list as verb_list_dsp;
-use shared\enum\foaf_direction;
-use shared\library;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
-use test\all_tests;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_word_display_test(all_tests $t): void
 {

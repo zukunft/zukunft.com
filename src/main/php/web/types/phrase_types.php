@@ -30,9 +30,9 @@
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
@@ -40,10 +40,10 @@ include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
-use shared\enum\messages as msg_id;
-use shared\types\phrase_type;
-use shared\types\view_styles;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class phrase_types extends type_list
 {

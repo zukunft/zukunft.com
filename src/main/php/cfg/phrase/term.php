@@ -43,9 +43,9 @@
 
 */
 
-namespace cfg\phrase;
+namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::DB . 'sql.php';
@@ -74,31 +74,31 @@ include_once paths::SHARED_TYPES . 'share_type.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\formula\formula_db;
-use cfg\helper\combine_named;
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\db\sql_field_type;
-use cfg\helper\db_object_seq_id;
-use cfg\formula\formula;
-use cfg\sandbox\sandbox;
-use cfg\user\user_db;
-use cfg\user\user_message;
-use cfg\verb\verb;
-use cfg\user\user;
-use cfg\verb\verb_db;
-use cfg\word\triple_db;
-use cfg\word\word;
-use cfg\word\triple;
-use cfg\word\word_db;
-use shared\enum\messages as msg_id;
-use shared\types\protection_type as protect_type_shared;
-use shared\types\share_type as share_type_shared;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class term extends combine_named
 {

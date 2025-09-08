@@ -31,11 +31,11 @@
 
 namespace formula;
 
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'list_dsp.php';
 
-use html\sandbox\list_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
 
 class formula_link_list extends list_dsp
 {

@@ -30,23 +30,20 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_CONST . 'files.php';
 include_once html_paths::TYPES . 'type_lists.php';
 
-use cfg\const\files;
-use cfg\import\import;
-use controller\controller;
-use html\frontend;
-use html\helper\data_object as data_object_dsp;
-use html\html_base;
-use html\list_sort;
-use html\phrase\phrase;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\list_sort;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class start_ui_read_tests
 {

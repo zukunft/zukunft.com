@@ -39,14 +39,14 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::USER . 'user_message.php';
 
-use html\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class sandbox_list extends list_dsp
 {

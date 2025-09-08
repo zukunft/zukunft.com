@@ -30,13 +30,13 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\html_base;
-use html\types\type_lists;
-use html\word\word;
-use shared\const\views;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_ui_tests
 {

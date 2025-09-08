@@ -30,18 +30,17 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::VIEW . 'view_list.php';
 
-use html\html_base;
-use html\view\view_list as view_list_dsp;
-use shared\enum\messages;
-use shared\enum\messages as msg_id;
-use shared\url_var;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_list_ui_tests
 {

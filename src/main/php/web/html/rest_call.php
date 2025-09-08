@@ -30,13 +30,13 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use cfg\const\paths;
-use controller\controller;
-use shared\const\rest_ctrl;
-use shared\library;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 //include_once paths::API_OBJECT . 'controller.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';

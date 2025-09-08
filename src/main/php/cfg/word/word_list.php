@@ -49,9 +49,9 @@
 
 */
 
-namespace cfg\word;
+namespace Zukunft\ZukunftCom\main\php\cfg\word;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
 include_once paths::DB . 'sql_creator.php';
@@ -85,36 +85,36 @@ include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\group\group;
-use cfg\group\group_id;
-use cfg\helper\combine_named;
-use cfg\helper\data_object;
-use cfg\import\import;
-use cfg\phrase\phr_ids;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term_list;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_link_named;
-use cfg\sandbox\sandbox_list_named;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value;
-use cfg\value\value_list;
-use cfg\verb\verb;
-use cfg\verb\verb_db;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\enum\foaf_direction;
-use shared\enum\messages as msg_id;
-use shared\library;
-use shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class word_list extends sandbox_list_named
 {

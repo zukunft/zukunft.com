@@ -30,16 +30,16 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::WORD . 'word_list.php';
 
-use html\html_base;
-use html\word\word_list as word_list_dsp;
-use shared\const\views;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_list_ui_tests
 {

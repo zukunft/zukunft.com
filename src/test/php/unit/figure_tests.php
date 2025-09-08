@@ -30,20 +30,20 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::FIGURE . 'figure.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 
-use cfg\result\results;
-use html\figure\figure as figure_dsp;
-use shared\const\rest_ctrl;
-use shared\const\values;
-use shared\types\api_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\result\results;
+use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class figure_tests
 {

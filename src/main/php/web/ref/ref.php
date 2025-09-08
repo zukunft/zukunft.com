@@ -32,10 +32,10 @@
   
 */
 
-namespace html\ref;
+namespace Zukunft\ZukunftCom\main\php\web\ref;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::PHRASE . 'phrase.php';
@@ -47,15 +47,15 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\types\type_lists;
-use html\sandbox\db_object as db_object_dsp;
-use html\phrase\phrase as phrase_dsp;
-use html\user\user_message;
-use html\word\word as word_dsp;
-use html\ref\source as source_dsp;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class ref extends db_object_dsp
 {

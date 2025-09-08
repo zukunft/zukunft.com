@@ -32,30 +32,30 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SERVICE . 'config.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once TEST_CONST_PATH . 'files.php';
 
-use cfg\import\import_file;
-use cfg\system\ip_range;
-use cfg\system\job;
-use cfg\system\job_type_list;
-use cfg\user\user;
-use const\files as test_files;
-use html\rest_call;
-use shared\const\users;
-use shared\enum\user_profiles;
-use shared\library;
-use test\all_tests;
-use unit\lib_tests;
-use unit_read\all_unit_read_tests;
-use const test\ERROR_LIMIT;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\unit\lib_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests;
+use const Zukunft\ZukunftCom\test\php\utils\ERROR_LIMIT;
 
 class all_unit_write_tests extends all_unit_read_tests
 {

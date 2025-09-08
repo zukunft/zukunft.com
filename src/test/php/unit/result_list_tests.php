@@ -30,19 +30,19 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\db\sql_creator;
-use cfg\formula\formula;
-use cfg\group\group;
-use cfg\phrase\phrase_list;
-use cfg\result\result_list;
-use cfg\db\sql_db;
-use cfg\word\triple;
-use cfg\user\user;
-use cfg\word\word;
-use html\result\result_list as result_list_dsp;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_dsp;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class result_list_tests
 {

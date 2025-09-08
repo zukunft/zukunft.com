@@ -41,10 +41,10 @@
 
 */
 
-namespace html\formula;
+namespace Zukunft\ZukunftCom\main\php\web\formula;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
 //include_once html_paths::SANDBOX . 'sandbox_typed.php';
@@ -78,26 +78,26 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_db;
-use html\button;
-use html\html_base;
-use html\html_selector;
-use html\log\user_log_display;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\phrase\term;
-use html\phrase\term_list;
-use html\result\result_list;
-use html\sandbox\sandbox_code_id;
-use html\system\back_trace;
-use html\types\type_lists;
-use html\user\user_message;
-use shared\const\rest_ctrl;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\types\view_styles;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\web\button;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class formula extends sandbox_code_id
 {

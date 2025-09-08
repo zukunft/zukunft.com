@@ -29,9 +29,9 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::MODEL_SYSTEM . 'ip_range.php';
@@ -44,35 +44,35 @@ include_once paths::SHARED_CONST . 'refs.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once TEST_CONST_PATH . 'files.php';
 
-use cfg\config;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\formula\formula;
-use cfg\helper\data_object;
-use cfg\system\ip_range;
-use cfg\system\ip_range_list;
-use cfg\system\session;
-use cfg\system\sys_log;
-use cfg\system\sys_log_list;
-use cfg\system\sys_log_status_list;
-use cfg\user\user_message;
-use cfg\verb\verb;
-use cfg\word\word;
-use const\paths as test_paths;
+use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\session;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use DateTime;
-use html\system\sys_log as sys_log_dsp;
-use html\system\sys_log_list as sys_log_list_dsp;
-use html\user\user;
-use shared\enum\language_codes;
-use shared\enum\messages as msg_id;
-use shared\enum\sys_log_statuus;
-use shared\library;
-use shared\const\refs;
-use shared\const\words;
-use shared\types\api_type;
-use test\test_cleanup;
-use const\files as test_files;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_dsp;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class system_tests
 {
@@ -183,15 +183,15 @@ class system_tests
         $t->assert($test_name, $mtr->txt(msg_id::DONE, language_codes::DE), "erledigt");
 
         $t->subheader($ts . 'system function');
-        $t->assert('default log message', log_debug(), 'unit\system_tests->run');
+        $t->assert('default log message', log_debug(), 'Zukunft\ZukunftCom\test\php\unit\system_tests->run');
 
 
         $ts = 'unit system ';
         $t->header($ts);
 
         $t->subheader($ts . 'log');
-        $t->assert('default log message', log_debug(), 'unit\system_tests->run');
-        $t->assert('debug log message', log_debug('additional info'), 'unit\system_tests->run: additional info');
+        $t->assert('default log message', log_debug(), 'Zukunft\ZukunftCom\test\php\unit\system_tests->run');
+        $t->assert('debug log message', log_debug('additional info'), 'Zukunft\ZukunftCom\test\php\unit\system_tests->run: additional info');
 
         $t->subheader($ts . 'def');
         $t->assert_true('word is a sandbox class', $lib->class_is_sandbox(word::class));

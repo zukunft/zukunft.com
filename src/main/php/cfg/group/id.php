@@ -32,11 +32,11 @@
   
 */
 
-namespace cfg\group;
+namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
 //include_once paths::MODEL_PHRASE . 'phrase_list.php';
 
-use cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 
 class id
 {

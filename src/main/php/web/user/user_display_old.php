@@ -29,13 +29,13 @@
   
 */
 
-use cfg\const\paths;
-use cfg\db\sql_db;
-use cfg\formula\formula_db;
-use cfg\formula\formula_link;
-use cfg\user\user_db;
-use cfg\verb\verb_db;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::DB . 'sql_db.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::COMPONENT . 'component.php';
@@ -58,16 +58,16 @@ include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::VIEW . 'view.php';
 
-use cfg\word\triple_db;
-use html\html_base;
-use html\log\user_log_display;
-use html\phrase\phrase;
-use html\system\sys_log_list as sys_log_list_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\user\user;
-use html\verb\verb;
-use html\view\view as view_dsp;
-use html\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
 
 class user_dsp_old extends user
 {
@@ -150,7 +150,7 @@ class user_dsp_old extends user
             $result .= '<td>' . $wrd_row['usr_word_name'] . '</td><td>' . $wrd_row['word_name'] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_word='.$log_row['type_table'].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
             $url = '/http/user.php?id=' . $this->id() . '&undo_word=' . $wrd_row['word_id'] . '&back=' . $back . '';
-            $result .= '<td>' . \html\btn_del("Undo your change and use the standard word " . $wrd_row['word_name'], $url) . '</td>';
+            $result .= '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard word " . $wrd_row['word_name'], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= $html->dsp_tbl_end();
@@ -293,7 +293,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_triple=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard triple " . $sbx_row['std_triple'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard triple " . $sbx_row['std_triple'], $url) . '</td>';
 
                     // display the triple changes by the user
                     $result .= '<tr>';
@@ -365,7 +365,7 @@ class user_dsp_old extends user
             $result .= '<td>' . $frm_row[formula_db::FLD_FORMULA_TEXT] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$this->id.'&undo_formula='.$frm_row[formula_db::FLD_ID].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
             $url = '/http/user.php?id=' . $this->id() . '&undo_formula=' . $frm_row[formula_db::FLD_ID] . '&back=' . $back . '';
-            $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $frm_row[formula_db::FLD_FORMULA_TEXT], $url) . '</td>';
+            $result .= '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard formula " . $frm_row[formula_db::FLD_FORMULA_TEXT], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= $html->dsp_tbl_end();
@@ -502,7 +502,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_formula_link=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard formula_link " . $sbx_row['std_formula_link'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard formula_link " . $sbx_row['std_formula_link'], $url) . '</td>';
 
                     // display the formula_link changes by the user
                     $result .= '<tr>';
@@ -671,7 +671,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_value=' . $val_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard value " . $val_row['std_value'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard value " . $val_row['std_value'], $url) . '</td>';
 
                     // display the value changes by the user
                     $result .= '<tr>';
@@ -838,7 +838,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_view=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard view " . $sbx_row['std_view'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard view " . $sbx_row['std_view'], $url) . '</td>';
 
                     // display the view changes by the user
                     $result .= '<tr>';
@@ -1003,7 +1003,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_component=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard component " . $sbx_row['std_component'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard component " . $sbx_row['std_component'], $url) . '</td>';
 
                     // display the component changes by the user
                     $result .= '<tr>';
@@ -1172,7 +1172,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_component_link=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard component_link " . $sbx_row['std_component_link'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard component_link " . $sbx_row['std_component_link'], $url) . '</td>';
 
                     // display the component_link changes by the user
                     $result .= '<tr>';
@@ -1350,7 +1350,7 @@ class user_dsp_old extends user
 
                     // create the button
                     $url = '/http/user.php?id=' . $this->id() . '&undo_source=' . $sbx_row['id'] . '&back=' . $back;
-                    $sandbox_undo_btn = '<td>' . \html\btn_del("Undo your change and use the standard source " . $sbx_row['std_source'], $url) . '</td>';
+                    $sandbox_undo_btn = '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard source " . $sbx_row['std_source'], $url) . '</td>';
 
                     // display the source changes by the user
                     $result .= '<tr>';

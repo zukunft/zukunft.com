@@ -30,7 +30,7 @@
   
 */
 
-namespace cfg\formula;
+namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
 /**
  * helper class to make sure that

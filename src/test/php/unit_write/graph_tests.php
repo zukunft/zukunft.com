@@ -29,16 +29,16 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\phrase\phrase_list;
-use cfg\value\value_list;
-use cfg\word\triple_list;
-use cfg\word\word;
-use html\word\triple_list as triple_list_dsp;
-use shared\enum\foaf_direction;
-use shared\const\words;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class graph_tests
 {

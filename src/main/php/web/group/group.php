@@ -40,10 +40,10 @@
 
 */
 
-namespace html\group;
+namespace Zukunft\ZukunftCom\main\php\web\group;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::PHRASE . 'phrase.php';
@@ -53,13 +53,13 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\phrase\phrase as phrase;
-use html\phrase\phrase_list as phrase_list;
-use html\sandbox\sandbox_named as sandbox_named;
-use html\user\user_message;
-use html\word\triple as triple;
-use html\word\word as word;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple;
+use Zukunft\ZukunftCom\main\php\web\word\word as word;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class group extends sandbox_named
 {

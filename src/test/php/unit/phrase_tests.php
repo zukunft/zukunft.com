@@ -30,25 +30,25 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::PHRASE . 'phrase.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_CONST . 'words.php';
 
-use cfg\db\sql_creator;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_table;
-use cfg\phrase\phrase_table_status;
-use cfg\word\word;
-use html\phrase\phrase as phrase_dsp;
-use shared\const\words;
-use shared\types\phrase_type as phrase_type_shared;
-use test\test_base;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table_status;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\test\php\utils\test_base;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_tests
 {

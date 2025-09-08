@@ -30,19 +30,19 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::SHARED_CONST . 'triples.php';
 
-use cfg\phrase\phrase;
-use cfg\value\value;
-use cfg\value\value_list;
-use shared\const\triples;
-use shared\const\values;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class value_list_read_tests
 {

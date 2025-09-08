@@ -30,10 +30,10 @@
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'type_lists.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -41,10 +41,10 @@ include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'url_var.php';
 
-use shared\enum\messages as msg_id;
-use shared\types\protection_type;
-use shared\types\view_styles;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class protection extends type_list
 {

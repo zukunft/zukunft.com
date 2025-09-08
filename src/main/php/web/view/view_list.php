@@ -29,23 +29,23 @@
 
 */
 
-namespace html\view;
+namespace Zukunft\ZukunftCom\main\php\web\view;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-use html\ref\source;
-use html\rest_call;
-use html\sandbox\list_dsp;
-use html\sandbox\sandbox;
-use html\user\user_message;
-use html\verb\verb;
-use html\view\view as view_dsp;
-use html\word\triple;
-use html\word\word;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\types\view_styles;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::REF . 'source.php';

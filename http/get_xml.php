@@ -30,10 +30,10 @@
 
 */
 
-use cfg\phrase\phrase_list;
-use cfg\user\user;
-use shared\library;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 Header('Content-type: text/xml');
 

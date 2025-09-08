@@ -29,9 +29,9 @@
   
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'base_list.php';
 include_once paths::DB . 'sql.php';
@@ -52,15 +52,15 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 
-use cfg\db\sql;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\helper\type_object;
-use cfg\sandbox\sandbox;
-use cfg\user\user;
-use cfg\user\user_db;
-use shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 
 class sys_log_list extends base_list
 {

@@ -29,10 +29,10 @@
 
 */
 
-namespace html\user;
+namespace Zukunft\ZukunftCom\main\php\web\user;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 // get the api const that are shared between the backend and the html frontend
 // get the pure html frontend objects
 include_once html_paths::HTML . 'html_base.php';
@@ -43,13 +43,13 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\html_base;
-use html\phrase\term;
-use html\sandbox\db_object;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\enum\user_profiles;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class user extends db_object
 {

@@ -30,9 +30,9 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'triple.php';
@@ -40,10 +40,10 @@ include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::PHRASE . 'term.php';
 
-use cfg\db\sql_creator;
-use html\phrase\term as term_dsp;
-use cfg\phrase\term;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class term_tests
 {

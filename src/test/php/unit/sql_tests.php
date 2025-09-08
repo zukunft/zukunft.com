@@ -29,19 +29,19 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'files.php';
 include_once TEST_CONST_PATH . 'files.php';
 
-use cfg\const\files;
-use cfg\db\sql_creator;
-use cfg\formula\formula;
-use html\user\user;
-use test\test_cleanup;
-use const\files as test_files;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class sql_tests
 {

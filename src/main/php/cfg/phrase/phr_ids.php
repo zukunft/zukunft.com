@@ -30,7 +30,7 @@
   
 */
 
-namespace cfg\phrase;
+namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 
 /**
  * helper class to make sure that

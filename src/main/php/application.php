@@ -29,11 +29,11 @@
 
 */
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 
-use cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
 
 const POD_NAME = "zukunft.com"; // the default pod name if not defined
 const PRG_VERSION = "0.0.3"; // to detect the correct update script and to mark the data export

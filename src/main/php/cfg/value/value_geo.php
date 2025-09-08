@@ -41,9 +41,9 @@
 
 */
 
-namespace cfg\value;
+namespace Zukunft\ZukunftCom\main\php\cfg\value;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::DB . 'sql_db.php';
@@ -62,21 +62,21 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\group\group;
-use cfg\log\change_value_geo;
-use cfg\log\change_values_geo_prime;
-use cfg\log\change_values_geo_norm;
-use cfg\log\change_values_geo_big;
-use cfg\sandbox\sandbox;
-use cfg\ref\source_db;
-use cfg\sandbox\sandbox_multi;
-use cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use DateTime;
-use shared\json_fields;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class value_geo extends value_base
 {

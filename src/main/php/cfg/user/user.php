@@ -64,9 +64,9 @@
   
 */
 
-namespace cfg\user;
+namespace Zukunft\ZukunftCom\main\php\cfg\user;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_id_object_non_sandbox.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
@@ -116,42 +116,42 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\helper\data_object;
-use cfg\helper\db_id_object_non_sandbox;
-use cfg\helper\db_object_seq_id;
-use cfg\helper\type_object;
-use cfg\log\change_action;
-use cfg\log\change_log;
-use cfg\phrase\term;
-use cfg\ref\source_db;
-use cfg\system\ip_range_list;
-use cfg\log\change;
-use cfg\sandbox\sandbox_named;
-use cfg\ref\source;
-use cfg\verb\verb_list;
-use cfg\view\view_sys_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
 use Exception;
-use shared\const\rest_ctrl;
-use shared\const\users;
-use shared\const\words;
-use shared\enum\change_actions;
-use shared\enum\change_tables;
-use shared\enum\messages as msg_id;
-use shared\enum\user_profiles;
-use shared\helper\CombineObject;
-use shared\helper\Config as shared_config;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class user extends db_id_object_non_sandbox
 {

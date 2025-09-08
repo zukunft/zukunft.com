@@ -35,7 +35,7 @@
 
 */
 
-namespace const;
+namespace Zukunft\ZukunftCom\test\php\const;
 
 class paths
 {

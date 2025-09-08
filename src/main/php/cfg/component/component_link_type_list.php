@@ -31,14 +31,14 @@
   
 */
 
-namespace cfg\component;
+namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::DB . 'sql_db.php';
 
-use cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
 
 class component_link_type_list extends type_list
 {

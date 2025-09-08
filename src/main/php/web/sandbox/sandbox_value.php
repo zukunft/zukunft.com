@@ -32,17 +32,17 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use DateTime;
-use html\const\paths as html_paths;
-use html\group\group;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\user\user_message;
-use shared\json_fields;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::SANDBOX . 'sandbox.php';
 include_once html_paths::SANDBOX . 'db_object.php';

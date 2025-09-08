@@ -30,14 +30,14 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::EXPORT . 'xml.php';
 
-use cfg\export\xml;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\export\xml;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class export_read_tests
 {

@@ -30,7 +30,7 @@
 
 */
 
-use test\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 function run_permission_test (test_cleanup $t) {
 

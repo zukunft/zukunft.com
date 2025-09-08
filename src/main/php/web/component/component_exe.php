@@ -35,13 +35,13 @@
 
 */
 
-namespace html\component;
+namespace Zukunft\ZukunftCom\main\php\web\component;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
-include_once html_paths::FORM . 'system_form.php';
+include_once html_paths::EXECUTE . 'system_form.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::HTML . 'sheet.php';
@@ -54,17 +54,19 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
 include_once paths::SHARED . 'url_var.php';
 
-use html\helper\data_object;
-use html\helper\data_object as data_object_dsp;
-use html\list_sort;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\sandbox\db_object as db_object_dsp;
-use html\sheet;
-use html\component\form\system_form;
-use shared\const\triples;
-use shared\types\component_type;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\list_sort;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\sheet;
+use Zukunft\ZukunftCom\main\php\web\component\form\system_form;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\types\component_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 
 class component_exe extends component
 {
@@ -116,6 +118,7 @@ class component_exe extends component
         }
 
         $form = new system_form();
+        $page = new system_page();
 
         // list of all possible view components
         $result .= match ($this->type_code_id($cfg->typ_lst_cache)) {
@@ -127,35 +130,49 @@ class component_exe extends component
 
             // system form - usage only allowed for internal system forms
             component_type::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
-            component_type::FORM_BACK => $form->form_back($msk_id, $dbo->id(), $back),
-            component_type::FORM_CONFIRM => $form->form_confirm(),
+            component_type::FORM_HIDDEN_BACK => $form->form_back($msk_id, $dbo->id(), $back),
+            component_type::FORM_HIDDEN_STEP => $form->form_confirm(),
             component_type::SHOW_NAME => $form->show_name($dbo),
-            component_type::FORM_NAME => $form->form_name($dbo, $this->style_code_id($cfg->typ_lst_cache)),
-            component_type::FORM_PLURAL => $form->form_plural($dbo, $this->style_code_id($cfg->typ_lst_cache)),
-            component_type::FORM_DESCRIPTION => $form->form_description($dbo),
-            component_type::FORM_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
-            component_type::FORM_VERB_SELECTOR => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_PHRASE_TYPE => $form->form_phrase_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SOURCE_TYPE => $form->form_source_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_REF_TYPE => $form->form_ref_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_FORMULA_TYPE => $form->form_formula_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_FORMULA_EXPRESSION => $form->form_formula_expression($dbo, $form_name),
-            component_type::FORM_FORMULA_ALL_FIELDS => $form->form_formula_all_fields($dbo, $form_name),
-            component_type::FORM_VIEW_TYPE => $form->form_view_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_VIEW_STYLE => $form->form_view_style($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_FIELD_NAME => $form->form_name($dbo, $this->style_code_id($cfg->typ_lst_cache)),
+            component_type::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
+            component_type::FORM_FIELD_PLURAL => $form->form_field_plural($dbo, $this->style_code_id($cfg->typ_lst_cache)),
+            component_type::FORM_FIELD_URL => $form->form_field_url($dbo),
+            component_type::FORM_FIELD_GROUP => $form->form_field_group_name($dbo),
+            component_type::FORM_FIELD_GROUP_OR_PHRASES => $form->form_field_group_or_phrases($dbo),
+            component_type::FORM_FIELD_SELECTION_NAME => $form->form_field_selection_name($dbo),
+            component_type::FORM_FIELD_SELECTION_DESCRIPTION => $form->form_field_selection_description($dbo),
+            component_type::FORM_FIELD_SELECTION_TEXT => $form->form_field_selection_text($dbo),
+            component_type::FORM_SELECT_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
+            component_type::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_PHRASE_TYPE => $form->form_phrase_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_SOURCE_TYPE => $form->form_source_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_REF_TYPE => $form->form_ref_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_FORMULA_TYPE => $form->form_formula_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_FIELD_FORMULA_EXPRESSION => $form->form_formula_expression($dbo, $form_name),
+            component_type::FORM_FIELD_FORMULA_ALL_VAR_NEEDED => $form->form_formula_all_fields($dbo, $form_name),
+            component_type::FORM_SELECT_VIEW_TYPE => $form->form_view_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VIEW_STYLE => $form->form_view_style($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SHARE_TYPE => $form->form_share_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_PROTECTION_TYPE => $form->form_protection_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name),
-            component_type::FORM_CANCEL => $form->form_cancel($msk_id, $dbo->id()),
-            component_type::FORM_SAVE => $form->form_save(),
-            component_type::FORM_DEL => $form->form_del(),
+            component_type::FORM_BUTTON_CANCEL => $form->form_cancel($msk_id, $dbo->id()),
+            component_type::FORM_BUTTON_SAVE => $form->form_save(),
+            component_type::FORM_BUTTON_DEL => $form->form_del(),
             component_type::FORM_END => $form->form_end(),
 
             // hidden - only used for formatting without functional behaviour
             component_type::ROW_START => $form->row_start(),
             component_type::ROW_RIGHT => $form->row_right(),
             component_type::ROW_END => $form->row_end(),
+
+            // fixed system pages - usage only allowed for fixed internal system pages
+            component_type::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
+            component_type::SYSTEM_BODY_ABOUT => $page->about_body(),
+            component_type::SYSTEM_BODY_ERROR_LOG => $page->error_log(),
+            component_type::SYSTEM_BODY_ERROR_UPDATE => $page->error_update(),
+            component_type::SYSTEM_BODY_PROCESS_PROGRESS => $page->process_progress(),
+            component_type::SYSTEM_BODY_PROCESS_LIST => $page->process_list(),
 
             // ref only -
 
@@ -184,7 +201,7 @@ class component_exe extends component
             component_type::NUMERIC_VALUE => $this->num_list($dbo, $back),
 
             // related
-            component_type::REF_LIST_WORD => $this->ref_list_word($dbo, $cfg),
+            component_type::LIST_REF => $this->ref_list_word($dbo, $cfg),
             component_type::LINK_LIST_WORD => $this->link_list_word($dbo, $cfg),
             component_type::FORMULAS => $this->formulas($dbo),
             component_type::FORMULA_RESULTS => $this->results($dbo),

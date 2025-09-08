@@ -33,9 +33,9 @@
 
 */
 
-namespace cfg\word;
+namespace Zukunft\ZukunftCom\main\php\cfg\word;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
@@ -50,18 +50,18 @@ include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 //include_once paths::MODEL_VERB . 'verb_db.php';
 //include_once paths::MODEL_VIEW . 'view.php';
 
-use cfg\db\sql;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\language\language;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_type;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
-use cfg\verb\verb;
-use cfg\verb\verb_db;
-use cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
 
 class triple_db
 {

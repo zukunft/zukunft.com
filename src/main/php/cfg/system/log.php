@@ -31,7 +31,7 @@
 
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
 class log
 {

@@ -40,7 +40,7 @@ if ($debug > 0) {
     echo 'libs loaded<br>';
 }
 
-use html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 
 // open database 
 $db_con = prg_start("about", "center_form", false);

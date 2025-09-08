@@ -29,16 +29,16 @@
 
 */
 
-namespace html\component;
+namespace Zukunft\ZukunftCom\main\php\web\component;
 
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::USER . 'user_message.php';
 
-use html\sandbox\sandbox_list_named;
-use html\component\component_exe as component;
-use html\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class component_list extends sandbox_list_named
 {

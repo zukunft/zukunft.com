@@ -30,7 +30,7 @@
 
 */
 
-namespace shared;
+namespace Zukunft\ZukunftCom\main\php\shared;
 
 class api
 {

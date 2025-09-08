@@ -30,22 +30,22 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
 include_once paths::DB . 'db_check.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 
-use cfg\formula\formula;
-use cfg\system\job_type_list;
-use cfg\system\sys_log_status_list;
-use cfg\helper\type_lists;
-use shared\enum\sys_log_statuus;
-use shared\types\api_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class system_read_tests
 {

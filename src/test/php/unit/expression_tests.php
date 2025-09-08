@@ -30,21 +30,21 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 
-use cfg\formula\expression;
-use cfg\phrase\term_list;
-use shared\library;
-use shared\const\formulas;
-use shared\const\words;
-use shared\types\verbs;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class expression_tests
 {

@@ -30,29 +30,29 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 
-use cfg\db\sql_db;
-use cfg\formula\formula;
-use cfg\formula\formula_db;
-use cfg\formula\formula_list;
-use cfg\formula\formula_type;
-use cfg\phrase\phrase_list;
-use cfg\result\results;
-use cfg\word\word;
-use html\formula\formula as formula_dsp;
-use html\phrase\term_list as term_list_dsp;
-use shared\const\formulas;
-use shared\const\users;
-use shared\const\words;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\results;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_write_tests
 {

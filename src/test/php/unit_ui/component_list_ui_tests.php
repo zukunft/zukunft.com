@@ -30,19 +30,19 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 
-use shared\enum\messages as msg_id;
-use html\component\component_list as component_list_dsp;
-use html\html_base;
-use shared\url_var;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_list_ui_tests
 {

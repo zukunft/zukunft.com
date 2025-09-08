@@ -37,20 +37,20 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 
-use html\rest_call as api_dsp;
-use html\user\user_message;
-use html\word\word;
-use shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 
 class combine_object extends CombineObject
 {

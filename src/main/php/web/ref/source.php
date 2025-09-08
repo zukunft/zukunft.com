@@ -37,10 +37,10 @@
   
 */
 
-namespace html\ref;
+namespace Zukunft\ZukunftCom\main\php\web\ref;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -53,15 +53,15 @@ include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'url_var.php';
 
-use html\types\type_lists;
-use html\html_base;
-use html\sandbox\sandbox_code_id;
-use html\user\user_message;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\types\view_styles;
-use shared\json_fields;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class source extends sandbox_code_id
 {
@@ -237,8 +237,8 @@ class source extends sandbox_code_id
 
         log_debug("source id used (" . $this->id() . ")");
         $result .= '      taken from ' . $this->source_selector($form_name, '') . ' ';
-        $result .= '    <td>' . \html\btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id() . '&back=' . $back) . '</td>';
-        $result .= '    <td>' . \html\btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
+        $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id() . '&back=' . $back) . '</td>';
+        $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
         return $result;
     }
 

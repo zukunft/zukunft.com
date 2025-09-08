@@ -30,15 +30,15 @@
 
 */
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'users.php';
 
-use cfg\user\user;
-use cfg\user\user_list;
-use shared\const\users;
-use shared\const\words;
-use test\all_tests;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_system_test(all_tests $t): void
 {

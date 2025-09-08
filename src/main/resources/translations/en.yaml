@@ -102,6 +102,7 @@ messages:
   form_select_phrase_col: "Column type"
   form_select_phrase_col_sub: "Column subtype"
   form_triple_verb: "verb"
+  system_title_about: "About"
   SELECT_VIEW: "Select a view"
   undo: "undo"
   undo_add: "delete added"

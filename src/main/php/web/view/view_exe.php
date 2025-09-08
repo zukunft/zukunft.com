@@ -35,26 +35,26 @@
 
 */
 
-namespace html\view;
+namespace Zukunft\ZukunftCom\main\php\web\view;
 
-use cfg\const\paths;
-use html\button;
-use html\const\paths as html_paths;
-use html\display_list;
-use html\helper\data_object;
-use html\html_base;
-use html\log\user_log_display;
-use html\sandbox\db_object;
-use html\system\back_trace;
-use html\types\type_lists;
-use html\word\word;
-use shared\api;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\types\position_types;
-use shared\types\view_styles;
-use shared\types\view_type;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\button;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\display_list;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::HELPER . 'data_object.php';
@@ -477,9 +477,9 @@ class view_exe extends view_base
                 $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
             }
             $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= \html\btn_edit('design the view', $call_edit) . ' ';
+            $result .= \Zukunft\ZukunftCom\main\php\web\btn_edit('design the view', $call_edit) . ' ';
             $call_del = '/http/view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= \html\btn_del('delete the view', $call_del) . ' ';
+            $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete the view', $call_del) . ' ';
             $result .= '<br>';
         }
 

@@ -32,9 +32,9 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_object_key.php';
 include_once paths::API_OBJECT . 'api_message.php';
@@ -48,15 +48,15 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\group\group_id;
-use cfg\user\user;
-use cfg\user\user_message;
-use controller\api_message;
-use shared\enum\messages as msg_id;
-use shared\types\api_type_list;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class db_object_multi extends db_object_key
 {

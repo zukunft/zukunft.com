@@ -30,9 +30,9 @@
 
 */
 
-namespace const;
+namespace Zukunft\ZukunftCom\test\php\const;
 
-use const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 class files
 {

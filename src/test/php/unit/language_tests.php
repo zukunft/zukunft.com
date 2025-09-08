@@ -30,11 +30,11 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\language\language;
-use cfg\language\language_form;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class language_tests
 {

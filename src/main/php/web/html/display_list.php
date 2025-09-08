@@ -32,14 +32,14 @@
   
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::HTML . 'html_base.php';
 include_once paths::SHARED . 'library.php';
 
-use shared\library;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class display_list extends html_base
 {
@@ -83,7 +83,7 @@ class display_list extends html_base
                 $result .= '</td><td>';
             }
             $result .= ' ';
-            $result .= \html\btn_del('Delete component', $this->script_name . '?id=' . $this->script_parameter . '&del=' . $entry->id);
+            $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('Delete component', $this->script_name . '?id=' . $this->script_parameter . '&del=' . $entry->id);
             if (html_base::UI_USE_BOOTSTRAP) {
                 $result .= '</td></tr>';
             }

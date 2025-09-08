@@ -51,17 +51,17 @@ Delete a word (check if nothing is depending on the word to delete)
 
 */
 
-use cfg\const\paths;
-use cfg\phrase\term;
-use cfg\user\user;
-use cfg\view\view;
-use cfg\word\triple;
-use cfg\word\word;
-use html\html_base;
-use html\view\view as view_dsp;
-use html\word\word as word_dsp;
-use shared\const\views as view_shared;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 
 /* standard zukunft header for callable php files to allow debugging and lib loading */

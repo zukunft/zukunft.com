@@ -29,7 +29,7 @@
 
 */
 
-namespace shared\types;
+namespace Zukunft\ZukunftCom\main\php\shared\types;
 
 class share_type
 {

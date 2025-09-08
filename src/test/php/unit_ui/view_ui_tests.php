@@ -30,13 +30,13 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\frontend;
-use html\html_base;
-use html\view\view as view_dsp;
-use shared\const\views;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_ui_tests
 {

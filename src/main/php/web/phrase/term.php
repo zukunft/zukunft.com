@@ -30,10 +30,10 @@
 
 */
 
-namespace html\phrase;
+namespace Zukunft\ZukunftCom\main\php\web\phrase;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
@@ -47,20 +47,20 @@ include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use html\formula\formula;
-use html\verb\verb;
-use html\word\triple;
-use html\word\word;
-use html\sandbox\combine_named as combine_named_dsp;
-use html\formula\formula as formula_dsp;
-use html\user\user_message;
-use html\verb\verb as verb_dsp;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
-use shared\types\phrase_type;
-use shared\json_fields;
-use shared\library;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class term extends combine_named_dsp
 {
@@ -490,7 +490,7 @@ class term extends combine_named_dsp
     function dsp_unlink(int $link_id): string
     {
         $result = '    <td>' . "\n";
-        $result .= \html\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id());
+        $result .= \Zukunft\ZukunftCom\main\php\web\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id());
         $result .= '    </td>' . "\n";
 
         return $result;

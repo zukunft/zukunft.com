@@ -30,10 +30,10 @@
 
 */
 
-namespace html\group;
+namespace Zukunft\ZukunftCom\main\php\web\group;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::PHRASE . 'phrase.php';
@@ -45,14 +45,14 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'library.php';
 
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\sandbox\sandbox_list;
-use html\user\user;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class group_list extends sandbox_list
 {

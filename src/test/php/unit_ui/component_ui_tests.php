@@ -30,12 +30,12 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\component\component_exe as component_dsp;
-use html\html_base;
-use shared\const\components;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_ui_tests
 {

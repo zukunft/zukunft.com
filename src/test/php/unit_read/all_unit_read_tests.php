@@ -32,20 +32,20 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
-use html\frontend;
-use html\types\type_lists as type_list_dsp;
-use shared\const\groups;
-use shared\const\triples;
-use shared\const\values;
-use shared\const\words;
-use shared\types\verbs;
-use test\all_tests;
-use unit\all_unit_tests;
-use unit_ui\start_ui_read_tests;
-use unit_ui\start_ui_tests;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\start_ui_read_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\start_ui_tests;
 
 include_once paths::WEB . 'frontend.php';
 include_once paths::SHARED_TYPES . 'verbs.php';

@@ -30,16 +30,16 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'triples.php';
 
-use cfg\word\triple;
-use cfg\word\triple_list;
-use shared\const\triples;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_list_read_tests
 {

@@ -33,10 +33,10 @@
 
 */
 
-namespace shared\calc;
+namespace Zukunft\ZukunftCom\main\php\shared\calc;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_PHRASE . 'term.php';
@@ -54,23 +54,23 @@ include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\formula\formula;
-use cfg\phrase\term;
-use cfg\phrase\term_list;
-use cfg\user\user_message;
-use cfg\word\triple;
-use cfg\verb\verb;
-use cfg\word\word;
-use html\formula\formula as formula_dsp;
-use html\phrase\term as term_dsp;
-use html\phrase\term_list as term_list_dsp;
-use html\word\triple as triple_dsp;
-use html\verb\verb as verb_dsp;
-use html\word\word as word_dsp;
-use shared\const\chars;
-use shared\enum\messages;
-use shared\enum\messages as msg_id;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list as term_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class expression
 {

@@ -29,21 +29,21 @@
   
 */
 
-namespace html\verb;
+namespace Zukunft\ZukunftCom\main\php\web\verb;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'library.php';
 
-use html\html_base;
-use html\types\type_list;
-use html\user\user;
-use html\user\user_message;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\types\type_list;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class verb_list extends type_list
 {
@@ -123,7 +123,7 @@ class verb_list extends type_list
         foreach ($item_lst as $item) {
             $result .= '<a href="/http/' . $edit_script . '?id=' . $item->id . '">' . $item->name . '</a><br> ';
         }
-        $result .= \html\btn_add('Add ' . $item_type, $add_script);
+        $result .= \Zukunft\ZukunftCom\main\php\web\btn_add('Add ' . $item_type, $add_script);
         $result .= '<br>';
 
         return $result;

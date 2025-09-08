@@ -30,27 +30,27 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'view_type.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
 include_once paths::SHARED_CONST . 'views.php';
 
-use cfg\component\component;
-use cfg\component\component_type_list;
-use cfg\view\view;
-use cfg\view\view_link_type;
-use cfg\view\view_link_type_list;
-use cfg\view\view_sys_list;
-use cfg\view\view_type_list;
-use shared\const\components;
-use shared\const\views;
-use shared\const\views as view_shared;
-use shared\types\component_type as comp_type_shared;
-use shared\types\view_type as view_type_shared;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type as view_type_shared;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_read_tests
 {

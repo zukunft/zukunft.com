@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\value;
+namespace Zukunft\ZukunftCom\main\php\cfg\value;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_object_no_id.php';
 include_once paths::DB . 'sql.php';
@@ -44,12 +44,12 @@ include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_type_list.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_type_list;
-use cfg\helper\db_object_no_id;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_no_id;
 use DateTime;
 
 class value_ts_data extends db_object_no_id

@@ -32,27 +32,27 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use cfg\const\paths;
-use controller\api_message;
-use html\button;
-use html\const\paths as html_paths;
-use html\html_base;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list;
-use html\phrase\term as term_dsp;
-use html\rest_call;
-use html\rest_call as api_dsp;
-use html\types\type_lists;
-use html\user\user_message;
-use html\view\view_list;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\helper\TextIdObject;
-use shared\json_fields;
-use shared\types\view_styles;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\web\button;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::API_OBJECT . 'api_message.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -512,6 +512,16 @@ class db_object extends TextIdObject
     /*
      * dummy function to be overwritten by the child objects
      */
+
+    /**
+     * @return string|null the url field of some child object e.g. the source
+     */
+    function url(): ?string
+    {
+        $msg = 'url not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
 
     /**
      * create the html code to select the phrase type

@@ -30,7 +30,7 @@
 
 */
 
-namespace cfg\log_text;
+namespace Zukunft\ZukunftCom\main\php\cfg\log_text;
 
 enum text_log_format: int
 {

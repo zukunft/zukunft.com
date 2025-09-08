@@ -30,10 +30,10 @@
 
 */
 
-namespace html\phrase;
+namespace Zukunft\ZukunftCom\main\php\web\phrase;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -52,17 +52,17 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\types\type_lists;
-use html\sandbox\combine_named;
-use html\user\user_message;
-use html\verb\verb;
-use html\verb\verb_list;
-use html\word\triple;
-use html\word\word;
-use html\word\word_list;
-use shared\enum\foaf_direction;
-use shared\json_fields;
-use shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class phrase extends combine_named
 {

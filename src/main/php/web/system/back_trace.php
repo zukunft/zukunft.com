@@ -34,7 +34,7 @@
   
 */
 
-namespace html\system;
+namespace Zukunft\ZukunftCom\main\php\web\system;
 
 class back_trace
 {

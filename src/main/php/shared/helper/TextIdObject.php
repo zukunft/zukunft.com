@@ -30,7 +30,7 @@
 
 */
 
-namespace shared\helper;
+namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
 class TextIdObject
 {

@@ -44,15 +44,15 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 // load once the common const and vars used almost every time
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 // load the mian frontend class
 include_once paths::WEB . 'frontend.php';
 
-use html\frontend;
-use cfg\user\user;
-use html\helper\config;
-use html\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 
 // reset the html code var
 $html_str = '';

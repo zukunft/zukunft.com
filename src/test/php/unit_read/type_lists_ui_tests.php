@@ -30,28 +30,28 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use html\const\paths as html_paths;
-use html\frontend;
-use html\helper\data_object;
-use html\html_base;
-use html\types\component_type_list;
-use html\types\formula_link_type_list;
-use html\types\formula_type_list;
-use html\types\phrase_types;
-use html\types\protection;
-use html\types\ref_type_list;
-use html\types\share;
-use html\types\source_type_list;
-use html\types\type_lists as type_list_dsp;
-use html\types\user_profile;
-use html\types\verbs;
-use html\types\view_style_list;
-use html\types\view_type_list;
-use shared\const\views;
-use shared\url_var;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\types\component_type_list;
+use Zukunft\ZukunftCom\main\php\web\types\formula_link_type_list;
+use Zukunft\ZukunftCom\main\php\web\types\formula_type_list;
+use Zukunft\ZukunftCom\main\php\web\types\phrase_types;
+use Zukunft\ZukunftCom\main\php\web\types\protection;
+use Zukunft\ZukunftCom\main\php\web\types\ref_type_list;
+use Zukunft\ZukunftCom\main\php\web\types\share;
+use Zukunft\ZukunftCom\main\php\web\types\source_type_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\types\user_profile;
+use Zukunft\ZukunftCom\main\php\web\types\verbs;
+use Zukunft\ZukunftCom\main\php\web\types\view_style_list;
+use Zukunft\ZukunftCom\main\php\web\types\view_type_list;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::TYPES . 'type_lists.php';

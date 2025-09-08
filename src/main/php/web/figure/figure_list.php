@@ -32,10 +32,10 @@
 
 */
 
-namespace html\figure;
+namespace Zukunft\ZukunftCom\main\php\web\figure;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::FIGURE . 'figure.php';
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::USER . 'user_message.php';
@@ -43,12 +43,12 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 
-use html\figure\figure as figure_dsp;
-use html\sandbox\list_dsp;
-use html\user\user_message;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 
 class figure_list extends list_dsp
 {

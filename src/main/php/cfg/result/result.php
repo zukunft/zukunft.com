@@ -45,9 +45,9 @@
 
 */
 
-namespace cfg\result;
+namespace Zukunft\ZukunftCom\main\php\cfg\result;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 include_once paths::DB . 'sql.php';
@@ -82,36 +82,36 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\element\element_list;
-use cfg\formula\figure;
-use cfg\formula\formula;
-use cfg\formula\formula_db;
-use cfg\group\group;
-use cfg\group\group_id;
-use cfg\group\group_list;
-use cfg\helper\data_object;
-use cfg\helper\db_object_multi;
-use cfg\phrase\phrase_list;
-use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_value;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\figure;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTime;
-use shared\calc\parameter_type;
-use shared\const\chars;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class result extends sandbox_value
 {

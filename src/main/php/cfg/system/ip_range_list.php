@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'base_list.php';
 include_once paths::MODEL_SYSTEM . 'ip_range.php';
@@ -45,13 +45,13 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Translator.php';
 
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\import\import;
-use cfg\user\user_message;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 class ip_range_list extends base_list
 {

@@ -50,8 +50,8 @@ include_once TEST_PHP_UTIL_PATH . 'test_base.php';
 // load the main test control class
 include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
 
-use cfg\user\user;
-use test\all_tests;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 
 global $db_con;

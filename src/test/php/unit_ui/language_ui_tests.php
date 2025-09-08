@@ -35,15 +35,15 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SYSTEM . 'language.php';
 
-use html\html_base;
-use html\system\language as language_dsp;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\system\language as language_dsp;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class language_ui_tests
 {

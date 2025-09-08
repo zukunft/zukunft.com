@@ -30,10 +30,10 @@
 
 */
 
-namespace shared\calc;
+namespace Zukunft\ZukunftCom\main\php\shared\calc;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_SYSTEM . 'BasicEnum.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
@@ -45,15 +45,15 @@ include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 
-use cfg\formula\formula;
-use cfg\system\BasicEnum;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\word;
-use html\formula\formula as formula_dsp;
-use html\verb\verb as verb_dsp;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\system\BasicEnum;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
 
 class parameter_type extends BasicEnum
 {

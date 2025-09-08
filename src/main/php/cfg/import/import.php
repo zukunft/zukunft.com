@@ -36,9 +36,9 @@
   
 */
 
-namespace cfg\import;
+namespace Zukunft\ZukunftCom\main\php\cfg\import;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
@@ -72,33 +72,33 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\component\component;
-use cfg\formula\formula;
-use cfg\formula\formula_list;
-use cfg\helper\data_object;
-use cfg\phrase\phrase_list;
-use cfg\ref\ref;
-use cfg\ref\source;
-use cfg\result\result;
-use cfg\result\result_list;
-use cfg\system\ip_range;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value;
-use cfg\value\value_base;
-use cfg\value\value_list;
-use cfg\value\value_text;
-use cfg\verb\verb;
-use cfg\view\view;
-use cfg\view\view_list;
-use cfg\word\triple;
-use cfg\word\word;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
-use shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class import
 {

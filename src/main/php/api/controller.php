@@ -32,18 +32,18 @@
 
 */
 
-namespace controller;
+namespace Zukunft\ZukunftCom\main\php\api;
 
-use cfg\const\paths;
-use cfg\helper\db_object_seq_id;
-use cfg\ref\source;
-use cfg\user\user;
-use cfg\word\word;
-use shared\api;
-use shared\const\rest_ctrl;
-use shared\library;
-use shared\types\api_type;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_REF . 'source.php';

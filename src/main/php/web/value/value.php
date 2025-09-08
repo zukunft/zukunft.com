@@ -33,28 +33,28 @@
 
 */
 
-namespace html\value;
+namespace Zukunft\ZukunftCom\main\php\web\value;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-use html\figure\figure;
-use html\group\group;
-use html\helper\config;
-use html\html_base;
-use html\log\user_log_display;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\ref\source;
-use html\sandbox\sandbox_value;
-use html\styles;
-use html\user\user_message;
-use html\word\word;
-use shared\const\rest_ctrl;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\figure\figure;
+use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::DB . 'sql_db.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
@@ -486,7 +486,7 @@ class value extends sandbox_value
     // the same as \html\btn_del_value, but with another icon
     function btn_undo_add_value($back): string
     {
-        return \html\btn_undo('delete this value', '/http/value_del.php?id=' . $this->id() . '&back=' . $back . '');
+        return \Zukunft\ZukunftCom\main\php\web\btn_undo('delete this value', '/http/value_del.php?id=' . $this->id() . '&back=' . $back . '');
     }
 
     // display a value, means create the HTML code that allows to edit the value
@@ -532,7 +532,7 @@ class value extends sandbox_value
         $log_dsp = new user_log_display();
         $log_dsp->id = $this->id();
         $log_dsp->obj = $this;
-        $log_dsp->type = \cfg\value\value::class;
+        $log_dsp->type = \Zukunft\ZukunftCom\main\php\cfg\value\value::class;
         $log_dsp->page = $page;
         $log_dsp->size = $size;
         $log_dsp->call = $call;
@@ -698,7 +698,7 @@ class value extends sandbox_value
         if (count($this->ids()) > 0) {
             $url_pos = 1; // the phrase position (combined number for fixed, type and free phrases)
             // if the form is confirmed, save the value or the other way round: if with the plus sign only a new phrase is added, do not yet save the value
-            $result .= $html->input(\shared\url_var::ID, $this->id(), html_base::INPUT_HIDDEN);
+            $result .= $html->input(\Zukunft\ZukunftCom\main\php\shared\url_var::ID, $this->id(), html_base::INPUT_HIDDEN);
             $result .= $html->input('confirm', '1', html_base::INPUT_HIDDEN);
 
             // reset the phrase sample settings
@@ -823,8 +823,8 @@ class value extends sandbox_value
                             $url_pos++;
 
                             $result .= '    </td>';
-                            $result .= '    <td>' . \html\btn_del("Remove " . $phr->name(), $used_url) . '</td>';
-                            $result .= '    <td>' . \html\btn_edit("Rename " . $phr->name(), $phrase_url) . '</td>';
+                            $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Remove " . $phr->name(), $used_url) . '</td>';
+                            $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\btn_edit("Rename " . $phr->name(), $phrase_url) . '</td>';
                         }
                     }
 
@@ -841,8 +841,8 @@ class value extends sandbox_value
                             $url_pos++;
 
                             $result .= '    </td>';
-                            $result .= '    <td>' . \html\btn_del("Remove " . $phr->name(), $used_url) . '</td>';
-                            $result .= '    <td>' . \html\btn_edit("Rename " . $phr->name(), $phrase_url) . '</td>';
+                            $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Remove " . $phr->name(), $used_url) . '</td>';
+                            $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\btn_edit("Rename " . $phr->name(), $phrase_url) . '</td>';
                         }
                     }
 
@@ -866,7 +866,7 @@ class value extends sandbox_value
                     $url_pos++;
 
                     $result .= '    </td>';
-                    $result .= '    <td>' . \html\btn_del("Remove " . $time_phr->name(), $used_url) . '</td>';
+                    $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Remove " . $time_phr->name(), $used_url) . '</td>';
                 }
                 $result .= '  </tr>';
             }
@@ -881,7 +881,7 @@ class value extends sandbox_value
                 $url_pos++;
 
                 $result .= '    </td>';
-                $result .= '    <td>' . \html\btn_del("Remove " . $time_phr->name(), $used_url) . '</td>';
+                $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Remove " . $time_phr->name(), $used_url) . '</td>';
                 $result .= '  </tr>';
             }
 
@@ -897,7 +897,7 @@ class value extends sandbox_value
                     $url_pos++;
 
                     $result .= '    </td>';
-                    $result .= '    <td>' . \html\btn_del("Remove new", $used_url) . '</td>';
+                    $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Remove new", $used_url) . '</td>';
                 }
                 $result .= '  </tr>';
             }
@@ -913,7 +913,7 @@ class value extends sandbox_value
         $type_ids_new[] = 0;
         $used_url = $this_url . $lib->ids_to_url($phr_ids_new, "phrase") .
             $lib->ids_to_url($type_ids_new, "type");
-        $result .= '  ' . \html\btn_add("Add another phrase", $used_url);
+        $result .= '  ' . \Zukunft\ZukunftCom\main\php\web\btn_add("Add another phrase", $used_url);
         $result .= '  <br><br>';
         $result .= '  <input type="' . html_base::INPUT_HIDDEN . '" name="back" value="' . $back . '">';
         if ($this->id() > 0) {
@@ -939,7 +939,7 @@ class value extends sandbox_value
         $result .= $this->dsp_protection($script, $back);
 
         $result .= '<br>';
-        $result .= \html\btn_back($back);
+        $result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
 
         // display the user changes
         log_debug('user changes');

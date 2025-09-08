@@ -30,13 +30,13 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use const\paths as test_paths;
-use html\frontend;
-use shared\api;
-use test\test_cleanup;
-use unit\all_unit_tests;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
 
 include_once test_paths::UNIT_UI . 'base_ui_tests.php';
 //include_once test_paths::UNIT_UI . 'type_lists_ui_tests.php';

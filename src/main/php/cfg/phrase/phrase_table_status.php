@@ -30,13 +30,13 @@
 */
 
 
-namespace cfg\phrase;
+namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 
-use cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 
 class phrase_table_status extends type_object
 {

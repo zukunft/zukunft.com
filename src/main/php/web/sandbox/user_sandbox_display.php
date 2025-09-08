@@ -30,9 +30,9 @@
   
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'html_selector.php';
 
@@ -72,7 +72,7 @@ class user_sandbox_display
             $result .= '<td>' . $wrd_row[0] . '</td><td>' . $wrd_row[1] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$user_id.'&undo_word='.$wrd_row[2].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
             $url = "/http/user.php?id='.$user_id.'&undo_word='.$wrd_row[2].'&back='.$back_link.'";
-            $result .= '<td>' . \html\btn_del("Undo your change and use the standard word " . $wrd_row[1], $url) . '</td>';
+            $result .= '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard word " . $wrd_row[1], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= '</table>';
@@ -118,7 +118,7 @@ class user_sandbox_display
             $result .= '<td>' . $wrd_row[2] . '</td>';
             //$result .= '<td><a href="/http/user.php?id='.$user_id.'&undo_formula='.$wrd_row[3].'&back='.$id.'"><img src="/src/main/resources/images/button_del_small.jpg" alt="undo change"></a></td>';
             $url = "/http/user.php?id='.$user_id.'&undo_formula='.$wrd_row[3].'&back='.$back_link.'";
-            $result .= '<td>' . \html\btn_del("Undo your change and use the standard formula " . $wrd_row[2], $url) . '</td>';
+            $result .= '<td>' . \Zukunft\ZukunftCom\main\php\web\btn_del("Undo your change and use the standard formula " . $wrd_row[2], $url) . '</td>';
             $result .= '</tr>';
         }
         $result .= '</table>';

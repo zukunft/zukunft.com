@@ -30,20 +30,20 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'system_time_type.php';
 include_once paths::MODEL_SYSTEM . 'system_time.php';
 
-use cfg\db\sql_creator;
-use cfg\system\sys_log;
-use cfg\system\system_time;
-use cfg\system\system_time_type;
-use shared\library;
-use shared\types\api_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class sys_log_tests
 {

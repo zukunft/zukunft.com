@@ -30,11 +30,11 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\formula\formula as formula_dsp;
-use html\html_base;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_ui_tests
 {

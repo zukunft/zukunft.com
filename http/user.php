@@ -36,22 +36,22 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\const\paths;
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\user\user;
-use cfg\value\value;
-use cfg\view\view;
-use cfg\word\triple;
-use cfg\word\word;
-use html\html_base;
-use html\user\user as user_dsp;
-use html\view\view as view_dsp;
-use shared\const\views as view_shared;
-use shared\enum\user_profiles;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
@@ -210,7 +210,7 @@ if ($usr->id() > 0) {
 }
 
 $result .= '<br><br>';
-$result .= \html\btn_back($back);
+$result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
 
 echo $result;
 

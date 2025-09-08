@@ -30,7 +30,7 @@
 
 */
 
-namespace cfg\const;
+namespace Zukunft\ZukunftCom\main\php\cfg\const;
 
 class files
 {

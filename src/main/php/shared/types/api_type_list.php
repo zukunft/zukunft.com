@@ -30,13 +30,13 @@
 
 */
 
-namespace shared\types;
+namespace Zukunft\ZukunftCom\main\php\shared\types;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'api_type.php';
 
-use cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 
 class api_type_list
 {

@@ -31,10 +31,10 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
 include_once html_paths::HTML . 'html_selector.php';
@@ -52,19 +52,19 @@ include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
-use controller\api_message;
-use html\html_selector;
-use html\rest_call as api_dsp;
-use html\user\user;
-use html\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\ListOfIdObjects;
-use shared\helper\TextIdObject;
-use shared\types\api_type_list;
-use shared\types\view_styles;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class list_dsp extends ListOfIdObjects
 {

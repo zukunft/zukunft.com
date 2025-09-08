@@ -35,10 +35,10 @@
 
 */
 
-namespace html\component\form;
+namespace Zukunft\ZukunftCom\main\php\web\component\form;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once html_paths::COMPONENT . 'component.php';
@@ -59,21 +59,21 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
-use html\component\component;
-use html\html_base;
-use html\phrase\phrase_list;
-use html\sandbox\db_object as db_object_dsp;
-use html\types\type_lists;
-use html\view\view_list;
-use html\word\triple;
-use shared\api;
-use shared\const\components;
-use shared\const\views;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\library;
-use shared\types\view_styles;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class system_form extends component
 {
@@ -167,7 +167,7 @@ class system_form extends component
      * @param db_object_dsp $dbo the object
      * @return string the html code to request the object plural from the user
      */
-    function form_plural(db_object_dsp $dbo, string $style_text): string
+    function form_field_plural(db_object_dsp $dbo, string $style_text): string
     {
         $html = new html_base();
         $plural = $dbo->plural();
@@ -179,6 +179,96 @@ class system_form extends component
             $plural,
             html_base::INPUT_TEXT,
             '', $style_text
+        );
+    }
+
+    /**
+     * @return string the html code to request a url from the user
+     */
+    function form_field_url(db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field(
+            url_var::URL,
+            $dbo->url(),
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_12
+        );
+    }
+
+    /**
+     * @return string the html code to request the group name
+     */
+    function form_field_group_name(db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field(
+            url_var::GROUP_NAME_LONG,
+            $dbo->name(),
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_8
+        );
+    }
+
+    /**
+     * @return string the html code to request the group name or a list of phrases
+     */
+    function form_field_group_or_phrases(db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field(
+            url_var::GROUP_NAME_LONG,
+            $dbo->name(),
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_8
+        );
+    }
+
+    /**
+     * @return string the html code to request the selection name from the user
+     */
+    function form_field_selection_name(db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field(
+            url_var::GROUP_NAME_LONG,
+            $dbo->name(),
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_8
+        );
+    }
+
+    /**
+     * @return string the html code to request the selection description from the user
+     */
+    function form_field_selection_description(db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field(
+            url_var::GROUP_NAME_LONG,
+            $dbo->name(),
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_8
+        );
+    }
+
+    /**
+     * @return string the html code to request the selection text from the user
+     */
+    function form_field_selection_text(db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field(
+            url_var::GROUP_NAME_LONG,
+            $dbo->name(),
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_8
         );
     }
 

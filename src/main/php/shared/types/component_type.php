@@ -34,83 +34,149 @@
   
 */
 
-namespace shared\types;
+namespace Zukunft\ZukunftCom\main\php\shared\types;
 
 class component_type
 {
+
+    // const names in thematic order
+    // *_ID is the fixed database id as defined by the component_list.csv
+    // *_COM is the description of the field shown as a tooltip to the user to help selecting the right field
+
 
     /*
      * start page
      */
 
-    // just to display a fixed text
-    // *_ID is the fixed database id as defined by the component_list.csv
-    const TEXT_COM = "simply to display a variable text";
-    const TEXT = "text";
-    const TEXT_ID = 3;
-    // show a spreadsheet that allow changes
-    const CALC_SHEET_COM = "changeable sheet with words, number and formulas";
-    const CALC_SHEET = "calc_sheet";
-    const CALC_SHEET_ID = 35;
+
+    // the components used for the default start page
+    const string PHRASE_NAME = "phrase_name";
+    const int PHRASE_NAME_ID = 8;
+
+    const string CALC_SHEET = "calc_sheet";
+    const int CALC_SHEET_ID = 35;
+    const string CALC_SHEET_COM = "changeable spreadsheet with words, number and formulas that allow changes";
 
 
     /*
      * system form
      */
 
-    const FORM_TITLE = "system_form_title";
-    const FORM_TITLE_ID = 17;
-    const FORM_BACK = "system_form_back_stack";
-    const FORM_BACK_ID = 18;
-    const FORM_CONFIRM = "system_form_confirm_status";
-    const FORM_CONFIRM_ID = 19;
-    const SHOW_NAME = "system_show_field_name";
-    const SHOW_NAME_ID = 20;
-    const FORM_NAME = "system_form_field_name";
-    const FORM_NAME_ID = 21;
-    const FORM_DESCRIPTION = "system_form_field_description";
-    const FORM_DESCRIPTION_ID = 22;
-    const FORM_PLURAL = "system_form_field_plural";
-    const FORM_PLURAL_ID = 54;
-    const FORM_PHRASE = "system_form_select_phrase";
-    const FORM_PHRASE_ID = 23;
-    const FORM_VERB_SELECTOR = "system_form_select_verb";
-    const FORM_VERB_SELECTOR_ID = 24;
-    const FORM_PHRASE_TYPE = "system_form_select_phrase_type";
-    const FORM_PHRASE_TYPE_ID = 25;
-    const FORM_SOURCE_TYPE = "system_form_select_source_type";
-    const FORM_SOURCE_TYPE_ID = 39;
-    const FORM_REF_TYPE = "system_form_select_ref_type";
-    const FORM_REF_TYPE_ID = 48;
-    const FORM_FORMULA_TYPE = "system_form_select_formula_type";
-    const FORM_FORMULA_TYPE_ID = 49;
-    const FORM_VIEW_TYPE = "system_form_select_view_type";
-    const FORM_VIEW_TYPE_ID = 50;
-    const FORM_VIEW_STYLE = "system_form_select_view_style";
-    const FORM_VIEW_STYLE_ID = 51;
-    const FORM_COMPONENT_TYPE = "system_form_select_component_type";
-    const FORM_COMPONENT_TYPE_ID = 52;
-    const FORM_FORMULA_EXPRESSION = "system_form_field_formula_expression";
-    const FORM_FORMULA_EXPRESSION_ID = 53;
-    const FORM_FORMULA_ALL_FIELDS = "system_form_field_formula_all_vars";
-    const FORM_FORMULA_ALL_FIELDS_ID = 54;
-    const FORM_SHARE_TYPE = "system_form_select_share";
-    const FORM_SHARE_TYPE_ID = 26;
-    const FORM_PROTECTION_TYPE = "system_form_select_protection";
-    const FORM_PROTECTION_TYPE_ID = 27;
-    const FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
-    const FORM_TABLE_LINKED_VIEWS_ID = 28;
-    const FORM_CANCEL = "system_button_cancel";
-    const FORM_CANCEL_ID = 29;
-    const FORM_SAVE = "system_button_save";
-    const FORM_SAVE_ID = 30;
-    const FORM_DEL = "system_button_del";
-    const FORM_DEL_ID = 31;
+    // internal fields used in system forms that should not be used for user views
+    const string FORM_TITLE = "system_form_title";
+    const int FORM_TITLE_ID = 17;
+    const string FORM_FIELD_NAME = "system_form_field_name";
+    const int FORM_FIELD_NAME_ID = 21;
+    const string FORM_FIELD_DESCRIPTION = "system_form_field_description";
+    const int FORM_FIELD_DESCRIPTION_ID = 22;
+    const string FORM_FIELD_URL = "system_form_field_url";
+    const int FORM_FIELD_URL_ID = 71;
+    const string FORM_FIELD_PLURAL = "system_form_field_plural";
+    const int FORM_FIELD_PLURAL_ID = 54;
+    const string FORM_FIELD_FORMULA_EXPRESSION = "system_form_field_formula_expression";
+    const int FORM_FIELD_FORMULA_EXPRESSION_ID = 53;
+    const string FORM_FIELD_FORMULA_ALL_VAR_NEEDED = "system_form_field_formula_all_vars";
+    const int FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID = 54;
+    const string FORM_FIELD_GROUP = "system_form_field_group";
+    const int FORM_FIELD_GROUP_ID = 69;
+    const string FORM_FIELD_GROUP_OR_PHRASES = "system_form_field_group_or_phrase_list";
+    const int FORM_FIELD_GROUP_OR_PHRASES_ID = 70;
+    const string FORM_FIELD_SELECTION_NAME = "system_form_selection_name";
+    const int FORM_FIELD_SELECTION_NAME_ID = 72;
+    const string FORM_FIELD_SELECTION_DESCRIPTION = "system_form_selection_description";
+    const int FORM_FIELD_SELECTION_DESCRIPTION_ID = 73;
+    const string FORM_FIELD_SELECTION_TEXT = "system_form_selection_text";
+    const int FORM_FIELD_SELECTION_TEXT_ID = 74;
+    const string FORM_SELECT_PHRASE = "system_form_select_phrase";
+    const int FORM_SELECT_PHRASE_ID = 23;
+    const string FORM_SELECT_PHRASES = "system_form_select_multi_phrases";
+    const int FORM_SELECT_PHRASES_ID = 75;
+    const string FORM_SELECT_VERB = "system_form_select_verb";
+    const int FORM_SELECT_VERB_ID = 24;
+    const string FORM_SELECT_VERBS = "system_form_select_multi_verbs";
+    const int FORM_SELECT_VERBS_ID = 76;
+    const string FORM_SELECT_FORMULA = "system_form_select_formula";
+    const int FORM_SELECT_FORMULA_ID = 77;
+    const string FORM_SELECT_FORMULAS = "system_form_select_multi_formulas";
+    const int FORM_SELECT_FORMULAS_ID = 78;
+    const string FORM_SELECT_TERM = "system_form_select_term";
+    const int FORM_SELECT_TERM_ID = 79;
+    const string FORM_SELECT_TERMS = "system_form_select_multi_terms";
+    const int FORM_SELECT_TERMS_ID = 80;
+    const string FORM_SELECT_VALUE = "system_form_select_value";
+    const int FORM_SELECT_VALUE_ID = 81;
+    const string FORM_SELECT_VALUES = "system_form_select_multi_values";
+    const int FORM_SELECT_VALUES_ID = 82;
+    const string FORM_SELECT_RESULT = "system_form_select_result";
+    const int FORM_SELECT_RESULT_ID = 83;
+    const string FORM_SELECT_RESULTS = "system_form_select_multi_results";
+    const int FORM_SELECT_RESULTS_ID = 84;
+    const string FORM_SELECT_VIEW = "system_form_select_view";
+    const int FORM_SELECT_VIEW_ID = 85;
+    const string FORM_SELECT_VIEWS = "system_form_select_multi_views";
+    const int FORM_SELECT_VIEWS_ID = 86;
+    const string FORM_SELECT_COMPONENT = "system_form_select_component";
+    const int FORM_SELECT_COMPONENT_ID = 87;
+    const string FORM_SELECT_COMPONENTS = "system_form_select_multi_components";
+    const int FORM_SELECT_COMPONENTS_ID = 88;
+    const string FORM_SELECT_VIEW_DEFAULT = "system_form_select_view_default";
+    const int FORM_SELECT_VIEW_DEFAULT_ID = 90;
+    const string FORM_SELECT_FILE = "system_form_select_file";
+    const int FORM_SELECT_FILE_ID = 91;
+    const string FORM_SELECT_FORMAT_EXPORT = "system_form_select_export_format";
+    const int FORM_SELECT_FORMAT_EXPORT_ID = 92;
+    const string FORM_SELECT_PHRASE_TYPE = "system_form_select_phrase_type";
+    const int FORM_SELECT_PHRASE_TYPE_ID = 25;
+    const string FORM_SELECT_SOURCE_TYPE = "system_form_select_source_type";
+    const int FORM_SELECT_SOURCE_TYPE_ID = 39;
+    const string FORM_SELECT_REF_TYPE = "system_form_select_ref_type";
+    const int FORM_SELECT_REF_TYPE_ID = 48;
+    const string FORM_SELECT_FORMULA_TYPE = "system_form_select_formula_type";
+    const int FORM_SELECT_FORMULA_TYPE_ID = 49;
+    const string FORM_SELECT_VIEW_TYPE = "system_form_select_view_type";
+    const int FORM_SELECT_VIEW_TYPE_ID = 50;
+    const string FORM_SELECT_VIEW_STYLE = "system_form_select_view_style";
+    const int FORM_SELECT_VIEW_STYLE_ID = 51;
+    const string FORM_SELECT_COMPONENT_TYPE = "system_form_select_component_type";
+    const int FORM_SELECT_COMPONENT_TYPE_ID = 52;
+    const string FORM_SELECT_FORMULA_LINK_TYPE = "system_form_select_formula_link_type";
+    const int FORM_SELECT_FORMULA_LINK_TYPE_ID = 100;
+    const string FORM_SELECT_VIEW_LINK_TYPE = "system_form_select_view_link_type";
+    const int FORM_SELECT_VIEW_LINK_TYPE_ID = 101;
+    const string FORM_SELECT_COMPONENT_LINK_TYPE = "system_form_select_component_link_type";
+    const int FORM_SELECT_VIEW_COMPONENT_TYPE_ID = 99;
+    const string FORM_SHARE_TYPE = "system_form_select_share";
+    const int FORM_SHARE_TYPE_ID = 26;
+    const string FORM_PROTECTION_TYPE = "system_form_select_protection";
+    const int FORM_PROTECTION_TYPE_ID = 27;
+    const string FORM_TABLE_LINKED_VIEWS = "system_form_link_table";
+    const int FORM_TABLE_LINKED_VIEWS_ID = 93;
+    const string FORM_BUTTON_CANCEL = "system_button_cancel";
+    const int FORM_BUTTON_CANCEL_ID = 29;
+    const string FORM_BUTTON_SAVE = "system_button_save";
+    const int FORM_BUTTON_SAVE_ID = 30;
+    const string FORM_BUTTON_DEL = "system_button_del";
+    const int FORM_BUTTON_DEL_ID = 31;
+    const string FORM_BUTTON_IMPORT = "system_button_import";
+    const int FORM_BUTTON_IMPORT_ID = 94;
+    const string FORM_BUTTON_EXPORT = "system_button_export";
+    const int FORM_BUTTON_EXPORT_ID = 95;
+
+    // preview related to form fields
+    const string FORM_PREVIEW = "system_form_preview";
+    const int FORM_PREVIEW_ID = 89;
+
+    // hidden form fields
+    const string FORM_HIDDEN_BACK = "system_form_back_stack";
+    const int FORM_HIDDEN_BACK_ID = 18;
+    const string FORM_HIDDEN_STEP = "system_form_confirm_status";
+    const int FORM_HIDDEN_STEP_ID = 19;
+
     // simple close the form section
-    const FORM_END = "form_end";
-    const FORM_END_ID = 32;
-    const FORM_VIEW_SELECT = "form_view_select";
-    const FORM_VIEW_SELECT_ID = 41;
+    const string FORM_END = "form_end";
+    const int FORM_END_ID = 32;
+    const string FORM_VIEW_SELECT = "form_view_select";
+    const int FORM_VIEW_SELECT_ID = 41;
 
 
     /*
@@ -118,12 +184,24 @@ class component_type
      */
 
     // internal components used for formatting
-    const ROW_START = "row_start";
-    const ROW_START_ID = 33;
-    const ROW_RIGHT = "row_right";
-    const ROW_RIGHT_ID = 34;
-    const ROW_END = "row_end";
-    const ROW_END_ID = 35;
+    const string ROW_START = "row_start";
+    const int ROW_START_ID = 33;
+    const string ROW_RIGHT = "row_right";
+    const int ROW_RIGHT_ID = 34;
+    const string ROW_END = "row_end";
+    const int ROW_END_ID = 35;
+
+
+    /*
+     * fixed system pages
+     */
+
+    const string SYSTEM_TITLE = "system_title";
+    const string SYSTEM_BODY_ABOUT = "system_body_about";
+    const string SYSTEM_BODY_ERROR_LOG = "system_body_error_log";
+    const string SYSTEM_BODY_ERROR_UPDATE = "system_body_error_update";
+    const string SYSTEM_BODY_PROCESS_PROGRESS = "system_body_process_progress";
+    const string SYSTEM_BODY_PROCESS_LIST = "system_body_process_list";
 
 
     /*
@@ -131,105 +209,155 @@ class component_type
      */
 
     // select a view
-    const VIEW_SELECT = "view_select";
-    const VIEW_SELECT_ID = 2;
+    const string VIEW_SELECT = "view_select";
+    const int VIEW_SELECT_ID = 2;
     // show a list of external references
-    const REF_LIST_WORD = "ref_list";
-    const REF_LIST_WORD_ID = 42;
-    const LINK_LIST_WORD = "link_list";
-    const LINK_LIST_WORD_ID = 43;
-    const USAGE_WORD = "usage";
-    const USAGE_WORD_ID = 44;
-    const SYSTEM_CHANGE_LOG = "change_log";
-    const SYSTEM_CHANGE_LOG_ID = 45;
-    const TRIPLE_LIST = "triples_related";
-    const TRIPLE_LIST_ID = 48;
+    const string LIST_PHRASES = "phrase_list";
+    const int LIST_PHRASES_ID = 96;
+    const string LIST_RESULTS = "result_list";
+    const int LIST_RESULTS_ID = 97;
+    const string LIST_FORMULAS = "formula_list";
+    const int LIST_FORMULAS_ID = 98;
+    const string LIST_REF = "ref_list";
+    const int LIST_REF_ID = 42;
+    const string LINK_LIST_WORD = "link_list";
+    const int LINK_LIST_WORD_ID = 43;
+    const string USAGE_WORD = "usage";
+    const int USAGE_WORD_ID = 44;
+    const string SYSTEM_CHANGE_LOG = "change_log";
+    const int SYSTEM_CHANGE_LOG_ID = 45;
+    const string TRIPLE_LIST = "triples_related";
+    const int TRIPLE_LIST_ID = 48;
 
     // show the user specific name of a word or triple with the description on mouseover without allowing to change it
-    const PHRASE = "phrase";
-    const PHRASE_ID = 4;
+    const string PHRASE = "phrase";
+    const int PHRASE_ID = 4;
     // show the word or triple name and give the user the possibility to change the name
-    const PHRASE_NAME = "phrase_name";
-    const PHRASE_NAME_ID = 8;
-    const PHRASE_SELECT = "phrase_select";
-    const PHRASE_SELECT_ID = 1;
+    const string PHRASE_SELECT = "phrase_select";
+    const int PHRASE_SELECT_ID = 1;
     // show all word that this words is based on
-    const VERB_NAME = "verb_name";
-    const VERB_NAME_ID = 37;
-    const WORDS_UP = "word_list_up";
+    const string VERB_NAME = "verb_name";
+    const int VERB_NAME_ID = 37;
+    const string WORDS_UP = "word_list_up";
     // show all words that are based on the given start word
-    const WORDS_DOWN = "word_list_down";
+    const string WORDS_DOWN = "word_list_down";
     // a word list with some key numbers e.g. all companies with the PE ratio
-    const NUMERIC_VALUE = "word_value_list";
+    const string NUMERIC_VALUE = "word_value_list";
     // shows all: all words that link to the given word and all values related to the given word
-    const VALUES_ALL = "values_all";
+    const string VALUES_ALL = "values_all";
     // display all formulas related to the given word
-    const FORMULAS = "formula_list";
+    const string FORMULAS = "formula_list";
     // show a list of formula results related to a word
-    const FORMULA_RESULTS = "formula_results";
+    const string FORMULA_RESULTS = "formula_results";
     // offer to configure and create an JSON file
-    const JSON_EXPORT = "export_json";
+    const string JSON_EXPORT = "export_json";
     // offer to configure and create an XML file
-    const XML_EXPORT = "export_xml";
+    const string XML_EXPORT = "export_xml";
     // offer to configure and create an CSV file
-    const CSV_EXPORT = "export_csv";
+    const string CSV_EXPORT = "export_csv";
     // show a list of words and triples with a link type selector
-    const LINK = "link";
+    const string LINK = "link";
 
 
     /*
      * related
      */
 
+    const string SHOW_NAME = "system_show_field_name";
+    const int SHOW_NAME_ID = 20;
+
+    const string TEXT = "text";
+    const int TEXT_ID = 3;
+    const string TEXT_COM = "simply to display a variable text";
+
+
     // display a changeable list as a table (e.g. ABB as first word, Cash Flow Statement as second word)
-    const VALUES_RELATED = "values_related";
-    const VALUES_RELATED_ID = 11;
+    const string VALUES_RELATED = "values_related";
+    const int VALUES_RELATED_ID = 11;
 
 
     // a list with all types for the initial load with name, code_id and description
-    const ALL_TYPES = [
+    const array ALL_TYPES = [
         self::TEXT,self::TEXT_COM,
         self::CALC_SHEET,self::CALC_SHEET_COM
     ];
 
     // list of component types that should not be used for non system views
-    const SYSTEM_TYPES = array(
+    const array SYSTEM_TYPES = array(
         self::FORM_TITLE,
-        self::FORM_BACK,
-        self::FORM_CONFIRM,
-        self::SHOW_NAME,
-        self::FORM_NAME,
-        self::FORM_DESCRIPTION,
-        self::FORM_PLURAL,
-        self::FORM_PHRASE,
-        self::FORM_VERB_SELECTOR,
-        self::FORM_PHRASE_TYPE,
-        self::FORM_SOURCE_TYPE,
+        self::FORM_FIELD_NAME,
+        self::FORM_FIELD_DESCRIPTION,
+        self::FORM_FIELD_URL,
+        self::FORM_FIELD_PLURAL,
+        self::FORM_FIELD_FORMULA_EXPRESSION,
+        self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED,
+        self::FORM_FIELD_GROUP,
+        self::FORM_FIELD_GROUP_OR_PHRASES,
+        self::FORM_FIELD_SELECTION_NAME,
+        self::FORM_FIELD_SELECTION_DESCRIPTION,
+        self::FORM_FIELD_SELECTION_TEXT,
+        self::FORM_SELECT_PHRASE,
+        self::FORM_SELECT_PHRASES,
+        self::FORM_SELECT_VERB,
+        self::FORM_SELECT_VERBS,
+        self::FORM_SELECT_FORMULA,
+        self::FORM_SELECT_FORMULAS,
+        self::FORM_SELECT_TERM,
+        self::FORM_SELECT_TERMS,
+        self::FORM_SELECT_VALUE,
+        self::FORM_SELECT_VALUES,
+        self::FORM_SELECT_RESULT,
+        self::FORM_SELECT_RESULTS,
+        self::FORM_SELECT_VIEW,
+        self::FORM_SELECT_VIEWS,
+        self::FORM_SELECT_COMPONENT,
+        self::FORM_SELECT_COMPONENTS,
+        self::FORM_SELECT_VIEW_DEFAULT,
+        self::FORM_SELECT_FILE,
+        self::FORM_SELECT_FORMAT_EXPORT,
+        self::FORM_SELECT_PHRASE_TYPE,
+        self::FORM_SELECT_SOURCE_TYPE,
+        self::FORM_SELECT_REF_TYPE,
+        self::FORM_SELECT_FORMULA_TYPE,
+        self::FORM_SELECT_VIEW_TYPE,
+        self::FORM_SELECT_VIEW_STYLE,
+        self::FORM_SELECT_COMPONENT_TYPE,
+        self::FORM_SELECT_FORMULA_LINK_TYPE,
+        self::FORM_SELECT_VIEW_LINK_TYPE,
+        self::FORM_SELECT_COMPONENT_LINK_TYPE,
         self::FORM_SHARE_TYPE,
         self::FORM_PROTECTION_TYPE,
         self::FORM_TABLE_LINKED_VIEWS,
-        self::FORM_CANCEL,
-        self::FORM_SAVE,
-        self::FORM_DEL,
+        self::FORM_BUTTON_CANCEL,
+        self::FORM_BUTTON_SAVE,
+        self::FORM_BUTTON_DEL,
+        self::FORM_BUTTON_IMPORT,
+        self::FORM_BUTTON_EXPORT,
         self::FORM_END,
         self::ROW_START,
         self::ROW_RIGHT,
-        self::ROW_END
+        self::ROW_END,
+        self::FORM_HIDDEN_BACK,
+        self::FORM_HIDDEN_STEP,
+        self::SHOW_NAME,
+        self::SYSTEM_TITLE
     );
 
     // list of component types that are a button
-    const BUTTON_TYPES = array(
-        self::FORM_CANCEL,
-        self::FORM_SAVE,
-        self::FORM_DEL
+    const array BUTTON_TYPES = array(
+        self::FORM_BUTTON_CANCEL,
+        self::FORM_BUTTON_SAVE,
+        self::FORM_BUTTON_DEL,
+        self::FORM_BUTTON_IMPORT,
+        self::FORM_BUTTON_EXPORT
     );
 
-    // list of component types that are a button
-    const HIDDEN_TYPES = array(
+    // list of component types that are a e.g. button
+    const array HIDDEN_TYPES = array(
         self::ROW_START,
         self::FORM_TITLE,
-        self::FORM_BACK,
-        self::FORM_CONFIRM,
+        self::FORM_HIDDEN_BACK,
+        self::FORM_HIDDEN_STEP,
         self::FORM_END,
         self::ROW_START,
         self::ROW_RIGHT,
@@ -237,49 +365,61 @@ class component_type
     );
 
     // list of the component types used for unit testing
+    // in order of const definition which should be also the thematic order
     // TODO align with component_types.csv
-    const TEST_TYPES = array(
-        [self::PHRASE_SELECT, self::PHRASE_SELECT_ID],
-        [self::VIEW_SELECT, self::VIEW_SELECT_ID],
+    const array TEST_TYPES = array(
         [self::TEXT, self::TEXT_ID],
-        [self::PHRASE, self::PHRASE_ID],
-        [self::PHRASE_NAME, self::PHRASE_NAME_ID],
-        [self::VERB_NAME, self::VERB_NAME_ID],
-        [self::VALUES_RELATED, self::VALUES_RELATED_ID],
+        [self::CALC_SHEET, self::CALC_SHEET_ID],
         [self::FORM_TITLE, self::FORM_TITLE_ID],
-        [self::FORM_BACK, self::FORM_BACK_ID],
-        [self::FORM_CONFIRM, self::FORM_CONFIRM_ID],
-        [self::SHOW_NAME, self::SHOW_NAME_ID],
-        [self::FORM_NAME, self::FORM_NAME_ID],
-        [self::FORM_PLURAL, self::FORM_PLURAL_ID],
-        [self::FORM_DESCRIPTION, self::FORM_DESCRIPTION_ID],
-        [self::FORM_PHRASE, self::FORM_PHRASE_ID],
-        [self::FORM_VERB_SELECTOR, self::FORM_VERB_SELECTOR_ID],
-        [self::FORM_PHRASE_TYPE, self::FORM_PHRASE_TYPE_ID],
+        [self::FORM_FIELD_NAME, self::FORM_FIELD_NAME_ID],
+        [self::FORM_FIELD_DESCRIPTION, self::FORM_FIELD_DESCRIPTION_ID],
+        [self::FORM_FIELD_URL, self::FORM_FIELD_URL_ID],
+        [self::FORM_FIELD_PLURAL, self::FORM_FIELD_PLURAL_ID],
+        [self::FORM_FIELD_FORMULA_EXPRESSION, self::FORM_FIELD_FORMULA_EXPRESSION_ID],
+        [self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED, self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID],
+        [self::FORM_FIELD_GROUP, self::FORM_FIELD_GROUP_ID],
+        [self::FORM_FIELD_GROUP_OR_PHRASES, self::FORM_FIELD_GROUP_OR_PHRASES_ID],
+        [self::FORM_FIELD_SELECTION_NAME, self::FORM_FIELD_SELECTION_NAME_ID],
+        [self::FORM_FIELD_SELECTION_DESCRIPTION, self::FORM_FIELD_SELECTION_DESCRIPTION_ID],
+        [self::FORM_FIELD_SELECTION_TEXT, self::FORM_FIELD_SELECTION_TEXT_ID],
+        [self::FORM_SELECT_PHRASE, self::FORM_SELECT_PHRASE_ID],
+        [self::FORM_SELECT_VERB, self::FORM_SELECT_VERB_ID],
+        [self::FORM_SELECT_PHRASE_TYPE, self::FORM_SELECT_PHRASE_TYPE_ID],
         [self::FORM_SHARE_TYPE, self::FORM_SHARE_TYPE_ID],
         [self::FORM_PROTECTION_TYPE, self::FORM_PROTECTION_TYPE_ID],
         [self::FORM_TABLE_LINKED_VIEWS, self::FORM_TABLE_LINKED_VIEWS_ID],
-        [self::FORM_CANCEL, self::FORM_CANCEL_ID],
-        [self::FORM_SAVE, self::FORM_SAVE_ID],
-        [self::FORM_DEL, self::FORM_DEL_ID],
+        [self::FORM_BUTTON_CANCEL, self::FORM_BUTTON_CANCEL_ID],
+        [self::FORM_BUTTON_SAVE, self::FORM_BUTTON_SAVE_ID],
+        [self::FORM_BUTTON_DEL, self::FORM_BUTTON_DEL_ID],
+        [self::FORM_BUTTON_IMPORT, self::FORM_BUTTON_IMPORT_ID],
+        [self::FORM_BUTTON_EXPORT, self::FORM_BUTTON_EXPORT_ID],
         [self::FORM_END, self::FORM_END_ID],
         [self::ROW_START, self::ROW_START_ID],
         [self::ROW_RIGHT, self::ROW_RIGHT_ID],
         [self::ROW_END, self::ROW_END_ID],
-        [self::CALC_SHEET, self::CALC_SHEET_ID],
-        [self::FORM_SOURCE_TYPE, self::FORM_SOURCE_TYPE_ID],
-        [self::FORM_REF_TYPE, self::FORM_REF_TYPE_ID],
-        [self::FORM_FORMULA_TYPE, self::FORM_FORMULA_TYPE_ID],
-        [self::FORM_VIEW_TYPE, self::FORM_VIEW_TYPE_ID],
-        [self::FORM_COMPONENT_TYPE, self::FORM_COMPONENT_TYPE_ID],
-        [self::FORM_VIEW_STYLE, self::FORM_VIEW_STYLE_ID],
-        [self::FORM_FORMULA_EXPRESSION, self::FORM_FORMULA_EXPRESSION_ID],
-        [self::FORM_FORMULA_ALL_FIELDS, self::FORM_FORMULA_ALL_FIELDS_ID],
+        [self::FORM_SELECT_SOURCE_TYPE, self::FORM_SELECT_SOURCE_TYPE_ID],
+        [self::FORM_SELECT_REF_TYPE, self::FORM_SELECT_REF_TYPE_ID],
+        [self::FORM_SELECT_FORMULA_TYPE, self::FORM_SELECT_FORMULA_TYPE_ID],
+        [self::FORM_SELECT_VIEW_TYPE, self::FORM_SELECT_VIEW_TYPE_ID],
+        [self::FORM_SELECT_COMPONENT_TYPE, self::FORM_SELECT_COMPONENT_TYPE_ID],
+        [self::FORM_SELECT_VIEW_STYLE, self::FORM_SELECT_VIEW_STYLE_ID],
         [self::VIEW_SELECT, self::VIEW_SELECT_ID],
         [self::FORM_VIEW_SELECT, self::FORM_VIEW_SELECT_ID],
         [self::TRIPLE_LIST, self::TRIPLE_LIST_ID],
-        [self::REF_LIST_WORD, self::REF_LIST_WORD_ID],
+        [self::PHRASE_SELECT, self::PHRASE_SELECT_ID],
+        [self::VIEW_SELECT, self::VIEW_SELECT_ID],
+        [self::LIST_PHRASES, self::LIST_PHRASES_ID],
+        [self::LIST_FORMULAS, self::LIST_FORMULAS_ID],
+        [self::LIST_RESULTS, self::LIST_RESULTS_ID],
+        [self::LIST_REF, self::LIST_REF_ID],
         [self::LINK_LIST_WORD, self::LINK_LIST_WORD_ID],
+        [self::PHRASE, self::PHRASE_ID],
+        [self::PHRASE_NAME, self::PHRASE_NAME_ID],
+        [self::VERB_NAME, self::VERB_NAME_ID],
+        [self::VALUES_RELATED, self::VALUES_RELATED_ID],
+        [self::FORM_HIDDEN_BACK, self::FORM_HIDDEN_BACK_ID],
+        [self::FORM_HIDDEN_STEP, self::FORM_HIDDEN_STEP_ID],
+        [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::USAGE_WORD, self::USAGE_WORD_ID],
         [self::SYSTEM_CHANGE_LOG, self::SYSTEM_CHANGE_LOG_ID]
     );

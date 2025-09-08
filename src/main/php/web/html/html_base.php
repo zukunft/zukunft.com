@@ -32,14 +32,14 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use cfg\const\paths;
-use shared\api;
-use shared\const\rest_ctrl;
-use shared\library;
-use shared\types\view_styles;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
@@ -712,10 +712,10 @@ class html_base
                     '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
-                $result .= \html\btn_back($back);
+                $result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
             }
             if ($del_call <> "") {
-                $result .= \html\btn_del('delete', $del_call);
+                $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete', $del_call);
             }
         }
         $result .= '</form>';
@@ -729,7 +729,14 @@ class html_base
     {
         $result = $this->header('about', "center_form"); // reset the html code var
 
-        $result .= $this->dsp_form_center();
+        $result .= $this->about_body();
+
+        return $result;
+    }
+
+    function about_body(): string
+    {
+        $result = $this->dsp_form_center();
         $result .= $this->logo_big();
         $result .= '<br><br>';
         $result .= 'is sponsored by <br><br>';
@@ -748,6 +755,7 @@ class html_base
 
         return $result;
     }
+
 
     /*
      * output device specific support functions for the pure HTML version
@@ -817,7 +825,7 @@ class html_base
                 $result .= $this->ref($url, 'down');
             }
             $result .= ' ';
-            $result .= \html\btn_del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
+            $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
             $result .= '<br>';
         }
 
@@ -1130,10 +1138,10 @@ class html_base
                     '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
-                $result .= \html\btn_back($back);
+                $result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
             }
             if ($del_call <> "") {
-                $result .= \html\btn_del('delete', $del_call);
+                $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete', $del_call);
             }
         }
         $result .= '</form>';

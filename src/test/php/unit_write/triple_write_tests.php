@@ -30,29 +30,28 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
 
-use cfg\formula\formula;
-use cfg\log\change_link;
-use cfg\user\user;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\word;
-use shared\const\users;
-use shared\enum\change_tables;
-use shared\library;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
-use test\all_tests;
-use test\test_cleanup;
-use function test\zu_test_time_setup;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use function Zukunft\ZukunftCom\test\php\utils\zu_test_time_setup;
 
 class triple_write_tests
 {

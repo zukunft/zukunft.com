@@ -30,9 +30,9 @@
 
 */
 
-namespace shared\enum;
+namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
-use cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
 
 enum value_types: string
 {

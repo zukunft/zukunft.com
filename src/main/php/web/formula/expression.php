@@ -33,10 +33,10 @@
 
 */
 
-namespace html\formula;
+namespace Zukunft\ZukunftCom\main\php\web\formula;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::ELEMENT . 'element.php';
 include_once html_paths::ELEMENT . 'element_list.php';
 include_once html_paths::PHRASE . 'term.php';
@@ -49,17 +49,17 @@ include_once paths::SHARED_CALC . 'parameter_type.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED . 'library.php';
 
-use html\element\element;
-use html\element\element_list;
-use html\phrase\term;
-use html\phrase\term_list;
-use html\verb\verb;
-use html\word\triple;
-use html\word\word;
-use shared\calc\expression as shared_expression;
-use shared\calc\parameter_type;
-use shared\const\chars;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\web\element\element;
+use Zukunft\ZukunftCom\main\php\web\element\element_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\calc\expression as shared_expression;
+use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class expression extends shared_expression
 {

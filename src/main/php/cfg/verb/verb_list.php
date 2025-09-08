@@ -30,9 +30,9 @@
   
 */
 
-namespace cfg\verb;
+namespace Zukunft\ZukunftCom\main\php\cfg\verb;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::DB . 'sql_db.php';
@@ -51,21 +51,21 @@ include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\helper\type_list;
-use cfg\phrase\phrase;
-use cfg\phrase\term_list;
-use cfg\sandbox\sandbox;
-use cfg\system\system_time_type;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\word\triple;
-use cfg\word\triple_db;
-use cfg\word\word;
-use shared\enum\foaf_direction;
-use shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class verb_list extends type_list
 {

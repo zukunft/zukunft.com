@@ -46,10 +46,10 @@
   
 */
 
-namespace html\word;
+namespace Zukunft\ZukunftCom\main\php\web\word;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
@@ -82,33 +82,33 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use controller\api_message;
-use html\button;
-use html\formula\formula;
-use html\helper\config;
-use html\html_base;
-use html\html_selector;
-use html\log\change_log_named;
-use html\log\user_log_display;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\phrase\term;
-use html\sandbox\sandbox_code_id;
-use html\styles;
-use html\system\back_trace;
-use html\types\type_lists;
-use html\user\user_message;
-use html\verb\verb_list;
-use html\view\view;
-use shared\const\rest_ctrl;
-use shared\const\views;
-use shared\const\words;
-use shared\enum\foaf_direction;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\types\phrase_type;
-use shared\types\view_styles;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\web\button;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
+use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class word extends sandbox_code_id
 {
@@ -792,7 +792,7 @@ class word extends sandbox_code_id
 
         if ($usr->is_admin()) {
             // admin users should always have the possibility to create a new link type
-            $result .= \html\btn_add('add new link type', '/http/verb_add.php?back=' . $back);
+            $result .= \Zukunft\ZukunftCom\main\php\web\btn_add('add new link type', '/http/verb_add.php?back=' . $back);
         }
 
         return $result;

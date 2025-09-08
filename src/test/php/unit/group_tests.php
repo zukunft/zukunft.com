@@ -30,9 +30,9 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_GROUP . 'group_id.php';
 include_once paths::MODEL_GROUP . 'group_link.php';
@@ -40,17 +40,17 @@ include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_GROUP . 'result_id.php';
 include_once paths::SHARED_CONST . 'groups.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\group\group;
-use cfg\group\group_id;
-use cfg\group\group_link;
-use cfg\group\result_id;
-use cfg\phrase\phrase_list;
-use shared\const\groups;
-use shared\const\values;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_link;
+use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class group_tests
 {

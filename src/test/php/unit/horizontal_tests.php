@@ -43,37 +43,37 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\component\component;
-use cfg\const\def;
-use cfg\const\paths;
-use cfg\formula\formula;
-use cfg\group\group;
-use cfg\helper\data_object;
-use cfg\helper\db_object;
-use cfg\ref\ref;
-use cfg\ref\source;
-use cfg\result\result;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_multi;
-use cfg\user\user;
-use cfg\value\value;
-use cfg\verb\verb;
-use cfg\view\view;
-use cfg\word\triple;
-use cfg\word\word;
-use const\paths as test_paths;
-use html\frontend;
-use html\user\user as user_dsp;
-use shared\const\views;
-use shared\const\views as view_shared;
-use shared\enum\change_actions;
-use shared\library;
-use shared\types\api_type;
-use shared\url_var;
-use test\test_api;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\utils\test_api;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::API_OBJECT . 'controller.php';

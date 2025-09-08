@@ -30,18 +30,18 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use cfg\const\paths;
-use cfg\phrase\phrase;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value_list;
-use shared\api;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\language_codes;
-use shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_USER . 'user.php';

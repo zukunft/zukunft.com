@@ -36,11 +36,11 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\component\component_list;
-use cfg\const\paths;
-use cfg\user\user;
-use controller\controller;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';

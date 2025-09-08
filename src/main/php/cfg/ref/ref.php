@@ -61,9 +61,9 @@
    
 */
 
-namespace cfg\ref;
+namespace Zukunft\ZukunftCom\main\php\cfg\ref;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 // include should also contain the files not shown by use to enable automatic java and rust translation
 // the order is first the extends and then in alphabetic order except word before triple
@@ -107,34 +107,34 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\helper\combine_named;
-use cfg\helper\data_object;
-use cfg\helper\db_object_seq_id;
-use cfg\helper\type_object;
-use cfg\log\change;
-use cfg\log\change_link;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_link;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
-use shared\enum\change_actions;
-use shared\enum\change_tables;
-use shared\helper\CombineObject;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
-use shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 class ref extends sandbox_link
 {

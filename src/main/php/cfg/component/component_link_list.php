@@ -42,9 +42,9 @@
   
 */
 
-namespace cfg\component;
+namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
 include_once paths::DB . 'sql_creator.php';
@@ -56,14 +56,14 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_VIEW . 'view.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\sandbox\sandbox_link;
-use cfg\sandbox\sandbox_link_list;
-use cfg\user\user_message;
-use cfg\view\view;
-use cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
 
 class component_link_list extends sandbox_link_list
 {

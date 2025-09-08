@@ -30,12 +30,12 @@
 */
 
 // standard zukunft header for callable php files to allow debugging and lib loading
-use cfg\user\user;
-use cfg\view\view;
-use cfg\word\word;
-use html\view\view as view_dsp;
-use html\word\word as word_dsp;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -55,7 +55,7 @@ $result .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    $html = new \html\html_base();
+    $html = new \Zukunft\ZukunftCom\main\php\web\html\html_base();
 
     $usr->load_usr_data();
 

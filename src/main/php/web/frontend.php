@@ -29,10 +29,10 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::WEB_CONST . 'paths.php';
 
@@ -94,30 +94,30 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
-use const\files as test_files;
-use html\component\component_exe as component_dsp;
-use html\formula\formula as formula_dsp;
-use html\helper\data_object;
-use html\ref\ref as ref_dsp;
-use html\ref\source as source_dsp;
-use html\result\result as result_dsp;
-use html\sandbox\db_object as db_object_dsp;
-use html\sandbox\sandbox as sandbox_dsp;
-use html\sandbox\sandbox_named as sandbox_named_dsp;
-use html\types\type_lists;
-use html\user\user as user_dsp;
-use html\user\user_message;
-use html\value\value as value_dsp;
-use html\verb\verb as verb_dsp;
-use html\view\view as view_dsp;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
-use shared\api;
-use shared\const\rest_ctrl;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\library;
-use shared\url_var;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named_dsp;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Exception;
 
 class frontend

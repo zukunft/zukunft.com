@@ -33,10 +33,10 @@
 
 */
 
-namespace html\element;
+namespace Zukunft\ZukunftCom\main\php\web\element;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::WORD . 'triple.php';
@@ -45,13 +45,13 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\sandbox\db_object;
-use html\formula\formula;
-use html\user\user_message;
-use html\verb\verb;
-use html\word\triple;
-use html\word\word;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class element extends db_object
 {

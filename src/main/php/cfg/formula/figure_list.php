@@ -34,9 +34,9 @@
   
 */
 
-namespace cfg\formula;
+namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
@@ -49,14 +49,14 @@ include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\phrase\term_list;
-use cfg\result\result;
-use cfg\sandbox\sandbox_list;
-use cfg\user\user_message;
-use cfg\value\value;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class figure_list extends sandbox_list
 {

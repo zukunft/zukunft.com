@@ -29,10 +29,10 @@
 
 */
 
-namespace html\word;
+namespace Zukunft\ZukunftCom\main\php\web\word;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
@@ -45,16 +45,16 @@ include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
-use html\html_base;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\sandbox\list_dsp;
-use html\styles;
-use html\user\user_message;
-use html\word\triple as triple_dsp;
-use html\word\triple_list as triple_list_dsp;
-use shared\enum\foaf_direction;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class triple_list extends list_dsp
 {
@@ -247,7 +247,7 @@ class triple_list extends list_dsp
                     // give the user the possibility to add a similar word
                     $result .= '  <tr>';
                     $result .= '    <td>';
-                    $result .= '      ' . \html\btn_add("Add similar word", '/http/word_add.php?verb=' .
+                    $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\btn_add("Add similar word", '/http/word_add.php?verb=' .
                             $directional_link_type_id . '&word=' . $start_id . '&type=' . $lnk->tob()->type_id . '&back=' . $start_id);
                     $result .= '    </td>';
                     $result .= '  </tr>';

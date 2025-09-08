@@ -30,22 +30,21 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'change_tables.php';
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\log\change_link;
-use cfg\user\user;
-use cfg\view\view;
-use shared\const\components;
-use shared\const\users;
-use shared\const\views;
-use shared\enum\change_tables;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_link_write_tests
 {

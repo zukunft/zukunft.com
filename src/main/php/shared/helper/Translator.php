@@ -30,15 +30,15 @@
 
 */
 
-namespace shared\helper;
+namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'messages.php';
 
-use cfg\const\files;
-use shared\enum\language_codes;
-use shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 class Translator
 {

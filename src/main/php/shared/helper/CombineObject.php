@@ -30,12 +30,12 @@
 
 */
 
-namespace shared\helper;
+namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
-use cfg\word\triple;
-use html\word\triple as triple_dsp;
-use cfg\word\word;
-use html\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
 
 class CombineObject
 {

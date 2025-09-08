@@ -29,18 +29,18 @@
   
 */
 
-namespace html\system;
+namespace Zukunft\ZukunftCom\main\php\web\system;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use DateTime;
 use DateTimeInterface;
 use Exception;
-use html\const\paths as html_paths;
-use html\html_base;
-use html\sandbox\db_object as db_object_dsp;
-use html\user\user_message;
-use shared\json_fields;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::API_OBJECT . 'controller.php';
@@ -290,7 +290,7 @@ class job extends db_object_dsp
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(\html\rest_ctrl::VIEW, $this->id(), $back, url_var::WORDS);
+        $url = $html->url(\Zukunft\ZukunftCom\main\php\web\rest_ctrl::VIEW, $this->id(), $back, url_var::WORDS);
         return $html->ref($url, $this->name(), $this->description(), $style);
     }
 

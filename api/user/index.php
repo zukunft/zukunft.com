@@ -41,7 +41,7 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
@@ -50,9 +50,9 @@ include_once paths::API_OBJECT . 'controller.php';
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::MODEL_USER . 'user.php';
 
-use controller\controller;
-use cfg\user\user;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
 $db_con = prg_start("api/user", "", false);

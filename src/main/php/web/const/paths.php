@@ -33,7 +33,7 @@
 
 */
 
-namespace html\const;
+namespace Zukunft\ZukunftCom\main\php\web\const;
 
 class paths
 {
@@ -47,7 +47,7 @@ class paths
 
     const COMPONENT = self::WEB . 'component' . DIRECTORY_SEPARATOR;
     const SHEET = self::COMPONENT . 'sheet' . DIRECTORY_SEPARATOR;
-    const FORM = self::COMPONENT . 'form' . DIRECTORY_SEPARATOR;
+    const EXECUTE = self::COMPONENT . 'execute' . DIRECTORY_SEPARATOR;
 
     const CONST = self::WEB . 'const' . DIRECTORY_SEPARATOR;
     const ELEMENT = self::WEB . 'element' . DIRECTORY_SEPARATOR;

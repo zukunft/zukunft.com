@@ -29,10 +29,10 @@
 
 */
 
-namespace html\log;
+namespace Zukunft\ZukunftCom\main\php\web\log;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -49,18 +49,18 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\formula\formula;
-use html\helper\config;
-use html\button;
-use html\html_base;
-use html\system\back_trace;
-use html\user\user_message;
-use shared\const\rest_ctrl;
-use shared\enum\change_actions;
-use shared\enum\change_fields;
-use shared\enum\change_tables;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\button;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class change_log_named extends change_log
 {

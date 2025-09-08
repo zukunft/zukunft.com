@@ -120,9 +120,9 @@
 
 */
 
-namespace cfg\formula;
+namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CALC . 'expression.php';
 include_once paths::MODEL_ELEMENT . 'element.php';
@@ -142,24 +142,24 @@ include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\element\element;
-use cfg\element\element_group;
-use cfg\element\element_group_list;
-use cfg\element\element_list;
-use cfg\phrase\phr_ids;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term;
-use cfg\phrase\term_list;
-use cfg\user\user;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_group;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_group_list;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Exception;
-use shared\calc\expression as shared_expression;
-use shared\calc\parameter_type;
-use shared\const\chars;
-use shared\library;
-use shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\calc\expression as shared_expression;
+use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 
 class expression extends shared_expression
 {

@@ -30,23 +30,23 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::VALUE . 'value_list.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\value\value_list;
-use html\value\value_list as value_list_dsp;
-use shared\enum\value_types;
-use shared\library;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class value_list_tests
 {

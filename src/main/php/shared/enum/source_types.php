@@ -30,7 +30,7 @@
 
 */
 
-namespace shared\enum;
+namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
 enum source_types: string
 {

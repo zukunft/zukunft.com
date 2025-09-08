@@ -30,13 +30,13 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\system\job_list;
-use cfg\system\job_type_list;
-use cfg\user\user;
-use shared\const\users;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class job_read_tests
 {

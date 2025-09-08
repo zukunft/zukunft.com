@@ -32,10 +32,10 @@
 
 include_once TEST_CONST_PATH . 'files.php';
 
-use cfg\import\import_file;
-use const\paths as test_paths;
-use test\test_cleanup;
-use const\files as test_files;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 function run_import_test($file_list, test_cleanup $t): void
 {

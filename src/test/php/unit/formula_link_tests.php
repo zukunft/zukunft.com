@@ -30,23 +30,23 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_FORMULA . 'formula_link_type.php';
 include_once paths::MODEL_FORMULA . 'formula_link_list.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\formula\formula_link;
-use cfg\formula\formula_link_list;
-use cfg\formula\formula_link_type;
-use const\paths as test_paths;
-use shared\library;
-use test\test_base;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\utils\test_base;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_link_tests
 {

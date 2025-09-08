@@ -32,18 +32,18 @@
 
 */
 
-namespace html\user;
+namespace Zukunft\ZukunftCom\main\php\web\user;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 
-use html\html_base;
-use html\html_selector;
-use html\types\type_list;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\types\type_list;
 
 class user_type_list extends type_list
 {

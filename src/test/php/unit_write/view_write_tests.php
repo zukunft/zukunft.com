@@ -30,24 +30,24 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_VIEW . 'view_db.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 
-use cfg\db\sql_db;
-use cfg\view\view;
-use cfg\view\view_db;
-use cfg\view\view_type;
-use cfg\word\word;
-use html\view\view as view_dsp;
-use shared\const\users;
-use shared\const\views;
-use shared\const\words;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_write_tests
 {

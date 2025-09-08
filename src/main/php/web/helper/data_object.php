@@ -30,10 +30,10 @@
 
 */
 
-namespace html\helper;
+namespace Zukunft\ZukunftCom\main\php\web\helper;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
@@ -41,12 +41,12 @@ include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\phrase\phrase_list;
-use html\types\type_lists;
-use html\user\user_message;
-use html\view\view_list;
-use html\word\word_list;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class data_object
 {

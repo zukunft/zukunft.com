@@ -36,10 +36,10 @@
 
 */
 
-namespace cfg\export;
+namespace Zukunft\ZukunftCom\main\php\service\export;
 
-use cfg\phrase\phrase_list;
-use cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 
 class json_io
 {

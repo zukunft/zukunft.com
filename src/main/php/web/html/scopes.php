@@ -30,7 +30,7 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
 class scopes
 {

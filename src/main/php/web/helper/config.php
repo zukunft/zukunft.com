@@ -32,17 +32,17 @@
 
 */
 
-namespace html\helper;
+namespace Zukunft\ZukunftCom\main\php\web\helper;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-use html\rest_call;
-use html\user\user_message;
-use html\value\value_list;
-use shared\api;
-use shared\enum\messages as msg_id;
-use shared\helper\Config as shared_config;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::HTML . 'rest_call.php';

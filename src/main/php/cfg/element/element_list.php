@@ -35,9 +35,9 @@
 
 */
 
-namespace cfg\element;
+namespace Zukunft\ZukunftCom\main\php\cfg\element;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
@@ -49,15 +49,15 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\formula\formula_db;
-use cfg\phrase\term_list;
-use cfg\sandbox\sandbox_list;
-use cfg\system\sys_log_level;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 class element_list extends sandbox_list
 {

@@ -30,9 +30,9 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use test\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class expression_read_tests
 {

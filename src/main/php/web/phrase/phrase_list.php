@@ -32,28 +32,28 @@
 
 */
 
-namespace html\phrase;
+namespace Zukunft\ZukunftCom\main\php\web\phrase;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-use html\formula\formula;
-use html\helper\config;
-use html\html_base;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\rest_call as api_dsp;
-use html\sandbox\sandbox_list_named;
-use html\user\user_message;
-use html\verb\verb;
-use html\verb\verb_list;
-use html\word\triple;
-use html\word\word;
-use html\word\word_list;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\foaf_direction;
-use shared\library;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 //include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 //include_once html_paths::HELPER . 'config.php';
@@ -530,7 +530,7 @@ class phrase_list extends sandbox_list_named
      */
     function btn_add_value($back): string
     {
-        $result = \html\btn_add_value($this, Null, $back);
+        $result = \Zukunft\ZukunftCom\main\php\web\btn_add_value($this, Null, $back);
         /*
         zu_debug('phrase_list->btn_add_value');
         $val_btn_title = '';

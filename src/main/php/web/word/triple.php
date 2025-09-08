@@ -40,29 +40,29 @@
 
 */
 
-namespace html\word;
+namespace Zukunft\ZukunftCom\main\php\web\word;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-use html\html_base;
-use html\html_selector;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\phrase\term as term_dsp;
-use html\sandbox\sandbox_code_id;
-use html\types\type_lists;
-use html\user\user_message;
-use html\verb\verb as verb_dsp;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\types\phrase_type;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\types\view_styles;
-use shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
 include_once html_paths::TYPES . 'type_lists.php';

@@ -30,11 +30,11 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\html_base;
-use html\ref\ref as ref_dsp;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class reference_ui_tests
 {

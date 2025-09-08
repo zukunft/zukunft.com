@@ -30,10 +30,10 @@
 */
 
 
-namespace html\log;
+namespace Zukunft\ZukunftCom\main\php\web\log;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
 //include_once html_paths::HTML . 'button.php';
@@ -51,21 +51,21 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_db;
-use html\component\component_exe as component;
-use html\formula\formula;
-use html\button;
-use html\html_base;
-use html\system\back_trace;
-use html\user\user;
-use html\value\value;
-use html\view\view;
-use html\word\word;
-use shared\const\rest_ctrl;
-use shared\enum\change_tables;
-use shared\enum\change_fields;
-use shared\enum\messages as msg_id;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\button;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class user_log_display
 {

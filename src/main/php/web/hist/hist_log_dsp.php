@@ -29,15 +29,15 @@
   
 */
 
-namespace html\hist;
+namespace Zukunft\ZukunftCom\main\php\web\hist;
 
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::WORD . 'word.php';
 
-use html\html_base;
-use html\word\word;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\word\word;
 
 class hist_log_dsp
 {

@@ -37,17 +37,17 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\phrase\phrase_list;
-use html\element\element_group;
-use html\figure\figure as figure_dsp;
-use html\figure\figure_list;
-use shared\library;
-use shared\const\formulas;
-use shared\const\words;
-use test\test_api;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\element\element_group;
+use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
+use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\utils\test_api;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class element_group_write_tests
 {

@@ -19,12 +19,12 @@ include_once TEST_PHP_UTIL_PATH . 'test_base.php';
 include_once TEST_PHP_UTIL_PATH . 'all_tests.php';
 
 // load the sql sequence check functions
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 include_once paths::DB . 'sql_sync_sequences.php';
 
-use cfg\db\sql_sync_sequences;
-use cfg\user\user;
-use test\all_tests;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_sync_sequences;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 global $db_con;
 

@@ -30,10 +30,10 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_WORD . 'word.php';
@@ -42,20 +42,18 @@ include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_CONST . 'words.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\phrase\phrase;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
-use cfg\word\word;
-use cfg\word\word_db;
-use html\word\word as word_dsp;
-use shared\const\formulas;
-use shared\const\words;
-use shared\types\phrase_type as phrase_type_shared;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_tests
 {

@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_COMPONENT . 'component.php';
 include_once paths::SERVICE . 'config.php';
@@ -53,24 +53,24 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\component\component;
-use cfg\config;
-use cfg\const\files;
-use cfg\formula\formula_list;
-use cfg\group\group;
-use cfg\phrase\phrase;
-use cfg\result\result_two;
-use cfg\system\sys_log_function;
-use cfg\system\system_time_type;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
-use cfg\user\user_profile_list;
-use cfg\value\value;
-use cfg\value\value_db;
-use shared\const\users;
-use shared\enum\user_profiles;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_two;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class db_check
 {

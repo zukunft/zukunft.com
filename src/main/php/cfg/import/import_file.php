@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\import;
+namespace Zukunft\ZukunftCom\main\php\cfg\import;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::MODEL_IMPORT . 'import.php';
@@ -45,15 +45,15 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'file_types.php';
 include_once TEST_CONST_PATH . 'files.php';
 
-use cfg\const\files;
-use cfg\helper\config_numbers;
-use cfg\user\user;
-use cfg\user\user_message;
-use const\files as test_files;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\types\file_types;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\file_types;
 
 class import_file
 {

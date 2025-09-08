@@ -40,9 +40,9 @@
   
 */
 
-namespace cfg\element;
+namespace Zukunft\ZukunftCom\main\php\cfg\element;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_FORMULA . 'figure_list.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
@@ -56,17 +56,17 @@ include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\formula\figure_list;
-use cfg\formula\formula;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\result\result;
-use cfg\phrase\term_list;
-use cfg\system\base_list;
-use cfg\user\user;
-use cfg\value\value;
-use cfg\word\word;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class element_group extends base_list
 {

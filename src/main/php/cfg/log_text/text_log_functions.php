@@ -29,9 +29,9 @@
   
 */
 
-use cfg\const\paths;
-use cfg\user\user_db;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_SYSTEM . 'sys_log.php';
@@ -44,15 +44,15 @@ include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_db;
-use cfg\system\sys_log;
-use cfg\system\sys_log_function;
-use cfg\system\sys_log_level;
-use cfg\user\user;
-use cfg\view\view;
-use html\view\view as view_dsp;
-use shared\const\users;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 /**
  * for internal functions debugging

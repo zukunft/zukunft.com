@@ -32,7 +32,7 @@
 
 */
 
-namespace shared\const;
+namespace Zukunft\ZukunftCom\main\php\shared\const;
 
 class triples
 {

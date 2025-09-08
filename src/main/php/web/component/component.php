@@ -35,10 +35,10 @@
 
 */
 
-namespace html\component;
+namespace Zukunft\ZukunftCom\main\php\web\component;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_typed.php';
 include_once paths::DB . 'sql_db.php';
@@ -63,26 +63,26 @@ include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\helper\data_object;
-use html\html_base;
-use html\html_selector;
-use html\log\user_log_display;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\sandbox\db_object;
-use html\sandbox\sandbox_code_id;
-use html\system\back_trace;
-use html\types\type_lists;
-use html\user\user_message;
-use html\view\view_list;
-use html\word\word;
-use shared\json_fields;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\types\component_type;
-use shared\types\position_types;
-use shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\component_type;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 
 class component extends sandbox_code_id
 {
@@ -92,14 +92,14 @@ class component extends sandbox_code_id
      */
 
     // curl views
-    const VIEW_ADD = views::COMPONENT_ADD;
-    const VIEW_EDIT = views::COMPONENT_EDIT;
-    const VIEW_DEL = views::COMPONENT_DEL;
+    const string VIEW_ADD = views::COMPONENT_ADD;
+    const string VIEW_EDIT = views::COMPONENT_EDIT;
+    const string VIEW_DEL = views::COMPONENT_DEL;
 
     // curl message id
-    const MSG_ADD = msg_id::COMPONENT_ADD;
-    const MSG_EDIT = msg_id::COMPONENT_EDIT;
-    const MSG_DEL = msg_id::COMPONENT_DEL;
+    const msg_id MSG_ADD = msg_id::COMPONENT_ADD;
+    const msg_id MSG_EDIT = msg_id::COMPONENT_EDIT;
+    const msg_id MSG_DEL = msg_id::COMPONENT_DEL;
 
 
     /*
@@ -473,7 +473,7 @@ class component extends sandbox_code_id
      * @param back_trace|null $back
      * @return string
      */
-    function dsp_edit(int $add_link, word $wrd, back_trace $back = null): string
+    function dsp_edit(int $add_link, word $wrd, ?back_trace $back): string
     {
         $this->log_debug($this->dsp_id() . ' (called from ' . $back->url_encode() . ')');
         $result = '';
@@ -678,7 +678,7 @@ class component extends sandbox_code_id
 
             $result .= $html->dsp_form_end('', $back);
         } else {
-            $result .= '      ' . \html\btn_add('add new', '/http/component_edit.php?id=' . $this->id() . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
+            $result .= '      ' . btn_add('add new', '/http/component_edit.php?id=' . $this->id() . '&add_link=1&word=' . $wrd->id . '&back=' . $back);
         }
         $result .= '    </td>';
         $result .= '  </tr>';
@@ -701,7 +701,7 @@ class component extends sandbox_code_id
         int        $page,
         int        $size,
         string     $call,
-        back_trace $back = null
+        back_trace $back
     ): string
     {
         $this->log_debug("for id " . $this->id() . " page " . $size . ", size " . $size . ", call " . $call . ", back " . $back->url_encode() . ".");
