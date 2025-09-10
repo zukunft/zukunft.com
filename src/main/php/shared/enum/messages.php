@@ -32,114 +32,117 @@
 
 namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
+use ValueError;
+
 enum messages: string
 {
 
     // start and end maker for message id within a text to allow changing the order of vars within a message
-    const VAR_START = 'z$';
-    const VAR_END = '$z';
+    const string VAR_START = 'z$';
+    const string VAR_END = '$z';
 
     // to use the var makers without
-    const VAR_ESC_START = '\z$';
-    const VAR_ESC_END = '\$z';
-    const VAR_TEMP_START = '\zTemp$';
-    const VAR_TEMP_END = '\Temp$z';
-    const VAR_TEMP_VAR = 'VarPrefix';
+    const string VAR_ESC_START = '\z$';
+    const string VAR_ESC_END = '\$z';
+    const string VAR_TEMP_START = '\zTemp$';
+    const string VAR_TEMP_END = '\Temp$z';
+    const string VAR_TEMP_VAR = 'VarPrefix';
 
     // var names
     // the id of a sandbox object
-    const VAR_ID = 'VarObjId';
+    const string VAR_ID = 'VarObjId';
     // the id of the compare sandbox object
-    const VAR_ID_CHK = 'VarObjIdCheck';
+    const string VAR_ID_CHK = 'VarObjIdCheck';
     // the name of a sandbox object
-    const VAR_NAME = 'VarObjName';
+    const string VAR_NAME = 'VarObjName';
     // the list of names e.g. the reserved names that should not be used
-    const VAR_NAME_LIST = 'VarObjNameList';
+    const string VAR_NAME_LIST = 'VarObjNameList';
     // the name of the compare sandbox object
-    const VAR_NAME_CHK = 'VarObjNameCheck';
+    const string VAR_NAME_CHK = 'VarObjNameCheck';
     // the description of a sandbox object using dsp_id()
-    const VAR_SANDBOX_NAME = 'VarSandboxName';
+    const string VAR_SANDBOX_NAME = 'VarSandboxName';
     // the name and if of a word
-    const VAR_WORD_NAME = 'VarWordName';
+    const string VAR_WORD_NAME = 'VarWordName';
     // the name and if of a triple
-    const VAR_TRIPLE_NAME = 'VarTripleName';
+    const string VAR_TRIPLE_NAME = 'VarTripleName';
     // the name and if of a phrase
-    const VAR_PHRASE_NAME = 'VarPhraseName';
+    const string VAR_PHRASE_NAME = 'VarPhraseName';
     // the name and if of a term
-    const VAR_TERM_NAME = 'VarTermName';
+    const string VAR_TERM_NAME = 'VarTermName';
     // the name and if of a view
-    const VAR_VIEW_NAME = 'VarViewName';
+    const string VAR_VIEW_NAME = 'VarViewName';
     // the user/owner of an object
-    const VAR_USER = 'VarUser';
+    const string VAR_USER = 'VarUser';
     // the user/owner of a compare object
-    const VAR_USER_CHK = 'VarUserCheck';
+    const string VAR_USER_CHK = 'VarUserCheck';
     // the name of a user
-    const VAR_USER_NAME = 'VarUserName';
+    const string VAR_USER_NAME = 'VarUserName';
     // the name, profile and permissions of a user
-    const VAR_USER_PROFILE = 'VarUserProfile';
+    const string VAR_USER_PROFILE = 'VarUserProfile';
     // the name of a user of a list
-    const VAR_USER_LIST_NAME = 'VarUserListName';
+    const string VAR_USER_LIST_NAME = 'VarUserListName';
     // the name of a sandbox object
-    const VAR_TYPE = 'VarObjType';
+    const string VAR_TYPE = 'VarObjType';
     // the name of the compare sandbox object
-    const VAR_TYPE_CHK = 'VarObjTypeCheck';
+    const string VAR_TYPE_CHK = 'VarObjTypeCheck';
     // the id of a value object
-    const VAR_VAL_ID = 'VarValueId';
+    const string VAR_VAL_ID = 'VarValueId';
     // the numeric, time, text or geo value of a value
-    const VAR_VALUE = 'VarValue';
+    const string VAR_VALUE = 'VarValue';
     // the numeric, time, text or geo value of a compare value
-    const VAR_VALUE_CHK = 'VarValueCheck';
+    const string VAR_VALUE_CHK = 'VarValueCheck';
     // the real number of values
-    const VAR_VALUE_COUNT = 'VarValueCount';
+    const string VAR_VALUE_COUNT = 'VarValueCount';
     // the expected number of values
-    const VAR_VALUE_COUNT_CHK = 'VarValueCountCheck';
+    const string VAR_VALUE_COUNT_CHK = 'VarValueCountCheck';
     // a list of values
-    const VAR_VALUE_LIST = 'VarValueList';
+    const string VAR_VALUE_LIST = 'VarValueList';
     // the phrase group naming of a value
-    const VAR_GROUP = 'VarGroup';
+    const string VAR_GROUP = 'VarGroup';
     // the phrase group naming of a compare value
-    const VAR_GROUP_CHK = 'VarGroupCheck';
+    const string VAR_GROUP_CHK = 'VarGroupCheck';
     // the source of a value
-    const VAR_SOURCE = 'VarSource';
+    const string VAR_SOURCE = 'VarSource';
     // the source of a compare value
-    const VAR_SOURCE_CHK = 'VarSourceCheck';
-    const VAR_SYMBOL = 'VarSymbol';
+    const string VAR_SOURCE_CHK = 'VarSourceCheck';
+    const string VAR_SYMBOL = 'VarSymbol';
     // the symbol of a compare value
-    const VAR_SYMBOL_CHK = 'VarSymbolCheck';
-    const VAR_FORMULA_CHK = 'VarFormulaCheck';
+    const string VAR_SYMBOL_CHK = 'VarSymbolCheck';
+    const string VAR_FORMULA_CHK = 'VarFormulaCheck';
     // the name of a class
-    const VAR_CLASS_NAME = 'VarClassName';
+    const string VAR_CLASS_NAME = 'VarClassName';
     // the share permission of a sandbox object
-    const VAR_SHARE = 'VarShare';
+    const string VAR_SHARE = 'VarShare';
     // the share permission of the compare sandbox object
-    const VAR_SHARE_CHK = 'VarShareCheck';
+    const string VAR_SHARE_CHK = 'VarShareCheck';
     // the change protection of a sandbox object
-    const VAR_PROTECT = 'VarProtect';
+    const string VAR_PROTECT = 'VarProtect';
     // the change protection of the compare sandbox object
-    const VAR_PROTECT_CHK = 'VarProtectCheck';
+    const string VAR_PROTECT_CHK = 'VarProtectCheck';
     // the exclusion status of a sandbox object
-    const VAR_EXCLUDE = 'VarExclude';
+    const string VAR_EXCLUDE = 'VarExclude';
     // the exclusion status of the compare sandbox object
-    const VAR_EXCLUDE_CHK = 'VarExcludeCheck';
+    const string VAR_EXCLUDE_CHK = 'VarExcludeCheck';
 
-    const VAR_JSON_TEXT = 'VarJsonText';
-    const VAR_SOURCE_NAME = 'VarSourceName';
-    const VAR_COMPONENT_NAME = 'VarComponentName';
-    const VAR_FILE_TYPE = 'VarFileType';
-    const VAR_FILE_NAME = 'VarFileName';
-    const VAR_IP_RANGE = 'VarIpRange';
-    const VAR_SUMMARY = 'VarSummary';
-    const VAR_PART = 'VarPart';
-    const VAR_REQUEST = 'VarRequest';
-    const VAR_ERROR_TEXT = 'VarErrorText';
+    const string VAR_JSON_TEXT = 'VarJsonText';
+    const string VAR_SOURCE_NAME = 'VarSourceName';
+    const string VAR_COMPONENT_NAME = 'VarComponentName';
+    const string VAR_FILE_TYPE = 'VarFileType';
+    const string VAR_FILE_NAME = 'VarFileName';
+    const string VAR_IP_RANGE = 'VarIpRange';
+    const string VAR_SUMMARY = 'VarSummary';
+    const string VAR_PART = 'VarPart';
+    const string VAR_REQUEST = 'VarRequest';
+    const string VAR_ERROR_TEXT = 'VarErrorText';
+    const string VAR_MESSAGE_ID = 'VarMsgId';
+    const string VAR_LANGUAGE = 'VarLanguage';
 
     // for the object main parameters created by the dsp_id function
-    const VAR_TRIPLE = 'VarObjTriple';
-    const VAR_FORMULA = 'VarObjFormula';
-    const VAR_EXPRESSION = 'VarObjExpression';
-    const VAR_JSON_PART = 'VarJsonPart';
-    const VAR_VERB_NAME = 'VarVerbName';
-    const IMPORT_SUCCESS = 'finished successful';
+    const string VAR_FORMULA = 'VarObjFormula';
+    const string VAR_EXPRESSION = 'VarObjExpression';
+    const string VAR_JSON_PART = 'VarJsonPart';
+    const string VAR_VERB_NAME = 'VarVerbName';
+    const string IMPORT_SUCCESS = 'finished successful';
 
     // unique message keys
     // *_txt sample translation to test the English mapping
@@ -196,6 +199,14 @@ enum messages: string
     case LABEL_PROTECTION = 'protection';
 
     // messages with vars
+
+    case MISSING_TRANSLATION = 'translation of "'
+        . self::VAR_START . self::VAR_MESSAGE_ID . self::VAR_END
+        . '" to language "'
+        . self::VAR_START . self::VAR_LANGUAGE . self::VAR_END
+        . '" missing ('
+        . self::VAR_START . self::VAR_ERROR_TEXT . self::VAR_END
+        . ')';
     case MISSING_OVERWRITE = 'internal function overwrite of "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" is missing in class '
@@ -486,7 +497,7 @@ enum messages: string
     case USED_OBJECT_ID_AND_NAME_MISSING =
         self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . ' "'
-        . self::VAR_START . self::VAR_WORD_NAME . self::VAR_END
+        . self::VAR_START . self::VAR_PHRASE_NAME . self::VAR_END
         . '" missing but it is used "'
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '"';
@@ -965,9 +976,6 @@ enum messages: string
     case FORM_FORMULA_ADD_TITLE = 'form_title_formula_add';
     case FORM_FORMULA_EDIT_TITLE = 'form_title_formula_edit';
     case FORM_FORMULA_DEL_TITLE = 'form_title_formula_del';
-    case FORM_FORMULA_LINK_ADD_TITLE = 'form_title_formula_link_add';
-    case FORM_FORMULA_LINK_EDIT_TITLE = 'form_title_formula_link_edit';
-    case FORM_FORMULA_LINK_DEL_TITLE = 'form_title_formula_link_del';
     case FORM_RESULT_ADD_TITLE = 'form_title_result_add';
     case FORM_RESULT_EDIT_TITLE = 'form_title_result_edit';
     case FORM_RESULT_DEL_TITLE = 'form_title_result_del';
@@ -977,18 +985,50 @@ enum messages: string
     case FORM_COMPONENT_ADD_TITLE = 'form_title_component_add';
     case FORM_COMPONENT_EDIT_TITLE = 'form_title_component_edit';
     case FORM_COMPONENT_DEL_TITLE = 'form_title_component_del';
-    case FORM_COMPONENT_LINK_ADD_TITLE = 'form_title_component_link_add';
-    case FORM_COMPONENT_LINK_EDIT_TITLE = 'form_title_component_link_edit';
-    case FORM_COMPONENT_LINK_DEL_TITLE = 'form_title_component_link_del';
+    case FORM_TITLE_VIEW_LINK_ADD = 'form_title_view_link_add';
+    case FORM_TITLE_VIEW_LINK_EDIT = 'form_title_view_link_edit';
+    case FORM_TITLE_VIEW_LINK_DEL = 'form_title_view_link_del';
+    case FORM_TITLE_COMPONENT_LINK_ADD = 'form_title_component_link_add';
+    case FORM_TITLE_COMPONENT_LINK_EDIT = 'form_title_component_link_edit';
+    case FORM_TITLE_COMPONENT_LINK_DEL = 'form_title_component_link_del';
+    case FORM_FORMULA_LINK_ADD_TITLE = 'form_title_formula_link_add';
+    case FORM_FORMULA_LINK_EDIT_TITLE = 'form_title_formula_link_edit';
+    case FORM_FORMULA_LINK_DEL_TITLE = 'form_title_formula_link_del';
+    case FORM_TITLE_CONFIRM_ADD = 'form_title_confirm_add';
+    case FORM_TITLE_CONFIRM_EDIT = 'form_title_confirm_edit';
+    case FORM_TITLE_CONFIRM_DEL = 'form_title_confirm_del';
     case SYSTEM_TITLE_ABOUT = 'system_title_about';
-    case FORM_TITLE_ERROR_LOG = 'form_title_error_log';
-    case FORM_TITLE_ERROR_UPDATE = 'form_title_error_update';
-    case FORM_TITLE_PROCESS_ASYNC = 'form_title_process_async';
-    case FORM_TITLE_PROCESS_LIST = 'form_title_process_list';
+    case SYSTEM_TITLE_SETUP = 'system_title_setup';
+    case SYSTEM_TITLE_SIGNUP = 'system_title_signup';
+    case SYSTEM_TITLE_LOGIN = 'system_title_login';
+    case SYSTEM_TITLE_LOGIN_ACTIVATE = 'system_title_login_activate';
+    case SYSTEM_TITLE_LOGIN_RESET = 'system_title_login_reset';
+    case SYSTEM_TITLE_LOGOUT = 'system_title_logout';
+    case FORM_TITLE_ERROR_LOG = 'system_title_error_log';
+    case FORM_TITLE_ERROR_UPDATE = 'system_title_error_update';
+    case FORM_TITLE_SEARCH = 'system_title_search';
+    case FORM_TITLE_SEARCH_FULL = 'system_title_search_full';
+    case SYSTEM_TITLE_VALUE_DETAIL = 'system_title_value_detail';
+    case SYSTEM_TITLE_RESULT_EXPLAIN = 'system_title_result_explain';
+    case SYSTEM_TITLE_FORMULA_TEST = 'system_title_formula_test';
+    case FORM_TITLE_SANDBOX = 'system_title_sandbox';
+    case FORM_TITLE_UNDO = 'system_title_undo';
+    case SYSTEM_TITLE_USER_SETTINGS = 'system_title_user_settings';
+    case FORM_PASTE_TABLE = 'system_paste_table';
+    case TITLE_USER_IMPORT = 'system_title_import';
+    case TITLE_USER_EXPORT = 'system_title_export';
+    case TITLE_USER_EXPORT_JSON = 'system_title_export_json';
+    case TITLE_USER_EXPORT_XML = 'system_title_export_xml';
+    case TITLE_USER_EXPORT_CSV = 'system_title_export_csv';
+    case TITLE_USER_EXPORT_ODS = 'system_title_export_ods';
+    case FORM_TITLE_PROCESS_ASYNC = 'system_title_process_async';
+    case FORM_TITLE_PROCESS_LIST = 'system_title_process_list';
+    case FORM_TITLE_PROCESS = 'system_title_process';
     case FORM_FIELD_NAME = 'form_field_name';
     case FORM_FIELD_DESCRIPTION = 'form_field_description';
     case FORM_FIELD_GROUP = 'form_field_group';
     case FORM_FIELD_GROUP_OR_PHRASE_LIST = 'form_field_group_or_phrase_list';
+    case FORM_FIELD_SOURCE_GROUP_OR_PHRASE_LIST = 'form_field_source_group_or_phrase_list';
     case FORM_FIELD_URL = 'form_field_url';
     case FORM_FIELD_SELECTION_NAME = 'system_form_selection_name';
     case FORM_FIELD_SELECTION_DESCRIPTION = 'system_form_selection_description';
@@ -997,6 +1037,10 @@ enum messages: string
     case FORM_FIELD_SELECT_MULTI_PHRASES = 'system_form_select_multi_phrases';
     case FORM_FIELD_SELECT_VERB = 'system_form_select_verb';
     case FORM_FIELD_SELECT_MULTI_VERBS = 'system_form_select_multi_verbs';
+    case SYSTEM_FORM_SELECT_SOURCE = 'system_form_select_source';
+    case SYSTEM_FORM_SELECT_MULTI_SOURCES = 'system_form_select_multi_sources';
+    case SYSTEM_FORM_SELECT_REF = 'system_form_select_ref';
+    case SYSTEM_FORM_SELECT_MULTI_REFS = 'system_form_select_multi_refs';
     case FORM_FIELD_SELECT_FORMULA = 'system_form_select_formula';
     case FORM_FIELD_SELECT_MULTI_FORMULAS = 'system_form_select_multi_formulas';
     case FORM_FIELD_SELECT_TERM = 'system_form_select_term';
@@ -1010,31 +1054,42 @@ enum messages: string
     case FORM_FIELD_SELECT_COMPONENT = 'system_form_select_component';
     case FORM_FIELD_SELECT_MULTI_COMPONENTS = 'system_form_select_multi_components';
     case FORM_FIELD_PREVIEW_CHANGE_COMPONENTS = 'system_form_preview_change_component';
-    case FORM_SELECT_VIEW = 'form_select_view';
+    case FORM_SELECT_VIEW_LINK_TYPE = 'form_select_view_link_type';
+    case FORM_SELECT_VIEW_LINK_PRIORITY = 'form_select_view_link_priority';
+    case FORM_SELECT_COMPONENT_LINK_TYPE = 'form_select_component_link_type';
+    case FORM_SELECT_COMPONENT_LINK_ORDER_NUMBER = 'form_select_component_link_order_number';
+    case FORM_SELECT_FORMULA_LINK_TYPE = 'form_select_formula_link_type';
+    case FORM_SELECT_FORMULA_LINK_PRIORITY = 'form_select_formula_link_priority';
+    case FORM_SELECT_SHARE = 'form_select_share';
+    case FORM_SELECT_PROTECTION = 'form_select_protection';
     case FORM_SELECT_FILE = 'system_form_select_file';
     case FORM_SELECT_EXPORT_FORMAT = 'system_form_select_export_format';
     case FORM_LINK_TABLE_VIEW = 'form_link_table_view';
     case FORM_FIELD_PLURAL = 'form_field_plural';
+    case FORM_FIELD_REVERSE = 'form_field_reverse';
+    case FORM_FIELD_PLURAL_REVERSE = 'form_field_plural_reverse';
     case FORM_FIELD_FORMULA_EXPRESSION = 'form_field_formula_expression';
     case FORM_FIELD_FORMULA_ALL_VARS = 'form_field_formula_all_vars';
-    case FORM_TRIPLE_PHRASE_FROM = 'form_triple_phrase_from';
-    case FORM_TRIPLE_PHRASE_TO = 'form_triple_phrase_to';
+    case FORM_SELECT_VIEW = 'form_select_view';
+    case FORM_TRIPLE_PHRASE_FROM = 'form_select_phrase_from';
+    case FORM_TRIPLE_PHRASE_TO = 'form_select_phrase_to';
     case FORM_TRIPLE_PHRASE_ROW = 'form_select_phrase_row';
     case FORM_TRIPLE_PHRASE_COL = 'form_select_phrase_col';
     case FORM_TRIPLE_PHRASE_COL_SUB = 'form_select_phrase_col_sub';
-    case FORM_TRIPLE_VERB = 'form_triple_verb';
+    case FORM_TRIPLE_VERB = 'form_select_verb';
     case FORM_PHRASE_TYPE_FROM = 'form_phrase_type_from';
     case FORM_PHRASE_TYPE_TO = 'form_phrase_type_to';
+    case FORM_SELECT_VERB_TYPE = 'form_select_verb_type';
     case FORM_SELECT_PHRASE_TYPE = 'form_select_phrase_type';
     case FORM_SELECT_SOURCE_TYPE = 'form_select_source_type';
     case FORM_SELECT_REF_TYPE = 'form_select_ref_type';
+    case FORM_SELECT_VALUE_TYPE = 'form_select_value_type';
     case FORM_SELECT_FORMULA_TYPE = 'form_select_formula_type';
     case FORM_SELECT_VIEW_TYPE = 'form_select_view_type';
     case FORM_SELECT_VIEW_STYLE = 'form_select_view_style';
     case FORM_SELECT_COMPONENT_TYPE = 'form_select_component_type';
+    case FORM_SELECT_COMPONENT_STYLE = 'form_select_component_style';
     case SELECT_VIEW = 'select_view';
-    case FORM_SELECT_SHARE = 'form_select_share';
-    case FORM_SELECT_PROTECTION = 'form_select_protection';
     case FORM_BUTTON_CANCEL = 'form_button_cancel';
     case FORM_BUTTON_SAVE = 'form_button_save';
     case FORM_BUTTON_DEL = 'form_button_del';
@@ -1076,8 +1131,8 @@ enum messages: string
         . self::VAR_START . self::VAR_CLASS_NAME . self::VAR_END
         . '.';
     case DUMMY_PARENT_ADD_FUNCTION_CALLED = 'The dummy parent add function has been called, which should never happen';
-    case NOT_SIMILAR_OBJECTS = ''
-        . self::VAR_START . self::VAR_NAME . self::VAR_END
+    case NOT_SIMILAR_OBJECTS =
+        self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' not similar '
         . self::VAR_START . self::VAR_NAME_CHK . self::VAR_END;
     case FAILED_RELOAD_DEFAULT_VALUES = 'Reloading of the default values for '
@@ -1132,6 +1187,6 @@ enum messages: string
                 return $msg_id;
             }
         }
-        throw new \ValueError("$name is not a valid backing value for enum " . self::class);
+        throw new ValueError("$name is not a valid backing value for enum " . self::class);
     }
 }

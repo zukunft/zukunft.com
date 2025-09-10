@@ -76,6 +76,7 @@ class url_var
     const string TERM = 'e';
     const string FORMULA = 'f';
     const string FORMULA_LINK = 'fl'; // to link a formula to a phrase
+    const string FORMULA_LINK_PRIO = 'fp';
     const string GROUP = 'g';
     const string GROUP_NAME = 'gn';
     const string LOG = 'h'; // h for history of the object
@@ -90,6 +91,7 @@ class url_var
     const string PHRASE = 'p'; // the id or name of one phrase
     const string VALUE = 'v';
     const string VIEW_TERM_LINK = 'vl'; // to link a view to a term
+    const string VIEW_TERM_LINK_PRIO = 'vp'; //
     const string CONTEXT = 'x'; // list of terms to describe the context used for the view
     const string STEP = 'z'; // the user process (proZess) step (e.g. show, to_confirm, confirmed)
     const string VALUE_TIME_SERIES = 'ts';

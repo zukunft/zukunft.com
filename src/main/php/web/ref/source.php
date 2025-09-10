@@ -179,7 +179,7 @@ class source extends sandbox_code_id
      * @param string $pattern
      * @return string
      */
-    private function source_selector(string $form, string $pattern): string
+    function source_selector(string $form, string $pattern): string
     {
         $src_lst = new source_list();
         $src_lst->load_like($pattern);

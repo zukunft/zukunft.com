@@ -538,6 +538,19 @@ class db_object extends TextIdObject
     }
 
     /**
+     * create the html code to select the verb type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the verb type
+     */
+    public function verb_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'verb type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
      * create the html code to select the source type
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
@@ -559,6 +572,19 @@ class db_object extends TextIdObject
     public function ref_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'reference type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select the value type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the value type
+     */
+    public function value_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'value type selector not defined for ' . $this::class;
         log_err($msg);
         return $msg;
     }
@@ -600,6 +626,58 @@ class db_object extends TextIdObject
     public function component_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'component type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select the component style
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the component type
+     */
+    public function component_style_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'component style selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select the formula link type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the formula type
+     */
+    public function formula_link_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'formula link type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select the view link type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the view type
+     */
+    public function view_link_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'view link type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select the component link type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the component type
+     */
+    public function component_link_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'component link type selector not defined for ' . $this::class;
         log_err($msg);
         return $msg;
     }
@@ -709,6 +787,32 @@ class db_object extends TextIdObject
     public function verb_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'verb selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select a source
+     * @param string $form the name of the html form
+     * @param string $pattern
+     * @return string the html code to select a source
+     */
+    public function source_selector(string $form, string $pattern): string
+    {
+        $msg = 'source selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select a reference
+     * @param string $form the name of the html form
+     * @param string $pattern
+     * @return string the html code to select a reference
+     */
+    public function ref_selector(string $form, string $pattern): string
+    {
+        $msg = 'reference selector not defined for ' . $this::class;
         log_err($msg);
         return $msg;
     }

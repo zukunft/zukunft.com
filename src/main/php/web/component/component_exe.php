@@ -132,27 +132,38 @@ class component_exe extends component
             component_type::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
             component_type::FORM_HIDDEN_BACK => $form->form_back($msk_id, $dbo->id(), $back),
             component_type::FORM_HIDDEN_STEP => $form->form_confirm(),
-            component_type::SHOW_NAME => $form->show_name($dbo),
             component_type::FORM_FIELD_NAME => $form->form_name($dbo, $this->style_code_id($cfg->typ_lst_cache)),
             component_type::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
             component_type::FORM_FIELD_PLURAL => $form->form_field_plural($dbo, $this->style_code_id($cfg->typ_lst_cache)),
             component_type::FORM_FIELD_URL => $form->form_field_url($dbo),
             component_type::FORM_FIELD_GROUP => $form->form_field_group_name($dbo),
             component_type::FORM_FIELD_GROUP_OR_PHRASES => $form->form_field_group_or_phrases($dbo),
+            component_type::SYSTEM_FORM_FIELD_SOURCE_GROUP_OR_PHRASES => $form->form_field_source_group_or_phrases($dbo),
             component_type::FORM_FIELD_SELECTION_NAME => $form->form_field_selection_name($dbo),
             component_type::FORM_FIELD_SELECTION_DESCRIPTION => $form->form_field_selection_description($dbo),
             component_type::FORM_FIELD_SELECTION_TEXT => $form->form_field_selection_text($dbo),
             component_type::FORM_SELECT_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
             component_type::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_SOURCE => $form->form_source($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_REF => $form->form_ref($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_PHRASE_TYPE => $form->form_phrase_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VERB_TYPE => $form->form_verb_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_SOURCE_TYPE => $form->form_source_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_REF_TYPE => $form->form_ref_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VALUE_TYPE => $form->form_value_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_FORMULA_TYPE => $form->form_formula_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_FIELD_FORMULA_EXPRESSION => $form->form_formula_expression($dbo, $form_name),
             component_type::FORM_FIELD_FORMULA_ALL_VAR_NEEDED => $form->form_formula_all_fields($dbo, $form_name),
             component_type::FORM_SELECT_VIEW_TYPE => $form->form_view_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_VIEW_STYLE => $form->form_view_style($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_COMPONENT_STYLE => $form->form_component_style($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_FORMULA_LINK_TYPE => $form->form_formula_link_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_FORMULA_LINK_PRIORITY => $form->form_field_formula_link_priority($dbo),
+            component_type::FORM_SELECT_VIEW_LINK_TYPE => $form->form_view_link_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VIEW_LINK_PRIORITY => $form->form_field_view_link_priority($dbo),
+            component_type::FORM_SELECT_COMPONENT_LINK_TYPE => $form->form_component_link_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER => $form->form_field_component_link_order_number($dbo),
             component_type::FORM_SHARE_TYPE => $form->form_share_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_PROTECTION_TYPE => $form->form_protection_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name),
@@ -169,6 +180,21 @@ class component_exe extends component
             // fixed system pages - usage only allowed for fixed internal system pages
             component_type::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
             component_type::SYSTEM_BODY_ABOUT => $page->about_body(),
+            component_type::SYSTEM_BODY_SETUP => $page->setup_body(),
+            component_type::SYSTEM_BODY_SIGNUP => $page->signup_body(),
+            component_type::SYSTEM_BODY_LOGIN => $page->login_body(),
+            component_type::SYSTEM_BODY_LOGIN_ACTIVATE => $page->activate_body(),
+            component_type::SYSTEM_BODY_LOGIN_RESET => $page->reset_body(),
+            component_type::SYSTEM_BODY_LOGOUT => $page->logout_body(),
+            component_type::SYSTEM_BODY_SEARCH => $page->body_search(),
+            component_type::SYSTEM_BODY_SEARCH_FULL => $page->body_search_full(),
+            component_type::SYSTEM_BODY_VALUE_DETAIL => $page->value_details(),
+            component_type::SYSTEM_BODY_RESULT_EXPLAIN => $page->result_explain(),
+            component_type::SYSTEM_BODY_FORMULA_TEST => $page->formula_test(),
+            component_type::SYSTEM_BODY_SANDBOX => $page->sandbox(),
+            component_type::SYSTEM_BODY_UNDO => $page->undo(),
+            component_type::SYSTEM_BODY_USER_SETTINGS => $page->user_setting(),
+            component_type::SYSTEM_BODY_PROCESS => $page->process(),
             component_type::SYSTEM_BODY_ERROR_LOG => $page->error_log(),
             component_type::SYSTEM_BODY_ERROR_UPDATE => $page->error_update(),
             component_type::SYSTEM_BODY_PROCESS_PROGRESS => $page->process_progress(),
@@ -179,6 +205,11 @@ class component_exe extends component
             // formula only -
 
             // view only -
+            component_type::SHOW_NAME => $form->show_name($dbo),
+            component_type::SHOW_FIELD_USAGE => $form->usage($dbo),
+            component_type::WORD_RESULTS => $form->result($dbo),
+            component_type::USED_IN_AS_TEXT => $form->used_as_text($dbo),
+            component_type::USED_IN_AS_TEXT_WITH_LINK => $form->used_as_text_link($dbo),
             component_type::USAGE_WORD => $this->usage_word($dbo, $form_name),
             component_type::SYSTEM_CHANGE_LOG => $this->system_change_log($dbo, $form_name),
 
@@ -212,6 +243,7 @@ class component_exe extends component
             component_type::JSON_EXPORT => $this->json_export($dbo, $back),
             component_type::XML_EXPORT => $this->xml_export($dbo, $back),
             component_type::CSV_EXPORT => $this->csv_export($dbo, $back),
+            component_type::ODS_EXPORT => $this->ods_export($dbo, $back),
 
             default => 'program code for component ' . $this->dsp_id() . ' missing<br>'
         };
@@ -427,6 +459,15 @@ class component_exe extends component
      * @return string a dummy text
      */
     function csv_export(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO move code from component_dsp_old
+     * @return string a dummy text
+     */
+    function ods_export(): string
     {
         return $this->name();
     }

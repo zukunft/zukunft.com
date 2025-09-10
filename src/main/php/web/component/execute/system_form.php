@@ -134,6 +134,46 @@ class system_form extends component
     }
 
     /**
+     * TODO Prio 1 fill with the correct field
+     * @param db_object_dsp $dbo the object
+     * @return string the html code to show the object name to the user
+     */
+    function usage(db_object_dsp $dbo): string
+    {
+        return $dbo->name();
+    }
+
+    /**
+     * TODO Prio 1 fill with the correct field
+     * @param db_object_dsp $dbo the object
+     * @return string the html code to show the object name to the user
+     */
+    function result(db_object_dsp $dbo): string
+    {
+        return $dbo->name();
+    }
+
+    /**
+     * TODO Prio 1 fill with the correct field
+     * @param db_object_dsp $dbo the object
+     * @return string the html code to show the object name to the user
+     */
+    function used_as_text(db_object_dsp $dbo): string
+    {
+        return $dbo->name();
+    }
+
+    /**
+     * TODO Prio 1 fill with the correct field
+     * @param db_object_dsp $dbo the object
+     * @return string the html code to show the object name to the user
+     */
+    function used_as_text_link(db_object_dsp $dbo): string
+    {
+        return $dbo->name();
+    }
+
+    /**
      * @param db_object_dsp $dbo the object
      * @return string the html code to request the object name from the user
      */
@@ -224,6 +264,66 @@ class system_form extends component
             html_base::INPUT_TEXT,
             '',
             view_styles::COL_SM_8
+        );
+    }
+
+    /**
+     * @return string the html code to request the group name or a list of phrases
+     */
+    function form_field_source_group_or_phrases(db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field(
+            url_var::GROUP_NAME_LONG,
+            $dbo->name(),
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_8
+        );
+    }
+
+    /**
+     * @return string the html code to request the formula link priority
+     */
+    function form_field_formula_link_priority(db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field(
+            url_var::FORMULA_LINK_PRIO,
+            $dbo->url(),
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_12
+        );
+    }
+
+    /**
+     * @return string the html code to request the view link priority
+     */
+    function form_field_view_link_priority(db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field(
+            url_var::VIEW_TERM_LINK_PRIO,
+            $dbo->url(),
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_12
+        );
+    }
+
+    /**
+     * @return string the html code to request the component position
+     */
+    function form_field_component_link_order_number(db_object_dsp $dbo): string
+    {
+        $html = new html_base();
+        return $html->form_field(
+            url_var::COMPONENT_LINK,
+            $dbo->url(),
+            html_base::INPUT_TEXT,
+            '',
+            view_styles::COL_SM_12
         );
     }
 
@@ -353,6 +453,30 @@ class system_form extends component
     }
 
     /**
+     * create the html code for the form element to select the source
+     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the source
+     */
+    function form_source(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    {
+        return $dbo->source_selector($form_name, $typ_lst);
+    }
+
+    /**
+     * create the html code for the form element to select the reference
+     * @param db_object_dsp $dbo the frontend phrase object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the reference
+     */
+    function form_ref(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    {
+        return $dbo->ref_selector($form_name, $typ_lst);
+    }
+
+    /**
      * create the html code for the form element to select the phrase type
      * @param db_object_dsp $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
@@ -362,6 +486,18 @@ class system_form extends component
     function form_phrase_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->phrase_type_selector($form_name, $typ_lst);
+    }
+
+    /**
+     * create the html code for the form element to select the verb type
+     * @param db_object_dsp $dbo the frontend verb object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the verb type
+     */
+    function form_verb_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    {
+        return $dbo->verb_type_selector($form_name, $typ_lst);
     }
 
     /**
@@ -384,6 +520,18 @@ class system_form extends component
      * @return string the html code to select the reference type
      */
     function form_ref_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    {
+        return $dbo->ref_type_selector($form_name, $typ_lst);
+    }
+
+    /**
+     * create the html code for the form element to select the value type
+     * @param db_object_dsp $dbo the frontend value object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the value type
+     */
+    function form_value_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->ref_type_selector($form_name, $typ_lst);
     }
@@ -435,6 +583,54 @@ class system_form extends component
     function form_component_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
     {
         return $dbo->component_type_selector($form_name, $typ_lst);
+    }
+
+    /**
+     * create the html code for the form element to select the component style
+     * @param db_object_dsp $dbo the frontend component object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the component style
+     */
+    function form_component_style(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    {
+        return $dbo->component_style_selector($form_name, $typ_lst);
+    }
+
+    /**
+     * create the html code for the form element to select the formula link type
+     * @param db_object_dsp $dbo the frontend formula object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the formula link type
+     */
+    function form_formula_link_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    {
+        return $dbo->formula_link_type_selector($form_name, $typ_lst);
+    }
+
+    /**
+     * create the html code for the form element to select the view link type
+     * @param db_object_dsp $dbo the frontend view object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the view link type
+     */
+    function form_view_link_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    {
+        return $dbo->view_link_type_selector($form_name, $typ_lst);
+    }
+
+    /**
+     * create the html code for the form element to select the component link type
+     * @param db_object_dsp $dbo the frontend component object with the type used until now
+     * @param string $form_name the name of the view which is also used for the html form name
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the component link type
+     */
+    function form_component_link_type(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    {
+        return $dbo->component_link_type_selector($form_name, $typ_lst);
     }
 
     /**

@@ -4184,6 +4184,16 @@ class create_test_objects extends test_base
         return $cmp;
     }
 
+    function component_word_add_verb_type(): component
+    {
+        $cmp = new component($this->usr1);
+        $cmp->set(6, components::FORM_VERB_TYPE_NAME);
+        $cmp->set_type(comp_type_shared::FORM_SELECT_VERB_TYPE, $this->usr1);
+        $cmp->description = components::FORM_VERB_TYPE_COM;
+        $cmp->set_code_id(components::FORM_VERB_TYPE, $this->usr_system);
+        return $cmp;
+    }
+
     function component_word_add_share_type(): component
     {
         $cmp = new component($this->usr1);
@@ -4307,6 +4317,8 @@ class create_test_objects extends test_base
         $lst->add($pos, $msk, $this->component_word_add_plural(), $pos);
         $pos++;
         $lst->add($pos, $msk, $this->component_word_add_phrase_type(), $pos);
+        $pos++;
+        $lst->add($pos, $msk, $this->component_word_add_verb_type(), $pos);
         $pos++;
         $lst->add($pos, $msk, $this->component_word_add_share_type(), $pos);
         $pos++;

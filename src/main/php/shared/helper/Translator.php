@@ -33,19 +33,22 @@
 namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use ValueError;
 
 include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class Translator
 {
 
     // structure elements of the translation yaml
-    const MESSAGES = "messages";
-    const TEXT = "text";
+    const string MESSAGES = "messages";
+    const string TEXT = "text";
 
     private array $msg_file = [];
     private string $lan = '';
@@ -103,8 +106,15 @@ class Translator
         } else {
             try {
                 return msg_id::get($msg_id_txt);
-            } catch (\ValueError $error) {
-                log_err($error);
+            } catch (ValueError $error) {
+                $usr_msg = new user_message();
+                $usr_msg->add_id_with_vars(msg_id::MISSING_TRANSLATION, [
+                    msg_id::VAR_MESSAGE_ID => $msg_id_txt,
+                    msg_id::VAR_LANGUAGE => $this->lan,
+                    msg_id::VAR_ERROR_TEXT => $error->getMessage()
+                ]);
+                $msg = $usr_msg->var_message_text();
+                log_err($msg);
                 return msg_id::ERROR;
             }
         }

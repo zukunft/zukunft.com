@@ -73,6 +73,10 @@ class component_type
     const int FORM_FIELD_URL_ID = 71;
     const string FORM_FIELD_PLURAL = "system_form_field_plural";
     const int FORM_FIELD_PLURAL_ID = 54;
+    const string FORM_FIELD_REVERSE = "system_form_field_reverse";
+    const int FORM_FIELD_REVERSE_ID = 136;
+    const string FORM_FIELD_PLURAL_REVERSE = "system_form_field_plural_reverse";
+    const int FORM_FIELD_PLURAL_REVERSE_ID = 137;
     const string FORM_FIELD_FORMULA_EXPRESSION = "system_form_field_formula_expression";
     const int FORM_FIELD_FORMULA_EXPRESSION_ID = 53;
     const string FORM_FIELD_FORMULA_ALL_VAR_NEEDED = "system_form_field_formula_all_vars";
@@ -81,6 +85,8 @@ class component_type
     const int FORM_FIELD_GROUP_ID = 69;
     const string FORM_FIELD_GROUP_OR_PHRASES = "system_form_field_group_or_phrase_list";
     const int FORM_FIELD_GROUP_OR_PHRASES_ID = 70;
+    const string SYSTEM_FORM_FIELD_SOURCE_GROUP_OR_PHRASES = "system_form_field_source_group_or_phrase_list";
+    const int SYSTEM_FORM_FIELD_SOURCE_GROUP_OR_PHRASES_ID = 117;
     const string FORM_FIELD_SELECTION_NAME = "system_form_selection_name";
     const int FORM_FIELD_SELECTION_NAME_ID = 72;
     const string FORM_FIELD_SELECTION_DESCRIPTION = "system_form_selection_description";
@@ -97,6 +103,14 @@ class component_type
     const int FORM_SELECT_VERB_ID = 24;
     const string FORM_SELECT_VERBS = "system_form_select_multi_verbs";
     const int FORM_SELECT_VERBS_ID = 76;
+    const string FORM_SELECT_SOURCE = "system_form_select_source";
+    const int FORM_SELECT_SOURCE_ID = 118;
+    const string FORM_SELECT_SOURCES = "system_form_select_multi_sources";
+    const int FORM_SELECT_SOURCES_ID = 119;
+    const string FORM_SELECT_REF = "system_form_select_ref";
+    const int FORM_SELECT_REF_ID = 120;
+    const string FORM_SELECT_REFS = "system_form_select_multi_refs";
+    const int FORM_SELECT_REFS_ID = 121;
     const string FORM_SELECT_FORMULA = "system_form_select_formula";
     const int FORM_SELECT_FORMULA_ID = 77;
     const string FORM_SELECT_FORMULAS = "system_form_select_multi_formulas";
@@ -129,10 +143,14 @@ class component_type
     const int FORM_SELECT_FORMAT_EXPORT_ID = 92;
     const string FORM_SELECT_PHRASE_TYPE = "system_form_select_phrase_type";
     const int FORM_SELECT_PHRASE_TYPE_ID = 25;
+    const string FORM_SELECT_VERB_TYPE = "system_form_select_verb_type";
+    const int FORM_SELECT_VERB_TYPE_ID = 122;
     const string FORM_SELECT_SOURCE_TYPE = "system_form_select_source_type";
     const int FORM_SELECT_SOURCE_TYPE_ID = 39;
     const string FORM_SELECT_REF_TYPE = "system_form_select_ref_type";
     const int FORM_SELECT_REF_TYPE_ID = 48;
+    const string FORM_SELECT_VALUE_TYPE = "system_form_select_value_type";
+    const int FORM_SELECT_VALUE_TYPE_ID = 123;
     const string FORM_SELECT_FORMULA_TYPE = "system_form_select_formula_type";
     const int FORM_SELECT_FORMULA_TYPE_ID = 49;
     const string FORM_SELECT_VIEW_TYPE = "system_form_select_view_type";
@@ -141,12 +159,20 @@ class component_type
     const int FORM_SELECT_VIEW_STYLE_ID = 51;
     const string FORM_SELECT_COMPONENT_TYPE = "system_form_select_component_type";
     const int FORM_SELECT_COMPONENT_TYPE_ID = 52;
+    const string FORM_SELECT_COMPONENT_STYLE = "system_form_select_component_style";
+    const int FORM_SELECT_COMPONENT_STYLE_ID = 124;
     const string FORM_SELECT_FORMULA_LINK_TYPE = "system_form_select_formula_link_type";
     const int FORM_SELECT_FORMULA_LINK_TYPE_ID = 100;
+    const string FORM_SELECT_FORMULA_LINK_PRIORITY = "system_form_select_formula_link_priority";
+    const int FORM_SELECT_FORMULA_LINK_PRIORITY_ID = 127;
     const string FORM_SELECT_VIEW_LINK_TYPE = "system_form_select_view_link_type";
     const int FORM_SELECT_VIEW_LINK_TYPE_ID = 101;
+    const string FORM_SELECT_VIEW_LINK_PRIORITY = "system_form_select_view_link_priority";
+    const int FORM_SELECT_VIEW_LINK_PRIORITY_ID = 125;
     const string FORM_SELECT_COMPONENT_LINK_TYPE = "system_form_select_component_link_type";
     const int FORM_SELECT_VIEW_COMPONENT_TYPE_ID = 99;
+    const string FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER = "system_form_select_component_link_order_number";
+    const int FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER_ID = 126;
     const string FORM_SHARE_TYPE = "system_form_select_share";
     const int FORM_SHARE_TYPE_ID = 26;
     const string FORM_PROTECTION_TYPE = "system_form_select_protection";
@@ -200,14 +226,44 @@ class component_type
     const int SYSTEM_TITLE_ID = 63;
     const string SYSTEM_BODY_ABOUT = "system_body_about";
     const int SYSTEM_BODY_ABOUT_ID = 64;
-    const string SYSTEM_BODY_ERROR_LOG = "system_body_error_log";
-    const int SYSTEM_BODY_ERROR_LOG_ID = 65;
-    const string SYSTEM_BODY_ERROR_UPDATE = "system_body_error_update";
-    const int SYSTEM_BODY_ERROR_UPDATE_ID = 66;
+    const string SYSTEM_BODY_SETUP = "system_body_setup";
+    const int SYSTEM_BODY_SETUP_ID = 102;
+    const string SYSTEM_BODY_SIGNUP = "system_body_signup";
+    const int SYSTEM_BODY_SIGNUP_ID = 103;
+    const string SYSTEM_BODY_LOGIN = "system_body_login";
+    const int SYSTEM_BODY_LOGIN_ID = 104;
+    const string SYSTEM_BODY_LOGIN_ACTIVATE = "system_body_login_activate";
+    const int SYSTEM_BODY_LOGIN_ACTIVATE_ID = 105;
+    const string SYSTEM_BODY_LOGIN_RESET = "system_body_login_reset";
+    const int SYSTEM_BODY_LOGIN_RESET_ID = 106;
+    const string SYSTEM_BODY_LOGOUT = "system_body_logout";
+    const int SYSTEM_BODY_LOGOUT_ID = 107;
+    const string SYSTEM_BODY_SEARCH = "system_body_search";
+    const int SYSTEM_BODY_SEARCH_ID = 108;
+    const string SYSTEM_BODY_SEARCH_FULL = "system_body_search_full";
+    const int SYSTEM_BODY_SEARCH_FULL_ID = 109;
+    const string SYSTEM_BODY_VALUE_DETAIL = "system_body_value_detail";
+    const int SYSTEM_BODY_VALUE_DETAIL_ID = 110;
+    const string SYSTEM_BODY_RESULT_EXPLAIN = "system_body_result_explain";
+    const int SYSTEM_BODY_RESULT_EXPLAIN_ID = 111;
+    const string SYSTEM_BODY_FORMULA_TEST = "system_body_formula_test";
+    const int SYSTEM_BODY_FORMULA_TEST_ID = 112;
+    const string SYSTEM_BODY_SANDBOX = "system_body_sandbox";
+    const int SYSTEM_BODY_SANDBOX_ID = 113;
+    const string SYSTEM_BODY_UNDO = "system_body_undo";
+    const int SYSTEM_BODY_UNDO_ID = 114;
+    const string SYSTEM_BODY_USER_SETTINGS = "system_body_user_settings";
+    const int SYSTEM_BODY_USER_SETTINGS_ID = 115;
     const string SYSTEM_BODY_PROCESS_PROGRESS = "system_body_process_progress";
     const int SYSTEM_BODY_PROCESS_PROGRESS_ID = 67;
     const string SYSTEM_BODY_PROCESS_LIST = "system_body_process_list";
     const int SYSTEM_BODY_PROCESS_LIST_ID = 68;
+    const string SYSTEM_BODY_PROCESS = "system_body_process";
+    const int SYSTEM_BODY_PROCESS_ID = 116;
+    const string SYSTEM_BODY_ERROR_LOG = "system_body_error_log";
+    const int SYSTEM_BODY_ERROR_LOG_ID = 65;
+    const string SYSTEM_BODY_ERROR_UPDATE = "system_body_error_update";
+    const int SYSTEM_BODY_ERROR_UPDATE_ID = 66;
 
 
     /*
@@ -253,6 +309,14 @@ class component_type
 
     const string SHOW_NAME = "system_show_field_name";
     const int SHOW_NAME_ID = 20;
+    const string SHOW_FIELD_USAGE = "system_show_field_usage";
+    const int SHOW_FIELD_USAGE_ID = 128;
+    const string WORD_RESULTS = "word_results";
+    const int WORD_RESULTS_ID = 129;
+    const string USED_IN_AS_TEXT = "used_in_as_text";
+    const int USED_IN_AS_TEXT_ID = 130;
+    const string USED_IN_AS_TEXT_WITH_LINK = "used_in_as_text_with_link";
+    const int USED_IN_AS_TEXT_WITH_LINK_ID = 131;
 
     const string TEXT = "text";
     const int TEXT_ID = 3;
@@ -275,10 +339,16 @@ class component_type
     const string FORMULA_RESULTS = "formula_results";
     // offer to configure and create an JSON file
     const string JSON_EXPORT = "export_json";
+    const int JSON_EXPORT_ID = 133;
     // offer to configure and create an XML file
     const string XML_EXPORT = "export_xml";
+    const int XML_EXPORT_ID = 134;
     // offer to configure and create an CSV file
     const string CSV_EXPORT = "export_csv";
+    const int CSV_EXPORT_ID = 135;
+    // offer to configure and create an CSV file
+    const string ODS_EXPORT = "export_ods";
+    const int ODS_EXPORT_ID = 132;
     // show a list of words and triples with a link type selector
     const string LINK = "link";
 
@@ -301,6 +371,7 @@ class component_type
         self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED,
         self::FORM_FIELD_GROUP,
         self::FORM_FIELD_GROUP_OR_PHRASES,
+        self::SYSTEM_FORM_FIELD_SOURCE_GROUP_OR_PHRASES,
         self::FORM_FIELD_SELECTION_NAME,
         self::FORM_FIELD_SELECTION_DESCRIPTION,
         self::FORM_FIELD_SELECTION_TEXT,
@@ -308,6 +379,10 @@ class component_type
         self::FORM_SELECT_PHRASES,
         self::FORM_SELECT_VERB,
         self::FORM_SELECT_VERBS,
+        self::FORM_SELECT_SOURCE,
+        self::FORM_SELECT_SOURCES,
+        self::FORM_SELECT_REF,
+        self::FORM_SELECT_REFS,
         self::FORM_SELECT_FORMULA,
         self::FORM_SELECT_FORMULAS,
         self::FORM_SELECT_TERM,
@@ -324,15 +399,21 @@ class component_type
         self::FORM_SELECT_FILE,
         self::FORM_SELECT_FORMAT_EXPORT,
         self::FORM_SELECT_PHRASE_TYPE,
+        self::FORM_SELECT_VERB_TYPE,
         self::FORM_SELECT_SOURCE_TYPE,
         self::FORM_SELECT_REF_TYPE,
+        self::FORM_SELECT_VALUE_TYPE,
         self::FORM_SELECT_FORMULA_TYPE,
         self::FORM_SELECT_VIEW_TYPE,
         self::FORM_SELECT_VIEW_STYLE,
         self::FORM_SELECT_COMPONENT_TYPE,
+        self::FORM_SELECT_COMPONENT_STYLE,
         self::FORM_SELECT_FORMULA_LINK_TYPE,
+        self::FORM_SELECT_FORMULA_LINK_PRIORITY,
         self::FORM_SELECT_VIEW_LINK_TYPE,
+        self::FORM_SELECT_VIEW_LINK_PRIORITY,
         self::FORM_SELECT_COMPONENT_LINK_TYPE,
+        self::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER,
         self::FORM_SHARE_TYPE,
         self::FORM_PROTECTION_TYPE,
         self::FORM_TABLE_LINKED_VIEWS,
@@ -348,6 +429,10 @@ class component_type
         self::FORM_HIDDEN_BACK,
         self::FORM_HIDDEN_STEP,
         self::SHOW_NAME,
+        self::SHOW_FIELD_USAGE,
+        self::WORD_RESULTS,
+        self::USED_IN_AS_TEXT,
+        self::USED_IN_AS_TEXT_WITH_LINK,
         self::SYSTEM_TITLE
     );
 
@@ -383,10 +468,13 @@ class component_type
         [self::FORM_FIELD_DESCRIPTION, self::FORM_FIELD_DESCRIPTION_ID],
         [self::FORM_FIELD_URL, self::FORM_FIELD_URL_ID],
         [self::FORM_FIELD_PLURAL, self::FORM_FIELD_PLURAL_ID],
+        [self::FORM_FIELD_REVERSE, self::FORM_FIELD_REVERSE_ID],
+        [self::FORM_FIELD_PLURAL_REVERSE, self::FORM_FIELD_PLURAL_REVERSE_ID],
         [self::FORM_FIELD_FORMULA_EXPRESSION, self::FORM_FIELD_FORMULA_EXPRESSION_ID],
         [self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED, self::FORM_FIELD_FORMULA_ALL_VAR_NEEDED_ID],
         [self::FORM_FIELD_GROUP, self::FORM_FIELD_GROUP_ID],
         [self::FORM_FIELD_GROUP_OR_PHRASES, self::FORM_FIELD_GROUP_OR_PHRASES_ID],
+        [self::SYSTEM_FORM_FIELD_SOURCE_GROUP_OR_PHRASES, self::SYSTEM_FORM_FIELD_SOURCE_GROUP_OR_PHRASES_ID],
         [self::FORM_FIELD_SELECTION_NAME, self::FORM_FIELD_SELECTION_NAME_ID],
         [self::FORM_FIELD_SELECTION_DESCRIPTION, self::FORM_FIELD_SELECTION_DESCRIPTION_ID],
         [self::FORM_FIELD_SELECTION_TEXT, self::FORM_FIELD_SELECTION_TEXT_ID],
@@ -395,6 +483,10 @@ class component_type
         [self::FORM_SELECT_PHRASES, self::FORM_SELECT_PHRASES_ID],
         [self::FORM_SELECT_VERB, self::FORM_SELECT_VERB_ID],
         [self::FORM_SELECT_VERBS, self::FORM_SELECT_VERBS_ID],
+        [self::FORM_SELECT_SOURCE, self::FORM_SELECT_SOURCE_ID],
+        [self::FORM_SELECT_SOURCES, self::FORM_SELECT_SOURCES_ID],
+        [self::FORM_SELECT_REF, self::FORM_SELECT_REF_ID],
+        [self::FORM_SELECT_REFS, self::FORM_SELECT_REFS_ID],
         [self::FORM_SELECT_FORMULA, self::FORM_SELECT_FORMULA_ID],
         [self::FORM_SELECT_FORMULAS, self::FORM_SELECT_FORMULAS_ID],
         [self::FORM_SELECT_TERM, self::FORM_SELECT_TERM_ID],
@@ -413,15 +505,21 @@ class component_type
         [self::FORM_SELECT_FILE, self::FORM_SELECT_FILE_ID],
         [self::FORM_SELECT_FORMAT_EXPORT, self::FORM_SELECT_FORMAT_EXPORT_ID],
         [self::FORM_SELECT_PHRASE_TYPE, self::FORM_SELECT_PHRASE_TYPE_ID],
+        [self::FORM_SELECT_VERB_TYPE, self::FORM_SELECT_VERB_TYPE_ID],
         [self::FORM_SELECT_SOURCE_TYPE, self::FORM_SELECT_SOURCE_TYPE_ID],
         [self::FORM_SELECT_REF_TYPE, self::FORM_SELECT_REF_TYPE_ID],
+        [self::FORM_SELECT_VALUE_TYPE, self::FORM_SELECT_VALUE_TYPE_ID],
         [self::FORM_SELECT_FORMULA_TYPE, self::FORM_SELECT_FORMULA_TYPE_ID],
         [self::FORM_SELECT_VIEW_TYPE, self::FORM_SELECT_VIEW_TYPE_ID],
         [self::FORM_SELECT_VIEW_STYLE, self::FORM_SELECT_VIEW_STYLE_ID],
         [self::FORM_SELECT_COMPONENT_TYPE, self::FORM_SELECT_COMPONENT_TYPE_ID],
+        [self::FORM_SELECT_COMPONENT_STYLE, self::FORM_SELECT_COMPONENT_STYLE_ID],
         [self::FORM_SELECT_FORMULA_LINK_TYPE, self::FORM_SELECT_FORMULA_LINK_TYPE_ID],
+        [self::FORM_SELECT_FORMULA_LINK_PRIORITY, self::FORM_SELECT_FORMULA_LINK_PRIORITY_ID],
         [self::FORM_SELECT_VIEW_LINK_TYPE, self::FORM_SELECT_VIEW_LINK_TYPE_ID],
+        [self::FORM_SELECT_VIEW_LINK_PRIORITY, self::FORM_SELECT_VIEW_LINK_PRIORITY_ID],
         [self::FORM_SELECT_COMPONENT_LINK_TYPE, self::FORM_SELECT_VIEW_COMPONENT_TYPE_ID],
+        [self::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER, self::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER_ID],
         [self::FORM_SHARE_TYPE, self::FORM_SHARE_TYPE_ID],
         [self::FORM_PROTECTION_TYPE, self::FORM_PROTECTION_TYPE_ID],
         [self::FORM_TABLE_LINKED_VIEWS, self::FORM_TABLE_LINKED_VIEWS_ID],
@@ -439,6 +537,21 @@ class component_type
         [self::ROW_END, self::ROW_END_ID],
         [self::SYSTEM_TITLE, self::SYSTEM_TITLE_ID],
         [self::SYSTEM_BODY_ABOUT, self::SYSTEM_BODY_ABOUT_ID],
+        [self::SYSTEM_BODY_SETUP, self::SYSTEM_BODY_SETUP_ID],
+        [self::SYSTEM_BODY_SIGNUP, self::SYSTEM_BODY_SIGNUP_ID],
+        [self::SYSTEM_BODY_LOGIN, self::SYSTEM_BODY_LOGIN_ID],
+        [self::SYSTEM_BODY_LOGIN_ACTIVATE, self::SYSTEM_BODY_LOGIN_ACTIVATE_ID],
+        [self::SYSTEM_BODY_LOGIN_RESET, self::SYSTEM_BODY_LOGIN_RESET_ID],
+        [self::SYSTEM_BODY_LOGOUT, self::SYSTEM_BODY_LOGOUT_ID],
+        [self::SYSTEM_BODY_SEARCH, self::SYSTEM_BODY_SEARCH_ID],
+        [self::SYSTEM_BODY_SEARCH_FULL, self::SYSTEM_BODY_SEARCH_FULL_ID],
+        [self::SYSTEM_BODY_VALUE_DETAIL, self::SYSTEM_BODY_VALUE_DETAIL_ID],
+        [self::SYSTEM_BODY_RESULT_EXPLAIN, self::SYSTEM_BODY_RESULT_EXPLAIN_ID],
+        [self::SYSTEM_BODY_FORMULA_TEST, self::SYSTEM_BODY_FORMULA_TEST_ID],
+        [self::SYSTEM_BODY_SANDBOX, self::SYSTEM_BODY_SANDBOX_ID],
+        [self::SYSTEM_BODY_UNDO, self::SYSTEM_BODY_UNDO_ID],
+        [self::SYSTEM_BODY_USER_SETTINGS, self::SYSTEM_BODY_USER_SETTINGS_ID],
+        [self::SYSTEM_BODY_PROCESS, self::SYSTEM_BODY_PROCESS_ID],
         [self::SYSTEM_BODY_ERROR_LOG, self::SYSTEM_BODY_ERROR_LOG_ID],
         [self::SYSTEM_BODY_ERROR_UPDATE, self::SYSTEM_BODY_ERROR_UPDATE_ID],
         [self::SYSTEM_BODY_PROCESS_PROGRESS, self::SYSTEM_BODY_PROCESS_PROGRESS_ID],
@@ -456,7 +569,15 @@ class component_type
         [self::VERB_NAME, self::VERB_NAME_ID],
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
+        [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
+        [self::WORD_RESULTS, self::WORD_RESULTS_ID],
+        [self::USED_IN_AS_TEXT, self::USED_IN_AS_TEXT_ID],
+        [self::USED_IN_AS_TEXT_WITH_LINK, self::USED_IN_AS_TEXT_WITH_LINK_ID],
         [self::TEXT, self::TEXT_ID],
+        [self::JSON_EXPORT, self::JSON_EXPORT_ID],
+        [self::XML_EXPORT, self::XML_EXPORT_ID],
+        [self::CSV_EXPORT, self::CSV_EXPORT_ID],
+        [self::ODS_EXPORT, self::ODS_EXPORT_ID],
         [self::SYSTEM_CHANGE_LOG, self::SYSTEM_CHANGE_LOG_ID]
     );
 

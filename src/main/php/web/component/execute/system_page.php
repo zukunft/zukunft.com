@@ -68,30 +68,140 @@ class system_page extends component
         return $result;
     }
 
+    // TODO Prio 0 fill with real code
     function about_body(): string
     {
         $html = new html_base();
         return $html->about_body();
     }
 
+    // TODO Prio 0 fill with real code
+    function setup_body(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function signup_body(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function login_body(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function activate_body(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function reset_body(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function logout_body(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function body_search(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function body_search_full(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function value_details(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function result_explain(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function formula_test(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function sandbox(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function undo(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function user_setting(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
+    function process(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
     function error_log(): string
     {
         $html = new html_base();
         return $html->about_body();
     }
 
+    // TODO Prio 0 fill with real code
     function error_update(): string
     {
         $html = new html_base();
         return $html->about_body();
     }
 
+    // TODO Prio 0 fill with real code
     function process_progress(): string
     {
         $html = new html_base();
         return $html->about_body();
     }
 
+    // TODO Prio 0 fill with real code
     function process_list(): string
     {
         $html = new html_base();

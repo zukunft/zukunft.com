@@ -387,27 +387,27 @@
       "name": "system title login activate",
       "description": "show the language specific title for the login activate page",
       "type": "system_title",
-      "code_id": "system_title_login activate",
-      "ui_msg_code_id": "system_title_login activate"
+      "code_id": "system_title_login_activate",
+      "ui_msg_code_id": "system_title_login_activate"
     },
     {
       "name": "system body login activate",
       "description": "show the body of the login activate page",
-      "type": "system_body_login activate",
-      "code_id": "system_body_login activate"
+      "type": "system_body_login_activate",
+      "code_id": "system_body_login_activate"
     },
     {
       "name": "system title login reset",
       "description": "show the language specific title for the login reset page",
       "type": "system_title",
-      "code_id": "system_title_login reset",
-      "ui_msg_code_id": "system_title_login reset"
+      "code_id": "system_title_login_reset",
+      "ui_msg_code_id": "system_title_login_reset"
     },
     {
       "name": "system body login reset",
       "description": "show the body of the login reset page",
-      "type": "system_body_login reset",
-      "code_id": "system_body_login reset"
+      "type": "system_body_login_reset",
+      "code_id": "system_body_login_reset"
     },
     {
       "name": "system title logout",
@@ -426,8 +426,8 @@
       "name": "system title error log",
       "description": "show the language specific title for the error log page",
       "type": "system_title",
-      "code_id": "form_title_error_log",
-      "ui_msg_code_id": "form_title_error_log"
+      "code_id": "system_title_error_log",
+      "ui_msg_code_id": "system_title_error_log"
     },
     {
       "name": "system body error log",
@@ -439,8 +439,8 @@
       "name": "system title error update",
       "description": "show the language specific title for the error update page",
       "type": "system_title",
-      "code_id": "form_title_error_update",
-      "ui_msg_code_id": "form_title_error_update"
+      "code_id": "system_title_error_update",
+      "ui_msg_code_id": "system_title_error_update"
     },
     {
       "name": "system body error update",
@@ -452,8 +452,8 @@
       "name": "system title search",
       "description": "show the language specific title for the search page",
       "type": "system_title",
-      "code_id": "form_title_search",
-      "ui_msg_code_id": "form_title_search"
+      "code_id": "system_title_search",
+      "ui_msg_code_id": "system_title_search"
     },
     {
       "name": "system body search",
@@ -465,8 +465,8 @@
       "name": "system title search full",
       "description": "show the language specific title for the search full page",
       "type": "system_title",
-      "code_id": "form_title_search_full",
-      "ui_msg_code_id": "form_title_search_full"
+      "code_id": "system_title_search_full",
+      "ui_msg_code_id": "system_title_search_full"
     },
     {
       "name": "system body search full",
@@ -478,8 +478,8 @@
       "name": "system title value detail",
       "description": "show the language specific title for the system value detail page",
       "type": "system_title",
-      "code_id": "system title_value_detail",
-      "ui_msg_code_id": "system title_value_detail"
+      "code_id": "system_title_value_detail",
+      "ui_msg_code_id": "system_title_value_detail"
     },
     {
       "name": "system body value detail",
@@ -491,8 +491,8 @@
       "name": "system title result explain",
       "description": "show the language specific title for the system result explain page",
       "type": "system_title",
-      "code_id": "system title_result_explain",
-      "ui_msg_code_id": "system title_result_explain"
+      "code_id": "system_title_result_explain",
+      "ui_msg_code_id": "system_title_result_explain"
     },
     {
       "name": "system body result explain",
@@ -504,8 +504,8 @@
       "name": "system title formula test",
       "description": "show the language specific title for the system formula test page",
       "type": "system_title",
-      "code_id": "system title_formula_test",
-      "ui_msg_code_id": "system title_formula_test"
+      "code_id": "system_title_formula_test",
+      "ui_msg_code_id": "system_title_formula_test"
     },
     {
       "name": "system body formula test",
@@ -517,8 +517,8 @@
       "name": "system title sandbox",
       "description": "show the language specific title for the sandbox page",
       "type": "system_title",
-      "code_id": "form_title_sandbox",
-      "ui_msg_code_id": "form_title_sandbox"
+      "code_id": "system_title_sandbox",
+      "ui_msg_code_id": "system_title_sandbox"
     },
     {
       "name": "system body sandbox",
@@ -530,8 +530,8 @@
       "name": "system title undo",
       "description": "show the language specific title for the undo page",
       "type": "system_title",
-      "code_id": "form_title_undo",
-      "ui_msg_code_id": "form_title_undo"
+      "code_id": "system_title_undo",
+      "ui_msg_code_id": "system_title_undo"
     },
     {
       "name": "system body undo",
@@ -543,8 +543,8 @@
       "name": "system title user settings",
       "description": "show the language specific title for the system user settings page",
       "type": "system_title",
-      "code_id": "system title_user_settings",
-      "ui_msg_code_id": "system title_user_settings"
+      "code_id": "system_title_user_settings",
+      "ui_msg_code_id": "system_title_user_settings"
     },
     {
       "name": "system body user settings",
@@ -556,57 +556,57 @@
       "name": "system form title paste table",
       "description": "show the language specific title for the drop table to db page",
       "type": "system_title",
-      "code_id": "form_paste_table",
-      "ui_msg_code_id": "form_paste_table"
+      "code_id": "system_paste_table",
+      "ui_msg_code_id": "system_paste_table"
     },
     {
       "name": "system title import",
       "description": "show the language specific title for the import page",
       "type": "system_title",
-      "code_id": "title_user_import",
-      "ui_msg_code_id": "title_user_import"
+      "code_id": "system_title_import",
+      "ui_msg_code_id": "system_title_import"
     },
     {
       "name": "system title export",
       "description": "show the language specific title for the export page",
       "type": "system_title",
-      "code_id": "title_user_export",
-      "ui_msg_code_id": "title_user_export"
+      "code_id": "system_title_export",
+      "ui_msg_code_id": "system_title_export"
     },
     {
       "name": "system title export json",
       "description": "show the language specific title for the export json page",
       "type": "system_title",
-      "code_id": "title_user_export_json",
-      "ui_msg_code_id": "title_user_export_json"
+      "code_id": "system_title_export_json",
+      "ui_msg_code_id": "system_title_export_json"
     },
     {
       "name": "system title export xml",
       "description": "show the language specific title for the export xml page",
       "type": "system_title",
-      "code_id": "title_user_export_xml",
-      "ui_msg_code_id": "title_user_export_xml"
+      "code_id": "system_title_export_xml",
+      "ui_msg_code_id": "system_title_export_xml"
     },
     {
       "name": "system title export csv",
       "description": "show the language specific title for the export csv page",
       "type": "system_title",
-      "code_id": "title_user_export_csv",
-      "ui_msg_code_id": "title_user_export_csv"
+      "code_id": "system_title_export_csv",
+      "ui_msg_code_id": "system_title_export_csv"
     },
     {
       "name": "system title export ods",
       "description": "show the language specific title for the export ods page",
       "type": "system_title",
-      "code_id": "title_user_export_ods",
-      "ui_msg_code_id": "title_user_export_ods"
+      "code_id": "system_title_export_ods",
+      "ui_msg_code_id": "system_title_export_ods"
     },
     {
       "name": "system title process async",
       "description": "show the language specific title for the progress of one process",
       "type": "system_title",
-      "code_id": "form_title_process_async",
-      "ui_msg_code_id": "form_title_process_async"
+      "code_id": "system_title_process_async",
+      "ui_msg_code_id": "system_title_process_async"
     },
     {
       "name": "system body process async",
@@ -618,8 +618,8 @@
       "name": "system title process list",
       "description": "show the language specific title for the control of all processes",
       "type": "system_title",
-      "code_id": "form_title_process_list",
-      "ui_msg_code_id": "form_title_process_list"
+      "code_id": "system_title_process_list",
+      "ui_msg_code_id": "system_title_process_list"
     },
     {
       "name": "system body process list",
@@ -631,8 +631,8 @@
       "name": "system title process",
       "description": "show the language specific title for the job dashboard",
       "type": "system_title",
-      "code_id": "form_title_process",
-      "ui_msg_code_id": "form_title_process"
+      "code_id": "system_title_process",
+      "ui_msg_code_id": "system_title_process"
     },
     {
       "name": "system body process",
@@ -671,21 +671,21 @@
       "description": "selector for the from phrase of a triple",
       "type": "system_form_select_phrase",
       "code_id": "form_field_triple_phrase_from",
-      "ui_msg_code_id": "form_triple_phrase_from"
+      "ui_msg_code_id": "form_select_phrase_from"
     },
     {
       "name": "system form triple phrase to",
       "description": "selector for the to phrase of a triple",
       "type": "system_form_select_phrase",
       "code_id": "form_field_triple_phrase_to",
-      "ui_msg_code_id": "form_triple_phrase_to"
+      "ui_msg_code_id": "form_select_phrase_to"
     },
     {
       "name": "system form triple verb",
       "description": "selector for the verb of a triple",
       "type": "system_form_select_verb",
       "code_id": "form_field_triple_verb",
-      "ui_msg_code_id": "form_triple_verb"
+      "ui_msg_code_id": "form_select_verb"
     },
     {
       "name": "system form field group",
@@ -887,7 +887,7 @@
       "name": "system form select verb type",
       "description": "selector for the verb type",
       "type": "system_form_select_verb_type",
-      "code_id": "form_field_verb_type",
+      "code_id": "form_select_verb_type",
       "ui_msg_code_id": "form_select_verb_type"
     },
     {
@@ -1221,8 +1221,14 @@
     {
       "name": "Export CSV",
       "description": "get data from zukunft.com in the csv format",
-      "type": "export_xml",
-      "code_id": "export_xml"
+      "type": "export_csv",
+      "code_id": "export_csv"
+    },
+    {
+      "name": "Export ODS",
+      "description": "get data from zukunft.com in the ods format",
+      "type": "export_ods",
+      "code_id": "export_ods"
     },
     {
       "name": "usage word",
@@ -3751,7 +3757,7 @@
     {
       "name": "Change formula link",
       "description": "Change a link between a formula and a phrase",
-      "code_id": "formula_link_add",
+      "code_id": "formula_link_edit",
       "type": "system",
       "protection": "admin_protection",
       "components": [

@@ -528,7 +528,7 @@ class sandbox_list_named extends sandbox_list
                 $lib = new library();
                 $usr_msg->add_id_with_vars(msg_id::USED_OBJECT_ID_AND_NAME_MISSING, [
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($obj_to_fill::class),
-                    msg_id::VAR_WORD_NAME => $obj_to_fill->dsp_id(),
+                    msg_id::VAR_PHRASE_NAME => $obj_to_fill->dsp_id(),
                     msg_id::VAR_NAME => $this->name()
                 ]);
             }
