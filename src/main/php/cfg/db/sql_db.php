@@ -1588,6 +1588,7 @@ class sql_db
     {
         global $usr;
 
+        $lib = new library();
         $this->reset();
         $this->class = $class;
         if ($usr == null) {
@@ -4358,7 +4359,7 @@ class sql_db
     function missing_owner_sql(): sql_par
     {
         $qp = new sql_par('missing_owner');
-        $qp->name .= $this->class;
+        $qp->name .= $this->table;
         $this->set_name($qp->name);
         $this->set_usr($this->usr_id);
         $this->set_id_field();

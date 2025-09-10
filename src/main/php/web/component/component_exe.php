@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::EXECUTE . 'system_form.php';
+include_once html_paths::EXECUTE . 'system_page.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::HTML . 'sheet.php';
@@ -54,19 +55,18 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
 include_once paths::SHARED . 'url_var.php';
 
-use Zukunft\ZukunftCom\main\php\web\component\component;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
-use Zukunft\ZukunftCom\main\php\web\list_sort;
+use Zukunft\ZukunftCom\main\php\web\html\list_sort;
+use Zukunft\ZukunftCom\main\php\web\html\sheet;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
-use Zukunft\ZukunftCom\main\php\web\sheet;
-use Zukunft\ZukunftCom\main\php\web\component\form\system_form;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\types\component_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
 
 class component_exe extends component
 {
@@ -184,7 +184,7 @@ class component_exe extends component
 
             // verb only -
             component_type::VERB_NAME => $this->verb_name($dbo),
-            component_type::TRIPLE_LIST => $this->triple_list($dbo),
+            component_type::LIST_TRIPLES => $this->triple_list($dbo),
 
             // base
             component_type::PHRASE => $this->name_tip(),
@@ -192,8 +192,8 @@ class component_exe extends component
             component_type::LINK => $this->phrase_link($dbo, $form_name),
 
             // select
-            component_type::VIEW_SELECT => $this->view_select($dbo, $form_name, $cfg),
-            component_type::PHRASE_SELECT => $this->phrase_select($dbo, $form_name, $phr_lst,),
+            component_type::SELECT_VIEW => $this->view_select($dbo, $form_name, $cfg),
+            component_type::SELECT_PHRASE => $this->phrase_select($dbo, $form_name, $phr_lst,),
 
             // table
             component_type::VALUES_ALL => $this->all($dbo, $back),
@@ -454,7 +454,7 @@ class component_exe extends component
      */
     function list_sort(
         phrase $phr,
-        data_object $dbo = null
+        data_object $dbo
     ): string
     {
         $lst = new list_sort();
@@ -465,7 +465,7 @@ class component_exe extends component
      * @return string the html code for the start view as a sortable list
      */
     function start_list(
-        data_object $dbo = null
+        data_object $dbo
     ): string
     {
         $phr = new phrase();

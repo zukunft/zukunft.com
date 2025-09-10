@@ -39,27 +39,27 @@ class files
      * types and extensions
      */
 
-    CONST JSON = '.json';
-    CONST YAML = '.yaml';
-    const CODE_LINK_TYPE = '.csv';
-    CONST SQL = '.sql';
+    const string JSON = '.json';
+    const string YAML = '.yaml';
+    const string CODE_LINK_TYPE = '.csv';
+    const string SQL = '.sql';
 
 
     /*
      * path
      */
 
-    const RESOURCE_PATH = paths::MAIN . 'resources' . DIRECTORY_SEPARATOR;
-    const MESSAGE_PATH = self::RESOURCE_PATH . 'messages' . DIRECTORY_SEPARATOR;
-    const DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
-    const DB_UPGRADE_PATH = self::DB_PATH . 'upgrade' . DIRECTORY_SEPARATOR;
-    const DB_UPGRADE_V003_PATH = self::DB_UPGRADE_PATH . 'v0.0.3' . DIRECTORY_SEPARATOR;
-    const DB_SETUP_PATH = self::DB_PATH . 'setup' . DIRECTORY_SEPARATOR;
-    const DB_SETUP_PG_PATH = self::DB_SETUP_PATH . 'postgres' . DIRECTORY_SEPARATOR;
-    const DB_SETUP_MYSQL_PATH = self::DB_SETUP_PATH . 'mysql' . DIRECTORY_SEPARATOR;
+    const string RESOURCE_PATH = paths::MAIN . 'resources' . DIRECTORY_SEPARATOR;
+    const string MESSAGE_PATH = self::RESOURCE_PATH . 'messages' . DIRECTORY_SEPARATOR;
+    const string DB_PATH = self::RESOURCE_PATH . 'db' . DIRECTORY_SEPARATOR;
+    const string DB_UPGRADE_PATH = self::DB_PATH . 'upgrade' . DIRECTORY_SEPARATOR;
+    const string DB_UPGRADE_V003_PATH = self::DB_UPGRADE_PATH . 'v0.0.3' . DIRECTORY_SEPARATOR;
+    const string DB_SETUP_PATH = self::DB_PATH . 'setup' . DIRECTORY_SEPARATOR;
+    const string DB_SETUP_PG_PATH = self::DB_SETUP_PATH . 'postgres' . DIRECTORY_SEPARATOR;
+    const string DB_SETUP_MYSQL_PATH = self::DB_SETUP_PATH . 'mysql' . DIRECTORY_SEPARATOR;
 
     // TODO make the csv file list based on the class name
-    const CODE_LINK_PATH = self::RESOURCE_PATH . 'db_code_links' . DIRECTORY_SEPARATOR;
+    const string CODE_LINK_PATH = self::RESOURCE_PATH . 'db_code_links' . DIRECTORY_SEPARATOR;
 
 
     /*
@@ -67,34 +67,34 @@ class files
      */
 
     // the system users as a zukunft.com user import json
-    const SYSTEM_USERS = self::RESOURCE_PATH . 'users' . self::JSON;
+    const string SYSTEM_USERS = self::RESOURCE_PATH . 'users' . self::JSON;
 
     // the default system config as a yaml including the pod and the user frontend config
-    const SYSTEM_CONFIG = self::RESOURCE_PATH . 'config' . self::YAML;
+    const string SYSTEM_CONFIG = self::RESOURCE_PATH . 'config' . self::YAML;
 
     // the system views as a zukunft.com user import json
-    const SYSTEM_VIEWS_FILE = 'system_views' . self::JSON;
-    const SYSTEM_VIEWS = self::MESSAGE_PATH . self::SYSTEM_VIEWS_FILE;
-    const TRANSLATION_PATH = self::RESOURCE_PATH . 'translations' . DIRECTORY_SEPARATOR;
+    const string SYSTEM_VIEWS_FILE = 'system_views' . self::JSON;
+    const string SYSTEM_VIEWS = self::MESSAGE_PATH . self::SYSTEM_VIEWS_FILE;
+    const string TRANSLATION_PATH = self::RESOURCE_PATH . 'translations' . DIRECTORY_SEPARATOR;
 
     // initial loading of words and triples used for unit, ui and db read tests
     // so that they have a low database id that does hopefully neven change
     // including some often used words and triples that are used for the offline phrase selection
-    const BASE_PHRASES_FILE = 'base_phrases' . self::JSON;
+    const string BASE_PHRASES_FILE = 'base_phrases' . self::JSON;
 
     // initial configuration of some views that the user can change
-    const BASE_VIEWS_FILE = 'base_views' . self::JSON;
+    const string BASE_VIEWS_FILE = 'base_views' . self::JSON;
 
 
     /*
      * db config
      */
 
-    const DB_ROLE_FILE = 'db_create_user' . self::SQL;
-    const DB_CREATE_FILE = 'db_create_database' . self::SQL;
-    const DB_STRUCTURE_FILE = 'zukunft_structure' . self::SQL;
-    const DB_UPGRADE_POSTGRES = 'upgrade_postgres' . self::SQL;
-    const DB_UPGRADE_MYSQL = 'upgrade_mysql' . self::SQL;
+    const string DB_ROLE_FILE = 'db_create_user' . self::SQL;
+    const string DB_CREATE_FILE = 'db_create_database' . self::SQL;
+    const string DB_STRUCTURE_FILE = 'zukunft_structure' . self::SQL;
+    const string DB_UPGRADE_POSTGRES = 'upgrade_postgres' . self::SQL;
+    const string DB_UPGRADE_MYSQL = 'upgrade_mysql' . self::SQL;
 
 
     /*
@@ -102,30 +102,30 @@ class files
      */
 
     // the initial verbs as a zukunft.com verb import json
-    const VERBS = self::RESOURCE_PATH . 'verbs' . self::JSON;
+    const string VERBS = self::RESOURCE_PATH . 'verbs' . self::JSON;
 
 
     // the initial list of blocked ip addresses
-    const IP_BLACKLIST_FILE = 'ip_blacklist' . self::JSON;
+    const string IP_BLACKLIST_FILE = 'ip_blacklist' . self::JSON;
 
     // sources used for the initial pod setup and for system testing
-    const SOURCES_FILE = 'sources' . self::JSON;
+    const string SOURCES_FILE = 'sources' . self::JSON;
 
     // some basic units including the SI units e.g. kilogram
-    const UNITS_FILE = 'units' . self::JSON;
+    const string UNITS_FILE = 'units' . self::JSON;
 
     // some basic scaling formulas e.g. to scale millions to one
-    const SCALING_FILE = 'scaling' . self::JSON;
+    const string SCALING_FILE = 'scaling' . self::JSON;
 
     // some basic time definition e.g. years
-    const TIME_FILE = 'time_definition' . self::JSON;
+    const string TIME_FILE = 'time_definition' . self::JSON;
 
     // data for the default start page
-    const START_PAGE_DATA_FILE = 'solution_prio' . self::JSON;
+    const string START_PAGE_DATA_FILE = 'solution_prio' . self::JSON;
 
     // initial data just to add some sample data and for system testing
-    const COUNTRY_FILE = 'country' . self::JSON;
-    const COMPANY_FILE = 'company' . self::JSON;
+    const string COUNTRY_FILE = 'country' . self::JSON;
+    const string COMPANY_FILE = 'company' . self::JSON;
 
 
     /*
@@ -133,7 +133,7 @@ class files
      */
 
     // to load the default data for a pod
-    const BASE_CONFIG_FILES = [
+    const array BASE_CONFIG_FILES = [
         self::SYSTEM_VIEWS_FILE,
         self::SOURCES_FILE,
         self::UNITS_FILE,
@@ -148,11 +148,11 @@ class files
     ];
 
     // to load the default data for all pods
-    const BASE_CONFIG_FILES_DIRECT = [
+    const array BASE_CONFIG_FILES_DIRECT = [
     ];
 
     // to load the default data for a standard pod
-    const POD_CONFIG_FILES_DIRECT = [
+    const array POD_CONFIG_FILES_DIRECT = [
         self::IP_BLACKLIST_FILE,
         self::BASE_VIEWS_FILE,
         self::COUNTRY_FILE,

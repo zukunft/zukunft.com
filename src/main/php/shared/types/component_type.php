@@ -87,6 +87,8 @@ class component_type
     const int FORM_FIELD_SELECTION_DESCRIPTION_ID = 73;
     const string FORM_FIELD_SELECTION_TEXT = "system_form_selection_text";
     const int FORM_FIELD_SELECTION_TEXT_ID = 74;
+    const string FORM_VIEW_SELECT = "form_view_select";
+    const int FORM_VIEW_SELECT_ID = 41;
     const string FORM_SELECT_PHRASE = "system_form_select_phrase";
     const int FORM_SELECT_PHRASE_ID = 23;
     const string FORM_SELECT_PHRASES = "system_form_select_multi_phrases";
@@ -175,8 +177,6 @@ class component_type
     // simple close the form section
     const string FORM_END = "form_end";
     const int FORM_END_ID = 32;
-    const string FORM_VIEW_SELECT = "form_view_select";
-    const int FORM_VIEW_SELECT_ID = 41;
 
 
     /*
@@ -197,47 +197,71 @@ class component_type
      */
 
     const string SYSTEM_TITLE = "system_title";
+    const int SYSTEM_TITLE_ID = 63;
     const string SYSTEM_BODY_ABOUT = "system_body_about";
+    const int SYSTEM_BODY_ABOUT_ID = 64;
     const string SYSTEM_BODY_ERROR_LOG = "system_body_error_log";
+    const int SYSTEM_BODY_ERROR_LOG_ID = 65;
     const string SYSTEM_BODY_ERROR_UPDATE = "system_body_error_update";
+    const int SYSTEM_BODY_ERROR_UPDATE_ID = 66;
     const string SYSTEM_BODY_PROCESS_PROGRESS = "system_body_process_progress";
+    const int SYSTEM_BODY_PROCESS_PROGRESS_ID = 67;
     const string SYSTEM_BODY_PROCESS_LIST = "system_body_process_list";
+    const int SYSTEM_BODY_PROCESS_LIST_ID = 68;
 
 
     /*
      * system components
      */
 
+    // show the word or triple name and give the user the possibility to change the name
+    const string SELECT_PHRASE = "phrase_select";
+    const int SELECT_PHRASE_ID = 1;
     // select a view
-    const string VIEW_SELECT = "view_select";
-    const int VIEW_SELECT_ID = 2;
+    const string SELECT_VIEW = "view_select";
+    const int SELECT_VIEW_ID = 2;
+
     // show a list of external references
     const string LIST_PHRASES = "phrase_list";
     const int LIST_PHRASES_ID = 96;
-    const string LIST_RESULTS = "result_list";
-    const int LIST_RESULTS_ID = 97;
-    const string LIST_FORMULAS = "formula_list";
-    const int LIST_FORMULAS_ID = 98;
+    const string LIST_TRIPLES = "triples_related";
+    const int LIST_TRIPLES_ID = 48;
     const string LIST_REF = "ref_list";
     const int LIST_REF_ID = 42;
+    const string LIST_FORMULAS = "formula_list";
+    const int LIST_FORMULAS_ID = 98;
+    const string LIST_RESULTS = "result_list";
+    const int LIST_RESULTS_ID = 97;
     const string LINK_LIST_WORD = "link_list";
     const int LINK_LIST_WORD_ID = 43;
     const string USAGE_WORD = "usage";
     const int USAGE_WORD_ID = 44;
-    const string SYSTEM_CHANGE_LOG = "change_log";
-    const int SYSTEM_CHANGE_LOG_ID = 45;
-    const string TRIPLE_LIST = "triples_related";
-    const int TRIPLE_LIST_ID = 48;
 
     // show the user specific name of a word or triple with the description on mouseover without allowing to change it
     const string PHRASE = "phrase";
     const int PHRASE_ID = 4;
-    // show the word or triple name and give the user the possibility to change the name
-    const string PHRASE_SELECT = "phrase_select";
-    const int PHRASE_SELECT_ID = 1;
-    // show all word that this words is based on
     const string VERB_NAME = "verb_name";
     const int VERB_NAME_ID = 37;
+
+    /*
+     * related
+     */
+
+    // display a changeable list as a table (e.g. ABB as first word, Cash Flow Statement as second word)
+    const string VALUES_RELATED = "values_related";
+    const int VALUES_RELATED_ID = 11;
+
+    const string SHOW_NAME = "system_show_field_name";
+    const int SHOW_NAME_ID = 20;
+
+    const string TEXT = "text";
+    const int TEXT_ID = 3;
+    const string TEXT_COM = "simply to display a variable text";
+
+    const string SYSTEM_CHANGE_LOG = "change_log";
+    const int SYSTEM_CHANGE_LOG_ID = 45;
+
+    // show all word that this words is based on
     const string WORDS_UP = "word_list_up";
     // show all words that are based on the given start word
     const string WORDS_DOWN = "word_list_down";
@@ -258,22 +282,6 @@ class component_type
     // show a list of words and triples with a link type selector
     const string LINK = "link";
 
-
-    /*
-     * related
-     */
-
-    const string SHOW_NAME = "system_show_field_name";
-    const int SHOW_NAME_ID = 20;
-
-    const string TEXT = "text";
-    const int TEXT_ID = 3;
-    const string TEXT_COM = "simply to display a variable text";
-
-
-    // display a changeable list as a table (e.g. ABB as first word, Cash Flow Statement as second word)
-    const string VALUES_RELATED = "values_related";
-    const int VALUES_RELATED_ID = 11;
 
 
     // a list with all types for the initial load with name, code_id and description
@@ -368,7 +376,7 @@ class component_type
     // in order of const definition which should be also the thematic order
     // TODO align with component_types.csv
     const array TEST_TYPES = array(
-        [self::TEXT, self::TEXT_ID],
+        [self::PHRASE_NAME, self::PHRASE_NAME_ID],
         [self::CALC_SHEET, self::CALC_SHEET_ID],
         [self::FORM_TITLE, self::FORM_TITLE_ID],
         [self::FORM_FIELD_NAME, self::FORM_FIELD_NAME_ID],
@@ -382,9 +390,38 @@ class component_type
         [self::FORM_FIELD_SELECTION_NAME, self::FORM_FIELD_SELECTION_NAME_ID],
         [self::FORM_FIELD_SELECTION_DESCRIPTION, self::FORM_FIELD_SELECTION_DESCRIPTION_ID],
         [self::FORM_FIELD_SELECTION_TEXT, self::FORM_FIELD_SELECTION_TEXT_ID],
+        [self::FORM_VIEW_SELECT, self::FORM_VIEW_SELECT_ID],
         [self::FORM_SELECT_PHRASE, self::FORM_SELECT_PHRASE_ID],
+        [self::FORM_SELECT_PHRASES, self::FORM_SELECT_PHRASES_ID],
         [self::FORM_SELECT_VERB, self::FORM_SELECT_VERB_ID],
+        [self::FORM_SELECT_VERBS, self::FORM_SELECT_VERBS_ID],
+        [self::FORM_SELECT_FORMULA, self::FORM_SELECT_FORMULA_ID],
+        [self::FORM_SELECT_FORMULAS, self::FORM_SELECT_FORMULAS_ID],
+        [self::FORM_SELECT_TERM, self::FORM_SELECT_TERM_ID],
+        [self::FORM_SELECT_TERMS, self::FORM_SELECT_TERMS_ID],
+        [self::FORM_SELECT_TERM, self::FORM_SELECT_TERM_ID],
+        [self::FORM_SELECT_TERMS, self::FORM_SELECT_TERMS_ID],
+        [self::FORM_SELECT_VALUE, self::FORM_SELECT_VALUE_ID],
+        [self::FORM_SELECT_VALUES, self::FORM_SELECT_VALUES_ID],
+        [self::FORM_SELECT_RESULT, self::FORM_SELECT_RESULT_ID],
+        [self::FORM_SELECT_RESULTS, self::FORM_SELECT_RESULTS_ID],
+        [self::FORM_SELECT_VIEW, self::FORM_SELECT_VIEW_ID],
+        [self::FORM_SELECT_VIEWS, self::FORM_SELECT_VIEWS_ID],
+        [self::FORM_SELECT_COMPONENT, self::FORM_SELECT_COMPONENT_ID],
+        [self::FORM_SELECT_COMPONENTS, self::FORM_SELECT_COMPONENTS_ID],
+        [self::FORM_SELECT_VIEW_DEFAULT, self::FORM_SELECT_VIEW_DEFAULT_ID],
+        [self::FORM_SELECT_FILE, self::FORM_SELECT_FILE_ID],
+        [self::FORM_SELECT_FORMAT_EXPORT, self::FORM_SELECT_FORMAT_EXPORT_ID],
         [self::FORM_SELECT_PHRASE_TYPE, self::FORM_SELECT_PHRASE_TYPE_ID],
+        [self::FORM_SELECT_SOURCE_TYPE, self::FORM_SELECT_SOURCE_TYPE_ID],
+        [self::FORM_SELECT_REF_TYPE, self::FORM_SELECT_REF_TYPE_ID],
+        [self::FORM_SELECT_FORMULA_TYPE, self::FORM_SELECT_FORMULA_TYPE_ID],
+        [self::FORM_SELECT_VIEW_TYPE, self::FORM_SELECT_VIEW_TYPE_ID],
+        [self::FORM_SELECT_VIEW_STYLE, self::FORM_SELECT_VIEW_STYLE_ID],
+        [self::FORM_SELECT_COMPONENT_TYPE, self::FORM_SELECT_COMPONENT_TYPE_ID],
+        [self::FORM_SELECT_FORMULA_LINK_TYPE, self::FORM_SELECT_FORMULA_LINK_TYPE_ID],
+        [self::FORM_SELECT_VIEW_LINK_TYPE, self::FORM_SELECT_VIEW_LINK_TYPE_ID],
+        [self::FORM_SELECT_COMPONENT_LINK_TYPE, self::FORM_SELECT_VIEW_COMPONENT_TYPE_ID],
         [self::FORM_SHARE_TYPE, self::FORM_SHARE_TYPE_ID],
         [self::FORM_PROTECTION_TYPE, self::FORM_PROTECTION_TYPE_ID],
         [self::FORM_TABLE_LINKED_VIEWS, self::FORM_TABLE_LINKED_VIEWS_ID],
@@ -393,34 +430,33 @@ class component_type
         [self::FORM_BUTTON_DEL, self::FORM_BUTTON_DEL_ID],
         [self::FORM_BUTTON_IMPORT, self::FORM_BUTTON_IMPORT_ID],
         [self::FORM_BUTTON_EXPORT, self::FORM_BUTTON_EXPORT_ID],
+        [self::FORM_PREVIEW, self::FORM_PREVIEW_ID],
+        [self::FORM_HIDDEN_BACK, self::FORM_HIDDEN_BACK_ID],
+        [self::FORM_HIDDEN_STEP, self::FORM_HIDDEN_STEP_ID],
         [self::FORM_END, self::FORM_END_ID],
         [self::ROW_START, self::ROW_START_ID],
         [self::ROW_RIGHT, self::ROW_RIGHT_ID],
         [self::ROW_END, self::ROW_END_ID],
-        [self::FORM_SELECT_SOURCE_TYPE, self::FORM_SELECT_SOURCE_TYPE_ID],
-        [self::FORM_SELECT_REF_TYPE, self::FORM_SELECT_REF_TYPE_ID],
-        [self::FORM_SELECT_FORMULA_TYPE, self::FORM_SELECT_FORMULA_TYPE_ID],
-        [self::FORM_SELECT_VIEW_TYPE, self::FORM_SELECT_VIEW_TYPE_ID],
-        [self::FORM_SELECT_COMPONENT_TYPE, self::FORM_SELECT_COMPONENT_TYPE_ID],
-        [self::FORM_SELECT_VIEW_STYLE, self::FORM_SELECT_VIEW_STYLE_ID],
-        [self::VIEW_SELECT, self::VIEW_SELECT_ID],
-        [self::FORM_VIEW_SELECT, self::FORM_VIEW_SELECT_ID],
-        [self::TRIPLE_LIST, self::TRIPLE_LIST_ID],
-        [self::PHRASE_SELECT, self::PHRASE_SELECT_ID],
-        [self::VIEW_SELECT, self::VIEW_SELECT_ID],
+        [self::SYSTEM_TITLE, self::SYSTEM_TITLE_ID],
+        [self::SYSTEM_BODY_ABOUT, self::SYSTEM_BODY_ABOUT_ID],
+        [self::SYSTEM_BODY_ERROR_LOG, self::SYSTEM_BODY_ERROR_LOG_ID],
+        [self::SYSTEM_BODY_ERROR_UPDATE, self::SYSTEM_BODY_ERROR_UPDATE_ID],
+        [self::SYSTEM_BODY_PROCESS_PROGRESS, self::SYSTEM_BODY_PROCESS_PROGRESS_ID],
+        [self::SYSTEM_BODY_PROCESS_LIST, self::SYSTEM_BODY_PROCESS_LIST_ID],
+        [self::SELECT_PHRASE, self::SELECT_PHRASE_ID],
+        [self::SELECT_VIEW, self::SELECT_VIEW_ID],
         [self::LIST_PHRASES, self::LIST_PHRASES_ID],
+        [self::LIST_TRIPLES, self::LIST_TRIPLES_ID],
+        [self::LIST_REF, self::LIST_REF_ID],
         [self::LIST_FORMULAS, self::LIST_FORMULAS_ID],
         [self::LIST_RESULTS, self::LIST_RESULTS_ID],
-        [self::LIST_REF, self::LIST_REF_ID],
         [self::LINK_LIST_WORD, self::LINK_LIST_WORD_ID],
+        [self::USAGE_WORD, self::USAGE_WORD_ID],
         [self::PHRASE, self::PHRASE_ID],
-        [self::PHRASE_NAME, self::PHRASE_NAME_ID],
         [self::VERB_NAME, self::VERB_NAME_ID],
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
-        [self::FORM_HIDDEN_BACK, self::FORM_HIDDEN_BACK_ID],
-        [self::FORM_HIDDEN_STEP, self::FORM_HIDDEN_STEP_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
-        [self::USAGE_WORD, self::USAGE_WORD_ID],
+        [self::TEXT, self::TEXT_ID],
         [self::SYSTEM_CHANGE_LOG, self::SYSTEM_CHANGE_LOG_ID]
     );
 

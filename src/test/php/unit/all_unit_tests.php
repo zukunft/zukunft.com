@@ -389,10 +389,10 @@ class all_unit_tests extends test_cleanup
         (new figure_list_tests)->run($this);
         (new view_tests)->run($this);
         (new view_list_tests)->run($this); // TODO add assert_api_to_dsp
-        (new term_view_tests())->run($this);
-        (new component_tests ())->run($this);
-        (new component_list_tests ())->run($this); // TODO add assert_api_to_dsp
-        (new component_link_tests)->run($this); // TODO add assert_api_to_dsp
+        new term_view_tests()->run($this);
+        new component_tests()->run($this);
+        new component_list_tests()->run($this); // TODO add assert_api_to_dsp
+        new component_link_tests()->run($this); // TODO add assert_api_to_dsp
         (new component_link_list_tests)->run($this);
 
         // do the im- and export unit tests

@@ -83,11 +83,10 @@ include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
-use Zukunft\ZukunftCom\main\php\web\button;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\html\html_selector;
 use Zukunft\ZukunftCom\main\php\web\log\change_log_named;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
@@ -118,14 +117,14 @@ class word extends sandbox_code_id
      */
 
     // curl views
-    const VIEW_ADD = views::WORD_ADD;
-    const VIEW_EDIT = views::WORD_EDIT;
-    const VIEW_DEL = views::WORD_DEL;
+    const string VIEW_ADD = views::WORD_ADD;
+    const string VIEW_EDIT = views::WORD_EDIT;
+    const string VIEW_DEL = views::WORD_DEL;
 
     // curl message id
-    const MSG_ADD = msg_id::WORD_ADD;
-    const MSG_EDIT = msg_id::WORD_EDIT;
-    const MSG_DEL = msg_id::WORD_DEL;
+    const msg_id MSG_ADD = msg_id::WORD_ADD;
+    const msg_id MSG_EDIT = msg_id::WORD_EDIT;
+    const msg_id MSG_DEL = msg_id::WORD_DEL;
 
 
     /*
@@ -384,8 +383,8 @@ class word extends sandbox_code_id
      */
     function btn_unlink(int $link_id, string $back = ''): string
     {
-        $url = (new html_base())->url(rest_ctrl::LINK . rest_ctrl::REMOVE, $link_id, $this->id());
-        return (new button($url, $back))->del(msg_id::WORD_UNLINK);
+        $url = new html_base()->url(rest_ctrl::LINK . rest_ctrl::REMOVE, $link_id, $this->id());
+        return new button($url, $back)->del(msg_id::WORD_UNLINK);
     }
 
 

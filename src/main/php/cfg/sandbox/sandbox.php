@@ -231,7 +231,7 @@ class sandbox extends db_object_seq_id_user
 
     // list of all user sandbox database types with a sequence ID
     // so exclude values and result TODO check missing owner for values and results
-    const DB_TYPES = array(
+    const array DB_TYPES = array(
         word::class,
         triple::class,
         source::class,

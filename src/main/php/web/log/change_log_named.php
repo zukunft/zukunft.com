@@ -51,7 +51,7 @@ include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
 use Zukunft\ZukunftCom\main\php\web\helper\config;
-use Zukunft\ZukunftCom\main\php\web\button;
+use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -205,19 +205,19 @@ class change_log_named extends change_log
         if ($this->table_name() == change_tables::WORD) {
             if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
-                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_ADD);
+                $undo_btn = new button($undo_call)->undo(msg_id::UNDO_ADD);
             }
         } elseif ($this->table_name() == change_tables::VIEW) {
             if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
-                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_EDIT);
+                $undo_btn = new button($undo_call)->undo(msg_id::UNDO_EDIT);
             }
         } elseif ($this->table_name() == change_tables::FORMULA) {
             if ($this->action_code_id() == change_actions::UPDATE) {
                 $undo_call = $html->url(
                     formula::class . rest_ctrl::UPDATE, $this->row_id,
                     $back->url_encode() . '&undo_change=' . $this->id());
-                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_DEL);
+                $undo_btn = new button($undo_call)->undo(msg_id::UNDO_DEL);
             }
         }
         // display the undo button

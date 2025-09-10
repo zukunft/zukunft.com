@@ -38,23 +38,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\view;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\web\button;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\display_list;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
-use Zukunft\ZukunftCom\main\php\web\html\styles;
-use Zukunft\ZukunftCom\main\php\web\system\back_trace;
-use Zukunft\ZukunftCom\main\php\web\types\type_lists;
-use Zukunft\ZukunftCom\main\php\web\word\word;
-use Zukunft\ZukunftCom\main\php\shared\api;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
-use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
-use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 
 include_once html_paths::VIEW . 'view_exe.php';
 include_once html_paths::HELPER . 'config.php';
@@ -76,6 +60,23 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\html\display_list;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+
 class view extends view_exe
 {
 
@@ -84,14 +85,14 @@ class view extends view_exe
      */
 
     // curl views
-    const VIEW_ADD = views::VIEW_ADD;
-    const VIEW_EDIT = views::VIEW_EDIT;
-    const VIEW_DEL = views::VIEW_DEL;
+    const string VIEW_ADD = views::VIEW_ADD;
+    const string VIEW_EDIT = views::VIEW_EDIT;
+    const string VIEW_DEL = views::VIEW_DEL;
 
     // curl message id
-    const MSG_ADD = msg_id::VIEW_ADD;
-    const MSG_EDIT = msg_id::VIEW_EDIT;
-    const MSG_DEL = msg_id::VIEW_DEL;
+    const msg_id MSG_ADD = msg_id::VIEW_ADD;
+    const msg_id MSG_EDIT = msg_id::VIEW_EDIT;
+    const msg_id MSG_DEL = msg_id::VIEW_DEL;
 
 
     /**
@@ -256,16 +257,16 @@ class view extends view_exe
         $result .= '<td class="' . styles::STYLE_RIGHT . '">';
         if ($this->is_system() and !$usr->is_admin()) {
             $url = $html->url(rest_ctrl::SEARCH);
-            $result .= (new button($url, $back))->find(msg_id::SEARCH_MAIN) . ' - ';
+            $result .= new button($url, $back)->find(msg_id::SEARCH_MAIN) . ' - ';
             $result .= $this->name . ' ';
         } else {
             $url = '/http/find.php?word=' . $back;
-            $result .= (new button($url, $back))->find(msg_id::SEARCH_MAIN) . ' - ';
+            $result .= new button($url, $back)->find(msg_id::SEARCH_MAIN) . ' - ';
             $result .= $this->dsp_view_name($back);
             $url = $html->url(api::DSP_VIEW_EDIT, $this->id());
-            $result .= (new button($url, $back))->edit(msg_id::VIEW_EDIT, $this->name) . ' ';
+            $result .= new button($url, $back)->edit(msg_id::VIEW_EDIT, $this->name) . ' ';
             $url = $html->url(api::DSP_VIEW_ADD);
-            $result .= (new button($url, $back))->add(msg_id::VIEW_ADD);
+            $result .= new button($url, $back)->add(msg_id::VIEW_ADD);
         }
         $result .= ' - ';
         $result .= $this->dsp_user($back);

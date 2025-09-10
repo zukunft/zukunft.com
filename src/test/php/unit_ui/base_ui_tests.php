@@ -53,9 +53,9 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_dsp;
-use Zukunft\ZukunftCom\main\php\web\button;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
@@ -122,7 +122,7 @@ class base_ui_tests
 
         // button add
         $url = $html->url(views::WORD_ADD);
-        $t->html_test((new button($url))->add(msg_id::WORD_ADD), '', 'button_add', $t);
+        $t->html_test(new button($url)->add(msg_id::WORD_ADD), '', 'button_add', $t);
 
         $t->subheader('unit html table tests');
 

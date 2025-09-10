@@ -46,8 +46,8 @@ include_once paths::MODEL_CONST . 'def.php';
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\result\result;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
-use Zukunft\ZukunftCom\main\php\web\button;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class horizontal_ui_tests

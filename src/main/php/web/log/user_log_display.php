@@ -54,7 +54,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component;
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
-use Zukunft\ZukunftCom\main\php\web\button;
+use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\user\user;
@@ -294,7 +294,7 @@ class user_log_display
                 if ($this->type == 'word') {
                     if ($db_row['type'] == 'add') {
                         $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id, $this->back);
-                        $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_ADD);
+                        $undo_btn = new button($undo_call)->undo(msg_id::UNDO_ADD);
                     }
                 } elseif ($this->type == 'value') {
                     if ($db_row['type'] == 'add') {
@@ -303,7 +303,7 @@ class user_log_display
                 } elseif ($this->type == 'formula') {
                     if ($db_row['type'] == 'update') {
                         $undo_call = $html->url(formula::class . rest_ctrl::UPDATE, $db_row["row_id"], $this->back . '&undo_change=' . $db_row["change_id"]);
-                        $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_ADD);
+                        $undo_btn = new button($undo_call)->undo(msg_id::UNDO_ADD);
                     }
                 }
                 // display the undo button

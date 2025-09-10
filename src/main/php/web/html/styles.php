@@ -36,13 +36,13 @@ class styles
 {
 
     // styles used
-    const STYLE_GREY = 'grey';
-    const STYLE_GLYPH = 'glyphicon glyphicon-pencil';
-    const STYLE_USER = 'user_specific';
-    const STYLE_RIGHT = 'right_ref';
-    const STYLE_BORDERLESS = 'borderless';
-    const TABLE_PUR = 'table';
-    const TEXT_RIGHT = 'text-right';
+    const string STYLE_GREY = 'grey';
+    const string STYLE_GLYPH = 'glyphicon glyphicon-pencil';
+    const string STYLE_USER = 'user_specific';
+    const string STYLE_RIGHT = 'right_ref';
+    const string STYLE_BORDERLESS = 'borderless';
+    const string TABLE_PUR = 'table';
+    const string TEXT_RIGHT = 'text-right';
 
 
 }

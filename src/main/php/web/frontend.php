@@ -48,6 +48,7 @@ include_once html_paths::USER . 'user.php';
 
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -94,6 +95,7 @@ include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
@@ -127,7 +129,7 @@ class frontend
      * api const
      */
 
-    const PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
+    const string PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
 
 
     /*
@@ -135,10 +137,10 @@ class frontend
      */
 
     // TODO Prio 1 review (get from .env and not move to application.yaml and detect and fix it on initial program start)
-    const HOST_DEV = 'http://localhost/';
-    const HOST_UAT = 'https://test.zukunft.com/';
-    const HOST_PROD = 'https://www.zukunft.com/';
-    const HOST_SYS_LOG = '';
+    const string HOST_DEV = 'http://localhost/';
+    const string HOST_UAT = 'https://test.zukunft.com/';
+    const string HOST_PROD = 'https://www.zukunft.com/';
+    const string HOST_SYS_LOG = '';
 
     /*
      * vars

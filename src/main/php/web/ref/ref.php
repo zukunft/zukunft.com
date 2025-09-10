@@ -156,6 +156,11 @@ class ref extends db_object_dsp
         return $usr_msg;
     }
 
+    function name(): string
+    {
+        return $this->source_name() . ' ' . $this->external_key();
+    }
+
     function set_phrase(phrase_dsp $phr = null): void
     {
         $this->phr = $phr;
@@ -174,6 +179,11 @@ class ref extends db_object_dsp
     function source(): ?source
     {
         return $this->source;
+    }
+
+    function source_name(): ?string
+    {
+        return $this->source?->name();
     }
 
     /**

@@ -78,10 +78,10 @@ class system_tests
 {
 
     // use path that does not need to be included
-    const PATH_NO_INCLUDE = [
+    const array PATH_NO_INCLUDE = [
         'PgSql\Connection',
-        'cfg\const\paths',
-        'html\const\paths'
+        'Zukunft\ZukunftCom\main\php\cfg\const\paths',
+        'Zukunft\ZukunftCom\main\php\web\const\paths'
     ];
 
     function run(test_cleanup $t): void

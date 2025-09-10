@@ -58,7 +58,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\file_types;
 class import_file
 {
 
-    const FILE = 'file';
+    const string FILE = 'file';
 
     public float $start_time;
     public float $start_read;

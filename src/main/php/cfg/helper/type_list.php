@@ -174,15 +174,15 @@ class type_list
      */
 
     // database and export JSON object field names
-    const FLD_NAME = 'sys_log_function_name';
-    const FLD_NAME_SQL_TYP = sql_field_type::NAME;
+    const string FLD_NAME = 'sys_log_function_name';
+    const sql_field_type FLD_NAME_SQL_TYP = sql_field_type::NAME;
 
     // error return codes
-    const CODE_ID_NOT_FOUND = -1;
+    const int CODE_ID_NOT_FOUND = -1;
 
     // persevered type name and code id for unit and integration tests
-    const TEST_NAME = 'System Test Type Name';
-    const TEST_TYPE = 'System Test Type Code ID';
+    const string TEST_NAME = 'System Test Type Name';
+    const string TEST_TYPE = 'System Test Type Code ID';
 
 
     /*

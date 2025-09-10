@@ -75,8 +75,8 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 class db_check
 {
 
-    const TBL_WORD = 'word';
-    const TBL_TRIPLE = 'triple';
+    const string TBL_WORD = 'word';
+    const string TBL_TRIPLE = 'triple';
 
     /**
      * read the version number from the database and compare it with the backend version
