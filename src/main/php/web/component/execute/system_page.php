@@ -69,6 +69,13 @@ class system_page extends component
     }
 
     // TODO Prio 0 fill with real code
+    function preview(): string
+    {
+        $html = new html_base();
+        return $html->about_body();
+    }
+
+    // TODO Prio 0 fill with real code
     function about_body(): string
     {
         $html = new html_base();

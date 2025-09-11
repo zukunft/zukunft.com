@@ -149,7 +149,6 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
-use DateTime;
 use Zukunft\ZukunftCom\main\php\web\component\component as component_dsp;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
@@ -160,9 +159,11 @@ use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_dsp;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
 use Zukunft\ZukunftCom\main\php\shared\api;
@@ -208,6 +209,7 @@ use Zukunft\ZukunftCom\test\php\unit_write\triple_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\value_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\view_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\word_write_tests;
+use DateTime;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
@@ -3980,11 +3982,37 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return component_list with a list of suggested component for a word
+     */
+    function component_list_word(): component_list
+    {
+        $lst = new component_list($this->usr1);
+        $lst->add($this->component_filled());
+        return $lst;
+    }
+
+    /**
+     * @return formula_list_dsp a sample frontend formula list
+     */
+    function formula_list_dsp(): formula_list_dsp
+    {
+        return new formula_list_dsp($this->view_list_word()->api_json());
+    }
+
+    /**
      * @return view_list_dsp a sample frontend view list
      */
     function view_list_dsp(): view_list_dsp
     {
         return new view_list_dsp($this->view_list_word()->api_json());
+    }
+
+    /**
+     * @return component_list_dsp a sample frontend component list
+     */
+    function component_list_dsp(): component_list_dsp
+    {
+        return new component_list_dsp($this->component_list_word()->api_json());
     }
 
     /**

@@ -198,6 +198,20 @@ class type_list
     function get(int $id): verb|type_object|null
     {
         $result = null;
+        if (count($this->hash) != count($this->lst)) {
+            $dub_key = [];
+            $all_key = [];
+            foreach ($this->lst as $typ) {
+                $key = $typ->code_id();
+                if (!in_array($key, $all_key)) {
+                    $all_key[] = $key;
+                } else {
+                    $dub_key[] = $key;
+                }
+            }
+            log_err('probably "' . implode(', ' ,$dub_key) . '" are duplicate code_id in ' . $this::class);
+            //log_warning('probably "' . implode(', ' ,$dub_key) . '" are duplicate code_id in ' . $this::class);
+        }
         if ($id > 0) {
             if (in_array($id, $this->hash)) {
                 $key = array_search($id, $this->hash);

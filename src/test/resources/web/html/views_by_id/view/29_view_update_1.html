@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>Change view Start view (zukunft.com)</title>
+<head><title>Add view Start view (zukunft.com)</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
     <script src="/external_lib/bootstrap/js/bootstrap.js"></script>
@@ -26,30 +26,19 @@
             </ul>
         </div>
     </nav>
-    <br><br><br><br><br><h4>Change view</h4>
-    <form action="/http/view.php" id="view_edit"><input class="form-control" type="hidden" name="m" id="m"
-                                                        value="29"><input class="form-control" type="hidden" name="id"
-                                                                          id="id" value="0"><input class="form-control"
-                                                                                                   type="hidden"
-                                                                                                   name="back" id="back"
-                                                                                                   value="0"><input
+    <br><br><br><br><br><h4>Add a new view</h4>
+    <form action="/http/view.php" id="view_add"><input class="form-control" type="hidden" name="m" id="m"
+                                                       value="29"><input class="form-control" type="hidden" name="id"
+                                                                         id="id" value="0"><input class="form-control"
+                                                                                                  type="hidden"
+                                                                                                  name="back" id="back"
+                                                                                                  value="0"><input
             class="form-control" type="hidden" name="confirm" id="confirm" value="1">
         <div class="row col-md-12">
             <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
                                                                                   name="name" id="name"
                                                                                   value="Start view"></div>
-            <div class="form-group col-md-4"><label for="view_type">view type</label><select class="form-control"
-                                                                                             name="view_type"
-                                                                                             form="view_edit"
-                                                                                             id="view_type">
-                <option value="1">standard</option>
-                <option value="2" selected>entry view</option>
-                <option value="3">edit</option>
-                <option value="4">presentation</option>
-                <option value="5">word default</option>
-                <option value="6">details</option>
-                <option value="7">system</option>
-            </select></div>
+            view type selector not defined for Zukunft\ZukunftCom\main\php\web\view\view
         </div>
         <div class="row col-md-12">
             <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
@@ -60,8 +49,16 @@
             </div>
         </div>
         <div class="row col-md-12">
+            <div class="form-group col-md-4"><label for="style">style</label><select class="form-control" name="style"
+                                                                                     form="view_add" id="style">
+                <option value="0" selected>please select ...</option>
+                <option value="1">1/3 width</option>
+                <option value="2">2/3 width</option>
+                <option value="3">half width</option>
+                <option value="4">full width</option>
+            </select></div>
             <div class="form-group col-md-4"><label for="share">share</label><select class="form-control" name="share"
-                                                                                     form="view_edit" id="share">
+                                                                                     form="view_add" id="share">
                 <option value="1">public</option>
                 <option value="2">personal</option>
                 <option value="3" selected>group</option>
@@ -69,7 +66,7 @@
             </select></div>
             <div class="form-group col-md-4"><label for="protection">protection</label><select class="form-control"
                                                                                                name="protection"
-                                                                                               form="view_edit"
+                                                                                               form="view_add"
                                                                                                id="protection">
                 <option value="1">no protection</option>
                 <option value="2" selected>user</option>

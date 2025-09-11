@@ -70,7 +70,9 @@ class system_views_read_tests
         $cfg = new data_object_dsp();
         $cfg->typ_lst_cache = $ui->typ_lst_cache;
         //$cfg = new data_object_dsp();
+        $cfg->set_formula_list($t->formula_list_dsp());
         $cfg->set_view_list($t->view_list_dsp());
+        $cfg->set_component_list($t->component_list_dsp());
         // create the test pages
         $t->assert_view(views::WORD_CODE_ID, $t->usr1, new word($t->usr1), 1, $cfg);
         $t->assert_view(views::WORD_ADD, $t->usr1, new word($t->usr1));

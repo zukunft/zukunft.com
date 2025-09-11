@@ -38,6 +38,8 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
+//include_once html_paths::COMPONENT . 'component_list.php';
+include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 //include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
@@ -57,6 +59,8 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
 use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\web\component\component_list;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
@@ -412,6 +416,16 @@ class db_object extends TextIdObject
         return 'plural not overwritten by ' . $this::class;
     }
 
+    function reverse(): ?string
+    {
+        return 'reverse not overwritten by ' . $this::class;
+    }
+
+    function plural_reverse(): ?string
+    {
+        return 'plural reverse not overwritten by ' . $this::class;
+    }
+
     function phrase(): phrase_dsp
     {
         return new phrase_dsp();
@@ -572,7 +586,9 @@ class db_object extends TextIdObject
     public function ref_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'reference type selector not defined for ' . $this::class;
-        log_err($msg);
+        // TODO Prio 1 active
+        //log_err($msg);
+        log_warning($msg);
         return $msg;
     }
 
@@ -599,6 +615,21 @@ class db_object extends TextIdObject
     {
         $msg = 'formula type selector not defined for ' . $this::class;
         log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select the view type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the view type
+     */
+    public function view_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'view type selector not defined for ' . $this::class;
+        // TODO Prio 1 active
+        //log_err($msg);
+        log_warning($msg);
         return $msg;
     }
 
@@ -761,6 +792,56 @@ class db_object extends TextIdObject
     }
 
     /**
+     * create the HTML code for a field to select a value by the group or phrase list
+     * @param string $form the name of the html form
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function value_selector(
+        string $form,
+        string $name = url_var::VALUE
+    ): string
+    {
+        $msg = 'view selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the HTML code to select a formula
+     * @param string $form the name of the html form
+     * @param formula_list $frm_lst with the suggested views
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function formula_selector(
+        string       $form,
+        formula_list $frm_lst,
+        string       $name = url_var::VIEW_ID
+    ): string
+    {
+        $msg = 'formula selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the HTML code for a field to select a result by the group or phrase list
+     * @param string $form the name of the html form
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function result_selector(
+        string $form,
+        string $name = url_var::RESULT
+    ): string
+    {
+        $msg = 'view selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
      * create the HTML code to select a view
      * @param string $form the name of the html form
      * @param view_list $msk_lst with the suggested views
@@ -768,12 +849,32 @@ class db_object extends TextIdObject
      * @return string the html code to select a view
      */
     public function view_selector(
-        string      $form,
-        view_list   $msk_lst,
-        string      $name = url_var::VIEW_ID
+        string    $form,
+        view_list $msk_lst,
+        string    $name = url_var::VIEW_ID
     ): string
     {
         $msg = 'view selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the HTML code to select a component
+     * @param string $form the name of the html form
+     * @param string $pattern the pattern used to filter the components by the name
+     * @param int $id the id of the component selected until now
+     * @param component_list $cmp_lst with the suggested components
+     * @return string the html code to select a component
+     */
+    public function component_selector(
+        string $form,
+        string $pattern,
+        int $id,
+        component_list $cmp_lst
+    ): string
+    {
+        $msg = 'component selector not defined for ' . $this::class;
         log_err($msg);
         return $msg;
     }

@@ -49,6 +49,7 @@ include_once html_paths::USER . 'user.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -96,6 +97,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;

@@ -72,9 +72,11 @@ class html_base
     // bootstrap const used in zukunft.com
     const BS_FORM = 'form-control';
     const BS_BTN = 'btn btn-space col-1';
-    const BS_BTN_SUCCESS = 'btn-outline-success';
-    const BS_BTN_CANCEL = 'btn-outline-secondary';
-    const BS_BTN_DEL = 'btn-outline-secondary';
+    const string BS_BTN_SUCCESS = 'btn-outline-success';
+    const string BS_BTN_CANCEL = 'btn-outline-secondary';
+    const string BS_BTN_DEL = 'btn-outline-secondary';
+    const string BS_BTN_IMPORT = 'btn-outline-secondary';
+    const string BS_BTN_EXPORT = 'btn-outline-secondary';
 
     // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
     const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used

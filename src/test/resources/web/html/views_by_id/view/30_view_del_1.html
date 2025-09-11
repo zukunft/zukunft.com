@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>Delete view Start view (zukunft.com)</title>
+<head><title>Change view Start view (zukunft.com)</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
     <script src="/external_lib/bootstrap/js/bootstrap.js"></script>
@@ -26,17 +26,58 @@
             </ul>
         </div>
     </nav>
-    <br><br><br><br><br><h4>Delete view</h4>
-    <form action="/http/view.php" id="view_del"><input class="form-control" type="hidden" name="m" id="m"
-                                                       value="30"><input class="form-control" type="hidden" name="id"
-                                                                         id="id" value="0"><input class="form-control"
-                                                                                                  type="hidden"
-                                                                                                  name="back" id="back"
-                                                                                                  value="0"><input
+    <br><br><br><br><br><h4>Change view</h4>
+    <form action="/http/view.php" id="view_edit"><input class="form-control" type="hidden" name="m" id="m"
+                                                        value="30"><input class="form-control" type="hidden" name="id"
+                                                                          id="id" value="0"><input class="form-control"
+                                                                                                   type="hidden"
+                                                                                                   name="back" id="back"
+                                                                                                   value="0"><input
             class="form-control" type="hidden" name="confirm" id="confirm" value="1">
-        <div class="row col-md-12">Start view</div>
-        <a href="/http/view.php?m=0" title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
-        <button class="btn btn-space col-1 btn-outline-secondary" type="submit">Delete</button>
+        <div class="row col-md-12">
+            <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
+                                                                                  name="name" id="name"
+                                                                                  value="Start view"></div>
+            view type selector not defined for Zukunft\ZukunftCom\main\php\web\view\view
+        </div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
+                                                                                                 type="text"
+                                                                                                 name="description"
+                                                                                                 id="description"
+                                                                                                 value="A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.">
+            </div>
+        </div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-4"><label for="style">style</label><select class="form-control" name="style"
+                                                                                     form="view_edit" id="style">
+                <option value="0" selected>please select ...</option>
+                <option value="1">1/3 width</option>
+                <option value="2">2/3 width</option>
+                <option value="3">half width</option>
+                <option value="4">full width</option>
+            </select></div>
+            <div class="form-group col-md-4"><label for="share">share</label><select class="form-control" name="share"
+                                                                                     form="view_edit" id="share">
+                <option value="1" selected>public</option>
+                <option value="2">personal</option>
+                <option value="3">group</option>
+                <option value="4">private</option>
+            </select></div>
+            <div class="form-group col-md-4"><label for="protection">protection</label><select class="form-control"
+                                                                                               name="protection"
+                                                                                               form="view_edit"
+                                                                                               id="protection">
+                <option value="1" selected>no protection</option>
+                <option value="2">user</option>
+                <option value="3">admin</option>
+                <option value="4">no change</option>
+            </select></div>
+        </div>
+        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=0" title="Cancel"
+                                                          class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
+            <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
+        </div>
     </form>
 </div>
 <footer>

@@ -284,15 +284,23 @@ class view_base extends sandbox_code_id
     }
 
     /**
-     * @param string $form
-     * @param string $pattern
-     * @param int $id
-     * @return string
+     * create the HTML code to select a component
+     * * @param string $form the name of the html form
+     * * @param string $pattern the pattern used to filter the components by the name
+     * * @param int $id the id of the component selected until now
+     * * @param component_list $cmp_lst with the suggested components
+     * * @return string the html code to select a component
      */
-    function component_selector(string $form, string $pattern, int $id): string
+    function component_selector(
+        string $form,
+        string $pattern,
+        int $id,
+        component_list $cmp_lst
+    ): string
     {
-        $cmp_lst = new component_list;
-        $cmp_lst->load_like($pattern);
+        if ($pattern != '') {
+            $cmp_lst->load_like($pattern);
+        }
         return $cmp_lst->selector($form, $id, url_var::COMPONENT,  msg_id::LABEL_COMPONENT_TYPE);
     }
 
