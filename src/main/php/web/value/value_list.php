@@ -212,7 +212,7 @@ class value_list extends list_dsp
                 $header .= $html->th('value');
                 $header_rows = $html->tr($header);
             }
-            $row = $html->td($val->grp()->name_link_list($common_phrases));
+            $row = $html->td($val->grp->name_link_list($common_phrases));
             $row .= $html->td($val->value_edit($back));
             $rows .= $html->tr($row);
             // TODO add button to delete a value or add a similar value
@@ -250,7 +250,7 @@ class value_list extends list_dsp
         $lib = new library();
         $grp_lst = new group_list();
         foreach ($this->lst() as $val) {
-            $grp = $val->grp();
+            $grp = $val->grp;
             if ($grp != null) {
                 $grp_lst->lst[] = $grp;
             } else {

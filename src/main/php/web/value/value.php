@@ -37,24 +37,6 @@ namespace Zukunft\ZukunftCom\main\php\web\value;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\figure\figure;
-use Zukunft\ZukunftCom\main\php\web\group\group;
-use Zukunft\ZukunftCom\main\php\web\helper\config;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
-use Zukunft\ZukunftCom\main\php\web\ref\source;
-use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
-use Zukunft\ZukunftCom\main\php\web\html\styles;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\web\word\word;
-use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::DB . 'sql_db.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
@@ -78,6 +60,25 @@ include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\web\figure\figure;
+use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
 class value extends sandbox_value
 {
 
@@ -86,14 +87,14 @@ class value extends sandbox_value
      */
 
     // curl views
-    const VIEW_ADD = views::VALUE_ADD;
-    const VIEW_EDIT = views::VALUE_EDIT;
-    const VIEW_DEL = views::VALUE_DEL;
+    const string VIEW_ADD = views::VALUE_ADD;
+    const string VIEW_EDIT = views::VALUE_EDIT;
+    const string VIEW_DEL = views::VALUE_DEL;
 
     // curl message id
-    const MSG_ADD = msg_id::VALUE_ADD;
-    const MSG_EDIT = msg_id::VALUE_EDIT;
-    const MSG_DEL = msg_id::VALUE_DEL;
+    const msg_id MSG_ADD = msg_id::VALUE_ADD;
+    const msg_id MSG_EDIT = msg_id::VALUE_EDIT;
+    const msg_id MSG_DEL = msg_id::VALUE_DEL;
 
 
     /*
@@ -237,7 +238,7 @@ class value extends sandbox_value
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[json_fields::PHRASES] = $this->grp()->phr_lst()->api_array();
+        $vars[json_fields::PHRASES] = $this->grp->phr_lst()->api_array();
         $vars[json_fields::NUMBER] = $this->number();
         if ($this->src != null) {
             $vars[json_fields::SOURCE] = $this->source_id();
@@ -340,6 +341,22 @@ class value extends sandbox_value
     }
 
     /**
+     * @return string interface function to align the value with the other sandbox objects
+     */
+    function name(): string
+    {
+        return $this->grp->name();
+    }
+
+    /**
+     * @return string interface function to align the value with the other sandbox objects
+     */
+    function description(): string
+    {
+        return $this->grp->description();
+    }
+
+    /**
      * create the HTML code to show to the user
      * the value with the name and the formatted value
      * with a tooltip
@@ -350,7 +367,7 @@ class value extends sandbox_value
      */
     function name_tip(phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
     {
-        return $this->grp()->name_tip($phr_lst_exclude) . $sep . $this->value();
+        return $this->grp->name_tip($phr_lst_exclude) . $sep . $this->value();
     }
 
     /**
@@ -362,7 +379,7 @@ class value extends sandbox_value
      */
     function name_link(phrase_list|null $phr_lst_exclude = null, string $sep = ' '): string
     {
-        return $this->grp()->name_link_list($phr_lst_exclude) . $sep . $this->value_edit('');
+        return $this->grp->name_link_list($phr_lst_exclude) . $sep . $this->value_edit('');
     }
 
     /**
@@ -379,8 +396,8 @@ class value extends sandbox_value
 
         if (!is_null($this->number())) {
             // load the list of phrases if needed
-            if (!$this->grp()->phr_lst()->is_empty()) {
-                if ($this->grp()->phr_lst()->has_percent()) {
+            if (!$this->grp->phr_lst()->is_empty()) {
+                if ($this->grp->phr_lst()->has_percent()) {
                     $result = round($this->number() * 100, $cfg->percent_decimals()) . "%";
                 } else {
                     if ($this->number() >= 1000 or $this->number() <= -1000) {
@@ -418,9 +435,9 @@ class value extends sandbox_value
         $msg_code_id = msg_id::VALUE_ADD;
         $explain = '';
 
-        if ($this->grp()->phr_lst()->is_empty()) {
-            if (!empty($this->grp()->phr_lst()->lst())) {
-                $explain = htmlentities($this->grp()->phr_lst()->dsp_name());
+        if ($this->grp->phr_lst()->is_empty()) {
+            if (!empty($this->grp->phr_lst()->lst())) {
+                $explain = htmlentities($this->grp->phr_lst()->dsp_name());
                 $msg_code_id = msg_id::VALUE_ADD_SIMILAR;
             }
         }
@@ -468,7 +485,7 @@ class value extends sandbox_value
     private function is_loaded(): bool
     {
         $result = true;
-        if ($this->grp()->phr_lst()->is_empty()) {
+        if ($this->grp->phr_lst()->is_empty()) {
             $result = false;
         }
         return $result;
@@ -476,7 +493,7 @@ class value extends sandbox_value
 
     function is_id_set(): bool
     {
-        return $this->grp()->is_id_set();
+        return $this->grp->is_id_set();
     }
 
     /*
@@ -721,7 +738,7 @@ class value extends sandbox_value
       */
 
             // assign the type to the phrases
-            $phr_lst = clone $this->grp()->phrase_list();
+            $phr_lst = clone $this->grp->phrase_list();
             foreach ($phr_lst->lst() as $phr) {
                 $phr->set_user($this->user());
                 foreach (array_keys($this->ids()) as $pos) {
@@ -853,7 +870,7 @@ class value extends sandbox_value
 
             // show the time phrase
             log_debug('show time');
-            $time_lst = $this->grp()->phr_lst()->time_word_list();
+            $time_lst = $this->grp->phr_lst()->time_word_list();
             $has_time = false;
             foreach ($time_lst->lst() as $time_phr) {
                 $result .= '  <tr>';

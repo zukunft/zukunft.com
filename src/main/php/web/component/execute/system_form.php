@@ -818,6 +818,11 @@ class system_form extends component
 
     /**
      * create the html code for the form element to select the view
+     * there are three fields / functions to select a view:
+     *   form_view_default - this select default to set the default view of a sandbox object within a system form
+     *   form_view         - the select view as a form field e.g. to select a view for the export
+     *   select_view       - the select view as a direct save to change the view of a sandbox object without changing other fields
+     *
      * @param db_object_dsp $dbo the frontend object with the view used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param view_list|null $msk_lst cached list of views for fast selection

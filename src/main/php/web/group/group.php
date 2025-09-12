@@ -289,7 +289,36 @@ class group extends sandbox_named
      */
 
     /**
-     * the name of the phrase group with the tooltip 
+     * the name of the phrase group as pure text
+     * e.g. for form fields
+     * @param phrase_list|null $phr_lst_exclude list of phrases already shown in the header and should be excluded
+     * @param string $sep the separator between the phrase names
+     * @return string the html code to show the group name
+     */
+    function name(phrase_list $phr_lst_exclude = null, string $sep = ', '): string
+    {
+        $result = '';
+        if (parent::name() <> '') {
+            $result .= parent::name();
+        } else {
+            $lst_to_show = $this->phr_lst();
+            if ($phr_lst_exclude != null) {
+                if (!$phr_lst_exclude->is_empty()) {
+                    $lst_to_show->remove($phr_lst_exclude);
+                }
+            }
+            foreach ($lst_to_show->lst() as $phr) {
+                if ($result <> '') {
+                    $result .= $sep;
+                }
+                $result .= $phr->name();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the name of the phrase group with the tooltip
      * or the names of the phrases with the tooltip
      * @param phrase_list|null $phr_lst_exclude list of phrases already shown in the header and should be excluded
      * @param string $sep the separator between the phrase names
@@ -299,7 +328,7 @@ class group extends sandbox_named
     {
         $result = '';
         if ($this->name_tip_dirty or $phr_lst_exclude != null) {
-            if ($this->name() <> '') {
+            if ($this->name <> '') {
                 $result .= parent::name_tip();
             } else {
                 $lst_to_show = $this->phr_lst();
@@ -331,7 +360,7 @@ class group extends sandbox_named
     {
         $result = '';
         if ($this->name_link_dirty or $phr_lst_header != null) {
-            if ($this->name() <> '') {
+            if ($this->name <> '') {
                 $result .= $this->name_link();
             } else {
                 $lst_to_show = $this->phr_lst();

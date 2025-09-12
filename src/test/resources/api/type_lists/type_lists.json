@@ -7654,11 +7654,11 @@
           {
             "link_id": 28,
             "id": 167,
-            "name": "system select default view word",
+            "name": "system form select view default",
             "description": "select the default view for this word",
             "type_id": 2,
-            "code_id": "select_view_word",
-            "ui_msg_code_id": "select_view",
+            "code_id": "system_form_select_view_default",
+            "ui_msg_code_id": "system_form_select_view_default",
             "position": 11,
             "position_type": 1
           },

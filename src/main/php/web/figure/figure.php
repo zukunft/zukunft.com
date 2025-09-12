@@ -126,7 +126,7 @@ class figure extends combine_named_dsp
 
     function grp(): group
     {
-        return $this->obj()->grp();
+        return $this->obj()->grp;
     }
 
     function number(): float|null
@@ -154,7 +154,9 @@ class figure extends combine_named_dsp
         }
         $vars[json_fields::ID] = $this->obj_id();
         $vars[json_fields::NUMBER] = $this->number();
-        $vars[json_fields::PHRASES] = $this->obj->grp()->api_array();
+        if ($this->obj->grp->name() != '') {
+            $vars[json_fields::PHRASES] = $this->obj->api_array();
+        }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

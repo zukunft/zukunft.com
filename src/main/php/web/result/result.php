@@ -129,7 +129,7 @@ class result extends sandbox_value
      */
     function display(phrase_list_dsp $phr_lst_header = null): string
     {
-        return $this->grp()->name_tip($phr_lst_header);
+        return $this->grp->name_tip($phr_lst_header);
     }
 
     /**
@@ -138,7 +138,7 @@ class result extends sandbox_value
      */
     function display_linked(phrase_list_dsp $phr_lst_header = null): string
     {
-        return $this->grp()->name_link_list($phr_lst_header);
+        return $this->grp->name_link_list($phr_lst_header);
     }
 
 
@@ -239,7 +239,7 @@ class result extends sandbox_value
         // build the title
         $title = '';
         // add the words that specify the calculated value to the title
-        $val_phr_lst = clone $this->grp()->phrase_list();
+        $val_phr_lst = clone $this->grp->phrase_list();
         $val_wrd_lst = $val_phr_lst->wrd_lst_all();
         $title .= $lib->dsp_array($val_wrd_lst->api_obj()->ex_measure_and_time_lst()->dsp_obj()->names_linked());
         $time_phr = $lib->dsp_array($val_wrd_lst->dsp_obj()->time_lst()->names_linked());

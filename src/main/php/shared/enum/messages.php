@@ -1070,7 +1070,7 @@ enum messages: string
     case FORM_FIELD_PLURAL_REVERSE = 'form_field_plural_reverse';
     case FORM_FIELD_FORMULA_EXPRESSION = 'form_field_formula_expression';
     case FORM_FIELD_FORMULA_ALL_VARS = 'form_field_formula_all_vars';
-    case FORM_SELECT_VIEW = 'form_select_view';
+    case FORM_SELECT_VIEW_DEFAULT = 'system_form_select_view_default';
     case FORM_TRIPLE_PHRASE_FROM = 'form_select_phrase_from';
     case FORM_TRIPLE_PHRASE_TO = 'form_select_phrase_to';
     case FORM_TRIPLE_PHRASE_ROW = 'form_select_phrase_row';

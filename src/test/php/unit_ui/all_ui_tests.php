@@ -90,7 +90,7 @@ class all_ui_tests extends all_unit_tests
         $t->subheader($ts . 'page');
         (new word_ui_tests)->run($t, $ui->typ_lst_cache);
         (new word_list_ui_tests)->run($t);
-        (new verb_ui_tests())->run($t);
+        new verb_ui_tests()->run($t);
         (new triple_ui_tests)->run($t, $ui);
         (new triple_list_ui_tests)->run($t);
         (new phrase_ui_tests)->run($t);
@@ -104,7 +104,7 @@ class all_ui_tests extends all_unit_tests
         (new formula_list_ui_tests)->run($t);
         (new result_ui_tests)->run($t);
         (new result_list_ui_tests)->run($t);
-        (new figure_ui_tests())->run($t);
+        new figure_ui_tests()->run($t);
         (new figure_list_ui_tests)->run($t);
         (new view_ui_tests)->run($t, $ui);
         (new view_list_ui_tests)->run($t);

@@ -964,8 +964,8 @@
       "name": "system form select view",
       "description": "selector for the default view to show this object to the user e.g. the word physics should be shown with the view science",
       "type": "system_form_select_view",
-      "code_id": "form_field_view",
-      "ui_msg_code_id": "form_select_view"
+      "code_id": "system_form_field_view",
+      "ui_msg_code_id": "system_form_select_view"
     },
     {
       "name": "system form select view style",
@@ -1140,11 +1140,11 @@
       "code_id": "row_end"
     },
     {
-      "name": "system select default view word",
-      "description": "select the default view for this word",
+      "name": "system form select view default",
+      "description": "form field to select the default view for this object",
       "type": "view_select",
-      "code_id": "select_view_word",
-      "ui_msg_code_id": "select_view"
+      "code_id": "system_form_select_view_default",
+      "ui_msg_code_id": "system_form_select_view_default"
     },
     {
       "name": "link list word",
@@ -1394,7 +1394,7 @@
         },
         {
           "position": "8",
-          "name": "system form select view"
+          "name": "system form select view default"
         },
         {
           "position": "9",
@@ -1408,41 +1408,37 @@
         },
         {
           "position": "11",
-          "name": "system select default view word"
-        },
-        {
-          "position": "12",
           "name": "link list word"
         },
         {
-          "position": "13",
+          "position": "12",
           "name": "value list word",
           "position_type": "side"
         },
         {
-          "position": "14",
+          "position": "13",
           "name": "ref list word",
           "position_type": "side"
         },
         {
-          "position": "15",
+          "position": "14",
           "name": "system form button cancel"
         },
         {
-          "position": "16",
+          "position": "15",
           "name": "system form button save"
         },
         {
-          "position": "17",
+          "position": "16",
           "name": "system form end"
         },
         {
-          "position": "18",
+          "position": "17",
           "name": "usage word",
           "position_type": "side"
         },
         {
-          "position": "19",
+          "position": "18",
           "name": "change log word",
           "position_type": "side"
         }

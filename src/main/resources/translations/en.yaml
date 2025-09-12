@@ -102,6 +102,7 @@ messages:
   system_form_select_result: "result"
   system_form_select_multi_results: "results"
   system_form_select_view: "view"
+  system_form_select_view_default: "default view"
   system_form_select_multi_views: "views"
   system_form_select_component: "component"
   system_form_select_multi_components: "components"

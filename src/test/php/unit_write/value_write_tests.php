@@ -211,7 +211,7 @@ class value_write_tests
         $t->assert(', value->display_linked', $result, $target);
 
         // change the number to force using the thousand separator
-        $mio_val_dsp->set_number(values::SAMPLE_INT);
+        $mio_val_dsp->number = values::SAMPLE_INT;
         $result = $mio_val_dsp->value_edit('1');
         //$target = '<a class="' . styles::STYLE_USER . '" href="/http/value_edit.php?id=2559&back=1">46\'000</a>';
         $target = '<a href="/http/view.php?m=value_edit&id=' . $mio_val_dsp->id() . '&back=1" title="123\'456">123\'456</a>';
