@@ -121,6 +121,11 @@ class component_exe extends component
         $page = new system_page();
 
         // list of all possible view components
+        $t_id = $this->type_id();
+        if ($t_id == 17 ) {
+            log_info('');
+        }
+        $tc_id = $this->type_code_id($cfg->typ_lst_cache);
         $result .= match ($this->type_code_id($cfg->typ_lst_cache)) {
 
             // start page - components used for the start page

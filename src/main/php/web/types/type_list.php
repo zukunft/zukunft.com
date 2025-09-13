@@ -206,10 +206,14 @@ class type_list
                 if (!in_array($key, $all_key)) {
                     $all_key[] = $key;
                 } else {
-                    $dub_key[] = $key;
+                    if ($key != '') {
+                        $dub_key[] = $key;
+                    }
                 }
             }
-            log_err('probably "' . implode(', ' ,$dub_key) . '" are duplicate code_id in ' . $this::class);
+            if (count($dub_key) > 0) {
+                log_err('probably "' . implode(', ' ,$dub_key) . '" are duplicate code_id in ' . $this::class);
+            }
             //log_warning('probably "' . implode(', ' ,$dub_key) . '" are duplicate code_id in ' . $this::class);
         }
         if ($id > 0) {

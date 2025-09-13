@@ -73,6 +73,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO check the order of the class sections
     TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change
 
+    TODO allow views to be depedend on other and allow add, replace and remove of components of the original mask
+    TODO make it possible to change the parent view and while changing either keep the view or keep the chances or a combination of both
     TODO for user_values allow a source 0=not set or exclude the source_id from the prime index?
     TODO add import fail test to check the error message creation
     TODO on import create a fail message if the import tries to import a word that exists already as a formula (or create a user specific word and rename the formula)

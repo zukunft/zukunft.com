@@ -226,6 +226,8 @@ class all_unit_write_tests extends all_unit_read_tests
         }
         $db_con->setup_db();
 
+        // TODO recreate the type list api message
+
         // restore the test user
         $usr = clone $test_usr;
 

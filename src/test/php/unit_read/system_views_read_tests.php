@@ -65,6 +65,7 @@ class system_views_read_tests
     function run(test_cleanup $t): void
     {
         // create the stable test context that is not based on the database so that the test results rarely change
+        // unlike ti horizontal system view test for this test the object can be filled with data for special cases
         $ui = new frontend('system_views_read_tests');
         $ui->load_cache();
         $cfg = new data_object_dsp();

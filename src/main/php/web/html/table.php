@@ -30,14 +30,12 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-include_once html_paths::TYPES . 'type_lists.php';
+
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
-include_once html_paths::SHEET . 'position_list.php';
 
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;

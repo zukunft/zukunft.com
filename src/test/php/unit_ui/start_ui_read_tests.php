@@ -41,7 +41,7 @@ include_once html_paths::TYPES . 'type_lists.php';
 use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\list_sort;
+use Zukunft\ZukunftCom\main\php\web\html\list_sort;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
