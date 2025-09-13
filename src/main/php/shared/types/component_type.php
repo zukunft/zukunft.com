@@ -362,7 +362,7 @@ class component_type
     // shows all: all words that link to the given word and all values related to the given word
     const string VALUES_ALL = "values_all";
     // display all formulas related to the given word
-    const string FORMULAS = "85";
+    const string FORMULAS = "formula_list";
     // show a list of formula results related to a word
     const string FORMULA_RESULTS = "formula_results";
     // offer to configure and create an JSON file

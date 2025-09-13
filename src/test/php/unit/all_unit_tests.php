@@ -68,6 +68,7 @@ use Zukunft\ZukunftCom\main\php\web\types\formula_type_list as formula_type_list
 use Zukunft\ZukunftCom\main\php\web\types\type_lists as type_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\users;
 use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
 use Zukunft\ZukunftCom\test\php\utils\all_tests;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 use Zukunft\ZukunftCom\test\php\unit\import_tests as import_tests;
@@ -163,9 +164,9 @@ class all_unit_tests extends test_cleanup
          */
 
         // run the selected unit tests
-        //(new system_tests)->run($this);
-        //(new import_tests)->run($this);
-        //(new formula_link_tests())->run($this);
+        //new system_tests()->run($this);
+        //new import_tests()->run($this);
+        //new formula_link_tests()->run($this);
 
         // restore the global vars that may be overwritten if additional tests are activated
         $db_con = $global_db_con;
@@ -192,8 +193,8 @@ class all_unit_tests extends test_cleanup
              */
 
             // preferred tests to check upfront the words::*_ID and triples::*_ID
-            (new word_list_read_tests())->run($this);
-            (new triple_list_read_tests())->run($this);
+            new word_list_read_tests()->run($this);
+            new triple_list_read_tests()->run($this);
 
             /*
              * part of system setup testing
@@ -209,7 +210,7 @@ class all_unit_tests extends test_cleanup
              * unit testing - with system users
              */
 
-            (new horizontal_tests)->run($t);
+            new horizontal_tests()->run($t);
 
             /*
              * prepare db testing
@@ -228,7 +229,7 @@ class all_unit_tests extends test_cleanup
             $import_result = $imf->import_config_yaml($sys_usr, true);
             $t->assert($test_name, $import_result->is_ok(), true, $t::TIMEOUT_LIMIT_IMPORT);
             */
-            //(new import_write_tests())->run($t);
+            //new import_write_tests()->run($t);
             //$this->file_import(test_files::IMPORT_TRAVEL_SCORING, $usr);
             //$this->file_import(test_files::IMPORT_CURRENCY, $usr);
             //$this->file_import(files::MESSAGE_PATH . files::SYSTEM_VIEWS_FILE, $usr);
@@ -250,49 +251,49 @@ class all_unit_tests extends test_cleanup
              */
 
             // preferred tests to check upfront the words::*_ID and triples::*_ID
-            (new word_list_read_tests())->run($this);
-            (new triple_list_read_tests())->run($this);
+            new word_list_read_tests()->run($this);
+            new triple_list_read_tests()->run($this);
             // run the selected db read tests
-            //(new api_tests())->run($this);
-            //(new word_read_tests())->run($this);
-            //(new triple_read_tests())->run($this);
-            //(new source_read_tests())->run($this);
-            //(new formula_read_tests())->run($this);
-            //(new view_read_tests())->run($this);
-            //(new component_read_tests())->run($this);
-            //(new graph_tests())->run($this);
-            //(new value_read_tests())->run($this);
+            //new api_tests()->run($this);
+            //new word_read_tests()->run($this);
+            //new triple_read_tests()->run($this);
+            //new source_read_tests()->run($this);
+            //new formula_read_tests()->run($this);
+            //new view_read_tests()->run($this);
+            //new component_read_tests()->run($this);
+            //new graph_tests()->run($this);
+            //new value_read_tests()->run($this);
 
 
             /*
              * user interface
              */
 
-            (new horizontal_ui_tests)->run($t);
+            new horizontal_ui_tests()->run($t);
 
             /*
              * db write
              */
 
             // run the selected db write tests
-            (new api_write_tests())->run($t);
-            //(new user_write_tests)->run($this);
-            //(new word_write_tests)->run($this);
-            //(new word_list_write_tests)->run($this);
-            //(new triple_write_tests)->run($this);
-            //(new group_write_tests)->run($this);
-            //(new source_write_tests)->run($this);
-            //(new ref_write_tests)->run($this);
-            //(new value_write_tests)->run($this);
-            //(new formula_write_tests)->run($this);
-            //(new formula_link_write_tests)->run($this);
-            //(new expression_write_tests)->run($this);
-            //(new element_write_tests)->run($this);
-            //(new element_write_tests)->run_list($this);
-            //(new view_write_tests)->run($this);
-            //(new view_link_write_tests)->run($this);
-            //(new component_write_tests)->run($this);
-            //(new component_link_write_tests)->run($this);
+            //new api_write_tests()->run($t);
+            //new user_write_tests()->run($this);
+            //new word_write_tests()->run($this);
+            //new word_list_write_tests()->run($this);
+            //new triple_write_tests()->run($this);
+            //new group_write_tests()->run($this);
+            //new source_write_tests()->run($this);
+            //new ref_write_tests()->run($this);
+            //new value_write_tests()->run($this);
+            //new formula_write_tests()->run($this);
+            //new formula_link_write_tests()->run($this);
+            //new expression_write_tests()->run($this);
+            //new element_write_tests()->run($this);
+            //new element_write_tests()->run_list($this);
+            //new view_write_tests()->run($this);
+            //new view_link_write_tests()->run($this);
+            new component_write_tests()->run($this);
+            //new component_link_write_tests()->run($this);
 
 
             //$import = new import_file();
@@ -345,65 +346,65 @@ class all_unit_tests extends test_cleanup
 
         // do the general unit tests
         $all = new all_tests();
-        (new lib_tests)->run($all); // test functions not yet split into single unit tests
-        (new math_tests)->run($this);
-        (new system_tests)->run($this);
-        (new sql_tests)->run($this);
-        (new sys_log_tests)->run($this); // TODO add assert_api_to_dsp
-        (new change_log_tests)->run($this); // TODO add assert_api_to_dsp  // TODO for version 0.0.6 add import test
-        (new job_tests)->run($this); // TODO add assert_api_to_dsp
-        (new pod_tests)->run($this);
-        (new user_tests)->run($this);
-        (new user_list_tests)->run($this);
-        (new sandbox_tests)->run($this);
-        (new language_tests)->run($this); // TODO add assert_api_to_dsp
-        (new type_tests)->run($this); // TODO add assert_api_to_dsp
+        new lib_tests()->run($all); // test functions not yet split into single unit tests
+        new math_tests()->run($this);
+        new system_tests()->run($this);
+        new sql_tests()->run($this);
+        new sys_log_tests()->run($this); // TODO add assert_api_to_dsp
+        new change_log_tests()->run($this); // TODO add assert_api_to_dsp  // TODO for version 0.0.6 add import test
+        new job_tests()->run($this); // TODO add assert_api_to_dsp
+        new pod_tests()->run($this);
+        new user_tests()->run($this);
+        new user_list_tests()->run($this);
+        new sandbox_tests()->run($this);
+        new language_tests()->run($this); // TODO add assert_api_to_dsp
+        new type_tests()->run($this); // TODO add assert_api_to_dsp
 
         // do the user object unit tests
-        (new horizontal_tests)->run($this);
-        (new word_tests)->run($this);
-        (new word_list_tests)->run($this);
-        (new verb_tests)->run($this);
-        (new triple_tests)->run($this);
-        (new triple_list_tests)->run($this);
-        (new phrase_tests)->run($this);
-        (new phrase_list_tests)->run($this);
-        (new group_tests)->run($this); // TODO add assert_api_to_dsp
-        (new group_list_tests)->run($this); // TODO add assert_api_to_dsp
-        (new term_tests)->run($this);
-        (new term_list_tests)->run($this);
-        (new source_tests)->run($this);
-        (new source_list_tests)->run($this);
-        (new ref_tests)->run($this);
-        (new value_tests)->run($this);
-        (new value_list_tests)->run($this);
-        (new formula_tests)->run($this);
-        (new formula_list_tests)->run($this);
-        (new formula_link_tests)->run($this); // TODO add assert_api_to_dsp
-        (new element_tests)->run($this);
-        (new element_list_tests)->run($this);
-        (new expression_tests)->run($this);
-        (new result_tests)->run($this);
-        (new result_list_tests)->run($this);
-        (new figure_tests)->run($this);
-        (new figure_list_tests)->run($this);
-        (new view_tests)->run($this);
-        (new view_list_tests)->run($this); // TODO add assert_api_to_dsp
+        new horizontal_tests()->run($this);
+        new word_tests()->run($this);
+        new word_list_tests()->run($this);
+        new verb_tests()->run($this);
+        new triple_tests()->run($this);
+        new triple_list_tests()->run($this);
+        new phrase_tests()->run($this);
+        new phrase_list_tests()->run($this);
+        new group_tests()->run($this); // TODO add assert_api_to_dsp
+        new group_list_tests()->run($this); // TODO add assert_api_to_dsp
+        new term_tests()->run($this);
+        new term_list_tests()->run($this);
+        new source_tests()->run($this);
+        new source_list_tests()->run($this);
+        new ref_tests()->run($this);
+        new value_tests()->run($this);
+        new value_list_tests()->run($this);
+        new formula_tests()->run($this);
+        new formula_list_tests()->run($this);
+        new formula_link_tests()->run($this); // TODO add assert_api_to_dsp
+        new element_tests()->run($this);
+        new element_list_tests()->run($this);
+        new expression_tests()->run($this);
+        new result_tests()->run($this);
+        new result_list_tests()->run($this);
+        new figure_tests()->run($this);
+        new figure_list_tests()->run($this);
+        new view_tests()->run($this);
+        new view_list_tests()->run($this); // TODO add assert_api_to_dsp
         new term_view_tests()->run($this);
         new component_tests()->run($this);
         new component_list_tests()->run($this); // TODO add assert_api_to_dsp
         new component_link_tests()->run($this); // TODO add assert_api_to_dsp
-        (new component_link_list_tests)->run($this);
+        new component_link_list_tests()->run($this);
 
         // do the im- and export unit tests
-        (new import_tests)->run($this);
+        new import_tests()->run($this);
 
         // db setup
-        (new db_setup_tests)->run($this);
+        new db_setup_tests()->run($this);
 
         // do the UI unit tests
-        (new api_tests)->run_openapi_test($this);
-        (new base_ui_tests)->run($this);
+        new api_tests()->run_openapi_test($this);
+        new base_ui_tests()->run($this);
 
         // load the types from the api message
         $api_msg = $this->type_lists_api($this->usr1);
@@ -412,10 +413,10 @@ class all_unit_tests extends test_cleanup
         // test the html ui on localhost without api
         $ui = new frontend('unit ui tests');
         $ui->load_dummy_cache_from_test_resources();
-        (new all_ui_tests())->run($this, $ui);
+        new all_ui_tests()->run($this, $ui);
 
         // test the html ui on localhost with api
-        // (new all_ui_api_tests())->run($this);
+        // (new all_ui_api_tests()->run($this);
 
         // restore the global vars
         $db_con = $global_db_con;
