@@ -36,34 +36,34 @@ class phrase_type
 
     // list of the phrase types that have a coded functionality
     // TODO add the missing functionality and unit tests
-    const NORMAL = "default";
-    const MATH_CONST = "constant"; // TODO add usage sample
-    const TIME = "time";
-    const TIME_JUMP = "time_jump";
-    const LATEST = "latest"; // TODO add usage sample
-    const PERCENT = "percent";
-    const MEASURE = "measure";
-    const MEASURE_DIVISOR = "measure_divisor";
-    const SCALING = "scaling";
-    const SCALING_HIDDEN = "scaling_hidden";
-    const SCALING_PCT = "scaling_percent"; // TODO used to define the scaling formula word to scale percentage values ?
-    const SCALED_MEASURE = "scaled_measure"; // TODO add usage sample
-    const FORMULA_LINK = "formula_link"; // special phrase type for functional words that are used to link values to formulas
-    const CALC = "calc"; // TODO add usage sample
-    const LAYER = "view"; // TODO add usage sample
-    const OTHER = "type_other";
-    const KEY = "key";
-    const INFO = "information";
-    const TRIPLE_HIDDEN = "hidden_triple";
-    const SYSTEM_HIDDEN = "hidden_system";
-    const GROUP = "group";
-    const SYMBOL = "symbol"; // is expected to be a symbol e.g. used to preselect columns for table import
-    const RANK = "rank"; // is expected to be a ranking number e.g. used to preselect columns for table import
-    const IGNORE = "ignore"; // e.g. to set column names to be excluded from the import
-    const THIS = "this";
-    const NEXT = "next";
-    const PRIOR = "previous";
+    const string NORMAL = "default";
+    const string MATH_CONST = "constant"; // TODO add usage sample
+    const string TIME = "time";
+    const string TIME_JUMP = "time_jump";
+    const string LATEST = "latest"; // TODO add usage sample
+    const string PERCENT = "percent";
+    const string MEASURE = "measure";
+    const string MEASURE_DIVISOR = "measure_divisor";
+    const string SCALING = "scaling";
+    const string SCALING_HIDDEN = "scaling_hidden";
+    const string SCALING_PCT = "scaling_percent"; // TODO used to define the scaling formula word to scale percentage values ?
+    const string SCALED_MEASURE = "scaled_measure"; // TODO add usage sample
+    const string FORMULA_LINK = "formula_link"; // special phrase type for functional words that are used to link values to formulas
+    const string CALC = "calc"; // TODO add usage sample
+    const string LAYER = "view"; // TODO add usage sample
+    const string OTHER = "type_other";
+    const string KEY = "key";
+    const string INFO = "information";
+    const string TRIPLE_HIDDEN = "hidden_triple";
+    const string SYSTEM_HIDDEN = "hidden_system";
+    const string GROUP = "group";
+    const string SYMBOL = "symbol"; // is expected to be a symbol e.g. used to preselect columns for table import
+    const string RANK = "rank"; // is expected to be a ranking number e.g. used to preselect columns for table import
+    const string IGNORE = "ignore"; // e.g. to set column names to be excluded from the import
+    const string THIS = "this";
+    const string NEXT = "next";
+    const string PRIOR = "previous";
 
-    const DEFAULT = self::NORMAL;
+    const string DEFAULT = self::NORMAL;
 
 }

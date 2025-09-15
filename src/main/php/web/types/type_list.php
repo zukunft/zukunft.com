@@ -46,6 +46,7 @@ include_once html_paths::TYPES . 'type_object.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -57,6 +58,7 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
 use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 
 class type_list
@@ -64,6 +66,8 @@ class type_list
 
     // error return codes
     const int CODE_ID_NOT_FOUND = -1;
+    // extra entry used in a selection to separate the highlighted entries from the sorted entries
+    const string SELECT_SEPARATOR = ' --- ';
 
     // the protected main var without id list because this is only loaded once
     private array $lst = [];
@@ -122,6 +126,36 @@ class type_list
         foreach ($this->lst as $typ) {
             $result[$typ->id()] = $typ->name();
         }
+        return $result;
+    }
+
+    /**
+     * @returns array with the names on the db keys
+     */
+    function lst_key_sort_by_name(array $highlighted = []): array
+    {
+        $result = $this->lst_key();
+        natsort($result);
+
+        if (!empty($highlighted)) {
+            $highlightSet = array_flip($highlighted);
+            $final = [];
+            $remaining = [];
+            $separator = [];
+            $separator[0] = self::SELECT_SEPARATOR;
+
+            foreach ($result as $key => $val) {
+                if (isset($highlightSet[$val])) {
+                    $final[$key] = $val;
+                } else {
+                    $remaining[$key] = $val;
+                }
+            }
+
+            // Combine, keeping original keys
+            return $final + $separator + $remaining;
+        }
+
         return $result;
     }
 
@@ -212,7 +246,7 @@ class type_list
                 }
             }
             if (count($dub_key) > 0) {
-                log_err('probably "' . implode(', ' ,$dub_key) . '" are duplicate code_id in ' . $this::class);
+                log_err('probably "' . implode(', ', $dub_key) . '" are duplicate code_id in ' . $this::class);
             }
             //log_warning('probably "' . implode(', ' ,$dub_key) . '" are duplicate code_id in ' . $this::class);
         }
@@ -301,7 +335,12 @@ class type_list
     ): string
     {
         $sel = new html_selector();
-        $sel->lst = $this->lst_key();
+        if ($label_id == msg_id::LABEL_TYPE) {
+            $std = $this->get_by_code_id(phrase_type::DEFAULT);
+            $sel->lst = $this->lst_key_sort_by_name([$std->name()]);
+        } else {
+            $sel->lst = $this->lst_key();
+        }
         $sel->name = $name;
         $sel->form = $form;
         $sel->selected = $selected;

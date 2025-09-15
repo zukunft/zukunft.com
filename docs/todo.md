@@ -73,6 +73,11 @@ A proper issue ticket should be created for these TODOs notes:
     TODO check the order of the class sections
     TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change
 
+    TODO use the possibility to highlight a few (up to 3) entries in a selection list and use it e.g. for the phrase type selector
+    TODO add a tooltip text to selection lists like the phrase type
+    TODO fille the view selection list with some default values
+    TODO add the triple weight
+    TODO add the reserved triple "most relevant" e.g. to define a sort criteria for each phrase and as a sample sort the currencies by last years trading volumn  
     TODO allow views to be depedend on other and allow add, replace and remove of components of the original mask
     TODO make it possible to change the parent view and while changing either keep the view or keep the chances or a combination of both
     TODO for user_values allow a source 0=not set or exclude the source_id from the prime index?

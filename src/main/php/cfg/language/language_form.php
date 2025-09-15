@@ -53,15 +53,15 @@ class language_form extends type_object
      */
 
     // database and JSON object field names
-    const TBL_COMMENT = 'for language forms like plural';
-    const FLD_NAME_COM = 'type of adjustment of a term in a language e.g. plural';
-    const FLD_NAME = 'language_form_name';
+    const string TBL_COMMENT = 'for language forms like plural';
+    const string FLD_NAME_COM = 'type of adjustment of a term in a language e.g. plural';
+    const string FLD_NAME = 'language_form_name';
 
     // field lists for the table creation
-    const FLD_LST_NAME = array(
+    const array FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [language::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, language::class, ''],
@@ -72,8 +72,8 @@ class language_form extends type_object
      */
 
     // list of the language forms that have a coded functionality
-    const DEFAULT = "standard";
-    const PLURAL = "plural";
+    const string DEFAULT = "standard";
+    const string PLURAL = "plural";
 
 
     /*
