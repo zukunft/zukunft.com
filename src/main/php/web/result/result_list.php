@@ -5,7 +5,7 @@
     web/result/result_list.php - the display extension of the api result list object
     --------------------------
 
-    to creat the HTML code to display a list of formula results
+    to create the HTML code to display a list of formula results
 
 
     This file is part of zukunft.com - calc with words

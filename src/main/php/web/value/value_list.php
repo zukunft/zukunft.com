@@ -5,7 +5,7 @@
     web/value_list.php - the display extension of the api value list object
     ------------------
 
-    to creat the HTML code to display a list of values
+    to create the HTML code to display a list of values
 
 
     This file is part of zukunft.com - calc with words

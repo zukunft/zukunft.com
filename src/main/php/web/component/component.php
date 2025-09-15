@@ -5,7 +5,7 @@
     web/view/component.php - function to add, change or delete a view component
     ----------------------
 
-    to creat the HTML code to display a component
+    to create the HTML code to display a component
 
     The main sections of this object are
     - object vars:       the variables of this word object

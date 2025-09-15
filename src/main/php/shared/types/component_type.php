@@ -297,17 +297,21 @@ class component_type
      */
 
     // show the word or triple name and give the user the possibility to change the name
-    const string SELECT_PHRASE = "phrase_select";
+    const string SELECT_PHRASE = "select_phrase";
     const int SELECT_PHRASE_ID = 1;
     // select a view
-    const string SELECT_VIEW = "view_select";
+    const string SELECT_VIEW = "select_view";
     const int SELECT_VIEW_ID = 2;
 
-    // show a list of external references
-    const string LIST_PHRASES = "phrase_list";
-    const int LIST_PHRASES_ID = 96;
-    const string LIST_TRIPLES = "triples_related";
-    const int LIST_TRIPLES_ID = 48;
+    // show a list of related objects that cannot be changed (e.g. Zurich: is part of Switzerland or Zurich: is a city)
+    const string LIST_PARENTS_OF_WORD = "list_parents_of_word";
+    const int LIST_PARENTS_OF_WORD_ID = 96;
+    const string LIST_CHILDREN_OF_WORD = "list_children_of_word";
+    const int LIST_CHILDREN_OF_WORD_ID = 48;
+    const string LIST_TRIPLES_OF_VERB = "list_of_triples_that_use_a_verb";
+    const int LIST_TRIPLES_OF_VERB_ID = 137;
+    const string LIST_PHRASES_OF_FORMULA = "list_phrases_of_formula";
+    const int LIST_PHRASES_OF_FORMULA_ID = 48;
     const string LIST_REF = "ref_list";
     const int LIST_REF_ID = 42;
     const string LIST_FORMULAS = "formula_list";
@@ -586,8 +590,10 @@ class component_type
         [self::SYSTEM_BODY_PROCESS_LIST, self::SYSTEM_BODY_PROCESS_LIST_ID],
         [self::SELECT_PHRASE, self::SELECT_PHRASE_ID],
         [self::SELECT_VIEW, self::SELECT_VIEW_ID],
-        [self::LIST_PHRASES, self::LIST_PHRASES_ID],
-        [self::LIST_TRIPLES, self::LIST_TRIPLES_ID],
+        [self::LIST_PARENTS_OF_WORD, self::LIST_PARENTS_OF_WORD_ID],
+        [self::LIST_CHILDREN_OF_WORD, self::LIST_CHILDREN_OF_WORD_ID],
+        [self::LIST_TRIPLES_OF_VERB, self::LIST_TRIPLES_OF_VERB_ID],
+        [self::LIST_PHRASES_OF_FORMULA, self::LIST_PHRASES_OF_FORMULA_ID],
         [self::LIST_REF, self::LIST_REF_ID],
         [self::LIST_FORMULAS, self::LIST_FORMULAS_ID],
         [self::LIST_RESULTS, self::LIST_RESULTS_ID],

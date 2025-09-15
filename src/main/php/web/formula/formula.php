@@ -5,7 +5,7 @@
     web/formula/formula.php - the display extension of the api formula object
     -----------------------
 
-    to creat the HTML code to display a formula
+    to create the HTML code to display a formula
 
     The main sections of this object are
     - object vars:       the variables of this word object

@@ -43,7 +43,7 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 include_once PHP_PATH . 'init.php';
 
 // open database
-$db_con = prg_start("view_select");
+$db_con = prg_start("select_view");
 
 $result = ''; // reset the html code var
 $msg = ''; // to collect all messages that should be shown to the user immediately

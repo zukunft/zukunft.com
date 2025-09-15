@@ -5,7 +5,7 @@
     web/figure/figure_list.php - the display extension of the api figure list object
     --------------------------
 
-    to creat the HTML code to display a list of figures
+    to create the HTML code to display a list of figures
 
 
     This file is part of zukunft.com - calc with words

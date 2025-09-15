@@ -63,7 +63,7 @@ class type_list
 {
 
     // error return codes
-    const CODE_ID_NOT_FOUND = -1;
+    const int CODE_ID_NOT_FOUND = -1;
 
     // the protected main var without id list because this is only loaded once
     private array $lst = [];

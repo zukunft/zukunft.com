@@ -2,10 +2,10 @@
 
 /*
 
-    web/view/component.php - function to execute a view component
-    ----------------------
+    web/component/execute/system_form.php - function to execute a system form component
+    -------------------------------------
 
-    to creat the HTML code to display a component
+    to create the HTML code to display a system form component
 
     The main sections of this object are
     - object vars:       the variables of this word object

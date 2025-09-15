@@ -1142,7 +1142,7 @@
     {
       "name": "system form select view default",
       "description": "form field to select the default view for this object",
-      "type": "view_select",
+      "type": "select_view",
       "code_id": "system_form_select_view_default",
       "ui_msg_code_id": "system_form_select_view_default"
     },
@@ -1153,7 +1153,19 @@
       "code_id": "link_list_word"
     },
     {
-      "name": "value list word",
+      "name": "parents of word",
+      "description": "list of words or triples that lead to this word",
+      "type": "list_parents_of_word",
+      "code_id": "list_parents_of_word"
+    },
+    {
+      "name": "children of word",
+      "description": "list of words or triples where this word leading to",
+      "type": "list_children_of_word",
+      "code_id": "list_children_of_word"
+    },
+    {
+      "name": "value list of word",
       "description": "list of values related to this word",
       "type": "values_related",
       "code_id": "value_list_word"
@@ -1173,8 +1185,8 @@
     {
       "name": "assigned phrases of this formula",
       "description": "changeable list of phrases assigned to this formula",
-      "type": "phrase_list",
-      "code_id": "phrase_list_formula"
+      "type": "list_phrases_of_formula",
+      "code_id": "list_phrases_of_formula"
     },
     {
       "name": "formula result list",
@@ -1317,7 +1329,8 @@
         },
         {
           "position": "7",
-          "name": "system form field plural"
+          "name": "system form field plural",
+          "style": "col-md-8"
         },
         {
           "position": "8",
@@ -1390,7 +1403,8 @@
         },
         {
           "position": "7",
-          "name": "system form field plural"
+          "name": "system form field plural",
+          "style": "col-md-8"
         },
         {
           "position": "8",
@@ -1408,25 +1422,33 @@
         },
         {
           "position": "11",
-          "name": "link list word"
-        },
-        {
-          "position": "12",
-          "name": "value list word",
-          "position_type": "side"
-        },
-        {
-          "position": "13",
-          "name": "ref list word",
-          "position_type": "side"
-        },
-        {
-          "position": "14",
           "name": "system form button cancel"
         },
         {
-          "position": "15",
+          "position": "12",
           "name": "system form button save"
+        },
+        {
+          "position": "13",
+          "name": "parents of word",
+          "style": "col-md-6"
+        },
+        {
+          "position": "13",
+          "name": "children of word",
+          "position_type": "side",
+          "style": "col-md-6"
+        },
+        {
+          "position": "14",
+          "name": "value list of word",
+          "style": "col-md-6"
+        },
+        {
+          "position": "15",
+          "name": "ref list word",
+          "position_type": "side",
+          "style": "col-md-6"
         },
         {
           "position": "16",

@@ -5,7 +5,7 @@
     web/result_dsp.php - the display extension of the api result object
     ------------------
 
-    to creat the HTML code to display a formula
+    to create the HTML code to display a formula
 
 
     This file is part of zukunft.com - calc with words

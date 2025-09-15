@@ -136,6 +136,8 @@ class words
     const string DEFAULT_COM = 'The setting used if nothing else is specified.';
     const string DATABASE = 'database';
     const string DATABASE_COM = 'An organized collection of data stored and accessed electronically.';
+    const string LISTS = 'lists';
+    const string LISTS_COM = 'general parameters for lists e.g. the number of default entries';
 
     // general words used also for the system configuration where the initial tooltip is in the config.yaml
     const string VALUE = 'value';
@@ -363,9 +365,9 @@ class words
     const string COMPANY = 'company';
     const int COMPANY_ID = 188;
     const string ABB = 'ABB';
-    const int ABB_ID = 1027;
+    const int ABB_ID = 1026;
     const string VESTAS = 'Vestas';
-    const int VESTAS_ID = 1030;
+    const int VESTAS_ID = 1029;
 
     // for the config.yaml
     const string TEST = 'test';

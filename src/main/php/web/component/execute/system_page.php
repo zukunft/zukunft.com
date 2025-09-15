@@ -2,10 +2,10 @@
 
 /*
 
-    web/component/page/system_page.php - create the html components for fixed system pages
-    ----------------------
+    web/component/execute/system_page.php - create the html code for fixed system pages
+    -------------------------------------
 
-    to creat the HTML code to display a component
+    to create the HTML code to display a fixed system page
 
     The main sections of this object are
     - object vars:       the variables of this word object

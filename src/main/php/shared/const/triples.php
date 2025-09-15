@@ -62,6 +62,7 @@ class triples
     const MAX_LEVELS = 'max levels';
     const AUTOMATIC_CREATE = 'automatic create';
     const ROW_LIMIT = 'row limit';
+    const LINK_LIST = 'link list';
     const RESPONSE_TIME = 'response time';
     const OUTPUT_FORMAT = 'output format';
 

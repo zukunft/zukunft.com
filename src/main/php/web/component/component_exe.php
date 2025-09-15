@@ -2,10 +2,10 @@
 
 /*
 
-    web/view/component.php - function to execute a view component
-    ----------------------
+    web/component/component_exe.php - call the functions to execute a view component
+    -------------------------------
 
-    to creat the HTML code to display a component
+    to create the HTML code to display a component
 
     The main sections of this object are
     - object vars:       the variables of this word object
@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::EXECUTE . 'system_form.php';
 include_once html_paths::EXECUTE . 'system_page.php';
+include_once html_paths::EXECUTE . 'list_related.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::HTML . 'sheet.php';
@@ -57,6 +58,7 @@ include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
+use Zukunft\ZukunftCom\main\php\web\component\execute\list_related;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
@@ -119,6 +121,7 @@ class component_exe extends component
 
         $form = new system_form();
         $page = new system_page();
+        $list = new list_related();
 
         // list of all possible view components
         $t_id = $this->type_id();
@@ -261,11 +264,22 @@ class component_exe extends component
             component_type::ROW_RIGHT => $form->row_right(),
             component_type::ROW_END => $form->row_end(),
 
-            // components for user view
+            // components for user views
+
+            // select
+            component_type::SELECT_PHRASE => $this->phrase_select($dbo, $form_name, $phr_lst,),
+            component_type::SELECT_VIEW => $this->view_select($dbo, $form_name, $cfg),
+
+            // related
+            component_type::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo),
+            component_type::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo),
+            component_type::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo),
+            component_type::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo),
+
+            // TODO Prio 1 review the components below
 
             // verb only -
             component_type::VERB_NAME => $this->verb_name($dbo),
-            component_type::LIST_TRIPLES => $this->triple_list($dbo),
 
             // other
             component_type::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $cfg->view_list()),
@@ -283,10 +297,6 @@ class component_exe extends component
             // base
             component_type::PHRASE => $this->name_tip(),
             component_type::LINK => $this->phrase_link($dbo, $form_name),
-
-            // select
-            component_type::SELECT_VIEW => $this->view_select($dbo, $form_name, $cfg),
-            component_type::SELECT_PHRASE => $this->phrase_select($dbo, $form_name, $phr_lst,),
 
             // table
             component_type::VALUES_ALL => $this->all($dbo, $back),
@@ -497,15 +507,6 @@ class component_exe extends component
      * @return string a dummy text
      */
     function verb_name(?db_object_dsp $dbo = null): string
-    {
-        return $dbo->name();
-    }
-
-    /**
-     * TODO move to a component exe part class
-     * @return string a dummy text
-     */
-    function triple_list(?db_object_dsp $dbo = null): string
     {
         return $dbo->name();
     }

@@ -158,22 +158,27 @@ class sandbox_list_named extends sandbox_list
      * @return string with a list of the component names with html links
      * ex. names_linked
      */
-    function name_link(string $back = ''): string
+    function name_link(string $back = '', $limit = config::LIMIT_NAME_LIST): string
     {
         $this->sort_by_name();
-        return implode(', ', $this->names_linked($back));
+        return implode(', ', $this->names_linked($back, $limit));
     }
 
     /**
      * an array of the names with a http link
      * @param string $back the back trace url for the undo functionality
+     * @param int $limit the max number of entries to show
      * @return array with a list of the component names with html links
      */
-    private function names_linked(string $back = ''): array
+    private function names_linked(string $back = '', int $limit = config::LIMIT_NAME_LIST): array
     {
         $result = array();
+        $i = 0;
         foreach ($this->lst() as $sbx) {
-            $result[] = $sbx->name_link($back);
+            if ($i < $limit) {
+                $result[] = $sbx->name_link($back);
+                $i++;
+            }
         }
         return $result;
     }

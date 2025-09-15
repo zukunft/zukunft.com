@@ -284,7 +284,7 @@
       },
       {
         "id": 2,
-        "code_id": "view_select",
+        "code_id": "select_view",
         "name": "view selector",
         "comment": "to select an existing mask e.g. to set the default view"
       },
