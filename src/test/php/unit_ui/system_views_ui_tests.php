@@ -49,7 +49,7 @@ class system_views_ui_tests
 
         $html = new html_base();
         $ui = new frontend('system_views_ui_tests');
-        $ui->load_dummy_cache_from_test_resources();
+        $ui->load_dummy_cache_from_test_resources($t->usr1);
 
         // start the test section (ts)
         $ts = 'unit ui html system view ';

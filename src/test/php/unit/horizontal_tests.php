@@ -211,7 +211,7 @@ class horizontal_tests
 
         $t->subheader($ts . 'system views');
         $ui = new frontend('unit test');
-        $ui->load_dummy_cache_from_test_resources();
+        $ui->load_dummy_cache_from_test_resources($t->usr1);
         for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
             $dbo = $this->view_id_to_dbo($id, $t->usr1);
             $action = $this->view_id_to_url_action($id);

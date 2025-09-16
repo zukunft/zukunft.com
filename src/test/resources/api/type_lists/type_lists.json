@@ -7347,6 +7347,28 @@
         "frm_name": null,
         "usage": 0,
         "id": 31
+      },
+      {
+        "name": "in",
+        "code_id": "in",
+        "description": "to specify the measure unit",
+        "plural": "in",
+        "reverse": null,
+        "rev_plural": null,
+        "frm_name": null,
+        "usage": 0,
+        "id": 32
+      },
+      {
+        "name": "to",
+        "code_id": "to",
+        "description": "to define a time period e.g. \"12:00 to 13:00\" or \"1. March 2024 to 3. March 2024 or to specify the assignment type e.g. net to net for currency turnover",
+        "plural": "to",
+        "reverse": null,
+        "rev_plural": null,
+        "frm_name": null,
+        "usage": 0,
+        "id": 33
       }
     ],
     "system_views": [
@@ -7688,17 +7710,6 @@
             "position_type": 1
           },
           {
-            "link_id": 31,
-            "id": 170,
-            "name": "children of word",
-            "description": "list of words or triples where this word leading to",
-            "type_id": 47,
-            "code_id": "list_children_of_word",
-            "position": 13,
-            "position_type": 2,
-            "style": 3
-          },
-          {
             "link_id": 30,
             "id": 169,
             "name": "parents of word",
@@ -7707,6 +7718,17 @@
             "code_id": "list_parents_of_word",
             "position": 13,
             "position_type": 1,
+            "style": 3
+          },
+          {
+            "link_id": 31,
+            "id": 170,
+            "name": "children of word",
+            "description": "list of words or triples where this word leading to",
+            "type_id": 47,
+            "code_id": "list_children_of_word",
+            "position": 13,
+            "position_type": 2,
             "style": 3
           },
           {
@@ -14397,17 +14419,6 @@
             "position_type": 1
           },
           {
-            "link_id": 626,
-            "id": 162,
-            "name": "system form button export",
-            "description": "button to start the export",
-            "type_id": 95,
-            "code_id": "system_button_export",
-            "ui_msg_code_id": "system_button_export",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 624,
             "id": 159,
             "name": "system form button save",
@@ -14415,6 +14426,17 @@
             "type_id": 29,
             "code_id": "form_button_save",
             "ui_msg_code_id": "form_button_save",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 626,
+            "id": 162,
+            "name": "system form button export",
+            "description": "button to start the export",
+            "type_id": 95,
+            "code_id": "system_button_export",
+            "ui_msg_code_id": "system_button_export",
             "position": 8,
             "position_type": 1
           },
@@ -14517,17 +14539,6 @@
             "position_type": 1
           },
           {
-            "link_id": 637,
-            "id": 162,
-            "name": "system form button export",
-            "description": "button to start the export",
-            "type_id": 95,
-            "code_id": "system_button_export",
-            "ui_msg_code_id": "system_button_export",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 635,
             "id": 159,
             "name": "system form button save",
@@ -14535,6 +14546,17 @@
             "type_id": 29,
             "code_id": "form_button_save",
             "ui_msg_code_id": "form_button_save",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 637,
+            "id": 162,
+            "name": "system form button export",
+            "description": "button to start the export",
+            "type_id": 95,
+            "code_id": "system_button_export",
+            "ui_msg_code_id": "system_button_export",
             "position": 8,
             "position_type": 1
           },
@@ -14757,17 +14779,6 @@
             "position_type": 1
           },
           {
-            "link_id": 659,
-            "id": 162,
-            "name": "system form button export",
-            "description": "button to start the export",
-            "type_id": 95,
-            "code_id": "system_button_export",
-            "ui_msg_code_id": "system_button_export",
-            "position": 8,
-            "position_type": 1
-          },
-          {
             "link_id": 657,
             "id": 159,
             "name": "system form button save",
@@ -14775,6 +14786,17 @@
             "type_id": 29,
             "code_id": "form_button_save",
             "ui_msg_code_id": "form_button_save",
+            "position": 8,
+            "position_type": 1
+          },
+          {
+            "link_id": 659,
+            "id": 162,
+            "name": "system form button export",
+            "description": "button to start the export",
+            "type_id": 95,
+            "code_id": "system_button_export",
+            "ui_msg_code_id": "system_button_export",
             "position": 8,
             "position_type": 1
           },

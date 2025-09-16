@@ -163,32 +163,41 @@ class word extends sandbox_code_id
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
+    const string TBL_COMMENT = 'for a short text, that can be used to search for values or results with a 64 bit database key because humans will never be able to use more than a few million words';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const FLD_ID = word_db::FLD_ID;
-    const FLD_LST_MUST_BE_IN_STD = word_db::FLD_LST_MUST_BE_IN_STD;
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = word_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
-    const FLD_LST_USER_CAN_CHANGE = word_db::FLD_LST_USER_CAN_CHANGE;
-    const FLD_LST_NON_CHANGEABLE = word_db::FLD_LST_NON_CHANGEABLE;
-    const FLD_NAMES = word_db::FLD_NAMES;
-    const FLD_NAMES_USR = word_db::FLD_NAMES_USR;
-    const FLD_NAMES_NUM_USR = word_db::FLD_NAMES_NUM_USR;
-    const ALL_SANDBOX_FLD_NAMES = word_db::ALL_SANDBOX_FLD_NAMES;
+    const string FLD_ID = word_db::FLD_ID;
+    const array FLD_LST_MUST_BE_IN_STD = word_db::FLD_LST_MUST_BE_IN_STD;
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = word_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
+    const array FLD_LST_USER_CAN_CHANGE = word_db::FLD_LST_USER_CAN_CHANGE;
+    const array FLD_LST_NON_CHANGEABLE = word_db::FLD_LST_NON_CHANGEABLE;
+    const array FLD_NAMES = word_db::FLD_NAMES;
+    const array FLD_NAMES_USR = word_db::FLD_NAMES_USR;
+    const array FLD_NAMES_NUM_USR = word_db::FLD_NAMES_NUM_USR;
+    const array ALL_SANDBOX_FLD_NAMES = word_db::ALL_SANDBOX_FLD_NAMES;
 
     /*
      * object vars
      */
 
     // database fields additional to the user sandbox fields
-    private ?string $plural;    // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
+    // the english plural name as a kind of shortcut; if plural is NULL the database value should not be updated
+    public ?string $plural {
+        set {
+            $this->plural = $value;
+        }
+    }
     private ?int $values;       // the total number of values linked to this word as an indication how common the word is and to sort the words
 
     // in memory only fields
     public ?int $link_type_id; // used in the word list to know based on which relation the word was added to the list
 
     // only used for the export object
-    private ?view $view; // name of the default view for this word
+    public ?view $view {
+        set(?view $value) {
+            $this->view = $value;
+        }
+    } // name of the default view for this word
     private ?array $ref_lst = [];
 
 
@@ -249,7 +258,7 @@ class word extends sandbox_code_id
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             if (array_key_exists(word_db::FLD_PLURAL, $db_row)) {
-                $this->set_plural($db_row[word_db::FLD_PLURAL]);
+                $this->plural = $db_row[word_db::FLD_PLURAL];
             }
             if (array_key_exists(word_db::FLD_VIEW, $db_row)) {
                 if ($db_row[word_db::FLD_VIEW] != null) {
@@ -277,7 +286,7 @@ class word extends sandbox_code_id
         // TODO move plural to language forms
         if (array_key_exists(json_fields::PLURAL, $api_json)) {
             if ($api_json[json_fields::PLURAL] <> '') {
-                $this->set_plural($api_json[json_fields::PLURAL]);
+                $this->plural = $api_json[json_fields::PLURAL];
             }
         }
 
@@ -324,7 +333,7 @@ class word extends sandbox_code_id
         }
         if (key_exists(json_fields::PLURAL, $in_ex_json)) {
             if ($in_ex_json[json_fields::PLURAL] <> '') {
-                $this->set_plural($in_ex_json[json_fields::PLURAL]);
+                $this->plural = $in_ex_json[json_fields::PLURAL];
             }
         }
 
@@ -466,11 +475,6 @@ class word extends sandbox_code_id
         }
     }
 
-    function set_plural(?string $plural): void
-    {
-        $this->plural = $plural;
-    }
-
     function plural(): ?string
     {
         return $this->plural;
@@ -516,11 +520,6 @@ class word extends sandbox_code_id
         } else {
             return $this->view->id();
         }
-    }
-
-    function set_view(?view $msk): void
-    {
-        $this->view = $msk;
     }
 
     /**
@@ -983,7 +982,7 @@ class word extends sandbox_code_id
             $this->set_code_id($obj->code_id(), $usr_req);
         }
         if ($obj->plural() != null) {
-            $this->set_plural($obj->plural());
+            $this->plural = $obj->plural();
         }
         if ($obj->values != null) {
             $this->values = $obj->values;

@@ -363,7 +363,7 @@ class word_write_tests
         $t->display('word->load renamed word "' . words::TEST_RENAMED . '"', $target, $result);
 
         // check if the word parameters can be added
-        $wrd_renamed->set_plural(words::TEST_RENAMED . 's');
+        $wrd_renamed->plural = words::TEST_RENAMED . 's';
         $wrd_renamed->description = words::TEST_RENAMED . ' description';
         $wrd_renamed->type_id = $phr_typ_cac->id(phrase_type_shared::OTHER);
         $result = $wrd_renamed->save()->get_last_message();
@@ -398,7 +398,7 @@ class word_write_tests
         // check if a user specific word is created if another user changes the word
         $wrd_usr2 = new word($t->usr2);
         $wrd_usr2->load_by_name(words::TEST_RENAMED);
-        $wrd_usr2->set_plural(words::TEST_RENAMED . 's2');
+        $wrd_usr2->plural = words::TEST_RENAMED . 's2';
         $wrd_usr2->description = words::TEST_RENAMED . ' description2';
         $wrd_usr2->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $result = $wrd_usr2->save()->get_last_message();
@@ -435,7 +435,7 @@ class word_write_tests
         // check if undo all specific changes removes the user word
         $wrd_usr2 = new word($t->usr2);
         $wrd_usr2->load_by_name(words::TEST_RENAMED);
-        $wrd_usr2->set_plural(words::TEST_RENAMED . 's');
+        $wrd_usr2->plural = words::TEST_RENAMED . 's';
         $wrd_usr2->description = words::TEST_RENAMED . ' description';
         $wrd_usr2->type_id = $phr_typ_cac->id(phrase_type_shared::OTHER);
         $result = $wrd_usr2->save()->get_last_message();

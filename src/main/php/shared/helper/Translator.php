@@ -33,15 +33,16 @@
 namespace Zukunft\ZukunftCom\main\php\shared\helper;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use ValueError;
 
+include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\shared\const\files AS files_shared;
 use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
-use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use ValueError;
 
 class Translator
 {
@@ -122,7 +123,7 @@ class Translator
 
     private function read(string $lan = ''): array
     {
-        $file_path = files::TRANSLATION_PATH . $lan . files::YAML;;
+        $file_path = files_shared::TRANSLATION_PATH . $lan . files::YAML;;
         $result = yaml_parse_file($file_path);
         if ($result === false) {
             log_warning('translation file ' . $file_path . ' missing');

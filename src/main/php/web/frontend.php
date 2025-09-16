@@ -86,9 +86,14 @@ include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
+include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once TEST_CONST_PATH . 'files.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -98,6 +103,7 @@ include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\test\php\const\files as test_files;
 use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
@@ -116,12 +122,16 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
 use Exception;
 
 class frontend
@@ -153,6 +163,7 @@ class frontend
     private string $msg; // messages that should be shown to the user asap
 
     public ?type_lists $typ_lst_cache = null;
+    public ?view_list $msk_lst_cache = null;
 
 
     /*
@@ -171,6 +182,7 @@ class frontend
     function reset_cache(): void
     {
         $this->typ_lst_cache = null;
+        $this->msk_lst_cache = null;
     }
 
 
@@ -250,13 +262,25 @@ class frontend
 
     /**
      * load the frontend cache from the test resource
+     * TODO move to test to avoid usage of backend in frontend
      * @return void
      */
-    function load_dummy_cache_from_test_resources(): void
+    function load_dummy_cache_from_test_resources(user_backend $usr): void
     {
         if ($this->typ_lst_cache == null) {
             $api_msg = file_get_contents(test_files::TYPE_LISTS_CACHE);
             $this->set_cache($api_msg);
+        }
+        if ($this->msk_lst_cache == null) {
+            $imp = new import();
+            $imp->usr = $usr;
+            $usr_msg = new backend_user_message();
+            $json_str = file_get_contents(files::SYSTEM_VIEWS);
+            $size = strlen($json_str);
+            $json_array = json_decode($json_str, true);
+            $dto = $imp->get_data_object($json_array, $usr_msg, $size);
+            $api_msg = $dto->view_list()->api_json();
+            $this->set_view_cache($api_msg);
         }
     }
 
@@ -271,6 +295,20 @@ class frontend
     {
         if ($this->typ_lst_cache == null) {
             $this->typ_lst_cache = new type_lists($api_msg);
+        }
+    }
+
+    /**
+     * set the frontend view cache once upfront base on the api message
+     * used for the unit test without api calls
+     *
+     * @param string|null $api_msg with the api message as a string
+     * @return void
+     */
+    function set_view_cache(?string $api_msg = null): void
+    {
+        if ($this->msk_lst_cache == null) {
+            $this->msk_lst_cache = new view_list($api_msg);
         }
     }
 
@@ -433,6 +471,7 @@ class frontend
             $title = $msk_dsp->title($dbo);
             $cfg = new data_object();
             $cfg->typ_lst_cache = $this->typ_lst_cache;
+            $cfg->set_view_list($this->msk_lst_cache);
             $dsp_text = $msk_dsp->show($dbo, $cfg, $back);
 
             // use a fallback if the view is empty

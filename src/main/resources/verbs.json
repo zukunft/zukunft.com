@@ -244,6 +244,22 @@
       "name_plural_reverse": "distribute to",
       "name_plural": "on",
       "name_reverse": "distribute to"
+    },
+    {
+      "name": "in",
+      "code_id": "in",
+      "description": "to specify the measure unit",
+      "name_plural_reverse": "",
+      "name_plural": "in",
+      "name_reverse": ""
+    },
+    {
+      "name": "to",
+      "code_id": "to",
+      "description": "to define a time period e.g. \"12:00 to 13:00\" or \"1. March 2024 to 3. March 2024 or to specify the assignment type e.g. net to net for currency turnover",
+      "name_plural_reverse": "",
+      "name_plural": "to",
+      "name_reverse": ""
     }
   ]
 }

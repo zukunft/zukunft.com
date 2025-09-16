@@ -1283,7 +1283,7 @@ class create_test_objects extends test_base
         $wrd->set(words::COMPANY_ID, words::COMPANY);
         $msk = new view($this->usr1);
         $msk->set(views::HISTORIC_ID, '');
-        $wrd->set_view($msk);
+        $wrd->view = $msk;
         $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $wrd;
     }
@@ -1294,7 +1294,7 @@ class create_test_objects extends test_base
     function word_view_not_4_user(): word
     {
         $wrd = $this->word_view_set();
-        $wrd->set_view(null);
+        $wrd->view = null;
         $wrd->set_protection_id(null);
         return $wrd;
     }
@@ -1311,7 +1311,7 @@ class create_test_objects extends test_base
         $wrd->description = words::MATH_COM;
         $wrd->set_type(phrase_type_shared::SCALING, $this->usr1);
         $wrd->set_code_id(words::MATH, $this->usr_system);
-        $wrd->set_plural(words::MATH_PLURAL);
+        $wrd->plural = words::MATH_PLURAL;
         $wrd->set_view_id(views::START_ID);
         $wrd->set_usage(2);
         $wrd->exclude();
@@ -1661,7 +1661,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::INHABITANT_ID, words::INHABITANTS);
-        $wrd->set_plural(words::INHABITANTS);
+        $wrd->plural = words::INHABITANTS;
         return $wrd;
     }
 
@@ -1941,7 +1941,7 @@ class create_test_objects extends test_base
     function triple_filled(): triple
     {
         $trp = $this->triple();
-        $trp->set_name_given(triples::MATH_CONST_GIVEN);
+        $trp->name_given = triples::MATH_CONST_GIVEN;
         $trp->set_view_id(views::START_ID);
         $trp->set_usage(triples::SYSTEM_TEST_ADD_USAGE);
         $trp->exclude();
@@ -5143,7 +5143,7 @@ class create_test_objects extends test_base
                 if ($trp->id() > 0) {
                     // refresh the given name if needed
                     if ($name_given <> '' and $trp->name(true) <> $name_given) {
-                        $trp->set_name_given($name_given);
+                        $trp->name_given = $name_given;
                         $trp->set_name($name_given);
                         $result = $trp->save()->get_last_message();
                         if ($result != '') {
@@ -5166,7 +5166,7 @@ class create_test_objects extends test_base
                         $trp->set_verb($vrb);
                         $trp->set_to($to);
                         if ($trp->name(true) <> $name_given) {
-                            $trp->set_name_given($name_given);
+                            $trp->name_given = $name_given;
                             $trp->set_name($name_given);
                         }
                         $save_result = $trp->save()->get_last_message();

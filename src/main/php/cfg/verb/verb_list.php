@@ -314,6 +314,21 @@ class verb_list extends type_list
         $vrb->set_name(verbs::AND_NAME);
         $vrb->set_code_id_db(verbs::AND);
         $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->set_id(verbs::IN_ID);
+        $vrb->set_name(verbs::IN_NAME);
+        $vrb->set_code_id_db(verbs::IN);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->set_id(verbs::TO_ID);
+        $vrb->set_name(verbs::TO_NAME);
+        $vrb->set_code_id_db(verbs::TO);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->set_id(verbs::ON_ID);
+        $vrb->set_name(verbs::ON_NAME);
+        $vrb->set_code_id_db(verbs::ON);
+        $this->add_verb($vrb);
     }
 
 

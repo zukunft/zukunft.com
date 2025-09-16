@@ -158,19 +158,19 @@ class triple extends sandbox_link_named
      */
 
     // comment used for the database creation
-    const TBL_COMMENT = 'to link one word or triple with a verb to another word or triple';
+    const string TBL_COMMENT = 'to link one word or triple with a verb to another word or triple';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const FLD_ID = triple_db::FLD_ID;
-    const FLD_LST_LINK = triple_db::FLD_LST_LINK;
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = triple_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
-    const FLD_LST_USER_CAN_CHANGE = triple_db::FLD_LST_USER_CAN_CHANGE;
-    const FLD_LST_NON_CHANGEABLE = triple_db::FLD_LST_NON_CHANGEABLE;
-    const FLD_NAMES_LINK = triple_db::FLD_NAMES_LINK;
-    const FLD_NAMES = triple_db::FLD_NAMES;
-    const FLD_NAMES_USR = triple_db::FLD_NAMES_USR;
-    const FLD_NAMES_NUM_USR = triple_db::FLD_NAMES_NUM_USR;
-    const ALL_SANDBOX_FLD_NAMES = triple_db::ALL_SANDBOX_FLD_NAMES;
+    const string FLD_ID = triple_db::FLD_ID;
+    const array FLD_LST_LINK = triple_db::FLD_LST_LINK;
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = triple_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
+    const array FLD_LST_USER_CAN_CHANGE = triple_db::FLD_LST_USER_CAN_CHANGE;
+    const array FLD_LST_NON_CHANGEABLE = triple_db::FLD_LST_NON_CHANGEABLE;
+    const array FLD_NAMES_LINK = triple_db::FLD_NAMES_LINK;
+    const array FLD_NAMES = triple_db::FLD_NAMES;
+    const array FLD_NAMES_USR = triple_db::FLD_NAMES_USR;
+    const array FLD_NAMES_NUM_USR = triple_db::FLD_NAMES_NUM_USR;
+    const array ALL_SANDBOX_FLD_NAMES = triple_db::ALL_SANDBOX_FLD_NAMES;
 
     /*
      * object vars
@@ -178,7 +178,11 @@ class triple extends sandbox_link_named
 
     // triple vars additional to the name and link vars of the parent user sandbox object
     // the name manually set by the user, which can be empty
-    private ?string $name_given;
+    public ?string $name_given {
+        set {
+            $this->name_given = $value;
+        }
+    }
     // the generated name based on the linked objects and saved in the database for faster searching
     private string $name_generated;
 
@@ -191,7 +195,11 @@ class triple extends sandbox_link_named
 
     // only used for the export object
     // name of the default view for this word
-    private ?view $view;
+    private ?view $view {
+        set(?view $value) {
+            $this->view = $value;
+        }
+    }
     private ?array $ref_lst = [];
 
 
@@ -288,10 +296,13 @@ class triple extends sandbox_link_named
             }
             // TODO use json_fields object
             if (array_key_exists(triple_db::FLD_NAME_GIVEN, $db_row)) {
-                $this->set_name_given($db_row[triple_db::FLD_NAME_GIVEN]);
+                $this->name_given = $db_row[triple_db::FLD_NAME_GIVEN];
             }
             if (array_key_exists(triple_db::FLD_NAME_AUTO, $db_row)) {
                 $this->set_name_generated($db_row[triple_db::FLD_NAME_AUTO]);
+            }
+            if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
+                $this->set_code_id($db_row[sql_db::FLD_CODE_ID], $this->user());
             }
             if (array_key_exists(triple_db::FLD_VALUES, $db_row)) {
                 $this->values = $db_row[triple_db::FLD_VALUES];
@@ -922,16 +933,6 @@ class triple extends sandbox_link_named
     }
 
     /**
-     * set the name manually set by the user and set the used name if needed
-     * @param string|null $name_given
-     * @return void
-     */
-    function set_name_given(?string $name_given): void
-    {
-        $this->name_given = $name_given;
-    }
-
-    /**
      *
      * @param string|null $name_generated the generated name as saved in the database
      * @return void
@@ -1079,11 +1080,6 @@ class triple extends sandbox_link_named
             $this->view = new view($this->user());
         }
         $this->view->set_id($id);
-    }
-
-    function set_view(?view $msk): void
-    {
-        $this->view = $msk;
     }
 
     function view(): ?view

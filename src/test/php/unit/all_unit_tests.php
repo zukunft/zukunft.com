@@ -412,7 +412,7 @@ class all_unit_tests extends test_cleanup
 
         // test the html ui on localhost without api
         $ui = new frontend('unit ui tests');
-        $ui->load_dummy_cache_from_test_resources();
+        $ui->load_dummy_cache_from_test_resources($this->usr1);
         new all_ui_tests()->run($this, $ui);
 
         // test the html ui on localhost with api

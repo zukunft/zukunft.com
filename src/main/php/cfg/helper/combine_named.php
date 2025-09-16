@@ -228,7 +228,7 @@ class combine_named extends combine_object
      */
     function set_plural(?string $plural): void
     {
-        $this->obj()?->set_plural($plural);
+        $this->obj()->plural = $plural;
     }
 
 

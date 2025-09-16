@@ -478,6 +478,11 @@ class phrase extends combine_named
         return $this->obj()->owner_id();
     }
 
+    function code_id(): ?int
+    {
+        return $this->obj()->code_id();
+    }
+
     function share_id(): ?int
     {
         return $this->obj()->share_id();

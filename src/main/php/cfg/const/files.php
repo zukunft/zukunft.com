@@ -32,6 +32,10 @@
 
 namespace Zukunft\ZukunftCom\main\php\cfg\const;
 
+include_once paths::SHARED_CONST . 'files.php';
+
+use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
+
 class files
 {
 
@@ -71,11 +75,6 @@ class files
 
     // the default system config as a yaml including the pod and the user frontend config
     const string SYSTEM_CONFIG = self::RESOURCE_PATH . 'config' . self::YAML;
-
-    // the system views as a zukunft.com user import json
-    const string SYSTEM_VIEWS_FILE = 'system_views' . self::JSON;
-    const string SYSTEM_VIEWS = self::MESSAGE_PATH . self::SYSTEM_VIEWS_FILE;
-    const string TRANSLATION_PATH = self::RESOURCE_PATH . 'translations' . DIRECTORY_SEPARATOR;
 
     // initial loading of words and triples used for unit, ui and db read tests
     // so that they have a low database id that does hopefully neven change
@@ -134,7 +133,7 @@ class files
 
     // to load the default data for a pod
     const array BASE_CONFIG_FILES = [
-        self::SYSTEM_VIEWS_FILE,
+        files_shared::SYSTEM_VIEWS_FILE,
         self::SOURCES_FILE,
         self::UNITS_FILE,
         self::SCALING_FILE,

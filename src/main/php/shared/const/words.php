@@ -139,6 +139,12 @@ class words
     const string LISTS = 'lists';
     const string LISTS_COM = 'general parameters for lists e.g. the number of default entries';
 
+    // words with a predefined functionality
+    const string MOST = 'most';
+    const string MOST_COM = 'also used by the system to force selecting only one value';
+    const string RELEVANT = 'relevant';
+    const string RELEVANT_COM = 'also used by the system to select some highlighted entries';
+
     // general words used also for the system configuration where the initial tooltip is in the config.yaml
     const string VALUE = 'value';
     const string VERSION = 'version';
@@ -365,9 +371,9 @@ class words
     const string COMPANY = 'company';
     const int COMPANY_ID = 188;
     const string ABB = 'ABB';
-    const int ABB_ID = 1026;
+    const int ABB_ID = 1029;
     const string VESTAS = 'Vestas';
-    const int VESTAS_ID = 1029;
+    const int VESTAS_ID = 1032;
 
     // for the config.yaml
     const string TEST = 'test';

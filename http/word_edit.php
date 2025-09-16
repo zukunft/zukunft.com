@@ -82,7 +82,7 @@ if ($usr->id() > 0) {
             $wrd->set_name($_GET[url_var::NAME]);
         } //
         if (isset($_GET[url_var::PLURAL])) {
-            $wrd->set_plural($_GET[url_var::PLURAL]);
+            $wrd->plural = $_GET[url_var::PLURAL];
         } //
         if (isset($_GET[url_var::DESCRIPTION])) {
             $wrd->description = $_GET[url_var::DESCRIPTION];
