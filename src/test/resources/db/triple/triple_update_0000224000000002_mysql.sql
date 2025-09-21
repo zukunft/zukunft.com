@@ -1,4 +1,4 @@
-PREPARE triple_update_000022400000002 FROM
+PREPARE triple_update_0000224000000002 FROM
    'UPDATE triples
        SET triple_name = ?,
            description = ?,

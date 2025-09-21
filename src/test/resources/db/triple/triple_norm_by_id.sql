@@ -9,6 +9,7 @@ PREPARE triple_norm_by_id (bigint) AS
            name_given,
            name_generated,
            description,
+           weight,
            values,
            excluded,
            share_type_id,

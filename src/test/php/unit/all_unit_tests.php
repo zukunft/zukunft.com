@@ -186,7 +186,7 @@ class all_unit_tests extends test_cleanup
         $this->set_users();
         $usr = $this->usr1;
 
-        if ($usr->id() > 0) {
+        if ($usr->id > 0) {
 
             /*
              * db read
@@ -452,14 +452,14 @@ class all_unit_tests extends test_cleanup
 
         // create a dummy user for testing
         $usr = new user;
-        $usr->set_id(users::SYSTEM_TEST_ID);
+        $usr->id = users::SYSTEM_TEST_ID;
         $usr->name = users::SYSTEM_TEST_NAME;
         $usr->set_profile(user_profiles::EMAIL);
         $this->usr1 = $usr;
 
         // create a dummy system user for unit testing
         $usr_sys = new user;
-        $usr_sys->set_id(users::SYSTEM_ID);
+        $usr_sys->id = users::SYSTEM_ID;
         $usr_sys->name = users::SYSTEM_NAME;
 
     }
@@ -479,7 +479,7 @@ class all_unit_tests extends test_cleanup
         // set the profile of the test users
         $usr->profile_id = $usr_pro_cac->id(user_profiles::EMAIL);
         $usr_sys->profile_id = $usr_pro_cac->id(user_profiles::SYSTEM);
-        $usr->set_id(1);
+        $usr->id = 1;
 
         // continue with preparing unit tests
         $this->init_phrase_types();

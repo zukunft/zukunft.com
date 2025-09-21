@@ -174,7 +174,7 @@ class term_view extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $msk = new view($this->user());
-            $msk->set_id($db_row[view_db::FLD_ID]);
+            $msk->id = $db_row[view_db::FLD_ID];
             $this->set_view($msk);
             $trm = new term($this->user());
             $trm->set_id($db_row[term::FLD_ID]);
@@ -199,7 +199,7 @@ class term_view extends sandbox_link
      */
     function set(int $id, view $msk, term $trm): void
     {
-        $this->set_id($id);
+        $this->id = $id;
         $this->set_view($msk);
         $this->set_term($trm);
     }
@@ -348,7 +348,7 @@ class term_view extends sandbox_link
 
         $sc->set_class($class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_usr_fields(self::FLD_NAMES_USR);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
@@ -406,7 +406,7 @@ class term_view extends sandbox_link
     {
         // try to get the search values from the objects
         if ($this->id() <= 0) {
-            $this->set_id(0);
+            $this->id = 0;
         }
 
         $sc->set_class($this::class);
@@ -429,9 +429,9 @@ class term_view extends sandbox_link
             $sc->add_where(term::FLD_ID, $this->term()->id());
         } else {
             if ($this->view()->id() > 0) {
-                log_err('Cannot load default view term link because term id for ' . $this->term()-$this->dsp_id() . 'is missing');
+                log_err('Cannot load default view term link because term id for ' . $this->term()->dsp_id() . 'is missing');
             } else {
-                log_err('Cannot load default view term link because term id for ' . $this->view()-$this->dsp_id() . 'is missing');
+                log_err('Cannot load default view term link because term id for ' . $this->view()->dsp_id() . 'is missing');
             }
         }
         $qp->sql = $sc->sql();

@@ -134,7 +134,7 @@ class user_list
         $sc->set_class(user::class);
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(user_db::FLD_NAMES_LIST);
         return $qp;
     }
@@ -379,7 +379,7 @@ class user_list
         if ($db_usr_lst != null) {
             foreach ($db_usr_lst as $db_usr) {
                 $usr = new user;
-                $usr->set_id($db_usr[user_db::FLD_ID]);
+                $usr->id = $db_usr[user_db::FLD_ID];
                 $usr->name = $db_usr[user_db::FLD_NAME];
                 $usr->code_id = $db_usr[sql_db::FLD_CODE_ID];
                 $this->lst[] = $usr;
@@ -418,7 +418,7 @@ class user_list
         $result = array();
         if ($this->lst != null) {
             foreach ($this->lst as $usr) {
-                $result[] = $usr->id();
+                $result[] = $usr->id;
             }
         }
         return $result;
@@ -577,8 +577,8 @@ class user_list
         if ($allow_duplicates) {
             $this->add_direct($usr_to_add);
         } else {
-            if ($usr_to_add->id() != 0) {
-                if (!array_key_exists($usr_to_add->id(), $this->id_lst())) {
+            if ($usr_to_add->id != 0) {
+                if (!array_key_exists($usr_to_add->id, $this->id_lst())) {
                     if (!array_key_exists($usr_to_add->name(), $this->names())) {
                         $this->add_direct($usr_to_add);
                     } else {
@@ -665,7 +665,7 @@ class user_list
         } else {
             foreach ($this->lst() as $usr) {
                 if ($usr->excluded === true) {
-                    if ($usr->id() == 0 and $usr->name() != '') {
+                    if ($usr->id == 0 and $usr->name() != '') {
                         $usr->load_by_name($usr->name());
                     }
                     $usr_msg->add($usr->del($usr_req));

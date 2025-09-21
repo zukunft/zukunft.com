@@ -1,4 +1,4 @@
-PREPARE triple_update_000022400000002 (text, text, smallint, smallint, bigint) AS
+PREPARE triple_update_0000224000000002 (text, text, smallint, smallint, bigint) AS
     UPDATE triples
        SET triple_name = $1,
            description = $2,

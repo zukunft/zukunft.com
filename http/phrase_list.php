@@ -160,9 +160,9 @@ if ($usr->id() > 0) {
                 // ... and link it to an existing word
                 log_debug('word ' . $wrd->id() . ' linked via ' . $vrb_id . ' to ' . $phr_to . ': ' . $add_result);
                 $lnk = new triple($usr);
-                $lnk->from()->set_id($wrd->id());
+                $lnk->from()->id = $wrd->id();
                 $lnk->set_verb_id($vrb_id);
-                $lnk->to()->set_id($phr_to);
+                $lnk->to()->id = $phr_to;
                 $add_result .= $lnk->save()->get_last_message();
             }
 

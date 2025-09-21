@@ -214,7 +214,7 @@ class system_form extends component
     function form_field_plural(db_object_dsp $dbo, string $style_text): string
     {
         $html = new html_base();
-        $plural = $dbo->plural();
+        $plural = $dbo->get_plural();
         if ($plural == null) {
             $plural = '';
         }

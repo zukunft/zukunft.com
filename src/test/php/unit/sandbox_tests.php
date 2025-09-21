@@ -193,10 +193,10 @@ class sandbox_tests
         // TODO review test (start with test_name="" and move the creation to the test object creation)
         // a source can have the same name as a word
         $wrd1 = new word($usr);
-        $wrd1->set_id(1);
+        $wrd1->id = 1;
         $wrd1->set_name(sources::IPCC_AR6_SYNTHESIS);
         $src2 = new source($usr);
-        $src2->set_id(2);
+        $src2->id = 2;
         $src2->set_name(sources::IPCC_AR6_SYNTHESIS);
         $result = $wrd1->is_same($src2);
         $t->assert("a source is not the same as a word even if they have the same name", $result, false);
@@ -1882,7 +1882,7 @@ class sandbox_tests
 
         // the word changer query (used in _sandbox->changer_sql)
         $wrd = new word($usr);
-        $wrd->set_id(1);
+        $wrd->id = 1;
         $sc = $db_con->sql_creator();
         $sc->db_type = sql_db::POSTGRES;
         $qp = $wrd->load_sql_changer($sc);

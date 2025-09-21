@@ -94,7 +94,7 @@ class db_id_object_non_sandbox extends db_object_seq_id
         $usr_msg = new user_message();
 
         if (array_key_exists(json_fields::ID, $api_json)) {
-            $this->set_id($api_json[json_fields::ID]);
+            $this->id = $api_json[json_fields::ID];
         }
 
         return $usr_msg;

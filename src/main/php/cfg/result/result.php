@@ -120,30 +120,30 @@ class result extends sandbox_value
      * db const
      */
 
-    const TBL_COMMENT = 'to cache the formula ';
-    const TBL_COMMENT_PRIME = 'to cache the formula most often requested ';
-    const TBL_COMMENT_STD = 'to cache the formula public unprotected ';
-    const TBL_COMMENT_USER = 'to cache the user specific changes of ';
+    const string TBL_COMMENT = 'to cache the formula ';
+    const string TBL_COMMENT_PRIME = 'to cache the formula most often requested ';
+    const string TBL_COMMENT_STD = 'to cache the formula public unprotected ';
+    const string TBL_COMMENT_USER = 'to cache the user specific changes of ';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const FLD_NAMES = result_db::FLD_NAMES;
-    const FLD_NAMES_NUM_USR = result_db::FLD_NAMES_NUM_USR;
-    const FLD_NAMES_USR_ONLY = result_db::FLD_NAMES_USR_ONLY;
+    const array FLD_NAMES = result_db::FLD_NAMES;
+    const array FLD_NAMES_NUM_USR = result_db::FLD_NAMES_NUM_USR;
+    const array FLD_NAMES_USR_ONLY = result_db::FLD_NAMES_USR_ONLY;
 
-    const FLD_ALL_TIME_SERIES = result_db::FLD_ALL_TIME_SERIES;
-    const FLD_ALL_TIME_SERIES_USER = result_db::FLD_ALL_TIME_SERIES_USER;
+    const array FLD_ALL_TIME_SERIES = result_db::FLD_ALL_TIME_SERIES;
+    const array FLD_ALL_TIME_SERIES_USER = result_db::FLD_ALL_TIME_SERIES_USER;
 
-    const TBL_LIST = result_db::TBL_LIST;
+    const array TBL_LIST = result_db::TBL_LIST;
 
-    const FLD_KEY_PRIME = result_db::FLD_KEY_PRIME;
-    const FLD_KEY_PRIME_USER = result_db::FLD_KEY_PRIME_USER;
-    const FLD_ALL_CHANGED = result_db::FLD_ALL_CHANGED;
-    const FLD_ALL_SOURCE = result_db::FLD_ALL_SOURCE;
-    const FLD_ALL_SOURCE_GROUP = result_db::FLD_ALL_SOURCE_GROUP;
-    const FLD_ALL_SOURCE_GROUP_PRIME = result_db::FLD_ALL_SOURCE_GROUP_PRIME;
-    const FLD_ALL_SOURCE_GROUP_BIG = result_db::FLD_ALL_SOURCE_GROUP_BIG;
-    const FLD_ALL_OWNER = result_db::FLD_ALL_OWNER;
-    const FLD_ALL_CHANGER = result_db::FLD_ALL_CHANGER;
+    const array FLD_KEY_PRIME = result_db::FLD_KEY_PRIME;
+    const array FLD_KEY_PRIME_USER = result_db::FLD_KEY_PRIME_USER;
+    const array FLD_ALL_CHANGED = result_db::FLD_ALL_CHANGED;
+    const array FLD_ALL_SOURCE = result_db::FLD_ALL_SOURCE;
+    const array FLD_ALL_SOURCE_GROUP = result_db::FLD_ALL_SOURCE_GROUP;
+    const array FLD_ALL_SOURCE_GROUP_PRIME = result_db::FLD_ALL_SOURCE_GROUP_PRIME;
+    const array FLD_ALL_SOURCE_GROUP_BIG = result_db::FLD_ALL_SOURCE_GROUP_BIG;
+    const array FLD_ALL_OWNER = result_db::FLD_ALL_OWNER;
+    const array FLD_ALL_CHANGER = result_db::FLD_ALL_CHANGER;
 
 
     /*
@@ -204,7 +204,7 @@ class result extends sandbox_value
         $lib = new library();
         $result = parent::row_mapper_multi($db_row, $ext, result_db::FLD_ID);
         if ($result) {
-            $this->frm->set_id($db_row[formula_db::FLD_ID]);
+            $this->frm = $db_row[formula_db::FLD_ID];
             if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
                 $this->src_grp->set_id((int)$db_row[result_db::FLD_SOURCE_GRP]);
             } else {
@@ -508,7 +508,7 @@ class result extends sandbox_value
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $sc->set_id_field($this->id_field($sc_par_lst));
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(result_db::FLD_NAMES);
 
         return $qp;
@@ -793,7 +793,7 @@ class result extends sandbox_value
     function load_sql_where(sql_db $db_con, sql_par $qp, string $sql_where = ''): sql_par
     {
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(result_db::FLD_NAMES);
         $db_con->set_where_text($sql_where);
         $qp->sql = $db_con->select_by_set_id();
@@ -1208,7 +1208,7 @@ class result extends sandbox_value
                  AND group_id = " . $this->grp()->id() . "
                  AND user_id         = " . $this->user()->id() . ";";
             //$db_con = New mysql;
-            $db_con->usr_id = $this->user()->id();
+            $db_con->usr_id = $this->user()->id;
             $val_rows = $db_con->get_old($sql);
             foreach ($val_rows as $val_row) {
                 $res_upd = new result($this->user());
@@ -1247,7 +1247,7 @@ class result extends sandbox_value
 
     private function save_without_time(): string
     {
-        $res_no_time = clone $this;
+        $res_no_time = $this->clone_all();
         // $res_no_time->time_phr = null;
         return $res_no_time->save()->get_last_message();
     }
@@ -1263,7 +1263,7 @@ class result extends sandbox_value
     // TODO add check
     private function has_no_time_value(): bool
     {
-        $res_check = clone $this;
+        $res_check = $this->clone_all();
         $phr_lst_ex_time = $res_check->grp()->phrase_list();
         $phr_lst_ex_time->ex_time();
         return !$res_check->load_by_phr_lst($phr_lst_ex_time);
@@ -1354,7 +1354,7 @@ class result extends sandbox_value
                 }
 
                 if ($this->number() == null) {
-                    log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_grp->phrase_list()->dsp_id() . ' for user ' . $this->user()->id() . '.', "result->save_if_updated");
+                    log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_grp->phrase_list()->dsp_id() . ' for user ' . $this->user()->id . '.', "result->save_if_updated");
                 } else {
                     // save the default value if the result time is the "newest"
                     if (isset($res_default_time)) {
@@ -1418,7 +1418,7 @@ class result extends sandbox_value
             if ($debug > 0) {
                 $debug_txt = 'result->save (' . $this->number() . ' for formula ' . $this->frm->id() . ' with ' . $this->grp()->phrase_list()->dsp_name() . ' based on ' . $this->src_grp->phrase_list()->dsp_name();
                 if (!$this->is_std) {
-                    $debug_txt .= ' and user ' . $this->user()->id();
+                    $debug_txt .= ' and user ' . $this->user()->id;
                 }
                 $debug_txt .= ')';
                 log_debug($debug_txt);
@@ -1426,7 +1426,7 @@ class result extends sandbox_value
 
             // build the database object because the is anyway needed
             //$db_con = new mysql;
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
             $db_con->set_class(result::class);
 
             // build the word list if needed to separate the time word from the word list

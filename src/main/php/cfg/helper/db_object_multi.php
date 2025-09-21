@@ -68,7 +68,19 @@ class db_object_multi extends db_object_key
     // database fields that are used in all model objects
     // the database id is the unique prime key
     // TODO actually not needed on this level, because the id may be generated and remembered in a linked object e.g. the group
-    protected int|string $id;
+    public int|string $id {
+        // get @return int the database id which is not 0 if the object has been saved
+        // the internal null value is used to detect if database saving has been tried
+        get {
+            return $this->id;
+        }
+        // set the unique database id of a database object
+        // @param int $id used in the row mapper and to set a dummy database id for unit tests
+        set {
+            $this->id = $value;
+            $this->set_modified();
+        }
+    }
 
 
     /*
@@ -102,9 +114,9 @@ class db_object_multi extends db_object_key
                 if (array_key_exists($id_fld, $db_row)) {
                     if ($db_row[$id_fld] != 0 or $db_row[$id_fld] != '') {
                         if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
-                            $this->set_id((int)$db_row[$id_fld]);
+                            $this->id = (int)$db_row[$id_fld];
                         } else {
-                            $this->set_id($db_row[$id_fld]);
+                            $this->id = $db_row[$id_fld];
                         }
                         $result = true;
                     }
@@ -114,29 +126,6 @@ class db_object_multi extends db_object_key
             }
         }
         return $result;
-    }
-
-
-    /*
-     * set and get
-     */
-
-    /**
-     * set the unique database id of a database object
-     * @param int|string $id used in the row mapper and to set a dummy database id for unit tests
-     */
-    function set_id(int|string $id): void
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return int|string the database id which is not 0 if the object has been saved
-     * the internal null value is used to detect if database saving has been tried
-     */
-    function id(): int|string
-    {
-        return $this->id;
     }
 
 
@@ -235,9 +224,18 @@ class db_object_multi extends db_object_key
         $usr_msg = new user_message();
         // add a dummy id for unit testing
         if ($test_obj) {
-            $db_obj->set_id($test_obj->seq_id());
+            $db_obj->id = $test_obj->seq_id();
         }
         return $usr_msg;
+    }
+
+    /*
+     * set and get
+     */
+
+    function id(): string|int
+    {
+        return $this->id;
     }
 
 

@@ -71,9 +71,9 @@ class source_tests
 
         $t->subheader($ts . 'sql read standard and user changes by id');
         $src = new source($usr);
-        $src->set_id(4);
+        $src->id = 4;
         $t->assert_sql_standard($sc, $src);
-        $src->set_id(5);
+        $src->id = 5;
         $t->assert_sql_not_changed($sc, $src);
         $t->assert_sql_user_changes($sc, $src);
 

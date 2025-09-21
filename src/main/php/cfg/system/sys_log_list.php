@@ -122,13 +122,13 @@ class sys_log_list extends base_list
             $sql_where = $sql_status;
             $qp->name .= self::DSP_ALL;
         } elseif ($this->dsp_type == self::DSP_OTHER) {
-            $db_con->add_par(sql_par_type::INT, $this->user()->id());
+            $db_con->add_par(sql_par_type::INT, $this->user()->id);
             $sql_where = $sql_status .
                 ' AND (' . sql_db::STD_TBL . '.' . user_db::FLD_ID . ' <> ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
             $qp->name .= self::DSP_OTHER;
         } elseif ($this->dsp_type == self::DSP_MY) {
-            $db_con->add_par(sql_par_type::INT, $this->user()->id());
+            $db_con->add_par(sql_par_type::INT, $this->user()->id);
             $sql_where = $sql_status .
                 ' AND (' . sql_db::STD_TBL . '.' . user_db::FLD_ID . ' = ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
@@ -140,7 +140,7 @@ class sys_log_list extends base_list
         if ($sql_where <> '') {
             $db_con->set_class(sys_log::class);
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
             $db_con->set_fields(sys_log::FLD_NAMES);
             $db_con->set_join_fields(array(sys_log_function::FLD_NAME), sys_log_function::class);
             $db_con->set_join_fields(array(type_object::FLD_NAME), sys_log_status::class);

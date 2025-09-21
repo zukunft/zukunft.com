@@ -130,8 +130,8 @@ class list_dsp extends ListOfIdObjects
     function lst_key(): array
     {
         $result = array();
-        foreach ($this->lst() as $val) {
-            $result[$val->id()] = $val->name();
+        foreach ($this->lst() as $sbx) {
+            $result[$sbx->id()] = $sbx->name();
         }
         return $result;
     }

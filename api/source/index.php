@@ -72,7 +72,7 @@ if ($db_con->is_open()) {
 
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id() > 0) {
+    if ($usr->id > 0) {
 
         // load the source from the database for GET, UPDATE and DELETE
         $src = new source($usr);

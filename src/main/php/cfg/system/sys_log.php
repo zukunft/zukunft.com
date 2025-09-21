@@ -447,7 +447,7 @@ class sys_log extends db_object_seq_id
         $usr_msg = new user_message();
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_class(sys_log::class);
 
         if ($this->id() > 0) {

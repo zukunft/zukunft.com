@@ -75,7 +75,7 @@ class phrase_type extends type_object
     {
         parent::__construct($code_id, $name, $id);
         $this->code_id = $code_id;
-        $this->set_id($id);
+        $this->id = $id;
         $this->name = $name;
     }
 

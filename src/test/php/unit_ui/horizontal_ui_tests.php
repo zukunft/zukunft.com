@@ -90,7 +90,7 @@ class horizontal_ui_tests
             $refilled_obj->reset();
             $refilled_obj->api_mapper($api_msg);
             // fill the id that is not set by the add url
-            $refilled_obj->set_id($filled_obj->id());
+            $refilled_obj->id = $filled_obj->id();
             // fill the exclude field that is set by the curl action
             if ($filled_obj::class != verb::class) {
                 if ($filled_obj->is_excluded()) {

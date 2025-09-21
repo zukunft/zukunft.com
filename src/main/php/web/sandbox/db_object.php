@@ -194,6 +194,10 @@ class db_object extends TextIdObject
             $this->set_id(0);
             $usr_msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
+
+        // remember to send the updates to the backend
+        $this->set_modified();
+
         return $usr_msg;
     }
 
@@ -411,7 +415,7 @@ class db_object extends TextIdObject
         return 'description not overwritten by ' . $this::class;
     }
 
-    function plural(): ?string
+    function get_plural(): ?string
     {
         return 'plural not overwritten by ' . $this::class;
     }

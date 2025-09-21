@@ -184,7 +184,7 @@ class element extends db_object_seq_id_user
      */
     function row_mapper_sandbox(?array $db_row): bool
     {
-        $this->set_id(0);
+        $this->id = 0;
         $result = parent::row_mapper($db_row, self::FLD_ID);
         if ($result) {
             $par_typ = new parameter_type();

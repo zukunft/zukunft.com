@@ -122,7 +122,7 @@ class formula_list_tests
     {
         // prepare
         $wrd = new word($t->usr1);
-        $wrd->set_id(1);
+        $wrd->id = 1;
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -150,7 +150,7 @@ class formula_list_tests
     {
         // prepare
         $trp = new triple($t->usr1);
-        $trp->set_id(1);
+        $trp->id = 1;
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -178,7 +178,7 @@ class formula_list_tests
     {
         // prepare
         $vrb = new verb();
-        $vrb->set_id(1);
+        $vrb->id = 1;
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;
@@ -206,7 +206,7 @@ class formula_list_tests
     {
         // prepare
         $frm = new formula($t->usr1);
-        $frm->set_id(1);
+        $frm->id = 1;
 
         // check the Postgres query syntax
         $db_con->db_type = sql_db::POSTGRES;

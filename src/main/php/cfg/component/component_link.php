@@ -254,9 +254,9 @@ class component_link extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             $this->set_view(new view($this->user()));
-            $this->view()->set_id($db_row[view_db::FLD_ID]);
+            $this->view()->id = $db_row[view_db::FLD_ID];
             $this->set_component(new component($this->user()));
-            $this->component()->set_id($db_row[component::FLD_ID]);
+            $this->component()->id = $db_row[component::FLD_ID];
             $this->order_nbr = $db_row[self::FLD_ORDER_NBR];
             $this->set_pos_type_by_id($db_row[self::FLD_POS_TYPE]);
             $this->set_style_by_id($db_row[self::FLD_STYLE]);
@@ -418,7 +418,7 @@ class component_link extends sandbox_link
     function set(int $id, view $msk, component $cmp, int $pos): void
     {
         $this->reset();
-        parent::set_id($id);
+        $this->id = $id;
         $this->set_view($msk);
         $this->set_component($cmp);
         $this->set_pos($pos);
@@ -460,7 +460,7 @@ class component_link extends sandbox_link
      */
     function set_component_id(int $id): void
     {
-        $this->component()->set_id($id);
+        $this->component()->id = $id;
     }
 
     /**
@@ -788,7 +788,7 @@ class component_link extends sandbox_link
 
         $sc->set_class($class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(self::FLD_NAMES_LINK);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
@@ -844,7 +844,7 @@ class component_link extends sandbox_link
 
         $sc->set_class(self::class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->add_usr_grp_field(self::FLD_ORDER_NBR, sql_par_type::MAX);
         $sc->add_where(view_db::FLD_ID, $id, sql_par_type::INT_SUB);
         $qp->sql = $sc->sql(1, false);

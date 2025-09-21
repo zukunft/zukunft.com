@@ -336,7 +336,7 @@ class value_list extends sandbox_value_list
         }
 
         // check the all minimal input parameters are set
-        if ($this->user()->id() <= 0) {
+        if ($this->user()->id <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } elseif ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
@@ -424,7 +424,7 @@ class value_list extends sandbox_value_list
         $pos_usr = $par_pos;
         $par_pos++;
         $par_name = $sc->par_name($par_pos);
-        $sc->add_where_par(user_db::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
+        $sc->add_where_par(user_db::FLD_ID, $this->user()->id, sql_par_type::INT, '', $par_name);
 
         // remember the parameters
         $par_lst = clone $sc->par_list();
@@ -481,7 +481,7 @@ class value_list extends sandbox_value_list
         $sc->set_id_field($val->id_field());
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(value_db::FLD_NAMES);
         //$sc->set_usr_only_fields(value_db::FLD_NAMES_USR_ONLY);
         //$sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
@@ -923,7 +923,7 @@ class value_list extends sandbox_value_list
                 $src = new source($this->user());
                 $src->set_name($value);
                 if ($test_obj) {
-                    $src->set_id($test_obj->seq_id());
+                    $src->id = $test_obj->seq_id();
                 } else {
                     if ($usr_msg->is_ok()) {
                         $src->load_by_name($value);
@@ -1427,7 +1427,7 @@ class value_list extends sandbox_value_list
 
         // the id and the user must be set
         $db_con->set_class(value::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $sql = $db_con->select_by_set_id();
         $db_val_lst = $db_con->get_old($sql);
         foreach ($db_val_lst as $db_val) {

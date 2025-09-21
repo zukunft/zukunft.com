@@ -73,7 +73,7 @@ class view_tests
 
         $t->subheader($ts . 'sql read standard and user changes by id');
         $msk = new view($usr);
-        $msk->set_id(2);
+        $msk->id = 2;
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard($sc, $msk);
         $t->assert_sql_user_changes($sc, $msk);
@@ -145,7 +145,7 @@ class view_tests
 
         // sql to load the view components
         $msk = new view($usr);
-        $msk->set_id(2);
+        $msk->id = 2;
 
         $lib = new library();
         $db_con = new sql_db();

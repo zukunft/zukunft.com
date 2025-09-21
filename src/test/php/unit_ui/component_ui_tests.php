@@ -57,7 +57,7 @@ class component_ui_tests
         $test_page .= 'table<br>';
         $test_page .= $html->tbl($wrd->th() . $wrd_pi->tr());
         $test_page .= 'del in columns: ' . $wrd->dsp_del() . '<br>';
-        $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id()) . '<br>';
+        $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id) . '<br>';
         $test_page .= 'view header<br>';
         $test_page .= $wrd->header() . '<br>';
         */

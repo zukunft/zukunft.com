@@ -73,6 +73,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO check the order of the class sections
     TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change
 
+    TODO add parent to source and ref
     TODO include code_id for all terms 
     TODO use php 8.4 set and get function
     TODO use the possibility to highlight a few (up to 3) entries in a selection list and use it e.g. for the phrase type selector

@@ -1217,6 +1217,7 @@ CREATE TABLE IF NOT EXISTS triples
     name_given          varchar(255) DEFAULT NULL COMMENT 'the unique name manually set by the user,which can be null if the generated name should be used',
     name_generated      varchar(255) DEFAULT NULL COMMENT 'the generated name is saved in the database for database base unique check based on the phrases and verb,which can be overwritten by the given name',
     description         text         DEFAULT NULL COMMENT 'text that should be shown to the user in case of mouseover on the triple name',
+    weight              double       DEFAULT NULL COMMENT 'the weight of this triple compared to others where 1 represents 100% weight',
     triple_condition_id bigint       DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
     phrase_type_id      smallint     DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
     view_id             bigint       DEFAULT NULL COMMENT 'the default mask for this triple',
@@ -1250,6 +1251,7 @@ CREATE TABLE IF NOT EXISTS user_triples
     name_given          varchar(255) DEFAULT NULL COMMENT 'the unique name manually set by the user,which can be null if the generated name should be used',
     name_generated      varchar(255) DEFAULT NULL COMMENT 'the generated name is saved in the database for database base unique check based on the phrases and verb,which can be overwritten by the given name',
     description         text         DEFAULT NULL COMMENT 'text that should be shown to the user in case of mouseover on the triple name',
+    weight              double       DEFAULT NULL COMMENT 'the weight of this triple compared to others where 1 represents 100% weight',
     triple_condition_id bigint       DEFAULT NULL COMMENT 'formula_id of a formula with a boolean result; the term is only added if formula result is true',
     phrase_type_id      smallint     DEFAULT NULL COMMENT 'to link coded functionality to words e.g. to exclude measure words from a percent result',
     view_id             bigint       DEFAULT NULL COMMENT 'the default mask for this triple',
@@ -4673,6 +4675,7 @@ ALTER TABLE triples
     ADD KEY triples_triple_name_idx    (triple_name),
     ADD KEY triples_name_given_idx     (name_given),
     ADD KEY triples_name_generated_idx (name_generated),
+    ADD KEY triples_weight_idx         (weight),
     ADD KEY triples_phrase_type_idx    (phrase_type_id),
     ADD KEY triples_view_idx           (view_id);
 
@@ -4687,6 +4690,7 @@ ALTER TABLE user_triples ADD PRIMARY KEY (triple_id, user_id, language_id),
      ADD KEY user_triples_triple_name_idx    (triple_name),
      ADD KEY user_triples_name_given_idx     (name_given),
      ADD KEY user_triples_name_generated_idx (name_generated),
+     ADD KEY user_triples_weight_idx         (weight),
      ADD KEY user_triples_phrase_type_idx    (phrase_type_id),
      ADD KEY user_triples_view_idx           (view_id);
 

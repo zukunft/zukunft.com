@@ -48,7 +48,7 @@ class triple_tests
 
         $t->subheader($ts . 'sql read standard and user changes by id');
         $trp = new triple($usr);
-        $trp->set_id(2);
+        $trp->id = 2;
         $t->assert_sql_standard($sc, $trp);
         $t->assert_sql_user_changes($sc, $trp);
 

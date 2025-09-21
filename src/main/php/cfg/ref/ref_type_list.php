@@ -74,7 +74,7 @@ class ref_type_list extends type_list
                 $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
                 $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new ref_type($type_code_id, $type_name, $type_comment);
-                $type_obj->set_id($db_entry[self::FLD_ID]);
+                $type_obj->id = $db_entry[self::FLD_ID];
                 $type_obj->url = $db_entry[self::FLD_URL];
                 // TODO check if still needed
                 // $id = $db_entry[$db_con->get_id_field_name($db_type)];

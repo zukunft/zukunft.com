@@ -63,7 +63,7 @@ if ($session_usr->id() > 0) {
 
     // show the header
     $msk = new view($session_usr);
-    $msk->set_id($sys_msk_cac->id(view_shared::FORMULA_EXPLAIN));
+    $msk->id = $sys_msk_cac->id(view_shared::FORMULA_EXPLAIN);
     $back = $_GET[url_var::BACK] = ''; // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_dsp($msk->api_json());
     $result .= $msk_dsp->dsp_navbar($back);

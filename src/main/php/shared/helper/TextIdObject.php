@@ -42,7 +42,21 @@ class TextIdObject
     // database fields that are used in all model objects
     // the database id is the unique prime key
     // is private because some objects like group have a complex id which needs a id() function
-    private string|int $id;
+    public string|int $id {
+        // get @return int the database id which is not 0 if the object has been saved
+        // the internal null value is used to detect if database saving has been tried
+        get {
+            return $this->id;
+        }
+        // set the unique database id of a database object
+        // @param int $id used in the row mapper and to set a dummy database id for unit tests
+        set {
+            $this->id = $value;
+            $this->set_modified();
+        }
+    }
+    // true if the backend entry needs to be updated
+    private bool $modified = true;
 
 
     /*
@@ -54,7 +68,8 @@ class TextIdObject
      */
     function __construct()
     {
-        $this->set_id(0);
+        $this->id = 0;
+        $this->modified = true;
     }
 
     /**
@@ -63,30 +78,40 @@ class TextIdObject
      */
     function reset(): void
     {
-        $this->set_id(0);
+        $this->id = 0;
+        $this->modified = true;
+    }
+
+    /**
+     * clone this object and all linked objects
+     * @return $this a complete clone including a clone of all child objects
+     */
+    function clone_all(): TextIdObject
+    {
+        return clone $this;
     }
 
 
     /*
-     * set and get
+     * modify
      */
 
     /**
-     * set the unique database id of a database object
-     * @param string|int $id used in the row mapper and to set a dummy database id for unit tests
+     * check if the object in the backend needs to be updated
+     *
+     * @return bool true if this object has infos that should be saved in the database
      */
-    function set_id(string|int $id): void
+    function needs_backend_update(): bool
     {
-        $this->id = $id;
+        return $this->modified;
     }
 
     /**
-     * @return string|int the database id which is not 0 if the object has been saved
-     * the internal null value is used to detect if database saving has been tried
+     * TODO to be called once by all child setter hooks
      */
-    function id(): string|int
+    function set_modified(): void
     {
-        return $this->id;
+        $this->modified = true;
     }
 
 }

@@ -88,7 +88,7 @@ class word_tests
 
         $t->subheader($ts . 'sql read default and user changes');
         $wrd = new word($usr);
-        $wrd->set_id(words::CONST_ID);
+        $wrd->id = words::CONST_ID;
         $t->assert_sql_standard($sc, $wrd);
         $t->assert_sql_not_changed($sc, $wrd);
         $t->assert_sql_user_changes($sc, $wrd);
@@ -128,7 +128,7 @@ class word_tests
 
         $t->subheader($ts . 'sql write update of all fields changed');
         $wrd_filled = $t->word_filled();
-        $wrd_renamed->set_id($wrd->id());
+        $wrd_renamed->id = $wrd->id();
         $t->assert_sql_update($sc, $wrd_renamed, $wrd_filled, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write delete');
@@ -187,7 +187,7 @@ class word_tests
         $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, []);
         $test_name = 'check if the word id is filled up';
         $wrd_imp = $t->word();
-        $wrd_imp->set_id(0);
+        $wrd_imp->id = 0;
         $wrd_db = $t->word();
         $wrd_imp->fill($wrd_db, $usr_sys);
         $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();

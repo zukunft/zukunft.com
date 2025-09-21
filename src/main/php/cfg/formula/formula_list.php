@@ -91,7 +91,7 @@ class formula_list extends sandbox_list_named
     const UPDATE_BLOCK_SIZE = 100;
 
     // array $lst are the loaded formula objects
-    // if user $usr->id() is 0 (not NULL) for standard formulas, otherwise for a user specific formulas
+    // if user $usr->id is 0 (not NULL) for standard formulas, otherwise for a user specific formulas
 
     // TODO move to display object: in memory only fields
     public ?string $back = null;         // the calling stack
@@ -166,7 +166,7 @@ class formula_list extends sandbox_list_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_usr_fields(formula_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(formula_db::FLD_NAMES_NUM_USR);
         return $qp;
@@ -389,7 +389,7 @@ class formula_list extends sandbox_list_named
         $class = $lib->class_to_name(self::class);
         $db_con->set_class(formula::class);
         $qp = new sql_par($class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_all();
         $qp->name = $class . '_all';
         $db_con->set_name($qp->name);
@@ -553,7 +553,7 @@ class formula_list extends sandbox_list_named
             $usr_msg->add($frm->import_obj($value, $dto, $test_obj));
             // add a dummy id for unit testing
             if ($test_obj) {
-                $frm->set_id($test_obj->seq_id());
+                $frm->id = $test_obj->seq_id();
             }
             $this->add($frm);
         }

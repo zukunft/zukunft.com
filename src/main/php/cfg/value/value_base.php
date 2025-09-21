@@ -211,19 +211,19 @@ class value_base extends sandbox_value
      */
 
     // forward the const to enable usage of $this::CONST_NAME
-    const FLD_ID = value_db::FLD_ID;
-    const FLD_VALUE_TEXT = value_db::FLD_VALUE_TEXT;
-    const FLD_VALUE_TIME = value_db::FLD_VALUE_TIME;
-    const FLD_VALUE_GEO = value_db::FLD_VALUE_GEO;
+    const string FLD_ID = value_db::FLD_ID;
+    const string FLD_VALUE_TEXT = value_db::FLD_VALUE_TEXT;
+    const string FLD_VALUE_TIME = value_db::FLD_VALUE_TIME;
+    const string FLD_VALUE_GEO = value_db::FLD_VALUE_GEO;
 
     // all database field names excluding the id and excluding the user specific fields
-    const FLD_NAMES = value_db::FLD_NAMES;
+    const array FLD_NAMES = value_db::FLD_NAMES;
     const FLD_NAMES_STD = value_db::FLD_NAMES_STD;
-    const FLD_NAMES_USR = value_db::FLD_NAMES_USR;
-    const FLD_NAMES_NUM_USR = value_db::FLD_NAMES_NUM_USR;
-    const FLD_ALL_TIME_SERIES = value_db::FLD_ALL_TIME_SERIES;
-    const FLD_ALL_TIME_SERIES_USER = value_db::FLD_ALL_TIME_SERIES_USER;
-    const ALL_SANDBOX_FLD_NAMES = value_db::ALL_SANDBOX_FLD_NAMES;
+    const array FLD_NAMES_USR = value_db::FLD_NAMES_USR;
+    const array FLD_NAMES_NUM_USR = value_db::FLD_NAMES_NUM_USR;
+    const array FLD_ALL_TIME_SERIES = value_db::FLD_ALL_TIME_SERIES;
+    const array FLD_ALL_TIME_SERIES_USER = value_db::FLD_ALL_TIME_SERIES_USER;
+    const array ALL_SANDBOX_FLD_NAMES = value_db::ALL_SANDBOX_FLD_NAMES;
 
 
     /*
@@ -768,7 +768,7 @@ class value_base extends sandbox_value
         // overwrite the standard id field name (value_id) with the main database id field for values "group_id"
         $sc->set_id_field($this->id_field($sc_par_lst));
 
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(value_db::FLD_NAMES);
         if ($this->is_numeric()) {
             $sc->set_usr_num_fields(value_db::FLD_NAMES_NUM_USR);
@@ -990,7 +990,7 @@ class value_base extends sandbox_value
                 if ($this->source == null) {
                     $this->source = new source($this->user());
                 }
-                $this->source->set_id($id);
+                $this->source->id = $id;
             }
         }
     }
@@ -1154,7 +1154,7 @@ class value_base extends sandbox_value
         if ($this->id() != $val->id()) {
             $result = false;
         }
-        if ($this->user()->id() != $val->user()->id()) {
+        if ($this->user()->id != $val->user()->id) {
             $result = false;
         }
         if ($this->number() != $val->number()) {
@@ -1189,12 +1189,12 @@ class value_base extends sandbox_value
         if (is_null($this->value())) {
             // this test should be done in the calling function if needed
             log_debug("To scale a value the number should not be empty.");
-        } elseif (is_null($this->user()->id())) {
+        } elseif (is_null($this->user()->id)) {
             log_warning("To scale a value the user must be defined.", "value->scale");
         } elseif ($this->phrase_list()->is_empty()) {
             log_warning("To scale a value the word list should be loaded by the calling method.", "value->scale");
         } else {
-            log_debug($this->value() . ' for ' . $this->grp()->dsp_id() . ' (user ' . $this->user()->id() . ')');
+            log_debug($this->value() . ' for ' . $this->grp()->dsp_id() . ' (user ' . $this->user()->id . ')');
 
             // if it has a scaling word, scale it to one
             if ($this->phrase_list()->has_scaling()) {
@@ -1549,7 +1549,7 @@ class value_base extends sandbox_value
      */
     function convert(): string
     {
-        log_debug('value->convert (' . $this->usr_value . ',u' . $this->user()->id() . ')');
+        log_debug('value->convert (' . $this->usr_value . ',u' . $this->user()->id . ')');
         $result = $this->usr_value;
         $result = str_replace(" ", "", $result);
         $result = str_replace("'", "", $result);
@@ -1691,7 +1691,7 @@ class value_base extends sandbox_value
     function is_std(): bool
     {
         $result = false;
-        if ($this->owner_id() == $this->user()->id() or $this->owner_id() <= 0) {
+        if ($this->owner_id() == $this->user()->id or $this->owner_id() <= 0) {
             $result = true;
         }
 
@@ -1726,10 +1726,10 @@ class value_base extends sandbox_value
 
             // check again if there ist not yet a record
             $qp = $this->load_sql_user_changes($db_con->sql_creator());
-            $db_con->usr_id = $this->user()->id();
+            $db_con->usr_id = $this->user()->id;
             $db_row = $db_con->get1($qp);
             if ($db_row != null) {
-                $this->usr_cfg_id = $this->user()->id();
+                $this->usr_cfg_id = $this->user()->id;
             }
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
@@ -2182,7 +2182,7 @@ class value_base extends sandbox_value
                 } else {
                     // if the target link has not yet been created
                     // ... request to delete the old
-                    $to_del = clone $db_rec;
+                    $to_del = $db_rec->clone_all();
                     $msg = $to_del->del();
                     $result .= $msg->get_last_message();
                     // ... and create a deletion request for all users ???
@@ -2257,12 +2257,12 @@ class value_base extends sandbox_value
 
                     if ($this->is_id_set()) {
                         // create an empty db_rec element to force saving of all set fields
-                        $db_val = clone $this;
+                        $db_val = $this->clone_all();
                         $db_val->reset();
                         $db_val->set_user($this->user());
                         $db_val->set_id($this->id());
                         $db_val->set_value($this->value()); // ... but not the field saved already with the insert
-                        $std_val = clone $db_val;
+                        $std_val = $db_val->clone_all();
                         // save the value fields
                         $usr_msg->add_message_text($this->save_fields($db_con, $db_val, $std_val));
                     }
@@ -2310,7 +2310,7 @@ class value_base extends sandbox_value
         if (!$this->is_saved()) {
             log_debug('check if a value ' . $this->dsp_id() . ' is already in the database');
             // check if a value for these phrases is already in the database
-            $db_chk = clone $this;
+            $db_chk = $this->clone_all();
             $db_chk->reset();
             $db_chk->set_user($this->user());
             $db_chk->load_by_id($this->grp()->id());
@@ -2332,7 +2332,7 @@ class value_base extends sandbox_value
 
                 // read the database value to be able to check if something has been changed
                 // done first, because it needs to be done for user and general values
-                $db_rec = clone $this;
+                $db_rec = $this->clone_all();
                 $db_rec->reset();
                 $db_rec->set_user($this->user());
                 // TODO for the user sandbox load by phrase group id and source because one user can say, that one value has different number from different sources
@@ -2343,7 +2343,7 @@ class value_base extends sandbox_value
                 log_debug("old database value loaded (" . $db_rec->value() . ") with group " . $db_rec->grp()->id() . ".");
 
                 // load the common object
-                $std_rec = clone $this;
+                $std_rec = $this->clone_all();
                 $std_rec->reset();
                 $std_rec->set_user($this->user()); // user must also be set to allow to take the ownership
                 $std_rec->set_grp($this->grp());

@@ -13,6 +13,7 @@ PREPARE triple_list_by_ids FROM
             IF(u.name_given      IS NULL,  s.name_given,      u.name_given)     AS name_given,
             IF(u.name_generated  IS NULL,  s.name_generated,  u.name_generated) AS name_generated,
             IF(u.description     IS NULL,  s.description,     u.description)    AS description,
+            IF(u.weight          IS NULL,  s.weight,          u.weight)         AS weight,
             IF(u.`values`        IS NULL,  s.`values`,        u.`values`)       AS `values`,
             IF(u.excluded        IS NULL,  s.excluded,        u.excluded)       AS excluded,
             IF(u.share_type_id   IS NULL,  s.share_type_id,   u.share_type_id)  AS share_type_id,

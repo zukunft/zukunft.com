@@ -301,25 +301,25 @@ class term extends combine_named_dsp
             if ($class == word::class) {
                 if ($this->obj == null) {
                     $this->obj = new word();
-                    $this->obj->set_id($id);
                 }
             } elseif ($class == triple::class) {
                 if ($this->obj == null) {
                     $this->obj = new triple();
-                    $this->obj->set_id($id);
                 }
             } elseif ($class == formula::class) {
                 if ($this->obj == null) {
                     $this->obj = new formula();
-                    $this->obj->set_id($id);
                 }
             } elseif ($class == verb::class) {
                 if ($this->obj == null) {
                     $this->obj = new verb();
-                    $this->obj->set_id($id);
+                }
+            } else {
+                if ($this->obj == null) {
+                    $this->obj = new word();
                 }
             }
-            $this->obj->set_id($id);
+            $this->obj->id = $id;
         }
     }
 

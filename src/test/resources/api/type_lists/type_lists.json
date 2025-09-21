@@ -7004,6 +7004,18 @@
         "code_id": "1excluded",
         "description": "",
         "id": 790
+      },
+      {
+        "name": "7weight",
+        "code_id": "7weight",
+        "description": "",
+        "id": 791
+      },
+      {
+        "name": "8weight",
+        "code_id": "8weight",
+        "description": "",
+        "id": 792
       }
     ],
     "verbs": [

@@ -543,7 +543,7 @@ class sandbox_list_named extends sandbox_list
             if ($id != 0 and $name != '') {
                 $sbx_old = $this->get_by_name($name);
                 if ($sbx_old != null) {
-                    $sbx_old->set_id($id);
+                    $sbx_old->id = $id;
                 } else {
                     $lib = new library();
                     $usr_msg->add_id_with_vars(msg_id::ADDED_OBJECT_NOT_FOUND, [

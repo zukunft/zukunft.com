@@ -785,7 +785,7 @@ class test_base
     {
         $lib = new library();
         $original_json = $usr_obj->export_json();
-        $db_obj = clone $usr_obj;
+        $db_obj = $usr_obj->clone_all();
         $db_obj->reset();
         $db_obj->load_by_id($usr_obj->id());
         $recreated_json = $db_obj->export_json();
@@ -961,7 +961,7 @@ class test_base
     {
         $json_before = $obj->api_json([api_type::TEST_MODE]);
         $json_ex = $obj->export_json(false);
-        $new_obj = clone $obj;
+        $new_obj = $obj->clone_all();
         $new_obj->reset();
         $dto = new data_object($usr_req);
         $new_obj->import_obj($json_ex, $dto, $this);
@@ -2200,7 +2200,7 @@ class test_base
         // check the loading via id and check if the id has been mapped
         $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
         $usr_obj->reset();
-        $usr_obj->set_id(0);
+        $usr_obj->id = 0;
         $usr_obj->load_by_id($id);
         return $this->assert($test_name, $usr_obj->id(), $id);
     }
@@ -3942,7 +3942,7 @@ class test_base
         // set the id for simple db objects without related objects
         if ($usr_obj::class == user::class) {
             if ($usr_obj->id() == 0) {
-                $usr_obj->set_id($this->next_seq_nbr());
+                $usr_obj->id = $this->next_seq_nbr();
             }
         } elseif ($usr_obj::class == word::class
             or $usr_obj::class == triple::class
@@ -3952,7 +3952,7 @@ class test_base
             or $usr_obj::class == source::class
             or $usr_obj::class == ref::class) {
             if ($usr_obj->id() == 0) {
-                $usr_obj->set_id($this->next_seq_nbr());
+                $usr_obj->id = $this->next_seq_nbr();
             }
         } elseif ($usr_obj::class == value::class
             or $usr_obj::class == result::class) {
@@ -4013,7 +4013,7 @@ class test_base
     private function set_frm_id_for_unit_tests(formula $frm): void
     {
         if ($frm->id() == 0) {
-            $frm->set_id($this->next_seq_nbr());
+            $frm->id = $this->next_seq_nbr();
         }
     }
 

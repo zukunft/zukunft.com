@@ -94,14 +94,14 @@ class triple extends sandbox_code_id
      */
 
     // curl views
-    const VIEW_ADD = views::TRIPLE_ADD;
-    const VIEW_EDIT = views::TRIPLE_EDIT;
-    const VIEW_DEL = views::TRIPLE_DEL;
+    const string VIEW_ADD = views::TRIPLE_ADD;
+    const string VIEW_EDIT = views::TRIPLE_EDIT;
+    const string VIEW_DEL = views::TRIPLE_DEL;
 
     // curl message id
-    const MSG_ADD = msg_id::TRIPLE_ADD;
-    const MSG_EDIT = msg_id::TRIPLE_EDIT;
-    const MSG_DEL = msg_id::TRIPLE_DEL;
+    const msg_id MSG_ADD = msg_id::TRIPLE_ADD;
+    const msg_id MSG_EDIT = msg_id::TRIPLE_EDIT;
+    const msg_id MSG_DEL = msg_id::TRIPLE_DEL;
 
 
     /*
@@ -113,7 +113,15 @@ class triple extends sandbox_code_id
     private ?phrase_dsp $from = null;
     private ?verb_dsp $verb = null;
     private ?phrase_dsp $to = null;
-    private ?string $plural = null;
+    private ?float $weight = null;
+    public ?string $plural = null {
+        get {
+            return $this->plural;
+        }
+        set {
+            $this->plural = $value;
+        }
+    }
 
 
     /*
@@ -139,11 +147,14 @@ class triple extends sandbox_code_id
             if (array_key_exists(url_var::TO_ID_LONG, $url_array)) {
                 $this->set_to_by_id($url_array[url_var::TO_ID_LONG]);
             }
+            if (array_key_exists(url_var::WEIGHT, $url_array)) {
+                $this->weight = $url_array[url_var::WEIGHT];
+            }
             // TODO Prio 2 use the languages forms
             if (array_key_exists(url_var::PLURAL, $url_array)) {
-                $this->set_plural($url_array[url_var::PLURAL]);
+                $this->plural = $url_array[url_var::PLURAL];
             } else {
-                $this->set_plural(null);
+                $this->plural = null;
             }
         }
         return $usr_msg;
@@ -211,6 +222,12 @@ class triple extends sandbox_code_id
         } else {
             $this->set_to(new phrase_dsp());
         }
+        if (array_key_exists(json_fields::WEIGHT, $json_array)) {
+            $this->weight = $json_array[json_fields::WEIGHT];
+        }
+        if (array_key_exists(json_fields::PLURAL, $json_array)) {
+            $this->plural = $json_array[json_fields::PLURAL];
+        }
         return $usr_msg;
     }
 
@@ -229,6 +246,8 @@ class triple extends sandbox_code_id
         $vars[json_fields::FROM] = $this->from()->id();
         $vars[json_fields::VERB] = $this->verb()->id();
         $vars[json_fields::TO] = $this->to()->id();
+        $vars[json_fields::WEIGHT] = $this->weight;
+        $vars[json_fields::PLURAL] = $this->plural;
         return $vars;
     }
 
@@ -239,9 +258,9 @@ class triple extends sandbox_code_id
 
     function set(string $from, string $verb, string $to): void
     {
-        $this->set_from((new word_dsp(0, $from))->phrase());
-        $this->set_verb(new verb_dsp(0, $verb));
-        $this->set_to((new word_dsp(0, $to))->phrase());
+        $this->set_from(new word_dsp($from)->phrase());
+        $this->set_verb(new verb_dsp($verb));
+        $this->set_to(new word_dsp($to)->phrase());
     }
 
     function set_from(phrase_dsp $from): void
@@ -309,16 +328,6 @@ class triple extends sandbox_code_id
         return $this->to;
     }
 
-    function set_plural(?string $plural): void
-    {
-        $this->plural = $plural;
-    }
-
-    function plural(): ?string
-    {
-        return $this->plural;
-    }
-
     /**
      * @param string|null $code_id the code id of the phrase type
      */
@@ -344,6 +353,11 @@ class triple extends sandbox_code_id
         } else {
             return $phr_typ_cac->get($this->type_id());
         }
+    }
+
+    function get_plural(): ?string
+    {
+        return $this->plural;
     }
 
 
@@ -380,7 +394,7 @@ class triple extends sandbox_code_id
         if ($this->from() != null) {
             if ($this->from()->id() > 0) {
                 $wrd_lst->add($this->from()->obj()->word());
-            } elseif ($this->from->id() < 0) {
+            } elseif ($this->from()->id() < 0) {
                 $sub_wrd_lst = $this->from()->wrd_lst();
                 foreach ($sub_wrd_lst->lst() as $wrd) {
                     $wrd_lst->add($wrd);
@@ -392,9 +406,9 @@ class triple extends sandbox_code_id
 
         // add the "to" side
         if ($this->to() != null) {
-            if ($this->to->id() > 0) {
+            if ($this->to()->id() > 0) {
                 $wrd_lst->add($this->to()->obj()->word());
-            } elseif ($this->to->id() < 0) {
+            } elseif ($this->to()->id() < 0) {
                 $sub_wrd_lst = $this->to()->wrd_lst();
                 foreach ($sub_wrd_lst->lst() as $wrd) {
                     $wrd_lst->add($wrd);

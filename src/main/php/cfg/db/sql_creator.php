@@ -587,10 +587,10 @@ class sql_creator
         if ($usr == null) {
             $this->set_usr(users::SYSTEM_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
-            if ($usr->id() == null) {
+            if ($usr->id == null) {
                 $this->set_usr(0); // fallback for special cases
             } else {
-                $this->set_usr($usr->id()); // by default use the session user id
+                $this->set_usr($usr->id); // by default use the session user id
             }
         }
         $this->set_table($sc_par_lst, $ext);
@@ -1933,7 +1933,7 @@ class sql_creator
             // add the user_id if needed
             $log_usr_id = $fvt_lst->get_value(user_db::FLD_ID);
             if ($log_usr_id == null) {
-                $log_usr_id = $usr->id();
+                $log_usr_id = $usr->id;
             }
             $par_lst_out->add_field(
                 user_db::FLD_ID,
@@ -2218,7 +2218,7 @@ class sql_creator
         $par_lst_out = new sql_par_field_list();
         $usr_id = $fvt_lst->get_value(user_db::FLD_ID);
         if ($usr_id == null) {
-            $usr_id = $usr->id();
+            $usr_id = $usr->id;
         }
         $par_lst_out->add_field(
             user_db::FLD_ID,

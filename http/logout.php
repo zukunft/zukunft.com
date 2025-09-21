@@ -52,11 +52,11 @@ if ($db_con->is_open()) {
     $result = $usr->get(); // to check from which ip the user has logged in
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id() > 0) {
+    if ($usr->id > 0) {
         $db_con->set_class(user::class);
-        $db_con->set_usr($usr->id());
-        if (!$db_con->update_old($usr->id(), "last_logoff", sql::NOW)) {
-            log_err('Logout time update failed for ' . $usr->id());
+        $db_con->set_usr($usr->id);
+        if (!$db_con->update_old($usr->id, "last_logoff", sql::NOW)) {
+            log_err('Logout time update failed for ' . $usr->id);
         }
     }
 

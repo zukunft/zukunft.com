@@ -159,7 +159,7 @@ class view_sys_list extends type_list
     {
         parent::load_dummy();
         $msk = new view($this->usr);
-        $msk->set_id(2);
+        $msk->id = 2;
         $msk->set_name(view_shared::WORD);
         $msk->set_code_id_db(view_shared::WORD_CODE_ID);
         $this->add($msk);

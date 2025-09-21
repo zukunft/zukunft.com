@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS triple_insert_log_015511550000001;
-CREATE PROCEDURE triple_insert_log_015511550000001
+DROP PROCEDURE IF EXISTS triple_insert_log_0155115500000001;
+CREATE PROCEDURE triple_insert_log_0155115500000001
     (_from_phrase_id          bigint,
      _verb_id                 smallint,
      _to_phrase_id            bigint,
@@ -54,10 +54,10 @@ BEGIN
 
 END;
 
-PREPARE triple_insert_log_015511550000001_call FROM
-'SELECT triple_insert_log_015511550000001 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE triple_insert_log_0155115500000001_call FROM
+'SELECT triple_insert_log_0155115500000001 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT triple_insert_log_015511550000001
+SELECT triple_insert_log_0155115500000001
         (2,
          3,
          1,

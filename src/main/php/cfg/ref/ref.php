@@ -102,6 +102,7 @@ include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
@@ -131,6 +132,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -441,7 +443,7 @@ class ref extends sandbox_link
      */
     function set(int $id = 0, phrase $phr = null, int $predicate_id = 0, string|null $external_key = null): void
     {
-        $this->set_id($id);
+        $this->id = $id;
         if ($phr != null) {
             $this->set_phrase($phr);
         }
@@ -971,10 +973,10 @@ class ref extends sandbox_link
      * check if the reference in the database needs to be updated
      * e.g. for import  if this reference has only the name set, the protection should not be updated in the database
      *
-     * @param ref|CombineObject|db_object_seq_id $db_obj the reference as saved in the database
+     * @param ref|CombineObject|IdObject $db_obj the reference as saved in the database
      * @return bool true if this reference has infos that should be saved in the database
      */
-    function needs_db_update(ref|CombineObject|db_object_seq_id $db_obj): bool
+    function needs_db_update(ref|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->external_key() != null) {
@@ -1246,7 +1248,7 @@ class ref extends sandbox_link
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
             $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
             if ($ins_msg->is_ok()) {
-                $this->set_id($ins_msg->get_row_id());
+                $this->id = $ins_msg->get_row_id();
             }
             $usr_msg->add($ins_msg);
         } else {
@@ -1255,11 +1257,11 @@ class ref extends sandbox_link
             if ($log->id() > 0) {
                 // insert the new reference
                 $db_con->set_class(ref::class);
-                $db_con->set_usr($this->user()->id());
+                $db_con->set_usr($this->user()->id);
 
-                $this->set_id($db_con->insert_old(
+                $this->id = $db_con->insert_old(
                     array(phrase::FLD_ID, ref_db::FLD_EX_KEY, ref_db::FLD_TYPE),
-                    array($this->phrase_id(), $this->external_key(), $this->predicate_id)));
+                    array($this->phrase_id(), $this->external_key(), $this->predicate_id));
                 if ($this->id() > 0) {
                     // update the id in the log for the correct reference
                     if (!$log->add_ref($this->id())) {
@@ -1330,7 +1332,7 @@ class ref extends sandbox_link
 
         // build the database object because the is anyway needed
         if ($this->user() != null) {
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
         }
         $db_con->set_class(ref::class);
 
@@ -1341,7 +1343,7 @@ class ref extends sandbox_link
             $similar = $this->get_similar();
             if (isset($similar)) {
                 if ($similar->id() != 0) {
-                    $this->set_id($similar->id());
+                    $this->id = $similar->id();
                 }
             }
         }
@@ -1360,7 +1362,7 @@ class ref extends sandbox_link
             $db_rec->load_by_id($this->id());
             log_debug('ref->save reloaded from db');
             $std_rec = new ref($this->user()); // must also be set to allow to take the ownership
-            $std_rec->set_id($this->id());
+            $std_rec->id = $this->id();
             $std_rec->load_standard();
             log_debug("standard reference settings loaded (" . $std_rec->id() . ")");
 

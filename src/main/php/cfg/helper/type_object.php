@@ -145,7 +145,7 @@ class type_object extends db_object_seq_id
     function __construct(?string $code_id, string $name = '', ?string $description = null, int $id = 0)
     {
         parent::__construct();
-        $this->set_id($id);
+        $this->id = $id;
         $this->set_name($name);
         $this->set_code_id_db($code_id);
         $this->set_description($description);
@@ -153,7 +153,7 @@ class type_object extends db_object_seq_id
 
     function reset(): void
     {
-        $this->set_id(0);
+        $this->id = 0;
         $this->code_id = null;
         $this->name = '';
         $this->description = null;
@@ -170,7 +170,7 @@ class type_object extends db_object_seq_id
         $result = parent::row_mapper($db_row, $this->id_field_typ($class));
         // set the id upfront to allow row mapping
         if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
-            $this->set_id(($db_row[language::FLD_ID]));
+            $this->id = ($db_row[language::FLD_ID]);
         }
         if ($this->id() > 0) {
             $this->code_id = strval($db_row[sql_db::FLD_CODE_ID]);
@@ -205,7 +205,7 @@ class type_object extends db_object_seq_id
         $usr_msg = new user_message();
 
         if (array_key_exists(json_fields::ID, $api_json)) {
-            $this->set_id($api_json[json_fields::ID]);
+            $this->id = $api_json[json_fields::ID];
         }
         if (array_key_exists(json_fields::NAME, $api_json)) {
             $this->set_name($api_json[json_fields::NAME]);

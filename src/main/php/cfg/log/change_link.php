@@ -215,7 +215,7 @@ class change_link extends change_log
             $this->new_to_id = $db_row[self::FLD_NEW_TO_ID];
             // TODO check if not the complete user should be loaded
             $usr = new user();
-            $usr->set_id($db_row[user_db::FLD_ID]);
+            $usr->id = $db_row[user_db::FLD_ID];
             $usr->name = $db_row[user_db::FLD_NAME];
             $this->set_user($usr);
         }
@@ -238,11 +238,11 @@ class change_link extends change_log
         $sc->set_class(change_link::class);
 
         $sc->set_name($qp->name);
-        $sc->set_usr($usr->id());
+        $sc->set_usr($usr->id);
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_join_fields(array(user_db::FLD_NAME), user::class);
 
-        $sc->add_where(user_db::FLD_ID, $usr->id());
+        $sc->add_where(user_db::FLD_ID, $usr->id);
         $sc->set_order(self::FLD_ID, sql::ORDER_DESC);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -282,7 +282,7 @@ class change_link extends change_log
         }
 
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(self::FLD_NAMES);
         $db_con->set_join_fields(array(user_db::FLD_NAME), user::class);
 
@@ -314,7 +314,7 @@ class change_link extends change_log
         if ($table_name == "") {
             log_err("missing table name", "user_log_link->set_table");
         }
-        if ($this->user()->id() <= 0) {
+        if ($this->user()->id <= 0) {
             log_err("missing user", "user_log_link->set_table");
         }
 
@@ -343,7 +343,7 @@ class change_link extends change_log
         log_debug('user_log_link->set_usr for ' . $this->user()->dsp_id());
         if ($this->user() != null) {
             $usr = new user;
-            $usr->load_by_id($this->user()->id());
+            $usr->load_by_id($this->user()->id);
             $this->set_user($usr);
             log_debug('user_log_link->set_usr got ' . $this->user()->name);
         }
@@ -385,7 +385,7 @@ class change_link extends change_log
     function add_link(): bool
     {
         global $db_con;
-        log_debug("user_log_link->add_link (u" . $this->user()->id() . " " . $this->action() . " " . $this->table() .
+        log_debug("user_log_link->add_link (u" . $this->user()->id . " " . $this->action() . " " . $this->table() .
             ",of" . $this->old_from . ",ol" . $this->old_link . ",ot" . $this->old_to .
             ",nf" . $this->new_from . ",nl" . $this->new_link . ",nt" . $this->new_to . ",r" . $this->row_id . ")");
 
@@ -396,7 +396,7 @@ class change_link extends change_log
         $sql_fields = array();
         $sql_values = array();
         $sql_fields[] = user_db::FLD_ID;
-        $sql_values[] = $this->user()->id();
+        $sql_values[] = $this->user()->id;
         $sql_fields[] = change_action::FLD_ID;
         $sql_values[] = $this->action_id;
         $sql_fields[] = change_table::FLD_ID;
@@ -422,7 +422,7 @@ class change_link extends change_log
         //$db_con = new mysql;
         $db_type = $db_con->get_class();
         $db_con->set_class(change_link::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $log_id = $db_con->insert_old($sql_fields, $sql_values);
 
         if ($log_id <= 0) {
@@ -435,7 +435,7 @@ class change_link extends change_log
             log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->user());
             $result = False;
         } else {
-            $this->set_id($log_id);
+            $this->id = $log_id;
             $result = True;
         }
         // restore the type before saving the log
@@ -580,7 +580,7 @@ class change_link extends change_log
         $sql_fields = array();
         $sql_values = array();
         $sql_fields[] = user_db::FLD_ID;
-        $sql_values[] = $this->user()->id();
+        $sql_values[] = $this->user()->id;
         $sql_fields[] = change_action::FLD_ID;
         $sql_values[] = $this->action_id;
         $sql_fields[] = change_table::FLD_ID;
@@ -620,7 +620,7 @@ class change_link extends change_log
         //$db_con = new mysql;
         $db_type = $db_con->get_class();
         $db_con->set_class(change_link::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $log_id = $db_con->insert_old($sql_fields, $sql_values);
 
         if ($log_id <= 0) {
@@ -633,7 +633,7 @@ class change_link extends change_log
             log_fatal($msg_text, $func_name, $msg_description, $traceback, $this->user());
             $result = False;
         } else {
-            $this->set_id($log_id);
+            $this->id = $log_id;
             $result = True;
         }
         // restore the type before saving the log
@@ -764,7 +764,7 @@ class change_link extends change_log
     ): sql_par_field_list
     {
         $fvt_lst = new sql_par_field_list();
-        $fvt_lst->add_field(user_db::FLD_ID, $this->user()->id(), user_db::FLD_ID_SQL_TYP);
+        $fvt_lst->add_field(user_db::FLD_ID, $this->user()->id, user_db::FLD_ID_SQL_TYP);
         $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
         $fvt_lst->add_field(change_table::FLD_ID, $this->table_id, type_object::FLD_ID_SQL_TYP);
 
@@ -909,7 +909,7 @@ class change_link extends change_log
     function db_values(): array
     {
         $sql_values = array();
-        $sql_values[] = $this->user()->id();
+        $sql_values[] = $this->user()->id;
         $sql_values[] = $this->action_id;
         $sql_values[] = $this->field_id;
 

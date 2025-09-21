@@ -219,7 +219,7 @@ class word extends sandbox_code_id
     {
         $vars = parent::api_array();
 
-        $vars[json_fields::PLURAL] = $this->plural();
+        $vars[json_fields::PLURAL] = $this->get_plural();
         if ($this->has_parent()) {
             $vars[json_fields::PARENT] = $this->parent()->api_array();
         }
@@ -236,7 +236,7 @@ class word extends sandbox_code_id
         $this->plural = $plural;
     }
 
-    function plural(): ?string
+    function get_plural(): ?string
     {
         return $this->plural;
     }
@@ -656,7 +656,7 @@ class word extends sandbox_code_id
             $hidden_fields .= $html->form_hidden("back", $back);
             $hidden_fields .= $html->form_hidden("confirm", '1');
             $detail_fields = $dsp_frm;
-            $detail_fields .= $html->form_text("plural", $this->plural());
+            $detail_fields .= $html->form_text("plural", $this->get_plural());
             $detail_fields .= $html->form_text("description", $this->description());
             $detail_fields .= $dsp_type;
             $detail_row = $html->fr($detail_fields) . '<br>';

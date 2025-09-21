@@ -604,7 +604,7 @@ class type_list
                         } else {
                             $typ_obj = new type_object($data[$name_col]);
                         }
-                        $typ_obj->set_id($data[$id_col]);
+                        $typ_obj->id = $data[$id_col];
                         $typ_obj->set_name($data[$name_col]);
                         if ($code_id_col > 0) {
                             $typ_obj->set_code_id_db($data[$code_id_col]);

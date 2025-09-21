@@ -64,7 +64,7 @@ if ($db_con->is_open()) {
     $result = ''; // reset the json message string
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id() > 0) {
+    if ($usr->id > 0) {
 
         $lst = new sys_log_list();
         $lst->set_user($usr);

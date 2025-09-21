@@ -78,7 +78,7 @@ class source_type_list extends type_list
                 $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
                 $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new source_type($type_code_id, $type_name, $type_comment);
-                $type_obj->set_id($db_entry[self::FLD_ID]);
+                $type_obj->id = $db_entry[self::FLD_ID];
                 //$type_obj->set_url($db_entry[self::FLD_URL]);
                 $this->add($type_obj);
             }
@@ -94,13 +94,13 @@ class source_type_list extends type_list
     {
         parent::load_dummy();
         $type = new source_type(source_types::XBRL, source_types::XBRL);
-        $type->set_id(source_types::XBRL_ID);
+        $type->id = source_types::XBRL_ID;
         $this->add($type);
         $type = new source_type(source_types::CSV, source_types::CSV);
-        $type->set_id(source_types::CSV_ID);
+        $type->id = source_types::CSV_ID;
         $this->add($type);
         $type = new source_type(source_types::PDF, source_types::PDF);
-        $type->set_id(source_types::PDF_ID);
+        $type->id = source_types::PDF_ID;
         $this->add($type);
     }
 

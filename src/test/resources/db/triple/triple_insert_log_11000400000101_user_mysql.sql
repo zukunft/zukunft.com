@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS triple_insert_log_1100040000101_user;
-CREATE PROCEDURE triple_insert_log_1100040000101_user
+DROP PROCEDURE IF EXISTS triple_insert_log_11000400000101_user;
+CREATE PROCEDURE triple_insert_log_11000400000101_user
     (_user_id             bigint,
      _change_action_id    smallint,
      _change_table_id     smallint,
@@ -36,10 +36,10 @@ BEGIN
 
 END;
 
-PREPARE triple_insert_log_1100040000101_user_call FROM
-'SELECT triple_insert_log_1100040000101_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE triple_insert_log_11000400000101_user_call FROM
+'SELECT triple_insert_log_11000400000101_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT triple_insert_log_1100040000101_user (
+SELECT triple_insert_log_11000400000101_user (
                1,
                1,
                7,

@@ -347,7 +347,7 @@ class result_list extends sandbox_value_list
         $pos_usr = $par_pos;
         $par_pos++;
         $par_name = $sc->par_name($par_pos);
-        $sc->add_where_par(user_db::FLD_ID, $this->user()->id(), sql_par_type::INT, '', $par_name);
+        $sc->add_where_par(user_db::FLD_ID, $this->user()->id, sql_par_type::INT, '', $par_name);
 
         // remember the parameters
         $par_lst = clone $sc->par_list();
@@ -449,7 +449,7 @@ class result_list extends sandbox_value_list
         $sc->set_id_field($res->id_field_list($tbl_typ));
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(result_db::FLD_NAMES);
         return $qp;
     }
@@ -563,7 +563,7 @@ class result_list extends sandbox_value_list
             }
         }
         if ($sql_by == '') {
-            log_err('Either the formula id or the phrase group id and the user (' . $this->user()->id() .
+            log_err('Either the formula id or the phrase group id and the user (' . $this->user()->id .
                 ') must be set to load a ' . self::class, self::class . '->load_sql');
             $qp->name = '';
         } else {
@@ -574,7 +574,7 @@ class result_list extends sandbox_value_list
             $qp->name .= $sql_by;
             $db_con->set_name($qp->name);
             $db_con->set_fields(result_db::FLD_NAMES);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
             if ($obj->id() > 0) {
                 if (get_class($obj) == formula::class) {
                     $db_con->add_par(sql_par_type::INT, $obj->id());
@@ -932,7 +932,7 @@ class result_list extends sandbox_value_list
           } else {
 
             // include all results of the underlying formulas
-            $all_frm_ids = zuf_frm_ids ($frm_row[url_var::USER_EXPRESSION], $this->user()->id());
+            $all_frm_ids = zuf_frm_ids ($frm_row[url_var::USER_EXPRESSION], $this->user()->id);
 
             // get fixed / special formulas
             $frm_ids = array();
@@ -947,14 +947,14 @@ class result_list extends sandbox_value_list
             }
 
             // include the results of the underlying formulas, but only the once related to one of the words assigned to the formula
-            $result_res = zuc_upd_lst_res($val_wrd_lst, $phr_id, $frm_ids, $frm_row, $this->user()->id());
+            $result_res = zuc_upd_lst_res($val_wrd_lst, $phr_id, $frm_ids, $frm_row, $this->user()->id);
             $result = array_merge($result, $result_res);
 
             // get all values related to assigned word and to the formula words
             // and based on this value get the unique word list
             // e.g. if the formula text contains the word "sales" all values that are related to sales should be taken into account
             //      $frm_phr_ids is the list of words for the value selection, so in this case it would contain "sales"
-            $frm_phr_ids = zuf_phr_ids ($frm_row[url_var::USER_EXPRESSION], $this->user()->id());
+            $frm_phr_ids = zuf_phr_ids ($frm_row[url_var::USER_EXPRESSION], $this->user()->id);
             zu_debug('res_lst->frm_upd_lst_usr -> frm_phr_ids1 ('.implode(",",$frm_phr_ids).')');
 
             // add word words for the special formulas
@@ -964,8 +964,8 @@ class result_list extends sandbox_value_list
             $frm_phr_ids = array_filter($frm_phr_ids);
             zu_debug('res_lst->frm_upd_lst_usr -> frm_phr_ids2 ('.implode(",",$frm_phr_ids).')');
 
-            $result_val = $this->add_frm_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id());
-            // $result_val = zuc_upd_lst_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id());
+            $result_val = $this->add_frm_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id);
+            // $result_val = zuc_upd_lst_val($phr_id, $frm_phr_ids, $frm_row, $this->user()->id);
             $result = array_merge($result, $result_val);
 
             // show the user the progress every two seconds
@@ -1106,10 +1106,10 @@ class result_list extends sandbox_value_list
         foreach ($usr_lst->lst() as $usr) {
             // check
             $usr_calc_needed = False;
-            if ($usr->id() == $this->user()->id()) {
+            if ($usr->id == $this->user()->id) {
                 $usr_calc_needed = true;
             }
-            if ($this->user()->id() == 0 or $usr_calc_needed) {
+            if ($this->user()->id == 0 or $usr_calc_needed) {
                 log_debug('update results for user: ' . $usr->name . ' and formula ' . $frm->name());
 
                 $result = $this->frm_upd_lst_usr($frm, $phr_lst_frm_assigned, $phr_lst_frm_used, $phr_grp_lst_used, $usr, $last_msg_time, $collect_pos);

@@ -475,7 +475,7 @@ class create_test_objects extends test_base
                         } else {
                             $typ_obj = new type_object($data[$name_col]);
                         }
-                        $typ_obj->set_id($data[$id_col]);
+                        $typ_obj->id = $data[$id_col];
                         $typ_obj->set_name($data[$name_col]);
                         if ($code_id_col > 0) {
                             $typ_obj->set_code_id_db($data[$code_id_col]);
@@ -800,7 +800,7 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
                 $url .= $this->url_par(url_var::TYPE, $obj->type_id());
-                $url .= $this->url_par(url_var::PLURAL, $obj->plural());
+                $url .= $this->url_par(url_var::PLURAL, $obj->plural);
                 $url .= $this->url_par(url_var::SHARE, $obj->share_id());
                 $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
@@ -919,7 +919,7 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
                 $url .= $this->url_par(url_var::TYPE, $obj->type_id());
-                $url .= $this->url_par(url_var::PLURAL, $obj->plural());
+                $url .= $this->url_par(url_var::PLURAL, $obj->plural);
                 $url .= $this->url_par(url_var::SHARE, $obj->share_id());
                 $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
@@ -1047,7 +1047,7 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::NAME, $obj->name());
                 $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
                 $url .= $this->url_par(url_var::TYPE, $obj->type_id());
-                $url .= $this->url_par(url_var::PLURAL, $obj->plural());
+                $url .= $this->url_par(url_var::PLURAL, $obj->plural);
                 $url .= $this->url_par(url_var::SHARE, $obj->share_id());
                 $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
@@ -1327,7 +1327,7 @@ class create_test_objects extends test_base
     {
         $wrd = $this->word_filled();
         $wrd->include();
-        $wrd->set_id(0);
+        $wrd->id = 0;
         $wrd->set_name(words::TEST_ADD);
         return $wrd;
     }
@@ -1339,7 +1339,7 @@ class create_test_objects extends test_base
     {
         $wrd = $this->word_filled();
         $wrd->include();
-        $wrd->set_id(0);
+        $wrd->id = 0;
         $wrd->set_name(words::TEST_ADD_TO);
         return $wrd;
     }
@@ -1942,6 +1942,7 @@ class create_test_objects extends test_base
     {
         $trp = $this->triple();
         $trp->name_given = triples::MATH_CONST_GIVEN;
+        $trp->weight = 0.5;
         $trp->set_view_id(views::START_ID);
         $trp->set_usage(triples::SYSTEM_TEST_ADD_USAGE);
         $trp->exclude();
@@ -1955,7 +1956,7 @@ class create_test_objects extends test_base
     {
         $trp = $this->triple();
         $trp->include();
-        $trp->set_id(0);
+        $trp->id = 0;
         $trp->set_name(triples::SYSTEM_TEST_ADD);
         $trp->set_from($this->word_filled_add()->phrase());
         $trp->set_to($this->word_filled_add_to()->phrase());
@@ -2510,55 +2511,55 @@ class create_test_objects extends test_base
     {
         $lst = new phrase_list($this->usr1);
         $wrd = $this->word();
-        $wrd->set_id(1);
+        $wrd->id = 1;
         $wrd->set_name('word1');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(11);
+        $trp->id = 11;
         $trp->set_name('triple1');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(12);
+        $wrd->id = 12;
         $wrd->set_name('word2');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(37);
+        $trp->id = 37;
         $trp->set_name('triple2');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(38);
+        $wrd->id = 38;
         $wrd->set_name('word3');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(64);
+        $trp->id = 64;
         $trp->set_name('triple3');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(376);
+        $wrd->id = 376;
         $wrd->set_name('word4');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(2367);
+        $trp->id = 2367;
         $trp->set_name('triple4');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(13108);
+        $wrd->id = 13108;
         $wrd->set_name('word5');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(82124);
+        $trp->id = 82124;
         $trp->set_name('triple5');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(505294);
+        $wrd->id = 505294;
         $wrd->set_name('word6');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(2815273);
+        $trp->id = 2815273;
         $trp->set_name('triple6');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(17192845);
+        $wrd->id = 17192845;
         $wrd->set_name('word7');
         $lst->add($wrd->phrase());
         return $lst;
@@ -2585,7 +2586,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_13();
         $trp = $this->triple();
-        $trp->set_id(106841477);
+        $trp->id = 106841477;
         $trp->set_name('triple7');
         $lst->add($trp->phrase());
         return $lst;
@@ -2612,7 +2613,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_13();
         $trp = $this->triple();
-        $trp->set_id(3516593476);
+        $trp->id = 3516593476;
         $trp->set_name('triple8');
         $lst->add($trp->phrase());
         return $lst;
@@ -2641,15 +2642,15 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_13();
         $trp = $this->triple();
-        $trp->set_id(106841477);
+        $trp->id = 106841477;
         $trp->set_name('triple7');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(628779863);
+        $wrd->id = 628779863;
         $wrd->set_name('word8');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(3516593476);
+        $trp->id = 3516593476;
         $trp->set_name('triple8');
         $lst->add($trp->phrase());
         return $lst;
@@ -2659,7 +2660,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_16();
         $wrd = $this->word();
-        $wrd->set_id(987654321);
+        $wrd->id = 987654321;
         $wrd->set_name('word17');
         $lst->add($wrd->phrase());
         return $lst;
@@ -3328,7 +3329,7 @@ class create_test_objects extends test_base
     {
         $frm = $this->formula_filled();
         $frm->include();
-        $frm->set_id(0);
+        $frm->id = 0;
         $frm->set_name(formulas::SYSTEM_TEST_ADD);
         return $frm;
     }
@@ -3401,7 +3402,7 @@ class create_test_objects extends test_base
     {
         $lnk = $this->formula_link();
         $lnk->include();
-        $lnk->set_id(0);
+        $lnk->id = 0;
         $lnk->set_formula($this->formula_filled_add());
         $lnk->set_phrase($this->word_filled_add()->phrase());
         return $lnk;
@@ -3545,7 +3546,7 @@ class create_test_objects extends test_base
     function result_pct(): result
     {
         $res = new result($this->usr1);
-        $wrd_pct = $this->new_word(words::PCT, 2, phrase_type_shared::PERCENT);
+        $wrd_pct = $this->new_word(words::PCT, words::PCT_ID, phrase_type_shared::PERCENT);
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd_pct->phrase());
         $res->grp()->set_phrase_list($phr_lst);
@@ -3619,7 +3620,7 @@ class create_test_objects extends test_base
     {
         $src = $this->source_filled();
         $src->include();
-        $src->set_id(0);
+        $src->id = 0;
         $src->set_name(sources::SYSTEM_TEST_ADD);
         return $src;
     }
@@ -3764,7 +3765,7 @@ class create_test_objects extends test_base
     {
         $ref = $this->ref_filled();
         $ref->include();
-        $ref->set_id(0);
+        $ref->id = 0;
         $ref->set_phrase($this->word_filled_add()->phrase());
         return $ref;
     }
@@ -3904,7 +3905,7 @@ class create_test_objects extends test_base
     {
         $msk = $this->view_filled();
         $msk->include();
-        $msk->set_id(0);
+        $msk->id = 0;
         $msk->set_code_id_db(views::TEST_ADD);
         $msk->set_name(views::TEST_ADD_NAME);
         return $msk;
@@ -4048,7 +4049,7 @@ class create_test_objects extends test_base
     {
         $lnk = $this->view_link_filled();
         $lnk->include();
-        $lnk->set_id(0);
+        $lnk->id = 0;
         $lnk->set_view($this->view_filled_add());
         $lnk->set_term($this->word_filled_add()->term());
         return $lnk;
@@ -4115,7 +4116,7 @@ class create_test_objects extends test_base
     {
         $cmp = $this->component_filled();
         $cmp->include();
-        $cmp->set_id(0);
+        $cmp->id = 0;
         $cmp->set_name(components::TEST_ADD_NAME);
         return $cmp;
     }
@@ -4314,7 +4315,7 @@ class create_test_objects extends test_base
     {
         $lnk = $this->component_link_filled();
         $lnk->include();
-        $lnk->set_id(0);
+        $lnk->id = 0;
         $lnk->set_view($this->view_filled_add());
         $lnk->set_component($this->component_filled_add());
         return $lnk;
@@ -4726,7 +4727,7 @@ class create_test_objects extends test_base
     {
         global $sys_log_sta_cac;
         $sys = new sys_log();
-        $sys->set_id(1);
+        $sys->id = 1;
         $sys->log_time = new DateTime(sys_log_tests::TV_TIME);
         $sys->usr_name = users::SYSTEM_TEST_NAME;
         $sys->log_text = sys_log_tests::TV_LOG_TEXT;
@@ -4744,7 +4745,7 @@ class create_test_objects extends test_base
     {
         global $sys_log_sta_cac;
         $sys = new sys_log();
-        $sys->set_id(2);
+        $sys->id = 2;
         $sys->log_time = new DateTime(sys_log_tests::TV_TIME);
         $sys->usr_name = users::SYSTEM_TEST_NAME;
         $sys->log_text = sys_log_tests::T2_LOG_TEXT;
@@ -4762,7 +4763,7 @@ class create_test_objects extends test_base
     {
         $sys_usr = $this->system_user();
         $job = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME));
-        $job->set_id(1);
+        $job->id = 1;
         $job->start_time = new DateTime(sys_log_tests::TV_TIME);
         $job->set_type(job_type_list::BASE_IMPORT, $sys_usr);
         $job->row_id = 1;
@@ -4810,7 +4811,7 @@ class create_test_objects extends test_base
     function system_user(): user
     {
         $sys_usr = new user;
-        $sys_usr->set_id(users::SYSTEM_ID);
+        $sys_usr->id = users::SYSTEM_ID;
         $sys_usr->name = users::SYSTEM_NAME;
         $sys_usr->code_id = users::SYSTEM_CODE_ID;
         $sys_usr->dec_point = shared_config::DEFAULT_DEC_POINT;
@@ -4856,7 +4857,7 @@ class create_test_objects extends test_base
         }
 
         $wrd = new word($test_usr);
-        $wrd->set_id($id);
+        $wrd->id = $id;
         $wrd->set_name($wrd_name);
 
         if ($wrd_type_code_id != null) {
@@ -4918,7 +4919,7 @@ class create_test_objects extends test_base
                 log_err('add formula failed due to: ' . $result);
             }
         }
-        if ($wrd->id() <= 0) {
+        if ($wrd->id <= 0) {
             log_err('Cannot create word ' . $wrd_name);
         }
         if ($wrd_type_code_id != null) {
@@ -5025,7 +5026,7 @@ class create_test_objects extends test_base
         }
 
         $trp = new triple($test_usr);
-        $trp->set_id($id);
+        $trp->id = $id;
         $trp->set_from($this->new_word($from_name)->phrase());
         $trp->set_verb_id($vrb_cac->id($verb_code_id));
         $trp->set_to($this->new_word($to_name)->phrase());
@@ -5324,7 +5325,7 @@ class create_test_objects extends test_base
         }
 
         $frm = new formula($test_usr);
-        $frm->set_id($id);
+        $frm->id =$id;
         $frm->set_name($frm_name);
 
         if ($frm_type_code_id != null) {
@@ -5636,7 +5637,7 @@ class create_test_objects extends test_base
         }
 
         $vrb = new verb();
-        $vrb->set_id($id);
+        $vrb->id = $id;
         $vrb->set_name($vrb_name);
         $vrb->set_user($this->usr1);
 

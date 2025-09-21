@@ -82,8 +82,8 @@ $result .= $usr->get();
 $dsp_usr = new user_dsp($usr->api_json());
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
-    log_debug($usr->id());
+if ($usr->id > 0) {
+    log_debug($usr->id);
 
     $usr->load_usr_data();
 
@@ -104,49 +104,49 @@ if ($usr->id() > 0) {
     // undo user changes for words
     if ($undo_wrd > 0) {
         $wrd = new word($usr);
-        $wrd->set_id($undo_wrd);
+        $wrd->id = $undo_wrd;
         $wrd->del_usr_cfg();
     }
 
     // undo user changes for triples
     if ($undo_lnk > 0) {
         $lnk = new triple($usr);
-        $lnk->set_id($undo_lnk);
+        $lnk->id = $undo_lnk;
         $lnk->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_frm > 0) {
         $frm = new formula($usr);
-        $frm->set_id($undo_frm);
+        $frm->id = $undo_frm;
         $frm->del_usr_cfg();
     }
 
     // undo user changes for formula word links
     if ($undo_frm_lnk > 0) {
         $frm_lnk = new formula_link($usr);
-        $frm_lnk->set_id($undo_frm_lnk);
+        $frm_lnk->id = $undo_frm_lnk;
         $frm_lnk->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_dsp > 0) {
         $msk = new view($usr);
-        $msk->set_id($undo_dsp);
+        $msk->id = $undo_dsp;
         $msk->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_cmp > 0) {
         $cmp = new component($usr);
-        $cmp->set_id($undo_cmp);
+        $cmp->id = $undo_cmp;
         $cmp->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_cmp_lnk > 0) {
         $cmp_lnk = new component_link($usr);
-        $cmp_lnk->set_id($undo_cmp_lnk);
+        $cmp_lnk->id = $undo_cmp_lnk;
         $cmp_lnk->del_usr_cfg();
     }
 

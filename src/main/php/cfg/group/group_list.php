@@ -210,7 +210,7 @@ class group_list extends sandbox_list
         $sc->set_id_field($grp->id_field());
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(group::FLD_NAMES);
         return $qp;
     }
@@ -447,10 +447,10 @@ class group_list extends sandbox_list
             $sql_group = 'SELECT l1.group_id
                       FROM group_phrase_links l1
                  LEFT JOIN user_group_phrase_links u1 ON u1.group_phrase_link_id = l1.group_phrase_link_id 
-                                                            AND u1.user_id = ' . $this->user()->id() . ',
+                                                            AND u1.user_id = ' . $this->user()->id . ',
                            group_phrase_links l2
                  LEFT JOIN user_group_phrase_links u2 ON u2.group_phrase_link_id = l2.group_phrase_link_id 
-                                                            AND u2.user_id = ' . $this->user()->id() . '
+                                                            AND u2.user_id = ' . $this->user()->id . '
                      WHERE l1.phrase_id IN (' . $phr_linked_ex->ids_txt() . ')  
                        AND l2.phrase_id IN (' . $phr_used_ex->ids_txt() . ')
                        AND l1.group_id = l2.group_id
@@ -499,7 +499,7 @@ class group_list extends sandbox_list
 
         log_debug('sql "' . $sql . '"');
         //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         return $db_con->get_old($sql);
     }
 

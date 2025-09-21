@@ -336,7 +336,7 @@ class phrase_list extends sandbox_list_named
         $qp->name .= $query_name;
 
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(phrase::FLD_NAMES);
         $sc->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
         $sc->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
@@ -789,7 +789,7 @@ class phrase_list extends sandbox_list_named
         if ($qp->name == '') {
             log_warning('The phrase list is empty, so nothing could be found', self::class . '->load_linked_phrases');
         } else {
-            $db_con->usr_id = $this->user()->id();
+            $db_con->usr_id = $this->user()->id;
             $db_phr_lst = $db_con->get($qp);
             if ($db_phr_lst) {
                 log_debug('got ' . $lib->dsp_count($db_phr_lst));
@@ -1366,7 +1366,7 @@ class phrase_list extends sandbox_list_named
     function add_name($phr_name_to_add): void
     {
         log_debug('phrase_list->add_name "' . $phr_name_to_add . '"');
-        if (is_null($this->user()->id())) {
+        if (is_null($this->user()->id)) {
             log_err("The user must be set.", "phrase_list->add_name");
         } else {
             $phr_to_add = new phrase($this->user());

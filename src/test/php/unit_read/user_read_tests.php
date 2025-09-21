@@ -61,7 +61,7 @@ class user_read_tests
         $usr = new user();
         $usr->load_by_name(users::SYSTEM_TEST_NAME);
         $usr_by_id = new user();
-        $usr_by_id->load_by_id($usr->id(), user::class);
+        $usr_by_id->load_by_id($usr->id, user::class);
         $t->assert($test_name, $usr_by_id->name, users::SYSTEM_TEST_NAME);
         //$t->assert($test_name, $usr_by_id->email, users::SYSTEM_TEST_EMAIL);
 
@@ -69,7 +69,7 @@ class user_read_tests
         $usr = new user();
         $usr->load_by_email(users::SYSTEM_TEST_EMAIL);
         $usr_by_id = new user();
-        $usr_by_id->load_by_id($usr->id(), user::class);
+        $usr_by_id->load_by_id($usr->id, user::class);
         $t->assert($test_name, $usr_by_id->name, users::SYSTEM_TEST_NAME);
 
         // TODO test type and view

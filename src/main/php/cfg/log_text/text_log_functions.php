@@ -336,7 +336,7 @@ function log_msg(string  $msg_text,
         }
         $user_id = 0;
         if ($usr != null) {
-            $user_id = $usr->id();
+            $user_id = $usr->id;
         }
         if ($user_id <= 0) {
             $user_id = $_SESSION['usr_id'] ?? users::SYSTEM_ID;

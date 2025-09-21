@@ -184,7 +184,7 @@ class figure_list extends sandbox_list
         $sc->set_class(figure::class);
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(figure::FLD_NAMES);
         //$db_con->set_usr_fields(figure::FLD_NAMES_USR_NO_NAME);
         //$db_con->set_usr_num_fields(figure::FLD_NAMES_NUM_USR);

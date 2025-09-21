@@ -79,6 +79,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -103,14 +104,15 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
-use Exception;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Exception;
 
 class sandbox_link extends sandbox
 {
@@ -383,7 +385,7 @@ class sandbox_link extends sandbox
     function cloned(): sandbox_link
     {
         $obj_cpy = $this->clone_reset();
-        $obj_cpy->set_id($this->id());
+        $obj_cpy->id = $this->id();
         $obj_cpy->set_fob($this->fob());
         $obj_cpy->set_tob($this->tob());
         return $obj_cpy;
@@ -650,7 +652,7 @@ class sandbox_link extends sandbox
      */
     function is_valid(): bool
     {
-        if ($this->id() != 0 and $this->name() != '') {
+        if ($this->id != 0 and $this->name() != '') {
             return true;
         } else {
             return false;
@@ -660,10 +662,10 @@ class sandbox_link extends sandbox
     /**
      * check if the named object in the database needs to be updated
      *
-     * @param sandbox_link|CombineObject|db_object_seq_id $db_obj the word as saved in the database
+     * @param sandbox_link|CombineObject|IdObject $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(sandbox_link|CombineObject|db_object_seq_id $db_obj): bool
+    function needs_db_update(sandbox_link|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->fob->id() != 0) {
@@ -815,7 +817,7 @@ class sandbox_link extends sandbox
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
             $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
             if ($ins_msg->is_ok()) {
-                $this->set_id($ins_msg->get_row_id());
+                $this->id = $ins_msg->get_row_id();
             }
             $usr_msg->add($ins_msg);
         } else {
@@ -831,16 +833,16 @@ class sandbox_link extends sandbox
                     $qp = $this->sql_insert($sc);
                     $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
                     if ($ins_msg->is_ok()) {
-                        $this->set_id($ins_msg->get_row_id());
+                        $this->id = $ins_msg->get_row_id();
                     }
                 } else {
                     $db_con->set_class($this::class);
-                    $db_con->set_usr($this->user()->id());
-                    $this->set_id($this->add_insert());
+                    $db_con->set_usr($this->user()->id);
+                    $this->id = $this->add_insert();
                 }
 
                 // save the object fields if saving the key was successful
-                if ($this->id() > 0) {
+                if ($this->id > 0) {
                     log_debug($this::class . ' ' . $this->dsp_id() . ' has been added');
                     // update the id in the log
                     if (!$log->add_ref($this->id())) {
@@ -931,7 +933,7 @@ class sandbox_link extends sandbox
             $log->row_id = $this->id();
             if ($log->add()) {
                 $db_con->set_class($this::class);
-                $db_con->set_usr($this->user()->id());
+                $db_con->set_usr($this->user()->id);
                 if (!$db_con->update_old($this->id(),
                     array($this->from_name . sql_db::FLD_EXT_ID, $this->from_name . sql_db::FLD_EXT_ID),
                     array($this->fob()->id(), $this->tob()->id()))) {

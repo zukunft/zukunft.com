@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION triple_insert_log_1100040000101_user
+CREATE OR REPLACE FUNCTION triple_insert_log_11000400000101_user
     (_user_id             bigint,
      _change_action_id    smallint,
      _change_table_id     smallint,
@@ -38,12 +38,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE triple_insert_log_1100040000101_user_call
+PREPARE triple_insert_log_11000400000101_user_call
         (bigint, smallint, smallint, text, text, text, text, text, text, bigint, smallint, bigint, bigint, smallint, bigint, smallint, smallint, bigint, smallint, smallint) AS
-    SELECT triple_insert_log_1100040000101_user
+    SELECT triple_insert_log_11000400000101_user
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20);
 
-SELECT triple_insert_log_1100040000101_user (
+SELECT triple_insert_log_11000400000101_user (
                1::bigint,
                1::smallint,
                7::smallint,

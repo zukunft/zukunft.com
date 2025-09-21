@@ -109,7 +109,7 @@ class db_object_seq_id_user extends db_object_seq_id
      */
     function user_id(): int
     {
-        return $this->usr->id();
+        return $this->usr->id;
     }
 
 
@@ -173,7 +173,7 @@ class db_object_seq_id_user extends db_object_seq_id
         $result = '';
         if ($debug > DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+                $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }
         }
         return $result;

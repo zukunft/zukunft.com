@@ -135,8 +135,8 @@ class expression extends shared_expression
     {
         $frm = new formula();
         $frm->load_by_name($name);
-        if ($frm->id() > 0) {
-            $db_sym = chars::FORMULA_START . $frm->id() . chars::FORMULA_END;
+        if ($frm->id > 0) {
+            $db_sym = chars::FORMULA_START . $frm->id . chars::FORMULA_END;
             log_debug('found formula "' . $db_sym . '" for "' . $name . '"');
         } else {
             $db_sym = '';
@@ -148,8 +148,8 @@ class expression extends shared_expression
     {
         $wrd = new word();
         $wrd->load_by_name($name);
-        if ($wrd->id() > 0) {
-            $db_sym = chars::WORD_START . $wrd->id() . chars::WORD_END;
+        if ($wrd->id > 0) {
+            $db_sym = chars::WORD_START . $wrd->id . chars::WORD_END;
             log_debug('found word "' . $db_sym . '" for "' . $name . '"');
         } else {
             $db_sym = '';
@@ -161,8 +161,8 @@ class expression extends shared_expression
     {
         $trp = new triple();
         $trp->load_by_name($name);
-        if ($trp->id() > 0) {
-            $db_sym = chars::TRIPLE_START . $trp->id() . chars::TRIPLE_END;
+        if ($trp->id > 0) {
+            $db_sym = chars::TRIPLE_START . $trp->id . chars::TRIPLE_END;
             log_debug('found triple "' . $db_sym . '" for "' . $name . '"');
         } else {
             $db_sym = '';
@@ -174,8 +174,8 @@ class expression extends shared_expression
     {
         $vrb = new verb;
         $vrb->load_by_name($name);
-        if ($vrb->id() > 0) {
-            $db_sym = chars::VERB_START . $vrb->id() . chars::VERB_END;
+        if ($vrb->id > 0) {
+            $db_sym = chars::VERB_START . $vrb->id . chars::VERB_END;
             log_debug('found verb "' . $db_sym . '" for "' . $name . '"');
         } else {
             $db_sym = '';
@@ -187,7 +187,7 @@ class expression extends shared_expression
     {
         $wrd = new word();
         $wrd->load_by_id($id);
-        if ($wrd->id() == 0) {
+        if ($wrd->id == 0) {
             $wrd = null;
         }
         return $wrd;
@@ -197,7 +197,7 @@ class expression extends shared_expression
     {
         $trp = new triple();
         $trp->load_by_id($id);
-        if ($trp->id() == 0) {
+        if ($trp->id == 0) {
             $trp = null;
         }
         return $trp;
@@ -207,7 +207,7 @@ class expression extends shared_expression
     {
         $frm = new formula();
         $frm->load_by_id($id);
-        if ($frm->id() == 0) {
+        if ($frm->id == 0) {
             $frm = null;
         }
         return $frm;
@@ -217,7 +217,7 @@ class expression extends shared_expression
     {
         $vrb = new verb();
         $vrb->load_by_id($id);
-        if ($vrb->id() == 0) {
+        if ($vrb->id == 0) {
             $vrb = null;
         }
         return $vrb;

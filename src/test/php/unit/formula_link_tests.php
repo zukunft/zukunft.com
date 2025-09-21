@@ -89,7 +89,7 @@ class formula_link_tests
 
         // sql to load the standard formula link by id
         $lnk = new formula_link($usr);
-        $lnk->set_id(1);
+        $lnk->id = 1;
         $t->assert_sql_standard($sc, $lnk);
         $t->assert_sql_not_changed($sc, $lnk);
 

@@ -83,7 +83,6 @@ include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::MODEL_FORMULA . 'formula_link.php';
 include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::MODEL_VERB . 'verb_db.php';
 include_once paths::MODEL_VERB . 'verb_list.php';
@@ -117,7 +116,6 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
 use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
@@ -147,33 +145,33 @@ class phrase extends combine_named
 
     // the database and JSON object duplicate field names for combined word and triples mainly to link phrases
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID = 'phrase_id';
-    const FLD_ID_SQL_TYP = sql_field_type::INT;
-    const FLD_NAME = 'phrase_name';
-    const FLD_TYPE = 'phrase_type_id';
-    const FLD_TYPE_NAME = 'phrase_type_name'; // used for the log parameter only
-    const FLD_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
-    const FLD_VALUES = 'values';
+    const string FLD_ID = 'phrase_id';
+    const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT;
+    const string FLD_NAME = 'phrase_name';
+    const string FLD_TYPE = 'phrase_type_id';
+    const string FLD_TYPE_NAME = 'phrase_type_name'; // used for the log parameter only
+    const sql_field_type FLD_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
+    const string FLD_VALUES = 'values';
 
     // the common phrase database field names excluding the id and excluding the user specific fields
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         phrase::FLD_TYPE
     );
     // list of the common user specific database field names of phrases excluding the standard name field
-    const FLD_NAMES_USR_EX = array(
+    const array FLD_NAMES_USR_EX = array(
         sql_db::FLD_DESCRIPTION
     );
     // list of the common user specific database field names of phrases
-    const FLD_NAMES_USR = array(
+    const array FLD_NAMES_USR = array(
         phrase::FLD_NAME,
         sql_db::FLD_DESCRIPTION
     );
     // list of the common user specific database field names of phrases
-    const FLD_NAMES_USR_NO_NAME = array(
+    const array FLD_NAMES_USR_NO_NAME = array(
         sql_db::FLD_DESCRIPTION
     );
     // list of the common user specific numeric database field names of phrases
-    const FLD_NAMES_NUM_USR = array(
+    const array FLD_NAMES_NUM_USR = array(
         self::FLD_VALUES,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
@@ -181,10 +179,10 @@ class phrase extends combine_named
     );
     // list of phrase types used for the database views
     // using one array of sql table types per view
-    const TBL_PRIME_COM = 'phrases with an id less than 2^16 so that 4 phrase id fit in a 64 bit db key';
-    const TBL_PRIME_WHERE = '< 32767';
-    const TBL_COM = 'phrases with an id that is not prime';
-    const TBL_LIST = [
+    const string TBL_PRIME_COM = 'phrases with an id less than 2^16 so that 4 phrase id fit in a 64 bit db key';
+    const string TBL_PRIME_WHERE = '< 32767';
+    const string TBL_COM = 'phrases with an id that is not prime';
+    const array TBL_LIST = [
         [sql_type::PRIME, self::TBL_PRIME_WHERE, self::TBL_PRIME_COM],
         [sql_type::MOST, '', self::TBL_COM],
         [sql_type::PRIME, self::TBL_PRIME_WHERE, self::TBL_PRIME_COM, sql_type::USER],
@@ -192,7 +190,7 @@ class phrase extends combine_named
     ];
     // list of original tables that should be connoted with union
     // with fields used in the view
-    const TBL_FLD_LST_VIEW = [
+    const array TBL_FLD_LST_VIEW = [
         [word::class, [
             [word_db::FLD_ID, phrase::FLD_ID],
             [user_db::FLD_ID],
@@ -277,7 +275,7 @@ class phrase extends combine_named
             if ($db_row[$id_fld] > 0) {
                 // map a word
                 $wrd = new word($this->user());
-                $wrd->set_id($db_row[$id_fld]);
+                $wrd->id = $db_row[$id_fld];
                 $wrd->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
                 if (array_key_exists(sql_db::FLD_DESCRIPTION . $fld_ext, $db_row)) {
                     $wrd->description = $db_row[sql_db::FLD_DESCRIPTION . $fld_ext];
@@ -300,7 +298,7 @@ class phrase extends combine_named
             } elseif ($db_row[$id_fld] < 0) {
                 // map a triple
                 $trp = new triple($this->user());
-                $trp->set_id($db_row[$id_fld] * -1);
+                $trp->id = $db_row[$id_fld] * -1;
                 $name = $db_row[phrase::FLD_NAME . $fld_ext];
                 if ($name != null) {
                     $trp->set_name($db_row[phrase::FLD_NAME . $fld_ext]);
@@ -389,11 +387,11 @@ class phrase extends combine_named
     {
         if ($id > 0) {
             $wrd = new word($this->user());
-            $wrd->set_id($id);
+            $wrd->id = $id;
             $this->obj = $wrd;
         } elseif ($id < 0) {
             $trp = new triple($this->user());
-            $trp->set_id($id * -1);
+            $trp->id = $id * -1;
             $this->obj = $trp;
         } else {
             log_warning('id of a phrase is not expected to be zero');
@@ -417,7 +415,7 @@ class phrase extends combine_named
             $this->obj = new triple($this->user());
             $this->set_obj_id($id);
         }
-        $this->obj()->set_id($id);
+        $this->obj()->id = $id;
     }
 
     /**
@@ -1234,16 +1232,16 @@ class phrase extends combine_named
                              ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM words w   
                    LEFT JOIN user_words u ON u.word_id = w.word_id 
-                                         AND u.user_id = ' . $this->user()->id() . ' ';
+                                         AND u.user_id = ' . $this->user()->id . ' ';
         $sql_triples = 'SELECT DISTINCT l.triple_id * -1 AS id, 
                                ' . $db_con->get_usr_field("name_given", "l", "u", sql_db::FLD_FORMAT_TEXT, "name") . ',
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM triples l
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->user()->id() . ' ';
+                                                AND u.user_id = ' . $this->user()->id . ' ';
 
         if (isset($type)) {
-            if ($type->id() > 0) {
+            if ($type->id > 0) {
 
                 // select all phrase ids of the given type e.g. ABB, DANONE, Zurich
                 $sql_where_exclude = 'excluded = 0';
@@ -1280,7 +1278,7 @@ class phrase extends combine_named
                              ' . $db_con->get_usr_field("excluded", "w", "u", sql_db::FLD_FORMAT_BOOL) . '
                         FROM ( ' . $sql_wrd_all . ' ) a, words w
                    LEFT JOIN user_words u ON u.word_id = w.word_id 
-                                         AND u.user_id = ' . $this->user()->id() . '
+                                         AND u.user_id = ' . $this->user()->id . '
                        WHERE w.word_id NOT IN ( ' . $sql_wrd_other . ' )                                        
                          AND w.word_id = a.id ) AS w 
                        WHERE ' . $sql_where_exclude . ' ';
@@ -1293,10 +1291,10 @@ class phrase extends combine_named
                                ' . $db_con->get_usr_field("excluded", "l", "u", sql_db::FLD_FORMAT_BOOL) . '
                           FROM triples l
                      LEFT JOIN user_triples u ON u.triple_id = l.triple_id 
-                                                AND u.user_id = ' . $this->user()->id() . '
+                                                AND u.user_id = ' . $this->user()->id . '
                          WHERE l.from_phrase_id IN ( ' . $sql_wrd_other . ')                                        
                            AND l.verb_id = ' . $vrb_cac->id(verbs::IS) . '
-                           AND l.to_phrase_id = ' . $type->id() . ' ) AS t 
+                           AND l.to_phrase_id = ' . $type->id . ' ) AS t 
                          WHERE ' . $sql_where_exclude . ' ';
                 /*
                 $sql_type_from = ', triples t LEFT JOIN user_triples ut ON ut.triple_id = t.triple_id
@@ -1419,7 +1417,7 @@ class phrase extends combine_named
         $link_id = $vrb_cac->id(verbs::FOLLOW);
         //$link_id = cl(db_cl::VERB, verbs::FOLLOW);
         //$db_con = new mysql;
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         $db_con->set_class(triple::class);
         $key_result = $db_con->get_value_2key(triple_db::FLD_FROM, triple_db::FLD_TO, $this->id(), verb_db::FLD_ID, $link_id);
         if (is_numeric($key_result)) {

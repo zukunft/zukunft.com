@@ -68,7 +68,7 @@ if ($db_con->is_open()) {
     $msg .= $usr->get();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id() > 0) {
+    if ($usr->id > 0) {
 
         if ($fig_id > 0) {
             $val = new value($usr);

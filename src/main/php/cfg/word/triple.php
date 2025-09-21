@@ -100,6 +100,7 @@ include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -111,8 +112,6 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
@@ -143,6 +142,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -189,6 +189,13 @@ class triple extends sandbox_link_named
     // to select single triple used by the system without using the type that can potentially select more than one triple
     private ?string $code_id;
 
+    // the weight of this triple compared to others where 1 represents 100% weight
+    public ?float $weight {
+        set {
+            $this->weight = $value;
+        }
+    }
+
     // to cache the query results
     // the total number of values linked to this triple as an indication how common the triple is and to sort the triples
     private ?int $values;
@@ -196,7 +203,7 @@ class triple extends sandbox_link_named
     // only used for the export object
     // name of the default view for this word
     private ?view $view {
-        set(?view $value) {
+        set {
             $this->view = $value;
         }
     }
@@ -213,7 +220,7 @@ class triple extends sandbox_link_named
      */
     function __construct(user $usr)
     {
-        $this->set_id(0);
+        $this->id = 0;
 
         parent::__construct($usr);
 
@@ -234,6 +241,7 @@ class triple extends sandbox_link_named
         $this->set_name(null);
         $this->name_given = null;
         $this->name_generated = '';
+        $this->weight = null;
         $this->code_id = null;
         $this->values = null;
 
@@ -304,6 +312,9 @@ class triple extends sandbox_link_named
             if (array_key_exists(sql_db::FLD_CODE_ID, $db_row)) {
                 $this->set_code_id($db_row[sql_db::FLD_CODE_ID], $this->user());
             }
+            if (array_key_exists(triple_db::FLD_WIGHT, $db_row)) {
+                $this->weight = $db_row[triple_db::FLD_WIGHT];
+            }
             if (array_key_exists(triple_db::FLD_VALUES, $db_row)) {
                 $this->values = $db_row[triple_db::FLD_VALUES];
             }
@@ -333,6 +344,9 @@ class triple extends sandbox_link_named
             $phr = $this->phrase_from_api_json($api_json[json_fields::TO]);
             $this->set_to($phr);
         }
+        if (array_key_exists(json_fields::WEIGHT, $api_json)) {
+            $this->weight = $api_json[json_fields::WEIGHT];
+        }
         // TODO move plural to language forms
         /*
         if (array_key_exists(json_fields::PLURAL, $api_json)) {
@@ -345,7 +359,7 @@ class triple extends sandbox_link_named
             $msk = new view($this->user());
             $id = $api_json[json_fields::VIEW];
             if ($id != 0) {
-                $msk->set_id($id);
+                $msk->id = $id;
                 $this->view = $msk;
             }
         }
@@ -454,7 +468,7 @@ class triple extends sandbox_link_named
                     $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_MISSING, [msg_id::VAR_ID => $this->dsp_id()]);
                 }
             } else {
-                if ($vrb->id() <= 0) {
+                if ($vrb->id <= 0) {
                     $usr_msg->add_id_with_vars(msg_id::TRIPLE_VERB_NOT_FOUND, [msg_id::VAR_NAME => $name]);
                     if ($this->name <> '') {
                         $usr_msg->add_id_with_vars(msg_id::FOR_TRIPLE, [msg_id::VAR_NAME => $this->name]);
@@ -462,6 +476,10 @@ class triple extends sandbox_link_named
                 }
             }
             $this->set_verb($vrb);
+        }
+
+        if (key_exists(json_fields::WEIGHT, $in_ex_json)) {
+            $this->weight = $in_ex_json[json_fields::WEIGHT];
         }
 
         if (key_exists(json_fields::VIEW, $in_ex_json)) {
@@ -729,7 +747,8 @@ class triple extends sandbox_link_named
         string $to = ''
     ): void
     {
-        parent::set_id($id);
+        $this->id = $id;
+
         if ($name != '') {
             $this->set_name($name);
         }
@@ -1079,7 +1098,7 @@ class triple extends sandbox_link_named
         if ($this->view == null) {
             $this->view = new view($this->user());
         }
-        $this->view->set_id($id);
+        $this->view->id = $id;
     }
 
     function view(): ?view
@@ -1465,7 +1484,7 @@ class triple extends sandbox_link_named
         $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
         $qp->name .= $this->load_sql_name_ext();
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(array_merge(
             triple_db::FLD_NAMES_LINK,
             triple_db::FLD_NAMES,
@@ -1492,7 +1511,7 @@ class triple extends sandbox_link_named
 
         $sc->set_class($class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(array_merge(triple_db::FLD_NAMES_LINK, triple_db::FLD_NAMES));
         $sc->set_usr_fields(triple_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(triple_db::FLD_NAMES_NUM_USR);
@@ -1639,7 +1658,7 @@ class triple extends sandbox_link_named
         if ($this->from() == null) {
             log_err("The word (" . $this->from_id() . ") must be set before it can be loaded.", "triple->load_objects");
         } else {
-            if ($this->from_id() <> 0 and !is_null($this->user()->id())) {
+            if ($this->from_id() <> 0 and !is_null($this->user()->id)) {
                 if ($this->from_id() > 0) {
                     $wrd = new word($this->user());
                     $wrd->load_by_id($this->from_id());
@@ -1682,7 +1701,7 @@ class triple extends sandbox_link_named
                 $this->set_to($wrd_to->phrase());
             }
         } else {
-            if ($this->to_id() <> 0 and !is_null($this->user()->id())) {
+            if ($this->to_id() <> 0 and !is_null($this->user()->id)) {
                 if ($this->to_id() > 0) {
                     $wrd_to = new word($this->user());
                     $wrd_to->load_by_id($this->to_id());
@@ -1932,10 +1951,10 @@ class triple extends sandbox_link_named
      * check if the word in the database needs to be updated
      * e.g. for import  if this word has only the name set, the protection should not be updated in the database
      *
-     * @param triple|CombineObject|db_object_seq_id $db_obj the word as saved in the database
+     * @param triple|CombineObject|IdObject $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(triple|CombineObject|db_object_seq_id $db_obj): bool
+    function needs_db_update(triple|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->verb_id() > 0) {
@@ -1945,6 +1964,11 @@ class triple extends sandbox_link_named
         }
         if ($this->name_given != null) {
             if ($this->name_given != $db_obj->name_given) {
+                $result = true;
+            }
+        }
+        if ($this->weight != null) {
+            if ($this->weight != $db_obj->weight) {
                 $result = true;
             }
         }
@@ -2354,7 +2378,7 @@ class triple extends sandbox_link_named
             // check if target link already exists
             log_debug('triple->save_id_if_updated check if target link already exists ' . $this->dsp_id() . ' (has been "' . $db_rec->dsp_id() . '")');
             $db_chk = clone $this;
-            $db_chk->set_id(0); // to force the load by the id fields
+            $db_chk->id = 0; // to force the load by the id fields
             $db_chk->load_standard();
             if ($db_chk->id() > 0) {
                 // ... if yes request to delete or exclude the record with the id parameters before the change
@@ -2366,7 +2390,7 @@ class triple extends sandbox_link_named
                 }
                 if ($usr_msg->is_ok()) {
                     // ... and use it for the update
-                    $this->set_id($db_chk->id());
+                    $this->id = $db_chk->id();
                     $this->set_owner_id($db_chk->owner_id());
                     // force including again
                     $this->include();
@@ -2393,8 +2417,8 @@ class triple extends sandbox_link_named
                     // ... and create a deletion request for all users ???
 
                     // ... and create a new triple
-                    $this->set_id(0);
-                    $this->set_owner_id($this->user()->id());
+                    $this->id = 0;
+                    $this->set_owner_id($this->user()->id);
                     $usr_msg->add($this->add());
                     log_debug('triple->save_id_if_updated recreate the triple del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
                 }
@@ -2427,7 +2451,7 @@ class triple extends sandbox_link_named
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
             $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
             if ($ins_msg->is_ok()) {
-                $this->set_id($ins_msg->get_row_id());
+                $this->id = $ins_msg->get_row_id();
             }
             $usr_msg->add($ins_msg);
         } else {
@@ -2441,12 +2465,12 @@ class triple extends sandbox_link_named
                     $qp = $this->sql_insert($sc);
                     $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id());
                     if ($ins_msg->is_ok()) {
-                        $this->set_id($ins_msg->get_row_id());
+                        $this->id = $ins_msg->get_row_id();
                     }
                 } else {
                     $db_con->set_class(triple::class);
-                    $this->set_id($db_con->insert_old(array(triple_db::FLD_FROM, verb_db::FLD_ID, triple_db::FLD_TO, user_db::FLD_ID),
-                        array($this->from_id(), $this->verb_id(), $this->to_id(), $this->user()->id())));
+                    $this->id = $db_con->insert_old(array(triple_db::FLD_FROM, verb_db::FLD_ID, triple_db::FLD_TO, user_db::FLD_ID),
+                        array($this->from_id(), $this->verb_id(), $this->to_id(), $this->user()->id));
                 }
                 // TODO make sure on all add functions that the database object is always set
                 //array($this->from_id(), $this->verb_id() , $this->to_id(), $this->user()->id()));
@@ -2509,7 +2533,7 @@ class triple extends sandbox_link_named
             $this->load_objects();
 
             // build the database object because the is anyway needed
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
             $db_con->set_class(triple::class);
 
             // check if a triple with the same link exists and if yes, update this triple
@@ -2517,7 +2541,7 @@ class triple extends sandbox_link_named
                 $db_chk = new triple($this->user());
                 $db_chk->load_by_link_id($this->from()->id(), $this->verb()->id(), $this->to()->id());
                 if ($db_chk->id() != 0) {
-                    $this->set_id($db_chk->id());
+                    $this->id = $db_chk->id();
                 }
             }
 
@@ -2527,14 +2551,14 @@ class triple extends sandbox_link_named
                 // check if the reverse triple is already in the database
                 $db_chk_rev = clone $this;
                 $db_chk_rev->set_from($this->to());
-                $db_chk_rev->from()->set_id($this->to_id());
+                $db_chk_rev->from()->id = $this->to_id();
                 $db_chk_rev->set_to($this->from());
-                $db_chk_rev->to()->set_id($this->from_id());
+                $db_chk_rev->to()->id = $this->from_id();
                 // remove the name in the object to prevent loading by name
                 $db_chk_rev->name = '';
                 $db_chk_rev->load_standard();
                 if ($db_chk_rev->id() > 0) {
-                    $this->set_id($db_chk_rev->id());
+                    $this->id = $db_chk_rev->id();
 
                     $usr_msg->add_id_with_vars(msg_id::REVERSE_ALREADY_EXISTS, [
                         msg_id::VAR_SOURCE_NAME => $this->from()->name(),
@@ -2551,7 +2575,7 @@ class triple extends sandbox_link_named
                 $db_chk = clone $this;
                 $db_chk->load_standard();
                 if ($db_chk->id() > 0) {
-                    $this->set_id($db_chk->id());
+                    $this->id = $db_chk->id();
                 }
             }
         }
@@ -2580,7 +2604,7 @@ class triple extends sandbox_link_named
                 }
                 log_debug('database triple "' . $db_rec->name() . '" (' . $db_rec->id() . ') loaded');
                 $std_rec = new triple($this->user()); // the user must also be set to allow to take the ownership
-                $std_rec->set_id($this->id());
+                $std_rec->id = $this->id();
                 if (!$std_rec->load_standard()) {
                     $usr_msg->add_id_with_vars(msg_id::FAILED_RELOAD_CLASS, [msg_id::VAR_CLASS_NAME => $class_name]);
                     if (!$usr_msg->is_ok()) {
@@ -2692,6 +2716,7 @@ class triple extends sandbox_link_named
                 verb_db::FLD_ID,
                 triple_db::FLD_NAME_GIVEN,
                 triple_db::FLD_NAME_AUTO,
+                triple_db::FLD_WIGHT,
                 triple_db::FLD_VALUES,
                 triple_db::FLD_VIEW
             ],
@@ -2867,6 +2892,21 @@ class triple extends sandbox_link_named
                     $sbx->name_generated()
                 );
             }
+        }
+        if ($sbx->weight <> $this->weight) {
+            if ($do_log) {
+                $lst->add_field(
+                    sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_WIGHT,
+                    $cng_fld_cac->id($table_id . triple_db::FLD_WIGHT),
+                    change::FLD_FIELD_ID_SQL_TYP
+                );
+            }
+            $lst->add_field(
+                triple_db::FLD_WIGHT,
+                $this->weight,
+                triple_db::FLD_WEIGHT_SQL_TYP,
+                $sbx->weight
+            );
         }
         // TODO rename to usage
         if ($sbx->values <> $this->values) {

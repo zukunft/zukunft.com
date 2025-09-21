@@ -263,7 +263,7 @@ class word_list extends sandbox_list_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(word_db::FLD_NAMES);
         $sc->set_usr_fields(word_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(word_db::FLD_NAMES_NUM_USR);
@@ -467,7 +467,7 @@ class word_list extends sandbox_list_named
         if ($qp->name == '') {
             log_warning('The word list is empty, so nothing could be found', self::class . '->load_linked_words');
         } else {
-            $db_con->usr_id = $this->user()->id();
+            $db_con->usr_id = $this->user()->id;
             $db_wrd_lst = $db_con->get($qp);
             if ($db_wrd_lst) {
                 log_debug('got ' . $lib->dsp_count($db_wrd_lst));
@@ -861,7 +861,7 @@ class word_list extends sandbox_list_named
     {
         $result = false;
         log_debug($wrd_name_to_add);
-        if (is_null($this->user()->id())) {
+        if (is_null($this->user()->id)) {
             log_err("The user must be set.", "word_list->add_name");
         } else {
             $wrd_to_add = new word($this->user());

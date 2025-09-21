@@ -75,18 +75,18 @@ class element_write_tests
                 if ($elm->obj == null) {
                     log_err('object of formula element ' . $elm->dsp_id() . ' missing');
                 } else {
-                    $elm->load_obj_by_id($elm->obj->id(), $elm->type);
+                    $elm->load_obj_by_id($elm->obj->id, $elm->type);
                 }
 
                 $result = $elm->dsp_id();
                 if ($pos == 0) {
-                    $target = 'word "Country" (' . $wrd_country->id() . ') for user 3 (zukunft.com system test)';
+                    $target = 'word "Country" (' . $wrd_country->id . ') for user 3 (zukunft.com system test)';
                 } elseif ($pos == 1) {
                     $target = 'verb "can be used as a differentiator for" (' . $vrb_id . ') for user 3 (zukunft.com system test)';
                 } elseif ($pos == 2) {
-                    $target = 'word "Canton" (' . $wrd_canton->id() . ') for user 3 (zukunft.com system test)';
+                    $target = 'word "Canton" (' . $wrd_canton->id . ') for user 3 (zukunft.com system test)';
                 } elseif ($pos == 3) {
-                    $target = 'word "System Test Word Total" (' . $wrd_total->id() . ') for user 3 (zukunft.com system test)';
+                    $target = 'word "System Test Word Total" (' . $wrd_total->id . ') for user 3 (zukunft.com system test)';
                 }
                 $t->display('element->dsp_id', $target, $result);
 
@@ -106,13 +106,13 @@ class element_write_tests
                 $result = $elm_dsp->link($back);
                 $url = '<a href="/http/view.php?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
                 if ($pos == 0) {
-                    $target = $url . $wrd_country->id() . '&back=0" title="Country">Country</a>';
+                    $target = $url . $wrd_country->id . '&back=0" title="Country">Country</a>';
                 } elseif ($pos == 1) {
                     $target = 'can be used as a differentiator for';
                 } elseif ($pos == 2) {
-                    $target = $url . $wrd_canton->id() . '&back=0" title="Canton">Canton</a>';
+                    $target = $url . $wrd_canton->id . '&back=0" title="Canton">Canton</a>';
                 } elseif ($pos == 3) {
-                    $target = $url . $wrd_total->id() . '&back=0" title="System Test Word Total">System Test Word Total</a>';
+                    $target = $url . $wrd_total->id . '&back=0" title="System Test Word Total">System Test Word Total</a>';
                 }
                 $t->display('element->dsp_id', $target, $result);
 

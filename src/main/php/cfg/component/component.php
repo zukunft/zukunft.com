@@ -84,6 +84,7 @@ include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -112,6 +113,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\const\components;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
@@ -400,7 +402,7 @@ class component extends sandbox_code_id
         } elseif (is_int($value)) {
             if ($value != 0) {
                 // TODO use formula cache
-                $frm->set_id($value);
+                $frm->id = $value;
             }
         } else {
             log_err('unexpected format of api message');
@@ -659,7 +661,7 @@ class component extends sandbox_code_id
         if ($id != null) {
             if ($id > 0) {
                 $frm = new formula($this->user());
-                $frm->set_id($id);
+                $frm->id = $id;
             } else {
                 $lib = new library();
                 $usr_msg->add_id_with_vars(msg_id::LOAD_FORMULA_ID, [
@@ -1058,10 +1060,10 @@ class component extends sandbox_code_id
      * check if the named object in the database needs to be updated
      * is expected to be similar to the diff_msg function
      *
-     * @param component|CombineObject|db_object_seq_id $db_obj the word as saved in the database
+     * @param component|CombineObject|IdObject $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(component|CombineObject|db_object_seq_id $db_obj): bool
+    function needs_db_update(component|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->formula_id() != null) {
@@ -1108,7 +1110,7 @@ class component extends sandbox_code_id
     // set the log entry parameters for a value update
     function log_link($dsp): bool
     {
-        log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id());
+        log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id);
         $log = new change_link($this->user());
         $log->set_action(change_actions::ADD);
         $log->set_class(component_link::class);
@@ -1124,7 +1126,7 @@ class component extends sandbox_code_id
     // set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
     function log_unlink($dsp): bool
     {
-        log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id());
+        log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id);
         $log = new change_link($this->user());
         $log->set_action(change_actions::DELETE);
         $log->set_class(component_link::class);
@@ -1592,7 +1594,7 @@ class component extends sandbox_code_id
                     FROM component_types
                    WHERE component_type_id = ".$this->type_id.";";
           $db_con = new mysql;
-          $db_con->usr_id = $this->user()->id();
+          $db_con->usr_id = $this->user()->id;
           $db_type = $db_con->get1($sql);
           $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }

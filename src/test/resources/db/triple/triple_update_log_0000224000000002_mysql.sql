@@ -1,4 +1,5 @@
-CREATE OR REPLACE FUNCTION triple_update_log_000022400000002
+DROP PROCEDURE IF EXISTS triple_update_log_0000224000000002;
+CREATE PROCEDURE triple_update_log_0000224000000002
         (_user_id                 bigint,
          _change_action_id        smallint,
          _field_id_triple_name    smallint,
@@ -15,8 +16,7 @@ CREATE OR REPLACE FUNCTION triple_update_log_000022400000002
          _phrase_type_id          smallint,
          _field_id_protect_id     smallint,
          _protect_id_old          smallint,
-         _protect_id              smallint) RETURNS void AS
-$$
+         _protect_id              smallint)
 BEGIN
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,    old_value,     new_value, row_id)
@@ -35,29 +35,26 @@ BEGIN
            protect_id     = _protect_id
      WHERE triple_id = _triple_id;
 
-END
-$$ LANGUAGE plpgsql;
+END;
 
-PREPARE triple_update_log_000022400000002_call
-        (bigint, smallint, smallint, text, text, bigint, smallint, text, text, smallint, text, smallint, text, smallint, smallint, smallint, smallint) AS
-SELECT triple_update_log_000022400000002
-        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12, $13, $14,$15, $16, $17);
+PREPARE triple_update_log_0000224000000002_call FROM
+    'SELECT triple_update_log_0000224000000002 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT triple_update_log_000022400000002
-        (1::bigint,
-         2::smallint,
-         18::smallint,
-         'mathematical constant'::text,
-         'System Test Word Renamed'::text,
-         1::bigint,
-         68::smallint,
-         'A mathematical constant that never changes e.g. Pi'::text,
-         null::text,
-         69::smallint,
-         'constant'::text,
-         17::smallint,
-         null::text,
-         null::smallint,
-         97::smallint,
-         3::smallint,
-         null::smallint);
+SELECT triple_update_log_0000224000000002
+       (1,
+        2,
+        18,
+        'mathematical constant',
+        'System Test Word Renamed',
+        1,
+        68,
+        'A mathematical constant that never changes e.g. Pi',
+        null,
+        69,
+        'constant',
+        17,
+        null,
+        null,
+        97,
+        3,
+        null);

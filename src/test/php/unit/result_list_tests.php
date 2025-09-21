@@ -97,14 +97,14 @@ class result_list_tests
         // sql to load a list of results by the word id
         $res_lst = new result_list($usr);
         $wrd = new word($usr);
-        $wrd->set_id(2);
+        $wrd->id = 2;
         // TODO activate Prio 1
         //$t->assert_sql_list_by_ref($db_con, $res_lst, $wrd);
 
         // sql to load a list of results by the triple id
         $res_lst = new result_list($usr);
         $trp = new triple($usr);
-        $trp->set_id(3);
+        $trp->id = 3;
         // TODO activate Prio 1
         //$t->assert_sql_list_by_ref($db_con, $res_lst, $trp);
 

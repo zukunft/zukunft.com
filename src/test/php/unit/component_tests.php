@@ -78,7 +78,7 @@ class component_tests
 
         $t->subheader($ts . 'component sql read standard and user changes by id');
         $cmp = new component($usr);
-        $cmp->set_id(2);
+        $cmp->id = 2;
         //$t->assert_sql_all($db_con, $cmp);
         $t->assert_sql_standard($sc, $cmp);
         $t->assert_sql_user_changes($sc, $cmp);

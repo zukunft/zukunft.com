@@ -650,7 +650,7 @@ class change_log extends db_object_seq_id_user
                 }
             } else {
                 $sys_usr = new user();
-                $sys_usr->set_id(users::SYSTEM_ID);
+                $sys_usr->id = users::SYSTEM_ID;
                 $sys_usr->set_name(users::SYSTEM_NAME);
                 log_warning('Log field settings for table ' . $table_name . ' are missing',
                     '', '', '', $sys_usr, $db_con);
@@ -974,10 +974,10 @@ class change_log extends db_object_seq_id_user
     {
         $fvt_lst = new sql_par_field_list();
         if ($sc_par_lst->has_requesting_user()) {
-            $fvt_lst->add_field(user_db::FLD_ID, $this->user()->id(), db_object_seq_id::FLD_ID_SQL_TYP,
+            $fvt_lst->add_field(user_db::FLD_ID, $this->user()->id, db_object_seq_id::FLD_ID_SQL_TYP,
                 null, sql::PAR_PREFIX . sql::FLD_LOG_REQ_USER);
         } else {
-            $fvt_lst->add_field(user_db::FLD_ID, $this->user()->id(), db_object_seq_id::FLD_ID_SQL_TYP);
+            $fvt_lst->add_field(user_db::FLD_ID, $this->user()->id, db_object_seq_id::FLD_ID_SQL_TYP);
         }
         $fvt_lst->add_field(change_action::FLD_ID, $this->action_id, type_object::FLD_ID_SQL_TYP);
         if ($this->field_id != null) {
@@ -1012,7 +1012,7 @@ class change_log extends db_object_seq_id_user
     function db_values(): array
     {
         $sql_values = array();
-        $sql_values[] = $this->user()->id();
+        $sql_values[] = $this->user()->id;
         $sql_values[] = $this->action_id;
         $sql_values[] = $this->field_id;
 
@@ -1059,7 +1059,7 @@ class change_log extends db_object_seq_id_user
             }
             $result = False;
         } else {
-            $this->set_id($log_id);
+            $this->id = $log_id;
             // restore the type before saving the log
             $db_con->set_class($db_type);
             $result = True;

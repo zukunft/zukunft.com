@@ -151,14 +151,14 @@ class change_value extends change_log
             // TODO check if not the complete user should be loaded
             $usr_set = false;
             if ($usr != null) {
-                if ($db_row[user_db::FLD_ID] == $usr->id()) {
+                if ($db_row[user_db::FLD_ID] == $usr->id) {
                     $this->set_user($usr);
                     $usr_set = true;
                 }
             }
             if (!$usr_set) {
                 $row_usr = new user();
-                $row_usr->set_id($db_row[user_db::FLD_ID]);
+                $row_usr->id = $db_row[user_db::FLD_ID];
                 $row_usr->name = $db_row[user_db::FLD_NAME];
                 $this->set_user($row_usr);
             }

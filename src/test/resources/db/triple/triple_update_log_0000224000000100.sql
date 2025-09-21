@@ -1,5 +1,4 @@
-DROP PROCEDURE IF EXISTS triple_update_log_000022400000002;
-CREATE PROCEDURE triple_update_log_000022400000002
+CREATE OR REPLACE FUNCTION triple_update_log_0000224000000100
         (_user_id                 bigint,
          _change_action_id        smallint,
          _field_id_triple_name    smallint,
@@ -14,9 +13,10 @@ CREATE PROCEDURE triple_update_log_000022400000002
          _phrase_type_id_old      smallint,
          _phrase_type_name        text,
          _phrase_type_id          smallint,
-         _field_id_protect_id     smallint,
-         _protect_id_old          smallint,
-         _protect_id              smallint)
+         _field_id_excluded       smallint,
+         _excluded_old            smallint,
+         _excluded                smallint) RETURNS void AS
+$$
 BEGIN
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,    old_value,     new_value, row_id)
@@ -25,36 +25,42 @@ BEGIN
          SELECT          _user_id,_change_action_id,_field_id_description,_description_old,_description,_triple_id ;
     INSERT INTO changes ( user_id, change_action_id, change_field_id,         old_value,            new_value,        old_id,             new_id,         row_id)
          SELECT          _user_id,_change_action_id,_field_id_phrase_type_id,_phrase_type_name_old,_phrase_type_name,_phrase_type_id_old,_phrase_type_id,_triple_id ;
-    INSERT INTO changes (user_id, change_action_id, change_field_id,     old_value,      new_value,  row_id)
-         SELECT         _user_id,_change_action_id,_field_id_protect_id,_protect_id_old,_protect_id,_triple_id ;
+    INSERT INTO changes (user_id, change_action_id, change_field_id,   old_value,    new_value,row_id)
+         SELECT         _user_id,_change_action_id,_field_id_excluded,_excluded_old,_excluded,_triple_id ;
+
+    INSERT INTO changes (user_id, change_action_id, change_field_id,      old_value,       row_id)
+         SELECT         _user_id,_change_action_id,_field_id_triple_name,_triple_name_old,_triple_id ;
 
     UPDATE triples
        SET triple_name    = _triple_name,
            description    = _description,
            phrase_type_id = _phrase_type_id,
-           protect_id     = _protect_id
+           excluded       = _excluded
      WHERE triple_id = _triple_id;
 
-END;
+END
+$$ LANGUAGE plpgsql;
 
-PREPARE triple_update_log_000022400000002_call FROM
-    'SELECT triple_update_log_000022400000002 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE triple_update_log_0000224000000100_call
+        (bigint, smallint, smallint, text, text, bigint, smallint, text, text, smallint, text, smallint, text, smallint, smallint, smallint, smallint) AS
+SELECT triple_update_log_0000224000000100
+        ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12, $13, $14,$15, $16, $17);
 
-SELECT triple_update_log_000022400000002
-       (1,
-        2,
-        18,
-        'mathematical constant',
-        'System Test Word Renamed',
-        1,
-        68,
-        'A mathematical constant that never changes e.g. Pi',
-        null,
-        69,
-        'constant',
-        17,
-        null,
-        null,
-        97,
-        3,
-        null);
+SELECT triple_update_log_0000224000000100
+        (1::bigint,
+         2::smallint,
+         18::smallint,
+         'mathematical constant'::text,
+         ''::text,
+         1::bigint,
+         68::smallint,
+         'A mathematical constant that never changes e.g. Pi'::text,
+         ''::text,
+         69::smallint,
+         'constant'::text,
+         17::smallint,
+         null::text,
+         null::smallint,
+         21::smallint,
+         null::smallint,
+         1::smallint);

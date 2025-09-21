@@ -1596,10 +1596,10 @@ class sql_db
         if ($usr == null) {
             $this->set_usr(users::SYSTEM_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
-            if ($usr->id() == null) {
+            if ($usr->id == null) {
                 $this->set_usr(0); // fallback for special cases
             } else {
-                $this->set_usr($usr->id()); // by default use the session user id
+                $this->set_usr($usr->id); // by default use the session user id
             }
         }
         $this->set_table($usr_table, $ext);
@@ -2963,7 +2963,7 @@ class sql_db
                 $function_trace = (new Exception)->getTraceAsString();
                 // set the global db connection to be able to report error also on db restart
                 $usr = new user();
-                $usr->set_id($this->usr_id);
+                $usr->id = $this->usr_id;
                 $msg = log_msg($msg_text, $msg_text . ' from ' . $sql_name, $log_level, $sql_name, $function_trace, $usr);
                 throw new Exception("sql_db->exe -> error (" . $msg . ")");
             }
@@ -4397,12 +4397,12 @@ class sql_db
         $sys_usr = new user();
         $sys_usr->load_by_name(users::SYSTEM_NAME);
 
-        if ($sys_usr->id() <= 0) {
+        if ($sys_usr->id <= 0) {
             log_err('Cannot load system used in set_default_owner');
             $result = false;
         } else {
             $sql = "UPDATE " . $this->name_sql_esc($this->table) . "
-               SET user_id = " . $sys_usr->id() . "
+               SET user_id = " . $sys_usr->id . "
              WHERE user_id IS NULL;";
 
             //return $this->exe($sql, 'user_default', array());
@@ -5807,7 +5807,7 @@ class sql_db
         $usr = new user;
         $usr->load_by_id(users::SYSTEM_ID);
 
-        if ($usr->id() <= 0) {
+        if ($usr->id <= 0) {
 
             // check if there is really no user in the database with a system profile
             $check_usr = new user();

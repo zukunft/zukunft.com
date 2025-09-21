@@ -145,7 +145,7 @@ class controller
         $result = ''; // reset the json message string
 
         $dbo->api_mapper($api_json);
-        $dbo->set_id($id);
+        $dbo->id = $id;
 
         // update the db object e.g. word
         $upd_result = $dbo->save();

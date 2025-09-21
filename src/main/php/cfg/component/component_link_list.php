@@ -178,7 +178,7 @@ class component_link_list extends sandbox_link_list
 
         $sc->set_class(component_link::class);
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(component_link::FLD_NAMES);
         $sc->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
         return $qp;

@@ -69,21 +69,21 @@ $usr = new user;
 $result .= $usr->get();
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+if ($usr->id > 0) {
 
     $usr->load_usr_data();
 
     $msk = new view($usr);
-    $msk->set_id($sys_msk_cac->id(view_shared::ERR_UPD));
+    $msk->id = $sys_msk_cac->id(view_shared::ERR_UPD);
     $msk_dsp = new view_dsp($msk->api_json());
     $result .= $msk_dsp->dsp_navbar($back);
 
-    if ($usr->id() > 0 and $usr->is_admin()) {
+    if ($usr->id > 0 and $usr->is_admin()) {
         // update the error if requested
         if ($log_id > 0 and $status_id > 0) {
             $err_entry = new sys_log;
             $err_entry->set_user($usr);
-            $err_entry->set_id($log_id);
+            $err_entry->id = $log_id;
             $err_entry->status_id = $status_id;
             $err_entry->save();
         }
@@ -100,7 +100,7 @@ if ($usr->id() > 0) {
             $err_lst_dsp = new sys_log_list($err_lst->api_json());
             $errors_all = $err_lst_dsp->get_html();
         }
-        //$errors_all .= dsp_errors  ($usr->id(), $usr->profile_id, "all", $back);
+        //$errors_all .= dsp_errors  ($usr->id, $usr->profile_id, "all", $back);
         if ($errors_all <> "") {
             $result .= $html->dsp_text_h3("Program issues that other user have found, that have not yet been solved.");
             $result .= $errors_all;

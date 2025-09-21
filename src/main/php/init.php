@@ -574,7 +574,7 @@ function prg_restart(string $code_name): sql_db
 
         // create a virtual one-time system user to load the system users
         $usr_sys = new user();
-        $usr_sys->set_id(users::SYSTEM_ID);
+        $usr_sys->id = users::SYSTEM_ID;
         $usr_sys->name = users::SYSTEM_NAME;
 
         // load system configuration

@@ -221,7 +221,7 @@ class result_tests
     {
         // prepare
         $frm = new formula($t->usr1);
-        $frm->set_id(2);
+        $frm->id = 2;
         $grp = new group($t->usr1);
         $grp->set_id(3);
 
@@ -251,7 +251,7 @@ class result_tests
     {
         // prepare
         $frm = new formula($t->usr1);
-        $frm->set_id(2);
+        $frm->id = 2;
         $grp1 = new group($t->usr1);
         $grp1->set_id(3);
         $grp2 = new group($t->usr1);

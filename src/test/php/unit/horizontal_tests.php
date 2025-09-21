@@ -151,7 +151,8 @@ class horizontal_tests
             if (in_array($class, def::SANDBOX_CLASSES)) {
                 $filled_obj->include();
             }
-            $check_obj = clone $filled_obj;
+            // use the clone function instead of pure clone of the object to clone also the child objects like the group of the value
+            $check_obj = $filled_obj->clone_all();
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
             $ui_obj = $t->frontend_obj_from_backend_object($filled_obj);
             $ui_obj->set_from_json($api_json);
@@ -204,7 +205,7 @@ class horizontal_tests
                 $filled_obj->import_mapper($ex_json, $dto);
             }
             // set the remembered id again , because the db id is never included in the export
-            $filled_obj->set_id($id);
+            $filled_obj->id = $id;
             $final_json = $filled_obj->api_json([api_type::TEST_MODE]);
             $t->assert_json_string($test_name, $final_json, $api_json);
         }

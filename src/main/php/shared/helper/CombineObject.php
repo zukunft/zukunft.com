@@ -92,7 +92,7 @@ class CombineObject
      */
     function set_id(int $id): void
     {
-        $this->obj()->set_id($id);
+        $this->obj()->id = $id;
     }
 
     /**

@@ -373,7 +373,7 @@ class word_write_tests
 
         // check if the word parameters have been added
         $wrd_reloaded = $t->load_word(words::TEST_RENAMED);
-        $result = $wrd_reloaded->plural();
+        $result = $wrd_reloaded->plural;
         $target = words::TEST_RENAMED . 's';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '"', $target, $result);
         $result = $wrd_reloaded->description;
@@ -408,7 +408,7 @@ class word_write_tests
         // check if a user specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);
         $wrd_usr2_reloaded->load_by_name(words::TEST_RENAMED);
-        $result = $wrd_usr2_reloaded->plural();
+        $result = $wrd_usr2_reloaded->plural;
         $target = words::TEST_RENAMED . 's2';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '"', $target, $result);
         $result = $wrd_usr2_reloaded->description;
@@ -420,7 +420,7 @@ class word_write_tests
 
         // check the word for the original user remains unchanged
         $wrd_reloaded = $t->load_word(words::TEST_RENAMED);
-        $result = $wrd_reloaded->plural();
+        $result = $wrd_reloaded->plural;
         $target = words::TEST_RENAMED . 's';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '" unchanged for user 1', $target, $result);
         $result = $wrd_reloaded->description;
@@ -445,7 +445,7 @@ class word_write_tests
         // check if a user specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);
         $wrd_usr2_reloaded->load_by_name(words::TEST_RENAMED);
-        $result = $wrd_usr2_reloaded->plural();
+        $result = $wrd_usr2_reloaded->plural;
         $target = words::TEST_RENAMED . 's';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '" unchanged now also for user 2', $target, $result);
         $result = $wrd_usr2_reloaded->description;

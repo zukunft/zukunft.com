@@ -206,7 +206,7 @@ class sandbox_list extends base_list
         //$sc->set_class($lib->class_to_name($sbx::class));
         $sc->set_class($sbx::class);
         $sc->set_name($qp->name);  // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(array($sbx->id_field()));
         $sc->set_usr_query();
         if ($pattern != '') {
@@ -268,7 +268,7 @@ class sandbox_list extends base_list
         $result = false;
 
         // check the all minimal input parameters are set
-        if ($this->user()->id() <= 0) {
+        if ($this->user()->id <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql_names($db_con->sql_creator(), $sbx, $pattern, $limit, $offset);
@@ -308,7 +308,7 @@ class sandbox_list extends base_list
         }
 
         // check the all minimal input parameters are set
-        if ($this->user()->id() <= 0) {
+        if ($this->user()->id <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } elseif ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
@@ -518,7 +518,7 @@ class sandbox_list extends base_list
         }
         if ($debug > DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+                $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }
         }
         return $result;

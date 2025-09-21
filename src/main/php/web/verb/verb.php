@@ -231,7 +231,7 @@ class verb extends sandbox_named
         $result .= '      verb plural:';
         $result .= '    </td>';
         $result .= '    <td>';
-        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural" value="' . $this->plural() . '">';
+        $result .= '      <input type="' . html_base::INPUT_TEXT . '" name="plural" value="' . $this->get_plural() . '">';
         $result .= '    </td>';
         $result .= '  </tr>';
         $result .= '  <tr>';

@@ -66,7 +66,7 @@ if ($db_con->is_open()) {
     $result = $start_usr->get();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($start_usr->id() > 0) {
+    if ($start_usr->id > 0) {
         if ($start_usr->is_admin()) {
 
             // run all unit, read and write tests

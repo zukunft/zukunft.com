@@ -67,7 +67,7 @@ class triple_old
 
         // sql to load a triple by id
         $trp = new triple($usr);
-        $trp->set_id(1);
+        $trp->id = 1;
         $t->assert_sql_by_obj_vars($db_con, $trp);
         $t->assert_sql_standard($sc, $trp);
 
@@ -80,17 +80,17 @@ class triple_old
         // sql to load a triple by link ids
         $trp = new triple($usr);
         $wrd_from = new word($usr);
-        $wrd_from->set_id(2);
+        $wrd_from->id = 2;
         $vrb = new verb();
-        $vrb->set_id(3);
+        $vrb->id = 3;
         $wrd_to = new word($usr);
-        $wrd_to->set_id(4);
+        $wrd_to->id = 4;
         $trp->set_from($wrd_from->phrase());
         $trp->set_verb($vrb);
         $trp->set_to($wrd_to->phrase());
         $t->assert_sql_by_obj_vars($db_con, $trp);
         $t->assert_sql_standard($sc, $trp);
-        $trp->set_id(5);
+        $trp->id = 5;
         $t->assert_sql_not_changed($sc, $trp);
         $t->assert_sql_user_changes($sc, $trp);
 

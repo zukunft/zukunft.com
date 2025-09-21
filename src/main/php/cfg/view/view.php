@@ -87,6 +87,7 @@ include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED . 'json_fields.php';
@@ -119,8 +120,8 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
-
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
@@ -809,7 +810,7 @@ class view extends sandbox_code_id
         }
 
         $db_con->set_class(component_link::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_name($qp->name);
         $db_con->set_fields(component_link::FLD_NAMES);
         $db_con->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
@@ -928,8 +929,8 @@ class view extends sandbox_code_id
                 $cmp->save();
                 $cmp_lnk = new component_link($this->user());
                 $cmp_lnk->reset();
-                $cmp_lnk->view()->set_id($this->id());
-                $cmp_lnk->component()->set_id($cmp->id());
+                $cmp_lnk->view()->id = $this->id();
+                $cmp_lnk->component()->id = $cmp->id();
                 $cmp_lnk->order_nbr = $pos;
                 $cmp_lnk->set_pos_type($pos_type_code_id);
                 $cmp_lnk->set_style($style_code_id);
@@ -1102,10 +1103,10 @@ class view extends sandbox_code_id
      * check if the view in the database needs to be updated
      * e.g. for import if this view has only the name set, the protection should not be updated in the database
      *
-     * @param view|CombineObject|db_object_seq_id $db_obj the word as saved in the database
+     * @param view|CombineObject|IdObject $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(view|CombineObject|db_object_seq_id $db_obj): bool
+    function needs_db_update(view|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->style() != null) {

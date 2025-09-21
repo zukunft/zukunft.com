@@ -83,12 +83,12 @@ include_once paths::SHARED_CONST . 'rest_ctrl.php';
 class test_api extends create_test_objects
 {
     // path
-    const API_PATH = 'api';
-    const JSON_EXT = '.json';
+    const string API_PATH = 'api';
+    const string JSON_EXT = '.json';
     // an api json message for an empty object
-    const JSON_ID_ONLY = '{"id":0}';
+    const string JSON_ID_ONLY = '{"id":0}';
     // an export json message for an empty object
-    const JSON_NAME_ONLY = '{"name":""}';
+    const string JSON_NAME_ONLY = '{"name":""}';
     // an export json message for an empty array object e.g.
     const JSON_ARRAY_ONLY = '[]';
 
@@ -175,7 +175,11 @@ class test_api extends create_test_objects
             $usr_obj->include();
             // check that the excluded object returns a json with just the id and the excluded flag
             $json_api = $usr_obj->api_json();
-            $clone_obj = clone $usr_obj;
+            if ($usr_obj::class == value::class) {
+                $clone_obj = $usr_obj->clone_all();
+            } else {
+                $clone_obj = clone $usr_obj;
+            }
             $clone_obj->reset();
             $json_empty = $clone_obj->api_json();
             $target = self::JSON_ID_ONLY;
@@ -409,12 +413,12 @@ class test_api extends create_test_objects
         switch ($class) {
             case word::class:
                 $wrd = new word($usr);
-                $wrd->set_id($id);
+                $wrd->id = $id;
                 $usr_msg = $wrd->del();
                 break;
             case source::class:
                 $src = new source($usr);
-                $src->set_id($id);
+                $src->id = $id;
                 $usr_msg = $src->del();
                 break;
             default:
@@ -608,7 +612,7 @@ class test_api extends create_test_objects
             $filename .= '_' . $fld;
         }
         if ($usr != null) {
-            $filename .= '_u' . $usr->id();
+            $filename .= '_u' . $usr->id;
         }
         if ($page != 0) {
             $filename .= '_p' . $page;

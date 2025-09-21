@@ -241,7 +241,7 @@ class user extends db_id_object_non_sandbox
 
     function reset(): void
     {
-        $this->set_id(0);
+        $this->id = 0;
 
         // more unique keys
         $this->name = null;
@@ -298,7 +298,7 @@ class user extends db_id_object_non_sandbox
     function cloned(string $name): user
     {
         $obj_cpy = $this->clone_reset();
-        $obj_cpy->set_id($this->id());
+        $obj_cpy->id = $this->id;
         $obj_cpy->set_name($name);
         return $obj_cpy;
     }
@@ -359,7 +359,7 @@ class user extends db_id_object_non_sandbox
             if (array_key_exists(user_db::FLD_SOURCE, $db_row)) {
                 if ($db_row[user_db::FLD_SOURCE] != null) {
                     $src = new source($this);
-                    $src->set_id($db_row[user_db::FLD_SOURCE]);
+                    $src->id = $db_row[user_db::FLD_SOURCE];
                     $this->source = $src;
                 }
             }
@@ -552,7 +552,7 @@ class user extends db_id_object_non_sandbox
      */
     function set(int $id = 0, string $name = '', string $email = ''): void
     {
-        $this->set_id($id);
+        $this->id = $id;
         $this->set_name($name);
         $this->set_email($email);
     }
@@ -895,7 +895,7 @@ class user extends db_id_object_non_sandbox
 
         $db_row = $db_con->get1($qp);
         $this->row_mapper($db_row);
-        return $this->id();
+        return $this->id;
     }
 
 
@@ -919,13 +919,13 @@ class user extends db_id_object_non_sandbox
         $sc->set_name($qp->name);
 
         if ($this->viewer == null) {
-            if ($this->id() == null) {
+            if ($this->id == null) {
                 $sc->set_usr(0);
             } else {
-                $sc->set_usr($this->id());
+                $sc->set_usr($this->id);
             }
         } else {
-            $sc->set_usr($this->viewer->id());
+            $sc->set_usr($this->viewer->id);
         }
         $sc->set_fields(user_db::FLD_NAMES);
         return $qp;
@@ -1110,7 +1110,7 @@ class user extends db_id_object_non_sandbox
         $ip_lst->load();
         $test_result = $ip_lst->includes($ip_addr);
         if (!$test_result->is_ok()) {
-            $this->set_id(0); // switch off the permission
+            $this->id = 0; // switch off the permission
         }
         return $test_result->all_message_text();
     }
@@ -1153,12 +1153,12 @@ class user extends db_id_object_non_sandbox
             if (isset($_SESSION['logged'])) {
                 if ($_SESSION['logged']) {
                     $this->load_by_id($_SESSION['usr_id']);
-                    log_debug('use (' . $this->id() . ')');
+                    log_debug('use (' . $this->id . ')');
                 }
             } else {
                 // else use the IP address (for testing don't overwrite any testing ip)
                 $this->load_by_ip($this->get_ip());
-                if ($this->id() <= 0) {
+                if ($this->id <= 0) {
                     // use the ip address as the username and add the user
                     $this->name = $this->get_ip();
 
@@ -1177,7 +1177,7 @@ class user extends db_id_object_non_sandbox
                 }
             }
         }
-        log_debug(' "' . $this->name . '" (' . $this->id() . ')');
+        log_debug(' "' . $this->name . '" (' . $this->id . ')');
         return $result;
     }
 
@@ -1215,7 +1215,7 @@ class user extends db_id_object_non_sandbox
             $usr_msg->add($sys_usr->save_direct());
             if (!$usr_msg->is_ok()) {
                 log_fatal('system user cannot be created', 'sql_db->create_system_user');
-            } elseif ($sys_usr->id() != users::SYSTEM_ID) {
+            } elseif ($sys_usr->id != users::SYSTEM_ID) {
                 log_fatal('system user has not the expected database id of ' . users::SYSTEM_ID, 'sql_db->create_system_user');
             } else {
                 // add the local admin user to use it for the import
@@ -1230,7 +1230,7 @@ class user extends db_id_object_non_sandbox
                 $usr_msg->add($local_usr->save_direct());
                 if (!$usr_msg->is_ok()) {
                     log_fatal('local admin user cannot be created', 'sql_db->create_system_user');
-                } elseif ($local_usr->id() != users::SYSTEM_ADMIN_ID) {
+                } elseif ($local_usr->id != users::SYSTEM_ADMIN_ID) {
                     log_fatal('local admin user has not the expected database id of ' . users::SYSTEM_ADMIN_ID, 'sql_db->create_system_user');
                 } else {
                     $usr_msg->add_info_id(msg_id::DONE);
@@ -1282,7 +1282,7 @@ class user extends db_id_object_non_sandbox
 
         // if the user who wants to change it, is the owner, he can do it
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
-        if ($this->id() == $usr_req->id()) {
+        if ($this->id == $usr_req->id) {
             $can_change = true;
         } elseif ($usr_req->is_admin() or $usr_req->is_system()) {
             $can_change = true;
@@ -1305,7 +1305,7 @@ class user extends db_id_object_non_sandbox
     {
         $result = false;
         // the user can change in general its own parameters
-        if ($usr->id() != 0 and $usr->id() == $this->id()) {
+        if ($usr->id != 0 and $usr->id == $this->id) {
             $result = true;
         }
         // the system users can always change other users
@@ -1625,7 +1625,7 @@ class user extends db_id_object_non_sandbox
      */
     function is_set(): bool
     {
-        if ($this->id() > 0) {
+        if ($this->id > 0) {
             return true;
         } else {
             return false;
@@ -1795,7 +1795,7 @@ class user extends db_id_object_non_sandbox
      */
     function dummy_all(): void
     {
-        $this->set_id(0);
+        $this->id = 0;
         // TODO Prio 1 use a const
         $this->code_id = 'all';
         $this->name = 'standard user view for all users';
@@ -1804,30 +1804,30 @@ class user extends db_id_object_non_sandbox
     // create the HTML code to display the username with the HTML link
     function display(): string
     {
-        return '<a href="/http/user.php?id=' . $this->id() . '">' . $this->name . '</a>';
+        return '<a href="/http/user.php?id=' . $this->id . '">' . $this->name . '</a>';
     }
 
     // remember the last source that the user has used
     function set_source($source_id): bool
     {
-        log_debug('(' . $this->id() . ',s' . $source_id . ')');
+        log_debug('(' . $this->id . ',s' . $source_id . ')');
         global $db_con;
         //$db_con = new mysql;
-        $db_con->usr_id = $this->id();
+        $db_con->usr_id = $this->id;
         $db_con->set_class(user::class);
-        return $db_con->update_old($this->id(), 'source_id', $source_id);
+        return $db_con->update_old($this->id, 'source_id', $source_id);
     }
 
     // remember the last source that the user has used
     // TODO add the database field
     function set_verb($vrb_id): bool
     {
-        log_debug('(' . $this->id() . ',s' . $vrb_id . ')');
+        log_debug('(' . $this->id . ',s' . $vrb_id . ')');
         global $db_con;
         //$db_con = new mysql;
-        $db_con->usr_id = $this->id();
+        $db_con->usr_id = $this->id;
         $result = $db_con->set_class(user::class);
-        //$result = $db_con->update($this->id(), verb_db::FLD_ID, $vrb_id);
+        //$result = $db_con->update($this->id, verb_db::FLD_ID, $vrb_id);
         return $result;
     }
 
@@ -1874,11 +1874,11 @@ class user extends db_id_object_non_sandbox
             $log = $this->log_upd();
             $log->old_value = $db_value;
             $log->new_value = $usr_par[$par_name];
-            $log->row_id = $this->id();
+            $log->row_id = $this->id;
             $log->set_field($fld_name);
             if ($log->add()) {
                 $db_con->set_class(user::class);
-                $result = $db_con->update_old($this->id(), $log->field(), $log->new_value);
+                $result = $db_con->update_old($this->id, $log->field(), $log->new_value);
             }
         }
     }
@@ -1897,11 +1897,11 @@ class user extends db_id_object_non_sandbox
         $result = ''; // reset the html code var
 
         // build the database object because the is anyway needed
-        $db_con->usr_id = $this->id();
+        $db_con->usr_id = $this->id;
         $db_con->set_class(user::class);
 
         $db_usr = new user;
-        $db_id = $db_usr->load_by_id($this->id());
+        $db_id = $db_usr->load_by_id($this->id);
         log_debug('database user loaded "' . $db_id . '"');
 
         $this->upd_par($db_con, $usr_par, $db_usr->name, user_db::FLD_NAME, 'name');
@@ -1990,7 +1990,7 @@ class user extends db_id_object_non_sandbox
 
         // configure the global database connection object for the select, insert, update and delete queries
         $db_con->set_class($this::class);
-        $db_con->set_usr($usr_req->id());
+        $db_con->set_usr($usr_req->id);
 
         // check the preserved names
         $usr_msg = $this->check_preserved($usr_req);
@@ -1998,10 +1998,10 @@ class user extends db_id_object_non_sandbox
         // check if a user with the same name or email already exists
         if ($usr_msg->is_ok()) {
             // if a new user is supposed to be added check upfront for a similar object to prevent adding duplicates
-            if ($this->id() == 0) {
+            if ($this->id == 0) {
                 log_debug('check possible duplicates before adding ' . $this->dsp_id());
                 $similar = $this->get_similar();
-                if ($similar->id() <> 0) {
+                if ($similar->id <> 0) {
                     log_debug('got similar ' . $similar->dsp_id());
                     // check that the get_similar function has really found a similar object and report potential program errors
                     if (!$this->is_similar($similar)) {
@@ -2011,8 +2011,8 @@ class user extends db_id_object_non_sandbox
                         ]);
                     } else {
                         // if similar is found set the id to trigger the updating instead of adding
-                        $similar->load_by_id($similar->id()); // e.g. to get the type_id
-                        $this->set_id($similar->id());
+                        $similar->load_by_id($similar->id); // e.g. to get the type_id
+                        $this->id = $similar->id;
                     }
                 } else {
                     log_debug('no similar to ' . $this->dsp_id() . ' found');
@@ -2023,7 +2023,7 @@ class user extends db_id_object_non_sandbox
 
         // create or update
         if ($usr_msg->is_ok()) {
-            if ($this->id() == 0) {
+            if ($this->id == 0) {
 
                 // create a user if no similar user has been found
                 $usr_msg->add($this->db_insert($db_con, $usr_req));
@@ -2035,7 +2035,7 @@ class user extends db_id_object_non_sandbox
                 // read the database parameter of the user as of now
                 $db_rec = clone $this;
                 $db_rec->reset();
-                if ($db_rec->load_by_id($this->id()) != $this->id()) {
+                if ($db_rec->load_by_id($this->id) != $this->id) {
                     $lib = new library();
                     $usr_msg->add_id_with_vars(msg_id::FAILED_RELOAD_CLASS, [
                         msg_id::VAR_CLASS_NAME => $lib->class_to_name($this::class)
@@ -2065,7 +2065,7 @@ class user extends db_id_object_non_sandbox
 
         // configure the global database connection object for the select, insert, update and delete queries
         $db_con->set_class($this::class);
-        $db_con->set_usr($this->id());
+        $db_con->set_usr($this->id);
         $sc_par_lst = new sql_type_list();
 
         // fields and values that the word has additional to the standard named user sandbox object
@@ -2089,7 +2089,7 @@ class user extends db_id_object_non_sandbox
 
         $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
         if ($ins_msg->is_ok()) {
-            $this->set_id($ins_msg->get_row_id());
+            $this->id = $ins_msg->get_row_id();
         }
         $usr_msg->add($ins_msg);
 
@@ -2164,7 +2164,7 @@ class user extends db_id_object_non_sandbox
         $usr_msg = new user_message();
 
         // use the signup system user for standard accounts if no requesting user is given
-        if ($usr_req->id() == 0) {
+        if ($usr_req->id == 0) {
             $usr_req->load_by_code_id(users::SYSTEM_SIGNUP_CODE_ID);
         }
 
@@ -2174,7 +2174,7 @@ class user extends db_id_object_non_sandbox
             $qp = $this->sql_insert($sc, $usr_req, new sql_type_list([sql_type::LOG]));
             $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
             if ($ins_msg->is_ok()) {
-                $this->set_id($ins_msg->get_row_id());
+                $this->id = $ins_msg->get_row_id();
             }
             $usr_msg->add($ins_msg);
         } else {
@@ -2318,7 +2318,7 @@ class user extends db_id_object_non_sandbox
         $fvt_lst_log = clone $fvt_lst;
         $fvt_lst_log->add_field(
             user_db::FLD_ID,
-            $usr->id(),
+            $usr->id,
             sql_par_type::INT
         );
 
@@ -2451,11 +2451,11 @@ class user extends db_id_object_non_sandbox
                 // add the row id
                 $fvt_lst->add_field(
                     $sc->id_field_name(),
-                    $this->id(),
+                    $this->id,
                     db_object_seq_id::FLD_ID_SQL_TYP);
 
                 // create the query parameters for the log entries for the single fields
-                $qp_log = $sc->sql_func_log_update($this::class, $usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id());
+                $qp_log = $sc->sql_func_log_update($this::class, $usr, $fld_lst_chg, $fvt_lst, $sc_par_lst_log, $this->id);
                 $sql .= ' ' . $qp_log->sql;
                 $par_lst_out->add_list($qp_log->par_fld_lst);
             } else {
@@ -2473,7 +2473,7 @@ class user extends db_id_object_non_sandbox
                 // add the row id
                 $fvt_lst->add_field(
                     $sc->id_field_name(),
-                    $this->id(),
+                    $this->id,
                     db_object_seq_id::FLD_ID_SQL_TYP);
 
                 // add the row id of the standard table for user overwrites
@@ -2885,7 +2885,7 @@ class user extends db_id_object_non_sandbox
             $usr_msg = new user_message();
             $lib = new library();
             $class_name = $lib->class_to_name($this::class);
-            if ($this->id() == 0) {
+            if ($this->id == 0) {
                 $usr_msg->add_id_with_vars(msg_id::ID_MISSING_FOR_DEL, [
                     msg_id::VAR_CLASS_NAME => $class_name,
                     msg_id::VAR_NAME => $this->dsp_id()
@@ -2893,7 +2893,7 @@ class user extends db_id_object_non_sandbox
             } else {
                 // refresh the object with the database to include all updates utils now
                 $reloaded = false;
-                $reloaded_id = $this->load_by_id($this->id());
+                $reloaded_id = $this->load_by_id($this->id);
                 if ($reloaded_id != 0) {
                     $reloaded = true;
                 }
@@ -2906,7 +2906,7 @@ class user extends db_id_object_non_sandbox
                 } else {
                     log_debug('reloaded ' . $this->dsp_id());
                     // check if the object is still valid
-                    if ($this->id() <= 0) {
+                    if ($this->id <= 0) {
                         log_warning('Delete failed',
                             $class_name . '->del',
                             'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id()
@@ -2944,8 +2944,8 @@ class user extends db_id_object_non_sandbox
         if ($this->ip_addr != '' and $this->ip_addr != null and $this->ip_addr != $this->name()) {
             $result .= ' - ip ' . $this->ip_addr;
         }
-        if ($this->id() != 0) {
-            $result .= ' (' . $this->id() . ')';
+        if ($this->id != 0) {
+            $result .= ' (' . $this->id . ')';
         }
         return $result;
     }

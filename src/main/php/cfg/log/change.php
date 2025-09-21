@@ -204,14 +204,14 @@ class change extends change_log
             // TODO check if not the complete user should be loaded
             $usr_set = false;
             if ($usr != null) {
-                if ($db_row[user_db::FLD_ID] == $usr->id()) {
+                if ($db_row[user_db::FLD_ID] == $usr->id) {
                     $this->set_user($usr);
                     $usr_set = true;
                 }
             }
             if (!$usr_set) {
                 $row_usr = new user();
-                $row_usr->set_id($db_row[user_db::FLD_ID]);
+                $row_usr->id = $db_row[user_db::FLD_ID];
                 $row_usr->name = $db_row[user_db::FLD_NAME];
                 $this->set_user($row_usr);
             }
@@ -287,7 +287,7 @@ class change extends change_log
             $usr = $this->user();
         }
 
-        $sc->add_where(user_db::FLD_ID, $usr->id());
+        $sc->add_where(user_db::FLD_ID, $usr->id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -305,7 +305,7 @@ class change extends change_log
         $qp->name .= 'user';
         $db_con->set_class(change::class);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(self::FLD_NAMES);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -339,7 +339,7 @@ class change extends change_log
                    OR f.table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 's.user_id = u.user_id
-                AND s.user_id = ' . $this->user()->id() . ' ';
+                AND s.user_id = ' . $this->user()->id . ' ';
         } elseif ($type == word::class) {
             //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_tables::WORD));
             //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_tables::WORD_USR));
@@ -381,7 +381,7 @@ class change extends change_log
             ORDER BY s.change_time DESC
                LIMIT " . $limit . ";";
             log_debug('user_log_display->dsp_hist ' . $qp->sql);
-            $db_con->usr_id = $this->user()->id();
+            $db_con->usr_id = $this->user()->id;
         }
         return $qp;
     }

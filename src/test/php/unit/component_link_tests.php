@@ -90,7 +90,7 @@ class component_link_tests
 
         // sql to load a view component link by the id
         $lnk = new component_link($usr);
-        $lnk->set_id(1);
+        $lnk->id = 1;
         $t->assert_sql_user_changes($sc, $lnk);
 
         $t->subheader($ts . 'component link sql write');

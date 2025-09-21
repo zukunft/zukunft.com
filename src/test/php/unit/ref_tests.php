@@ -75,7 +75,7 @@ class ref_tests
 
         $t->subheader($ts . 'sql read standard and user changes by id');
         $ref = new ref($usr);
-        $ref->set_id(3);
+        $ref->id = 3;
         $t->assert_sql_standard($sc, $ref);
 
         $t->subheader($ts . 'sql read all type');

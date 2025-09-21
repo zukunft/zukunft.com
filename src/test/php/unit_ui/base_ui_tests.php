@@ -257,7 +257,7 @@ class base_ui_tests
         // test if a simple text component can be created
         $cmp = new component($usr);
         $cmp->type_id = $cmp_typ_cac->id(comp_type_shared::TEXT);
-        $cmp->set_id(1);
+        $cmp->id = 1;
         $cmp->set_name(views::NESN_2016_FS_NAME);
         $cmp_dsp = new component_dsp($cmp->api_json());
         $result = $cmp_dsp->html();

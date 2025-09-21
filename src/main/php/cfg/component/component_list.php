@@ -272,7 +272,7 @@ class component_list extends sandbox_list_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(component::FLD_NAMES);
         $sc->set_usr_fields(component::FLD_NAMES_USR);
         $sc->set_usr_num_fields(component::FLD_NAMES_NUM_USR);

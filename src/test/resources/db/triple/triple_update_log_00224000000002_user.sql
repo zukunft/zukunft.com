@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION triple_update_log_0022400000002_user
+CREATE OR REPLACE FUNCTION triple_update_log_00224000000002_user
 (_user_id                 bigint,
  _change_action_id        smallint,
  _field_id_triple_name    smallint,
@@ -39,12 +39,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE triple_update_log_0022400000002_user_call
+PREPARE triple_update_log_00224000000002_user_call
         (bigint,smallint,smallint,text,text,bigint,smallint,text,text,smallint, text, smallint, text, smallint, smallint, smallint, smallint) AS
-SELECT triple_update_log_0022400000002_user
+SELECT triple_update_log_00224000000002_user
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12, $13, $14,$15, $16, $17);
 
-SELECT triple_update_log_0022400000002_user
+SELECT triple_update_log_00224000000002_user
         (1::bigint,
          2::smallint,
          18::smallint,

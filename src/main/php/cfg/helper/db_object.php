@@ -87,23 +87,6 @@ class db_object extends IdObject
 
 
     /*
-     * construct and map
-     */
-
-    /**
-     * dummy map function to be overwritten by the child object
-     *
-     * @param array|null $db_row with the data directly from the database
-     * @param string $id_fld the name of the id field as set in the child class
-     * @return bool true if the user sandbox object is loaded and valid
-     */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
-    {
-        return false;
-    }
-
-
-    /*
      * sql create
      */
 

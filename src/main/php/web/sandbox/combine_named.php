@@ -60,7 +60,7 @@ class combine_named extends combine_object
      */
     function set_obj_id(int $id): void
     {
-        $this->obj()?->set_id($id);
+        $this->obj()->id = $id;
     }
 
     /**
@@ -114,7 +114,7 @@ class combine_named extends combine_object
      */
     function plural(): ?string
     {
-        return $this->obj()?->plural();
+        return $this->obj()->get_plural();
     }
 
     /**

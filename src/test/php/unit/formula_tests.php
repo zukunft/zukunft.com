@@ -86,7 +86,7 @@ class formula_tests
 
         $t->subheader($ts . 'sql read default and user changes by id');
         $frm = new formula($usr);
-        $frm->set_id(formulas::SCALE_HOUR_ID);
+        $frm->id = formulas::SCALE_HOUR_ID;
         $t->assert_sql_standard($sc, $frm);
         $t->assert_sql_not_changed($sc, $frm);
         $t->assert_sql_user_changes($sc, $frm);

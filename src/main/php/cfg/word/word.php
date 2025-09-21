@@ -110,6 +110,7 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
@@ -148,6 +149,7 @@ use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\const\words;
@@ -185,6 +187,7 @@ class word extends sandbox_code_id
     public ?string $plural {
         set {
             $this->plural = $value;
+            $this->set_modified();
         }
     }
     private ?int $values;       // the total number of values linked to this word as an indication how common the word is and to sort the words
@@ -294,7 +297,7 @@ class word extends sandbox_code_id
             $msk = new view($this->user());
             $id = $api_json[json_fields::VIEW];
             if ($id != 0) {
-                $msk->set_id($id);
+                $msk->id = $id;
                 $this->view = $msk;
             }
         }
@@ -399,7 +402,7 @@ class word extends sandbox_code_id
             $vars[json_fields::EXCLUDED] = true;
         } else {
             $vars = parent::api_json_array($typ_lst, $usr);
-            $vars[json_fields::PLURAL] = $this->plural();
+            $vars[json_fields::PLURAL] = $this->plural;
         }
 
         return $vars;
@@ -421,8 +424,8 @@ class word extends sandbox_code_id
 
         $vars = parent::export_json($do_load);
 
-        if ($this->plural() <> '') {
-            $vars[json_fields::PLURAL] = $this->plural();
+        if ($this->plural <> '') {
+            $vars[json_fields::PLURAL] = $this->plural;
         }
         if ($this->type_id > 0) {
             if ($this->type_id == $phr_typ_cac->default_id()) {
@@ -475,11 +478,6 @@ class word extends sandbox_code_id
         }
     }
 
-    function plural(): ?string
-    {
-        return $this->plural;
-    }
-
     /**
      * set the value to rank the words by usage
      *
@@ -507,7 +505,7 @@ class word extends sandbox_code_id
         if ($this->view == null) {
             $this->view = new view($this->user());
         }
-        $this->view->set_id($id);
+        $this->view->id = $id;
     }
 
     /**
@@ -878,14 +876,14 @@ class word extends sandbox_code_id
      * * e.g. for import  if this word has only the name set, the protection should not be updated in the database
      * is expected to be similar to the diff_msg function
      *
-     * @param word|CombineObject|db_object_seq_id $db_obj which might be different to this sandbox object
+     * @param word|CombineObject|IdObject $db_obj which might be different to this sandbox object
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(word|CombineObject|db_object_seq_id $db_obj): bool
+    function needs_db_update(word|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
-        if ($this->plural() != null) {
-            if ($this->plural() != $db_obj->plural()) {
+        if ($this->plural != null) {
+            if ($this->plural != $db_obj->plural) {
                 $result = true;
             }
         }
@@ -981,8 +979,8 @@ class word extends sandbox_code_id
         if ($obj->code_id() != null) {
             $this->set_code_id($obj->code_id(), $usr_req);
         }
-        if ($obj->plural() != null) {
-            $this->plural = $obj->plural();
+        if ($obj->plural != null) {
+            $this->plural = $obj->plural;
         }
         if ($obj->values != null) {
             $this->values = $obj->values;
@@ -1051,7 +1049,7 @@ class word extends sandbox_code_id
     function parents(): phrase_list
     {
         global $vrb_cac;
-        log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
+        log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id);
         $phr_lst = $this->lst();
         $parent_phr_lst = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::IS));
         log_debug('are ' . $parent_phr_lst->dsp_name() . ' for ' . $this->dsp_id());
@@ -1119,7 +1117,7 @@ class word extends sandbox_code_id
     function children(): phrase_list
     {
         global $vrb_cac;
-        log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id());
+        log_debug('for ' . $this->dsp_id() . ' and user ' . $this->user()->id);
         $phr_lst = $this->lst();
         $child_phr_lst = $phr_lst->all_children($vrb_cac->get_verb(verbs::IS));
         log_debug('are ' . $child_phr_lst->name() . ' for ' . $this->dsp_id());
@@ -1209,7 +1207,7 @@ class word extends sandbox_code_id
         $result = new word($this->user());
 
         $link_id = $vrb_cac->id(verbs::FOLLOW);
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         $db_con->set_class(triple::class);
         $key_result = $db_con->get_value_2key(triple_db::FLD_FROM, triple_db::FLD_TO, $this->id(), verb_db::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
@@ -1235,7 +1233,7 @@ class word extends sandbox_code_id
         $result = new word($this->user());
 
         $link_id = $vrb_cac->id(verbs::FOLLOW);
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         $db_con->set_class(triple::class);
         $key_result = $db_con->get_value_2key(triple_db::FLD_TO, triple_db::FLD_FROM, $this->id(), verb_db::FLD_ID, $link_id);
         if (is_numeric($key_result)) {
@@ -1318,7 +1316,7 @@ class word extends sandbox_code_id
     function view_sql(sql_db $db_con): sql_par
     {
         $db_con->set_class(word::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(array(word_db::FLD_VIEW));
         $db_con->set_join_usr_count_fields(array(user_db::FLD_ID), word::class);
         $qp = new sql_par(self::class);
@@ -1358,7 +1356,7 @@ class word extends sandbox_code_id
     function is_part(): phrase_list
     {
         global $vrb_cac;
-        log_debug($this->dsp_id() . ', user ' . $this->user()->id());
+        log_debug($this->dsp_id() . ', user ' . $this->user()->id);
         $phr_lst = $this->lst();
         $is_phr_lst = $phr_lst->foaf_parents($vrb_cac->get_verb(verbs::PART_NAME));
 
@@ -1376,7 +1374,7 @@ class word extends sandbox_code_id
      */
     function link_types(foaf_direction $direction): verb_list
     {
-        log_debug($this->dsp_id() . ' and user ' . $this->user()->id());
+        log_debug($this->dsp_id() . ' and user ' . $this->user()->id);
 
         global $db_con;
 
@@ -1429,8 +1427,8 @@ class word extends sandbox_code_id
         global $phr_typ_cac;
 
         $has_cfg = false;
-        if ($this->plural() != null) {
-            if ($this->plural() <> '') {
+        if ($this->plural != null) {
+            if ($this->plural <> '') {
                 $has_cfg = true;
             }
         }
@@ -1601,7 +1599,7 @@ class word extends sandbox_code_id
             $this->set_view_id($view_id);
             if ($this->log_upd_view($view_id) > 0) {
                 //$db_con = new mysql;
-                $db_con->usr_id = $this->user()->id();
+                $db_con->usr_id = $this->user()->id;
                 if ($this->can_change()) {
                     $usr_msg->add($this->update('view of word'));
                 } else {
@@ -1649,13 +1647,13 @@ class word extends sandbox_code_id
     {
         $usr_msg = new user_message();
         // if the plural is not set, don't overwrite any db entry
-        if ($this->plural() <> Null) {
-            if ($this->plural() <> $db_rec->plural()) {
+        if ($this->plural <> Null) {
+            if ($this->plural <> $db_rec->plural) {
                 $log = $this->log_upd();
-                $log->old_value = $db_rec->plural();
-                $log->new_value = $this->plural();
-                $log->std_value = $std_rec->plural();
-                $log->row_id = $this->id();
+                $log->old_value = $db_rec->plural;
+                $log->new_value = $this->plural;
+                $log->std_value = $std_rec->plural;
+                $log->row_id = $this->id;
                 $log->set_field(word_db::FLD_PLURAL);
                 $usr_msg->add($this->save_field_user($db_con, $log));
             }
@@ -1841,7 +1839,7 @@ class word extends sandbox_code_id
             );
         }
         // TODO move to language forms
-        if ($sbx->plural() <> $this->plural()) {
+        if ($sbx->plural <> $this->plural) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_PLURAL,
@@ -1851,9 +1849,9 @@ class word extends sandbox_code_id
             }
             $lst->add_field(
                 word_db::FLD_PLURAL,
-                $this->plural(),
+                $this->plural,
                 word_db::FLD_PLURAL_SQL_TYP,
-                $sbx->plural()
+                $sbx->plural
             );
         }
         // TODO rename to usage

@@ -205,27 +205,27 @@ class sandbox_multi extends db_object_multi_user
     // the id field is not included here because it is used for the database relations and should be object specific
     // e.g. always "word_id" instead of simply "id"
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
-    const FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
-    const FLD_SHARE = "share_type_id";  // field name for the share permission
-    const FLD_SHARE_SQL_TYP = sql_field_type::INT_SMALL;
-    const FLD_PROTECT = "protect_id";   // field name for the protection level
-    const FLD_PROTECT_SQL_TYP = sql_field_type::INT_SMALL;
+    const string FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
+    const sql_field_type FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
+    const string FLD_SHARE = "share_type_id";  // field name for the share permission
+    const sql_field_type FLD_SHARE_SQL_TYP = sql_field_type::INT_SMALL;
+    const string FLD_PROTECT = "protect_id";   // field name for the protection level
+    const sql_field_type FLD_PROTECT_SQL_TYP = sql_field_type::INT_SMALL;
     // database fields used for user values and results
-    const FLD_VALUE = 'numeric_value';
-    const FLD_LAST_UPDATE = 'last_update';
+    const string FLD_VALUE = 'numeric_value';
+    const string FLD_LAST_UPDATE = 'last_update';
 
     // dummy arrays that should be overwritten by the child object
-    const FLD_NAMES = array();
-    const FLD_NAMES_USR = array();
+    const array FLD_NAMES = array();
+    const array FLD_NAMES_USR = array();
     // combine FLD_NAMES_NUM_USR_SBX and FLD_NAMES_NUM_USR_ONLY_SBX just for shorter code
-    const FLD_NAMES_NUM_USR = array(
+    const array FLD_NAMES_NUM_USR = array(
         sql_db::FLD_EXCLUDED,
         self::FLD_SHARE,
         self::FLD_PROTECT
     );
     // all database sandbox field names used to identify if there are some user specific changes so excluding the id fields
-    const ALL_SANDBOX_FLD_NAMES = array(
+    const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_LAST_UPDATE,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
@@ -234,7 +234,7 @@ class sandbox_multi extends db_object_multi_user
 
     // list of all user sandbox database types with a standard ID
     // so exclude values and result TODO check missing owner for values and results
-    const DB_TYPES = array(
+    const array DB_TYPES = array(
         word::class,
         triple::class,
         formula::class,
@@ -249,6 +249,16 @@ class sandbox_multi extends db_object_multi_user
      * object vars
      */
 
+    // overwrite the id set method to keep the group id in sync
+    public string|int $id {
+        set {
+            $this->id = $value;
+            if ($this->grp()->id != $value) {
+                $this->grp()->set_id($value);
+            }
+            $this->set_modified();
+        }
+    }
     // fields to define the object; should be set in the constructor of the child object
     public bool $rename_can_switch = True; // true if renaming an object can switch to another object with the new name
 
@@ -638,7 +648,7 @@ class sandbox_multi extends db_object_multi_user
 
         $db_row = $db_con->get1($qp);
         $this->row_mapper_sandbox_multi($db_row, $qp->ext);
-        return $this->id();
+        return $this->id;
     }
 
     /**
@@ -680,8 +690,8 @@ class sandbox_multi extends db_object_multi_user
         $sc->set_name($qp->name);
         $sc->set_id_field($this->id_field());
         $sc->set_fields($fld_lst);
-        $sc->set_usr($this->user()->id());
-        $sc->add_where($this->id_field(), $this->id());
+        $sc->set_usr($this->user()->id);
+        $sc->add_where($this->id_field(), $this->id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         $qp->ext = $id_ext;
@@ -733,7 +743,7 @@ class sandbox_multi extends db_object_multi_user
                 $pos++;
             }
         } else {
-            $sc->add_where(group::FLD_ID, $this->grp()->id());
+            $sc->add_where(group::FLD_ID, $this->grp()->id);
         }
         return $qp;
     }
@@ -748,7 +758,7 @@ class sandbox_multi extends db_object_multi_user
     {
         $qp->name .= '_std';
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
 
@@ -783,7 +793,7 @@ class sandbox_multi extends db_object_multi_user
     ): sql_par
     {
         $qp = parent::load_sql($sc, $query_name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields($fields);
         $sc->set_usr_fields($usr_fields);
         $sc->set_usr_num_fields($usr_num_fields);
@@ -808,7 +818,7 @@ class sandbox_multi extends db_object_multi_user
 
         $sc->set_class($lib->class_to_name($sbx::class));
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields($sbx::FLD_NAMES);
         $sc->set_usr_fields($sbx::FLD_NAMES_USR);
         $sc->set_usr_num_fields($sbx::FLD_NAMES_NUM_USR);
@@ -846,8 +856,8 @@ class sandbox_multi extends db_object_multi_user
             } else {
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
                 $db_con->set_class($this::class);
-                $db_con->set_usr($this->user()->id());
-                if ($db_con->update_old($this->id(), user_db::FLD_ID, $this->user()->id())) {
+                $db_con->set_usr($this->user()->id);
+                if ($db_con->update_old($this->id(), user_db::FLD_ID, $this->user()->id)) {
                     $result = true;
                 }
             }
@@ -915,7 +925,7 @@ class sandbox_multi extends db_object_multi_user
 
       //$db_con = New mysql;
       $db_con->set_type($this::class);
-      $db_con->set_usr($this->user()->id());
+      $db_con->set_usr($this->user()->id);
 
       if ($correct === True) {
         // set the default owner for all records with a missing owner
@@ -1157,7 +1167,7 @@ class sandbox_multi extends db_object_multi_user
         }
         $sc->set_class($this::class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(array(user_db::FLD_ID));
         $qp->sql = $sc->select_by_id_not_owner($this->id());
 
@@ -1185,8 +1195,8 @@ class sandbox_multi extends db_object_multi_user
             if ($this->owner_id() > 0) {
                 $result = $this->owner_id();
             } else {
-                if ($this->user()->id() > 0) {
-                    $result = $this->user()->id();
+                if ($this->user()->id > 0) {
+                    $result = $this->user()->id;
                 }
             }
         }
@@ -1234,7 +1244,7 @@ class sandbox_multi extends db_object_multi_user
 
         if ($this->user()->is_admin()) {
             // TODO activate Prio 3 $result .= $this->usr_cfg_create_all();
-            $result = $this->set_owner($this->user()->id()); // TODO remove double getting of the user object
+            $result = $this->set_owner($this->user()->id); // TODO remove double getting of the user object
             // TODO activate Prio 3 $result .= $this->usr_cfg_cleanup();
         }
 
@@ -1257,14 +1267,14 @@ class sandbox_multi extends db_object_multi_user
 
         if ($this->id() > 0 and $new_owner_id > 0) {
             // to recreate the calling object
-            $std = clone $this;
+            $std = $this->clone_all();
             $std->reset();
-            $std->set_id($this->id());
+            $std->id = $this->id();
             $std->set_user($this->user());
             $std->load_standard();
 
             $db_con->set_class($this::class);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
 
             // TODO review and create sql creation test
             if ($this->is_prime()) {
@@ -1342,7 +1352,7 @@ class sandbox_multi extends db_object_multi_user
         }
         $db_con->set_class($this::class, true);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(array(user_db::FLD_ID));
         $qp->sql = $db_con->select_by_id_not_owner($this->id(), $this->owner_id());
 
@@ -1364,7 +1374,7 @@ class sandbox_multi extends db_object_multi_user
 
         $user_id = 0;
         $db_con->set_class($this::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $qp = $this->changer_sql($db_con);
         $db_row = $db_con->get1($qp);
         if ($db_row) {
@@ -1390,7 +1400,7 @@ class sandbox_multi extends db_object_multi_user
         $class = $lib->class_to_name($this::class);
         $sc->set_class($class, new sql_type_list([sql_type::USER]));
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_join_fields(
             array_merge(array(user_db::FLD_ID, user_db::FLD_NAME), user_db::FLD_NAMES_LIST),
             user::class,
@@ -1440,12 +1450,12 @@ class sandbox_multi extends db_object_multi_user
         $result = true;
         log_debug($this->id());
 
-        log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->user()->id());
-        if ($this->owner_id() == $this->user()->id() or $this->owner_id() <= 0) {
+        log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->user()->id);
+        if ($this->owner_id() == $this->user()->id or $this->owner_id() <= 0) {
             $changer_id = $this->changer();
             // removed "OR $changer_id <= 0" because if no one has changed the object jet does not mean that it can be changed
-            log_debug('changer is ' . $changer_id . ' and the change is requested by ' . $this->user()->id());
-            if ($changer_id == $this->user()->id() or $changer_id <= 0) {
+            log_debug('changer is ' . $changer_id . ' and the change is requested by ' . $this->user()->id);
+            if ($changer_id == $this->user()->id or $changer_id <= 0) {
                 $result = false;
             }
         }
@@ -1465,8 +1475,8 @@ class sandbox_multi extends db_object_multi_user
 
         // if the user who wants to change it, is the owner, he can do it
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
-        log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->user()->id());
-        if ($this->owner_id() == $this->user()->id() or $this->owner_id() <= 0) {
+        log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->user()->id);
+        if ($this->owner_id() == $this->user()->id or $this->owner_id() <= 0) {
             $result = true;
         }
 
@@ -1617,8 +1627,8 @@ class sandbox_multi extends db_object_multi_user
             if (!$this->has_usr_cfg()) {
                 // create an entry in the user sandbox
                 $db_con->set_class(sql_db::TBL_USER_PREFIX . $class);
-                $db_con->set_usr($this->user()->id());
-                $log_id = $db_con->insert_old(array($this->id_field(), user_db::FLD_ID), array($this->id(), $this->user()->id()));
+                $db_con->set_usr($this->user()->id);
+                $log_id = $db_con->insert_old(array($this->id_field(), user_db::FLD_ID), array($this->id(), $this->user()->id));
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $class . ' failed.');
                     $result = false;
@@ -1644,7 +1654,7 @@ class sandbox_multi extends db_object_multi_user
         // check again if there ist not yet a record
         $sc = $db_con->sql_creator();
         $qp = $this->load_sql_user_changes($sc);
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         $db_row = $db_con->get1($qp);
         if ($db_row != null) {
             $this->usr_cfg_id = $db_row[$this->id_field()];
@@ -1671,7 +1681,7 @@ class sandbox_multi extends db_object_multi_user
 
         // check again if there ist not yet a record
         $qp = $this->load_sql_user_changes($db_con->sql_creator());
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         $usr_cfg_row = $db_con->get1($qp);
         if ($usr_cfg_row) {
             log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
@@ -2078,7 +2088,7 @@ class sandbox_multi extends db_object_multi_user
                     if ($this->has_usr_cfg()) {
                         log_debug('remove user change');
                         $db_con->set_class($this::class, true);
-                        $db_con->set_usr($this->user()->id());
+                        $db_con->set_usr($this->user()->id);
                         if (!$db_con->update_old($this->id(), $log->field(), Null)) {
                             $result = 'remove of ' . $log->field() . ' failed';
                         }
@@ -2086,7 +2096,7 @@ class sandbox_multi extends db_object_multi_user
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 } else {
                     $db_con->set_class($this::class);
-                    $db_con->set_usr($this->user()->id());
+                    $db_con->set_usr($this->user()->id);
                     if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
                         $result = 'update of ' . $log->field() . ' to ' . $new_value . ' failed';
                     }
@@ -2099,7 +2109,7 @@ class sandbox_multi extends db_object_multi_user
                 }
                 if ($result == '') {
                     $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->user()->id());
+                    $db_con->set_usr($this->user()->id);
                     if ($new_value == $std_value) {
                         log_debug('remove user change');
                         if (!$db_con->update_old($this->id(), $log->field(), Null)) {
@@ -2402,7 +2412,7 @@ class sandbox_multi extends db_object_multi_user
         }
         if ($log->add()) {
             $db_con->set_class($this::class);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
             if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
                 $result = 'update of value for ' . $log->field() . ' to ' . $new_value . ' failed';
             }
@@ -2458,7 +2468,7 @@ class sandbox_multi extends db_object_multi_user
             // similar to $this->save_field_do
             if ($this->can_change()) {
                 $db_con->set_class($this::class);
-                $db_con->set_usr($this->user()->id());
+                $db_con->set_usr($this->user()->id);
                 if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
                     $result .= 'excluding of ' . $class_name . ' failed';
                 }
@@ -2470,7 +2480,7 @@ class sandbox_multi extends db_object_multi_user
                 }
                 if ($result == '') {
                     $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->user()->id());
+                    $db_con->set_usr($this->user()->id);
                     if ($new_value == $std_value) {
                         if (!$db_con->update_old($this->id(), $log->field(), Null)) {
                             $result .= 'include of ' . $class_name . ' for user failed';
@@ -2529,7 +2539,7 @@ class sandbox_multi extends db_object_multi_user
                 }
                 if ($result == '') {
                     $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->user()->id());
+                    $db_con->set_usr($this->user()->id);
                     $fvt_lst = new sql_par_field_list();
                     $fvt_lst->add_field($log->field(), $new_value, sql_par_type::INT_SMALL);
                     $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst, new sql_type_list([sql_type::USER]));
@@ -2697,7 +2707,7 @@ class sandbox_multi extends db_object_multi_user
                     if ($result = '') {
                         // ... and create a new display component link
                         $this->set_id(0);
-                        $this->set_owner_id($this->user()->id());
+                        $this->set_owner_id($this->user()->id);
                         $result .= $this->add()->get_last_message();
                     }
                 }
@@ -2896,7 +2906,7 @@ class sandbox_multi extends db_object_multi_user
 
             // configure the global database connection object for the select, insert, update and delete queries
             $db_con->set_class($this::class);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
 
             // create an object to check possible duplicates
             $similar = null;
@@ -2973,7 +2983,7 @@ class sandbox_multi extends db_object_multi_user
                             }
                             // configure the global database connection object again to overwrite any changes from load_objects
                             $db_con->set_class($this::class);
-                            $db_con->set_usr($this->user()->id());
+                            $db_con->set_usr($this->user()->id);
                         }
                         // relevant is if there is a user config in the database
                         // so use this information to prevent
@@ -3055,8 +3065,8 @@ class sandbox_multi extends db_object_multi_user
         } else {
             $log = $this->log_del();
         }
-        if ($log->id() > 0) {
-            $db_con->usr_id = $this->user()->id();
+        if ($log->id > 0) {
+            $db_con->usr_id = $this->user()->id;
 
             // for words first delete all links
             if ($this::class == word::class) {
@@ -3078,16 +3088,16 @@ class sandbox_multi extends db_object_multi_user
                 // and the corresponding formula elements
                 if ($usr_msg->is_ok()) {
                     $db_con->set_class(element::class);
-                    $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete_old($this->id_field(), $this->id());
+                    $db_con->set_usr($this->user()->id);
+                    $msg = $db_con->delete_old($this->id_field(), $this->id);
                     $usr_msg->add_message_text($msg);
                 }
 
                 // and the corresponding results
                 if ($usr_msg->is_ok()) {
                     $db_con->set_class(result::class);
-                    $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete_old($this->id_field(), $this->id());
+                    $db_con->set_usr($this->user()->id);
+                    $msg = $db_con->delete_old($this->id_field(), $this->id);
                     $usr_msg->add_message_text($msg);
                 }
 
@@ -3123,7 +3133,7 @@ class sandbox_multi extends db_object_multi_user
                     $usr_msg->add($msg);
                 } else {
                     $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->user()->id());
+                    $db_con->set_usr($this->user()->id);
                     // TODO use prepared query
                     $msg = $db_con->delete_old(
                         array($class_name . sql_db::FLD_EXT_ID, 'excluded'),
@@ -3139,8 +3149,8 @@ class sandbox_multi extends db_object_multi_user
                     $usr_msg->add($msg);
                 } else {
                     $db_con->set_class($this::class);
-                    $db_con->set_usr($this->user()->id());
-                    $msg = $db_con->delete_old($this->id_field(), $this->id());
+                    $db_con->set_usr($this->user()->id);
+                    $msg = $db_con->delete_old($this->id_field(), $this->id);
                     $usr_msg->add_message_text($msg);
                 }
                 log_debug('of ' . $this->dsp_id() . ' done');
@@ -3208,7 +3218,7 @@ class sandbox_multi extends db_object_multi_user
                     $msg .= $this->del_exe();
                 } else {
                     // if the owner deletes the object find a new owner or delete the object completely
-                    if ($this->owner_id() == $this->user()->id()) {
+                    if ($this->owner_id() == $this->user()->id) {
                         log_debug('owner has requested the deletion');
                         // get median user
                         $new_owner_id = $this->median_user();
@@ -3360,7 +3370,7 @@ class sandbox_multi extends db_object_multi_user
                     // and due to that the source id in the user table cannot be null instead 0 is used
                     if ($this->source_id() == null) {
                         $src = new source($this->user());
-                        $src->set_id(sources::TRUST_ME_BRO_ID);
+                        $src->id = sources::TRUST_ME_BRO_ID;
                         $this->set_source($src);
                     }
                     // use the norm db_row to recreate the field list to include the id for the user table and to create the diff vs the norm db_row
@@ -3384,7 +3394,7 @@ class sandbox_multi extends db_object_multi_user
      * @param sandbox_multi|null $db_obj the user sandbox object with the database values before the update or the standard db_row
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
      * @param array $fld_lst_all list of field names of the given object
-     * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
+     * @return sql_par|null the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_write(
         sql_creator        $sc,

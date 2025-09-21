@@ -139,7 +139,7 @@ class verb extends type_object
     {
         parent::__construct($code_id);
         if ($id > 0) {
-            $this->set_id($id);
+            $this->id = $id;
         }
         if ($name != '') {
             $this->set_name($name);
@@ -288,7 +288,7 @@ class verb extends type_object
      */
     function set(int $id = 0, string $name = ''): void
     {
-        $this->set_id($id);
+        $this->id = $id;
         $this->set_name($name);
     }
 
@@ -711,7 +711,7 @@ class verb extends type_object
         $qp->name .= 'usage';
         $db_con->set_class(word::class);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(verb_db::FLD_NAMES);
         $db_con->set_where_std($this->id());
         $qp->sql = $db_con->select_by_set_id();
@@ -744,7 +744,7 @@ class verb extends type_object
     // true if no other user has modified the verb
     private function not_changed(): bool
     {
-        log_debug('verb->not_changed (' . $this->id() . ') by someone else than the owner (' . $this->user()->id() . ')');
+        log_debug('verb->not_changed (' . $this->id() . ') by someone else than the owner (' . $this->user()->id . ')');
 
         global $db_con;
         $result = true;
@@ -1049,7 +1049,7 @@ class verb extends type_object
         if ($log->id() > 0) {
             // insert the new verb
             $db_con->set_class(verb::class);
-            $this->set_id($db_con->insert_old(verb_db::FLD_NAME, $this->name));
+            $this->id = $db_con->insert_old(verb_db::FLD_NAME, $this->name);
             if ($this->id() > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id())) {
@@ -1120,7 +1120,7 @@ class verb extends type_object
         $usr_msg = $this->check_preserved();
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_class(verb::class);
 
         // check if a new verb is supposed to be added
@@ -1130,7 +1130,7 @@ class verb extends type_object
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
                 $usr_msg->add($trm->id_used_msg($this));
             } else {
-                $this->set_id($trm->id_obj());
+                $this->id = $trm->id_obj();
                 log_debug('verb->save adding verb name ' . $this->dsp_id() . ' is OK');
             }
         }
@@ -1239,7 +1239,7 @@ class verb extends type_object
         $result = parent::dsp_id();
         if ($debug > DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+                $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }
         }
         return $result;
