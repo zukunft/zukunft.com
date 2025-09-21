@@ -59,6 +59,7 @@ enum sql_field_type: string
     case INT = 'bigint'; // the standard integer type
     case INT_UNIQUE_PART = 'bigintUniquePart'; // an integer that is part of a combined unique index
     case INT_SMALL = 'smallint'; // the integer type for a very limited number of entries
+    case INT_SMALL_UNIQUE_PART = 'smallintUniquePart'; // a small integer that is part of a combined unique index
     case BOOL = 'bool'; // the one bit true/false type
     case TIME = 'time'; // for the iso timestamp format
     case GEO = 'geo'; // for a geolocation
@@ -76,7 +77,7 @@ enum sql_field_type: string
             self::CODE_ID => 'varchar(100)',
             self::TEXT, self::KEY_TEXT, self::KEY_PART_TEXT => 'text',
             self::INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT, self::INT_UNIQUE_PART => 'bigint',
-            self::INT_SMALL, self::BOOL, self::KEY_PART_INT_SMALL => 'smallint',
+            self::INT_SMALL, self::BOOL, self::KEY_PART_INT_SMALL, self::INT_SMALL_UNIQUE_PART => 'smallint',
             self::NUMERIC_FLOAT => 'double precision',
             self::TIME => 'timestamp',
             self::POINT, self::GEO => 'point',
@@ -95,7 +96,7 @@ enum sql_field_type: string
             self::IP_ADDR => 'varchar(46)',
             self::CODE_ID => 'varchar(100)',
             self::TEXT => 'text',
-            self::INT_SMALL, self::BOOL, self::KEY_INT_SMALL, self::KEY_PART_INT_SMALL => 'smallint',
+            self::INT_SMALL, self::BOOL, self::KEY_INT_SMALL, self::KEY_PART_INT_SMALL, self::INT_SMALL_UNIQUE_PART => 'smallint',
             self::NUMERIC_FLOAT => 'double',
             self::TIME => 'timestamp',
             self::POINT, self::GEO => 'point',
@@ -107,7 +108,7 @@ enum sql_field_type: string
     {
         return match($this) {
             self::INT, self::KEY_INT, self::KEY_INT_NO_AUTO, self::KEY_PART_INT, self::INT_UNIQUE_PART => sql_par_type::INT,
-            self::INT_SMALL, self::BOOL => sql_par_type::INT_SMALL,
+            self::INT_SMALL, self::INT_SMALL_UNIQUE_PART, self::BOOL => sql_par_type::INT_SMALL,
             self::NUMERIC_FLOAT => sql_par_type::FLOAT,
             self::TIME => sql_par_type::TIME,
             self::POINT => sql_par_type::POINT,
@@ -142,7 +143,7 @@ enum sql_field_type: string
     public function is_unique_part(): bool
     {
         return match($this) {
-            self::NAME_UNIQUE_PART, self::INT_UNIQUE_PART => true,
+            self::NAME_UNIQUE_PART, self::INT_UNIQUE_PART, self::INT_SMALL_UNIQUE_PART => true,
             default => false,
         };
     }

@@ -13,10 +13,11 @@ CREATE TABLE IF NOT EXISTS refs
     source_id     bigint   DEFAULT NULL COMMENT 'if the reference does not allow a full automatic bidirectional update use the source to define an as good as possible import or at least a check if the reference is still valid',
     description   text     DEFAULT NULL,
     phrase_id     bigint   DEFAULT NULL COMMENT 'the phrase for which the external data should be synchronised',
-    ref_type_id   bigint       NOT NULL COMMENT 'to link code functionality to a list of references',
+    ref_type_id   smallint     NOT NULL COMMENT 'to link code functionality to a list of references',
     excluded      smallint DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id smallint DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (ref_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -26,7 +27,7 @@ CREATE TABLE IF NOT EXISTS refs
 -- AUTO_INCREMENT for table refs
 --
 ALTER TABLE refs
-    MODIFY ref_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY ref_id bigint NOT NULL AUTO_INCREMENT;
 
 --
 -- table structure to save user specific changes to link external data to internal for synchronisation
@@ -42,7 +43,8 @@ CREATE TABLE IF NOT EXISTS user_refs
     description   text         DEFAULT NULL,
     excluded      smallint     DEFAULT NULL COMMENT 'true if a user,but not all,have removed it',
     share_type_id smallint     DEFAULT NULL COMMENT 'to restrict the access',
-    protect_id    smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes'
+    protect_id    smallint     DEFAULT NULL COMMENT 'to protect against unwanted changes',
+    PRIMARY KEY (ref_id, user_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8

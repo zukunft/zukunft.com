@@ -65,7 +65,7 @@ class change_field extends type_object
 
     // field lists for the field creation
     const FLD_LST_NAME = array(
-        [self::FLD_TABLE, sql_field_type::INT_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, change_table::class, self::FLD_TABLE_COM, change_table::FLD_ID],
+        [self::FLD_TABLE, sql_field_type::INT_SMALL_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, change_table::class, self::FLD_TABLE_COM, change_table::FLD_ID],
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE_PART, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     const FLD_LST_ALL = array(

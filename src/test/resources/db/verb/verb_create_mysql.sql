@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS verbs
     name_plural_reverse varchar(255) DEFAULT NULL COMMENT 'english description for the reverse list, e.g. Companies are ... TODO move to language forms',
     name_plural         varchar(255) DEFAULT NULL,
     name_reverse        varchar(255) DEFAULT NULL,
-    words               bigint       DEFAULT NULL COMMENT 'used for how many phrases or formulas'
+    words               bigint       DEFAULT NULL COMMENT 'used for how many phrases or formulas',
+    PRIMARY KEY (verb_id)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8
@@ -25,4 +26,4 @@ CREATE TABLE IF NOT EXISTS verbs
 -- AUTO_INCREMENT for table verbs
 --
 ALTER TABLE verbs
-    MODIFY verb_id int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY verb_id smallint NOT NULL AUTO_INCREMENT;

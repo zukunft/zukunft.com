@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS sys_log
     sys_log_trace       text   DEFAULT NULL,
     user_id             bigint DEFAULT NULL,
     solver_id           bigint DEFAULT NULL,
-    sys_log_status_id   bigint     NOT NULL DEFAULT 1
+    sys_log_status_id   smallint   NOT NULL DEFAULT 1
 );
 
 COMMENT ON TABLE sys_log IS 'for system error tracking and to measure execution times';

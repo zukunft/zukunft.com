@@ -79,7 +79,7 @@ class phrase_table extends db_object_seq_id
     const FLD_LST_ALL = array(
         [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_PHRASE_COM],
         [pod::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, pod::class, self::FLD_POD_COM],
-        [phrase_table_status::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, phrase_table_status::class, ''],
+        [phrase_table_status::FLD_ID, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, phrase_table_status::class, ''],
     );
 
 

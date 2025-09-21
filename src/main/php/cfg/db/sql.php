@@ -118,6 +118,7 @@ class sql
 
     const TBL_SEP = '.';
     const WITH = 'WITH';
+    const PRIMARY_KEY = 'PRIMARY KEY';
 
     const LAST_ID_MYSQL = 'SELECT LAST_INSERT_ID() AS ';
     const TRUE = '1'; // representing true in the where part for a smallint field

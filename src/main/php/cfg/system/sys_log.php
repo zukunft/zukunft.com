@@ -136,7 +136,7 @@ class sys_log extends db_object_seq_id
         [self::FLD_TRACE, sql_field_type::TEXT, sql_field_default::NULL, '', '', self::FLD_TRACE_COM],
         [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [self::FLD_SOLVER, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_SOLVER_COM, user_db::FLD_ID],
-        [sys_log_status::FLD_ID, sql_field_type::INT, sql_field_default::ONE, sql::INDEX, sys_log_status::class, ''],
+        [sys_log_status::FLD_ID, sql_field_type::INT_SMALL, sql_field_default::ONE, sql::INDEX, sys_log_status::class, ''],
     );
 
 

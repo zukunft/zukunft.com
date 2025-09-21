@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS user_views
 (
     view_id       bigint   NOT NULL,
     user_id       bigint   NOT NULL,
-    language_id   bigint   NOT NULL DEFAULT 1,
+    language_id   smallint NOT NULL DEFAULT 1,
     view_name     varchar(255)      DEFAULT NULL,
     description   text              DEFAULT NULL,
     view_type_id  smallint          DEFAULT NULL,

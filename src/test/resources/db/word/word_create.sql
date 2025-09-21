@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS user_words
 (
     word_id        bigint   NOT NULL,
     user_id        bigint   NOT NULL,
-    language_id    bigint   NOT NULL DEFAULT 1,
+    language_id    smallint NOT NULL DEFAULT 1,
     word_name      varchar(255)      DEFAULT NULL,
     plural         varchar(255)      DEFAULT NULL,
     description    text              DEFAULT NULL,

@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION formula_insert_log_011101111151111
      _field_id_description       smallint,
      _description                text,
      _field_id_formula_type_id   smallint,
-     _formula_type_id            bigint,
+     _formula_type_id            smallint,
      _field_id_formula_text      smallint,
      _formula_text               text,
      _field_id_resolved_text     smallint,
@@ -79,7 +79,7 @@ END
 $$ LANGUAGE plpgsql;
 
 PREPARE formula_insert_log_011101111151111_call
-        (text, bigint, smallint, smallint, smallint, smallint, text, smallint, bigint, smallint, text, smallint, text, smallint, smallint, smallint, text, bigint, smallint, bigint, smallint, smallint, smallint, smallint, smallint, smallint) AS
+        (text, bigint, smallint, smallint, smallint, smallint, text, smallint, smallint, smallint, text, smallint, text, smallint, smallint, smallint, text, bigint, smallint, bigint, smallint, smallint, smallint, smallint, smallint, smallint) AS
     SELECT formula_insert_log_011101111151111
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26);
 
@@ -92,7 +92,7 @@ SELECT formula_insert_log_011101111151111 (
                34::smallint,
                'to convert times in minutes to seconds and the other way round'::text,
                31::smallint,
-               1::bigint,
+               1::smallint,
                33::smallint,
                '{w24}={w104}*60'::text,
                32::smallint,

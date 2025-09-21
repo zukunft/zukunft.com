@@ -70,7 +70,7 @@ class formula_db
     const FLD_NAME = 'formula_name';
     const FLD_TYPE_COM = 'the id of the formula type';
     const FLD_TYPE = 'formula_type_id';
-    const FLD_TYPE_SQL_TYP = sql_field_type::INT;
+    const FLD_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
     const FLD_FORMULA_TEXT_COM = 'the internal formula expression with the database references e.g. {f1} for formula with id 1';
     const FLD_FORMULA_TEXT = 'formula_text';
     const FLD_FORMULA_TEXT_SQL_TYP = sql_field_type::TEXT;

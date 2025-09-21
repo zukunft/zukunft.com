@@ -120,7 +120,7 @@ class ref_db
     // list of fields that CANNOT be changed by the user
     const FLD_LST_NON_CHANGEABLE = array(
         [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, '', self::FLD_PHRASE_COM],
-        [ref_type::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, ref_type::class, ref_type::TBL_COMMENT],
+        [ref_type::FLD_ID, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, ref_type::class, ref_type::TBL_COMMENT],
     );
 
 }
