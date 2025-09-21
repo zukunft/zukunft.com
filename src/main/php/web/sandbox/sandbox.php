@@ -30,32 +30,34 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::TYPES . 'type_lists.php';
+//include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\button;
-use html\html_base;
-use shared\enum\messages as msg_id;
-use html\view\view_list;
-use shared\api;
-use html\sandbox\db_object as db_object_dsp;
-use html\user\user as user_dsp;
-use html\user\user_message;
-use shared\types\view_styles;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class sandbox extends db_object_dsp
 {
@@ -107,13 +109,13 @@ class sandbox extends db_object_dsp
     function url_mapper(array $url_array): user_message
     {
         $usr_msg = parent::url_mapper($url_array);
-        if (array_key_exists(api::URL_VAR_SHARE, $url_array)) {
-            $this->share_id = $url_array[api::URL_VAR_SHARE];
+        if (array_key_exists(url_var::SHARE, $url_array)) {
+            $this->share_id = $url_array[url_var::SHARE];
         } else {
             $this->share_id = null;
         }
-        if (array_key_exists(api::URL_VAR_PROTECTION, $url_array)) {
-            $this->protection_id = $url_array[api::URL_VAR_PROTECTION];
+        if (array_key_exists(url_var::PROTECTION, $url_array)) {
+            $this->protection_id = $url_array[url_var::PROTECTION];
         } else {
             $this->protection_id = null;
         }
@@ -171,54 +173,55 @@ class sandbox extends db_object_dsp
      * create the HTML code to select a view
      * @param string $form the name of the html form
      * @param view_list $msk_lst with the suggested views
+     * @param string $name the unique html field name for the selection of the view
      * @return string the html code to select a view
      */
-    public function view_selector(string $form, view_list $msk_lst, string $name = null): string
+    public function view_selector(
+        string    $form,
+        view_list $msk_lst,
+        string    $name = url_var::VIEW_ID
+    ): string
     {
         $view_id = $this->view_id();
         if ($view_id == null) {
             $view_id = $msk_lst->default_id($this);
         }
-        if ($name == null) {
-            return $msk_lst->selector($form, $view_id);
-        } else {
-            return $msk_lst->selector($form, $view_id, $name);
-        }
+        return $msk_lst->selector($form, $view_id, $name, msg_id::LABEL_VIEW);
     }
 
     /**
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the share type
      */
-    public function share_type_selector(string $form_name): string
+    public function share_type_selector(string $form, ?type_lists $typ_lst): string
     {
         global $usr;
-        global $html_share_types;
         $used_share_id = $this->share_id;
         if ($used_share_id == null) {
-            $used_share_id = $html_share_types->default_id();
+            $used_share_id = $typ_lst->html_share_types->default_id();
         }
         if ($usr === $this->owner or $this->owner == null) {
-            return $html_share_types->selector($form_name, $used_share_id, 'share', view_styles::COL_SM_4, 'share:');
+            return $typ_lst->html_share_types->selector($form, $used_share_id);
         } else {
             return '';
         }
     }
 
     /**
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the share type
      */
-    public function protection_type_selector(string $form_name): string
+    public function protection_type_selector(string $form, ?type_lists $typ_lst): string
     {
         global $usr;
-        global $html_protection_types;
         $used_protection_id = $this->protection_id;
         if ($used_protection_id == null) {
-            $used_protection_id = $html_protection_types->default_id();
+            $used_protection_id = $typ_lst->html_protection_types->default_id();
         }
         if ($usr === $this->owner or $this->owner == null) {
-            return $html_protection_types->selector($form_name, $used_protection_id, 'protection', view_styles::COL_SM_4, 'protection:');
+            return $typ_lst->html_protection_types->selector($form, $used_protection_id);
         } else {
             return '';
         }

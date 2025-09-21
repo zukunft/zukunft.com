@@ -30,14 +30,17 @@
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once paths::SHARED_TYPES . 'formula_types.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once html_paths::TYPES . 'type_list.php';
 
-use shared\types\formula_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 
 class formula_type_list extends type_list
 {
@@ -45,12 +48,19 @@ class formula_type_list extends type_list
     const NAME = 'formula type';
 
     /**
+     * create the HTML code to select a formula type
+     * @param string $form the unique name of the html form
+     * @param int|null $selected the id of the preselected formula link type
+     * @param string $name the unique name inside the form for this selector
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
+    function selector(
+        string   $form = '',
+        int|null $selected = null,
+        string   $name = self::NAME
+    ): string
     {
-        global $html_formula_types;
-        return parent::type_selector($html_formula_types->lst_key(), $name, $form, $selected);
+        return parent::type_selector($form, $selected, $name, msg_id::LABEL_FORMULA_TYPE);
     }
 
 

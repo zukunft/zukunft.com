@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\value;
+namespace Zukunft\ZukunftCom\main\php\cfg\value;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_VALUE . 'value.php';
 include_once paths::MODEL_VALUE . 'value_time.php';
@@ -41,8 +41,8 @@ include_once paths::MODEL_VALUE . 'value_geo.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_USER . 'user.php';
 
-use cfg\group\group;
-use cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use DateTime;
 
 class value_obj

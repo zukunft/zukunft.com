@@ -30,21 +30,21 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_USER . 'user_message.php';
 include_once TEST_CONST_PATH . 'files.php';
 include_once paths::SHARED_CONST . 'users.php';
 
-use cfg\user\user_message;
-use const\paths as test_paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 use DateTimeInterface;
-use shared\const\users;
-use shared\library;
-use test\all_tests;
-use const\files as test_files;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 global $db_con;
 

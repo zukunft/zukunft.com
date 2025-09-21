@@ -30,11 +30,11 @@
 
 */
 
-use cfg\phrase\phrase_list;
-use cfg\user\user;
-use cfg\export\json_io;
-use shared\api;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\export\json_io;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -55,7 +55,7 @@ if ($usr->id() > 0) {
     $lib = new library();
 
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
-    $phrases = $_GET[api::URL_VAR_WORDS];
+    $phrases = $_GET[url_var::WORDS];
     log_debug("json_save(" . $phrases . ")");
     $phr_names = $lib->array_trim(explode(",", $phrases));
 

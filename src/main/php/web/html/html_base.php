@@ -2,8 +2,8 @@
 
 /*
 
-    html_base.php - function to create the basic HTML elements used for zukunft.com
-    -------------
+    web/html/html_base.php - function to create the basic HTML elements used for zukunft.com
+    ----------------------
 
     depending on the settings either pure HTML, BOOTSTRAP HTML or vue.js code is created
 
@@ -32,29 +32,29 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+//include_once html_paths::WEB . 'frontend.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
-use shared\const\rest_ctrl;
-use shared\types\view_styles;
-use shared\api;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 
 class html_base
 {
 
-    // html const used in zukunft.com
-
-    // html base elements
-    const SPAN = 'span';
-    const HTML_CLASS = 'class';
-    const TITLE = 'title';
+    // TODO move all html const used in zukunft.com to html_names
 
     // fixed elements
     const TOGGLE_TOOLTIP = 'data-toggle="tooltip"';
@@ -72,9 +72,11 @@ class html_base
     // bootstrap const used in zukunft.com
     const BS_FORM = 'form-control';
     const BS_BTN = 'btn btn-space col-1';
-    const BS_BTN_SUCCESS = 'btn-outline-success';
-    const BS_BTN_CANCEL = 'btn-outline-secondary';
-    const BS_BTN_DEL = 'btn-outline-secondary';
+    const string BS_BTN_SUCCESS = 'btn-outline-success';
+    const string BS_BTN_CANCEL = 'btn-outline-secondary';
+    const string BS_BTN_DEL = 'btn-outline-secondary';
+    const string BS_BTN_IMPORT = 'btn-outline-secondary';
+    const string BS_BTN_EXPORT = 'btn-outline-secondary';
 
     // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
     const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
@@ -265,14 +267,14 @@ class html_base
      */
     function span(string $text, string $style = '', string $title = ''): string
     {
-        $result = '<' . self::SPAN;
+        $result = '<' . html_names::SPAN;
         if ($style != '') {
-            $result .= ' ' . self::HTML_CLASS . '="' . $style . '"';
+            $result .= ' ' . html_names::HTML_CLASS . '="' . $style . '"';
         }
         if ($title != '') {
-            $result .= ' ' . self::TITLE . '="' . $title . '" ' . self::TOGGLE_TOOLTIP;
+            $result .= ' ' . html_names::TITLE . '="' . $title . '" ' . self::TOGGLE_TOOLTIP;
         }
-        $result .= '>' . $text . '</' . self::SPAN . '>';
+        $result .= '>' . $text . '</' . html_names::SPAN . '>';
         return $result;
     }
 
@@ -339,7 +341,7 @@ class html_base
     ): string
     {
         $result = rest_ctrl::PATH_FIXED . rest_ctrl::URL_MAIN_SCRIPT . rest_ctrl::EXT . '?';
-        $result .= api::URL_VAR_MASK . '=' . $view;
+        $result .= url_var::MASK . '=' . $view;
         if (is_string($id)) {
             $result .= '&id=' . $id;
         } elseif ($id <> 0) {
@@ -716,10 +718,10 @@ class html_base
                     '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
-                $result .= \html\btn_back($back);
+                $result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
             }
             if ($del_call <> "") {
-                $result .= \html\btn_del('delete', $del_call);
+                $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete', $del_call);
             }
         }
         $result .= '</form>';
@@ -733,7 +735,14 @@ class html_base
     {
         $result = $this->header('about', "center_form"); // reset the html code var
 
-        $result .= $this->dsp_form_center();
+        $result .= $this->about_body();
+
+        return $result;
+    }
+
+    function about_body(): string
+    {
+        $result = $this->dsp_form_center();
         $result .= $this->logo_big();
         $result .= '<br><br>';
         $result .= 'is sponsored by <br><br>';
@@ -752,6 +761,7 @@ class html_base
 
         return $result;
     }
+
 
     /*
      * output device specific support functions for the pure HTML version
@@ -821,7 +831,7 @@ class html_base
                 $result .= $this->ref($url, 'down');
             }
             $result .= ' ';
-            $result .= \html\btn_del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
+            $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
             $result .= '<br>';
         }
 
@@ -1134,10 +1144,10 @@ class html_base
                     '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
-                $result .= \html\btn_back($back);
+                $result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
             }
             if ($del_call <> "") {
-                $result .= \html\btn_del('delete', $del_call);
+                $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete', $del_call);
             }
         }
         $result .= '</form>';

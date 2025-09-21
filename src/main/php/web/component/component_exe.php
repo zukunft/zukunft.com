@@ -2,10 +2,10 @@
 
 /*
 
-    web/view/component.php - function to execute a view component
-    ----------------------
+    web/component/component_exe.php - call the functions to execute a view component
+    -------------------------------
 
-    to creat the HTML code to display a component
+    to create the HTML code to display a component
 
     The main sections of this object are
     - object vars:       the variables of this word object
@@ -35,29 +35,40 @@
 
 */
 
-namespace html\component;
+namespace Zukunft\ZukunftCom\main\php\web\component;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::EXECUTE . 'system_form.php';
+include_once html_paths::EXECUTE . 'system_page.php';
+include_once html_paths::EXECUTE . 'list_related.php';
 include_once html_paths::HELPER . 'data_object.php';
-include_once html_paths::PHRASE . 'phrase.php';
-include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::HTML . 'sheet.php';
-include_once html_paths::FORM . 'system_form.php';
+include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::SANDBOX . 'db_object.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED . 'url_var.php';
 
-use html\helper\data_object;
-use html\helper\data_object as data_object_dsp;
-use html\list_sort;
-use html\phrase\phrase;
-use html\sandbox\db_object as db_object_dsp;
-use html\sheet;
-use html\component\form\system_form;
-use shared\const\triples;
-use shared\types\component_type;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
+use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
+use Zukunft\ZukunftCom\main\php\web\component\execute\list_related;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\list_sort;
+use Zukunft\ZukunftCom\main\php\web\html\sheet;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\types\component_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class component_exe extends component
 {
@@ -67,7 +78,10 @@ class component_exe extends component
      */
 
     /**
-     * @param db_object_dsp|null $dbo the word, triple or formula object that should be shown to the user
+     * create the html code of this component filled with the data from the given database object ($dbo)
+     * TODO the html form field name should always be an url var name
+     *
+     * @param db_object_dsp|null $dbo the word, triple, formula or ... object that should be shown to the user
      * @param string $form_name the name of the view which is also used for the html form name
      * @param int $msk_id the database id of the calling view
      * @param data_object_dsp|null $cfg the context used to create the view
@@ -95,66 +109,194 @@ class component_exe extends component
 
         $result = '';
 
+        // get the default values
+        // TODO call only when needed
+        $phr_lst = new phrase_list();
+        $phr_lst->load_fallback();
+        if ($cfg != null) {
+            if ($cfg->has_phrases()) {
+                $phr_lst = $cfg->phrase_list();
+            }
+        }
+
         $form = new system_form();
+        $page = new system_page();
+        $list = new list_related();
 
         // list of all possible view components
-        $result .= match ($this->type_code_id()) {
-            // start page
-            component_type::TEXT => $this->text(),
+        $t_id = $this->type_id();
+        if ($t_id == 17 ) {
+            log_info('');
+        }
+        $tc_id = $this->type_code_id($cfg->typ_lst_cache);
+        $result .= match ($this->type_code_id($cfg->typ_lst_cache)) {
+
+            // start page - components used for the start page
+            component_type::PHRASE_NAME => $this->phrase_name($dbo),
             // TODO Prio 2 use the spreadsheet for the start view
             //component_type::CALC_SHEET => $this->calc_sheet(),
-            component_type::CALC_SHEET => $this->start_list(),
+            component_type::CALC_SHEET => $this->start_list($cfg),
 
-            // system form - usage only allowed for internal system forms
+            // system form - components that can only be used for internal system forms
+            // general form fields
             component_type::FORM_TITLE => $form->form_tile($form_name, $this->ui_msg_code_id),
-            component_type::FORM_BACK => $form->form_back($msk_id, $dbo->id(), $back),
-            component_type::FORM_CONFIRM => $form->form_confirm(),
-            component_type::SHOW_NAME => $form->show_name($dbo),
-            component_type::FORM_NAME => $form->form_name($dbo, $this->style_text()),
-            component_type::FORM_PLURAL => $form->form_plural($dbo, $this->style_text()),
-            component_type::FORM_DESCRIPTION => $form->form_description($dbo),
-            component_type::FORM_PHRASE => $form->form_phrase($dbo, $test_mode, $this->name),
-            component_type::FORM_VERB_SELECTOR => $form->form_verb($dbo, $form_name),
-            component_type::FORM_PHRASE_TYPE => $form->form_phrase_type($dbo, $form_name),
-            component_type::FORM_SOURCE_TYPE => $form->form_source_type($dbo, $form_name),
-            component_type::FORM_REF_TYPE => $form->form_ref_type($dbo, $form_name),
-            component_type::FORM_FORMULA_TYPE => $form->form_formula_type($dbo, $form_name),
-            component_type::FORM_FORMULA_EXPRESSION => $form->form_formula_expression($dbo, $form_name),
-            component_type::FORM_FORMULA_ALL_FIELDS => $form->form_formula_all_fields($dbo, $form_name),
-            component_type::FORM_VIEW_TYPE => $form->form_view_type($dbo, $form_name),
-            component_type::FORM_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name),
-            component_type::FORM_SHARE_TYPE => $form->form_share_type($dbo, $form_name),
-            component_type::FORM_PROTECTION_TYPE => $form->form_protection_type($dbo, $form_name),
-            component_type::FORM_CANCEL => $form->form_cancel($msk_id, $dbo->id()),
-            component_type::FORM_SAVE => $form->form_save(),
-            component_type::FORM_DEL => $form->form_del(),
-            component_type::FORM_END => $form->form_end(),
+            component_type::FORM_FIELD_NAME => $form->form_name($dbo, $this->style_code_id($cfg->typ_lst_cache)),
+            component_type::FORM_FIELD_DESCRIPTION => $form->form_description($dbo),
+
+            // select object fields
+            component_type::FORM_SELECT_PHRASE => $form->form_phrase($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
+            component_type::FORM_SELECT_PHRASES => $form->form_phrases($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
+            component_type::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VERBS => $form->form_verbs($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_SOURCE => $form->form_source($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_SOURCES => $form->form_sources($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_REF => $form->form_ref($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_REFS => $form->form_refs($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VALUE => $form->form_value($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VALUES => $form->form_values($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_FORMULA => $form->form_formula($dbo, $form_name, $cfg->formula_list()),
+            component_type::FORM_SELECT_FORMULAS => $form->form_formulas($dbo, $form_name, $cfg->formula_list()),
+            component_type::FORM_SELECT_TERM => $form->form_term($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
+            component_type::FORM_SELECT_TERMS => $form->form_terms($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
+            component_type::FORM_SELECT_RESULT => $form->form_result($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_RESULTS => $form->form_results($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VIEW => $form->form_view($dbo, $form_name, $cfg->view_list()),
+            component_type::FORM_SELECT_VIEWS => $form->form_views($dbo, $form_name, $cfg->view_list()),
+            component_type::FORM_SELECT_COMPONENT => $form->form_component($dbo, $form_name, '', 1, $cfg->component_list()),
+            component_type::FORM_SELECT_COMPONENTS => $form->form_components($dbo, $form_name, '', 1, $cfg->component_list()),
+
+            // select access and protection
+            component_type::FORM_SHARE_TYPE => $form->form_share_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_PROTECTION_TYPE => $form->form_protection_type($dbo, $form_name, $cfg->typ_lst_cache),
+
+            // select object types
+            component_type::FORM_SELECT_PHRASE_TYPE => $form->form_phrase_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VERB_TYPE => $form->form_verb_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_SOURCE_TYPE => $form->form_source_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_REF_TYPE => $form->form_ref_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VALUE_TYPE => $form->form_value_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_FORMULA_TYPE => $form->form_formula_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VIEW_TYPE => $form->form_view_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VIEW_STYLE => $form->form_view_style($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_COMPONENT_TYPE => $form->form_component_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_COMPONENT_STYLE => $form->form_component_style($dbo, $form_name, $cfg->typ_lst_cache),
+
+            // select link types and priority
+            component_type::FORM_SELECT_FORMULA_LINK_TYPE => $form->form_formula_link_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_FORMULA_LINK_PRIORITY => $form->form_field_formula_link_priority($dbo),
+            component_type::FORM_SELECT_VIEW_LINK_TYPE => $form->form_view_link_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_VIEW_LINK_PRIORITY => $form->form_field_view_link_priority($dbo),
+            component_type::FORM_SELECT_COMPONENT_LINK_TYPE => $form->form_component_link_type($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_FIELD_COMPONENT_LINK_ORDER_NUMBER => $form->form_field_component_link_order_number($dbo),
+
+            // other select fields
+            component_type::FORM_SELECT_VIEW_DEFAULT => $form->form_view_default($dbo, $form_name, $cfg->view_list()),
+            component_type::FORM_SELECT_FILE => $this->select_file($dbo, $form_name, $cfg),
+            component_type::FORM_SELECT_FORMAT_EXPORT => $this->select_export_format($dbo, $form_name, $cfg),
+
+            // verb only fields
+            component_type::FORM_FIELD_PLURAL => $form->form_field_plural($dbo, $this->style_code_id($cfg->typ_lst_cache)),
+            component_type::FORM_FIELD_REVERSE => $form->form_field_reverse($dbo, $this->style_code_id($cfg->typ_lst_cache)),
+            component_type::FORM_FIELD_PLURAL_REVERSE => $form->form_field_plural_reverse($dbo, $this->style_code_id($cfg->typ_lst_cache)),
+
+            // value only fields
+            component_type::FORM_FIELD_GROUP => $form->form_field_group_name($dbo),
+            component_type::FORM_FIELD_GROUP_OR_PHRASES => $form->form_field_group_or_phrases($dbo),
+
+            // result only fields
+            component_type::FORM_FIELD_SOURCE_GROUP => $form->form_field_source_group_name($dbo),
+            component_type::FORM_FIELD_SOURCE_GROUP_OR_PHRASES => $form->form_field_source_group_or_phrases($dbo),
+
+            // formulas only fields
+            component_type::FORM_FIELD_FORMULA_EXPRESSION => $form->form_formula_expression($dbo, $form_name),
+            component_type::FORM_FIELD_FORMULA_ALL_VAR_NEEDED => $form->form_formula_all_fields($dbo, $form_name),
+
+            // for export
+            component_type::FORM_FIELD_SELECTION_NAME => $form->form_field_selection_name($dbo),
+            component_type::FORM_FIELD_SELECTION_DESCRIPTION => $form->form_field_selection_description($dbo),
+            component_type::FORM_FIELD_SELECTION_TEXT => $form->form_field_selection_text($dbo),
+
+            // for external links
+            component_type::FORM_FIELD_URL => $form->form_field_url($dbo),
+
+            // preview of the changes if confirmed
+            component_type::FORM_PREVIEW => $page->preview(),
 
             // hidden - only used for formatting without functional behaviour
+            component_type::FORM_HIDDEN_BACK => $form->form_back($msk_id, $dbo->id(), $back),
+            component_type::FORM_HIDDEN_STEP => $form->form_confirm(),
+
+            // buttons
+            component_type::FORM_BUTTON_CANCEL => $form->button_cancel($msk_id, $dbo->id()),
+            component_type::FORM_BUTTON_SAVE => $form->button_save(),
+            component_type::FORM_BUTTON_DEL => $form->button_del(),
+            component_type::FORM_BUTTON_IMPORT => $form->button_import(),
+            component_type::FORM_BUTTON_EXPORT => $form->button_export(),
+
+            // simple close the form section
+            component_type::FORM_END => $form->form_end(),
+
+            // fixed system pages - usage only allowed for fixed internal system pages
+            component_type::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
+            component_type::SYSTEM_BODY_ABOUT => $page->about_body(),
+            component_type::SYSTEM_BODY_SETUP => $page->setup_body(),
+            component_type::SYSTEM_BODY_SIGNUP => $page->signup_body(),
+            component_type::SYSTEM_BODY_LOGIN => $page->login_body(),
+            component_type::SYSTEM_BODY_LOGIN_ACTIVATE => $page->activate_body(),
+            component_type::SYSTEM_BODY_LOGIN_RESET => $page->reset_body(),
+            component_type::SYSTEM_BODY_LOGOUT => $page->logout_body(),
+            component_type::SYSTEM_BODY_SEARCH => $page->body_search(),
+            component_type::SYSTEM_BODY_SEARCH_FULL => $page->body_search_full(),
+            component_type::SYSTEM_BODY_VALUE_DETAIL => $page->value_details(),
+            component_type::SYSTEM_BODY_RESULT_EXPLAIN => $page->result_explain(),
+            component_type::SYSTEM_BODY_FORMULA_TEST => $page->formula_test(),
+            component_type::SYSTEM_BODY_SANDBOX => $page->sandbox(),
+            component_type::SYSTEM_BODY_UNDO => $page->undo(),
+            component_type::SYSTEM_BODY_USER_SETTINGS => $page->user_setting(),
+            component_type::SYSTEM_BODY_PROCESS => $page->process(),
+            component_type::SYSTEM_BODY_PROCESS_LIST => $page->process_list(),
+            component_type::SYSTEM_BODY_PROCESS_PROGRESS => $page->process_progress(),
+            component_type::SYSTEM_BODY_ERROR_LOG => $page->error_log(),
+            component_type::SYSTEM_BODY_ERROR_UPDATE => $page->error_update(),
+
+            // internal and hidden components used for formatting
             component_type::ROW_START => $form->row_start(),
             component_type::ROW_RIGHT => $form->row_right(),
             component_type::ROW_END => $form->row_end(),
 
-            // ref only -
+            // components for user views
 
-            // formula only -
+            // select
+            component_type::SELECT_PHRASE => $this->phrase_select($dbo, $form_name, $phr_lst,),
+            component_type::SELECT_VIEW => $this->view_select($dbo, $form_name, $cfg),
 
-            // view only -
-            component_type::USAGE_WORD => $this->usage_word($dbo, $form_name),
-            component_type::SYSTEM_CHANGE_LOG => $this->system_change_log($dbo, $form_name),
+            // related
+            component_type::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo),
+            component_type::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo),
+            component_type::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo),
+            component_type::LIST_PHRASES_OF_FORMULA => $list->phrases_of_formula($dbo),
+
+            // TODO Prio 1 review the components below
 
             // verb only -
             component_type::VERB_NAME => $this->verb_name($dbo),
-            component_type::TRIPLE_LIST => $this->triple_list($dbo),
+
+            // other
+            component_type::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $cfg->view_list()),
+
+
+            // view only -
+            component_type::SHOW_NAME => $form->show_name($dbo),
+            component_type::SHOW_FIELD_USAGE => $form->usage($dbo),
+            component_type::WORD_RESULTS => $form->result($dbo),
+            component_type::USED_IN_AS_TEXT => $form->used_as_text($dbo),
+            component_type::USED_IN_AS_TEXT_WITH_LINK => $form->used_as_text_link($dbo),
+            component_type::USAGE_WORD => $this->usage_word($dbo, $form_name),
+            component_type::SYSTEM_CHANGE_LOG => $this->system_change_log($dbo, $form_name),
 
             // base
             component_type::PHRASE => $this->name_tip(),
-            component_type::PHRASE_NAME => $this->phrase_name($dbo),
             component_type::LINK => $this->phrase_link($dbo, $form_name),
-
-            // select
-            component_type::VIEW_SELECT => $this->view_select($dbo, $form_name, $cfg),
-            component_type::PHRASE_SELECT => $this->phrase_select($dbo, $form_name),
 
             // table
             component_type::VALUES_ALL => $this->all($dbo, $back),
@@ -162,7 +304,7 @@ class component_exe extends component
             component_type::NUMERIC_VALUE => $this->num_list($dbo, $back),
 
             // related
-            component_type::REF_LIST_WORD => $this->ref_list_word($dbo, $cfg),
+            component_type::LIST_REF => $this->ref_list_word($dbo, $cfg),
             component_type::LINK_LIST_WORD => $this->link_list_word($dbo, $cfg),
             component_type::FORMULAS => $this->formulas($dbo),
             component_type::FORMULA_RESULTS => $this->results($dbo),
@@ -173,10 +315,17 @@ class component_exe extends component
             component_type::JSON_EXPORT => $this->json_export($dbo, $back),
             component_type::XML_EXPORT => $this->xml_export($dbo, $back),
             component_type::CSV_EXPORT => $this->csv_export($dbo, $back),
+            component_type::ODS_EXPORT => $this->ods_export($dbo, $back),
 
-            default => 'program code for component ' . $this->dsp_id() . ' missing<br>'
+            component_type::TEXT => $this->text(),
+
+            default => 'program code for component ' . $this->dsp_id() . ' of component type "' . $this->type_code_id($cfg->typ_lst_cache) . '" (id ' . $this->type_id() . ')missing<br>'
         };
         $this->log_debug($this->dsp_id() . ' created');
+        // TODO remove temp
+        if (str_starts_with('program code for component', $result)) {
+            $this->log_err($result);
+        }
 
         return $result;
     }
@@ -200,17 +349,25 @@ class component_exe extends component
     /**
      * @return string the name of a phrase and give the user the possibility to change the phrase name
      */
-    function phrase_select(db_object_dsp $phr, string $form_name): string
+    function phrase_select(
+        db_object_dsp $phr,
+        string $form_name,
+        phrase_list $phr_lst
+    ): string
     {
-        return $phr->phrase_selector_old('phrase', $form_name, 'word:', '', $phr->id());
+        return $phr->phrase_selector($phr_lst, url_var::PHRASE_LONG, $form_name, $phr->id());
     }
 
     /**
      * @return string show a list of phrases with a suggested link type that might be linked to the object
      */
-    function phrase_link(db_object_dsp $phr, string $form_name): string
+    function phrase_link(
+        db_object_dsp $phr,
+        string $form_name,
+        phrase_list $phr_lst
+    ): string
     {
-        return $phr->phrase_selector_old('phrase', $form_name, 'word:', '', $phr->id());
+        return $phr->phrase_selector($phr_lst, url_var::PHRASE_LONG, $form_name, $phr->id());
     }
 
     /**
@@ -223,6 +380,52 @@ class component_exe extends component
      * @return string with the html code to select a view
      */
     function view_select(db_object_dsp $dbo, string $form, ?data_object_dsp $cfg = null): string
+    {
+        $msk_lst = null;
+        // over
+        if ($cfg != null) {
+            if ($cfg->has_view_list()) {
+                $msk_lst = $cfg->view_list();
+            }
+        }
+        if ($msk_lst == null) {
+            $msk_lst = $dbo->view_list();
+        }
+        return $dbo->view_selector($form, $msk_lst);
+    }
+
+    /**
+     * the html code to select a filename e.g. to upload the file
+     * TODO Prio 1 review
+     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
+     * @param string $form the name of the view which is also used for the html form name
+     * @param data_object_dsp|null $cfg the context used to create the view
+     * @return string with the html code to select a view
+     */
+    function select_file(db_object_dsp $dbo, string $form, ?data_object_dsp $cfg = null): string
+    {
+        $msk_lst = null;
+        // over
+        if ($cfg != null) {
+            if ($cfg->has_view_list()) {
+                $msk_lst = $cfg->view_list();
+            }
+        }
+        if ($msk_lst == null) {
+            $msk_lst = $dbo->view_list();
+        }
+        return $dbo->view_selector($form, $msk_lst);
+    }
+
+    /**
+     * the html code to select a filename e.g. to upload the file
+     * TODO Prio 1 review
+     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
+     * @param string $form the name of the view which is also used for the html form name
+     * @param data_object_dsp|null $cfg the context used to create the view
+     * @return string with the html code to select a view
+     */
+    function select_export_format(db_object_dsp $dbo, string $form, ?data_object_dsp $cfg = null): string
     {
         $msk_lst = null;
         // over
@@ -309,15 +512,6 @@ class component_exe extends component
     }
 
     /**
-     * TODO move to a component exe part class
-     * @return string a dummy text
-     */
-    function triple_list(?db_object_dsp $dbo = null): string
-    {
-        return $dbo->name();
-    }
-
-    /**
      * TODO move code from component_dsp_old
      * @return string a dummy text
      */
@@ -384,6 +578,15 @@ class component_exe extends component
      * TODO move code from component_dsp_old
      * @return string a dummy text
      */
+    function ods_export(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO move code from component_dsp_old
+     * @return string a dummy text
+     */
     function all(): string
     {
         return $this->name();
@@ -403,7 +606,7 @@ class component_exe extends component
      */
     function list_sort(
         phrase $phr,
-        data_object $dbo = null
+        data_object $dbo
     ): string
     {
         $lst = new list_sort();
@@ -414,7 +617,7 @@ class component_exe extends component
      * @return string the html code for the start view as a sortable list
      */
     function start_list(
-        data_object $dbo = null
+        data_object $dbo
     ): string
     {
         $phr = new phrase();

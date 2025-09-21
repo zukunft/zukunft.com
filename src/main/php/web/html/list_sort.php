@@ -30,10 +30,11 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'table.php';
 include_once html_paths::HTML . 'scopes.php';
@@ -43,12 +44,12 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'words.php';
 
-use html\helper\data_object;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\word\triple;
-use html\word\word;
-use shared\const\words;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 
 class list_sort
 {
@@ -73,7 +74,7 @@ class list_sort
 
         // get the phrases for the rows
         // from "global problem" to e.g. "climate change"
-        $phr_lst = $phr->is_or_can_be($dbo?->phrase_list());
+        $phr_lst = $phr->is_or_can_be($dbo?->phrase_list(), $dbo->typ_lst_cache);
 
         // TODO remove temp hardcoded solution
         if ($phr_lst->is_empty()) {

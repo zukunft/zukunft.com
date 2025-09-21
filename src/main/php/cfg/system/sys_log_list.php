@@ -2,36 +2,36 @@
 
 /*
 
-  model/system/sys_log_list.php - a list of system error objects
-  ---------------------------
-  
-  This file is part of zukunft.com - calc with words
+    model/system/sys_log_list.php - a list of system error objects
+    ---------------------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2024 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2024 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'base_list.php';
 include_once paths::DB . 'sql.php';
@@ -52,15 +52,15 @@ include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 
-use cfg\db\sql;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\helper\type_object;
-use cfg\sandbox\sandbox;
-use cfg\user\user;
-use cfg\user\user_db;
-use shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
 
 class sys_log_list extends base_list
 {
@@ -122,13 +122,13 @@ class sys_log_list extends base_list
             $sql_where = $sql_status;
             $qp->name .= self::DSP_ALL;
         } elseif ($this->dsp_type == self::DSP_OTHER) {
-            $db_con->add_par(sql_par_type::INT, $this->user()->id());
+            $db_con->add_par(sql_par_type::INT, $this->user()->id);
             $sql_where = $sql_status .
                 ' AND (' . sql_db::STD_TBL . '.' . user_db::FLD_ID . ' <> ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
             $qp->name .= self::DSP_OTHER;
         } elseif ($this->dsp_type == self::DSP_MY) {
-            $db_con->add_par(sql_par_type::INT, $this->user()->id());
+            $db_con->add_par(sql_par_type::INT, $this->user()->id);
             $sql_where = $sql_status .
                 ' AND (' . sql_db::STD_TBL . '.' . user_db::FLD_ID . ' = ' . $db_con->par_name() .
                 ' OR ' . sql_db::STD_TBL . '.user_id IS NULL) ';
@@ -140,7 +140,7 @@ class sys_log_list extends base_list
         if ($sql_where <> '') {
             $db_con->set_class(sys_log::class);
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
             $db_con->set_fields(sys_log::FLD_NAMES);
             $db_con->set_join_fields(array(sys_log_function::FLD_NAME), sys_log_function::class);
             $db_con->set_join_fields(array(type_object::FLD_NAME), sys_log_status::class);

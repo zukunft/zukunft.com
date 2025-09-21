@@ -5,6 +5,12 @@
     web/sandbox/sandbox_typed.php - extends the superclass for named html objects with the type id
     ------------------------------
 
+    The main sections of this object are
+    - object vars:       the variables of this frontend sandbox typed object
+    - construct and map: the mapping of a url to this object or an api json message
+    - api:               create an api array for the json message to the backend
+    - set and get:       set and get the vars of the object for faster detection if a db update is needed
+
 
     This file is part of zukunft.com - calc with words
 
@@ -23,28 +29,33 @@
     To contact the authors write to:
     Timon Zielonka <timon@zukunft.com>
 
-    Copyright (c) 1995-2022 zukunft.com AG, Zurich
+    Copyright (c) 1995-2025 zukunft.com AG, Zurich
     Heang Lor <heang@zukunft.com>
 
     http://zukunft.com
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'sandbox_named.php';
-include_once paths::SHARED . 'api.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
-use shared\api;
-use html\user\user_message;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class sandbox_typed extends sandbox_named
 {
+
+    /*
+     * object vars
+     */
 
     // all named objects can have a type that links predefined functionality to it
     // e.g. all value assigned with the percent word are per default shown as percent with two decimals
@@ -65,8 +76,8 @@ class sandbox_typed extends sandbox_named
     function url_mapper(array $url_array): user_message
     {
         $usr_msg = parent::url_mapper($url_array);
-        if (array_key_exists(api::URL_VAR_TYPE, $url_array)) {
-            $this->set_type_id($url_array[api::URL_VAR_TYPE]);
+        if (array_key_exists(url_var::TYPE, $url_array)) {
+            $this->set_type_id($url_array[url_var::TYPE]);
         } else {
             $this->set_type_id();
         }
@@ -119,7 +130,6 @@ class sandbox_typed extends sandbox_named
     {
         return $this->type_id;
     }
-
 
 }
 

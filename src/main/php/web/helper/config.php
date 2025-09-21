@@ -32,10 +32,18 @@
 
 */
 
-namespace html\helper;
+namespace Zukunft\ZukunftCom\main\php\web\helper;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -44,16 +52,21 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'Config.php';
 include_once paths::SHARED . 'api.php';
-
-use html\rest_call;
-use html\user\user_message;
-use html\value\value_list;
-use shared\api;
-use shared\enum\messages as msg_id;
-use shared\helper\Config as shared_config;
+include_once paths::SHARED . 'url_var.php';
 
 class config extends value_list
 {
+
+    /*
+     * const
+     */
+
+    const int LIMIT_NAME_LIST = shared_config::LIMIT_NAME_LIST;
+
+
+    /*
+     * interface
+     */
 
     // TODO add the user setting as default
     function percent_decimals(): int
@@ -79,6 +92,11 @@ class config extends value_list
         return shared_config::DEFAULT_DATE_TIME_FORMAT;
     }
 
+
+    /*
+     * load
+     */
+
     /**
      * request the user specific frontend configuration from the backend
      * @return user_message if it fails the reason why
@@ -88,12 +106,12 @@ class config extends value_list
         $usr_msg = new user_message();
 
         $data = [];
-        $data[api::URL_VAR_CONFIG_PART] = $part;
-        $data[api::URL_VAR_WITH_PHRASES] = api::URL_VAR_TRUE;
+        $data[url_var::CONFIG_PART] = $part;
+        $data[url_var::WITH_PHRASES] = url_var::TRUE;
         $rest = new rest_call();
         $json_body = $rest->api_get(config::class, $data);
-        if (array_key_exists(api::URL_VAR_MSG, $json_body)) {
-            $usr_msg->add_id_with_vars(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[api::URL_VAR_MSG]]);
+        if (array_key_exists(url_var::MSG, $json_body)) {
+            $usr_msg->add_id_with_vars(msg_id::API_MESSAGE, [msg_id::VAR_JSON_TEXT => $json_body[url_var::MSG]]);
         }
         if ($usr_msg->is_ok()) {
             $this->api_mapper($json_body);

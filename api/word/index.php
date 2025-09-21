@@ -36,8 +36,8 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'rest_call.php';
 include_once paths::API_OBJECT . 'controller.php';
@@ -47,14 +47,15 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 
-use controller\controller;
-use cfg\user\user;
-use cfg\word\word;
-use html\rest_call;
-use shared\api;
-use shared\const\rest_ctrl;
-use shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 // open database
 $db_con = prg_start("api/word", "", false);
@@ -96,14 +97,14 @@ if ($db_con->is_open()) {
     }
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id() > 0) {
+    if ($usr->id > 0) {
 
         $wrd = new word($usr);
 
         if ($method === rest_ctrl::GET) {
             // get the parameters
-            $wrd_id = $_GET[api::URL_VAR_ID] ?? 0;
-            $wrd_name = $_GET[api::URL_VAR_NAME] ?? '';
+            $wrd_id = $_GET[url_var::ID] ?? 0;
+            $wrd_name = $_GET[url_var::NAME] ?? '';
 
             if ($wrd_id > 0) {
                 $wrd->load_by_id($wrd_id);

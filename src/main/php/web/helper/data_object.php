@@ -30,21 +30,28 @@
 
 */
 
-namespace html\helper;
+namespace Zukunft\ZukunftCom\main\php\web\helper;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-include_once paths::SHARED . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+//include_once html_paths::COMPONENT . 'component_list.php';
+include_once html_paths::FORMULA . 'formula_list.php';
+include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VIEW . 'view_list.php';
-include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::WORD . 'word_list.php';
+include_once paths::SHARED . 'json_fields.php';
 
-use html\phrase\phrase_list;
-use html\user\user_message;
-use html\view\view_list;
-use html\word\word_list;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\component\component_list;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class data_object
 {
@@ -55,7 +62,10 @@ class data_object
 
     private word_list $wrd_lst;
     private phrase_list $phr_lst;
+    private formula_list $frm_lst;
     private view_list $msk_lst;
+    private component_list $cmp_lst;
+    public ?type_lists $typ_lst_cache = null;
 
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
@@ -84,7 +94,9 @@ class data_object
     {
         $this->wrd_lst = new word_list();
         $this->phr_lst = new phrase_list();
+        $this->frm_lst = new formula_list();
         $this->msk_lst = new view_list();
+        $this->cmp_lst = new component_list();
         $this->usr_msg = new user_message();
         $this->online = true;
     }
@@ -112,6 +124,23 @@ class data_object
     }
 
     /**
+     * set the formula_list of this data object
+     * @param formula_list $frm_lst
+     */
+    function set_formula_list(formula_list $frm_lst): void
+    {
+        $this->frm_lst = $frm_lst;
+    }
+
+    /**
+     * @return formula_list with the formulas of this data object
+     */
+    function formula_list(): formula_list
+    {
+        return $this->frm_lst;
+    }
+
+    /**
      * set the view_list of this data object
      * @param view_list $msk_lst
      */
@@ -121,7 +150,7 @@ class data_object
     }
 
     /**
-     * @return view_list with the view of this data object
+     * @return view_list with the views of this data object
      */
     function view_list(): view_list
     {
@@ -134,6 +163,35 @@ class data_object
     function has_view_list(): bool
     {
         if ($this->msk_lst->count() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * set the component_list of this data object
+     * @param component_list $cmp_lst
+     */
+    function set_component_list(component_list $cmp_lst): void
+    {
+        $this->cmp_lst = $cmp_lst;
+    }
+
+    /**
+     * @return component_list with the components of this data object
+     */
+    function component_list(): component_list
+    {
+        return $this->cmp_lst;
+    }
+
+    /**
+     * @return bool true if this context object contains at least some phrases
+     */
+    function has_phrases(): bool
+    {
+        if ($this->phr_lst->count() > 0) {
             return true;
         } else {
             return false;

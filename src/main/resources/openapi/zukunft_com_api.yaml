@@ -2233,7 +2233,7 @@ components:
             with the predicate "is a" a word can be assign to several words e.g. 
             - Zurich is a City
             - Zurich is a Canton
-            - Zurich is a Company
+            - Zurich is a company
     TripleList:
       type: array
       description: list of words

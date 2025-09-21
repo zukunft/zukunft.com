@@ -37,57 +37,56 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\component\component;
-use cfg\component\component_list;
-use cfg\const\paths;
-use cfg\formula\formula;
-use cfg\formula\formula_list;
-use cfg\helper\type_lists;
-use cfg\language\language;
-use cfg\language\language_form;
-use cfg\phrase\phrase_list;
-use cfg\phrase\phrase_type;
-use cfg\phrase\term_list;
-use cfg\ref\ref;
-use cfg\ref\source;
-use cfg\system\job;
-use cfg\system\sys_log_list;
-use cfg\user\user;
-use cfg\value\value;
-use cfg\verb\verb;
-use cfg\view\view;
-use cfg\view\view_list;
-use cfg\word\triple;
-use cfg\word\word;
-use cfg\word\word_list;
-use html\const\paths as html_paths;
-use html\helper\config;
-use html\helper\data_object as data_object_dsp;
-use html\html_base;
-use html\phrase\phrase as phrase_dsp;
-use html\word\word as word_dsp;
-use shared\api;
-use shared\const\components;
-use shared\const\formulas;
-use shared\const\refs;
-use shared\const\sources;
-use shared\const\users;
-use shared\const\values;
-use shared\const\views;
-use shared\const\words;
-use shared\enum\change_fields;
-use shared\library;
-use shared\types\verbs;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_LOG . 'change_field.php';
 include_once paths::MODEL_LOG . 'change_field_list.php';
 include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_SYSTEM . 'job.php';
-include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -120,9 +119,9 @@ class api_tests
 
         $t->assert_api_get(user::class, users::SYSTEM_TEST_ID);
         $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_NAME);
-        $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_EMAIL, api::URL_VAR_EMAIL);
+        $t->assert_api_get_by_text(user::class, users::SYSTEM_TEST_EMAIL, url_var::EMAIL);
         $t->assert_api_get(word::class);
-        $t->assert_api_get_json(word::class, api::URL_VAR_WORD_ID);
+        $t->assert_api_get_json(word::class, url_var::WORD_ID);
         $t->assert_api_get_by_text(word::class, words::MATH);
         $t->assert_api_get(verb::class);
         $t->assert_api_get_by_text(verb::class, verbs::NOT_SET_NAME);
@@ -151,12 +150,12 @@ class api_tests
 
         $t->assert_api_get_list(type_lists::class);
         $t->assert_api_get_list(word_list::class, [1, 2, words::PI_ID]);
-        $t->assert_api_get_list(word_list::class, words::MATH, api::URL_VAR_PATTERN);
+        $t->assert_api_get_list(word_list::class, words::MATH, url_var::PATTERN);
         $t->assert_api_get_list(phrase_list::class, [words::MATH_ID, words::CONST_ID, words::PI_SYMBOL_ID, -1, -2]);
-        $t->assert_api_get_list(phrase_list::class, words::MATH, api::URL_VAR_PATTERN);
+        $t->assert_api_get_list(phrase_list::class, words::MATH, url_var::PATTERN);
         $t->assert_api_get_list(term_list::class, [1, -1, 2, -2]);
         $t->assert_api_get_list(formula_list::class, [1]);
-        $t->assert_api_get_list(view_list::class, views::START_NAME, api::URL_VAR_PATTERN);
+        $t->assert_api_get_list(view_list::class, views::START_NAME, url_var::PATTERN);
         $t->assert_api_get_list(component_list::class, 2, 'view_id');
 
         $t->assert_api_chg_list(word::class,words::MATH_ID);
@@ -310,17 +309,17 @@ class api_tests
      *
      * add key word test
      * assume
-     * ABB (Company),Employees, 2021: 15'000
+     * ABB (company),Employees, 2021: 15'000
      * ABBN (Ticker),Employees, 2021: 15'100
      *
      *
-     * ABBN (Ticker) is ABB (Company)
+     * ABBN (Ticker) is ABB (company)
      * -> ask the user which value to use for Employees, 2021
      * -> until the user has closed the open task 15'000 is used
      *
      * if Ticker is defined as a key for companies
      * -> create a normal table with a unique key
-     * -> and fields like Employees (of a Company)
+     * -> and fields like Employees (of a company)
      *
      * the advantage compared to a classic table setup is
      * that a smooth creation and reverse is supported

@@ -36,25 +36,24 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::VERB . 'verb_list.php';
 include_once paths::SHARED_CONST . 'views.php';
-
-use cfg\user\user;
-use cfg\verb\verb_list;
-use html\verb\verb_list as verb_list_dsp;
-use cfg\view\view;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("verbs");
 
 $result = ''; // reset the html code var
-$back = $_GET[api::URL_VAR_BACK] = ''; // the word id from which this value change has been called (maybe later any page)
+$back = $_GET[url_var::BACK] = ''; // the word id from which this value change has been called (maybe later any page)
 
 // load the session user parameters
 $usr = new user;
@@ -63,7 +62,7 @@ $result .= $usr->get();
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
 if ($usr->id() > 0) {
 
-    $html = new \html\html_base();
+    $html = new \Zukunft\ZukunftCom\main\php\web\html\html_base();
 
     $usr->load_usr_data();
 

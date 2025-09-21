@@ -30,10 +30,10 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_WORD . 'word.php';
@@ -42,20 +42,18 @@ include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_CONST . 'words.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\phrase\phrase;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
-use cfg\word\word;
-use cfg\word\word_db;
-use html\word\word as word_dsp;
-use shared\const\formulas;
-use shared\const\words;
-use shared\types\phrase_type as phrase_type_shared;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_tests
 {
@@ -90,7 +88,7 @@ class word_tests
 
         $t->subheader($ts . 'sql read default and user changes');
         $wrd = new word($usr);
-        $wrd->set_id(words::CONST_ID);
+        $wrd->id = words::CONST_ID;
         $t->assert_sql_standard($sc, $wrd);
         $t->assert_sql_not_changed($sc, $wrd);
         $t->assert_sql_user_changes($sc, $wrd);
@@ -123,14 +121,14 @@ class word_tests
         $wrd->description = words::MATH_COM;
         $wrd_updated = $t->word();
         $wrd_updated->set_user($usr_sys);
-        $wrd_updated->set_plural(words::TEST_RENAMED);
+        $wrd_updated->plural = words::TEST_RENAMED;
         $wrd_updated->description = words::TEST_RENAMED;
         $wrd_updated->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $t->assert_sql_update($sc, $wrd_updated, $wrd, [sql_type::LOG, sql_type::USER]);
 
         $t->subheader($ts . 'sql write update of all fields changed');
         $wrd_filled = $t->word_filled();
-        $wrd_renamed->set_id($wrd->id());
+        $wrd_renamed->id = $wrd->id();
         $t->assert_sql_update($sc, $wrd_renamed, $wrd_filled, [sql_type::LOG]);
 
         $t->subheader($ts . 'sql write delete');
@@ -189,7 +187,7 @@ class word_tests
         $t->assert($t->name . 'fill: ' . $test_name, $non_do_fld_names, []);
         $test_name = 'check if the word id is filled up';
         $wrd_imp = $t->word();
-        $wrd_imp->set_id(0);
+        $wrd_imp->id = 0;
         $wrd_db = $t->word();
         $wrd_imp->fill($wrd_db, $usr_sys);
         $non_do_fld_names = $wrd_db->db_fields_changed($wrd_imp)->names();

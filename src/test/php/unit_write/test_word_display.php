@@ -34,20 +34,20 @@
 // start testing the system functionality 
 // --------------------------------------
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
 
-use cfg\word\word;
-use html\word\word as word_dsp;
-use html\verb\verb_list as verb_list_dsp;
-use shared\enum\foaf_direction;
-use shared\library;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
-use test\all_tests;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_word_display_test(all_tests $t): void
 {
@@ -144,14 +144,14 @@ function run_word_display_test(all_tests $t): void
     //$t->display('word_dsp->dsp_val_list compare to old for '.$wrd_ZH->name, $target, $result, $t::TIMEOUT_LIMIT_PAGE);
     //$t->dsp_contains(', word_dsp->dsp_val_list compare to old for ' . $wrd_ZH->name(), $target, $result, $t::TIMEOUT_LIMIT_PAGE);
 
-    // the value table for Company
+    // the value table for company
     /*
     $wrd_company = New word_dsp;
     $wrd_company->name = "TEST_WORD";
     $wrd_company->set_user($usr);
     $wrd_company->load();
     $wrd_ratios = New word_dsp;
-    $wrd_ratios->name = "Company main ratio";
+    $wrd_ratios->name = "company main ratio";
     $wrd_ratios->set_user($usr);
     $wrd_ratios->load();
     $target = zut_dsp_list_wrd_val($wrd_company->id, $wrd_ratios->id, $usr->id());

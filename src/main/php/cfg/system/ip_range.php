@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::DB . 'sql.php';
@@ -53,22 +53,22 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\helper\data_object;
-use cfg\helper\db_object_seq_id;
-use cfg\log\change;
-use cfg\user\user;
-use cfg\user\user_message;
-use shared\enum\change_actions;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class ip_range extends db_object_seq_id
 {
@@ -123,7 +123,7 @@ class ip_range extends db_object_seq_id
 
     function reset(): void
     {
-        $this->set_id(0);
+        $this->id = 0;
         $this->from = '';
         $this->to = '';
         $this->reason = null;
@@ -270,7 +270,7 @@ class ip_range extends db_object_seq_id
 
         if ($qp->name != '') {
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
             $db_con->set_fields(self::FLD_NAMES);
             $db_con->set_where_text($sql_where);
             $qp->sql = $db_con->select_by_set_id();
@@ -290,7 +290,7 @@ class ip_range extends db_object_seq_id
         global $db_con;
 
         $this->reset();
-        $this->set_id($id);
+        $this->id = $id;
         $qp = $this->load_sql_by_vars($db_con);
         return $this->load($qp);
     }
@@ -524,11 +524,11 @@ class ip_range extends db_object_seq_id
         if ($log->id() > 0) {
             // insert the new ip range
             $db_con->set_class($this::class);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
 
-            $this->set_id($db_con->insert_old(
+            $this->id = $db_con->insert_old(
                 array(self::FLD_FROM, self::FLD_TO, self::FLD_REASON, self::FLD_ACTIVE),
-                array($this->from, $this->to, $this->reason, $this->active)));
+                array($this->from, $this->to, $this->reason, $this->active));
             if ($this->id() > 0) {
                 // update the id in the log for the correct reference
                 if (!$log->add_ref($this->id())) {
@@ -560,7 +560,7 @@ class ip_range extends db_object_seq_id
 
         $db_chk = clone $this;
         $db_chk->reset();
-        $db_chk->set_id($this->id());
+        $db_chk->id = $this->id();
         $db_chk->from = $this->from;
         $db_chk->to = $this->to;
         $db_chk->set_user($this->user());
@@ -588,7 +588,7 @@ class ip_range extends db_object_seq_id
         $usr_msg = new user_message();
 
         // build the database object because this is needed anyway
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_class($this::class);
 
         // check if the external reference is supposed to be added
@@ -598,7 +598,7 @@ class ip_range extends db_object_seq_id
             $similar = $this->get_similar();
             if ($similar != null) {
                 if ($similar->id() != 0) {
-                    $this->set_id($similar->id());
+                    $this->id = $similar->id();
                 }
             }
         }
@@ -613,7 +613,7 @@ class ip_range extends db_object_seq_id
             // done first, because it needs to be done for user and general object values
             $db_rec = clone $this;
             $db_rec->reset();
-            $db_rec->set_id($this->id());
+            $db_rec->id = $this->id();
             $db_rec->set_user($this->user());
             $qp = $this->load_sql_by_vars($db_con);
             if ($db_rec->load($qp) > 0) {

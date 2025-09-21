@@ -30,26 +30,26 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'change_tables.php';
 
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\formula\formula_link_list;
-use cfg\log\change_link;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\user\user;
-use cfg\word\word;
-use html\formula\formula as formula_dsp;
-use shared\const\formulas;
-use shared\const\users;
-use shared\const\words;
-use shared\enum\change_tables;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class formula_link_write_tests
 {

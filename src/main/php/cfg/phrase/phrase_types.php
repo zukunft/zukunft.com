@@ -32,9 +32,9 @@
   
 */
 
-namespace cfg\phrase;
+namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::DB . 'sql_db.php';
@@ -42,9 +42,9 @@ include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_PHRASE . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 
-use cfg\helper\type_list;
-use cfg\helper\type_object;
-use shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 
 class phrase_types extends type_list
 {

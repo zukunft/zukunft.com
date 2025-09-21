@@ -16,7 +16,7 @@
       "name": "Canton"
     },
     {
-      "name": "Company"
+      "name": "company"
     },
     {
       "name": "People"
@@ -80,7 +80,7 @@
       "name": "Zurich Insurance",
       "from": "Zurich",
       "verb": "is a",
-      "to": "Company",
+      "to": "company",
       "refs": [
         {
           "name": "Zurich_Insurance_Group",

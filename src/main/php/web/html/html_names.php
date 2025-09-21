@@ -2,8 +2,8 @@
 
 /*
 
-    html_names.php - const names used to make the html names unique
-    --------------
+    web/html/html_names.php - HTML language const used for the html zukunft.com frontend
+    -----------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,16 +30,18 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web\html;
 
 
 class html_names
 {
 
-    // html form element names
-    const PHRASE = 'phrase';
-    const FROM = 'from';
-    const TO = 'to';
-    const SEP = '_';
+    // html const used in zukunft.com
+
+    // html base elements
+    const SPAN = 'span';
+    const HTML_CLASS = 'class';
+    const TITLE = 'title';
+    const INPUT = 'input';
 
 }

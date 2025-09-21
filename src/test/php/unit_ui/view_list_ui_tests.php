@@ -30,15 +30,17 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::VIEW . 'view_list.php';
 
-use html\html_base;
-use html\view\view_list as view_list_dsp;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_list_ui_tests
 {
@@ -52,13 +54,14 @@ class view_list_ui_tests
         $t->header($ts);
 
         // test the view list display functions
+        $form = 'view_list_test';
         $lst = new view_list_dsp($t->view_list()->api_json());
         $test_page = $html->text_h2('view list display test');
         $test_page .= 'view list with tooltip: ' . $lst->name_tip() . '<br>';
         $test_page .= 'view list with link: ' . $lst->name_link() . '<br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst->selector('', 0, 'test_selector', 'No view selected') . '<br>';
+        $test_page .= $lst->selector($form, 0, url_var::VIEW_ID, msg_id::LABEL_VIEW) . '<br>';
 
         $t->html_test($test_page, 'view_list', 'view_list', $t);
     }

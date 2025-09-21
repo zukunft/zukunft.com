@@ -35,9 +35,9 @@
 
 */
 
-namespace cfg\sandbox;
+namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
 include_once paths::DB . 'sql.php';
@@ -50,31 +50,34 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_LOG . 'change_log_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\helper\data_object;
-use cfg\helper\db_object_seq_id;
-use cfg\log\change_log_list;
-use cfg\user\user;
-use cfg\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\helper\CombineObject;
-use shared\json_fields;
-use shared\types\api_type_list;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class sandbox_link_named extends sandbox_link
 {
@@ -86,13 +89,13 @@ class sandbox_link_named extends sandbox_link
     // the word, triple, verb oder formula description that is shown as a mouseover explain to the user
     // if description is NULL the database value should not be updated
     // or for triples the description that may differ from the generic created text
-    // e.g. Zurich AG instead of Zurich (Company)
+    // e.g. Zurich AG instead of Zurich (company)
     // if the description is empty the generic created name is used
     protected ?string $name = '';   // simply the object name, which cannot be empty if it is a named object
     public ?string $description = null;
 
     // database id of the type used for named link user sandbox objects with predefined functionality
-    // which is actually only triple
+    // which is actually only triple at the moment
     // repeating _sandbox_typed, because php 8.1 does not yet allow multi extends
     public ?int $type_id = null;
 
@@ -117,6 +120,7 @@ class sandbox_link_named extends sandbox_link
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as set in the child class
      * @param string $name_fld the name of the name field as set in the child class
+     * @param string $type_fld the name of the type field as defined in this child class
      * @return bool true if the word is loaded and valid
      */
     function row_mapper_sandbox(
@@ -124,7 +128,8 @@ class sandbox_link_named extends sandbox_link
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = '',
-        string $name_fld = ''
+        string $name_fld = '',
+        string $type_fld = ''
     ): bool
     {
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld);
@@ -136,6 +141,9 @@ class sandbox_link_named extends sandbox_link
             }
             if (array_key_exists(sql_db::FLD_DESCRIPTION, $db_row)) {
                 $this->description = $db_row[sql_db::FLD_DESCRIPTION];
+            }
+            if (array_key_exists($type_fld, $db_row)) {
+                $this->type_id = $db_row[$type_fld];
             }
         }
         return $result;
@@ -165,29 +173,6 @@ class sandbox_link_named extends sandbox_link
         return $msg;
     }
 
-
-    /*
-     * api
-     */
-
-    /**
-     * create an array for the api json creation
-     * differs from the export array by using the internal id instead of the names
-     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
-     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
-     * @return array the filled array used to create the api json message to the frontend
-     */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
-    {
-        $vars = parent::api_json_array($typ_lst, $usr);
-
-        $vars[json_fields::NAME] = $this->name();
-        $vars[json_fields::DESCRIPTION] = $this->description();
-        $vars[json_fields::TYPE] = $this->type_id();
-
-        return $vars;
-    }
-
     /**
      * set the vars of this named link object based on the given json without writing to the database
      * import the name and description of a sandbox link object
@@ -211,6 +196,29 @@ class sandbox_link_named extends sandbox_link
         }
 
         return $usr_msg;
+    }
+
+
+    /*
+     * api
+     */
+
+    /**
+     * create an array for the api json creation
+     * differs from the export array by using the internal id instead of the names
+     * @param api_type_list $typ_lst configuration for the api message e.g. if phrases should be included
+     * @param user|null $usr the user for whom the api message should be created which can differ from the session user
+     * @return array the filled array used to create the api json message to the frontend
+     */
+    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    {
+        $vars = parent::api_json_array($typ_lst, $usr);
+
+        $vars[json_fields::NAME] = $this->name();
+        $vars[json_fields::DESCRIPTION] = $this->description();
+        $vars[json_fields::TYPE] = $this->type_id();
+
+        return $vars;
     }
 
 
@@ -274,7 +282,7 @@ class sandbox_link_named extends sandbox_link
     function cloned_named(string $name): sandbox_link_named
     {
         $obj_cpy = parent::cloned();
-        $obj_cpy->set_id($this->id());
+        $obj_cpy->id = $this->id;
         $obj_cpy->set_fob($this->fob());
         $obj_cpy->set_tob($this->tob());
         $obj_cpy->set_name($name);
@@ -341,6 +349,72 @@ class sandbox_link_named extends sandbox_link
         return $this->type_id;
     }
 
+    /**
+     * set the type based on the given code id and type list
+     *
+     * @param string|null $code_id the code id that should be added to this view
+     * @param type_list $typ_lst the parent object specific preloaded list of types
+     * @param msg_id $msg_id the id of the message used to report a missing type
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
+     */
+    function set_type_by_code_id(
+        ?string   $code_id,
+        type_list $typ_lst,
+        msg_id    $msg_id,
+        user      $usr_req = new user()
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        if ($code_id == null) {
+            $this->type_id = null;
+        } else {
+            if ($typ_lst->has_code_id($code_id)) {
+                $this->set_type_id($typ_lst->id($code_id), $usr_req);
+            } else {
+                $usr_msg->add_id_with_vars($msg_id, [
+                    msg_id::VAR_NAME => $code_id
+                ]);
+                $this->type_id = null;
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * set the type based on the given name and type list
+     * should only be used if the code id is missing
+     * TODO Prio 2 if the code id is given and the type name differs rename the type for the user
+     *
+     * @param string|null $name the code id that should be added to this view
+     * @param type_list $typ_lst the parent object specific preloaded list of types
+     * @param msg_id $msg_id the id of the message used to report a missing type
+     * @param user $usr_req the user who wants to change the type
+     * @return user_message a warning if the view type code id is not found
+     */
+    function set_type_by_name(
+        ?string   $name,
+        type_list $typ_lst,
+        msg_id    $msg_id,
+        user      $usr_req = new user()
+    ): user_message
+    {
+        $usr_msg = new user_message();
+        if ($name == null) {
+            $this->type_id = null;
+        } else {
+            if ($typ_lst->has_name($name)) {
+                $this->set_type_id($typ_lst->id_by_name($name), $usr_req);
+            } else {
+                $usr_msg->add_id_with_vars($msg_id, [
+                    msg_id::VAR_NAME => $name
+                ]);
+                $this->type_id = null;
+            }
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * cast
@@ -367,10 +441,10 @@ class sandbox_link_named extends sandbox_link
     /**
      * check if the named object in the database needs to be updated
      *
-     * @param sandbox_link_named|sandbox_link|CombineObject|db_object_seq_id $db_obj the word as saved in the database
+     * @param sandbox_link_named|sandbox_link|CombineObject|IdObject $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(sandbox_link_named|sandbox_link|CombineObject|db_object_seq_id $db_obj): bool
+    function needs_db_update(sandbox_link_named|sandbox_link|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->name != null) {

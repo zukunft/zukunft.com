@@ -30,25 +30,25 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_WORD . 'triple_list.php';
 include_once html_paths::WORD . 'triple_list.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\triple_list;
-use html\word\triple_list as triple_list_dsp;
-use shared\enum\foaf_direction;
-use shared\const\triples;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple_list as triple_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_list_tests
 {

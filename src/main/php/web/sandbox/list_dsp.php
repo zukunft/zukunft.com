@@ -31,36 +31,40 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once paths::API_OBJECT . 'api_message.php';
 include_once html_paths::HTML . 'html_selector.php';
 include_once html_paths::HTML . 'rest_call.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
-include_once paths::SHARED_TYPES . 'api_type_list.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_HELPER . 'ListOfIdObjects.php';
+include_once paths::SHARED_TYPES . 'api_type_list.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 
-use controller\api_message;
-use html\rest_call as api_dsp;
-use html\html_selector;
-use html\user\user;
-use html\user\user_message;
-use shared\api;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\ListOfIdObjects;
-use shared\helper\TextIdObject;
-use shared\types\api_type_list;
-use shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\ListOfIdObjects;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class list_dsp extends ListOfIdObjects
 {
@@ -126,8 +130,8 @@ class list_dsp extends ListOfIdObjects
     function lst_key(): array
     {
         $result = array();
-        foreach ($this->lst() as $val) {
-            $result[$val->id()] = $val->name();
+        foreach ($this->lst() as $sbx) {
+            $result[$sbx->id()] = $sbx->name();
         }
         return $result;
     }
@@ -194,7 +198,7 @@ class list_dsp extends ListOfIdObjects
 
         $api = new api_dsp();
         $data = array();
-        $data[api::URL_VAR_PATTERN] = $pattern;
+        $data[url_var::PATTERN] = $pattern;
         $json_body = $api->api_get($this::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
@@ -259,29 +263,29 @@ class list_dsp extends ListOfIdObjects
      * 4. cmp->view_select: add the component and view parameters e.g. the form name and the unique name within the form
      *
      * @param string $form the html form name which must be unique within the html page
-     * @param int $selected the unique database id of the object that has been selected
+     * @param int|null $selected the unique database id of the object that has been selected
      * @param string $name the name of this selector which must be unique within the form
-     * @param string $label the text show to the user
-     * @param string $col_class the formatting code to adjust the formatting
+     * @param msg_id $label_id the text show to the user
+     * @param string $style the formatting code to adjust the formatting
      * @returns string the html code to select a word from this list
      */
     function selector(
         string $form = '',
-        int    $selected = 0,
+        ?int   $selected = null,
         string $name = '',
-        string $label = '',
-        string $col_class = view_styles::COL_SM_4,
+        msg_id $label_id = msg_id::LABEL,
+        string $style = view_styles::COL_SM_4,
         string $type = html_selector::TYPE_SELECT
     ): string
     {
         $sel = new html_selector();
+        $sel->lst = $this->lst_key();
         $sel->name = $name;
         $sel->form = $form;
-        $sel->label = $label;
-        $sel->bs_class = $col_class;
-        $sel->type = $type;
-        $sel->lst = $this->lst_key();
         $sel->selected = $selected;
+        $sel->label_id = $label_id;
+        $sel->style = $style;
+        $sel->type = $type;
         return $sel->display();
     }
 

@@ -32,10 +32,28 @@
 
 */
 
-namespace html\phrase;
+namespace Zukunft\ZukunftCom\main\php\web\phrase;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 //include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 //include_once html_paths::HELPER . 'config.php';
@@ -52,26 +70,12 @@ include_once html_paths::VERB . 'verb_list.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::WORD . 'word_list.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
-
-use html\formula\formula;
-use html\helper\config;
-use html\html_base;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\rest_call as api_dsp;
-use html\sandbox\sandbox_list_named;
-use html\user\user_message;
-use html\verb\verb;
-use html\verb\verb_list;
-use html\word\triple;
-use html\word\word;
-use html\word\word_list;
-use shared\api;
-use shared\enum\foaf_direction;
-use shared\library;
 
 class phrase_list extends sandbox_list_named
 {
@@ -109,9 +113,9 @@ class phrase_list extends sandbox_list_named
         // TODO move the
         $api = new api_dsp();
         $data = array();
-        $data[api::URL_VAR_PHRASE] = $phr->id();
-        $data[api::URL_VAR_DIRECTION] = $direction->value;
-        $data[api::URL_VAR_LEVELS] = 1;
+        $data[url_var::PHRASE] = $phr->id();
+        $data[url_var::DIRECTION] = $direction->value;
+        $data[url_var::LEVELS] = 1;
         $json_body = $api->api_get(self::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
@@ -132,13 +136,50 @@ class phrase_list extends sandbox_list_named
         // TODO move the
         $api = new api_dsp();
         $data = array();
-        $data[api::URL_VAR_FORMULAS] = $frm->id();
+        $data[url_var::FORMULAS] = $frm->id();
         $json_body = $api->api_get(self::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {
             $result = true;
         }
         return $result;
+    }
+
+    /**
+     * if the phrase list is empty fill it with some general suggested phrases
+     * to offer to the user at least a basic selection even if the backend connection is temporary lost
+     * @return bool
+     */
+    function load_fallback(): bool
+    {
+        $result = false;
+        if ($this->is_empty()) {
+            // TODO Prio 3 replace with an frequently generated preloaded list
+            $this->set_lst($this->phrases_often_used()->lst());
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * @return phrase_list with the most often used phrases as a frontend fallback list
+     */
+    private function phrases_often_used(): phrase_list
+    {
+        $lst = new phrase_list();
+        foreach (words::BASE_WORDS as $wrd_array) {
+            $wrd = new word();
+            $wrd->set_name($wrd_array[0]);
+            $wrd->set_id($wrd_array[1]);
+            $lst->add($wrd->phrase());
+        }
+        foreach (triples::BASE_TRIPLES as $trp_array) {
+            $trp = new triple();
+            $trp->set_name($trp_array[0]);
+            $trp->set_id($trp_array[1]);
+            $lst->add($trp->phrase());
+        }
+        return $lst;
     }
 
 
@@ -276,22 +317,6 @@ class phrase_list extends sandbox_list_named
     /*
      * display
      */
-
-    /**
-     * @returns string the html code to display the phrases with the most useful link
-     */
-    function name_link(): string
-    {
-        $result = '';
-        $this->sort_by_name();
-        foreach ($this->lst() as $phr) {
-            if ($result != '' and $phr->name_link() != '') {
-                $result .= ', ';
-            }
-            $result .= $phr->name_link();
-        }
-        return $result;
-    }
 
     /**
      * @returns string the html code to display the plural of the phrases with the most useful link
@@ -505,7 +530,7 @@ class phrase_list extends sandbox_list_named
      */
     function btn_add_value($back): string
     {
-        $result = \html\btn_add_value($this, Null, $back);
+        $result = \Zukunft\ZukunftCom\main\php\web\btn_add_value($this, Null, $back);
         /*
         zu_debug('phrase_list->btn_add_value');
         $val_btn_title = '';

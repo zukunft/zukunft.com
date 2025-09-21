@@ -2,8 +2,8 @@
 
 /*
 
-    user_dsp.php - functions to create the HTML code to display the user setup and log information
-    ------------
+    web/user/user.php - functions to create the HTML code to display the user setup and log information
+    -----------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,10 +29,10 @@
 
 */
 
-namespace html\user;
+namespace Zukunft\ZukunftCom\main\php\web\user;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 // get the api const that are shared between the backend and the html frontend
 // get the pure html frontend objects
 include_once html_paths::HTML . 'html_base.php';
@@ -43,13 +43,13 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\html_base;
-use html\phrase\term;
-use html\sandbox\db_object;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\enum\user_profiles;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\term;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class user extends db_object
 {
@@ -252,6 +252,9 @@ class user extends db_object
     {
         $vars[json_fields::NAME] = $this->name;
         $vars[json_fields::DESCRIPTION] = $this->description;
+        if ($this->is_profile_valid()) {
+            $vars[json_fields::PROFILE_ID] = $this->profile_id;
+        }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
@@ -268,10 +271,10 @@ class user extends db_object
         $html = new html_base();
         $result = ''; // reset the html code var
 
-        if ($this->id() > 0) {
+        if ($this->id > 0) {
             // display the user fields using a table and not using px in css to be independent of any screen solution
             $header = $html->text_h2('User "' . $this->name . '"');
-            $hidden_fields = $html->form_hidden("id", $this->id());
+            $hidden_fields = $html->form_hidden("id", $this->id);
             $hidden_fields .= $html->form_hidden("back", $back);
             $detail_fields = $html->form_text("username", $this->name);
             $detail_fields .= $html->form_text("email", $this->email);

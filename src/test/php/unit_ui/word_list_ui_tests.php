@@ -30,15 +30,16 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::WORD . 'word_list.php';
 
-use html\html_base;
-use html\word\word_list as word_list_dsp;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_list_ui_tests
 {
@@ -64,8 +65,8 @@ class word_list_ui_tests
         $test_page .= 'measure and scaling: ' . '<br>' . $lst_long->measure_scale_lst()->name_link() . '<br><br>';
 
         $test_page .= '<br>' . $html->text_h2('Selector tests');
-        $test_page .= $lst_long->selector('', 0, 'test_selector', 'No word selected') . '<br>';
-        $test_page .= $lst_long->selector('', 3, '2_selected', 'Pi selected', '') . '<br>';
+        $test_page .= $lst_long->selector(views::WORD_LIST) . '<br>';
+        $test_page .= $lst_long->selector(views::WORD_LIST, 3, '2_selected') . '<br>';
 
         $t->html_test($test_page, '', 'word_list', $t);
     }

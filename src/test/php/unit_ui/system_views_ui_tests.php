@@ -30,24 +30,26 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'views.php';
 
-use html\html_base;
-use shared\const\views as view_shared;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class system_views_ui_tests
 {
-    function run(test_cleanup $t): void
+    function run(test_cleanup $t, frontend $ui): void
     {
 
-        global $html_system_views;
-
         $html = new html_base();
+        $ui = new frontend('system_views_ui_tests');
+        $ui->load_dummy_cache_from_test_resources($t->usr1);
 
         // start the test section (ts)
         $ts = 'unit ui html system view ';
@@ -59,8 +61,10 @@ class system_views_ui_tests
         $wrd = $t->word_dsp();
 
         // check if the system views have set
-        $msk = $html_system_views->get_by_code_id(view_shared::WORD_ADD);
-        $test_page .= $msk->show($wrd, null, $back) . '<br>';
+        $msk = $ui->typ_lst_cache->html_system_views->get_by_code_id(view_shared::WORD_ADD);
+        $cfg = new data_object();
+        $cfg->typ_lst_cache = $ui->typ_lst_cache;
+        $test_page .= $msk->show($wrd, $cfg, $back) . '<br>';
 
         // TODO review and combine with read db tests
         $t->html_view_test($test_page, view_shared::WORD_ADD, $t);

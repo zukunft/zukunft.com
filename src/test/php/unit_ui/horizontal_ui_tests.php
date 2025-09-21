@@ -37,18 +37,18 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_CONST . 'def.php';
 
-use cfg\const\def;
-use cfg\result\result;
-use cfg\verb\verb;
-use html\button;
-use shared\library;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class horizontal_ui_tests
 {
@@ -90,7 +90,7 @@ class horizontal_ui_tests
             $refilled_obj->reset();
             $refilled_obj->api_mapper($api_msg);
             // fill the id that is not set by the add url
-            $refilled_obj->set_id($filled_obj->id());
+            $refilled_obj->id = $filled_obj->id();
             // fill the exclude field that is set by the curl action
             if ($filled_obj::class != verb::class) {
                 if ($filled_obj->is_excluded()) {

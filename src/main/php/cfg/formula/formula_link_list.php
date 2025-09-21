@@ -29,9 +29,9 @@
   
 */
 
-namespace cfg\formula;
+namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_link_list.php';
 include_once paths::DB . 'sql_db.php';
@@ -44,14 +44,14 @@ include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\phrase\phr_ids;
-use cfg\phrase\phrase;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_link_list;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_list;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class formula_link_list extends sandbox_link_list
 {
@@ -90,7 +90,7 @@ class formula_link_list extends sandbox_link_list
 
         $sc->set_class(formula_link::class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(array(formula_db::FLD_ID, phrase::FLD_ID));
         $sc->set_usr_num_fields(formula_link::FLD_NAMES_NUM_USR);
         // also load the linked user specific phrase with the same SQL statement
@@ -187,7 +187,7 @@ class formula_link_list extends sandbox_link_list
             if ($result == '') {
                 if ($frm_lnk->can_change() > 0 and $frm_lnk->not_used()) {
                     //$db_con = new mysql;
-                    $db_con->usr_id = $this->user()->id();
+                    $db_con->usr_id = $this->user()->id;
                     // delete first all user configuration that have also been excluded
                     $db_con->set_class(formula_link::class, true);
                     $result = $db_con->delete_old(array(formula_link::FLD_ID, sql_db::FLD_EXCLUDED), array($frm_lnk->id(), '1'));

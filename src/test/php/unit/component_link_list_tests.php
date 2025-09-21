@@ -30,17 +30,17 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_COMPONENT . 'component_link_list.php';
 
-use cfg\component\component_link_list;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use shared\library;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_link_list_tests
 {

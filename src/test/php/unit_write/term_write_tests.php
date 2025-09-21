@@ -30,22 +30,22 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
 
-use cfg\phrase\term;
-use cfg\word\word;
-use html\html_base;
-use shared\library;
-use shared\const\formulas;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class term_write_tests
 {
@@ -62,7 +62,7 @@ class term_write_tests
         // load the main test word
         $wrd_zh = $t->test_word(words::ZH);
 
-        // check that adding the predefined word "Company" creates an error message
+        // check that adding the predefined word "company" creates an error message
         $term = new term($usr);
         $term->load_by_obj_name(words::ZH);
         $target = 'A word with the name "' . words::ZH . '" already exists. '

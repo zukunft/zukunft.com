@@ -35,18 +35,17 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
-
-use cfg\user\user;
-use cfg\value\value;
-use cfg\view\view;
-use html\html_base;
-use html\value\value as value_dsp;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("value_add");
@@ -67,7 +66,7 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(view_shared::VALUE_ADD);
-    $back = $_GET[api::URL_VAR_BACK] = '';     // the word id from which this value change has been called (maybe later any page)
+    $back = $_GET[url_var::BACK] = '';     // the word id from which this value change has been called (maybe later any page)
 
     // create the object to store the parameters so that if the add form is shown again it is already filled
     $val = new value($usr);
@@ -128,7 +127,7 @@ if ($usr->id() > 0) {
                 }
             }
         } else {
-            $result .= log_err("Adding " . $new_val . " for phrases " . $val->grp->dsp_id() . " failed (" . $upd_result . ").", "value_add");
+            $result .= log_err("Adding " . $new_val . " for phrases " . $val->grp()->dsp_id() . " failed (" . $upd_result . ").", "value_add");
         }
 
         log_debug("go back to " . $back . ".");

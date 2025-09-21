@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS triples
     name_given          varchar(255)      DEFAULT NULL,
     name_generated      varchar(255)      DEFAULT NULL,
     description         text              DEFAULT NULL,
+    weight              double precision  DEFAULT NULL,
     triple_condition_id bigint            DEFAULT NULL,
     phrase_type_id      smallint          DEFAULT NULL,
     view_id             bigint            DEFAULT NULL,
@@ -36,6 +37,7 @@ COMMENT ON COLUMN triples.triple_name IS 'the name used which must be unique wit
 COMMENT ON COLUMN triples.name_given IS 'the unique name manually set by the user,which can be null if the generated name should be used';
 COMMENT ON COLUMN triples.name_generated IS 'the generated name is saved in the database for database base unique check based on the phrases and verb,which can be overwritten by the given name';
 COMMENT ON COLUMN triples.description IS 'text that should be shown to the user in case of mouseover on the triple name';
+COMMENT ON COLUMN triples.weight IS 'the weight of this triple compared to others where 1 represents 100% weight';
 COMMENT ON COLUMN triples.triple_condition_id IS 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
 COMMENT ON COLUMN triples.phrase_type_id IS 'to link coded functionality to words e.g. to exclude measure words from a percent result';
 COMMENT ON COLUMN triples.view_id IS 'the default mask for this triple';
@@ -59,6 +61,7 @@ CREATE TABLE IF NOT EXISTS user_triples
     name_given          varchar(255)      DEFAULT NULL,
     name_generated      varchar(255)      DEFAULT NULL,
     description         text              DEFAULT NULL,
+    weight              double precision  DEFAULT NULL,
     triple_condition_id bigint            DEFAULT NULL,
     phrase_type_id      smallint          DEFAULT NULL,
     view_id             bigint            DEFAULT NULL,
@@ -76,6 +79,7 @@ COMMENT ON COLUMN user_triples.triple_name IS 'the name used which must be uniqu
 COMMENT ON COLUMN user_triples.name_given IS 'the unique name manually set by the user,which can be null if the generated name should be used';
 COMMENT ON COLUMN user_triples.name_generated IS 'the generated name is saved in the database for database base unique check based on the phrases and verb,which can be overwritten by the given name';
 COMMENT ON COLUMN user_triples.description IS 'text that should be shown to the user in case of mouseover on the triple name';
+COMMENT ON COLUMN user_triples.weight IS 'the weight of this triple compared to others where 1 represents 100% weight';
 COMMENT ON COLUMN user_triples.triple_condition_id IS 'formula_id of a formula with a boolean result; the term is only added if formula result is true';
 COMMENT ON COLUMN user_triples.phrase_type_id IS 'to link coded functionality to words e.g. to exclude measure words from a percent result';
 COMMENT ON COLUMN user_triples.view_id IS 'the default mask for this triple';

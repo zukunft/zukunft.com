@@ -2,8 +2,8 @@
 
 /*
 
-    formula_list_dsp.php - a list function to create the HTML code to display a formula list
-    -----------------
+    web/formula/formula_list.php - a list function to create the HTML code to display a formula list
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,21 +29,21 @@
 
 */
 
-namespace html\formula;
+namespace Zukunft\ZukunftCom\main\php\web\formula;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::USER . 'user_message.php';
 
-use html\html_base;
-use html\sandbox\list_dsp;
-use html\formula\formula as formula_dsp;
-use html\styles;
-use html\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class formula_list extends list_dsp
 {

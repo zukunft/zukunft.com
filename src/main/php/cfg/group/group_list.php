@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\group;
+namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
@@ -46,17 +46,17 @@ include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type_list;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term_list;
-use cfg\sandbox\sandbox_list;
-use cfg\user\user_message;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class group_list extends sandbox_list
 {
@@ -210,7 +210,7 @@ class group_list extends sandbox_list
         $sc->set_id_field($grp->id_field());
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(group::FLD_NAMES);
         return $qp;
     }
@@ -389,7 +389,7 @@ class group_list extends sandbox_list
     including the user specific exceptions based on the formula expression
 
     used to request an update for a formula result for each phrase group
-    e.g. the formula is assigned to "Company" ($frm_linked) and the "operating income" formula result should be calculated
+    e.g. the formula is assigned to "company" ($frm_linked) and the "operating income" formula result should be calculated
          so "sales" and "Cost" are words of the formula
          if "sales" and "Cost" for 2016 and 2017 and EUR and CHF are in the database for one company (e.g. "ABB")
          the "ABB" "operating income" for "2016" and "2017" should be calculated in "EUR" and "CHF"
@@ -447,10 +447,10 @@ class group_list extends sandbox_list
             $sql_group = 'SELECT l1.group_id
                       FROM group_phrase_links l1
                  LEFT JOIN user_group_phrase_links u1 ON u1.group_phrase_link_id = l1.group_phrase_link_id 
-                                                            AND u1.user_id = ' . $this->user()->id() . ',
+                                                            AND u1.user_id = ' . $this->user()->id . ',
                            group_phrase_links l2
                  LEFT JOIN user_group_phrase_links u2 ON u2.group_phrase_link_id = l2.group_phrase_link_id 
-                                                            AND u2.user_id = ' . $this->user()->id() . '
+                                                            AND u2.user_id = ' . $this->user()->id . '
                      WHERE l1.phrase_id IN (' . $phr_linked_ex->ids_txt() . ')  
                        AND l2.phrase_id IN (' . $phr_used_ex->ids_txt() . ')
                        AND l1.group_id = l2.group_id
@@ -499,7 +499,7 @@ class group_list extends sandbox_list
 
         log_debug('sql "' . $sql . '"');
         //$db_con = New mysql;
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         return $db_con->get_old($sql);
     }
 

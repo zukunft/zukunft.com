@@ -44,15 +44,15 @@ const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SE
 // load once the common const and vars used almost every time
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 // load the mian frontend class
 include_once paths::WEB . 'frontend.php';
 
-use html\frontend;
-use cfg\user\user;
-use html\helper\config;
-use html\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 
 // reset the html code var
 $html_str = '';
@@ -63,6 +63,7 @@ $db_con = prg_start("view", '', false);
 if ($db_con->is_open()) {
 
     // load the session user parameters
+    // TODO Prio 2 create a session object and include the user in the prg_start return object
     $usr = new user;
     $html_str .= $usr->get();
 
@@ -79,8 +80,9 @@ if ($db_con->is_open()) {
         $cfg = new config();
         $cfg->load();
 
-        $main = new frontend('view');
-        $html_str .= $main->url_to_html($_GET, $usr_dsp);
+        $ui = new frontend('view');
+        $ui->load_cache();
+        $html_str .= $ui->url_to_html($_GET, $usr_dsp);
     }
 
     // close the database

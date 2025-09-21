@@ -2,8 +2,8 @@
 
 /*
 
-    user_log_display.php - a combined object to display single value changes or changes of links by the user
-    --------------------
+    web/log/user_log_display.php - a combined object to display single value changes or changes of links by the user
+    ----------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -30,41 +30,42 @@
 */
 
 
-namespace html\log;
+namespace Zukunft\ZukunftCom\main\php\web\log;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_db.php';
-include_once html_paths::HTML . 'button.php';
-include_once html_paths::HTML . 'html_base.php';
+//include_once html_paths::HTML . 'button.php';
+//include_once html_paths::HTML . 'html_base.php';
+//include_once html_paths::COMPONENT . 'component_exe.php';
+//include_once html_paths::FORMULA . 'formula.php';
+//include_once html_paths::SYSTEM . 'back_trace.php';
+//include_once html_paths::USER . 'user.php';
+//include_once html_paths::VALUE . 'value.php';
+//include_once html_paths::VIEW . 'view.php';
+//include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once html_paths::COMPONENT . 'component_exe.php';
-include_once html_paths::FORMULA . 'formula.php';
-include_once html_paths::SYSTEM . 'back_trace.php';
-include_once html_paths::USER . 'user.php';
-include_once html_paths::VALUE . 'value.php';
-include_once html_paths::VIEW . 'view.php';
-include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_db;
-use html\component\component_exe as component;
-use html\formula\formula;
-use html\button;
-use html\html_base;
-use html\system\back_trace;
-use html\user\user;
-use html\value\value;
-use html\view\view;
-use html\word\word;
-use shared\enum\change_tables;
-use shared\enum\change_fields;
-use shared\enum\messages as msg_id;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\web\view\view;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class user_log_display
 {
@@ -138,7 +139,7 @@ class user_log_display
                    OR f.table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 'c.user_id = u.user_id
-                AND c.user_id = ' . $this->usr->id() . ' ';
+                AND c.user_id = ' . $this->usr->id . ' ';
         } elseif ($this->type == word::class) {
             $sql_where = " (f.table_id = " . $cng_tbl_cac->id(change_tables::WORD) . " 
                      OR f.table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . ") AND ";
@@ -184,7 +185,7 @@ class user_log_display
             ORDER BY c.change_time DESC
                LIMIT " . $this->size . ";";
             log_debug('user_log_display->dsp_hist ' . $sql);
-            $db_con->usr_id = $this->usr->id();
+            $db_con->usr_id = $this->usr->id;
             $db_lst = $db_con->get_old($sql);
 
             // prepare to show where the user uses different word than a normal viewer
@@ -293,7 +294,7 @@ class user_log_display
                 if ($this->type == 'word') {
                     if ($db_row['type'] == 'add') {
                         $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id, $this->back);
-                        $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_ADD);
+                        $undo_btn = new button($undo_call)->undo(msg_id::UNDO_ADD);
                     }
                 } elseif ($this->type == 'value') {
                     if ($db_row['type'] == 'add') {
@@ -302,7 +303,7 @@ class user_log_display
                 } elseif ($this->type == 'formula') {
                     if ($db_row['type'] == 'update') {
                         $undo_call = $html->url(formula::class . rest_ctrl::UPDATE, $db_row["row_id"], $this->back . '&undo_change=' . $db_row["change_id"]);
-                        $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_ADD);
+                        $undo_btn = new button($undo_call)->undo(msg_id::UNDO_ADD);
                     }
                 }
                 // display the undo button
@@ -349,7 +350,7 @@ class user_log_display
                     c.new_text_to AS new';
             $sql_row = '';
             $sql_user = 'c.user_id = u.user_id
-                AND c.user_id = ' . $this->usr->id() . ' ';
+                AND c.user_id = ' . $this->usr->id . ' ';
         } elseif ($class == 'word') {
             $sql_where = " ( c.change_table_id = " . $cng_tbl_cac->id(change_tables::WORD) . " 
                     OR c.change_table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . " 
@@ -438,7 +439,7 @@ class user_log_display
         $html = new html_base();
 
         $sql = $this->dsp_hist_links_sql($db_con);
-        $db_con->usr_id = $this->usr->id();
+        $db_con->usr_id = $this->usr->id;
         $db_lst = $db_con->get_old($sql);
 
         // display the changes

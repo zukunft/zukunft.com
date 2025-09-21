@@ -30,20 +30,20 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'refs.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\ref\ref;
-use cfg\ref\ref_type_list;
-use html\ref\ref as ref_dsp;
-use shared\const\refs;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class ref_tests
 {
@@ -75,7 +75,7 @@ class ref_tests
 
         $t->subheader($ts . 'sql read standard and user changes by id');
         $ref = new ref($usr);
-        $ref->set_id(3);
+        $ref->id = 3;
         $t->assert_sql_standard($sc, $ref);
 
         $t->subheader($ts . 'sql read all type');

@@ -41,9 +41,18 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
@@ -54,22 +63,14 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::MODEL_HELPER . 'config_numbers.php';
 include_once paths::SHARED_CONST . 'users.php';
 
-use cfg\helper\config_numbers;
-use cfg\user\user_message;
-use controller\controller;
-use cfg\user\user;
-use shared\enum\messages as msg_id;
-use shared\api;
-use shared\types\api_type;
-
 // open database
 $db_con = prg_start("api/config", "", false);
 
 if ($db_con->is_open()) {
 
     // get the parameter which config part is requested
-    $part = $_GET[api::URL_VAR_CONFIG_PART] ?? '';
-    $with_phr = $_GET[api::URL_VAR_WITH_PHRASES] ?? '';
+    $part = $_GET[url_var::CONFIG_PART] ?? '';
+    $with_phr = $_GET[url_var::WITH_PHRASES] ?? '';
 
     $usr_msg = new user_message();
     $result = ''; // reset the html code var
@@ -79,7 +80,7 @@ if ($db_con->is_open()) {
     $usr_msg->add_message_text($usr->get());
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id() > 0) {
+    if ($usr->id > 0) {
         $cfg_lst = new config_numbers($usr);
         $usr_msg = new user_message();
         if ($part == api::CONFIG_ALL or $part == '') {
@@ -98,7 +99,7 @@ if ($db_con->is_open()) {
                 $usr_msg->add_id(msg_id::CONFIG_EMPTY);
             }
         }
-        if ($with_phr == api::URL_VAR_TRUE) {
+        if ($with_phr == url_var::TRUE) {
             $result = $cfg_lst->api_json([api_type::INCL_PHRASES]);
         } else {
             $result = $cfg_lst->api_json([api_type::NO_KEY_FILL]);

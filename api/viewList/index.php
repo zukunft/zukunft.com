@@ -36,19 +36,19 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VIEW . 'view_list.php';
-
-use controller\controller;
-use cfg\user\user;
-use cfg\view\view_list;
-use shared\api;
 
 // open database
 $db_con = prg_start("api/viewList", "", false);
@@ -56,8 +56,8 @@ $db_con = prg_start("api/viewList", "", false);
 if ($db_con->is_open()) {
 
     // get the parameters
-    $cmp_id = $_GET[api::URL_VAR_VIEW_ID] ?? '';
-    $pattern = $_GET[api::URL_VAR_PATTERN] ?? '';
+    $cmp_id = $_GET[url_var::VIEW_ID] ?? '';
+    $pattern = $_GET[url_var::PATTERN] ?? '';
 
     $msg = '';
     $result = ''; // reset the json message string
@@ -67,13 +67,13 @@ if ($db_con->is_open()) {
     $msg .= $usr->get();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id() > 0) {
+    if ($usr->id > 0) {
 
         if ($cmp_id != '') {
             $lst = new view_list($usr);
             $lst->load_by_component_id($cmp_id);
             $result = $lst->api_json();
-        } elseif ($_GET[api::URL_VAR_PATTERN] != null) {
+        } elseif ($_GET[url_var::PATTERN] != null) {
             $lst = new view_list($usr);
             $lst->load_names(($pattern));
             $result = $lst->api_json();

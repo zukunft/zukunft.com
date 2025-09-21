@@ -68,18 +68,18 @@
   
 */
 
-namespace cfg\group;
+namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_GROUP . 'id.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\formula\formula;
-use cfg\phrase\phrase_list;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class result_id extends id
 {

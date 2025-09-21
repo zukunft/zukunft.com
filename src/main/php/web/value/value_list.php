@@ -5,7 +5,7 @@
     web/value_list.php - the display extension of the api value list object
     ------------------
 
-    to creat the HTML code to display a list of values
+    to create the HTML code to display a list of values
 
 
     This file is part of zukunft.com - calc with words
@@ -32,10 +32,10 @@
 
 */
 
-namespace html\value;
+namespace Zukunft\ZukunftCom\main\php\web\value;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'list_dsp.php';
 include_once html_paths::HTML . 'button.php';
@@ -59,28 +59,29 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
-use html\button;
-use cfg\phrase\phr_ids;
-use html\group\group;
-use html\html_base;
-use html\group\group_list;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\rest_call;
-use html\result\result_list;
-use html\sandbox\list_dsp;
-use html\styles;
-use html\user\user_message;
-use html\word\word;
-use html\word\word_list;
-use shared\api;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
-use shared\library;
-use shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\group\group_list;
+use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\result\result_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class value_list extends list_dsp
 {
@@ -211,7 +212,7 @@ class value_list extends list_dsp
                 $header .= $html->th('value');
                 $header_rows = $html->tr($header);
             }
-            $row = $html->td($val->grp()->name_link_list($common_phrases));
+            $row = $html->td($val->grp->name_link_list($common_phrases));
             $row .= $html->td($val->value_edit($back));
             $rows .= $html->tr($row);
             // TODO add button to delete a value or add a similar value
@@ -249,7 +250,7 @@ class value_list extends list_dsp
         $lib = new library();
         $grp_lst = new group_list();
         foreach ($this->lst() as $val) {
-            $grp = $val->grp();
+            $grp = $val->grp;
             if ($grp != null) {
                 $grp_lst->lst[] = $grp;
             } else {
@@ -464,7 +465,7 @@ class value_list extends list_dsp
                             }
 
                             //$result .= '      '.btn_add_value_fast ($modal_nbr, $add_phr_lst, $common_lst, $back);
-                            $result .= '      ' . \html\btn_add_value_fast($modal_nbr, $add_phr_lst, $this->phr, $common_lst, $back);
+                            $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\btn_add_value_fast($modal_nbr, $add_phr_lst, $this->phr, $common_lst, $back);
                             $modal_nbr++;
                             //$result .= '      '.btn_add_value ($add_phr_lst, $type_ids, $back);
                             $result .= '      </td>' . "\n";
@@ -570,7 +571,7 @@ class value_list extends list_dsp
                                         $type_ids[] = 0;
                                     }
 
-                                    $result .= '      ' . \html\btn_add_value($add_phr_lst, $type_ids, $back);
+                                    $result .= '      ' . \Zukunft\ZukunftCom\main\php\web\btn_add_value($add_phr_lst, $type_ids, $back);
                                     $result .= '      </td>' . "\n";
                                 } else {
                                     $result .= $tbl_value->dsp_tbl($back);
@@ -603,7 +604,7 @@ class value_list extends list_dsp
                         $type_ids[] = $type_phr->id();
                         $type_ids[] = $type_phr->id();
 
-                        $result .= '      &nbsp;&nbsp;' . \html\btn_add_value($add_phr_ids, $type_ids, $back);
+                        $result .= '      &nbsp;&nbsp;' . \Zukunft\ZukunftCom\main\php\web\btn_add_value($add_phr_ids, $type_ids, $back);
                         $result .= '      </td>' . "\n";
                         $result .= '  </tr>' . "\n";
                     }
@@ -760,7 +761,7 @@ class value_list extends list_dsp
                     $result .= '    <td>';
                     $url = $html->url(view_shared::VALUE_ADD, $val->id(), $back);
                     $btn = new button($url, $back);
-                    $result .= \html\btn_add_value($val_phr_lst, Null, $this->phr->id());
+                    $result .= \Zukunft\ZukunftCom\main\php\web\btn_add_value($val_phr_lst, Null, $this->phr->id());
 
                     $result .= '    </td>';
                 }

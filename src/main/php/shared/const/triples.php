@@ -32,7 +32,7 @@
 
 */
 
-namespace shared\const;
+namespace Zukunft\ZukunftCom\main\php\shared\const;
 
 class triples
 {
@@ -43,7 +43,7 @@ class triples
 
     // keyword to select the system configuration
     const SYSTEM_CONFIG = 'system configuration';
-    const SYSTEM_CONFIG_ID = 151;
+    const SYSTEM_CONFIG_ID = 92;
 
     // triple names used for the system configuration
     const NUMBER_FORMAT = 'number format';
@@ -62,6 +62,7 @@ class triples
     const MAX_LEVELS = 'max levels';
     const AUTOMATIC_CREATE = 'automatic create';
     const ROW_LIMIT = 'row limit';
+    const LINK_LIST = 'link list';
     const RESPONSE_TIME = 'response time';
     const OUTPUT_FORMAT = 'output format';
 
@@ -93,48 +94,74 @@ class triples
     const GLOBAL_PROBLEM = 'global problem';
     const GLOBAL_PROBLEM_ID = 91;
     const GLOBAL_WARMING = 'global warming';
-    const GLOBAL_WARMING_ID = 94;
+    const GLOBAL_WARMING_ID = 99;
     const GWP = 'global warming potential';
-    const GWP_ID = 95;
+    const GWP_ID = 100;
     const TIME_POINTS = 'time points';
-    const TIME_POINTS_ID = 98;
+    const TIME_POINTS_ID = 103;
     const HAPPY_TIME_POINTS = 'happy time points';
-    const HAPPY_TIME_POINTS_ID = 102;
+    const HAPPY_TIME_POINTS_ID = 111;
     const GLOBAL_WARMING_PROBLEM = 'global warming (global problem)';
-    const GLOBAL_WARMING_PROBLEM_ID = 103;
+    const GLOBAL_WARMING_PROBLEM_ID = 112;
     const POPULISM_PROBLEM = 'populism (global problem)';
-    const POPULISM_PROBLEM_ID = 104;
+    const POPULISM_PROBLEM_ID = 105;
     const POTENTIAL_HEALTH_PROBLEM = 'health can be a global problem';
-    const POTENTIAL_HEALTH_PROBLEM_ID = 105;
+    const POTENTIAL_HEALTH_PROBLEM_ID = 106;
     const POVERTY_PROBLEM = 'poverty (global problem)';
-    const POVERTY_PROBLEM_ID = 106;
+    const POVERTY_PROBLEM_ID = 108;
     const POTENTIAL_EDUCATION_PROBLEM = 'education can be global problem';
-    const POTENTIAL_EDUCATION_PROBLEM_ID = 107;
+    const POTENTIAL_EDUCATION_PROBLEM_ID = 109;
     const CASH_FLOW = 'cash flow';
-    const CASH_FLOW_ID = 122;
+    const CASH_FLOW_ID = 127;
     const CASH_FLOW_STATEMENT = 'cash flow statement';
-    const CASH_FLOW_STATEMENT_ID = 124;
+    const CASH_FLOW_STATEMENT_ID = 129;
     const INCOME_TAX = 'income taxes';
-    const INCOME_TAX_ID = 123;
+    const INCOME_TAX_ID = 128;
 
     const TN_CUBIC_METER = 'm3';
 
     const CANTON_ZURICH = 'Zurich (Canton)';
-    const CANTON_ZURICH_ID = 128;
+    const CANTON_ZURICH_ID = 94;
     const CITY_ZH = 'Zurich (City)';
-    const CITY_ZH_ID = 129;
+    const CITY_ZH_ID = 93;
     const CITY_ZH_NAME = 'City of Zurich';
     const CITY_ZH_COM = 'the city of Zurich';
     const CITY_BE = 'Bern (City)';
-    const CITY_BE_ID = 130;
+    const CITY_BE_ID = 95;
     const CITY_GE = 'Geneva (City)';
-    const CITY_GE_ID = 131;
+    const CITY_GE_ID = 96;
     const CANTON_ZURICH_NAME = 'Canton Zurich';
     const COMPANY_ZURICH = "Zurich Insurance";
     const COMPANY_VESTAS = "Vestas SA";
-    const COMPANY_ABB = "ABB (Company)";
+    const COMPANY_ABB = "ABB (company)";
     const YEAR_2013_FOLLOW = "2014 is follower of 2013";
     const TAXES_OF_CF = "income taxes is part of cash flow statement";
+
+    // list of often used triples used as a default selection e.g. for the phrase selection
+    // TODO Prio 2 to be filled up
+    const BASE_TRIPLES = [
+        [self::MATH_CONST, self::MATH_CONST_ID],
+        [self::CANTON_ZURICH, self::CANTON_ZURICH_ID],
+        [self::CASH_FLOW, self::CASH_FLOW_ID],
+        [self::CASH_FLOW_STATEMENT, self::CASH_FLOW_STATEMENT_ID],
+        [self::CITY_BE, self::CITY_BE_ID],
+        [self::CITY_GE, self::CITY_GE_ID],
+        [self::CITY_ZH, self::CITY_ZH_ID],
+        [self::E, self::E_ID],
+        [self::GLOBAL_PROBLEM, self::GLOBAL_PROBLEM_ID],
+        [self::GLOBAL_WARMING, self::GLOBAL_WARMING_ID],
+        [self::GLOBAL_WARMING_PROBLEM, self::GLOBAL_WARMING_PROBLEM_ID],
+        [self::GWP, self::GWP_ID],
+        [self::HAPPY_TIME_POINTS, self::HAPPY_TIME_POINTS_ID],
+        [self::INCOME_TAX, self::INCOME_TAX_ID],
+        [self::PI, self::PI_ID],
+        [self::PI_SYMBOL, self::PI_SYMBOL_ID],
+        [self::POPULISM_PROBLEM, self::POPULISM_PROBLEM_ID],
+        [self::POTENTIAL_EDUCATION_PROBLEM, self::POTENTIAL_EDUCATION_PROBLEM_ID],
+        [self::POTENTIAL_HEALTH_PROBLEM, self::POTENTIAL_HEALTH_PROBLEM_ID],
+        [self::POVERTY_PROBLEM, self::POVERTY_PROBLEM_ID],
+        [self::TIME_POINTS, self::TIME_POINTS_ID],
+    ];
 
     // list of predefined triple used for system testing that are expected to be never renamed
     const RESERVED_NAMES = array(

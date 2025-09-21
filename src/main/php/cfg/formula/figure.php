@@ -36,9 +36,9 @@
 
 */
 
-namespace cfg\formula;
+namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'combine_object.php';
 include_once paths::MODEL_GROUP . 'group.php';
@@ -50,14 +50,14 @@ include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use cfg\helper\combine_object;
-use cfg\group\group;
-use cfg\result\result;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value;
-use cfg\value\value_base;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_object;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
 
 class figure extends combine_object
@@ -177,7 +177,7 @@ class figure extends combine_object
      */
     function set_obj_id(int $id): void
     {
-        $this->obj()?->set_id($id);
+        $this->obj()->id = $id;
     }
 
     /**

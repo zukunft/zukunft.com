@@ -37,26 +37,31 @@
   
 */
 
-namespace html\ref;
+namespace Zukunft\ZukunftCom\main\php\web\ref;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
+include_once paths::SHARED . 'url_var.php';
 
-use html\html_base;
-use html\sandbox\sandbox_code_id;
-use html\user\user_message;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class source extends sandbox_code_id
 {
@@ -66,14 +71,14 @@ class source extends sandbox_code_id
      */
 
     // curl views
-    const VIEW_ADD = views::SOURCE_ADD;
-    const VIEW_EDIT = views::SOURCE_EDIT;
-    const VIEW_DEL = views::SOURCE_DEL;
+    const string VIEW_ADD = views::SOURCE_ADD;
+    const string VIEW_EDIT = views::SOURCE_EDIT;
+    const string VIEW_DEL = views::SOURCE_DEL;
 
     // curl message id
-    const MSG_ADD = msg_id::SOURCE_ADD;
-    const MSG_EDIT = msg_id::SOURCE_EDIT;
-    const MSG_DEL = msg_id::SOURCE_DEL;
+    const msg_id MSG_ADD = msg_id::SOURCE_ADD;
+    const msg_id MSG_EDIT = msg_id::SOURCE_EDIT;
+    const msg_id MSG_DEL = msg_id::SOURCE_DEL;
 
 
     /*
@@ -160,25 +165,25 @@ class source extends sandbox_code_id
      */
 
     /**
-     * @param string $form_name the name of the html form
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the source type
      */
-    private function dsp_select_type(string $form_name): string
+    private function dsp_select_type(string $form, ?type_lists $typ_lst): string
     {
-        global $html_source_types;
-        return $html_source_types->selector($form_name);
+        return $typ_lst->html_source_types->selector($form);
     }
 
     /**
-     * @param string $form_name
+     * @param string $form
      * @param string $pattern
      * @return string
      */
-    private function source_selector(string $form_name, string $pattern): string
+    function source_selector(string $form, string $pattern): string
     {
         $src_lst = new source_list();
         $src_lst->load_like($pattern);
-        return $src_lst->selector($form_name, $this->id(), 'source', 'please define a source', '');
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE_LONG,  msg_id::LABEL_STYLE);
     }
 
 
@@ -232,19 +237,23 @@ class source extends sandbox_code_id
 
         log_debug("source id used (" . $this->id() . ")");
         $result .= '      taken from ' . $this->source_selector($form_name, '') . ' ';
-        $result .= '    <td>' . \html\btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id() . '&back=' . $back) . '</td>';
-        $result .= '    <td>' . \html\btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
+        $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id() . '&back=' . $back) . '</td>';
+        $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
         return $result;
     }
 
-    public function source_type_selector(string $form_name): string
+    /**
+     * @param string $form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string
+     */
+    public function source_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $html_source_types;
         $used_source_type_id = $this->type_id();
         if ($used_source_type_id == null) {
-            $used_source_type_id = $html_source_types->default_id();
+            $used_source_type_id = $typ_lst->html_source_types->default_id();
         }
-        return $html_source_types->selector($form_name, $used_source_type_id, 'type', view_styles::COL_SM_4, 'type:');
+        return $typ_lst->html_source_types->selector($form, $used_source_type_id);
     }
 
 }

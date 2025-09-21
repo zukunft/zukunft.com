@@ -30,9 +30,9 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_db.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -42,23 +42,23 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
-use cfg\db\sql_db;
-use cfg\formula\formula;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\word;
-use html\word\word as word_dsp;
-use shared\const\users;
-use shared\enum\change_fields;
-use shared\library;
-use shared\const\formulas;
-use shared\const\triples;
-use shared\const\views;
-use shared\const\words;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\types\verbs;
-use test\all_tests;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_write_tests
 {
@@ -363,7 +363,7 @@ class word_write_tests
         $t->display('word->load renamed word "' . words::TEST_RENAMED . '"', $target, $result);
 
         // check if the word parameters can be added
-        $wrd_renamed->set_plural(words::TEST_RENAMED . 's');
+        $wrd_renamed->plural = words::TEST_RENAMED . 's';
         $wrd_renamed->description = words::TEST_RENAMED . ' description';
         $wrd_renamed->type_id = $phr_typ_cac->id(phrase_type_shared::OTHER);
         $result = $wrd_renamed->save()->get_last_message();
@@ -373,7 +373,7 @@ class word_write_tests
 
         // check if the word parameters have been added
         $wrd_reloaded = $t->load_word(words::TEST_RENAMED);
-        $result = $wrd_reloaded->plural();
+        $result = $wrd_reloaded->plural;
         $target = words::TEST_RENAMED . 's';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '"', $target, $result);
         $result = $wrd_reloaded->description;
@@ -398,7 +398,7 @@ class word_write_tests
         // check if a user specific word is created if another user changes the word
         $wrd_usr2 = new word($t->usr2);
         $wrd_usr2->load_by_name(words::TEST_RENAMED);
-        $wrd_usr2->set_plural(words::TEST_RENAMED . 's2');
+        $wrd_usr2->plural = words::TEST_RENAMED . 's2';
         $wrd_usr2->description = words::TEST_RENAMED . ' description2';
         $wrd_usr2->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $result = $wrd_usr2->save()->get_last_message();
@@ -408,7 +408,7 @@ class word_write_tests
         // check if a user specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);
         $wrd_usr2_reloaded->load_by_name(words::TEST_RENAMED);
-        $result = $wrd_usr2_reloaded->plural();
+        $result = $wrd_usr2_reloaded->plural;
         $target = words::TEST_RENAMED . 's2';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '"', $target, $result);
         $result = $wrd_usr2_reloaded->description;
@@ -420,7 +420,7 @@ class word_write_tests
 
         // check the word for the original user remains unchanged
         $wrd_reloaded = $t->load_word(words::TEST_RENAMED);
-        $result = $wrd_reloaded->plural();
+        $result = $wrd_reloaded->plural;
         $target = words::TEST_RENAMED . 's';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '" unchanged for user 1', $target, $result);
         $result = $wrd_reloaded->description;
@@ -435,7 +435,7 @@ class word_write_tests
         // check if undo all specific changes removes the user word
         $wrd_usr2 = new word($t->usr2);
         $wrd_usr2->load_by_name(words::TEST_RENAMED);
-        $wrd_usr2->set_plural(words::TEST_RENAMED . 's');
+        $wrd_usr2->plural = words::TEST_RENAMED . 's';
         $wrd_usr2->description = words::TEST_RENAMED . ' description';
         $wrd_usr2->type_id = $phr_typ_cac->id(phrase_type_shared::OTHER);
         $result = $wrd_usr2->save()->get_last_message();
@@ -445,7 +445,7 @@ class word_write_tests
         // check if a user specific word changes have been saved
         $wrd_usr2_reloaded = new word($t->usr2);
         $wrd_usr2_reloaded->load_by_name(words::TEST_RENAMED);
-        $result = $wrd_usr2_reloaded->plural();
+        $result = $wrd_usr2_reloaded->plural;
         $target = words::TEST_RENAMED . 's';
         $t->display('word->load plural for "' . words::TEST_RENAMED . '" unchanged now also for user 2', $target, $result);
         $result = $wrd_usr2_reloaded->description;

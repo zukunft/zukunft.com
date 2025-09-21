@@ -39,14 +39,32 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::USER . 'user_message.php';
+
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class sandbox_list extends list_dsp
 {
+
+    /*
+     * sort
+     */
+
+    function sort_by_relevance(): user_message
+    {
+        $usr_msg = new user_message();
+        if ($this->count() > 0) {
+            $lst = $this->lst();
+            $sbx = $lst[0];
+        }
+        return $usr_msg;
+    }
+
 
     /*
      * debug
@@ -55,7 +73,7 @@ class sandbox_list extends list_dsp
     /**
      * to show the list name to the user in the most simple form (without any ids)
      * this function is called from dsp_id, so no other call is allowed
-     * e.g. >Company Zurich< can be either >"Company Zurich"< or >"Company" "Zurich"<, means either a triple or two words
+     * e.g. >company Zurich< can be either >"company Zurich"< or >"company" "Zurich"<, means either a triple or two words
      *      but this "short" form probably confuses the user less and
      *      if the user cannot change the tags anyway the saving of a related value is possible
      *

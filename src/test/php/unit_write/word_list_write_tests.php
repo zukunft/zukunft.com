@@ -30,22 +30,22 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
-use cfg\group\group;
-use cfg\word\word_list;
-use shared\enum\foaf_direction;
-use shared\library;
-use shared\const\values;
-use shared\const\words;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\types\verbs;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_list_write_tests
 {
@@ -133,7 +133,7 @@ class word_list_write_tests
         $target = "million,sales,wrd"; // order adjusted based on the number of usage
         $t->assert('word_list->load by word group id for "'.$wrd_grp_id.'"', $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI); */
 
-        // test add by verb e.g. "Zurich" "is a" "Canton", "City" or "Company"
+        // test add by verb e.g. "Zurich" "is a" "Canton", "City" or "company"
         $wrd_lst = new word_list($usr);
         $wrd_lst->load_by_names(array(words::ZH));
         $wrd_lst_linked = $wrd_lst->load_linked_words($vrb_cac->get_verb(verbs::IS), foaf_direction::UP);

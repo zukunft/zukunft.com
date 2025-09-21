@@ -30,7 +30,7 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
 enum sql_type: string
 {

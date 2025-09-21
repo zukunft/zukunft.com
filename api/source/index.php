@@ -36,9 +36,15 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::API_OBJECT . 'api_message.php';
@@ -46,21 +52,15 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_REF . 'source.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 
-use controller\controller;
-use cfg\user\user;
-use cfg\ref\source;
-use shared\api;
-use shared\types\api_type;
-
 // open database
 $db_con = prg_start("api/ref", "", false);
 
 if ($db_con->is_open()) {
 
     // get the parameters
-    $src_id = $_GET[api::URL_VAR_ID] ?? 0;
-    $src_name = $_GET[api::URL_VAR_NAME] ?? '';
-    $src_code_id = $_GET[api::URL_VAR_CODE_ID] ?? '';
+    $src_id = $_GET[url_var::ID] ?? 0;
+    $src_name = $_GET[url_var::NAME] ?? '';
+    $src_code_id = $_GET[url_var::CODE_ID] ?? '';
 
     // load the session user parameters
     $msg = '';
@@ -72,7 +72,7 @@ if ($db_con->is_open()) {
 
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id() > 0) {
+    if ($usr->id > 0) {
 
         // load the source from the database for GET, UPDATE and DELETE
         $src = new source($usr);

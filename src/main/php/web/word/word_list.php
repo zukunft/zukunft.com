@@ -2,8 +2,9 @@
 
 /*
 
-    word_list_dsp.php - a list function to create the HTML code to display a word list
-    -----------------
+    web/word/word_list_dsp.php - a list function to create the HTML code to display a word list
+    --------------------------
+
 
     This file is part of zukunft.com - calc with words
 
@@ -29,10 +30,10 @@
 
 */
 
-namespace html\word;
+namespace Zukunft\ZukunftCom\main\php\web\word;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'list_named.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
@@ -45,16 +46,16 @@ include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED . 'library.php';
 
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\phrase\term_list;
-use html\sandbox\list_named;
-use html\styles;
-use html\user\user_message;
-use html\value\value_list;
-use html\html_base;
-use shared\library;
-use shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_named;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 
 class word_list extends list_named
 {

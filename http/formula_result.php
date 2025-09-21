@@ -35,16 +35,16 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'views.php';
 
-use cfg\user\user;
-use cfg\view\view;
-use html\result\result;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 
 $db_con = prg_start("formula_result");
 
@@ -63,13 +63,13 @@ if ($session_usr->id() > 0) {
 
     // show the header
     $msk = new view($session_usr);
-    $msk->set_id($sys_msk_cac->id(view_shared::FORMULA_EXPLAIN));
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the page (or phrase id) from which formula testing has been called
+    $msk->id = $sys_msk_cac->id(view_shared::FORMULA_EXPLAIN);
+    $back = $_GET[url_var::BACK] = ''; // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_dsp($msk->api_json());
     $result .= $msk_dsp->dsp_navbar($back);
 
     // get the parameters
-    $frm_val_id = $_GET[api::URL_VAR_ID];      // id of the formula result if known already
+    $frm_val_id = $_GET[url_var::ID];      // id of the formula result if known already
     $frm_id = $_GET['formula']; // id of the formula which values should be explained
     $phr_id = $_GET['word'];    // id of the leading word used to order the result explaining
     //$wrd_group_id = $_GET['group'];   // id of the word group (excluding and time word)

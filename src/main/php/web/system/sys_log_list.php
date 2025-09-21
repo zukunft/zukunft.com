@@ -30,10 +30,19 @@
 
 */
 
-namespace html\system;
+namespace Zukunft\ZukunftCom\main\php\web\system;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -44,15 +53,7 @@ include_once html_paths::USER . 'user.php';
 include_once html_paths::USER . 'user_message.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'api.php';
-
-use controller\api_message;
-use controller\controller;
-use html\html_base;
-use html\system\sys_log as sys_log_dsp;
-use html\user\user;
-use html\user\user_message;
-use shared\api;
-use shared\types\api_type_list;
+include_once paths::SHARED . 'url_var.php';
 
 class sys_log_list
 {

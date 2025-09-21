@@ -2,8 +2,8 @@
 
 /*
 
-    model/phrase/type_object.php - the superclass for word, formula and view types
-    ----------------------------
+    web/types/type_object.php - the superclass for word, formula and view types
+    -------------------------
 
     a base type object that can be used to link program code to single objects
     e.g. if a value is classified by a phrase of type percent the value by default is formatted in percent
@@ -39,7 +39,7 @@
 
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
 class type_object
 {

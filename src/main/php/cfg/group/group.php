@@ -59,9 +59,9 @@
 
 */
 
-namespace cfg\group;
+namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::DB . 'sql.php';
@@ -91,32 +91,32 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\phrase\phr_ids;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\result\result;
-use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_value;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
-use cfg\value\value;
-use cfg\word\word;
-use shared\const\groups;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class group extends sandbox_multi
 {
@@ -128,40 +128,40 @@ class group extends sandbox_multi
     // object specific database and JSON object field names
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID_COM = 'the 64-bit prime index to find the -=class=-';
-    const FLD_ID_COM_USER = 'the 64-bit prime index to find the user -=class=-';
-    const FLD_ID = 'group_id';
-    const FLD_NAME_COM = 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
-    const FLD_NAME = 'group_name';
-    const FLD_NAME_SQL_TYP = sql_field_type::TEXT;
+    const string FLD_ID_COM = 'the 64-bit prime index to find the -=class=-';
+    const string FLD_ID_COM_USER = 'the 64-bit prime index to find the user -=class=-';
+    const string FLD_ID = 'group_id';
+    const string FLD_NAME_COM = 'the user specific group name which can contain the phrase names in a different order to display the group (does not need to be unique)';
+    const string FLD_NAME = 'group_name';
+    const sql_field_type FLD_NAME_SQL_TYP = sql_field_type::TEXT;
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
-    const TBL_COMMENT_PRIME = 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
-    const TBL_COMMENT_INDEX = 'to add a user given name using a 64-bit group id index for one 32-bit and two 16-bit phrase ids including the order';
-    const TBL_COMMENT_BIG = 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
-    const TBL_COMMENT_INDEX_BIG = 'to add a user given name using a 64-bit group id index for one 48-bit and one 16-bit phrase id including the order';
+    const string TBL_COMMENT = 'to add a user given name using a 512-bit group id index for up to 16 32-bit phrase ids including the order';
+    const string TBL_COMMENT_PRIME = 'to add a user given name using a 64-bit group id index for up to four 16-bit phrase ids including the order';
+    const string TBL_COMMENT_INDEX = 'to add a user given name using a 64-bit group id index for one 32-bit and two 16-bit phrase ids including the order';
+    const string TBL_COMMENT_BIG = 'to add a user given name using a group id index with a variable length for more than 16 32-bit phrase ids including the order';
+    const string TBL_COMMENT_INDEX_BIG = 'to add a user given name using a 64-bit group id index for one 48-bit and one 16-bit phrase id including the order';
 
     // list of fields with parameters used for the database creation
     // the fields that can be changed by the user
-    const FLD_KEY_PRIME = array(
+    const array FLD_KEY_PRIME = array(
         [group::FLD_ID, sql_field_type::KEY_INT_NO_AUTO, sql_field_default::NOT_NULL, '', '', self::FLD_ID_COM],
     );
-    const FLD_KEY_PRIME_USER = array(
+    const array FLD_KEY_PRIME_USER = array(
         [group::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, '', '', self::FLD_ID_COM_USER],
     );
-    const FLD_LST_USER_CAN_CHANGE = array(
+    const array FLD_LST_USER_CAN_CHANGE = array(
         [self::FLD_NAME, self::FLD_NAME_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_NAME_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_DESCRIPTION_COM],
     );
 
     // all database field names excluding the id
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         sql_db::FLD_DESCRIPTION
     );
     // list of fixed tables where a group name overwrite might be stored
     // TODO check if this can be used somewhere else means if there are unwanted repeating
-    const TBL_LIST = array(
+    const array TBL_LIST = array(
         [sql_type::MOST],
         [sql_type::PRIME],
         [sql_type::BIG]
@@ -942,7 +942,7 @@ class group extends sandbox_multi
         $sc->set_name($qp->name);
         $sc->set_id_field($this->id_field());
         $sc->set_fields($fld_lst);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->add_where($this->name_field(), $name);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -968,7 +968,7 @@ class group extends sandbox_multi
         $qp = new sql_par($class);
         $qp->name .= $this->load_sql_name_ext();
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(self::FLD_NAMES);
 
         return $this->load_sql_select_qp($sc, $qp);
@@ -1174,7 +1174,7 @@ class group extends sandbox_multi
         } elseif (!$wrd_lst->is_empty()) {
             $sql_name .= count($wrd_lst->lst()) . 'word_id';
         } else {
-            log_err("Either the database ID (" . $this->id() . ") or a word list and the user (" . $this->user()->id() . ") must be set to load a phrase list.", "phrase_list->load");
+            log_err("Either the database ID (" . $this->id() . ") or a word list and the user (" . $this->user()->id . ") must be set to load a phrase list.", "phrase_list->load");
         }
 
         $sql_from = '';
@@ -1631,7 +1631,7 @@ class group extends sandbox_multi
 
         Allow to remember the view order of words and phrases
 
-        the form should create an url with the ids in the view order
+        the form should create a url with the ids in the view order
         -> this is converted by this class to word ids, triple ids for selecting the group and saving the view order and the time for the value selection
 
         Create a new group if needed without asking the user
@@ -1925,7 +1925,7 @@ class group extends sandbox_multi
         global $debug;
         if ($debug > DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+                $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }
         }
 

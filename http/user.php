@@ -36,26 +36,25 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'user_profiles.php';
-
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\user\user;
-use cfg\value\value;
-use cfg\view\view;
-use cfg\word\triple;
-use cfg\word\word;
-use html\html_base;
-use html\user\user as user_dsp;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
-use shared\enum\user_profiles;
 
 $db_con = prg_start("user");
 $html = new html_base();
@@ -65,8 +64,8 @@ global $usr_pro_cac;
 $result = ''; // reset the html code var
 
 // get the parameters
-$id = $_GET[api::URL_VAR_ID];
-$back = $_GET[api::URL_VAR_BACK] = '';
+$id = $_GET[url_var::ID];
+$back = $_GET[url_var::BACK] = '';
 $undo_val = $_GET['undo_value'];
 $undo_wrd = $_GET['undo_word'];
 $undo_lnk = $_GET['undo_triple'];
@@ -83,8 +82,8 @@ $result .= $usr->get();
 $dsp_usr = new user_dsp($usr->api_json());
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
-    log_debug($usr->id());
+if ($usr->id > 0) {
+    log_debug($usr->id);
 
     $usr->load_usr_data();
 
@@ -105,49 +104,49 @@ if ($usr->id() > 0) {
     // undo user changes for words
     if ($undo_wrd > 0) {
         $wrd = new word($usr);
-        $wrd->set_id($undo_wrd);
+        $wrd->id = $undo_wrd;
         $wrd->del_usr_cfg();
     }
 
     // undo user changes for triples
     if ($undo_lnk > 0) {
         $lnk = new triple($usr);
-        $lnk->set_id($undo_lnk);
+        $lnk->id = $undo_lnk;
         $lnk->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_frm > 0) {
         $frm = new formula($usr);
-        $frm->set_id($undo_frm);
+        $frm->id = $undo_frm;
         $frm->del_usr_cfg();
     }
 
     // undo user changes for formula word links
     if ($undo_frm_lnk > 0) {
         $frm_lnk = new formula_link($usr);
-        $frm_lnk->set_id($undo_frm_lnk);
+        $frm_lnk->id = $undo_frm_lnk;
         $frm_lnk->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_dsp > 0) {
         $msk = new view($usr);
-        $msk->set_id($undo_dsp);
+        $msk->id = $undo_dsp;
         $msk->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_cmp > 0) {
         $cmp = new component($usr);
-        $cmp->set_id($undo_cmp);
+        $cmp->id = $undo_cmp;
         $cmp->del_usr_cfg();
     }
 
     // undo user changes for formulas
     if ($undo_cmp_lnk > 0) {
         $cmp_lnk = new component_link($usr);
-        $cmp_lnk->set_id($undo_cmp_lnk);
+        $cmp_lnk->id = $undo_cmp_lnk;
         $cmp_lnk->del_usr_cfg();
     }
 
@@ -211,7 +210,7 @@ if ($usr->id() > 0) {
 }
 
 $result .= '<br><br>';
-$result .= \html\btn_back($back);
+$result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
 
 echo $result;
 

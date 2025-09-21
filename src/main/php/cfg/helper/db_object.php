@@ -30,14 +30,14 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
-include_once paths::DB . 'sql_db.php';
+//include_once paths::DB . 'sql_db.php';
 //include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
@@ -47,21 +47,21 @@ include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_USER . 'user.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_base.php';
-//include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\group\group;
-use cfg\result\result;
-use cfg\sandbox\sandbox;
-use cfg\user\user;
-use cfg\value\value;
-use shared\helper\IdObject;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class db_object extends IdObject
 {
@@ -84,23 +84,6 @@ class db_object extends IdObject
     const FLD_LST_USER_CAN_CHANGE = array();
     // fields that CANNOT be changed by the user with the parameters for the table creation
     const FLD_LST_NON_CHANGEABLE = array();
-
-
-    /*
-     * construct and map
-     */
-
-    /**
-     * dummy map function to be overwritten by the child object
-     *
-     * @param array|null $db_row with the data directly from the database
-     * @param string $id_fld the name of the id field as set in the child class
-     * @return bool true if the user sandbox object is loaded and valid
-     */
-    function row_mapper(?array $db_row, string $id_fld = ''): bool
-    {
-        return false;
-    }
 
 
     /*

@@ -2,8 +2,8 @@
 
 /*
 
-    web/phrase.php - to create the html code to display a word or triple
-    --------------
+    web/phrase/phrase.php - to create the html code to display a word or triple
+    ---------------------
 
 
     This file is part of zukunft.com - calc with words
@@ -30,11 +30,13 @@
 
 */
 
-namespace html\phrase;
+namespace Zukunft\ZukunftCom\main\php\web\phrase;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'combine_named.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -50,16 +52,17 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\sandbox\combine_named;
-use html\user\user_message;
-use html\verb\verb;
-use html\verb\verb_list;
-use html\word\triple;
-use html\word\word;
-use html\word\word_list;
-use shared\enum\foaf_direction;
-use shared\json_fields;
-use shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class phrase extends combine_named
 {
@@ -290,15 +293,15 @@ class phrase extends combine_named
      * get the phrases that are related to this phrase be the verbs "is" of "can be"
      * if a phrase list id given only this cache is used for the selection
      * @param phrase_list|null $phr_lst_cac
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return phrase_list
      */
-    function is_or_can_be(phrase_list $phr_lst_cac = null): phrase_list
+    function is_or_can_be(phrase_list $phr_lst_cac = null, ?type_lists $typ_lst = null): phrase_list
     {
-        global $html_verbs;
         $result = new phrase_list();
         if ($phr_lst_cac != null) {
-            $result->merge($phr_lst_cac->parents($this, $html_verbs->get_by_code_id(verbs::IS)));
-            $result->merge($phr_lst_cac->parents($this, $html_verbs->get_by_code_id(verbs::CAN_BE)));
+            $result->merge($phr_lst_cac->parents($this, $typ_lst->html_verbs->get_by_code_id(verbs::IS)));
+            $result->merge($phr_lst_cac->parents($this, $typ_lst->html_verbs->get_by_code_id(verbs::CAN_BE)));
         }
         return $result;
     }
@@ -307,45 +310,6 @@ class phrase extends combine_named
     /*
      * to review
      */
-
-    /**
-     * create a selector that contains the words and triples
-     * if one form contains more than one selector, $pos is used for identification
-     *
-     * @param phrase $type is a word to preselect the list to only those phrases matching this type
-     * @param string $form_name
-     * @param int $pos
-     * @param string $class
-     * @param string $back
-     * @return string
-     */
-    function dsp_selector(phrase $type, string $form_name, int $pos, string $class, string $back = ''): string
-    {
-        // TODO include pattern in the call
-        $pattern = '';
-        $phr_lst = new phrase_list();
-        $phr_lst->load_like($pattern);
-
-        if ($pos > 0) {
-            $field_name = "phrase" . $pos;
-        } else {
-            $field_name = "phrase";
-        }
-        $label = "";
-        if ($form_name != "value_add" and $form_name != "value_edit") {
-            if ($pos == 1) {
-                $label = "From:";
-            } elseif ($pos == 2) {
-                $label = "To:";
-            } else {
-                $label = "Word:";
-            }
-        }
-        // TODO activate Prio 3
-        // $sel->bs_class = $class;
-
-        return $phr_lst->selector($form_name, $this->id(), $field_name, $label, '');
-    }
 
     function dsp_graph(foaf_direction $direction, ?verb_list $link_types = null, string $back = ''): string
     {

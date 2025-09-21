@@ -51,9 +51,9 @@
   
 */
 
-namespace cfg\component;
+namespace Zukunft\ZukunftCom\main\php\cfg\component;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
@@ -84,40 +84,42 @@ include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\formula\formula;
-use cfg\formula\formula_db;
-use cfg\helper\data_object;
-use cfg\helper\db_object_seq_id;
-use cfg\helper\type_object;
-use cfg\log\change;
-use cfg\log\change_link;
-use cfg\phrase\phrase;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_code_id;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
-use cfg\word\word;
-use shared\enum\change_actions;
-use shared\helper\CombineObject;
-use shared\json_fields;
-use shared\const\components;
-use shared\enum\messages as msg_id;
-use shared\library;
-use shared\types\api_type_list;
-use shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 
 class component extends sandbox_code_id
 {
@@ -241,6 +243,7 @@ class component extends sandbox_code_id
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @param string $name_fld the name of the name field as defined in this child class
+     * @param string $type_fld the name of the type field as defined in this child class
      * @return bool true if the view component is loaded and valid
      */
     function row_mapper_sandbox(
@@ -248,12 +251,13 @@ class component extends sandbox_code_id
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = component_db::FLD_ID,
-        string $name_fld = component_db::FLD_NAME
+        string $name_fld = component_db::FLD_NAME,
+        string $type_fld = component_db::FLD_TYPE
     ): bool
     {
         global $mtr;
 
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             if (array_key_exists(component_db::FLD_UI_MSG_ID, $db_row)) {
                 $msg_id_txt = $db_row[component_db::FLD_UI_MSG_ID];
@@ -262,10 +266,6 @@ class component extends sandbox_code_id
                 } else {
                     $this->ui_msg_code_id = $mtr->get($db_row[component_db::FLD_UI_MSG_ID]);
                 }
-            }
-            // TODO easy use set_type_by_id function
-            if (array_key_exists(component_db::FLD_TYPE, $db_row)) {
-                $this->type_id = $db_row[component_db::FLD_TYPE];
             }
             if (array_key_exists(component_db::FLD_STYLE, $db_row)) {
                 $this->set_style_by_id($db_row[component_db::FLD_STYLE]);
@@ -302,6 +302,9 @@ class component extends sandbox_code_id
         if (array_key_exists(json_fields::UI_MSG_CODE_ID, $api_json)) {
             global $mtr;
             $this->ui_msg_code_id = $mtr->get($api_json[json_fields::UI_MSG_CODE_ID]);
+        }
+        if (array_key_exists(json_fields::STYLE, $api_json)) {
+            $this->set_style_by_id($api_json[json_fields::STYLE]);
         }
         if (array_key_exists(json_fields::FORMULA_ID, $api_json)) {
             $frm = $this->formula_from_api_json($api_json[json_fields::FORMULA_ID]);
@@ -375,6 +378,9 @@ class component extends sandbox_code_id
             if ($this->ui_msg_code_id != null) {
                 $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id;
             }
+            if ($this->style_id() > 0) {
+                $vars[json_fields::STYLE] = $this->style_id();
+            }
             if ($this->frm != null) {
                 $vars[json_fields::FORMULA_ID] = $this->formula_id();
             }
@@ -396,7 +402,7 @@ class component extends sandbox_code_id
         } elseif (is_int($value)) {
             if ($value != 0) {
                 // TODO use formula cache
-                $frm->set_id($value);
+                $frm->id = $value;
             }
         } else {
             log_err('unexpected format of api message');
@@ -423,6 +429,9 @@ class component extends sandbox_code_id
         }
         if ($this->ui_msg_code_id != null) {
             $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id->value;
+        }
+        if ($this->style != null) {
+            $vars[json_fields::STYLE] = $this->style->code_id();
         }
 
         // add the phrases used
@@ -454,17 +463,22 @@ class component extends sandbox_code_id
      */
 
     /**
-     * set the view component type
+     * set the predefined view component type by the given code id or name
      *
-     * @param string $code_id the code id that should be added to this view component
+     * @param string $code_id_or_name the code id or name that should be added to this view component
      * @param user $usr_req the user who wants to change the type
      * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $code_id, user $usr_req = new user()): user_message
+    function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
         global $cmp_typ_cac;
-        return parent::set_type_by_code_id(
-            $code_id, $cmp_typ_cac, msg_id::COMPONENT_TYPE_NOT_FOUND, $usr_req);
+        if ($cmp_typ_cac->has_code_id($code_id_or_name)) {
+            return parent::set_type_by_code_id(
+                $code_id_or_name, $cmp_typ_cac, msg_id::COMPONENT_TYPE_NOT_FOUND, $usr_req);
+        } else {
+            return parent::set_type_by_name(
+                $code_id_or_name, $cmp_typ_cac, msg_id::COMPONENT_TYPE_NOT_FOUND, $usr_req);
+        }
     }
 
     /**
@@ -647,7 +661,7 @@ class component extends sandbox_code_id
         if ($id != null) {
             if ($id > 0) {
                 $frm = new formula($this->user());
-                $frm->set_id($id);
+                $frm->id = $id;
             } else {
                 $lib = new library();
                 $usr_msg->add_id_with_vars(msg_id::LOAD_FORMULA_ID, [
@@ -715,6 +729,15 @@ class component extends sandbox_code_id
     /*
      * preloaded
      */
+
+    /**
+     * @return string|null the code_id of the component type
+     */
+    function type_code_id(): string|null
+    {
+        global $cmp_typ_cac;
+        return $cmp_typ_cac->code_id($this->type_id);
+    }
 
     /**
      * @return string the name of the component type
@@ -997,6 +1020,9 @@ class component extends sandbox_code_id
         if ($obj->ui_msg_code_id != null) {
             $usr_msg->add($this->set_ui_msg_code_id($obj->ui_msg_code_id, $usr_req));
         }
+        if ($obj->style_id() != null) {
+            $this->set_style_by_id($obj->style_id());
+        }
         if ($obj->formula_id() != null) {
             $this->set_formula($obj->formula());
         }
@@ -1034,10 +1060,10 @@ class component extends sandbox_code_id
      * check if the named object in the database needs to be updated
      * is expected to be similar to the diff_msg function
      *
-     * @param component|CombineObject|db_object_seq_id $db_obj the word as saved in the database
+     * @param component|CombineObject|IdObject $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(component|CombineObject|db_object_seq_id $db_obj): bool
+    function needs_db_update(component|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->formula_id() != null) {
@@ -1084,7 +1110,7 @@ class component extends sandbox_code_id
     // set the log entry parameters for a value update
     function log_link($dsp): bool
     {
-        log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id());
+        log_debug('component->log_link ' . $this->dsp_id() . ' to "' . $dsp->name . '"  for user ' . $this->user()->id);
         $log = new change_link($this->user());
         $log->set_action(change_actions::ADD);
         $log->set_class(component_link::class);
@@ -1100,7 +1126,7 @@ class component extends sandbox_code_id
     // set the log entry parameters to unlink a display component ($cmp) from a view ($dsp)
     function log_unlink($dsp): bool
     {
-        log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id());
+        log_debug($this->dsp_id() . ' from "' . $dsp->name . '" for user ' . $this->user()->id);
         $log = new change_link($this->user());
         $log->set_action(change_actions::DELETE);
         $log->set_class(component_link::class);
@@ -1568,7 +1594,7 @@ class component extends sandbox_code_id
                     FROM component_types
                    WHERE component_type_id = ".$this->type_id.";";
           $db_con = new mysql;
-          $db_con->usr_id = $this->user()->id();
+          $db_con->usr_id = $this->user()->id;
           $db_type = $db_con->get1($sql);
           $this->type_name = $db_type[sql_db::FLD_TYPE_NAME];
         }

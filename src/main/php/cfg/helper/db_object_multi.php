@@ -32,9 +32,9 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_object_key.php';
 include_once paths::API_OBJECT . 'api_message.php';
@@ -48,15 +48,15 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\group\group_id;
-use cfg\user\user;
-use cfg\user\user_message;
-use controller\api_message;
-use shared\enum\messages as msg_id;
-use shared\types\api_type_list;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class db_object_multi extends db_object_key
 {
@@ -68,7 +68,19 @@ class db_object_multi extends db_object_key
     // database fields that are used in all model objects
     // the database id is the unique prime key
     // TODO actually not needed on this level, because the id may be generated and remembered in a linked object e.g. the group
-    protected int|string $id;
+    public int|string $id {
+        // get @return int the database id which is not 0 if the object has been saved
+        // the internal null value is used to detect if database saving has been tried
+        get {
+            return $this->id;
+        }
+        // set the unique database id of a database object
+        // @param int $id used in the row mapper and to set a dummy database id for unit tests
+        set {
+            $this->id = $value;
+            $this->set_modified();
+        }
+    }
 
 
     /*
@@ -102,9 +114,9 @@ class db_object_multi extends db_object_key
                 if (array_key_exists($id_fld, $db_row)) {
                     if ($db_row[$id_fld] != 0 or $db_row[$id_fld] != '') {
                         if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
-                            $this->set_id((int)$db_row[$id_fld]);
+                            $this->id = (int)$db_row[$id_fld];
                         } else {
-                            $this->set_id($db_row[$id_fld]);
+                            $this->id = $db_row[$id_fld];
                         }
                         $result = true;
                     }
@@ -114,29 +126,6 @@ class db_object_multi extends db_object_key
             }
         }
         return $result;
-    }
-
-
-    /*
-     * set and get
-     */
-
-    /**
-     * set the unique database id of a database object
-     * @param int|string $id used in the row mapper and to set a dummy database id for unit tests
-     */
-    function set_id(int|string $id): void
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return int|string the database id which is not 0 if the object has been saved
-     * the internal null value is used to detect if database saving has been tried
-     */
-    function id(): int|string
-    {
-        return $this->id;
     }
 
 
@@ -235,9 +224,18 @@ class db_object_multi extends db_object_key
         $usr_msg = new user_message();
         // add a dummy id for unit testing
         if ($test_obj) {
-            $db_obj->set_id($test_obj->seq_id());
+            $db_obj->id = $test_obj->seq_id();
         }
         return $usr_msg;
+    }
+
+    /*
+     * set and get
+     */
+
+    function id(): string|int
+    {
+        return $this->id;
     }
 
 

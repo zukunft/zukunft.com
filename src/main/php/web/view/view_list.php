@@ -2,8 +2,8 @@
 
 /*
 
-    view_list_dsp.php - a list function to create the HTML code to display a view list
-    -----------------
+    web/view/view_list.php - a list function to create the HTML code to display a view list
+    ----------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,10 +29,23 @@
 
 */
 
-namespace html\view;
+namespace Zukunft\ZukunftCom\main\php\web\view;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::REF . 'source.php';
@@ -46,21 +59,10 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
-
-use html\ref\source;
-use html\rest_call;
-use html\sandbox\list_dsp;
-use html\sandbox\sandbox;
-use html\user\user_message;
-use html\verb\verb;
-use html\view\view as view_dsp;
-use html\word\triple;
-use html\word\word;
-use shared\api;
-use shared\const\views;
-use shared\types\view_styles;
+include_once paths::SHARED . 'url_var.php';
 
 class view_list extends list_dsp
 {
@@ -100,7 +102,7 @@ class view_list extends list_dsp
     {
         $result = false;
 
-        $data = array(api::URL_VAR_PATTERN => $pattern);
+        $data = array(url_var::PATTERN => $pattern);
         $rest = new rest_call();
         $json_body = $rest->api_get(view_list::class, $data);
         $this->api_mapper($json_body);
@@ -120,7 +122,7 @@ class view_list extends list_dsp
     {
         $result = false;
 
-        $data = array(api::URL_VAR_CMP_ID => $id);
+        $data = array(url_var::CMP_ID => $id);
         $rest = new rest_call();
         $json_body = $rest->api_get(view_base::class, $data);
         $this->api_mapper($json_body);
@@ -197,31 +199,6 @@ class view_list extends list_dsp
     /*
      * select
      */
-
-    /**
-     * HTML code of a view selector
-     * @param string $form the name of the html form
-     * @param int $selected the id of the preselected item
-     * @param string $name the unique name inside the form for this selector
-     * @param string $label the label name (TODO remove from the selector?
-     * @param string $col_class the formatting code to adjust the formatting
-     * @param string $pattern the pattern to filter the views
-     * @return string with the HTML code to show the view selector
-     */
-    function selector(
-        string    $form = '',
-        int       $selected = 0,
-        string    $name = 'view',
-        string    $label = 'view: ',
-        string    $col_class = view_styles::COL_SM_4,
-        string    $pattern = ''
-    ): string
-    {
-        if ($pattern != '') {
-            $this->load_like($pattern);
-        }
-        return parent::selector($form, $selected, $name, $label, $col_class);
-    }
 
     /**
      * create a selection page where the user can select a view that should be used for a view

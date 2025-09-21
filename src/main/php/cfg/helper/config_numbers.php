@@ -30,9 +30,18 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 include_once paths::MODEL_PHRASE . 'phrase.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -43,16 +52,7 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'language_codes.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
-
-use cfg\phrase\phrase;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value_list;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\language_codes;
-use shared\api;
-use shared\enum\messages as msg_id;
+include_once paths::SHARED . 'url_var.php';
 
 
 class config_numbers extends value_list
@@ -154,7 +154,7 @@ class config_numbers extends value_list
 
     // list of internal tooltips (and the related word) where the default text for new users should not be changed
     // TODO check on pod start that these comments are still normal
-    const INTERNAL_COMMENTS = [
+    const array INTERNAL_COMMENTS = [
         [words::TOOLTIP_COMMENT_COM, words::TOOLTIP_COMMENT],
         [words::SYS_CONF_VALUE_COM, words::SYS_CONF_VALUE],
         [words::SYS_CONF_SOURCE_COM, words::SYS_CONF_SOURCE],
@@ -167,6 +167,9 @@ class config_numbers extends value_list
         [words::AVERAGE_COM, words::AVERAGE],
         [words::DEFAULT_COM, words::DEFAULT],
         [words::DATABASE_COM, words::DATABASE],
+        [words::LISTS, words::LISTS_COM],
+        [words::MOST, words::MOST_COM],
+        [words::RELEVANT, words::RELEVANT_COM],
     ];
 
 

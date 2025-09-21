@@ -37,37 +37,38 @@
             <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
                                                                                   name="name" id="name"
                                                                                   value="mathematics"></div>
-            <div class="form-group col-md-4"><label for="phrase_type">type:</label><select class="form-control"
-                                                                                           name="phrase_type"
-                                                                                           form="word_edit"
-                                                                                           id="phrase_type">
+            <div class="form-group col-md-4"><label for="phrase_type">type</label><select class="form-control"
+                                                                                          name="phrase_type"
+                                                                                          form="word_edit"
+                                                                                          id="phrase_type">
                 <option value="1" selected>standard</option>
-                <option value="2">time</option>
-                <option value="3">measure type</option>
-                <option value="4">time jump</option>
+                <option value="0"> ---</option>
                 <option value="5">calc</option>
-                <option value="6">format percent</option>
-                <option value="7">scaling</option>
-                <option value="8">hidden scaling</option>
-                <option value="9">view / layer</option>
-                <option value="10">formula link</option>
                 <option value="11">differentiator filler</option>
-                <option value="12">this</option>
-                <option value="13">next</option>
-                <option value="14">prior</option>
-                <option value="15">scaling word percent</option>
-                <option value="16">scaled measure</option>
+                <option value="6">format percent</option>
+                <option value="10">formula link</option>
+                <option value="24">group and select</option>
+                <option value="8">hidden scaling</option>
+                <option value="23">hidden system</option>
+                <option value="22">hidden triple</option>
+                <option value="27">ignore</option>
+                <option value="21">information</option>
+                <option value="20">key</option>
+                <option value="19">latest</option>
                 <option value="17">math constant</option>
                 <option value="18">measure divisor</option>
-                <option value="19">latest</option>
-                <option value="20">key</option>
-                <option value="21">information</option>
-                <option value="22">hidden triple</option>
-                <option value="23">hidden system</option>
-                <option value="24">group and select</option>
-                <option value="25">symbol</option>
+                <option value="3">measure type</option>
+                <option value="13">next</option>
+                <option value="14">prior</option>
                 <option value="26">rank</option>
-                <option value="27">ignore</option>
+                <option value="16">scaled measure</option>
+                <option value="7">scaling</option>
+                <option value="15">scaling word percent</option>
+                <option value="25">symbol</option>
+                <option value="12">this</option>
+                <option value="2">time</option>
+                <option value="4">time jump</option>
+                <option value="9">view / layer</option>
             </select></div>
         </div>
         <div class="row col-md-12">
@@ -79,48 +80,50 @@
             </div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="plural">plural</label><input class="form-control" type="text"
+            <div class="form-group col-md-8"><label for="plural">plural</label><input class="form-control" type="text"
                                                                                       name="plural" id="plural"></div>
-            <div class="form-group col-md-4"><label for="share">share:</label><select class="form-control" name="share"
-                                                                                      form="word_edit" id="share">
+        </div>
+        <div class="row col-md-12">
+            <div class="form-group col-md-4"><label for="view_id">view</label><select class="form-control"
+                                                                                      name="view_id" form="word_edit"
+                                                                                      id="view_id">
+                <option value="50">science</option>
+                <option value="51">Historic</option>
+                <option value="53">Education</option>
+                <option value="54">Touristic</option>
+            </select></div>
+            <div class="form-group col-md-4"><label for="share">share</label><select class="form-control" name="share"
+                                                                                     form="word_edit" id="share">
                 <option value="1" selected>public</option>
                 <option value="2">personal</option>
                 <option value="3">group</option>
                 <option value="4">private</option>
             </select></div>
-            <div class="form-group col-md-4"><label for="protection">protection:</label><select class="form-control"
-                                                                                                name="protection"
-                                                                                                form="word_edit"
-                                                                                                id="protection">
+            <div class="form-group col-md-4"><label for="protection">protection</label><select class="form-control"
+                                                                                               name="protection"
+                                                                                               form="word_edit"
+                                                                                               id="protection">
                 <option value="1">no protection</option>
                 <option value="2">user</option>
                 <option value="3" selected>admin</option>
                 <option value="4">no change</option>
             </select></div>
         </div>
-        <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="view">view:</label><select class="form-control" name="view"
-                                                                                    form="word_edit" id="view">
-                <option value="50">science</option>
-                <option value="51">Historic</option>
-                <option value="53">Education</option>
-                <option value="54">Touristic</option>
-            </select></div>
-        </div>
-        <div class="row col-md-12">list of phrases related to mathematics values related to value list word list of
-            references to mathematics
-        </div>
         <a href="/http/view.php?m=44&id=1" title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
         <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
+        <div class="row col-md-12"><a href="/http/view.php?m=46&id=1"
+                                      title="A mathematical constant that never changes e.g. Pi">mathematical
+            constant</a></div>
+        <div class="row col-md-12">values related to value list of word list of references to mathematics</div>
     </form>
     usage of mathematics change log for mathematics
 </div>
 <footer>
-    <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot;<a
+    <div class="text-center"><small><a href="/http/about.php" title="About">About</a> &middot; <a
             href="/http/privacy_policy.html" title="Privacy Policy">Privacy Policy</a> &middot; All structured data is
-        available under the<a href="//creativecommons.org/publicdomain/zero/1.0/"
-                              title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License
-        and the<a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the<a
+        available under the <a href="//creativecommons.org/publicdomain/zero/1.0/"
+                               title="Definition of the Creative Commons CC0 License">Creative Commons CC0</a> License
+        and the <a href="https://github.com/zukunft/zukunft.com" title="program code">program code</a> under the <a
                 href="https://www.gnu.org/licenses/agpl.html" title="AGPL3">AGPL3</a> License</small></div>
 </footer>
 </body>

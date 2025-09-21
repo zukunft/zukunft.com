@@ -30,9 +30,9 @@
   
 */
 
-namespace cfg\ref;
+namespace Zukunft\ZukunftCom\main\php\cfg\ref;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::DB . 'sql.php';
@@ -43,12 +43,12 @@ include_once paths::MODEL_REF . 'source_type.php';
 include_once paths::SHARED_ENUM . 'source_types.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\helper\type_list;
-use cfg\db\sql;
-use cfg\db\sql_db;
-use cfg\sandbox\sandbox_named;
-use shared\enum\source_types;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class source_type_list extends type_list
 {
@@ -78,7 +78,7 @@ class source_type_list extends type_list
                 $type_name = strval($db_entry[sql_db::FLD_TYPE_NAME]);
                 $type_comment = strval($db_entry[sql_db::FLD_DESCRIPTION]);
                 $type_obj = new source_type($type_code_id, $type_name, $type_comment);
-                $type_obj->set_id($db_entry[self::FLD_ID]);
+                $type_obj->id = $db_entry[self::FLD_ID];
                 //$type_obj->set_url($db_entry[self::FLD_URL]);
                 $this->add($type_obj);
             }
@@ -94,13 +94,13 @@ class source_type_list extends type_list
     {
         parent::load_dummy();
         $type = new source_type(source_types::XBRL, source_types::XBRL);
-        $type->set_id(source_types::XBRL_ID);
+        $type->id = source_types::XBRL_ID;
         $this->add($type);
         $type = new source_type(source_types::CSV, source_types::CSV);
-        $type->set_id(source_types::CSV_ID);
+        $type->id = source_types::CSV_ID;
         $this->add($type);
         $type = new source_type(source_types::PDF, source_types::PDF);
-        $type->set_id(source_types::PDF_ID);
+        $type->id = source_types::PDF_ID;
         $this->add($type);
     }
 

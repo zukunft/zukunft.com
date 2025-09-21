@@ -2,8 +2,8 @@
 
 /*
 
-    frontend.php - the main html frontend application
-    ------------
+    web/frontend.php - the main html frontend application
+    ----------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,26 +29,30 @@
 
 */
 
-namespace html;
+namespace Zukunft\ZukunftCom\main\php\web;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::WEB_CONST . 'paths.php';
-
-use html\const\paths as html_paths;
 
 // get library that is shared between the backend and the html frontend
 include_once paths::SHARED . 'library.php';
 
 // get the api const that are shared between the backend and the html frontend
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 
 // get the pure html frontend objects
 include_once html_paths::USER . 'user.php';
 
 include_once html_paths::HELPER . 'config.php';
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
+include_once html_paths::HTML . 'rest_call.php';
 include_once html_paths::COMPONENT . 'component_exe.php';
 include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::REF . 'source.php';
@@ -78,35 +82,56 @@ include_once html_paths::TYPES . 'component_type_list.php';
 include_once html_paths::TYPES . 'component_link_type_list.php';
 include_once html_paths::TYPES . 'position_type_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VERB . 'verb.php';
 include_once html_paths::VIEW . 'view.php';
+include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once TEST_CONST_PATH . 'files.php';
+include_once paths::MODEL_IMPORT . 'import.php';
+include_once paths::MODEL_USER . 'user.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 
-use html\component\component_exe as component_dsp;
-use html\formula\formula as formula_dsp;
-use html\types\type_lists;
-use html\ref\ref as ref_dsp;
-use html\result\result as result_dsp;
-use html\ref\source as source_dsp;
-use html\sandbox\db_object as db_object_dsp;
-use html\sandbox\sandbox as sandbox_dsp;
-use html\sandbox\sandbox_named as sandbox_named_dsp;
-use html\user\user as user_dsp;
-use html\value\value as value_dsp;
-use html\verb\verb as verb_dsp;
-use html\view\view as view_dsp;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
-use shared\const\rest_ctrl;
-use shared\const\views;
-use shared\library;
-use shared\api;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named_dsp;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\files;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\user\user as user_backend;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message as backend_user_message;
 use Exception;
 
 class frontend
@@ -116,7 +141,7 @@ class frontend
      * api const
      */
 
-    const PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
+    const string PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
 
 
     /*
@@ -124,10 +149,10 @@ class frontend
      */
 
     // TODO Prio 1 review (get from .env and not move to application.yaml and detect and fix it on initial program start)
-    const HOST_DEV = 'http://localhost/';
-    const HOST_UAT = 'https://test.zukunft.com/';
-    const HOST_PROD = 'https://www.zukunft.com/';
-    const HOST_SYS_LOG = '';
+    const string HOST_DEV = 'http://localhost/';
+    const string HOST_UAT = 'https://test.zukunft.com/';
+    const string HOST_PROD = 'https://www.zukunft.com/';
+    const string HOST_SYS_LOG = '';
 
     /*
      * vars
@@ -137,7 +162,8 @@ class frontend
     private string $code_name; // the name of the call script to locate issues
     private string $msg; // messages that should be shown to the user asap
 
-    private type_lists $typ_lst_cache;
+    public ?type_lists $typ_lst_cache = null;
+    public ?view_list $msk_lst_cache = null;
 
 
     /*
@@ -155,7 +181,8 @@ class frontend
 
     function reset_cache(): void
     {
-        $this->typ_lst_cache = new type_lists();
+        $this->typ_lst_cache = null;
+        $this->msk_lst_cache = null;
     }
 
 
@@ -183,13 +210,12 @@ class frontend
         $result = '';
 
         // resume session (based on cookies)
+        // TODO review session start and end calls
         session_start();
 
         $usr = $this->get_user();
 
-        // load upfront the frontend cache
-        $api_msg = $this->api_get(type_lists::class);
-        $this->typ_lst_cache = new type_lists($api_msg);
+        $this->load_cache();
 
         // html header
         $html = new html_base();
@@ -214,6 +240,78 @@ class frontend
         }
     }
 
+    /**
+     * load the frontend cache once upfront via api
+     * @return user_message
+     */
+    function load_cache(): user_message
+    {
+        $usr_msg = new user_message();
+        if ($this->typ_lst_cache == null) {
+            $api_msg = $this->api_get(type_lists::class);
+            if ($api_msg == '' or $api_msg == null) {
+                $usr_msg->add_id_with_vars(msg_id::API_MESSAGE_EMPTY, [
+                    msg_id::VAR_REQUEST => 'load cache'
+                ]);
+            } else {
+                $this->set_cache($api_msg);
+            }
+        }
+        return $usr_msg;
+    }
+
+    /**
+     * load the frontend cache from the test resource
+     * TODO move to test to avoid usage of backend in frontend
+     * @return void
+     */
+    function load_dummy_cache_from_test_resources(user_backend $usr): void
+    {
+        if ($this->typ_lst_cache == null) {
+            $api_msg = file_get_contents(test_files::TYPE_LISTS_CACHE);
+            $this->set_cache($api_msg);
+        }
+        if ($this->msk_lst_cache == null) {
+            $imp = new import();
+            $imp->usr = $usr;
+            $usr_msg = new backend_user_message();
+            $json_str = file_get_contents(files::SYSTEM_VIEWS);
+            $size = strlen($json_str);
+            $json_array = json_decode($json_str, true);
+            $dto = $imp->get_data_object($json_array, $usr_msg, $size);
+            $api_msg = $dto->view_list()->api_json();
+            $this->set_view_cache($api_msg);
+        }
+    }
+
+    /**
+     * set the frontend cache once upfront base on the api message
+     * used for the unit test without api calls
+     *
+     * @param string|null $api_msg with the api message as a string
+     * @return void
+     */
+    function set_cache(?string $api_msg = null): void
+    {
+        if ($this->typ_lst_cache == null) {
+            $this->typ_lst_cache = new type_lists($api_msg);
+        }
+    }
+
+    /**
+     * set the frontend view cache once upfront base on the api message
+     * used for the unit test without api calls
+     *
+     * @param string|null $api_msg with the api message as a string
+     * @return void
+     */
+    function set_view_cache(?string $api_msg = null): void
+    {
+        if ($this->msk_lst_cache == null) {
+            $this->msk_lst_cache = new view_list($api_msg);
+        }
+    }
+
 
     /*
      * user
@@ -234,6 +332,8 @@ class frontend
 
     /**
      * create the HTML code based on the given url
+     * TODO for the confirm action highlight the changes
+     * TODO add the db update via api
      *
      * @param array $url_array the parsed url as an array
      * @param user_dsp $usr the session user who has requested the view
@@ -241,43 +341,42 @@ class frontend
      */
     function url_to_html(array $url_array, user_dsp $usr): string
     {
-        // detect the url format and get the view id or code id
-        $human_url = false;
-        $pod_url = false;
-        if (array_key_exists(api::URL_VAR_MASK_HUMAN, $url_array)) {
-            $human_url = true;
-            $view = $url_array[api::URL_VAR_MASK_HUMAN] ?? views::START_ID; // the database id of the view to display
-        } elseif (array_key_exists(api::URL_VAR_MASK_POD, $url_array)) {
-            $pod_url = true;
-            $view = $url_array[api::URL_VAR_MASK_POD] ?? views::START_CODE; // the database id of the view to display
-        } else {
-            $view = $url_array[api::URL_VAR_MASK] ?? views::START_ID; // the database id of the view to display
-        }
-
-        // get the general vars from the url
-        $id = $url_array[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
-        // TODO Prio 1 complete all url vars mappings for $human_url, $pod_url and $short_url
-        if ($human_url) {
-            $step = $url_array[api::URL_VAR_STEP_LONG] ?? 0; // the enum of the user process step to perform next
-        } elseif ($pod_url) {
-            $step = $url_array[api::URL_VAR_STEP_POD] ?? 0; // the enum of the user process step to perform next
-        } else {
-            $step = $url_array[api::URL_VAR_STEP] ?? 0; // the enum of the user process step to perform next
-        }
-
-        $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
-        $view_words = $url_array[api::URL_VAR_WORDS] ?? '';
-        $back = $url_array[api::URL_VAR_BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
-
         // init the view
-        global $sys_msk_cac;
         $result = ''; // reset the html code var
         $msg = ''; // to collect all messages that should be shown to the user immediately
 
+        // detect the url format and get the view id or code id
+        $human_url = false;
+        $pod_url = false;
+        if (array_key_exists(url_var::MASK_HUMAN, $url_array)) {
+            $human_url = true;
+            $view = $url_array[url_var::MASK_HUMAN] ?? views::START_ID; // the database id of the view to display
+        } elseif (array_key_exists(url_var::MASK_POD, $url_array)) {
+            $pod_url = true;
+            $view = $url_array[url_var::MASK_POD] ?? views::START_CODE; // the database id of the view to display
+        } else {
+            $view = $url_array[url_var::MASK] ?? views::START_ID; // the database id of the view to display
+        }
+
+        // get the general vars from the url
+        $id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
+        // TODO Prio 1 complete all url vars mappings for $human_url, $pod_url and $short_url
+        if ($human_url) {
+            $step = $url_array[url_var::STEP_LONG] ?? 0; // the enum of the user process step to perform next
+        } elseif ($pod_url) {
+            $step = $url_array[url_var::STEP_POD] ?? 0; // the enum of the user process step to perform next
+        } else {
+            $step = $url_array[url_var::STEP] ?? 0; // the enum of the user process step to perform next
+        }
+
+        $new_view_id = $url_array[rest_ctrl::PAR_VIEW_NEW_ID] ?? '';
+        $view_words = $url_array[url_var::WORDS] ?? '';
+        $back = $url_array[url_var::BACK] ?? ''; // the word id from which this value change has been called (maybe later any page)
+
         // TODO move to the frontend __construct
         // get the fixed frontend config
-        $api_msg = $this->api_get(type_lists::class);
-        $frontend_cache = new type_lists($api_msg);
+        //$api_msg = $this->api_get(type_lists::class);
+        //$frontend_cache = new type_lists($api_msg);
 
         // use default view if nothing is set
         if (($view == 0 or $view == '' or $view == null or $view == 'null') and $id == 0) {
@@ -288,7 +387,8 @@ class frontend
         if (is_numeric($view)) {
             $view_id = $view;
         } else {
-            $view_id = $sys_msk_cac->id($view);
+            $msk = $this->typ_lst_cache->get_view($view);
+            $view_id = $msk->id();
         }
 
         // select the main object to display
@@ -320,7 +420,12 @@ class frontend
 
         // get the main object to display
         if ($id != 0) {
-            $dbo->load_by_id($id);
+            // if only the id is included in the url load the data via api
+            if (count($url_array) <= 2) {
+                $dbo->load_by_id($id);
+            } else {
+                $dbo->url_mapper($url_array);
+            }
         } else {
             // get last term used by the user or a default value
             $wrd = $usr->last_term();
@@ -344,7 +449,8 @@ class frontend
                             $view_id = $dbo->calc_view_id();
                             if ($view_id <= 0) {
                                 // if no one has set a view for this word, use the fallback view
-                                $view_id = $sys_msk_cac->id(views::WORD);
+                                $msk = $this->typ_lst_cache->get_view(views::WORD);
+                                $view_id = $msk->id();
                             }
                         }
                     }
@@ -360,15 +466,17 @@ class frontend
             // TODO first create the frontend object and call from the frontend object the api
             // TODO for system views avoid the backend call by using the cache from the frontend
             // TODO get the system view from the preloaded cache
-            $msk_dsp = new view_dsp();
-            $msk_dsp->load_by_id_with($view_id);
+            // TODO use the frontend not the backend cache
+            $msk_dsp = $this->typ_lst_cache->get_view_by_id($view_id);
             $title = $msk_dsp->title($dbo);
-            $dsp_text = $msk_dsp->show($dbo, null, $back);
+            $cfg = new data_object();
+            $cfg->typ_lst_cache = $this->typ_lst_cache;
+            $cfg->set_view_list($this->msk_lst_cache);
+            $dsp_text = $msk_dsp->show($dbo, $cfg, $back);
 
             // use a fallback if the view is empty
             if ($dsp_text == '' or $msk_dsp->name() == '') {
-                $view_id = $sys_msk_cac->id(views::START);
-                $msk_dsp->load_by_id_with($view_id);
+                $msk_dsp = $this->typ_lst_cache->get_view(views::START);
                 $dsp_text = $msk_dsp->name_tip($dbo, $back);
             }
             if ($dsp_text == '') {
@@ -377,6 +485,7 @@ class frontend
                 $html = new html_base();
                 $result .= $html->header($title, '');
                 $result .= $dsp_text;
+                $result .= $html->footer();
             }
         } else {
             $result .= log_err('No view for "' . $dbo->name() . '" found.',
@@ -388,7 +497,7 @@ class frontend
 
     function show_view(int $id): string
     {
-        return $this->typ_lst_cache->get_view_by_id($id);
+        return $this->typ_lst_cache->get_html_by_id($id);
     }
 
 
@@ -429,7 +538,7 @@ class frontend
     {
         $lib = new library();
         $class = $lib->class_to_name_pur($class);
-        $url = self::HOST_DEV . api::URL_API_PATH . $lib->camelize_ex_1($class);
+        $url = self::HOST_DEV . url_var::API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
             $data = array($id_fld => implode(",", $ids));
         } else {

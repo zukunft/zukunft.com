@@ -30,24 +30,22 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
-
-use cfg\phrase\phrase;
-use cfg\word\triple;
-use cfg\word\word;
-use html\phrase\phrase as phrase_dsp;
-use shared\api;
-use shared\library;
-use shared\const\triples;
-use shared\const\views;
-use shared\const\words;
-use shared\types\verbs;
-use test\test_cleanup;
 
 class phrase_write_tests
 {
@@ -85,7 +83,7 @@ class phrase_write_tests
 
         $phr_dsp = new phrase_dsp($phr->api_json());
         $result = $lib->trim_html($phr_dsp->dsp_tbl());
-        $url = '<td><a href="/http/view.php?' . api::URL_VAR_MASK . '=' . views::WORD_ID . '&' . api::URL_VAR_ID . '=';
+        $url = '<td><a href="/http/view.php?' . url_var::MASK . '=' . views::WORD_ID . '&' . url_var::ID . '=';
         $target = $lib->trim_html($url . $company_id . '" title="' .
             words::COMPANY . '">' . words::COMPANY . '</a></td> ');
         $t->assert('phrase->dsp_tbl word for ' . words::COMPANY, $result, $target);
@@ -100,7 +98,7 @@ class phrase_write_tests
 
         $phr_dsp = new phrase_dsp($phr->api_json());
         $result = $lib->trim_html($phr_dsp->dsp_tbl());
-        $target = $lib->trim_html(' <tr> <td> <a href="/http/view.php?m=' . VIEWS::TRIPLE_ID . '&id=' . $trp->id() . '" title="' .
+        $target = $lib->trim_html(' <tr> <td><a href="/http/view.php?m=' . VIEWS::TRIPLE_ID . '&id=' . $trp->id() . '" title="' .
             triples::COMPANY_ZURICH . '">' . triples::COMPANY_ZURICH . '</a></td></tr> ');
         $t->assert('phrase->dsp_tbl triple for ' . $zh_company_id, $result, $target);
 

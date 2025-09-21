@@ -30,9 +30,9 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::DB . 'sql.php';
@@ -47,40 +47,40 @@ include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED_CONST . 'words.php';
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\component\component_link_list;
-use cfg\config;
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\formula\formula;
-use cfg\formula\formula_db;
-use cfg\formula\formula_link;
-use cfg\formula\formula_link_type;
-use cfg\phrase\phrase;
-use cfg\ref\source;
-use cfg\ref\source_type;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_link;
-use cfg\sandbox\sandbox_named;
-use cfg\ref\source_db;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\value\value;
-use cfg\verb\verb;
-use cfg\verb\verb_db;
-use cfg\view\view;
-use cfg\view\view_db;
-use cfg\word\triple;
-use cfg\word\triple_db;
-use cfg\word\word;
-use cfg\word\word_db;
-use shared\const\users;
-use shared\library;
-use shared\const\sources;
-use shared\const\words;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
+use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class sandbox_tests
 {
@@ -193,10 +193,10 @@ class sandbox_tests
         // TODO review test (start with test_name="" and move the creation to the test object creation)
         // a source can have the same name as a word
         $wrd1 = new word($usr);
-        $wrd1->set_id(1);
+        $wrd1->id = 1;
         $wrd1->set_name(sources::IPCC_AR6_SYNTHESIS);
         $src2 = new source($usr);
-        $src2->set_id(2);
+        $src2->id = 2;
         $src2->set_name(sources::IPCC_AR6_SYNTHESIS);
         $result = $wrd1->is_same($src2);
         $t->assert("a source is not the same as a word even if they have the same name", $result, false);
@@ -1882,7 +1882,7 @@ class sandbox_tests
 
         // the word changer query (used in _sandbox->changer_sql)
         $wrd = new word($usr);
-        $wrd->set_id(1);
+        $wrd->id = 1;
         $sc = $db_con->sql_creator();
         $sc->db_type = sql_db::POSTGRES;
         $qp = $wrd->load_sql_changer($sc);

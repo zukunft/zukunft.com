@@ -6,11 +6,20 @@ A proper issue ticket should be created for these TODOs notes:
     but first this needs to be prioritized:
 
     TODO Release 0.0.3
+    TODO note what has to be changed based on the old http scripts (done: about)
+    TODO complete and test the db write via api
     TODO complete the import db write tests (pending: )
     TODO make main backend object vars private (pending: ref, value, formula, result, view, component, user)
     TODO complete and test the url mapper in the frontend
     TODO clean up import_mapper and move all mapping from import_obj to the mapper
 
+    TODO complete system view with: about, async_process, calculate
+
+    TODO object chart 
+         - add legend with object types and that dotted line is inheritance   
+         - move result towards value
+         - keep object inheritance tree
+         - keep highlight of word, value formula
 
     TODO Substeps: create insert, update and delete sql create tests for the main objects (TODO activate db write)
                    include the log in the prepared sql write statement
@@ -51,6 +60,7 @@ A proper issue ticket should be created for these TODOs notes:
 
     TODO set the vars of the backend objects to private e.g. to make sure that missing db updates can be detected
     TODO set vars in the frontend object to public and reduce the set and get function because frontend objects never save directly to the database
+    TODO add a component group for easier linking of more than one component to more than one view 
 
     TODO api review
     TODO all api messages should be optional with or without header
@@ -63,6 +73,16 @@ A proper issue ticket should be created for these TODOs notes:
     TODO check the order of the class sections
     TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change
 
+    TODO add parent to source and ref
+    TODO include code_id for all terms 
+    TODO use php 8.4 set and get function
+    TODO use the possibility to highlight a few (up to 3) entries in a selection list and use it e.g. for the phrase type selector
+    TODO add a tooltip text to selection lists like the phrase type
+    TODO fille the view selection list with some default values
+    TODO add the triple weight
+    TODO add the reserved triple "most relevant" e.g. to define a sort criteria for each phrase and as a sample sort the currencies by last years trading volumn  
+    TODO allow views to be depedend on other and allow add, replace and remove of components of the original mask
+    TODO make it possible to change the parent view and while changing either keep the view or keep the chances or a combination of both
     TODO for user_values allow a source 0=not set or exclude the source_id from the prime index?
     TODO add import fail test to check the error message creation
     TODO on import create a fail message if the import tries to import a word that exists already as a formula (or create a user specific word and rename the formula)
@@ -249,6 +269,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO additional to the git concept of merge allow also subscribe or auto merge
     TODO create a simple value table with the compressed phrase ids as a key and the value as a key-value table
     TODO check that all class function follow the setup suggested in user_message
+    TODO use the user_message object to collect all messages to the user and present the result to the user
+    TODO use log only for unexpected errors an warnings where the user has probably no chance ti fix it
     TODO move all tests to a class that is extended step by step e.g. test_unit extends test_base, ...
     TODO make sure that no word, phrase, verb and formula have the same name by using a name view table for each user
     TODO add JSON tests that check if a just imported JSON file can be exactly recreated with export
@@ -584,7 +606,7 @@ features
 Bugs
 - solve the view sorting issue by combining the user settings for view, link and components
   e.g. if a user changes the mask, he probably wants that the complete mask is unchanged
-- bug: display linked words does not display the downward words e.g. "Company main ratio" does not show "Target Price"
+- bug: display linked words does not display the downward words e.g. "company main ratio" does not show "Target Price"
 - don't write the same log message several times during the same call
 - don't write too many log message in on php script call
 - fix error when linking an existing formula to a phase

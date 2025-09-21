@@ -30,19 +30,37 @@
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
+
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::TYPES . 'type_lists.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'url_var.php';
+
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+
 
 class formula_link_type_list extends type_list
 {
-    const NAME = 'link type';
+    const NAME = url_var::FORMULA_TYPE;
 
     /**
+     * create the HTML code to select a formula link type
+     * @param string $form the unique name of the html form
+     * @param int|null $selected the id of the preselected formula link type
+     * @param string $name the unique name inside the form for this selector
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
+    function selector(
+        string   $form = '',
+        int|null $selected = null,
+        string   $name = self::NAME
+    ): string
     {
-        global $html_formula_link_types;
-        return parent::type_selector($html_formula_link_types->lst_key(), $name, $form, $selected);
+        return parent::type_selector($form, $selected, $name, msg_id::LABEL_FORMULA_LINK_TYPE);
     }
 
 }

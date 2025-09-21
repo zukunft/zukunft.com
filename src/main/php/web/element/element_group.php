@@ -30,10 +30,10 @@
   
 */
 
-namespace html\element;
+namespace Zukunft\ZukunftCom\main\php\web\element;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::FIGURE . 'figure.php';
@@ -49,19 +49,19 @@ include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::SHARED . 'library.php';
 
-use html\figure\figure as figure;
-use html\figure\figure_list;
-use html\formula\formula;
-use html\phrase\phrase;
-use html\phrase\phrase_list;
-use html\phrase\term_list;
-use html\result\result;
-use html\sandbox\list_dsp;
-use html\user\user_message;
-use html\value\value;
-use html\word\word;
-use shared\library;
-use shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\web\figure\figure as figure;
+use Zukunft\ZukunftCom\main\php\web\figure\figure_list;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 
 class element_group extends list_dsp
 {

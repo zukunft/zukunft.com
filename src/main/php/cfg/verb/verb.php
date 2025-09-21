@@ -32,9 +32,9 @@
 
 */
 
-namespace cfg\verb;
+namespace Zukunft\ZukunftCom\main\php\cfg\verb;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -63,27 +63,25 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\helper\data_object;
-use cfg\helper\type_object;
-use cfg\log\change;
-use cfg\phrase\term;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\word\word;
-use shared\enum\change_actions;
-use shared\enum\change_tables;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
-use shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class verb extends type_object
 {
@@ -141,7 +139,7 @@ class verb extends type_object
     {
         parent::__construct($code_id);
         if ($id > 0) {
-            $this->set_id($id);
+            $this->id = $id;
         }
         if ($name != '') {
             $this->set_name($name);
@@ -290,7 +288,7 @@ class verb extends type_object
      */
     function set(int $id = 0, string $name = ''): void
     {
-        $this->set_id($id);
+        $this->id = $id;
         $this->set_name($name);
     }
 
@@ -713,7 +711,7 @@ class verb extends type_object
         $qp->name .= 'usage';
         $db_con->set_class(word::class);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(verb_db::FLD_NAMES);
         $db_con->set_where_std($this->id());
         $qp->sql = $db_con->select_by_set_id();
@@ -746,7 +744,7 @@ class verb extends type_object
     // true if no other user has modified the verb
     private function not_changed(): bool
     {
-        log_debug('verb->not_changed (' . $this->id() . ') by someone else than the owner (' . $this->user()->id() . ')');
+        log_debug('verb->not_changed (' . $this->id() . ') by someone else than the owner (' . $this->user()->id . ')');
 
         global $db_con;
         $result = true;
@@ -1051,7 +1049,7 @@ class verb extends type_object
         if ($log->id() > 0) {
             // insert the new verb
             $db_con->set_class(verb::class);
-            $this->set_id($db_con->insert_old(verb_db::FLD_NAME, $this->name));
+            $this->id = $db_con->insert_old(verb_db::FLD_NAME, $this->name);
             if ($this->id() > 0) {
                 // update the id in the log
                 if (!$log->add_ref($this->id())) {
@@ -1122,7 +1120,7 @@ class verb extends type_object
         $usr_msg = $this->check_preserved();
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_class(verb::class);
 
         // check if a new verb is supposed to be added
@@ -1132,7 +1130,7 @@ class verb extends type_object
             if ($trm->id_obj() > 0 and $trm->type() <> verb::class) {
                 $usr_msg->add($trm->id_used_msg($this));
             } else {
-                $this->set_id($trm->id_obj());
+                $this->id = $trm->id_obj();
                 log_debug('verb->save adding verb name ' . $this->dsp_id() . ' is OK');
             }
         }
@@ -1241,7 +1239,7 @@ class verb extends type_object
         $result = parent::dsp_id();
         if ($debug > DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+                $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }
         }
         return $result;
@@ -1261,27 +1259,6 @@ class verb extends type_object
     function display(?string $back = ''): string
     {
         return '<a href="/http/verb_edit.php?id=' . $this->id() . '&back=' . $back . '">' . $this->name . '</a>';
-    }
-
-    // returns the html code to select a verb link type
-    // database link must be open
-    function dsp_selector($side, $form, $class, $back): string
-    {
-        global $html_verbs;
-
-        $result = "Verb:";
-        $result .= $html_verbs->selector('verb', $form, $this->id(), $class);
-
-        log_debug('admin id ' . $this->id());
-        if ($this->user() != null) {
-            if ($this->user()->is_admin()) {
-                // admin users should always have the possibility to create a new verb / link type
-                $result .= \html\btn_add('add new verb', '/http/verb_add.php?back=' . $back);
-            }
-        }
-
-        log_debug('done verb id ' . $this->id());
-        return $result;
     }
 
 }

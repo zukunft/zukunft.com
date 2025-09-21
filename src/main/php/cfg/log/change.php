@@ -41,9 +41,9 @@
 
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_LOG . 'change_log.php';
 //include_once paths::MODEL_COMPONENT . 'component.php';
@@ -72,29 +72,29 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use cfg\component\component;
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\formula\formula;
-use cfg\group\group;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\value\value;
-use cfg\view\view;
-use cfg\word\word;
-use shared\enum\change_fields;
-use shared\enum\change_tables;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 use DateTime;
 use DateTimeInterface;
 use Exception;
@@ -204,14 +204,14 @@ class change extends change_log
             // TODO check if not the complete user should be loaded
             $usr_set = false;
             if ($usr != null) {
-                if ($db_row[user_db::FLD_ID] == $usr->id()) {
+                if ($db_row[user_db::FLD_ID] == $usr->id) {
                     $this->set_user($usr);
                     $usr_set = true;
                 }
             }
             if (!$usr_set) {
                 $row_usr = new user();
-                $row_usr->set_id($db_row[user_db::FLD_ID]);
+                $row_usr->id = $db_row[user_db::FLD_ID];
                 $row_usr->name = $db_row[user_db::FLD_NAME];
                 $this->set_user($row_usr);
             }
@@ -287,7 +287,7 @@ class change extends change_log
             $usr = $this->user();
         }
 
-        $sc->add_where(user_db::FLD_ID, $usr->id());
+        $sc->add_where(user_db::FLD_ID, $usr->id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -305,7 +305,7 @@ class change extends change_log
         $qp->name .= 'user';
         $db_con->set_class(change::class);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(self::FLD_NAMES);
         $qp->sql = $db_con->select_by_set_id();
         $qp->par = $db_con->get_par();
@@ -339,7 +339,7 @@ class change extends change_log
                    OR f.table_id = " . $cng_tbl_cac->id(change_tables::WORD_USR) . ") AND ";
             $sql_row = '';
             $sql_user = 's.user_id = u.user_id
-                AND s.user_id = ' . $this->user()->id() . ' ';
+                AND s.user_id = ' . $this->user()->id . ' ';
         } elseif ($type == word::class) {
             //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_tables::WORD));
             //$db_con->add_par(sql_par_type::INT, $cng_tbl_cac->id(change_tables::WORD_USR));
@@ -381,7 +381,7 @@ class change extends change_log
             ORDER BY s.change_time DESC
                LIMIT " . $limit . ";";
             log_debug('user_log_display->dsp_hist ' . $qp->sql);
-            $db_con->usr_id = $this->user()->id();
+            $db_con->usr_id = $this->user()->id;
         }
         return $qp;
     }

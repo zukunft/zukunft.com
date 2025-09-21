@@ -28,7 +28,7 @@
     {
       "name": "related triples",
       "description": "triples where this verb is used",
-      "type": "triples_related"
+      "type": "list_children_of_word"
     },
     {
       "name": "triple name",

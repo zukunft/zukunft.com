@@ -30,16 +30,16 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\ref\source;
-use cfg\ref\source_type_list;
-use html\ref\source as source_dsp;
-use shared\const\sources;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class source_tests
 {
@@ -71,9 +71,9 @@ class source_tests
 
         $t->subheader($ts . 'sql read standard and user changes by id');
         $src = new source($usr);
-        $src->set_id(4);
+        $src->id = 4;
         $t->assert_sql_standard($sc, $src);
-        $src->set_id(5);
+        $src->id = 5;
         $t->assert_sql_not_changed($sc, $src);
         $t->assert_sql_user_changes($sc, $src);
 

@@ -30,18 +30,18 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
 
-use cfg\word\triple;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_read_tests
 {
@@ -99,7 +99,7 @@ class triple_read_tests
 
         $test_name = 'triple generated name of ' . triples::COMPANY_ZURICH . ' via function';
         $lnk_company->set_name('');
-        $target = 'Zurich (Company)';
+        $target = 'Zurich (company)';
         $result = $lnk_company->name_generated();
         $t->assert($test_name, $result, $target);
 

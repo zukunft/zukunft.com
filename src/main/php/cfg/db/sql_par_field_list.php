@@ -36,40 +36,40 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_par_field.php';
 //include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 //include_once paths::MODEL_FORMULA . 'formula_db.php';
-include_once paths::MODEL_LOG . 'change.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+//include_once paths::MODEL_LOG . 'change.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
 //include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\formula\formula_db;
-use cfg\helper\combine_named;
-use cfg\helper\db_object_seq_id;
-use cfg\log\change;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_link_named;
-use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_named;
-use cfg\helper\type_list;
-use cfg\helper\type_object;
-use cfg\user\user;
-use cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use DateTime;
 use DateTimeInterface;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class sql_par_field_list
 {

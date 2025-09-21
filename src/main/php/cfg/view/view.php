@@ -50,9 +50,9 @@
   
 */
 
-namespace cfg\view;
+namespace Zukunft\ZukunftCom\main\php\cfg\view;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_typed.php';
 include_once paths::DB . 'sql.php';
@@ -87,43 +87,45 @@ include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\component\component_link_list;
-use cfg\component\component_list;
-use cfg\component\view_style;
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\helper\data_object;
-use cfg\helper\db_object_seq_id;
-use cfg\helper\type_object;
-use cfg\log\change;
-use cfg\phrase\phrase;
-use cfg\phrase\term;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_code_id;
-use cfg\sandbox\sandbox_typed;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\helper\CombineObject;
-use shared\json_fields;
-use shared\library;
-use shared\const\views;
-use shared\types\api_type_list;
-use shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_typed;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
 
 class view extends sandbox_code_id
 {
@@ -201,6 +203,7 @@ class view extends sandbox_code_id
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
      * @param string $name_fld the name of the name field as defined in this child class
+     * @param string $type_fld the name of the type field as defined in this child class
      * @return bool true if the view is loaded and valid
      */
     function row_mapper_sandbox(
@@ -208,14 +211,12 @@ class view extends sandbox_code_id
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = view_db::FLD_ID,
-        string $name_fld = view_db::FLD_NAME
+        string $name_fld = view_db::FLD_NAME,
+        string $type_fld = view_db::FLD_TYPE
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
-            if (array_key_exists(view_db::FLD_TYPE, $db_row)) {
-                $this->type_id = $db_row[view_db::FLD_TYPE];
-            }
             if (array_key_exists(view_db::FLD_STYLE, $db_row)) {
                 $this->set_style_by_id($db_row[view_db::FLD_STYLE]);
             }
@@ -288,6 +289,7 @@ class view extends sandbox_code_id
                 $lnk = new component_link($usr);
                 $lnk->import_mapper($json_cmp, $dto, $test_obj);
                 $this->add_component($lnk, $cmp_pos);
+                $this->check_component_position($json_cmp, $cmp_pos, $usr_msg);
                 $cmp_pos++;
             }
         }
@@ -314,6 +316,38 @@ class view extends sandbox_code_id
         }
 
         return $usr_msg;
+    }
+
+    /**
+     * check if the position in the json is reasonable
+     * TODO add unit test case
+     * @param array $cmp_lnk_json the part of the json array which contains one component link
+     * @param int $pos the expected position
+     * @param user_message $usr_msg the user message object where the potential warning should be added
+     * @return void just enriches the given user message object with the warning message
+     */
+    private function check_component_position(
+        array $cmp_lnk_json,
+        int $pos,
+        user_message $usr_msg
+    ): void
+    {
+        if (in_array(json_fields::POSITION, $cmp_lnk_json)) {
+            $json_pos = $cmp_lnk_json[json_fields::POSITION];;
+            if ($pos !== $json_pos) {
+                $cmp_name = 'component name missing';
+                if (in_array(json_fields::NAME, $cmp_lnk_json)) {
+                    $json_pos = $cmp_lnk_json[json_fields::NAME];;
+                }
+                $usr_msg->add_id_with_vars(msg_id::JSON_ORDER_POS_COMPONENT, [
+                    msg_id::VAR_VALUE => $json_pos,
+                    msg_id::VAR_VALUE_CHK => $pos,
+                    msg_id::VAR_COMPONENT_NAME => $cmp_name,
+                    msg_id::VAR_VIEW_NAME => $this->name()
+                ]);
+            }
+        }
+
     }
 
 
@@ -459,17 +493,22 @@ class view extends sandbox_code_id
      */
 
     /**
-     * set the view type
+     * set the view type by the given code id or name
      *
-     * @param string|null $code_id the code id that should be added to this view
+     * @param string|null $code_id_or_name the code id or name that should be added to this view
      * @param user $usr_req the user who wants to change the type
      * @return user_message a warning if the view type code id is not found
      */
-    function set_type(?string $code_id, user $usr_req = new user()): user_message
+    function set_type(?string $code_id_or_name, user $usr_req = new user()): user_message
     {
         global $msk_typ_cac;
-        return parent::set_type_by_code_id(
-            $code_id, $msk_typ_cac, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
+        if ($msk_typ_cac->has_code_id($code_id_or_name)) {
+            return parent::set_type_by_code_id(
+                $code_id_or_name, $msk_typ_cac, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
+        } else {
+            return parent::set_type_by_name(
+                $code_id_or_name, $msk_typ_cac, msg_id::VIEW_TYPE_NOT_FOUND, $usr_req);
+        }
     }
 
     /**
@@ -579,22 +618,22 @@ class view extends sandbox_code_id
      */
 
     /**
+     * get the view type code id based on the database id set in this object
+     * @return string|null the code_id of the view type
+     */
+    function type_code_id(): string|null
+    {
+        global $msk_typ_cac;
+        return $msk_typ_cac->code_id($this->type_id);
+    }
+
+    /**
      * @return string the name of the view type
      */
     function type_name(): string
     {
         global $msk_typ_cac;
         return $msk_typ_cac->name($this->type_id);
-    }
-
-    /**
-     * get the view type code id based on the database id set in this object
-     * @return string
-     */
-    private function type_code_id(): string
-    {
-        global $msk_typ_cac;
-        return $msk_typ_cac->code_id($this->type_id);
     }
 
     /**
@@ -771,7 +810,7 @@ class view extends sandbox_code_id
         }
 
         $db_con->set_class(component_link::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_name($qp->name);
         $db_con->set_fields(component_link::FLD_NAMES);
         $db_con->set_usr_num_fields(component_link::FLD_NAMES_NUM_USR);
@@ -890,8 +929,8 @@ class view extends sandbox_code_id
                 $cmp->save();
                 $cmp_lnk = new component_link($this->user());
                 $cmp_lnk->reset();
-                $cmp_lnk->view()->set_id($this->id());
-                $cmp_lnk->component()->set_id($cmp->id());
+                $cmp_lnk->view()->id = $this->id();
+                $cmp_lnk->component()->id = $cmp->id();
                 $cmp_lnk->order_nbr = $pos;
                 $cmp_lnk->set_pos_type($pos_type_code_id);
                 $cmp_lnk->set_style($style_code_id);
@@ -1064,10 +1103,10 @@ class view extends sandbox_code_id
      * check if the view in the database needs to be updated
      * e.g. for import if this view has only the name set, the protection should not be updated in the database
      *
-     * @param view|CombineObject|db_object_seq_id $db_obj the word as saved in the database
+     * @param view|CombineObject|IdObject $db_obj the word as saved in the database
      * @return bool true if this word has infos that should be saved in the database
      */
-    function needs_db_update(view|CombineObject|db_object_seq_id $db_obj): bool
+    function needs_db_update(view|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->style() != null) {

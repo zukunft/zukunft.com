@@ -39,14 +39,14 @@
 
 */
 
-namespace cfg\sandbox;
+namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'base_list.php';
 include_once paths::MODEL_SYSTEM . 'base_list.php';
-include_once paths::MODEL_HELPER . 'combine_named.php';
-include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_HELPER . 'combine_named.php';
+//include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
 include_once paths::DB . 'sql_par.php';
@@ -54,9 +54,9 @@ include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
 //include_once paths::MODEL_PHRASE . 'term_list.php';
-include_once paths::MODEL_RESULT . 'result_list.php';
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_RESULT . 'result_list.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_message.php';
 //include_once paths::MODEL_VALUE . 'value_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
@@ -65,25 +65,25 @@ include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\helper\db_object_seq_id;
-use cfg\system\base_list;
-use cfg\helper\combine_named;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\phrase\term_list;
-use cfg\result\result_list;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value_list;
-use shared\enum\messages as msg_id;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class sandbox_list extends base_list
 {
@@ -206,7 +206,7 @@ class sandbox_list extends base_list
         //$sc->set_class($lib->class_to_name($sbx::class));
         $sc->set_class($sbx::class);
         $sc->set_name($qp->name);  // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(array($sbx->id_field()));
         $sc->set_usr_query();
         if ($pattern != '') {
@@ -268,7 +268,7 @@ class sandbox_list extends base_list
         $result = false;
 
         // check the all minimal input parameters are set
-        if ($this->user()->id() <= 0) {
+        if ($this->user()->id <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } else {
             $qp = $this->load_sql_names($db_con->sql_creator(), $sbx, $pattern, $limit, $offset);
@@ -308,7 +308,7 @@ class sandbox_list extends base_list
         }
 
         // check the all minimal input parameters are set
-        if ($this->user()->id() <= 0) {
+        if ($this->user()->id <= 0) {
             log_err('The user must be set to load ' . self::class, self::class . '->load');
         } elseif ($qp->name == '') {
             log_err('The query name cannot be created to load a ' . self::class, self::class . '->load');
@@ -518,7 +518,7 @@ class sandbox_list extends base_list
         }
         if ($debug > DEBUG_SHOW_USER or $debug == 0) {
             if ($this->user() != null) {
-                $result .= ' for user ' . $this->user()->id() . ' (' . $this->user()->name . ')';
+                $result .= ' for user ' . $this->user()->id . ' (' . $this->user()->name . ')';
             }
         }
         return $result;

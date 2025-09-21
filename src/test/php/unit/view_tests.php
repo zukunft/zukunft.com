@@ -30,16 +30,16 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_type;
-use cfg\view\view;
-use html\view\view as view_dsp;
-use shared\library;
-use shared\const\views;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class view_tests
 {
@@ -73,7 +73,7 @@ class view_tests
 
         $t->subheader($ts . 'sql read standard and user changes by id');
         $msk = new view($usr);
-        $msk->set_id(2);
+        $msk->id = 2;
         //$t->assert_load_sql($db_con, $msk);
         $t->assert_sql_standard($sc, $msk);
         $t->assert_sql_user_changes($sc, $msk);
@@ -145,7 +145,7 @@ class view_tests
 
         // sql to load the view components
         $msk = new view($usr);
-        $msk->set_id(2);
+        $msk->id = 2;
 
         $lib = new library();
         $db_con = new sql_db();

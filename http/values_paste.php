@@ -35,13 +35,13 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'views.php';
 
-use cfg\user\user;
-use cfg\view\view;
-use shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("values_paste");
@@ -65,7 +65,7 @@ if ($usr->id() > 0) {
         $new_tbl   = $_GET['table'];    // the value table as pasted by the user
         $src_id    = $_GET['source'];   // the source id as changed by the user
         $confirm   = $_GET['confirm'];  // 1 if the user has pressed "save"
-        $back = $_GET[api::URL_VAR_BACK] = '';     // the word id from which this value change has been called (maybe later any page)
+        $back = $_GET[url_var::BACK] = '';     // the word id from which this value change has been called (maybe later any page)
 
         // get the linked words from url
         $wrd_pos  = 1;

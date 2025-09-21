@@ -34,9 +34,9 @@
 
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'base_list.php';
 include_once paths::DB . 'sql_creator.php';
@@ -48,12 +48,12 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\user\user;
-use cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTime;
-use shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 class job_list extends base_list
 {

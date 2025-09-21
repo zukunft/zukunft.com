@@ -32,15 +32,15 @@
 
 */
 
-namespace html\phrase;
+namespace Zukunft\ZukunftCom\main\php\web\phrase;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'sandbox_list_named.php';
 include_once html_paths::USER . 'user_message.php';
 
-use html\sandbox\sandbox_list_named;
-use html\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
 
 class term_list extends sandbox_list_named
 {
@@ -64,36 +64,6 @@ class term_list extends sandbox_list_named
     /*
      * base
      */
-
-    /**
-     * @returns string the html code to display the phrases with the most useful link
-     */
-    function name_tip(): string
-    {
-        $result = '';
-        foreach ($this->lst() as $trm) {
-            if ($result != '' and $trm->name_tip() != '') {
-                $result .= ', ';
-            }
-            $result .= $trm->name_tip();
-        }
-        return $result;
-    }
-
-    /**
-     * @returns string the html code to display the phrases with the most useful link
-     */
-    function name_link(): string
-    {
-        $result = '';
-        foreach ($this->lst() as $trm) {
-            if ($result != '' and $trm->name_link() != '') {
-                $result .= ', ';
-            }
-            $result .= $trm->name_link();
-        }
-        return $result;
-    }
 
     /**
      * get a term from the term list selected by the word, triple, formula or verb id

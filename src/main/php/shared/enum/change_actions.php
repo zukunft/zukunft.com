@@ -30,12 +30,13 @@
 
 */
 
-namespace shared\enum;
+namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
 enum change_actions: string
 {
 
     // the basic change types that are logged
+    const SHOW = 'show';
     const ADD = 'add';
     const UPDATE = 'update';
     const DELETE = 'del';

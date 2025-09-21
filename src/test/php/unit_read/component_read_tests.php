@@ -30,14 +30,14 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\view\view;
-use shared\const\components;
-use shared\const\views;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_read_tests
 {
@@ -64,9 +64,9 @@ class component_read_tests
         $cmp_lnk = new component_link($t->usr1);
         $cmp_lnk->load_by_link_and_type(1, 1, 1);
         $test_name .= ' view id';
-        $t->assert($test_name, $cmp_lnk->view()->id(), $msk->id());
+        $t->assert($test_name, $cmp_lnk->view()->id, $msk->id);
         $test_name .= ' component id';
-        $t->assert($test_name, $cmp_lnk->component()->id(), $cmp->id());
+        $t->assert($test_name, $cmp_lnk->component()->id, $cmp->id);
 
     }
 

@@ -40,17 +40,36 @@
 
 */
 
-namespace html\word;
+namespace Zukunft\ZukunftCom\main\php\web\word;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::SANDBOX . 'sandbox_code_id.php';
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_names.php';
 include_once html_paths::HTML . 'html_selector.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
@@ -58,32 +77,14 @@ include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
-
-use html\html_names;
-use html\phrase\phrase_list;
-use html\html_base;
-use html\html_selector;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\sandbox\sandbox_code_id;
-use html\user\user_message;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\term as term_dsp;
-use html\verb\verb as verb_dsp;
-use shared\api;
-use shared\const\views;
-use shared\json_fields;
-use shared\enum\messages as msg_id;
-use shared\types\phrase_type;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\types\view_styles;
 
 class triple extends sandbox_code_id
 {
@@ -93,14 +94,14 @@ class triple extends sandbox_code_id
      */
 
     // curl views
-    const VIEW_ADD = views::TRIPLE_ADD;
-    const VIEW_EDIT = views::TRIPLE_EDIT;
-    const VIEW_DEL = views::TRIPLE_DEL;
+    const string VIEW_ADD = views::TRIPLE_ADD;
+    const string VIEW_EDIT = views::TRIPLE_EDIT;
+    const string VIEW_DEL = views::TRIPLE_DEL;
 
     // curl message id
-    const MSG_ADD = msg_id::TRIPLE_ADD;
-    const MSG_EDIT = msg_id::TRIPLE_EDIT;
-    const MSG_DEL = msg_id::TRIPLE_DEL;
+    const msg_id MSG_ADD = msg_id::TRIPLE_ADD;
+    const msg_id MSG_EDIT = msg_id::TRIPLE_EDIT;
+    const msg_id MSG_DEL = msg_id::TRIPLE_DEL;
 
 
     /*
@@ -112,7 +113,15 @@ class triple extends sandbox_code_id
     private ?phrase_dsp $from = null;
     private ?verb_dsp $verb = null;
     private ?phrase_dsp $to = null;
-    private ?string $plural = null;
+    private ?float $weight = null;
+    public ?string $plural = null {
+        get {
+            return $this->plural;
+        }
+        set {
+            $this->plural = $value;
+        }
+    }
 
 
     /*
@@ -129,20 +138,23 @@ class triple extends sandbox_code_id
     {
         $usr_msg = parent::url_mapper($url_array);
         if ($usr_msg->is_ok()) {
-            if (array_key_exists(api::URL_VAR_FROM_ID_LONG, $url_array)) {
-                $this->set_from_by_id($url_array[api::URL_VAR_FROM_ID_LONG]);
+            if (array_key_exists(url_var::FROM_ID_LONG, $url_array)) {
+                $this->set_from_by_id($url_array[url_var::FROM_ID_LONG]);
             }
-            if (array_key_exists(api::URL_VAR_VERB_ID_LONG, $url_array)) {
-                $this->set_verb_by_id($url_array[api::URL_VAR_VERB_ID_LONG]);
+            if (array_key_exists(url_var::VERB_LONG, $url_array)) {
+                $this->set_verb_by_id($url_array[url_var::VERB_LONG]);
             }
-            if (array_key_exists(api::URL_VAR_TO_ID_LONG, $url_array)) {
-                $this->set_to_by_id($url_array[api::URL_VAR_TO_ID_LONG]);
+            if (array_key_exists(url_var::TO_ID_LONG, $url_array)) {
+                $this->set_to_by_id($url_array[url_var::TO_ID_LONG]);
+            }
+            if (array_key_exists(url_var::WEIGHT, $url_array)) {
+                $this->weight = $url_array[url_var::WEIGHT];
             }
             // TODO Prio 2 use the languages forms
-            if (array_key_exists(api::URL_VAR_PLURAL, $url_array)) {
-                $this->set_plural($url_array[api::URL_VAR_PLURAL]);
+            if (array_key_exists(url_var::PLURAL, $url_array)) {
+                $this->plural = $url_array[url_var::PLURAL];
             } else {
-                $this->set_plural(null);
+                $this->plural = null;
             }
         }
         return $usr_msg;
@@ -210,6 +222,12 @@ class triple extends sandbox_code_id
         } else {
             $this->set_to(new phrase_dsp());
         }
+        if (array_key_exists(json_fields::WEIGHT, $json_array)) {
+            $this->weight = $json_array[json_fields::WEIGHT];
+        }
+        if (array_key_exists(json_fields::PLURAL, $json_array)) {
+            $this->plural = $json_array[json_fields::PLURAL];
+        }
         return $usr_msg;
     }
 
@@ -228,6 +246,8 @@ class triple extends sandbox_code_id
         $vars[json_fields::FROM] = $this->from()->id();
         $vars[json_fields::VERB] = $this->verb()->id();
         $vars[json_fields::TO] = $this->to()->id();
+        $vars[json_fields::WEIGHT] = $this->weight;
+        $vars[json_fields::PLURAL] = $this->plural;
         return $vars;
     }
 
@@ -238,9 +258,9 @@ class triple extends sandbox_code_id
 
     function set(string $from, string $verb, string $to): void
     {
-        $this->set_from((new word_dsp(0, $from))->phrase());
-        $this->set_verb(new verb_dsp(0, $verb));
-        $this->set_to((new word_dsp(0, $to))->phrase());
+        $this->set_from(new word_dsp($from)->phrase());
+        $this->set_verb(new verb_dsp($verb));
+        $this->set_to(new word_dsp($to)->phrase());
     }
 
     function set_from(phrase_dsp $from): void
@@ -293,7 +313,7 @@ class triple extends sandbox_code_id
         return $phr;
     }
 
-    function from(): phrase_dsp
+    function from(): ?phrase_dsp
     {
         return $this->from;
     }
@@ -303,19 +323,9 @@ class triple extends sandbox_code_id
         return $this->verb;
     }
 
-    function to(): phrase_dsp
+    function to(): ?phrase_dsp
     {
         return $this->to;
-    }
-
-    function set_plural(?string $plural): void
-    {
-        $this->plural = $plural;
-    }
-
-    function plural(): ?string
-    {
-        return $this->plural;
     }
 
     /**
@@ -343,6 +353,11 @@ class triple extends sandbox_code_id
         } else {
             return $phr_typ_cac->get($this->type_id());
         }
+    }
+
+    function get_plural(): ?string
+    {
+        return $this->plural;
     }
 
 
@@ -379,7 +394,7 @@ class triple extends sandbox_code_id
         if ($this->from() != null) {
             if ($this->from()->id() > 0) {
                 $wrd_lst->add($this->from()->obj()->word());
-            } elseif ($this->from->id() < 0) {
+            } elseif ($this->from()->id() < 0) {
                 $sub_wrd_lst = $this->from()->wrd_lst();
                 foreach ($sub_wrd_lst->lst() as $wrd) {
                     $wrd_lst->add($wrd);
@@ -391,9 +406,9 @@ class triple extends sandbox_code_id
 
         // add the "to" side
         if ($this->to() != null) {
-            if ($this->to->id() > 0) {
+            if ($this->to()->id() > 0) {
                 $wrd_lst->add($this->to()->obj()->word());
-            } elseif ($this->to->id() < 0) {
+            } elseif ($this->to()->id() < 0) {
                 $sub_wrd_lst = $this->to()->wrd_lst();
                 foreach ($sub_wrd_lst->lst() as $wrd) {
                     $wrd_lst->add($wrd);
@@ -432,116 +447,58 @@ class triple extends sandbox_code_id
      * create the HTML code to select a phrase type
      * and select the phrase type of this word
      * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    public function phrase_type_selector(string $form): string
+    public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $html_phrase_types;
         $used_phrase_id = $this->type_id();
         if ($used_phrase_id == null) {
-            $used_phrase_id = $html_phrase_types->default_id();
+            $used_phrase_id = $typ_lst->html_phrase_types->default_id();
         }
-        return $html_phrase_types->selector($form, $used_phrase_id);
+        return $typ_lst->html_phrase_types->selector($form, $used_phrase_id);
     }
 
     /**
-     * to select the from phrase
-     * @param string $form the name of the html form
-     * @param phrase_list_dsp|null $phr_lst a preloaded phrase list for the selection
-     * @return string the html code to select the phrase
-     */
-    function phrase_selector_from(
-        string $form,
-        ?phrase_list $phr_lst = null,
-        string $name = ''
-    ): string
-    {
-        $name = html_names::PHRASE . html_names::SEP . html_names::FROM;
-        return $this->phrase_selector(
-            $form, $this->from()->id(), $phr_lst, $name);
-    }
-
-    /**
-     * to select the to phrase
-     * @param string $form the name of the html form
-     * @param phrase_list_dsp|null $phr_lst a preloaded phrase list for the selection
-     * @return string the html code to select the phrase
-     */
-    function phrase_selector_to(
-        string $form,
-        ?phrase_list $phr_lst = null
-    ): string
-    {
-        $name = html_names::PHRASE . html_names::SEP . html_names::TO;
-        return $this->phrase_selector(
-            $form, $this->to()->id(), $phr_lst, $name);
-    }
-
-    /**
-     * to select the from phrase
-     * @param string $form the name of the html form
-     * @param phrase_list_dsp|null $phr_lst a preloaded phrase list for the selection
+     * to select the word or triple
+     * @param phrase_list_dsp $phr_lst a preloaded list of suggested phrases for the selection if no additional input is given from the user
      * @param string $name the unique name within the html form for this selector
+     * @param string $form the name of the html form
+     * @param int|null $selected the row id of the suggested phrase or the already selected phrase
+     * @param string $pattern the pattern to filter the phrases
+     * @param msg_id $label_id the translation id for the text show to the user
+     * @param string $style the style code e.g. to define the target width
      * @return string the html code to select the phrase
      */
-    private function phrase_selector(
-        string $form,
-        int $id,
-        ?phrase_list $phr_lst = null,
-        string $name = ''
+    function phrase_selector(
+        phrase_list $phr_lst,
+        string      $name,
+        string      $form,
+        ?int        $selected = null,
+        string      $pattern = '',
+        msg_id      $label_id = msg_id::LABEL_PHRASE,
+        string      $style = view_styles::COL_SM_4
     ): string
     {
         if ($phr_lst == null) {
             $phr_lst = new phrase_list();
         }
-        return $phr_lst->selector(
-            $form, $id, $name,
-            '', view_styles::COL_SM_4,
-            html_selector::TYPE_DATALIST);
-    }
-
-    /**
-     * TODO review
-     *
-     * select a phrase based on a given context
-     *
-     * @param string $name the unique name inside the form for this selector
-     * @param string $form the name of the html form
-     * @param string $label the text show to the user
-     * @param string $col_class the formatting code to adjust the formatting
-     * @param int $selected the id of the preselected phrase
-     * @param string $pattern the pattern to filter the phrases
-     * @param phrase_dsp|null $phr the context to select the phrases, which is until now just the phrase
-     * @return string the html code to select a phrase
-     */
-    public function phrase_selector_old(
-        string      $name,
-        string      $form,
-        string      $label = '',
-        string      $col_class = '',
-        int         $selected = 0,
-        string      $pattern = '',
-        ?phrase_dsp $phr = null
-    ): string
-    {
-        $phr_lst = new phrase_list_dsp();
-        $phr_lst->load_like($pattern);
-        return $phr_lst->selector($form, $selected, $name, $label, view_styles::COL_SM_4, html_selector::TYPE_DATALIST);
+        return $phr_lst->selector($form, $selected, $name, $label_id, $style, html_selector::TYPE_DATALIST);
     }
 
     /**
      * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select a phrase
      */
-    public function verb_selector(string $form): string
+    public function verb_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $html_verbs;
         if ($this->verb != null) {
             $id = $this->verb()->id();
         } else {
             $id = 0;
         }
-        return $html_verbs->selector($form, $id, 'verb', view_styles::COL_SM_4, 'verb:');
+        return $typ_lst->html_verbs->selector($form, $id, url_var::VERB_LONG);
     }
 
 
@@ -614,43 +571,6 @@ class triple extends sandbox_code_id
         }
         $result .= '      ' . $this->name_link() . "\n";
         $result .= '    </td>' . "\n";
-        return $result;
-    }
-
-
-    /*
-     * views
-     */
-
-    /**
-     * display a form to adjust the link between too words or triples
-     */
-    function form_edit(string $back = ''): string
-    {
-        $html = new html_base();
-        $result = ''; // reset the html code var
-
-        // prepare to show the word link
-        if ($this->id() > 0) {
-            $header = $html->text_h2('Change "' . $this->from()->name() . ' ' . $this->verb()->name() . ' ' . $this->to()->name() . '"');
-            $hidden_fields = $html->form_hidden("id", $this->id());
-            $hidden_fields .= $html->form_hidden("back", $back);
-            $hidden_fields .= $html->form_hidden("confirm", '1');
-            $detail_fields = $html->form_text("name", $this->name());
-            $detail_fields .= $html->form_text("description", $this->description);
-            $detail_fields .= 'from: ' . $this->phrase_selector_old(
-                    'from', views::TRIPLE_EDIT, 'from:', '', $this->from()->id(), '', $this->from());
-            /* TODO
-            if (isset($this->verb)) {
-                $result .= $this->verb->dsp_selector('forward', $form_name, view_styles::COL_SM_4, $back);
-            }
-            */
-            $detail_fields .= 'to: ' . $this->phrase_selector_old(
-                    'to', views::TRIPLE_EDIT, 'to:', '', $this->to()->id(), '', $this->to());
-            $detail_row = $html->fr($detail_fields) . '<br>';
-            $result = $header . $html->form(views::TRIPLE_EDIT, $hidden_fields . $detail_row);
-        }
-
         return $result;
     }
 

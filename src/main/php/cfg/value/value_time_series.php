@@ -35,9 +35,9 @@
   
 */
 
-namespace cfg\value;
+namespace Zukunft\ZukunftCom\main\php\cfg\value;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 include_once paths::DB . 'sql.php';
@@ -56,22 +56,22 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\group\group;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_value;
-use cfg\ref\source;
-use cfg\ref\source_db;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class value_time_series extends sandbox_value
 {
@@ -81,20 +81,20 @@ class value_time_series extends sandbox_value
      */
 
     // object specific database and JSON object field names
-    const TBL_COMMENT = 'for the common parameters for a list of numbers that differ only by the timestamp';
-    const FLD_ID_COM = 'a 64 bit integer value because the number of time series is not expected to be too high';
-    const FLD_ID = 'value_time_series_id';
-    const FLD_LAST_UPDATE_COM = 'timestamp of the last update of any value of the list for fast update detection';
-    const FLD_LAST_UPDATE = 'last_update';
+    const string TBL_COMMENT = 'for the common parameters for a list of numbers that differ only by the timestamp';
+    const string FLD_ID_COM = 'a 64 bit integer value because the number of time series is not expected to be too high';
+    const string FLD_ID = 'value_time_series_id';
+    const string FLD_LAST_UPDATE_COM = 'timestamp of the last update of any value of the list for fast update detection';
+    const string FLD_LAST_UPDATE = 'last_update';
 
     // all database field names excluding the id and excluding the user specific fields
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         user_db::FLD_ID,
         group::FLD_ID
     );
 
     // list of the user specific numeric database field names
-    const FLD_NAMES_NUM_USR = array(
+    const array FLD_NAMES_NUM_USR = array(
         source_db::FLD_ID,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_PROTECT
@@ -102,12 +102,12 @@ class value_time_series extends sandbox_value
 
     // list of field names that are only on the user sandbox row
     // e.g. the standard value does not need the share type, because it is by definition public (even if share types within a group of users needs to be defined, the value for the user group are also user sandbox table)
-    const FLD_NAMES_USR_ONLY = array(
+    const array FLD_NAMES_USR_ONLY = array(
         sandbox::FLD_SHARE
     );
 
     // list of fixed tables for the time series header
-    const TBL_LIST = array(
+    const array TBL_LIST = array(
         [sql_type::MOST],
         [sql_type::PRIME],
         [sql_type::BIG]
@@ -171,7 +171,7 @@ class value_time_series extends sandbox_value
             $this->grp()->set_id($db_row[group::FLD_ID]);
             if ($db_row[source_db::FLD_ID] > 0) {
                 $this->source = new source($this->user());
-                $this->source->set_id($db_row[source_db::FLD_ID]);
+                $this->source->id = $db_row[source_db::FLD_ID];
             }
             $this->set_last_update($lib->get_datetime($db_row[self::FLD_LAST_UPDATE], $this->dsp_id()));
         }
@@ -205,7 +205,7 @@ class value_time_series extends sandbox_value
 
         $sc->set_class($class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(self::FLD_NAMES);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         //$sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
@@ -251,7 +251,7 @@ class value_time_series extends sandbox_value
         $sc->set_id_field($this->id_field());
         $sc->set_name($qp->name);
         $sc->set_fields(self::FLD_NAMES);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
         //$sc->set_usr_only_fields(self::FLD_NAMES_USR_ONLY);
 
@@ -389,7 +389,7 @@ class value_time_series extends sandbox_value
 
         // build the database object because the is anyway needed
         $db_con->set_class(value_time_series::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
 
         // check if a new time series is supposed to be added
         if ($this->id() <= 0) {

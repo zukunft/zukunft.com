@@ -30,20 +30,20 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'triples.php';
 
-use cfg\verb\verb;
-use cfg\verb\verb_list;
-use cfg\word\word;
-use shared\const\triples;
-use shared\const\words;
-use shared\types\verbs;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class verb_read_tests
 {
@@ -103,7 +103,7 @@ class verb_read_tests
 
 
         // TODO add to phrase and triple the methode
-        //      ->all_parents to get Canton, City and Company for Zurich (Canton)
+        //      ->all_parents to get Canton, City and company for Zurich (Canton)
         //      whereas ->parents just return Canton for Zurich (Canton) because the word splitting is not done
 
 

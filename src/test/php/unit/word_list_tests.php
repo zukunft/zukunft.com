@@ -30,10 +30,10 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::MODEL_WORD . 'word_list.php';
 include_once html_paths::WORD . 'word_list.php';
@@ -42,19 +42,19 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once TEST_CONST_PATH . 'files.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\verb\verb;
-use cfg\word\word;
-use cfg\word\word_list;
-use html\word\word_list as word_list_dsp;
-use shared\enum\foaf_direction;
-use shared\library;
-use shared\const\words;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\types\verbs;
-use test\test_cleanup;
-use const\files as test_files;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
 
 class word_list_tests
 {
@@ -105,7 +105,7 @@ class word_list_tests
         // the parent words
         $wrd_lst = new word_list($usr);
         $wrd = new word($usr);
-        $wrd->set_id(6);
+        $wrd->id = 6;
         $wrd_lst->add($wrd);
         $vrb = null;
         $direction = foaf_direction::UP;
@@ -114,7 +114,7 @@ class word_list_tests
         // the parent words filtered by verb
         $wrd_lst = new word_list($usr);
         $wrd = new word($usr);
-        $wrd->set_id(7);
+        $wrd->id = 7;
         $wrd_lst->add($wrd);
         $vrb = $vrb_cac->get_verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
@@ -122,7 +122,7 @@ class word_list_tests
         // the child words
         $wrd_lst = new word_list($usr);
         $wrd = new word($usr);
-        $wrd->set_id(8);
+        $wrd->id = 8;
         $wrd_lst->add($wrd);
         $vrb = null;
         $direction = foaf_direction::DOWN;
@@ -131,7 +131,7 @@ class word_list_tests
         // the child words filtered by verb
         $wrd_lst = new word_list($usr);
         $wrd = new word($usr);
-        $wrd->set_id(9);
+        $wrd->id = 9;
         $wrd_lst->add($wrd);
         $vrb = $vrb_cac->get_verb(verbs::IS);
         $this->assert_sql_by_linked_words($t, $db_con, $wrd_lst, $vrb, $direction);
@@ -141,32 +141,32 @@ class word_list_tests
         // create words for unit testing
         // TODO used create dummy functions
         $wrd1 = new word($usr);
-        $wrd1->set_id(1);
+        $wrd1->id = 1;
         $wrd1->set_name('word1');
         $wrd2 = new word($usr);
-        $wrd2->set_id(2);
+        $wrd2->id = 2;
         $wrd2->set_name('word2');
         $wrd3 = new word($usr);
-        $wrd3->set_id(3);
+        $wrd3->id = 3;
         $wrd3->set_name('word3');
         $wrd_time = new word($usr);
-        $wrd_time->set_id(4);
+        $wrd_time->id = 4;
         $wrd_time->set_name('time_word');
         $wrd_time->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $wrd_time2 = new word($usr);
-        $wrd_time2->set_id(5);
+        $wrd_time2->id = 5;
         $wrd_time2->set_name('time_word2');
         $wrd_time2->type_id = $phr_typ_cac->id(phrase_type_shared::TIME);
         $wrd_scale = new word($usr);
-        $wrd_scale->set_id(6);
+        $wrd_scale->id = 6;
         $wrd_scale->set_name('scale_word');
         $wrd_scale->type_id = $phr_typ_cac->id(phrase_type_shared::SCALING);
         $wrd_percent = new word($usr);
-        $wrd_percent->set_id(7);
+        $wrd_percent->id = 7;
         $wrd_percent->set_name('percent_word');
         $wrd_percent->type_id = $phr_typ_cac->id(phrase_type_shared::PERCENT);
         $wrd_measure = new word($usr);
-        $wrd_measure->set_id(8);
+        $wrd_measure->id = 8;
         $wrd_measure->set_name('measure_word');
         $wrd_measure->type_id = $phr_typ_cac->id(phrase_type_shared::MEASURE);
 

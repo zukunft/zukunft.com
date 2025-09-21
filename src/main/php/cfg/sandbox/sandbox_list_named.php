@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\sandbox;
+namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 include_once paths::DB . 'sql_creator.php';
@@ -41,23 +41,23 @@ include_once paths::DB . 'sql_par_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
-include_once paths::MODEL_COMPONENT . 'component.php';
-include_once paths::MODEL_COMPONENT . 'component_list.php';
-include_once paths::MODEL_HELPER . 'data_object.php';
-include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
-include_once paths::MODEL_IMPORT . 'import.php';
-include_once paths::MODEL_PHRASE . 'phrase.php';
-include_once paths::MODEL_PHRASE . 'phrase_list.php';
-include_once paths::MODEL_PHRASE . 'term.php';
-include_once paths::MODEL_REF . 'source_list.php';
-include_once paths::MODEL_WORD . 'triple_list.php';
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::MODEL_VIEW . 'view.php';
-include_once paths::MODEL_VIEW . 'view_list.php';
-include_once paths::MODEL_WORD . 'triple.php';
-include_once paths::MODEL_WORD . 'word.php';
-include_once paths::MODEL_WORD . 'word_list.php';
+//include_once paths::MODEL_COMPONENT . 'component.php';
+//include_once paths::MODEL_COMPONENT . 'component_list.php';
+//include_once paths::MODEL_HELPER . 'data_object.php';
+//include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_IMPORT . 'import.php';
+//include_once paths::MODEL_PHRASE . 'phrase.php';
+//include_once paths::MODEL_PHRASE . 'phrase_list.php';
+//include_once paths::MODEL_PHRASE . 'term.php';
+//include_once paths::MODEL_REF . 'source_list.php';
+//include_once paths::MODEL_WORD . 'triple_list.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_VIEW . 'view_list.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+//include_once paths::MODEL_WORD . 'word.php';
+//include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
@@ -67,36 +67,36 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\component\component;
-use cfg\component\component_list;
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\db\sql_par_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\helper\data_object;
-use cfg\helper\db_object_seq_id;
-use cfg\import\import;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term;
-use cfg\ref\source_list;
-use cfg\view\view;
-use cfg\view\view_list;
-use cfg\word\triple_list;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\word\triple;
-use cfg\word\word_list;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\enum\value_types;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class sandbox_list_named extends sandbox_list
 {
@@ -528,7 +528,7 @@ class sandbox_list_named extends sandbox_list
                 $lib = new library();
                 $usr_msg->add_id_with_vars(msg_id::USED_OBJECT_ID_AND_NAME_MISSING, [
                     msg_id::VAR_CLASS_NAME => $lib->class_to_name($obj_to_fill::class),
-                    msg_id::VAR_WORD_NAME => $obj_to_fill->dsp_id(),
+                    msg_id::VAR_PHRASE_NAME => $obj_to_fill->dsp_id(),
                     msg_id::VAR_NAME => $this->name()
                 ]);
             }
@@ -543,7 +543,7 @@ class sandbox_list_named extends sandbox_list
             if ($id != 0 and $name != '') {
                 $sbx_old = $this->get_by_name($name);
                 if ($sbx_old != null) {
-                    $sbx_old->set_id($id);
+                    $sbx_old->id = $id;
                 } else {
                     $lib = new library();
                     $usr_msg->add_id_with_vars(msg_id::ADDED_OBJECT_NOT_FOUND, [

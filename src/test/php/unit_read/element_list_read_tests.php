@@ -30,10 +30,10 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\element\element_list;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class element_list_read_tests
 {

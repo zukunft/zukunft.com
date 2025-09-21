@@ -30,7 +30,7 @@
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
 class job_type_list extends type_list
 {

@@ -30,16 +30,17 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\html_base;
-use html\word\word;
-use shared\const\views;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class word_ui_tests
 {
-    function run(test_cleanup $t): void
+    function run(test_cleanup $t, type_lists $cfg): void
     {
         $html = new html_base();
 
@@ -65,16 +66,17 @@ class word_ui_tests
         $test_page .= 'del button: ' . $wrd->btn_del() . '<br>';
         $test_page .= 'unlink button: ' . $wrd->btn_unlink(1) . '<br>';
         $test_page .= $html->text_h2('select');
-        $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT) . '<br>';
+        $from_rows = $wrd->dsp_type_selector(views::WORD_EDIT, '', $cfg) . '<br>';
         $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t->view_list_dsp()) . '<br>';
         $from_rows .= $wrd->view_selector(views::WORD_EDIT, $t->view_list_long_dsp(), 'view_long') . '<br>';
         $test_page .= $html->form(views::WORD_EDIT, $from_rows);
         $test_page .= $html->text_h2('table');
         $test_page .= $html->tbl($html->tr($wrd->th()) . $wrd_pi->tr());
         $test_page .= 'del in columns: ' . $html->tbl($wrd->dsp_del()) . '<br>';
-        $test_page .= 'unlink in columns: ' . $html->tbl($wrd_pi->dsp_unlink($wrd->id())) . '<br>';
+        $test_page .= 'unlink in columns: ' . $html->tbl($wrd_pi->dsp_unlink($wrd->id)) . '<br>';
         $test_page .= $html->text_h2('view header');
         $test_page .= $wrd->header() . '<br>';
+        // TODO Prio 1 activate based on test resources
         //$test_page .= $html->text_h2('parents of ' . $wrd_zh->name());
         //$test_page .= $wrd_zh->parents()->name_link() . '<br>';
         //$test_page .= $html->text_h2('children of ' . $wrd_city->name());

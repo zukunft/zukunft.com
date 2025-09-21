@@ -29,19 +29,21 @@
 
 */
 
-namespace controller;
+namespace Zukunft\ZukunftCom\main\php\api;
+
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::SERVICE . 'config.php';
-//include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'library.php';
 
-use cfg\config;
-use cfg\db\sql_db;
-use cfg\user\user;
-use html\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 use DateTime;
 use DateTimeInterface;
-use shared\json_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class api_message
 {

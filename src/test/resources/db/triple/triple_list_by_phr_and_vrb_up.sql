@@ -13,6 +13,7 @@ PREPARE triple_list_by_phr_and_vrb_up (bigint, bigint, bigint) AS
            CASE WHEN (u.name_given     <> '' IS NOT TRUE) THEN s.name_given     ELSE u.name_given      END AS name_given,
            CASE WHEN (u.name_generated <> '' IS NOT TRUE) THEN s.name_generated ELSE u.name_generated  END AS name_generated,
            CASE WHEN (u.description    <> '' IS NOT TRUE) THEN s.description    ELSE u.description     END AS description,
+           CASE WHEN (u.weight               IS     NULL) THEN s.weight         ELSE u.weight         END AS weight,
            CASE WHEN (u.values               IS     NULL) THEN s.values         ELSE u.values          END AS values,
            CASE WHEN (u.excluded             IS     NULL) THEN s.excluded       ELSE u.excluded        END AS excluded,
            CASE WHEN (u.share_type_id        IS     NULL) THEN s.share_type_id  ELSE u.share_type_id   END AS share_type_id,

@@ -30,7 +30,7 @@
 
 */
 
-namespace shared\enum;
+namespace Zukunft\ZukunftCom\main\php\shared\enum;
 
 enum sys_log_statuus: string
 {

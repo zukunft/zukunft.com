@@ -29,9 +29,9 @@
 
 */
 
-namespace cfg\formula;
+namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::DB . 'sql_creator.php';
@@ -60,30 +60,30 @@ include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\element\element;
-use cfg\helper\data_object;
-use cfg\import\import;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term;
-use cfg\phrase\term_list;
-use cfg\sandbox\sandbox_list_named;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\verb\verb;
-use cfg\word\triple;
-use cfg\word\word;
-use cfg\word\word_list;
-use shared\calc\parameter_type;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class formula_list extends sandbox_list_named
 {
@@ -91,7 +91,7 @@ class formula_list extends sandbox_list_named
     const UPDATE_BLOCK_SIZE = 100;
 
     // array $lst are the loaded formula objects
-    // if user $usr->id() is 0 (not NULL) for standard formulas, otherwise for a user specific formulas
+    // if user $usr->id is 0 (not NULL) for standard formulas, otherwise for a user specific formulas
 
     // TODO move to display object: in memory only fields
     public ?string $back = null;         // the calling stack
@@ -166,7 +166,7 @@ class formula_list extends sandbox_list_named
         $qp = new sql_par(self::class);
         $qp->name .= $query_name;
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_usr_fields(formula_db::FLD_NAMES_USR);
         $sc->set_usr_num_fields(formula_db::FLD_NAMES_NUM_USR);
         return $qp;
@@ -389,7 +389,7 @@ class formula_list extends sandbox_list_named
         $class = $lib->class_to_name(self::class);
         $db_con->set_class(formula::class);
         $qp = new sql_par($class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_all();
         $qp->name = $class . '_all';
         $db_con->set_name($qp->name);
@@ -553,7 +553,7 @@ class formula_list extends sandbox_list_named
             $usr_msg->add($frm->import_obj($value, $dto, $test_obj));
             // add a dummy id for unit testing
             if ($test_obj) {
-                $frm->set_id($test_obj->seq_id());
+                $frm->id = $test_obj->seq_id();
             }
             $this->add($frm);
         }

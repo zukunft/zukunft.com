@@ -29,15 +29,15 @@
   
 */
 
-namespace cfg\element;
+namespace Zukunft\ZukunftCom\main\php\cfg\element;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list.php';
 include_once paths::MODEL_PHRASE . 'term_list.php';
 
-use cfg\sandbox\sandbox_list;
-use cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 
 class element_group_list extends sandbox_list
 {

@@ -32,7 +32,7 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
 use DateTime;
 

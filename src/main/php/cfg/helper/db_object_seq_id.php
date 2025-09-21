@@ -47,11 +47,11 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::API_OBJECT . 'api_message.php';
+//include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_field_default.php';
@@ -68,21 +68,21 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_type_list;
-use cfg\sandbox\sandbox;
-use cfg\user\user;
-use cfg\user\user_message;
-use controller\api_message;
-use shared\enum\messages as msg_id;
-use shared\helper\CombineObject;
-use shared\types\api_type_list;
-use shared\json_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class db_object_seq_id extends db_object
 {
@@ -110,14 +110,14 @@ class db_object_seq_id extends db_object
      */
     function row_mapper(?array $db_row, string $id_fld = ''): bool
     {
-        $result = false;
-        $this->set_id(0);
+        $result = parent::row_mapper($db_row, $id_fld);
+        $this->id = 0;
         if ($db_row != null) {
             if (array_key_exists($id_fld, $db_row)) {
                 // TODO check that $this->reset() is removed from all load function and only this reset is used
                 $this->reset();
                 if ($db_row[$id_fld] != 0) {
-                    $this->set_id($db_row[$id_fld]);
+                    $this->id = $db_row[$id_fld];
                     $result = true;
                 }
             }
@@ -135,7 +135,7 @@ class db_object_seq_id extends db_object
         $usr_msg = new user_message();
 
         if (array_key_exists(json_fields::ID, $api_json)) {
-            $this->set_id($api_json[json_fields::ID]);
+            $this->id = $api_json[json_fields::ID];
         }
 
         return $usr_msg;
@@ -342,7 +342,7 @@ class db_object_seq_id extends db_object
         $usr_msg = new user_message();
         // add a dummy id for unit testing
         if ($test_obj) {
-            $db_obj->set_id($test_obj->seq_id());
+            $db_obj->id = $test_obj->seq_id();
         }
         return $usr_msg;
     }
@@ -392,7 +392,7 @@ class db_object_seq_id extends db_object
         $usr_msg = new user_message();
         if ($obj->id() != 0) {
             if ($this->id() == 0) {
-                $this->set_id($obj->id());
+                $this->id = $obj->id();
             } elseif ($obj->id() != $this->id()) {
                 $usr_msg->add_id_with_vars(msg_id::CONFLICT_DB_ID, [msg_id::VAR_ID => $this->dsp_id()]);
             }

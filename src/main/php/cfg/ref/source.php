@@ -56,9 +56,9 @@
 
 */
 
-namespace cfg\ref;
+namespace Zukunft\ZukunftCom\main\php\cfg\ref;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_typed.php';
 include_once paths::DB . 'sql.php';
@@ -83,30 +83,31 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_CONST . 'sources.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\helper\data_object;
-use cfg\helper\db_object_seq_id;
-use cfg\helper\type_object;
-use cfg\log\change;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_code_id;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
-use shared\const\sources;
-use shared\enum\messages as msg_id;
-use shared\helper\CombineObject;
-use shared\types\api_type_list;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class source extends sandbox_code_id
 {
@@ -164,6 +165,8 @@ class source extends sandbox_code_id
      * @param bool $load_std true if only the standard user sandbox object is loaded
      * @param bool $allow_usr_protect false for using the standard protection settings for the default object used for all users
      * @param string $id_fld the name of the id field as defined in this child and given to the parent
+     * @param string $name_fld the name of the name field as defined in this child class
+     * @param string $type_fld the name of the type field as defined in this child class
      * @return bool true if the source is loaded and valid
      */
     function row_mapper_sandbox(
@@ -171,13 +174,13 @@ class source extends sandbox_code_id
         bool   $load_std = false,
         bool   $allow_usr_protect = true,
         string $id_fld = source_db::FLD_ID,
-        string $name_fld = source_db::FLD_NAME
+        string $name_fld = source_db::FLD_NAME,
+        string $type_fld = source_db::FLD_TYPE
     ): bool
     {
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
             $this->set_url($db_row[source_db::FLD_URL]);
-            $this->type_id = $db_row[source_db::FLD_TYPE];
         }
         return $result;
     }
@@ -221,9 +224,6 @@ class source extends sandbox_code_id
 
         if (key_exists(json_fields::URL, $in_ex_json)) {
             $this->set_url($in_ex_json[json_fields::URL]);
-        }
-        if (key_exists(json_fields::TYPE_NAME, $in_ex_json)) {
-            $this->type_id = $src_typ_cac->id($in_ex_json[json_fields::TYPE_NAME]);
         }
 
         return $usr_msg;
@@ -306,17 +306,22 @@ class source extends sandbox_code_id
      */
 
     /**
-     * set the predefined type of this source
+     * set the predefined source type by the given code id or name
      *
-     * @param string $code_id the code id that should be added to this source
+     * @param string $code_id_or_name the code id or name of the source type that should be added to this source
      * @param user $usr_req the user who wants to change the type
      * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $code_id, user $usr_req = new user()): user_message
+    function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
         global $src_typ_cac;
-        return parent::set_type_by_code_id(
-            $code_id, $src_typ_cac, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
+        if ($src_typ_cac->has_code_id($code_id_or_name)) {
+            return parent::set_type_by_code_id(
+                $code_id_or_name, $src_typ_cac, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
+        } else {
+            return parent::set_type_by_name(
+                $code_id_or_name, $src_typ_cac, msg_id::SOURCE_TYPE_NOT_FOUND, $usr_req);
+        }
     }
 
     function set_url(?string $url): void
@@ -335,6 +340,15 @@ class source extends sandbox_code_id
      */
 
     /**
+     * @return string|null the code_id of the source type
+     */
+    function type_code_id(): string|null
+    {
+        global $src_typ_cac;
+        return $src_typ_cac->code_id($this->type_id);
+    }
+
+    /**
      * @return string the source type name from the array preloaded from the database
      */
     function type_name(): string
@@ -346,16 +360,6 @@ class source extends sandbox_code_id
             $type_name = $src_typ_cac->name($this->type_id);
         }
         return $type_name;
-    }
-
-    /**
-     * get the code_id of the source type
-     * @return string the code_id of the source type
-     */
-    function type_code_id(): string
-    {
-        global $src_typ_cac;
-        return $src_typ_cac->code_id($this->type_id);
     }
 
 
@@ -426,10 +430,10 @@ class source extends sandbox_code_id
      * check if the source in the database needs to be updated
      * e.g. for import  if this source has only the name set, the protection should not be updated in the database
      *
-     * @param source|CombineObject|db_object_seq_id $db_obj the source as saved in the database
+     * @param source|CombineObject|IdObject $db_obj the source as saved in the database
      * @return bool true if this source has infos that should be saved in the database
      */
-    function needs_db_update(source|CombineObject|db_object_seq_id $db_obj): bool
+    function needs_db_update(source|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->url() != null) {

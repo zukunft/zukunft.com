@@ -34,14 +34,14 @@
 // start testing the user permission functionality
 // -----------------------------------------------
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 
-use html\user\user as user_dsp;
-use shared\const\rest_ctrl;
-use shared\const\users;
-use test\all_tests;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_user_test(all_tests $t): void
 {
@@ -66,7 +66,7 @@ function run_user_test(all_tests $t): void
             echo 'remote user: ' . $_SERVER[rest_ctrl::REMOTE_USER] . '<br>';
         }
     }
-    echo 'user id: ' . $usr->id() . '<br>';
+    echo 'user id: ' . $usr->id . '<br>';
 
     $t->header('user permission tests');
 

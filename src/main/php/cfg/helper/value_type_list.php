@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
 include_once paths::SHARED_ENUM . 'value_types.php';
@@ -41,12 +41,12 @@ include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'ListOf.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 
-use cfg\db\sql;
-use shared\enum\value_types;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\ListOf;
-use shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\ListOf;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
 
 class value_type_list extends ListOf
 {

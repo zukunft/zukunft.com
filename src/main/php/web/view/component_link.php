@@ -2,8 +2,8 @@
 
 /*
 
-    component_link_dsp.php - create HTML code to display a view component links
-    ---------------------
+    web/view/component_link.php - create HTML code to display a view component links
+    ---------------------------
 
     This file is part of zukunft.com - calc with words
 
@@ -29,7 +29,7 @@
 
 */
 
-namespace html\view;
+namespace Zukunft\ZukunftCom\main\php\web\view;
 
 class component_link_dsp
 {
@@ -43,7 +43,7 @@ class component_link_dsp
 
         if ($this->view() != null and $this->component() != null) {
             if ($this->view()->name() <> '' and $this->component()->name() <> '') {
-                $result .= '"' . $this->component()->name() . '" in "'; // e.g. Company details
+                $result .= '"' . $this->component()->name() . '" in "'; // e.g. company details
                 $result .= $this->view()->name() . '"';     // e.g. cash flow statement
             }
         } else {

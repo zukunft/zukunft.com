@@ -30,15 +30,15 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'share_type.php';
 
-use cfg\sandbox\share_type_list;
-use shared\types\share_type as share_type_shared;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class share_read_tests
 {

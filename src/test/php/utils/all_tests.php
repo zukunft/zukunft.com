@@ -23,7 +23,7 @@
 
     TODO
     - move the tests to classes and call all tests with test.php but stop in case of an error
-    - use for testing only data that is supposed never to be used by any user e.g. use "TestWord" instead of "Company"
+    - use for testing only data that is supposed never to be used by any user e.g. use "TestWord" instead of "company"
     - before starting the system test, check that really no user has used any test name and if create a warning and stop the test
     - use YAML export and import for testing the base sets
     - check that the order of the view items cannot be changed by another user
@@ -133,9 +133,9 @@
 
 */
 
-namespace test;
+namespace Zukunft\ZukunftCom\test\php\utils;
 
-use const\paths as test_paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 // main test settings
 const ERROR_LIMIT = 0; // increase to 1 or more to detect more than one error message with one run
@@ -150,8 +150,8 @@ const WRITE_TEST = true; // perform also the db write tests
 
 include_once test_paths::UNIT_WRITE . 'all_unit_write_tests.php';
 
-use cfg\log_text\text_log_format;
-use unit_write\all_unit_write_tests;
+use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
+use Zukunft\ZukunftCom\test\php\unit_write\all_unit_write_tests;
 
 class all_tests extends all_unit_write_tests
 {

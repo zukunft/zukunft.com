@@ -52,16 +52,16 @@
   
 */
 
-namespace cfg\group;
+namespace Zukunft\ZukunftCom\main\php\cfg\group;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_GROUP . 'id.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
 
-use cfg\db\sql_type;
-use cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 
 class group_id extends id
 {

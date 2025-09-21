@@ -30,10 +30,13 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use const\paths as test_paths;
-use shared\api;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\unit\all_unit_tests;
 
 include_once test_paths::UNIT_UI . 'base_ui_tests.php';
 //include_once test_paths::UNIT_UI . 'type_lists_ui_tests.php';
@@ -69,13 +72,10 @@ include_once test_paths::UNIT_UI . 'job_ui_tests.php';
 include_once test_paths::UNIT_UI . 'system_views_ui_tests.php';
 include_once test_paths::UNIT_UI . 'start_ui_tests.php';
 
-use test\test_cleanup;
-use unit\all_unit_tests;
-
 class all_ui_tests extends all_unit_tests
 {
 
-    function run(test_cleanup $t): void
+    function run(test_cleanup $t, frontend $ui): void
     {
 
         // start the test section (ts)
@@ -88,10 +88,10 @@ class all_ui_tests extends all_unit_tests
         (new horizontal_ui_tests)->run($t);
 
         $t->subheader($ts . 'page');
-        (new word_ui_tests)->run($t);
+        (new word_ui_tests)->run($t, $ui->typ_lst_cache);
         (new word_list_ui_tests)->run($t);
-        (new verb_ui_tests())->run($t);
-        (new triple_ui_tests)->run($t);
+        new verb_ui_tests()->run($t);
+        (new triple_ui_tests)->run($t, $ui);
         (new triple_list_ui_tests)->run($t);
         (new phrase_ui_tests)->run($t);
         (new phrase_list_ui_tests)->run($t);
@@ -104,9 +104,9 @@ class all_ui_tests extends all_unit_tests
         (new formula_list_ui_tests)->run($t);
         (new result_ui_tests)->run($t);
         (new result_list_ui_tests)->run($t);
-        (new figure_ui_tests())->run($t);
+        new figure_ui_tests()->run($t);
         (new figure_list_ui_tests)->run($t);
-        (new view_ui_tests)->run($t);
+        (new view_ui_tests)->run($t, $ui);
         (new view_list_ui_tests)->run($t);
         (new component_ui_tests)->run($t);
         (new component_list_ui_tests)->run($t);
@@ -119,7 +119,7 @@ class all_ui_tests extends all_unit_tests
 
         // TODO compare with run_ui_test in all_unit_read_tests
         //(new start_ui_tests)->run($t);
-        (new system_views_ui_tests)->run($t);
+        (new system_views_ui_tests)->run($t, $ui);
 
         $t->subheader($ts . 'check about page e.g. to check the library');
 

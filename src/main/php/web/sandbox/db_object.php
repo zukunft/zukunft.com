@@ -32,39 +32,51 @@
 
 */
 
-namespace html\sandbox;
+namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
-use cfg\const\paths;
-use html\button;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
+//include_once html_paths::COMPONENT . 'component_list.php';
+include_once html_paths::FORMULA . 'formula_list.php';
+include_once html_paths::TYPES . 'type_lists.php';
+//include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'rest_call.php';
 //include_once html_paths::PHRASE . 'phrase.php';
+//include_once html_paths::PHRASE . 'phrase_list.php';
 //include_once html_paths::PHRASE . 'term.php';
 include_once html_paths::USER . 'user_message.php';
 //include_once html_paths::VIEW . 'view_list.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use controller\api_message;
-use html\rest_call;
-use html\view\view_list;
-use shared\api;
-use html\rest_call as api_dsp;
-use html\html_base;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\term as term_dsp;
-use html\user\user_message;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\helper\TextIdObject;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\web\component\component_list;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\phrase\term as term_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\view\view_list;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class db_object extends TextIdObject
 {
@@ -120,8 +132,8 @@ class db_object extends TextIdObject
         $usr_msg = new user_message();
         if (!$this->url_is_add_action($url_array)) {
             // if the request is to add an object ignore the id
-            if (array_key_exists(api::URL_VAR_ID, $url_array)) {
-                $this->set_id($url_array[api::URL_VAR_ID]);
+            if (array_key_exists(url_var::ID, $url_array)) {
+                $this->set_id($url_array[url_var::ID]);
             } else {
                 $this->set_id(0);
                 $usr_msg->add_err('Mandatory field id missing in form url array ' . json_encode($url_array));
@@ -133,13 +145,13 @@ class db_object extends TextIdObject
     function url_is_add_action(array $url_array): bool
     {
         $is_add = false;
-        if (array_key_exists(api::URL_VAR_ACTION, $url_array)) {
-            if ($url_array[api::URL_VAR_ACTION] == api::URL_VAR_CURL_CREATE) {
+        if (array_key_exists(url_var::ACTION, $url_array)) {
+            if ($url_array[url_var::ACTION] == url_var::CURL_CREATE) {
                 $is_add = true;
             }
         }
-        if (array_key_exists(api::URL_VAR_ACTION_LONG, $url_array)) {
-            if ($url_array[api::URL_VAR_ACTION_LONG] == api::URL_VAR_CURL_CREATE) {
+        if (array_key_exists(url_var::ACTION_LONG, $url_array)) {
+            if ($url_array[url_var::ACTION_LONG] == url_var::CURL_CREATE) {
                 $is_add = true;
             }
         }
@@ -182,6 +194,10 @@ class db_object extends TextIdObject
             $this->set_id(0);
             $usr_msg->add_err('Mandatory field id missing in API JSON ' . json_encode($json_array));
         }
+
+        // remember to send the updates to the backend
+        $this->set_modified();
+
         return $usr_msg;
     }
 
@@ -399,9 +415,19 @@ class db_object extends TextIdObject
         return 'description not overwritten by ' . $this::class;
     }
 
-    function plural(): ?string
+    function get_plural(): ?string
     {
         return 'plural not overwritten by ' . $this::class;
+    }
+
+    function reverse(): ?string
+    {
+        return 'reverse not overwritten by ' . $this::class;
+    }
+
+    function plural_reverse(): ?string
+    {
+        return 'plural reverse not overwritten by ' . $this::class;
     }
 
     function phrase(): phrase_dsp
@@ -441,6 +467,9 @@ class db_object extends TextIdObject
     function view_list(?string $pattern = null): view_list
     {
         $msk_lst = new view_list();
+        if ($pattern == null) {
+            $pattern = '*';
+        }
         $msk_lst->load_by_pattern($pattern);
         return $msk_lst;
     }
@@ -504,10 +533,22 @@ class db_object extends TextIdObject
      */
 
     /**
+     * @return string|null the url field of some child object e.g. the source
+     */
+    function url(): ?string
+    {
+        $msg = 'url not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select the phrase type
      * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the phrase type
      */
-    public function phrase_type_selector(string $form): string
+    public function phrase_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'phrase type selector not defined for ' . $this::class;
         log_err($msg);
@@ -515,10 +556,25 @@ class db_object extends TextIdObject
     }
 
     /**
-     * @param string $form_name the name of the html form
-     * @return string the html code to select the phrase type
+     * create the html code to select the verb type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the verb type
      */
-    public function source_type_selector(string $form_name): string
+    public function verb_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'verb type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select the source type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the source type
+     */
+    public function source_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'source type selector not defined for ' . $this::class;
         log_err($msg);
@@ -526,54 +582,148 @@ class db_object extends TextIdObject
     }
 
     /**
-     * @param string $form_name the name of the html form
-     * @return string the html code to select the phrase type
+     * create the html code to select the reference type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the reference type
      */
-    public function ref_type_selector(string $form_name): string
+    public function ref_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'source type selector not defined for ' . $this::class;
+        $msg = 'reference type selector not defined for ' . $this::class;
+        // TODO Prio 1 active
+        //log_err($msg);
+        log_warning($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select the value type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the value type
+     */
+    public function value_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'value type selector not defined for ' . $this::class;
         log_err($msg);
         return $msg;
     }
 
     /**
-     * @param string $form_name the name of the html form
-     * @return string the html code to select the phrase type
+     * create the html code to select the formula type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the formula type
      */
-    public function formula_type_selector(string $form_name): string
+    public function formula_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'source type selector not defined for ' . $this::class;
+        $msg = 'formula type selector not defined for ' . $this::class;
         log_err($msg);
         return $msg;
     }
 
     /**
-     * @param string $form_name the name of the html form
-     * @return string the html code to select the phrase type
+     * create the html code to select the view type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the view type
      */
-    public function view_type_selector(string $form_name): string
+    public function view_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'source type selector not defined for ' . $this::class;
+        $msg = 'view type selector not defined for ' . $this::class;
+        // TODO Prio 1 active
+        //log_err($msg);
+        log_warning($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select the view style
+     * used by the view and the component
+     *
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the view type
+     */
+    public function style_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'view style selector not defined for ' . $this::class;
         log_err($msg);
         return $msg;
     }
 
     /**
-     * @param string $form_name the name of the html form
-     * @return string the html code to select the phrase type
+     * create the html code to select the component type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the component type
      */
-    public function component_type_selector(string $form_name): string
+    public function component_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        $msg = 'source type selector not defined for ' . $this::class;
+        $msg = 'component type selector not defined for ' . $this::class;
         log_err($msg);
         return $msg;
     }
 
     /**
-     * @param string $form_name the name of the html form
+     * create the html code to select the component style
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the component type
+     */
+    public function component_style_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'component style selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select the formula link type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the formula type
+     */
+    public function formula_link_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'formula link type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select the view link type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the view type
+     */
+    public function view_link_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'view link type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select the component link type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select the component type
+     */
+    public function component_link_type_selector(string $form, ?type_lists $typ_lst): string
+    {
+        $msg = 'component link type selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * the html code to select a share type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the share type
      */
-    public function share_type_selector(string $form_name): string
+    public function share_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'share type selector not defined for ' . $this::class;
         log_err($msg);
@@ -581,10 +731,12 @@ class db_object extends TextIdObject
     }
 
     /**
-     * @param string $form_name the name of the html form
+     * the html code to select a protection type
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code to select the protection type
      */
-    public function protection_type_selector(string $form_name): string
+    public function protection_type_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'protection type selector not defined for ' . $this::class;
         log_err($msg);
@@ -617,12 +769,42 @@ class db_object extends TextIdObject
     }
 
     /**
-     * create the HTML code to select a view
+     * html code for a form field to select a word or triple
+     *
+     * @param phrase_list $phr_lst a preloaded phrase list for the selection
+     * @param string $name the unique html field name that matches the resulting url field name
      * @param string $form the name of the html form
-     * @param view_list $msk_lst with the suggested views
+     * @param int|null $selected the row id of the suggested phrase or the already selected phrase
+     * @param string $pattern the pattern to filter the phrases
+     * @param msg_id $label_id the translation id for the text show to the user
+     * @param string $style the style code e.g. to define the target width
+     * @return string the html code to select the phrase
+     */
+    function phrase_selector(
+        phrase_list $phr_lst,
+        string      $name,
+        string      $form,
+        ?int        $selected = null,
+        string      $pattern = '',
+        msg_id      $label_id = msg_id::LABEL,
+        string      $style = view_styles::COL_SM_4
+    ): string
+    {
+        $msg = 'phrase selector ' . $name . ' for ' . $form . ' not defined in class ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the HTML code for a field to select a value by the group or phrase list
+     * @param string $form the name of the html form
+     * @param string $name the unique html field name for the selection of the view
      * @return string the html code to select a view
      */
-    public function view_selector(string $form, view_list $msk_lst): string
+    public function value_selector(
+        string $form,
+        string $name = url_var::VALUE
+    ): string
     {
         $msg = 'view selector not defined for ' . $this::class;
         log_err($msg);
@@ -630,12 +812,112 @@ class db_object extends TextIdObject
     }
 
     /**
+     * create the HTML code to select a formula
      * @param string $form the name of the html form
-     * @return string the html code to select a phrase
+     * @param formula_list $frm_lst with the suggested views
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
      */
-    public function verb_selector(string $form): string
+    public function formula_selector(
+        string       $form,
+        formula_list $frm_lst,
+        string       $name = url_var::VIEW_ID
+    ): string
+    {
+        $msg = 'formula selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the HTML code for a field to select a result by the group or phrase list
+     * @param string $form the name of the html form
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function result_selector(
+        string $form,
+        string $name = url_var::RESULT
+    ): string
+    {
+        $msg = 'view selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the HTML code to select a view
+     * @param string $form the name of the html form
+     * @param view_list $msk_lst with the suggested views
+     * @param string $name the unique html field name for the selection of the view
+     * @return string the html code to select a view
+     */
+    public function view_selector(
+        string    $form,
+        view_list $msk_lst,
+        string    $name = url_var::VIEW_ID
+    ): string
+    {
+        $msg = 'view selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the HTML code to select a component
+     * @param string $form the name of the html form
+     * @param string $pattern the pattern used to filter the components by the name
+     * @param int $id the id of the component selected until now
+     * @param component_list $cmp_lst with the suggested components
+     * @return string the html code to select a component
+     */
+    public function component_selector(
+        string $form,
+        string $pattern,
+        int $id,
+        component_list $cmp_lst
+    ): string
+    {
+        $msg = 'component selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select a verb
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string the html code to select a verb
+     */
+    public function verb_selector(string $form, ?type_lists $typ_lst): string
     {
         $msg = 'verb selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select a source
+     * @param string $form the name of the html form
+     * @param string $pattern
+     * @return string the html code to select a source
+     */
+    public function source_selector(string $form, string $pattern): string
+    {
+        $msg = 'source selector not defined for ' . $this::class;
+        log_err($msg);
+        return $msg;
+    }
+
+    /**
+     * create the html code to select a reference
+     * @param string $form the name of the html form
+     * @param string $pattern
+     * @return string the html code to select a reference
+     */
+    public function ref_selector(string $form, string $pattern): string
+    {
+        $msg = 'reference selector not defined for ' . $this::class;
         log_err($msg);
         return $msg;
     }

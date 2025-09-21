@@ -32,30 +32,29 @@
 
 */
 
-namespace unit_write;
+namespace Zukunft\ZukunftCom\test\php\unit_write;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SERVICE . 'config.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once TEST_CONST_PATH . 'files.php';
 
-use cfg\import\import_file;
-use cfg\system\ip_range;
-use cfg\system\job;
-use cfg\system\job_type_list;
-use cfg\user\user;
-use const\files as test_files;
-use shared\const\rest_ctrl;
-use shared\const\users;
-use shared\enum\user_profiles;
-use shared\library;
-use test\all_tests;
-use unit\lib_tests;
-use unit_read\all_unit_read_tests;
-use const test\ERROR_LIMIT;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
+use Zukunft\ZukunftCom\test\php\unit\lib_tests;
+use Zukunft\ZukunftCom\test\php\unit_read\all_unit_read_tests;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use const Zukunft\ZukunftCom\test\php\utils\ERROR_LIMIT;
 
 class all_unit_write_tests extends all_unit_read_tests
 {
@@ -71,7 +70,7 @@ class all_unit_write_tests extends all_unit_read_tests
         // switch to the test user
         // create the system user before the local user and admin to get the desired database id
         $usr->load_by_profile_code(user_profiles::TEST);
-        if ($usr->id() <= 0) {
+        if ($usr->id <= 0) {
 
             // but only from localhost
             $ip_addr = '';
@@ -85,7 +84,7 @@ class all_unit_write_tests extends all_unit_read_tests
             $usr->load_by_profile_code(user_profiles::TEST);
         }
 
-        if ($usr->id() > 0) {
+        if ($usr->id > 0) {
 
             // --------------------------------------
             // start testing the system functionality
@@ -107,48 +106,48 @@ class all_unit_write_tests extends all_unit_read_tests
             }
 
             if ($errors <= ERROR_LIMIT) {
-                (new lib_tests)->run($t); // test functions not yet split into single unit tests
+                new lib_tests()->run($t); // test functions not yet split into single unit tests
 
                 // create the test dataset to check the basic write functions
                 $t->set_users();
                 $t->create_test_db_entries($t);
                 // run the db write tests
-                (new user_write_tests)->run($t);
-                (new word_write_tests)->run($t);
-                (new word_list_write_tests)->run($t);
-                (new verb_write_tests)->run($t);
-                (new triple_write_tests)->run($t);
-                (new phrase_write_tests)->run($t);
-                (new phrase_list_write_tests)->run($t);
-                (new group_write_tests)->run($t);
-                (new group_list_write_tests)->run($t);
-                (new graph_tests)->run($t);
-                (new term_write_tests)->run($t);
-                //(new term_list_tests)->run($t);
-                (new value_write_tests)->run($t);
-                (new source_write_tests)->run($t);
-                (new ref_write_tests)->run($t);
-                (new expression_write_tests)->run($t);
-                (new formula_write_tests)->run($t);
-                (new formula_write_tests)->run_list($t);
-                (new formula_link_write_tests)->run($t);
-                (new formula_link_write_tests)->run_list($t);
-                (new formula_trigger_tests)->run($t);
-                (new result_write_tests)->run($t);
+                new user_write_tests()->run($t);
+                new word_write_tests()->run($t);
+                new word_list_write_tests()->run($t);
+                new verb_write_tests()->run($t);
+                new triple_write_tests()->run($t);
+                new phrase_write_tests()->run($t);
+                new phrase_list_write_tests()->run($t);
+                new group_write_tests()->run($t);
+                new group_list_write_tests()->run($t);
+                new graph_tests()->run($t);
+                new term_write_tests()->run($t);
+                //new term_list_tests()->run($t);
+                new value_write_tests()->run($t);
+                new source_write_tests()->run($t);
+                new ref_write_tests()->run($t);
+                new expression_write_tests()->run($t);
+                new formula_write_tests()->run($t);
+                new formula_write_tests()->run_list($t);
+                new formula_link_write_tests()->run($t);
+                new formula_link_write_tests()->run_list($t);
+                new formula_trigger_tests()->run($t);
+                new result_write_tests()->run($t);
                 // TODO activate Prio 1
-                //(new result_write_tests)->run_list($t);
-                (new element_write_tests)->run($t);
-                (new element_write_tests)->run_list($t);
-                (new element_group_write_tests)->run($t);
-                (new job_write_tests)->run($t);
-                (new job_write_tests)->run_list($t);
-                (new view_write_tests)->run($t);
-                (new view_link_write_tests)->run($this);
-                (new component_write_tests)->run($t);
-                (new component_link_write_tests)->run($t);
+                //new result_write_tests()->run_list($t);
+                new element_write_tests()->run($t);
+                new element_write_tests()->run_list($t);
+                new element_group_write_tests()->run($t);
+                new job_write_tests()->run($t);
+                new job_write_tests()->run_list($t);
+                new view_write_tests()->run($t);
+                new view_link_write_tests()->run($this);
+                new component_write_tests()->run($t);
+                new component_link_write_tests()->run($t);
 
-                (new api_write_tests())->run($t);
-                (new import_write_tests())->run($t);
+                new api_write_tests()->run($t);
+                new import_write_tests()->run($t);
 
                 // TODO activate Prio 2
                 // run_export_test($t);
@@ -203,9 +202,9 @@ class all_unit_write_tests extends all_unit_read_tests
         $lib = new library();
         $ip_tbl_name = $lib->class_to_name(ip_range::class);
         if ($db_con->has_table($ip_tbl_name)) {
-            $result = $usr->get();
+            $usr->get();
         } else {
-            $usr->set_id(users::SYSTEM_ID);
+            $usr->id = users::SYSTEM_ID;
             $usr->set_profile(user_profiles::ADMIN);
         }
 
@@ -216,7 +215,7 @@ class all_unit_write_tests extends all_unit_read_tests
         if ($db_con->has_table($ip_tbl_name)) {
             $usr->load_by_id(users::SYSTEM_ID);
         } else {
-            $usr->set_id(users::SYSTEM_ID);
+            $usr->id = users::SYSTEM_ID;
             $usr->set_profile(user_profiles::ADMIN);
         }
 
@@ -225,6 +224,8 @@ class all_unit_write_tests extends all_unit_read_tests
             $db_con->drop_table($table_name);
         }
         $db_con->setup_db();
+
+        // TODO recreate the type list api message
 
         // restore the test user
         $usr = clone $test_usr;
@@ -259,7 +260,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // reload the session user parameters
         $usr = new user;
-        $result = $usr->get();
+        $usr->get();
 
         // reopen the database to reload the verb cache
         $db_con->close();
@@ -267,7 +268,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // reload the base configuration
         $job = new job($sys_usr);
-        $job_id = $job->add(job_type_list::BASE_IMPORT);
+        $job->add(job_type_list::BASE_IMPORT);
 
         $import = new import_file();
         $import->import_base_config($sys_usr);
@@ -277,7 +278,6 @@ class all_unit_write_tests extends all_unit_read_tests
         global $usr;
         $usr = new user;
         $usr->load_by_id(users::SYSTEM_ID);
-        $sys_usr = $usr;
 
         // create the test dataset to check the basic write functions
         $t = new all_tests();
@@ -297,7 +297,7 @@ class all_unit_write_tests extends all_unit_read_tests
 
         // reload the session user parameters
         $usr = new user;
-        $result = $usr->get();
+        $usr->get();
 
         /*
          * For testing the system setup

@@ -30,16 +30,16 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'triples.php';
 
-use cfg\word\triple;
-use cfg\word\triple_list;
-use shared\const\triples;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class triple_list_read_tests
 {
@@ -68,7 +68,7 @@ class triple_list_read_tests
         $trp_lst->load_by_ids(array(triples::MATH_CONST_ID,triples::PI_SYMBOL_ID));
         $target = array(triples::MATH_CONST, triples::PI_SYMBOL_NAME); // order adjusted based on the number of usage
         $t->assert_contains($test_name, $trp_lst->names(), $target);
-        /* TODO activate
+        /* TODO Prio 1 activate
         $test_name = 'load triples by names';
         $wrd_lst = new triple_list($t->usr1);
         $wrd_lst->load_by_names(array(triples::TN_READ,triples::TN_PI));

@@ -30,10 +30,10 @@
 
 */
 
-use cfg\phrase\phrase_list;
-use cfg\user\user;
-use shared\api;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 Header('Content-type: text/xml');
 
@@ -57,7 +57,7 @@ if ($usr->id() > 0) {
     $lib = new library();
 
     // get the words that are supposed to be exported, sample "Nestlé 2 country weight"
-    $phrases = $_GET[api::URL_VAR_WORDS];
+    $phrases = $_GET[url_var::WORDS];
     log_debug("get_xml(" . $phrases . ")");
     $phr_names = $lib->array_trim(explode(",", $phrases));
 

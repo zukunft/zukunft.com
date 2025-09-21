@@ -30,12 +30,12 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use html\component\component_exe as component_dsp;
-use html\html_base;
-use shared\const\components;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class component_ui_tests
 {
@@ -57,7 +57,7 @@ class component_ui_tests
         $test_page .= 'table<br>';
         $test_page .= $html->tbl($wrd->th() . $wrd_pi->tr());
         $test_page .= 'del in columns: ' . $wrd->dsp_del() . '<br>';
-        $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id()) . '<br>';
+        $test_page .= 'unlink in columns: ' . $wrd_pi->dsp_unlink($wrd->id) . '<br>';
         $test_page .= 'view header<br>';
         $test_page .= $wrd->header() . '<br>';
         */

@@ -32,9 +32,9 @@
 
 */
 
-namespace cfg\sandbox;
+namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::DB . 'sql.php';
@@ -47,7 +47,6 @@ include_once paths::DB . 'sql_par_field_list.php';
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_type.php';
 include_once paths::DB . 'sql_type_list.php';
-include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_FORMULA . 'formula_db.php';
 include_once paths::MODEL_GROUP . 'group.php';
 include_once paths::MODEL_GROUP . 'group_id.php';
@@ -81,177 +80,177 @@ include_once paths::MODEL_WORD . 'word_list.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\formula\formula;
-use cfg\formula\formula_db;
-use cfg\group\group;
-use cfg\group\group_id;
-use cfg\group\result_id;
-use cfg\helper\db_object_multi;
-use cfg\helper\db_object_seq_id;
-use cfg\helper\type_object;
-use cfg\log\change;
-use cfg\log\change_action;
-use cfg\log\change_link;
-use cfg\log\change_value;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\ref\source;
-use cfg\result\result;
-use cfg\result\result_db;
-use cfg\ref\source_db;
-use cfg\user\user_db;
-use cfg\value\value_db;
-use cfg\value\value_geo;
-use cfg\value\value;
-use cfg\value\value_text;
-use cfg\value\value_time;
-use cfg\value\value_time_series;
-use cfg\word\triple_list;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value_base;
-use cfg\word\word_list;
-use shared\enum\change_actions;
-use shared\enum\change_fields;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\group\result_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_db;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
 use Exception;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class sandbox_value extends sandbox_multi
 {
 
     // the table name extension for public unprotected values related up to four prime phrase
-    const TBL_EXT_STD = '_standard';
+    const string TBL_EXT_STD = '_standard';
     const TBL_COMMENT_STD = 'for public unprotected ';
-    const TBL_COMMENT_STD_PRIME_CONT = 's related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
-    const TBL_COMMENT_STD_MAIN_CONT = 's related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated';
-    const TBL_COMMENT_STD_CONT = 's that have never changed the owner, does not have a description and are rarely updated';
+    const string TBL_COMMENT_STD_PRIME_CONT = 's related up to four prime phrase that have never changed the owner, does not have a description and are rarely updated';
+    const string TBL_COMMENT_STD_MAIN_CONT = 's related up to eight prime phrase that have never changed the owner, does not have a description and are rarely updated';
+    const string TBL_COMMENT_STD_CONT = 's that have never changed the owner, does not have a description and are rarely updated';
     const TBL_COMMENT = 'for ';
-    const TBL_COMMENT_CONT = 's related to up to 16 phrases';
-    const TBL_COMMENT_USER = 'for user specific changes of ';
-    const TBL_COMMENT_PRIME = 'for the most often requested ';
-    const TBL_COMMENT_PRIME_CONT = 's related up to four prime phrase';
-    const TBL_COMMENT_PRIME_USER = 'to store the user specific changes for the most often requested ';
-    const TBL_COMMENT_PRIME_USER_CONT = 's related up to four prime phrase';
-    const TBL_COMMENT_MAIN = 'to cache the formula second most often requested ';
-    const TBL_COMMENT_MAIN_CONT = 's related up to eight prime phrase';
-    const TBL_COMMENT_MAIN_USER = 'to store the user specific changes to cache the formula second most often requested ';
-    const TBL_COMMENT_MAIN_USER_CONT = 's related up to eight prime phrase';
-    const TBL_COMMENT_BIG_CONT = 's related to more than 16 phrases';
-    const TBL_COMMENT_BIG_USER = 'to store the user specific changes of ';
-    const TBL_COMMENT_BIG_USER_CONT = 's related to more than 16 phrases';
+    const string TBL_COMMENT_CONT = 's related to up to 16 phrases';
+    const string TBL_COMMENT_USER = 'for user specific changes of ';
+    const string TBL_COMMENT_PRIME = 'for the most often requested ';
+    const string TBL_COMMENT_PRIME_CONT = 's related up to four prime phrase';
+    const string TBL_COMMENT_PRIME_USER = 'to store the user specific changes for the most often requested ';
+    const string TBL_COMMENT_PRIME_USER_CONT = 's related up to four prime phrase';
+    const string TBL_COMMENT_MAIN = 'to cache the formula second most often requested ';
+    const string TBL_COMMENT_MAIN_CONT = 's related up to eight prime phrase';
+    const string TBL_COMMENT_MAIN_USER = 'to store the user specific changes to cache the formula second most often requested ';
+    const string TBL_COMMENT_MAIN_USER_CONT = 's related up to eight prime phrase';
+    const string TBL_COMMENT_BIG_CONT = 's related to more than 16 phrases';
+    const string TBL_COMMENT_BIG_USER = 'to store the user specific changes of ';
+    const string TBL_COMMENT_BIG_USER_CONT = 's related to more than 16 phrases';
     // TODO review the time series comments
-    const TBL_COMMENT_TS = 'for the common parameters for a list of numbers that differ only by the timestamp';
-    const TYPE_NUMBER = 'numeric';
-    const TYPE_TEXT = 'text';
-    const TYPE_TIME = 'time';
-    const TYPE_GEO = 'geo';
-    const TYPE_TIME_SERIES = 'time_series';
-    const FLD_USER_SOURCE_COM = 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key';
+    const string TBL_COMMENT_TS = 'for the common parameters for a list of numbers that differ only by the timestamp';
+    const string TYPE_NUMBER = 'numeric';
+    const string TYPE_TEXT = 'text';
+    const string TYPE_TIME = 'time';
+    const string TYPE_GEO = 'geo';
+    const string TYPE_TIME_SERIES = 'time_series';
+    const string FLD_USER_SOURCE_COM = 'one user can add different values from different sources, that have the same group, but a different value, so the source should be included in the unique key';
 
     // the database field names used for all value tables e.g. also for results
-    const FLD_ID_PREFIX = 'phrase_id_';
+    const string FLD_ID_PREFIX = 'phrase_id_';
 
 
     // field lists for the table creation
     // the group is not a foreign key, because if the name is not changed by the user an entry in the group table is not needed
-    const FLD_KEY = array(
+    const array FLD_KEY = array(
         [group::FLD_ID, sql_field_type::KEY_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the -=class=-'],
     );
-    const FLD_KEY_USER = array(
+    const array FLD_KEY_USER = array(
         [group::FLD_ID, sql_field_type::KEY_PART_512, sql_field_default::NOT_NULL, '', '', 'the 512-bit prime index to find the user -=class=-'],
     );
     // TODO use not null for all keys if a separate table for each number of phrase is implemented
     // TODO FLD_KEY_PRIME and FLD_KEY_PRIME_USER are not the same only if just one phrase is the key
-    const FLD_KEY_PRIME = array(
+    const array FLD_KEY_PRIME = array(
         [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '4', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is part of the prime key for a'],
     );
-    const FLD_KEY_PRIME_USER = array(
+    const array FLD_KEY_PRIME_USER = array(
         [sandbox_value::FLD_ID_PREFIX . '1', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::NOT_NULL, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '2', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '3', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
         [sandbox_value::FLD_ID_PREFIX . '4', sql_field_type::KEY_PART_INT_SMALL, sql_field_default::ZERO, sql::INDEX, '', 'phrase id that is with the user id part of the prime key for a'],
     );
-    const FLD_KEY_BIG = array(
+    const array FLD_KEY_BIG = array(
         [group::FLD_ID, sql_field_type::KEY_TEXT, sql_field_default::NOT_NULL, '', '', 'the variable text index to find -=class=-'],
     );
-    const FLD_KEY_BIG_USER = array(
+    const array FLD_KEY_BIG_USER = array(
         [group::FLD_ID, sql_field_type::KEY_PART_TEXT, sql_field_default::NOT_NULL, '', '', 'the text index for more than 16 phrases to find the -=class=-'],
     );
-    const FLD_ALL_VALUE = array(
+    const array FLD_ALL_VALUE = array(
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, '', '', 'the numeric value given by the user'],
     );
-    const FLD_ALL_VALUE_NUM = array(
+    const array FLD_ALL_VALUE_NUM = array(
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, '', '', 'the numeric value given by the user'],
     );
-    const FLD_ALL_VALUE_USER = array(
+    const array FLD_ALL_VALUE_USER = array(
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', 'the user specific numeric value change'],
     );
-    const FLD_ALL_VALUE_NUM_USER = array(
+    const array FLD_ALL_VALUE_NUM_USER = array(
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', 'the user specific numeric value change'],
     );
-    const FLD_ALL_VALUE_TEXT = array(
+    const array FLD_ALL_VALUE_TEXT = array(
         [value_db::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NOT_NULL, '', '', 'the text value given by the user'],
     );
-    const FLD_ALL_VALUE_TIME = array(
+    const array FLD_ALL_VALUE_TIME = array(
         [value_db::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NOT_NULL, '', '', 'the timestamp given by the user'],
     );
-    const FLD_ALL_VALUE_GEO = array(
+    const array FLD_ALL_VALUE_GEO = array(
         [value_db::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NOT_NULL, '', '', 'the geolocation given by the user'],
     );
-    const FLD_ALL_VALUE_TEXT_USER = array(
+    const array FLD_ALL_VALUE_TEXT_USER = array(
         [value_db::FLD_VALUE_TEXT, sql_field_type::TEXT, sql_field_default::NULL, '', '', 'the user specific text value change'],
     );
-    const FLD_ALL_VALUE_TIME_USER = array(
+    const array FLD_ALL_VALUE_TIME_USER = array(
         [value_db::FLD_VALUE_TIME, sql_field_type::TIME, sql_field_default::NULL, '', '', 'the user specific timestamp change'],
     );
-    const FLD_ALL_VALUE_GEO_USER = array(
+    const array FLD_ALL_VALUE_GEO_USER = array(
         [value_db::FLD_VALUE_GEO, sql_field_type::GEO, sql_field_default::NULL, '', '', 'the user specific geolocation change'],
     );
-    const FLD_ALL_SOURCE = array(
+    const array FLD_ALL_SOURCE = array(
         [source_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, source::class, 'the source of the value as given by the user'],
     );
     // TODO use this for the user tables
-    const FLD_USER_SOURCE = array(
+    const array FLD_USER_SOURCE = array(
         [source_db::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NULL, sql::INDEX, source::class, self::FLD_USER_SOURCE_COM],
     );
-    const FLD_ALL_CHANGED = array(
+    const array FLD_ALL_CHANGED = array(
         [self::FLD_LAST_UPDATE, sql_field_type::TIME, sql_field_default::NULL, '', '', 'timestamp of the last update used also to trigger updates of depending values for fast recalculation for fast recalculation'],
     );
     // dummy list which is always overwritten by either the value or result object
-    const FLD_ALL_TIME_SERIES = array();
-    const FLD_ALL_TIME_SERIES_USER = array();
-    const FLD_ALL_SOURCE_GROUP = array();
-    const FLD_ALL_SOURCE_GROUP_PRIME = array();
-    const FLD_ALL_SOURCE_GROUP_BIG = array();
-    const FLD_ALL_OWNER = array(
+    const array FLD_ALL_TIME_SERIES = array();
+    const array FLD_ALL_TIME_SERIES_USER = array();
+    const array FLD_ALL_SOURCE_GROUP = array();
+    const array FLD_ALL_SOURCE_GROUP_PRIME = array();
+    const array FLD_ALL_SOURCE_GROUP_BIG = array();
+    const array FLD_ALL_OWNER = array(
         [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, 'the owner / creator of the -=class=-'],
     );
-    const FLD_ALL_CHANGER = array(
+    const array FLD_ALL_CHANGER = array(
         [user_db::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, 'the changer of the -=class=-'],
     );
     // database fields that should only be taken from the user sandbox table
-    const FLD_NAMES_USR_ONLY = array(
+    const array FLD_NAMES_USR_ONLY = array(
         sandbox::FLD_CHANGE_USER
     );
 
@@ -296,6 +295,16 @@ class sandbox_value extends sandbox_multi
     }
 
     /**
+     * clone this object and all linked objects
+     * @return $this a complete clone including a clone of all child objects
+     */
+    function clone_all(): TextIdObject
+    {
+        $clone = parent::clone_all();
+        $clone->grp = clone $clone->grp;
+        return clone $clone;
+    }
+    /**
      * map the database fields to the object fields
      * to be extended by the child functions
      *
@@ -331,7 +340,7 @@ class sandbox_value extends sandbox_multi
     function set_grp(group $grp): void
     {
         $this->grp = $grp;
-        $this->set_id($grp->id());
+        $this->id = $grp->id();
     }
 
     function grp(): group
@@ -963,7 +972,7 @@ class sandbox_value extends sandbox_multi
         $qp = new sql_par($this::class, $sc_par_lst->remove(sql_type::USER), '', $this->table_extension());
         $qp->name .= sql::NAME_EXT_USER_CONFIG;
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields($this->all_sandbox_fields());
 
         // get and set the prime db key list for this sandbox object
@@ -994,7 +1003,7 @@ class sandbox_value extends sandbox_multi
         $qp = new sql_par($this::class, new sql_type_list($sc_par_lst), $ext);
         $sc->set_class($this::class, new sql_type_list($sc_par_lst));
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         // overwrite the standard id field because e.g. prime values have a combined id field
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array(user_db::FLD_ID));
@@ -1019,7 +1028,7 @@ class sandbox_value extends sandbox_multi
 
         $user_id = 0;
         $db_con->set_class($this::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $qp = $this->load_sql_changer($db_con->sql_creator());
         $db_row = $db_con->get1($qp);
         if ($db_row) {
@@ -1107,7 +1116,7 @@ class sandbox_value extends sandbox_multi
         $qp = new sql_par($this::class, $sc_par_lst, $ext, $id_ext);
         $sc->set_class($this::class, $sc_par_lst);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_id_field($this->id_field());
         $sc->set_fields(array(user_db::FLD_ID));
 
@@ -1273,7 +1282,7 @@ class sandbox_value extends sandbox_multi
             if ($sc_par_lst->is_insert() or $sc_par_lst->is_usr_tbl()) {
                 $lst->add_field(
                     user_db::FLD_ID,
-                    $this->user()->id(),
+                    $this->user()->id,
                     user_db::FLD_ID_SQL_TYP
                 );
             }
@@ -1703,7 +1712,7 @@ class sandbox_value extends sandbox_multi
                         $msg = 'remove user change of ' . $log->field();
                         log_debug($msg);
                         $db_con->set_class($this::class, true, $ext);
-                        $db_con->set_usr($this->user()->id());
+                        $db_con->set_usr($this->user()->id);
                         $fvt_lst = new sql_par_field_list();
                         $fvt_lst->add_field($log->field(), null, sql_par_type::CONST);
                         $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
@@ -1715,7 +1724,7 @@ class sandbox_value extends sandbox_multi
                     $msg = 'update of ' . $log->field() . ' to ' . $new_value;
                     log_debug($msg);
                     $db_con->set_class($this::class, false, $ext);
-                    $db_con->set_usr($this->user()->id());
+                    $db_con->set_usr($this->user()->id);
                     $fvt_lst = new sql_par_field_list();
                     $fvt_lst->add_field($log->field(), $new_value, $sql_fld_typ);
                     $qp = $this->sql_update_fields($db_con->sql_creator(), $fvt_lst);
@@ -1730,7 +1739,7 @@ class sandbox_value extends sandbox_multi
                 }
                 if ($result == '') {
                     $db_con->set_class($this::class, true, $ext);
-                    $db_con->set_usr($this->user()->id());
+                    $db_con->set_usr($this->user()->id);
                     $sql_fld_typ = $sc->get_sql_par_type($new_value);
                     $fvt_lst = new sql_par_field_list();
                     if ($new_value == $std_value) {
@@ -1852,7 +1861,7 @@ class sandbox_value extends sandbox_multi
             if (!is_array($id_lst)) {
                 $id_lst = [$id_lst];
             }
-            $id_lst[] = $this->user()->id();
+            $id_lst[] = $this->user()->id;
         }
         // finally actually create the sql
         $qp->sql = $sc->create_sql_update($id_fields, $id_lst, $fvt_lst);
@@ -1948,7 +1957,7 @@ class sandbox_value extends sandbox_multi
         );
 
         // get the fields for the value log entry
-        $fvt_lst_log->add_field(group::FLD_ID, $this->grp()->id());
+        $fvt_lst_log->add_field(group::FLD_ID, $this->grp()->id);
 
         // for standard prime values add the user only for the log
         if ($sc_par_lst->is_standard() and $sc_par_lst->is_prime()) {
@@ -2319,7 +2328,7 @@ class sandbox_value extends sandbox_multi
      */
     function cloned(float|string|null $value): sandbox_value
     {
-        $obj_cpy = clone $this;
+        $obj_cpy = $this->clone_all();
         $obj_cpy->reset();
         $obj_cpy->set_value($value);
         return $obj_cpy;

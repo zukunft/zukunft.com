@@ -30,14 +30,15 @@
 
 */
 
-namespace html\figure;
+namespace Zukunft\ZukunftCom\main\php\web\figure;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'html_base.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::GROUP . 'group.php';
@@ -49,16 +50,16 @@ include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use html\group\group;
-use html\html_base;
-use html\phrase\phrase_list;
-use html\result\result;
-use html\sandbox\combine_named as combine_named_dsp;
-use html\user\user_message;
-use html\value\value;
-use shared\const\rest_ctrl;
-use shared\json_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\result\result;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class figure extends combine_named_dsp
 {
@@ -125,7 +126,7 @@ class figure extends combine_named_dsp
 
     function grp(): group
     {
-        return $this->obj()->grp();
+        return $this->obj()->grp;
     }
 
     function number(): float|null
@@ -153,7 +154,9 @@ class figure extends combine_named_dsp
         }
         $vars[json_fields::ID] = $this->obj_id();
         $vars[json_fields::NUMBER] = $this->number();
-        $vars[json_fields::PHRASES] = $this->obj->grp()->api_array();
+        if ($this->obj->grp->name() != '') {
+            $vars[json_fields::PHRASES] = $this->obj->api_array();
+        }
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 

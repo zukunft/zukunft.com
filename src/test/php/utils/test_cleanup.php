@@ -30,39 +30,39 @@
 
 */
 
-namespace test;
+namespace Zukunft\ZukunftCom\test\php\utils;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED_CONST . 'words.php';
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\db\sql_par;
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\formula\formula_type;
-use cfg\phrase\term;
-use cfg\phrase\term_list;
-use cfg\ref\ref_type;
-use cfg\ref\source;
-use cfg\value\value;
-use cfg\verb\verb;
-use cfg\view\view;
-use cfg\word\triple;
-use cfg\word\word;
-use const\files as test_files;
-use const\paths as test_paths;
-use html\html_base;
-use shared\library;
-use shared\const\components;
-use shared\const\formulas;
-use shared\const\sources;
-use shared\const\triples;
-use shared\const\views;
-use shared\const\words;
-use shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class test_cleanup extends test_api
 {

@@ -37,10 +37,40 @@
 
 */
 
-namespace test;
+namespace Zukunft\ZukunftCom\test\php\utils;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use DateTime;
+use Exception;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_list as change_log_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
 
 include_once paths::MODEL_LOG . 'change_log.php';
 include_once paths::MODEL_LOG . 'change_field.php';
@@ -50,45 +80,15 @@ include_once paths::MODEL_SYSTEM . 'job.php';
 include_once html_paths::LOG . 'change_log_list.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 
-use cfg\db\sql_db;
-use cfg\element\element;
-use cfg\formula\formula;
-use cfg\log\change_log_list;
-use cfg\system\job;
-use cfg\log\change_log;
-use cfg\phrase\phrase_list;
-use cfg\ref\ref;
-use cfg\ref\source;
-use cfg\system\sys_log;
-use cfg\phrase\term_list;
-use cfg\phrase\trm_ids;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\value\value;
-use cfg\word\word;
-use controller\controller;
-use html\rest_call;
-use html\log\change_log_list as change_log_list_dsp;
-use shared\api;
-use shared\const\rest_ctrl;
-use shared\const\users;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type;
-use shared\types\api_type_list;
-use unit\sys_log_tests;
-use DateTime;
-use Exception;
-
 class test_api extends create_test_objects
 {
     // path
-    const API_PATH = 'api';
-    const JSON_EXT = '.json';
+    const string API_PATH = 'api';
+    const string JSON_EXT = '.json';
     // an api json message for an empty object
-    const JSON_ID_ONLY = '{"id":0}';
+    const string JSON_ID_ONLY = '{"id":0}';
     // an export json message for an empty object
-    const JSON_NAME_ONLY = '{"name":""}';
+    const string JSON_NAME_ONLY = '{"name":""}';
     // an export json message for an empty array object e.g.
     const JSON_ARRAY_ONLY = '[]';
 
@@ -175,7 +175,11 @@ class test_api extends create_test_objects
             $usr_obj->include();
             // check that the excluded object returns a json with just the id and the excluded flag
             $json_api = $usr_obj->api_json();
-            $clone_obj = clone $usr_obj;
+            if ($usr_obj::class == value::class) {
+                $clone_obj = $usr_obj->clone_all();
+            } else {
+                $clone_obj = clone $usr_obj;
+            }
             $clone_obj->reset();
             $json_empty = $clone_obj->api_json();
             $target = self::JSON_ID_ONLY;
@@ -224,8 +228,8 @@ class test_api extends create_test_objects
             return 0;
         } else {
             $id = 0;
-            if (array_key_exists(api::URL_VAR_ID, $actual)) {
-                $id = intval($actual[api::URL_VAR_ID]);
+            if (array_key_exists(url_var::ID, $actual)) {
+                $id = intval($actual[url_var::ID]);
             } else {
                 log_err('PUT api call is expected to return the id of the added record, but it returns: ' . $actual_text);
             }
@@ -409,12 +413,12 @@ class test_api extends create_test_objects
         switch ($class) {
             case word::class:
                 $wrd = new word($usr);
-                $wrd->set_id($id);
+                $wrd->id = $id;
                 $usr_msg = $wrd->del();
                 break;
             case source::class:
                 $src = new source($usr);
-                $src->set_id($id);
+                $src->id = $id;
                 $usr_msg = $src->del();
                 break;
             default:
@@ -471,14 +475,14 @@ class test_api extends create_test_objects
         $class_api = $this->class_to_api($class);
         $url = $this->class_to_url($class);
         if ($levels > 0) {
-            $url .= '?' . api::URL_VAR_ID . '=' . $id;
-            $url .= '&' . api::URL_VAR_CHILDREN . '=' . $levels;
+            $url .= '?' . url_var::ID . '=' . $id;
+            $url .= '&' . url_var::CHILDREN . '=' . $levels;
         }
         // Check if backend is reading the id
-        $data = array(api::URL_VAR_ID => $id);
+        $data = array(url_var::ID => $id);
         // TODO move this exception to the api_par_lst
         if ($class == value::class) {
-            $data[api::URL_VAR_WITH_PHRASES] = api::URL_VAR_TRUE;
+            $data[url_var::WITH_PHRASES] = url_var::TRUE;
         }
         // TODO check why for formula a double call is needed
         if ($class == formula::class) {
@@ -508,7 +512,7 @@ class test_api extends create_test_objects
      * @param string $field the URL field name of the unique text
      * @return bool true if the json has no relevant differences
      */
-    function assert_api_get_by_text(string $class, string $name = '', string $field = api::URL_VAR_NAME): bool
+    function assert_api_get_by_text(string $class, string $name = '', string $field = url_var::NAME): bool
     {
         $class = $this->class_to_api($class);
         $url = $this->class_to_url($class);
@@ -538,7 +542,7 @@ class test_api extends create_test_objects
     {
         $lib = new library();
         $class = $lib->class_to_name($class);
-        $url = api::HOST_TESTING . api::URL_API_PATH . $lib->camelize_ex_1($class);
+        $url = api::HOST_TESTING . url_var::API_PATH . $lib->camelize_ex_1($class);
         if (is_array($ids)) {
             $data = array($id_fld => implode(",", $ids));
         } else {
@@ -608,7 +612,7 @@ class test_api extends create_test_objects
             $filename .= '_' . $fld;
         }
         if ($usr != null) {
-            $filename .= '_u' . $usr->id();
+            $filename .= '_u' . $usr->id;
         }
         if ($page != 0) {
             $filename .= '_p' . $page;
@@ -796,10 +800,10 @@ class test_api extends create_test_objects
     {
         $lib = new library();
         if ($class == ref::class) {
-            $class = api::URL_REF;
+            $class = url_var::REFERENCE;
         }
         $url_class = $lib->camelize_ex_1($lib->class_to_name($class));
-        return api::HOST_TESTING . api::URL_API_PATH . $url_class;
+        return api::HOST_TESTING . url_var::API_PATH . $url_class;
     }
 
     /**
@@ -910,7 +914,7 @@ class test_api extends create_test_objects
         // but for tests that add and remove data to table that have real data the id field should be ignored
         if ($ignore_id) {
             $json = $this->json_remove_volatile_unset_field($json, sql_db::FLD_ID);
-            $json = $this->json_remove_volatile_unset_field($json, api::URL_VAR_ID);
+            $json = $this->json_remove_volatile_unset_field($json, url_var::ID);
         }
 
         // replace any local test username with the standard test username

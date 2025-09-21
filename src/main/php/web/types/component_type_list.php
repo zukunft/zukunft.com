@@ -30,28 +30,40 @@
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::TYPES . 'type_list.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::SHARED . 'url_var.php';
 
-use shared\types\component_type;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\component_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 
 class component_type_list extends type_list
 {
 
-    const NAME = 'component type';
+    const NAME = url_var::COMPONENT_TYPE;
 
     /**
+     * create the HTML code to select a component type
+     * @param string $form the unique name of the html form
+     * @param int|null $selected the id of the preselected component type
+     * @param string $name the unique name inside the form for this selector
      * @returns string the html code to select a type from this list
      */
-    function selector(string $form = '', int $selected = 0, string $name = self::NAME): string
+    function selector(
+        string   $form = '',
+        int|null $selected = null,
+        string   $name = self::NAME
+    ): string
     {
-        global $html_component_types;
-        return parent::type_selector($html_component_types->lst_key(), $name, $form, $selected);
+        return parent::type_selector($form, $selected, $name, msg_id::LABEL_COMPONENT_TYPE);
     }
 
 

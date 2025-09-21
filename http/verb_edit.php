@@ -35,20 +35,20 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_CONST . 'views.php';
 include_once html_paths::VERB . 'verb.php';
 
-use cfg\user\user;
-use cfg\verb\verb;
-use cfg\view\view;
-use html\html_base;
-use html\verb\verb as verb_dsp;
-use html\view\view as view_dsp;
-use shared\api;
-use shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
 
 // open database
 $db_con = prg_start("verb_edit");
@@ -69,32 +69,32 @@ if ($usr->id() > 0) {
     // prepare the display
     $msk = new view($usr);
     $msk->load_by_code_id(view_shared::VERB_EDIT);
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the original calling page that should be shown after the change is finished
+    $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change is finished
 
     // create the verb object to have an place to update the parameters
     $vrb = new verb;
     $vrb->set_user($usr);
-    $vrb->load_by_id($_GET[api::URL_VAR_ID]);
+    $vrb->load_by_id($_GET[url_var::ID]);
 
     if ($vrb->id() <= 0) {
         $result .= log_err("No verb found to change because the id is missing.", "verb_edit.php");
     } else {
 
         // if the save button has been pressed at least the name is filled (an empty name should never be saved; instead the word should be deleted)
-        if ($_GET[api::URL_VAR_NAME] <> '') {
+        if ($_GET[url_var::NAME] <> '') {
 
             // get the parameters (but if not set, use the database value)
-            if (isset($_GET[api::URL_VAR_NAME])) {
-                $vrb->set_name($_GET[api::URL_VAR_NAME]);
+            if (isset($_GET[url_var::NAME])) {
+                $vrb->set_name($_GET[url_var::NAME]);
             }
-            if (isset($_GET[api::URL_VAR_PLURAL])) {
-                $vrb->set_plural($_GET[api::URL_VAR_PLURAL]);
+            if (isset($_GET[url_var::PLURAL])) {
+                $vrb->set_plural($_GET[url_var::PLURAL]);
             }
-            if (isset($_GET[api::URL_VAR_REVERSE])) {
-                $vrb->set_reverse($_GET[api::URL_VAR_REVERSE]);
+            if (isset($_GET[url_var::REVERSE])) {
+                $vrb->set_reverse($_GET[url_var::REVERSE]);
             }
-            if (isset($_GET[api::URL_VAR_REVERSE_PLURAL])) {
-                $vrb->set_reverse_plural($_GET[api::URL_VAR_REVERSE_PLURAL]);
+            if (isset($_GET[url_var::REVERSE_PLURAL])) {
+                $vrb->set_reverse_plural($_GET[url_var::REVERSE_PLURAL]);
             }
 
             // save the changes

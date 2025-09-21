@@ -9,7 +9,7 @@
         check triple
 
     mainly to check the term consistency of all objects
-    a term must be unique for word, verb and triple e.g. "Company" is a word "is a" is a verb and "Kanton Zurich" is a triple
+    a term must be unique for word, verb and triple e.g. "company" is a word "is a" is a verb and "Kanton Zurich" is a triple
     all terms are the same for each user
     if a user changes a term and the term has been used already
     a new term is created and the deletion of the existing term is requested
@@ -43,9 +43,9 @@
 
 */
 
-namespace cfg\phrase;
+namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'combine_named.php';
 include_once paths::DB . 'sql.php';
@@ -74,31 +74,31 @@ include_once paths::SHARED_TYPES . 'share_type.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\formula\formula_db;
-use cfg\helper\combine_named;
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\db\sql_field_type;
-use cfg\helper\db_object_seq_id;
-use cfg\formula\formula;
-use cfg\sandbox\sandbox;
-use cfg\user\user_db;
-use cfg\user\user_message;
-use cfg\verb\verb;
-use cfg\user\user;
-use cfg\verb\verb_db;
-use cfg\word\triple_db;
-use cfg\word\word;
-use cfg\word\triple;
-use cfg\word\word_db;
-use shared\enum\messages as msg_id;
-use shared\types\protection_type as protect_type_shared;
-use shared\types\share_type as share_type_shared;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class term extends combine_named
 {
@@ -109,27 +109,27 @@ class term extends combine_named
 
     // field names of the database view for terms
     // the database view is used e.g. for a fast check of a new term name
-    const FLD_ID = 'term_id';
-    const FLD_ID_SQL_TYP = sql_field_type::INT;
-    const FLD_NAME = 'term_name';
-    const FLD_USAGE = 'usage'; // included in the database view to be able to show the user the most relevant terms
-    const FLD_TYPE = 'term_type_id'; // the term type for word or triple or the formula type for formulas; not used for verbs
+    const string FLD_ID = 'term_id';
+    const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT;
+    const string FLD_NAME = 'term_name';
+    const string FLD_USAGE = 'usage'; // included in the database view to be able to show the user the most relevant terms
+    const string FLD_TYPE = 'term_type_id'; // the term type for word or triple or the formula type for formulas; not used for verbs
 
     // the common term database field names excluding the id and excluding the user specific fields
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         self::FLD_TYPE
     );
     // list of the user specific database field names
     // some fields like the formula expression are only used for one term class e.g. formula
     // this is done because the total number of terms is expected to be less than 10 million
     // which database should be able to handle and only a few hundred are expected to be sent to via api at once
-    const FLD_NAMES_USR = array(
+    const array FLD_NAMES_USR = array(
         sql_db::FLD_DESCRIPTION,
         formula_db::FLD_FORMULA_TEXT,
         formula_db::FLD_FORMULA_USER_TEXT
     );
     // list of the user specific numeric database field names
-    const FLD_NAMES_NUM_USR = array(
+    const array FLD_NAMES_NUM_USR = array(
         self::FLD_USAGE,
         sql_db::FLD_EXCLUDED,
         sandbox::FLD_SHARE,
@@ -137,17 +137,17 @@ class term extends combine_named
     );
     // list of term types used for the database views
     // using one array of sql table types per view
-    const TBL_PRIME_COM = 'terms with an id less than 2^16 so that 4 term id fit in a 64 bit db key';
-    const TBL_PRIME_WHERE = '< 32767'; // 2^16 / 2 - 1
-    const TBL_WORD_WHERE = ['<> 10', sql::IS_NULL]; // to exclude the formula words from the term view
-    const TBL_COM = 'terms with an id that is not prime';
-    const FLD_WORD_ID_TO_TERM_ID = '* 2 - 1'; // to convert a word id to a term id
-    const FLD_TRIPLE_ID_TO_TERM_ID = '* -2 + 1'; // to convert a triple id to a term id
-    const FLD_FORMULA_ID_TO_TERM_ID = '* 2'; // to convert a formula id to a term id
-    const FLD_VERB_ID_TO_TERM_ID = '* -2'; // to convert a verb id to a term id
+    const string TBL_PRIME_COM = 'terms with an id less than 2^16 so that 4 term id fit in a 64 bit db key';
+    const string TBL_PRIME_WHERE = '< 32767'; // 2^16 / 2 - 1
+    const array TBL_WORD_WHERE = ['<> 10', sql::IS_NULL]; // to exclude the formula words from the term view
+    const string TBL_COM = 'terms with an id that is not prime';
+    const string FLD_WORD_ID_TO_TERM_ID = '* 2 - 1'; // to convert a word id to a term id
+    const string FLD_TRIPLE_ID_TO_TERM_ID = '* -2 + 1'; // to convert a triple id to a term id
+    const string FLD_FORMULA_ID_TO_TERM_ID = '* 2'; // to convert a formula id to a term id
+    const string FLD_VERB_ID_TO_TERM_ID = '* -2'; // to convert a verb id to a term id
     // each db view can have several sql table types and as second entry a where conditions
     // or list of or where conditions
-    const TBL_LIST = [
+    const array TBL_LIST = [
         [sql_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM],
         [sql_type::MOST, [self::TBL_WORD_WHERE], self::TBL_COM],
         [sql_type::PRIME, [self::TBL_WORD_WHERE, self::TBL_PRIME_WHERE], self::TBL_PRIME_COM, sql_type::USER],
@@ -159,7 +159,7 @@ class term extends combine_named
     // each fields can have additional to the name the target name (AS) and a calculation rules
     // the field name can also be an array where the first field is use with priority over the following
     // the where field can be a single field or an array
-    const TBL_FLD_LST_VIEW = [
+    const array TBL_FLD_LST_VIEW = [
         [word::class, [
             [word_db::FLD_ID, term::FLD_ID, self::FLD_WORD_ID_TO_TERM_ID],
             [user_db::FLD_ID],
@@ -383,25 +383,21 @@ class term extends combine_named
             if ($class == word::class) {
                 if ($this->obj == null) {
                     $this->obj = new word($this->user());
-                    $this->obj()->set_id($id);
                 }
             } elseif ($class == triple::class) {
                 if ($this->obj == null) {
                     $this->obj = new triple($this->user());
-                    $this->obj()->set_id($id);
                 }
             } elseif ($class == formula::class) {
                 if ($this->obj == null) {
                     $this->obj = new formula($this->user());
-                    $this->obj()->set_id($id);
                 }
             } elseif ($class == verb::class) {
                 if ($this->obj == null) {
                     $this->obj = new verb();
-                    $this->obj()->set_id($id);
                 }
             }
-            $this->obj()->set_id($id);
+            $this->obj->id = $id;
         }
     }
 
@@ -456,6 +452,37 @@ class term extends combine_named
             $this->set_obj_by_class($class);
         }
         $this->obj()->set_user($usr);
+    }
+
+    /**
+     * @return int the id of the user or 0 if the user is not set
+     */
+    function user_id(): int
+    {
+        return $this->obj()->user_id();
+    }
+
+    /**
+     * @return int|null the id of the owner if the user is not set
+     */
+    function owner_id(): ?int
+    {
+        return $this->obj()->owner_id();
+    }
+
+    function code_id(): ?int
+    {
+        return $this->obj()->code_id();
+    }
+
+    function share_id(): ?int
+    {
+        return $this->obj()->share_id();
+    }
+
+    function protection_id(): ?int
+    {
+        return $this->obj()->protection_id();
     }
 
     /**

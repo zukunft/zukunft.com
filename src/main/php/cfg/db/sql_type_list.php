@@ -30,23 +30,21 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
 //include_once paths::MODEL_USER . 'user.php';
-//include_once paths::MODEL_VALUE . 'value_base.php';
 //include_once paths::MODEL_VALUE . 'value.php';
 //include_once paths::MODEL_VALUE . 'value_db.php';
 //include_once paths::MODEL_VALUE . 'value_text.php';
 //include_once paths::MODEL_VALUE . 'value_time.php';
 //include_once paths::MODEL_VALUE . 'value_geo.php';
 
-use cfg\user\user;
-use cfg\value\value;
-use cfg\value\value_base;
-use cfg\value\value_db;
-use cfg\value\value_geo;
-use cfg\value\value_text;
-use cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
 
 class sql_type_list
 {

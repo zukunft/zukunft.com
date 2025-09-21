@@ -2,7 +2,7 @@
 
 /*
 
-    api/log/change_log_list.php - a list function to create the HTML code to display a list of user changes
+    web/log/change_log_list.php - a list function to create the HTML code to display a list of user changes
     ---------------------------
 
     This file is part of zukunft.com - calc with words
@@ -29,10 +29,10 @@
 
 */
 
-namespace html\log;
+namespace Zukunft\ZukunftCom\main\php\web\log;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
@@ -49,18 +49,18 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\formula\formula;
-use html\helper\config;
-use html\button;
-use html\html_base;
-use html\system\back_trace;
-use html\user\user_message;
-use shared\const\rest_ctrl;
-use shared\enum\change_actions;
-use shared\enum\change_fields;
-use shared\enum\change_tables;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\helper\config;
+use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class change_log_named extends change_log
 {
@@ -205,19 +205,19 @@ class change_log_named extends change_log
         if ($this->table_name() == change_tables::WORD) {
             if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
-                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_ADD);
+                $undo_btn = new button($undo_call)->undo(msg_id::UNDO_ADD);
             }
         } elseif ($this->table_name() == change_tables::VIEW) {
             if ($this->action_code_id() == change_actions::ADD) {
                 $undo_call = $html->url('value' . rest_ctrl::REMOVE, $this->id(), $back->url_encode());
-                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_EDIT);
+                $undo_btn = new button($undo_call)->undo(msg_id::UNDO_EDIT);
             }
         } elseif ($this->table_name() == change_tables::FORMULA) {
             if ($this->action_code_id() == change_actions::UPDATE) {
                 $undo_call = $html->url(
                     formula::class . rest_ctrl::UPDATE, $this->row_id,
                     $back->url_encode() . '&undo_change=' . $this->id());
-                $undo_btn = (new button($undo_call))->undo(msg_id::UNDO_DEL);
+                $undo_btn = new button($undo_call)->undo(msg_id::UNDO_DEL);
             }
         }
         // display the undo button

@@ -30,7 +30,7 @@
 
 */
 
-namespace cfg\component\sheet;
+namespace Zukunft\ZukunftCom\main\php\cfg\component\sheet;
 
 class position_list
 {

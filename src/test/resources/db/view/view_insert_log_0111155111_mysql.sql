@@ -85,7 +85,7 @@ SELECT view_insert_log_0111155111 (
                'entry view',
                2,
                777,
-               'col-md-4',
+               '1/3 width',
                1,
                72,
                1,

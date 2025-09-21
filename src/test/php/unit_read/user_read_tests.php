@@ -30,17 +30,17 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_ENUM . 'user_profiles.php';
 
-use cfg\user\user_profile_list;
-use cfg\user\user;
-use shared\const\users;
-use shared\enum\user_profiles;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class user_read_tests
 {
@@ -61,7 +61,7 @@ class user_read_tests
         $usr = new user();
         $usr->load_by_name(users::SYSTEM_TEST_NAME);
         $usr_by_id = new user();
-        $usr_by_id->load_by_id($usr->id(), user::class);
+        $usr_by_id->load_by_id($usr->id, user::class);
         $t->assert($test_name, $usr_by_id->name, users::SYSTEM_TEST_NAME);
         //$t->assert($test_name, $usr_by_id->email, users::SYSTEM_TEST_EMAIL);
 
@@ -69,7 +69,7 @@ class user_read_tests
         $usr = new user();
         $usr->load_by_email(users::SYSTEM_TEST_EMAIL);
         $usr_by_id = new user();
-        $usr_by_id->load_by_id($usr->id(), user::class);
+        $usr_by_id->load_by_id($usr->id, user::class);
         $t->assert($test_name, $usr_by_id->name, users::SYSTEM_TEST_NAME);
 
         // TODO test type and view

@@ -45,15 +45,14 @@
 
 */
 
-namespace cfg\result;
+namespace Zukunft\ZukunftCom\main\php\cfg\result;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 //include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_db.php';
-include_once paths::DB . 'sql_field_default.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_par.php';
 include_once paths::DB . 'sql_par_field_list.php';
@@ -70,7 +69,6 @@ include_once paths::MODEL_GROUP . 'group_list.php';
 include_once paths::MODEL_HELPER . 'data_object.php';
 include_once paths::MODEL_HELPER . 'db_object_multi.php';
 include_once paths::MODEL_PHRASE . 'phrase_list.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
 include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
 include_once paths::MODEL_USER . 'user.php';
@@ -84,38 +82,36 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\element\element_list;
-use cfg\formula\figure;
-use cfg\formula\formula;
-use cfg\formula\formula_db;
-use cfg\group\group;
-use cfg\group\group_id;
-use cfg\group\group_list;
-use cfg\helper\data_object;
-use cfg\helper\db_object_multi;
-use cfg\phrase\phrase_list;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_value;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\figure;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTime;
-use shared\calc\parameter_type;
-use shared\const\chars;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class result extends sandbox_value
 {
@@ -124,30 +120,30 @@ class result extends sandbox_value
      * db const
      */
 
-    const TBL_COMMENT = 'to cache the formula ';
-    const TBL_COMMENT_PRIME = 'to cache the formula most often requested ';
-    const TBL_COMMENT_STD = 'to cache the formula public unprotected ';
-    const TBL_COMMENT_USER = 'to cache the user specific changes of ';
+    const string TBL_COMMENT = 'to cache the formula ';
+    const string TBL_COMMENT_PRIME = 'to cache the formula most often requested ';
+    const string TBL_COMMENT_STD = 'to cache the formula public unprotected ';
+    const string TBL_COMMENT_USER = 'to cache the user specific changes of ';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const FLD_NAMES = result_db::FLD_NAMES;
-    const FLD_NAMES_NUM_USR = result_db::FLD_NAMES_NUM_USR;
-    const FLD_NAMES_USR_ONLY = result_db::FLD_NAMES_USR_ONLY;
+    const array FLD_NAMES = result_db::FLD_NAMES;
+    const array FLD_NAMES_NUM_USR = result_db::FLD_NAMES_NUM_USR;
+    const array FLD_NAMES_USR_ONLY = result_db::FLD_NAMES_USR_ONLY;
 
-    const FLD_ALL_TIME_SERIES = result_db::FLD_ALL_TIME_SERIES;
-    const FLD_ALL_TIME_SERIES_USER = result_db::FLD_ALL_TIME_SERIES_USER;
+    const array FLD_ALL_TIME_SERIES = result_db::FLD_ALL_TIME_SERIES;
+    const array FLD_ALL_TIME_SERIES_USER = result_db::FLD_ALL_TIME_SERIES_USER;
 
-    const TBL_LIST = result_db::TBL_LIST;
+    const array TBL_LIST = result_db::TBL_LIST;
 
-    const FLD_KEY_PRIME = result_db::FLD_KEY_PRIME;
-    const FLD_KEY_PRIME_USER = result_db::FLD_KEY_PRIME_USER;
-    const FLD_ALL_CHANGED = result_db::FLD_ALL_CHANGED;
-    const FLD_ALL_SOURCE = result_db::FLD_ALL_SOURCE;
-    const FLD_ALL_SOURCE_GROUP = result_db::FLD_ALL_SOURCE_GROUP;
-    const FLD_ALL_SOURCE_GROUP_PRIME = result_db::FLD_ALL_SOURCE_GROUP_PRIME;
-    const FLD_ALL_SOURCE_GROUP_BIG = result_db::FLD_ALL_SOURCE_GROUP_BIG;
-    const FLD_ALL_OWNER = result_db::FLD_ALL_OWNER;
-    const FLD_ALL_CHANGER = result_db::FLD_ALL_CHANGER;
+    const array FLD_KEY_PRIME = result_db::FLD_KEY_PRIME;
+    const array FLD_KEY_PRIME_USER = result_db::FLD_KEY_PRIME_USER;
+    const array FLD_ALL_CHANGED = result_db::FLD_ALL_CHANGED;
+    const array FLD_ALL_SOURCE = result_db::FLD_ALL_SOURCE;
+    const array FLD_ALL_SOURCE_GROUP = result_db::FLD_ALL_SOURCE_GROUP;
+    const array FLD_ALL_SOURCE_GROUP_PRIME = result_db::FLD_ALL_SOURCE_GROUP_PRIME;
+    const array FLD_ALL_SOURCE_GROUP_BIG = result_db::FLD_ALL_SOURCE_GROUP_BIG;
+    const array FLD_ALL_OWNER = result_db::FLD_ALL_OWNER;
+    const array FLD_ALL_CHANGER = result_db::FLD_ALL_CHANGER;
 
 
     /*
@@ -208,7 +204,7 @@ class result extends sandbox_value
         $lib = new library();
         $result = parent::row_mapper_multi($db_row, $ext, result_db::FLD_ID);
         if ($result) {
-            $this->frm->set_id($db_row[formula_db::FLD_ID]);
+            $this->frm = $db_row[formula_db::FLD_ID];
             if (substr($ext, 0, 2) == group_id::TBL_EXT_PHRASE_ID) {
                 $this->src_grp->set_id((int)$db_row[result_db::FLD_SOURCE_GRP]);
             } else {
@@ -512,7 +508,7 @@ class result extends sandbox_value
         // overwrite the standard id field name (result_id) with the main database id field for results "group_id"
         $sc->set_id_field($this->id_field($sc_par_lst));
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(result_db::FLD_NAMES);
 
         return $qp;
@@ -797,7 +793,7 @@ class result extends sandbox_value
     function load_sql_where(sql_db $db_con, sql_par $qp, string $sql_where = ''): sql_par
     {
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(result_db::FLD_NAMES);
         $db_con->set_where_text($sql_where);
         $qp->sql = $db_con->select_by_set_id();
@@ -1212,7 +1208,7 @@ class result extends sandbox_value
                  AND group_id = " . $this->grp()->id() . "
                  AND user_id         = " . $this->user()->id() . ";";
             //$db_con = New mysql;
-            $db_con->usr_id = $this->user()->id();
+            $db_con->usr_id = $this->user()->id;
             $val_rows = $db_con->get_old($sql);
             foreach ($val_rows as $val_row) {
                 $res_upd = new result($this->user());
@@ -1251,7 +1247,7 @@ class result extends sandbox_value
 
     private function save_without_time(): string
     {
-        $res_no_time = clone $this;
+        $res_no_time = $this->clone_all();
         // $res_no_time->time_phr = null;
         return $res_no_time->save()->get_last_message();
     }
@@ -1267,7 +1263,7 @@ class result extends sandbox_value
     // TODO add check
     private function has_no_time_value(): bool
     {
-        $res_check = clone $this;
+        $res_check = $this->clone_all();
         $phr_lst_ex_time = $res_check->grp()->phrase_list();
         $phr_lst_ex_time->ex_time();
         return !$res_check->load_by_phr_lst($phr_lst_ex_time);
@@ -1358,7 +1354,7 @@ class result extends sandbox_value
                 }
 
                 if ($this->number() == null) {
-                    log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_grp->phrase_list()->dsp_id() . ' for user ' . $this->user()->id() . '.', "result->save_if_updated");
+                    log_info('No result calculated for "' . $this->frm->name() . '" based on ' . $this->src_grp->phrase_list()->dsp_id() . ' for user ' . $this->user()->id . '.', "result->save_if_updated");
                 } else {
                     // save the default value if the result time is the "newest"
                     if (isset($res_default_time)) {
@@ -1422,7 +1418,7 @@ class result extends sandbox_value
             if ($debug > 0) {
                 $debug_txt = 'result->save (' . $this->number() . ' for formula ' . $this->frm->id() . ' with ' . $this->grp()->phrase_list()->dsp_name() . ' based on ' . $this->src_grp->phrase_list()->dsp_name();
                 if (!$this->is_std) {
-                    $debug_txt .= ' and user ' . $this->user()->id();
+                    $debug_txt .= ' and user ' . $this->user()->id;
                 }
                 $debug_txt .= ')';
                 log_debug($debug_txt);
@@ -1430,7 +1426,7 @@ class result extends sandbox_value
 
             // build the database object because the is anyway needed
             //$db_con = new mysql;
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
             $db_con->set_class(result::class);
 
             // build the word list if needed to separate the time word from the word list

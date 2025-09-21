@@ -32,9 +32,9 @@
   
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SYSTEM . 'base_list.php';
 //include_once paths::MODEL_COMPONENT . 'component.php';
@@ -59,27 +59,27 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\system\base_list;
-use cfg\component\component;
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\formula\formula;
-use cfg\group\group;
-use cfg\group\group_id;
-use cfg\sandbox\sandbox;
-use cfg\ref\source;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\value\value;
-use cfg\value\value_base;
-use cfg\verb\verb;
-use cfg\view\view;
-use cfg\word\word;
-use cfg\word\triple;
-use shared\enum\change_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\system\base_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class change_log_list extends base_list
 {
@@ -335,7 +335,7 @@ class change_log_list extends base_list
     {
         $qp = $this->load_sql($sc, 'user_last', self::class);
 
-        $sc->add_where(user_db::FLD_ID, $usr->id());
+        $sc->add_where(user_db::FLD_ID, $usr->id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;

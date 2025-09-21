@@ -43,10 +43,37 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\component\component;
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\utils\test_api;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::API_OBJECT . 'controller.php';
@@ -67,32 +94,8 @@ include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 
-
-use cfg\const\def;
-use cfg\formula\formula;
-use cfg\helper\db_object;
-use cfg\ref\source;
-use cfg\sandbox\sandbox;
-use cfg\user\user;
-use cfg\verb\verb;
-use cfg\view\view;
-use cfg\word\word;
-use const\paths as test_paths;
-use cfg\helper\data_object;
-use cfg\ref\ref;
-use cfg\result\result;
-use cfg\value\value;
-use cfg\word\triple;
-use html\user\user as user_dsp;
-use html\frontend;
-use shared\api;
-use shared\const\views;
-use shared\const\views as view_shared;
-use shared\library;
-use shared\types\api_type;
-use test\test_api;
-use test\test_cleanup;
 
 class horizontal_tests
 {
@@ -148,7 +151,8 @@ class horizontal_tests
             if (in_array($class, def::SANDBOX_CLASSES)) {
                 $filled_obj->include();
             }
-            $check_obj = clone $filled_obj;
+            // use the clone function instead of pure clone of the object to clone also the child objects like the group of the value
+            $check_obj = $filled_obj->clone_all();
             $api_json = $filled_obj->api_json([api_type::TEST_MODE]);
             $ui_obj = $t->frontend_obj_from_backend_object($filled_obj);
             $ui_obj->set_from_json($api_json);
@@ -158,6 +162,8 @@ class horizontal_tests
             $diff = $check_obj->diff_msg($filled_obj);
             if (!$diff->is_ok()) {
                 log_err($diff->all_message_text());
+            } else {
+                $t->assert_json_string($test_name, $ui_json, $api_json);
             }
             $t->assert_true($test_name, $diff->is_ok());
         }
@@ -199,47 +205,50 @@ class horizontal_tests
                 $filled_obj->import_mapper($ex_json, $dto);
             }
             // set the remembered id again , because the db id is never included in the export
-            $filled_obj->set_id($id);
+            $filled_obj->id = $id;
             $final_json = $filled_obj->api_json([api_type::TEST_MODE]);
             $t->assert_json_string($test_name, $final_json, $api_json);
         }
 
-        /*
-         TODO Prio 0 activate (is already fien for the first 2 masks)
         $t->subheader($ts . 'system views');
         $ui = new frontend('unit test');
-        for ($id = 1; $id <= views::MAX_TEST_ID; $id++) {
+        $ui->load_dummy_cache_from_test_resources($t->usr1);
+        for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
             $dbo = $this->view_id_to_dbo($id, $t->usr1);
-            $url = $t->class_to_url_add($dbo::class, $id);
+            $action = $this->view_id_to_url_action($id);
+            $url = $t->class_to_filled_url($dbo::class, $id, $action);
             $url_part = parse_url($url);
             parse_str($url_part["query"], $url_array);
             $usr_dsp = new user_dsp();
             $usr_dsp->set_from_json($t->usr1->api_json());
             $html = $ui->url_to_html($url_array, $usr_dsp);
-            $test_name = 'add ' . $lib->class_to_name($dbo::class) . ' view';
+            $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
             // create the filename of the expected result
             $dbo_name = $id . '_';
             if ($dbo::class == db_object::class) {
                 $folder = 'start_page' . DIRECTORY_SEPARATOR;
                 $dbo_name .= 'start_page';
+                $test_name = 'start_page view';
             } else {
                 $class = $lib->class_to_name($dbo::class);
                 $folder = $class . DIRECTORY_SEPARATOR;
                 $dbo_name .= $class;
-                $dbo_id = $url_array[api::URL_VAR_ID] ?? 0; // the database id of the prime object to display
+                $dbo_id = $url_array[url_var::ID] ?? 0; // the database id of the prime object to display
+                if ($action != change_actions::SHOW) {
+                    $dbo_name .= '_' . $action;
+                }
                 if ($dbo_id != 0) {
-                    $dbo_name .= '_' . $dbo_id;
+                    $dbo_name .= '_' . $lib->str_to_file($dbo_id);
                 }
             }
             $filename = test_paths::VIEWS_BY_ID . $folder . $dbo_name;
-            $t->assert_html($test_name, $html, $filename);
+            $t->assert_html_page($test_name, $html, $filename);
         }
-        */
 
     }
 
 
-    private function view_id_to_dbo(int $view_id, user $usr): sandbox|user|db_object
+    private function view_id_to_dbo(int $view_id, user $usr): sandbox|sandbox_multi|user|db_object
     {
         // select the backend object to display
         if (in_array($view_id, view_shared::WORD_MASKS_IDS)) {
@@ -254,6 +263,8 @@ class horizontal_tests
             $dbo = new ref($usr);
         } elseif (in_array($view_id, view_shared::VALUE_MASKS_IDS)) {
             $dbo = new value($usr);
+        } elseif (in_array($view_id, view_shared::GROUP_MASKS_IDS)) {
+            $dbo = new group($usr);
         } elseif (in_array($view_id, view_shared::FORMULA_MASKS_IDS)) {
             $dbo = new formula($usr);
         } elseif (in_array($view_id, view_shared::RESULT_MASKS_IDS)) {
@@ -266,6 +277,24 @@ class horizontal_tests
             $dbo = new db_object();
         }
         return $dbo;
+    }
+
+
+    private function view_id_to_url_action(int $view_id): string
+    {
+        // select the backend object to display
+        if (in_array($view_id, view_shared::SHOW_MASKS_IDS)) {
+            $action = change_actions::SHOW;
+        } elseif (in_array($view_id, view_shared::ADD_MASKS_IDS)) {
+            $action = change_actions::ADD;
+        } elseif (in_array($view_id, view_shared::EDIT_MASKS_IDS)) {
+            $action = change_actions::UPDATE;
+        } elseif (in_array($view_id, view_shared::DEL_MASKS_IDS)) {
+            $action = change_actions::DELETE;
+        } else {
+            $action = 'unknown';
+        }
+        return $action;
     }
 
 }

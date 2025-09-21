@@ -30,16 +30,19 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'verbs.php';
 
-use html\html_base;
-use html\phrase\phrase as phrase_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class phrase_list_ui_tests
 {
@@ -58,6 +61,7 @@ class phrase_list_ui_tests
         $t->assert('HTML phrase list names match backend names', $lst->names(), $db_lst->names());
 
         // create the phrase list test set
+        $form = 'phrase_list_ui_test';
         $lst = new phrase_list_dsp();
         $phr_city = $t->zh_city()->phrase();
         $phr_canton = $t->zh_canton()->phrase();
@@ -78,7 +82,7 @@ class phrase_list_ui_tests
         */
 
         $test_page .= 'selector: ' . '<br>';
-        $test_page .= $lst->selector('', 0, 'phrase list test selector', 'please select') . '<br>';
+        $test_page .= $lst->selector($form, 0, url_var::PHRASE_LONG, msg_id::LABEL_PHRASE) . '<br>';
 
         $t->html_test($test_page, 'phrase_list', 'phrase_list', $t);
 

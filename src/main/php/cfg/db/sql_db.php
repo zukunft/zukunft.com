@@ -2,40 +2,40 @@
 
 /*
 
-  sql_db.php - the SQL database link and abstraction layer
-  ----------
-  
-  the database link is reduced to a very few basic functions that exists on all databases
-  this way an apache droid or hadoop adapter should also be possible
-  at the moment adapter to MySQL and Postgres are working
-  
-  This file is part of zukunft.com - calc with words
+    model/db/sql_db.php - the SQL database link and abstraction layer
+    -------------------
 
-  zukunft.com is free software: you can redistribute it and/or modify it
-  under the terms of the GNU General Public License as
-  published by the Free Software Foundation, either version 3 of
-  the License, or (at your option) any later version.
-  zukunft.com is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-  
-  You should have received a copy of the GNU General Public License
-  along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
-  
-  To contact the authors write to:
-  Timon Zielonka <timon@zukunft.com>
-  
-  Copyright (c) 1995-2018 zukunft.com AG, Zurich
-  Heang Lor <heang@zukunft.com>
-  
-  http://zukunft.com
+    the database link is reduced to a very few basic functions that exists on all databases
+    this way an apache droid or hadoop adapter should also be possible
+    at the moment adapter to MySQL and Postgres are working
+
+    This file is part of zukunft.com - calc with words
+
+    zukunft.com is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as
+    published by the Free Software Foundation, either version 3 of
+    the License, or (at your option) any later version.
+    zukunft.com is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with zukunft.com. If not, see <http://www.gnu.org/licenses/agpl.html>.
+
+    To contact the authors write to:
+    Timon Zielonka <timon@zukunft.com>
+
+    Copyright (c) 1995-2018 zukunft.com AG, Zurich
+    Heang Lor <heang@zukunft.com>
+
+    http://zukunft.com
   
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_par_type.php';
 include_once paths::DB . 'sql_creator.php';
@@ -163,6 +163,7 @@ include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::MODEL_VIEW . 'view_type.php';
 include_once paths::MODEL_VIEW . 'view_type_list.php';
 include_once paths::MODEL_WORD . 'word.php';
+include_once paths::SHARED_CONST . 'files.php';
 include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED_CONST . 'words.php';
@@ -174,204 +175,205 @@ include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\component\component_link_type;
-use cfg\component\component_link_type_list;
-use cfg\component\component_type;
-use cfg\component\component_type_list;
-use cfg\component\position_type;
-use cfg\component\position_type_list;
-use cfg\component\view_style;
-use cfg\component\view_style_list;
-use cfg\config;
-use cfg\const\def;
-use cfg\const\files;
-use cfg\helper\config_numbers;
-use cfg\element\element;
-use cfg\element\element_type;
-use cfg\element\element_type_list;
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\formula\formula_link_type;
-use cfg\formula\formula_link_type_list;
-use cfg\formula\formula_type;
-use cfg\formula\formula_type_list;
-use cfg\group\group;
-use cfg\import\import_file;
-use cfg\log\change_values_geo_big;
-use cfg\log\change_values_geo_norm;
-use cfg\log\change_values_geo_prime;
-use cfg\log\change_values_text_big;
-use cfg\log\change_values_text_norm;
-use cfg\log\change_values_text_prime;
-use cfg\log\change_values_time_big;
-use cfg\log\change_values_time_norm;
-use cfg\log\change_values_time_prime;
-use cfg\sandbox\protection_type;
-use cfg\sandbox\protection_type_list;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\share_type;
-use cfg\sandbox\share_type_list;
-use cfg\system\ip_range;
-use cfg\system\ip_range_list;
-use cfg\system\job;
-use cfg\system\job_time;
-use cfg\system\job_type;
-use cfg\system\job_type_list;
-use cfg\language\language;
-use cfg\language\language_form;
-use cfg\language\language_form_list;
-use cfg\language\language_list;
-use cfg\system\log;
-use cfg\log\change;
-use cfg\log\change_action;
-use cfg\log\change_action_list;
-use cfg\log\change_field_list;
-use cfg\log\change_table_list;
-use cfg\log\change_values_big;
-use cfg\log\change_field;
-use cfg\log\change_link;
-use cfg\log\change_values_norm;
-use cfg\log\change_values_prime;
-use cfg\log\change_table;
-use cfg\log\change_table_field;
-use cfg\log\changes_big;
-use cfg\log\changes_norm;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_table;
-use cfg\phrase\phrase_table_status;
-use cfg\phrase\phrase_type;
-use cfg\phrase\phrase_types;
-use cfg\system\pod;
-use cfg\system\pod_status;
-use cfg\system\pod_type;
-use cfg\ref\ref;
-use cfg\ref\ref_type;
-use cfg\ref\ref_type_list;
-use cfg\result\result;
-use cfg\system\session;
-use cfg\ref\source;
-use cfg\ref\source_type;
-use cfg\ref\source_type_list;
-use cfg\system\sys_log;
-use cfg\system\sys_log_function;
-use cfg\system\sys_log_level;
-use cfg\system\sys_log_status;
-use cfg\system\sys_log_status_list;
-use cfg\system\sys_log_type;
-use cfg\system\system_time;
-use cfg\system\system_time_type;
-use cfg\phrase\term;
-use cfg\user\user_db;
-use cfg\value\value;
-use cfg\value\value_geo;
-use cfg\value\value_text;
-use cfg\value\value_time;
-use cfg\view\view_list;
-use cfg\word\triple;
-use cfg\helper\type_lists;
-use cfg\user\user;
-use cfg\user\user_profile;
-use cfg\user\user_type;
-use cfg\user\user_message;
-use cfg\user\user_official_type;
-use cfg\user\user_profile_list;
-use cfg\value\value_time_series;
-use cfg\value\value_ts_data;
-use cfg\verb\verb;
-use cfg\verb\verb_list;
-use cfg\view\view;
-use cfg\view\view_link_type;
-use cfg\view\view_link_type_list;
-use cfg\view\view_sys_list;
-use cfg\view\term_view;
-use cfg\view\view_type;
-use cfg\view\view_type_list;
-use cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\position_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
+use Zukunft\ZukunftCom\main\php\cfg\component\view_style_list;
+use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_time;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form_list;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\log;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table_status;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\system\session;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\files as files_shared;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\language_codes;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 use Exception;
 use mysqli;
 use mysqli_result;
 use PDOException;
 use PgSql\Connection;
-use shared\const\triples;
-use shared\const\users;
-use shared\const\words;
-use shared\enum\language_codes;
-use shared\enum\user_profiles;
-use shared\helper\Translator;
-use shared\library;
-use shared\types\protection_type as protect_type_shared;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\types\verbs;
 
 class sql_db
 {
 
     // these databases can be used at the moment (must be the same as in zu_lib)
-    const POSTGRES = "postgres";
-    const MYSQL = "MySQL";
-    const DB_LIST = [POSTGRES, MYSQL];
+    const string POSTGRES = "postgres";
+    const string MYSQL = "MySQL";
+    const array DB_LIST = [POSTGRES, MYSQL];
 
-    const POSTGRES_PATH = "postgres";
-    const MYSQL_PATH = "mysql";
+    const string POSTGRES_PATH = "postgres";
+    const string MYSQL_PATH = "mysql";
 
-    const POSTGRES_EXT = "";
-    const MYSQL_EXT = "_mysql";
+    const string POSTGRES_EXT = "";
+    const string MYSQL_EXT = "_mysql";
 
     // data retrieval settings
-    const SQL_QUERY_NAME_MAX_LEN = 62; // the query name cannot be longer than 62 chars at least for some databases
+    const int SQL_QUERY_NAME_MAX_LEN = 62; // the query name cannot be longer than 62 chars at least for some databases
 
     // default settings for sql
-    const ROW_LIMIT = 20; // default number of rows per page/query if the user has not defined another limit
-    const ROW_MAX = 2000; // the max number of rows per query to avoid long response times
+    const int ROW_LIMIT = 20; // default number of rows per page/query if the user has not defined another limit
+    const int ROW_MAX = 2000; // the max number of rows per query to avoid long response times
 
-    const TBL_USER_PREFIX = 'user_';
+    const string TBL_USER_PREFIX = 'user_';
 
     // the synthetic view tables (VT) for union query creation
-    const VT_PHRASE_GROUP_LINK = 'group_link'; // TODO deprecate
+    const string VT_PHRASE_GROUP_LINK = 'group_link'; // TODO deprecate
 
     // difference between the object name and the table name
-    const TABLE_EXTENSION = 's';
+    const string TABLE_EXTENSION = 's';
 
     // reserved words that are automatically escaped
 
     // based on https://www.Postgres.org/docs/current/sql-keywords-appendix.html from 2021-06-13
-    const POSTGRES_RESERVED_NAMES = ['AND ', 'ANY ', 'ARRAY ', 'AS ', 'ASC ', 'ASYMMETRIC ', 'BOTH ', 'CASE ', 'CAST ', 'CHECK ', 'COLLATE ', 'COLUMN ', 'CONSTRAINT ', 'CREATE ', 'CURRENT_CATALOG ', 'CURRENT_DATE ', 'CURRENT_ROLE ', 'CURRENT_TIME ', 'CURRENT_TIMESTAMP ', 'CURRENT_USER ', 'DEFAULT ', 'DEFERRABLE ', 'DESC ', 'DISTINCT ', 'DO ', 'ELSE ', 'END ', 'EXCEPT ', 'FALSE ', 'FETCH ', 'FOR ', 'FOREIGN ', 'FROM ', 'GRANT ', 'GROUP ', 'HAVING ', 'IN ', 'INITIALLY ', 'INTERSECT ', 'INTO ', 'LATERAL ', 'LEADING ', 'LIMIT ', 'LOCALTIME ', 'LOCALTIMESTAMP ', 'NOT ', 'NULL ', 'OFFSET ', 'ON ', 'ONLY ', 'OR ', 'ORDER ', 'PLACING ', 'PRIMARY ', 'REFERENCES ', 'RETURNING ', 'SELECT ', 'SESSION_USER ', 'SOME ', 'SYMMETRIC ', 'TABLE ', 'THEN ', 'TO ', 'TRAILING ', 'TRUE ', 'UNION ', 'UNIQUE ', 'USER ', 'USING ', 'VARIADIC ', 'WHEN ', 'WHERE ', 'WINDOW ', 'WITH ',];
+    const array POSTGRES_RESERVED_NAMES = ['AND ', 'ANY ', 'ARRAY ', 'AS ', 'ASC ', 'ASYMMETRIC ', 'BOTH ', 'CASE ', 'CAST ', 'CHECK ', 'COLLATE ', 'COLUMN ', 'CONSTRAINT ', 'CREATE ', 'CURRENT_CATALOG ', 'CURRENT_DATE ', 'CURRENT_ROLE ', 'CURRENT_TIME ', 'CURRENT_TIMESTAMP ', 'CURRENT_USER ', 'DEFAULT ', 'DEFERRABLE ', 'DESC ', 'DISTINCT ', 'DO ', 'ELSE ', 'END ', 'EXCEPT ', 'FALSE ', 'FETCH ', 'FOR ', 'FOREIGN ', 'FROM ', 'GRANT ', 'GROUP ', 'HAVING ', 'IN ', 'INITIALLY ', 'INTERSECT ', 'INTO ', 'LATERAL ', 'LEADING ', 'LIMIT ', 'LOCALTIME ', 'LOCALTIMESTAMP ', 'NOT ', 'NULL ', 'OFFSET ', 'ON ', 'ONLY ', 'OR ', 'ORDER ', 'PLACING ', 'PRIMARY ', 'REFERENCES ', 'RETURNING ', 'SELECT ', 'SESSION_USER ', 'SOME ', 'SYMMETRIC ', 'TABLE ', 'THEN ', 'TO ', 'TRAILING ', 'TRUE ', 'UNION ', 'UNIQUE ', 'USER ', 'USING ', 'VARIADIC ', 'WHEN ', 'WHERE ', 'WINDOW ', 'WITH ',];
     // extra names for backward compatibility
-    const POSTGRES_RESERVED_NAMES_EXTRA = ['USER'];
+    const array POSTGRES_RESERVED_NAMES_EXTRA = ['USER'];
 
     // Based on MySQL version 8
-    const MYSQL_RESERVED_NAMES = ['ACCESSIBLE', 'ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASC', 'ASENSITIVE', 'BEFORE', 'BETWEEN', 'BIGINT', 'BINARY', 'BLOB', 'BOTH', 'BY', 'CALL', 'CASCADE', 'CASE', 'CHANGE', 'CHAR', 'CHARACTER', 'CHECK', 'COLLATE', 'COLUMN', 'CONDITION', 'CONSTRAINT', 'CONTINUE', 'CONVERT', 'CREATE', 'CROSS', 'CUME_DIST', 'CURRENT_DATE', 'CURRENT_TIME', 'CURRENT_TIMESTAMP', 'CURRENT_USER', 'CURSOR', 'DATABASE', 'DATABASES', 'DAY_HOUR', 'DAY_MICROSECOND', 'DAY_MINUTE', 'DAY_SECOND', 'DEC', 'DECIMAL', 'DECLARE', 'DEFAULT', 'DELAYED', 'DELETE', 'DENSE_RANK', 'DESC', 'DESCRIBE', 'DETERMINISTIC', 'DISTINCT', 'DISTINCTROW', 'DIV', 'DOUBLE', 'DROP', 'DUAL', 'EACH', 'ELSE', 'ELSEIF', 'EMPTY', 'ENCLOSED', 'ESCAPED', 'EXCEPT', 'EXCEPT', 'EXISTS', 'EXIT', 'EXPLAIN', 'FALSE', 'FETCH', 'FIRST_VALUE', 'FLOAT', 'FLOAT4', 'FLOAT8', 'FOR', 'FORCE', 'FOREIGN', 'FROM', 'FULLTEXT', 'GENERATED', 'GET', 'GRANT', 'GROUP', 'GROUPING', 'GROUPS', 'HAVING', 'HIGH_PRIORITY', 'HOUR_MICROSECOND', 'HOUR_MINUTE', 'HOUR_SECOND', 'IF', 'IGNORE', 'IN', 'INDEX', 'INFILE', 'INNER', 'INOUT', 'INSENSITIVE', 'INSERT', 'INT', 'INT1', 'INT2', 'INT3', 'INT4', 'INT8', 'INTEGER', 'INTERVAL', 'INTO', 'IO_AFTER_GTIDS', 'IO_BEFORE_GTIDS', 'IS', 'ITERATE', 'JOIN', 'JSON_TABLE', 'KEY', 'KEYS', 'KILL', 'LAG', 'LAST_VALUE', 'LATERAL', 'LEAD', 'LEADING', 'LEAVE', 'LEFT', 'LIKE', 'LIMIT', 'LINEAR', 'LINES', 'LOAD', 'LOCALTIME', 'LOCALTIMESTAMP', 'LOCK', 'LONG', 'LONGBLOB', 'LONGTEXT', 'LOOP', 'LOW_PRIORITY', 'MASTER_BIND', 'MASTER_SSL_VERIFY_SERVER_CERT', 'MATCH', 'MAXVALUE', 'MEDIUMBLOB', 'MEDIUMINT', 'MEDIUMTEXT', 'MIDDLEINT', 'MINUTE_MICROSECOND', 'MINUTE_SECOND', 'MOD', 'MODIFIES', 'NATURAL', 'NO_WRITE_TO_BINLOG', 'NOT', 'NTH_VALUE', 'NTILE', 'NULL', 'NUMERIC', 'OF', 'ON', 'OPTIMIZE', 'OPTIMIZER_COSTS', 'OPTION', 'OPTIONALLY', 'OR', 'ORDER', 'OUT', 'OUTER', 'OUTFILE', 'OVER', 'PARTITION', 'PERCENT_RANK', 'PRECISION', 'PRIMARY', 'PROCEDURE', 'PURGE', 'RANGE', 'RANK', 'READ', 'READ_WRITE', 'READS', 'REAL', 'RECURSIVE', 'REFERENCES', 'REGEXP', 'RELEASE', 'RENAME', 'REPEAT', 'REPLACE', 'REQUIRE', 'RESIGNAL', 'RESTRICT', 'RETURN', 'REVOKE', 'RIGHT', 'RLIKE', 'ROW_NUMBER', 'SCHEMA', 'SCHEMAS', 'SECOND_MICROSECOND', 'SELECT', 'SENSITIVE', 'SEPARATOR', 'SET', 'SHOW', 'SIGNAL', 'SMALLINT', 'SPATIAL', 'SPECIFIC', 'SQL', 'SQL_BIG_RESULT', 'SQL_CALC_FOUND_ROWS', 'SQL_SMALL_RESULT', 'SQLEXCEPTION', 'SQLSTATE', 'SQLWARNING', 'SSL', 'STARTING', 'STORED', 'STRAIGHT_JOIN', 'SYSTEM', 'TABLE', 'TERMINATED', 'THEN', 'TINYBLOB', 'TINYINT', 'TINYTEXT', 'TO', 'TRAILING', 'TRIGGER', 'TRUE', 'UNDO', 'UNION', 'UNIQUE', 'UNLOCK', 'UNSIGNED', 'UPDATE', 'USAGE', 'USE', 'USING', 'UTC_DATE', 'UTC_TIME', 'UTC_TIMESTAMP', 'VALUES', 'VARBINARY', 'VARCHAR', 'VARCHARACTER', 'VARYING', 'VIRTUAL', 'WHEN', 'WHERE', 'WHILE', 'WINDOW', 'WITH', 'WRITE', 'XOR', 'YEAR_MONTH', 'ZEROFILL'];
+    const array MYSQL_RESERVED_NAMES = ['ACCESSIBLE', 'ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASC', 'ASENSITIVE', 'BEFORE', 'BETWEEN', 'BIGINT', 'BINARY', 'BLOB', 'BOTH', 'BY', 'CALL', 'CASCADE', 'CASE', 'CHANGE', 'CHAR', 'CHARACTER', 'CHECK', 'COLLATE', 'COLUMN', 'CONDITION', 'CONSTRAINT', 'CONTINUE', 'CONVERT', 'CREATE', 'CROSS', 'CUME_DIST', 'CURRENT_DATE', 'CURRENT_TIME', 'CURRENT_TIMESTAMP', 'CURRENT_USER', 'CURSOR', 'DATABASE', 'DATABASES', 'DAY_HOUR', 'DAY_MICROSECOND', 'DAY_MINUTE', 'DAY_SECOND', 'DEC', 'DECIMAL', 'DECLARE', 'DEFAULT', 'DELAYED', 'DELETE', 'DENSE_RANK', 'DESC', 'DESCRIBE', 'DETERMINISTIC', 'DISTINCT', 'DISTINCTROW', 'DIV', 'DOUBLE', 'DROP', 'DUAL', 'EACH', 'ELSE', 'ELSEIF', 'EMPTY', 'ENCLOSED', 'ESCAPED', 'EXCEPT', 'EXCEPT', 'EXISTS', 'EXIT', 'EXPLAIN', 'FALSE', 'FETCH', 'FIRST_VALUE', 'FLOAT', 'FLOAT4', 'FLOAT8', 'FOR', 'FORCE', 'FOREIGN', 'FROM', 'FULLTEXT', 'GENERATED', 'GET', 'GRANT', 'GROUP', 'GROUPING', 'GROUPS', 'HAVING', 'HIGH_PRIORITY', 'HOUR_MICROSECOND', 'HOUR_MINUTE', 'HOUR_SECOND', 'IF', 'IGNORE', 'IN', 'INDEX', 'INFILE', 'INNER', 'INOUT', 'INSENSITIVE', 'INSERT', 'INT', 'INT1', 'INT2', 'INT3', 'INT4', 'INT8', 'INTEGER', 'INTERVAL', 'INTO', 'IO_AFTER_GTIDS', 'IO_BEFORE_GTIDS', 'IS', 'ITERATE', 'JOIN', 'JSON_TABLE', 'KEY', 'KEYS', 'KILL', 'LAG', 'LAST_VALUE', 'LATERAL', 'LEAD', 'LEADING', 'LEAVE', 'LEFT', 'LIKE', 'LIMIT', 'LINEAR', 'LINES', 'LOAD', 'LOCALTIME', 'LOCALTIMESTAMP', 'LOCK', 'LONG', 'LONGBLOB', 'LONGTEXT', 'LOOP', 'LOW_PRIORITY', 'MASTER_BIND', 'MASTER_SSL_VERIFY_SERVER_CERT', 'MATCH', 'MAXVALUE', 'MEDIUMBLOB', 'MEDIUMINT', 'MEDIUMTEXT', 'MIDDLEINT', 'MINUTE_MICROSECOND', 'MINUTE_SECOND', 'MOD', 'MODIFIES', 'NATURAL', 'NO_WRITE_TO_BINLOG', 'NOT', 'NTH_VALUE', 'NTILE', 'NULL', 'NUMERIC', 'OF', 'ON', 'OPTIMIZE', 'OPTIMIZER_COSTS', 'OPTION', 'OPTIONALLY', 'OR', 'ORDER', 'OUT', 'OUTER', 'OUTFILE', 'OVER', 'PARTITION', 'PERCENT_RANK', 'PRECISION', 'PRIMARY', 'PROCEDURE', 'PURGE', 'RANGE', 'RANK', 'READ', 'READ_WRITE', 'READS', 'REAL', 'RECURSIVE', 'REFERENCES', 'REGEXP', 'RELEASE', 'RENAME', 'REPEAT', 'REPLACE', 'REQUIRE', 'RESIGNAL', 'RESTRICT', 'RETURN', 'REVOKE', 'RIGHT', 'RLIKE', 'ROW_NUMBER', 'SCHEMA', 'SCHEMAS', 'SECOND_MICROSECOND', 'SELECT', 'SENSITIVE', 'SEPARATOR', 'SET', 'SHOW', 'SIGNAL', 'SMALLINT', 'SPATIAL', 'SPECIFIC', 'SQL', 'SQL_BIG_RESULT', 'SQL_CALC_FOUND_ROWS', 'SQL_SMALL_RESULT', 'SQLEXCEPTION', 'SQLSTATE', 'SQLWARNING', 'SSL', 'STARTING', 'STORED', 'STRAIGHT_JOIN', 'SYSTEM', 'TABLE', 'TERMINATED', 'THEN', 'TINYBLOB', 'TINYINT', 'TINYTEXT', 'TO', 'TRAILING', 'TRIGGER', 'TRUE', 'UNDO', 'UNION', 'UNIQUE', 'UNLOCK', 'UNSIGNED', 'UPDATE', 'USAGE', 'USE', 'USING', 'UTC_DATE', 'UTC_TIME', 'UTC_TIMESTAMP', 'VALUES', 'VARBINARY', 'VARCHAR', 'VARCHARACTER', 'VARYING', 'VIRTUAL', 'WHEN', 'WHERE', 'WHILE', 'WINDOW', 'WITH', 'WRITE', 'XOR', 'YEAR_MONTH', 'ZEROFILL'];
     // extra names for backward compatibility
-    const MYSQL_RESERVED_NAMES_EXTRA = ['VALUE', 'VALUES', 'URL'];
+    const array MYSQL_RESERVED_NAMES_EXTRA = ['VALUE', 'VALUES', 'URL'];
 
     // setup header and footer
-    const SETUP_HEADER = 'ALTER DATABASE zukunft SET search_path TO public;';
-    const SETUP_HEADER_MYSQL = 'SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO"; SET time_zone = "+00:00"; /*!40101 SET @OLD_CHARACTER_SET_CLIENT = @@CHARACTER_SET_CLIENT */; /*!40101 SET @OLD_CHARACTER_SET_RESULTS = @@CHARACTER_SET_RESULTS */; /*!40101 SET @OLD_COLLATION_CONNECTION = @@COLLATION_CONNECTION */; /*!40101 SET NAMES utf8 */; -- Database:`zukunft` ';
+    const string SETUP_HEADER = 'ALTER DATABASE zukunft SET search_path TO public;';
+    const string SETUP_HEADER_MYSQL = 'SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO"; SET time_zone = "+00:00"; /*!40101 SET @OLD_CHARACTER_SET_CLIENT = @@CHARACTER_SET_CLIENT */; /*!40101 SET @OLD_CHARACTER_SET_RESULTS = @@CHARACTER_SET_RESULTS */; /*!40101 SET @OLD_COLLATION_CONNECTION = @@COLLATION_CONNECTION */; /*!40101 SET NAMES utf8 */; -- Database:`zukunft` ';
 
-    const SETUP_FOOTER = '';
-    const SETUP_FOOTER_MYSQL = '/*!40101 SET CHARACTER_SET_CLIENT = @OLD_CHARACTER_SET_CLIENT */; /*!40101 SET CHARACTER_SET_RESULTS = @OLD_CHARACTER_SET_RESULTS */; /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;';
-    const SETUP_COMMENT = '--';
-    const SETUP_INDEX = 'indexes for tables';
-    const SETUP_INDEX_COM = 'remark: no index needed for preloaded tables such as phrase types';
-    const SETUP_FOREIGN_KEY = 'foreign key constraints and auto_increment for tables';
+    const string SETUP_FOOTER = '';
+    const string SETUP_FOOTER_MYSQL = '/*!40101 SET CHARACTER_SET_CLIENT = @OLD_CHARACTER_SET_CLIENT */; /*!40101 SET CHARACTER_SET_RESULTS = @OLD_CHARACTER_SET_RESULTS */; /*!40101 SET COLLATION_CONNECTION = @OLD_COLLATION_CONNECTION */;';
+    const string SETUP_COMMENT = '--';
+    const string SETUP_INDEX = 'indexes for tables';
+    const string SETUP_INDEX_COM = 'remark: no index needed for preloaded tables such as phrase types';
+    const string SETUP_FOREIGN_KEY = 'foreign key constraints and auto_increment for tables';
 
     // db field names that are used in many classes
-    const FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
-    const FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
-    const FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
-    const FLD_DESCRIPTION = 'description';
-    const FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
-    const FLD_CODE_ID = 'code_id';     // field name for the code link e.g. for words used for the system configuration
-    const FLD_CODE_ID_SQL_TYP = sql_field_type::CODE_ID;
-    const FLD_VALUE = 'value';         // field name e.g. for the configuration value
-    const FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
-    const FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const
+    const string FLD_EXCLUDED = 'excluded';    // field name used to delete the object only for one user
+    const string FLD_EXCLUDED_COM = 'true if a user, but not all, have removed it';
+    const sql_field_type FLD_EXCLUDED_SQL_TYP = sql_field_type::BOOL;
+    const string FLD_DESCRIPTION = 'description';
+    const string FLD_DESCRIPTION_COM = 'the user specific description for mouse over helps';
+    const sql_field_type FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
+    const string FLD_CODE_ID = 'code_id';     // field name for the code link e.g. for words used for the system configuration
+    const sql_field_type FLD_CODE_ID_SQL_TYP = sql_field_type::CODE_ID;
+    const string FLD_VALUE = 'value';         // field name e.g. for the configuration value
+    const string FLD_TYPE_NAME = 'type_name'; // field name for the user specific name of a type; types are used to assign code to a db row
+    const string FLD_CONST = 'const'; // for the view creation to indicate that the field name as a const
 
     // classes that have a database table in order of suggested table creation so that depending on tables are created later
-    const DB_TABLE_CLASSES = [
+    const array DB_TABLE_CLASSES = [
         config::class,
         sys_log_type::class,
         sys_log_status::class,
@@ -448,7 +450,7 @@ class sql_db
 
     // classes that have a database table in order of least depending first to avoid the usage of CASCADE on truncate
     // array with true for the table with user overwrites
-    const DB_TABLE_CLASSES_DESC_DEPENDING = [
+    const array DB_TABLE_CLASSES_DESC_DEPENDING = [
         [value::class, true],
         value::class,
         result::class,
@@ -503,13 +505,13 @@ class sql_db
     ];
 
     // classes that use a database view
-    const DB_VIEW_CLASSES = [
+    const array DB_VIEW_CLASSES = [
         phrase::class,
         term::class,
         change_table_field::class
     ];
     // classes that does not have a series id
-    const DB_TABLE_WITHOUT_AUTO_ID = [
+    const array DB_TABLE_WITHOUT_AUTO_ID = [
         value_ts_data::class,
         value::class,
         result::class,
@@ -521,7 +523,7 @@ class sql_db
     ];
 
     // classes which use by default the "with log" function for saving data
-    const CLASSES_THAT_USE_SQL_FUNC = [
+    const array CLASSES_THAT_USE_SQL_FUNC = [
         word::class,
         triple::class,
         source::class,
@@ -540,7 +542,7 @@ class sql_db
     ];
 
     // classes that use the prepared sql write statement
-    const DB_WRITE_PREPARED = [
+    const array DB_WRITE_PREPARED = [
         word::class,
         triple::class,
         source::class,
@@ -558,7 +560,7 @@ class sql_db
     // e.g. sql_db::TBL_TRIPLE is a link which hase a name, but the generated name can be overwritten, so the standard field naming is not used
     // TODO use class
     // TODO switch the the sql const
-    const DB_TYPES_NOT_NAMED = [
+    const array DB_TYPES_NOT_NAMED = [
         triple::class,
         value::class,
         value_time::class,
@@ -584,14 +586,14 @@ class sql_db
         job::class,
         sql_db::VT_PHRASE_GROUP_LINK
     ];
-    const CLASSES_WITH_USER_CHANGES = [
+    const array CLASSES_WITH_USER_CHANGES = [
         word::class,
         triple::class
     ];
 
     // tables that link two named tables
     // TODO set automatically by set_link_fields???
-    const DB_TYPES_LINK = [
+    const array DB_TYPES_LINK = [
         triple::class,
         formula_link::class,
         component_link::class,
@@ -600,34 +602,34 @@ class sql_db
 
 
     // open used name extension for the prepared sql statements
-    const FLD_ID = 'id';                          // used also to name the sql statements
-    const FLD_NAME = 'name';                      // used      to name the sql statements
-    const FLD_SEP = '_';                          // the separator for the SQL field name parts
-    const FLD_EXT_ID = '_id';
-    const FLD_EXT_NAME = '_name';
-    const FLD_EXT_TYPE_ID = '_type_id';
+    const string FLD_ID = 'id';                          // used also to name the sql statements
+    const string FLD_NAME = 'name';                      // used      to name the sql statements
+    const string FLD_SEP = '_';                          // the separator for the SQL field name parts
+    const string FLD_EXT_ID = '_id';
+    const string FLD_EXT_NAME = '_name';
+    const string FLD_EXT_TYPE_ID = '_type_id';
 
-    const USER_PREFIX = 'user_';                  // prefix used for tables where the user sandbox values are stored
+    const string USER_PREFIX = 'user_';                  // prefix used for tables where the user sandbox values are stored
 
-    const STD_TBL = 's';                          // prefix used for the standard table where data for all users are stored
-    const USR_TBL = 'u';                          // prefix used for the standard table where the user sandbox data is stored
-    const LNK_TBL = 'l';                          // prefix used for the table which should be joined in the result
-    const LNK2_TBL = 'l2';                        // prefix used for the second table which should be joined in the result
-    const LNK3_TBL = 'l3';                        // prefix used for the third table which should be joined in the result
-    const LNK4_TBL = 'l4';                        // prefix used for the fourth table which should be joined in the result
-    const ULK_TBL = 'ul';                         // prefix used for the table which should be joined in the result of the user sandbox data
-    const ULK2_TBL = 'ul2';                       // prefix used for the second user table which should be joined in the result
-    const ULK3_TBL = 'ul3';                       // prefix used for the third user table which should be joined in the result
-    const ULK4_TBL = 'ul4';                       // prefix used for the fourth user table which should be joined in the result
-    const GRP_TBL = 'g';                          // prefix used for the standard table where data for all users are stored
+    const string STD_TBL = 's';                          // prefix used for the standard table where data for all users are stored
+    const string USR_TBL = 'u';                          // prefix used for the standard table where the user sandbox data is stored
+    const string LNK_TBL = 'l';                          // prefix used for the table which should be joined in the result
+    const string LNK2_TBL = 'l2';                        // prefix used for the second table which should be joined in the result
+    const string LNK3_TBL = 'l3';                        // prefix used for the third table which should be joined in the result
+    const string LNK4_TBL = 'l4';                        // prefix used for the fourth table which should be joined in the result
+    const string ULK_TBL = 'ul';                         // prefix used for the table which should be joined in the result of the user sandbox data
+    const string ULK2_TBL = 'ul2';                       // prefix used for the second user table which should be joined in the result
+    const string ULK3_TBL = 'ul3';                       // prefix used for the third user table which should be joined in the result
+    const string ULK4_TBL = 'ul4';                       // prefix used for the fourth user table which should be joined in the result
+    const string GRP_TBL = 'g';                          // prefix used for the standard table where data for all users are stored
 
     // formats to force the formatting of a value for an SQL statement e.g. convert true to 1 when using tinyint to save boolean values
-    const FLD_FORMAT_TEXT = 'text';               // to force the text formatting of a value for the SQL statement formatting
-    const FLD_FORMAT_VAL = 'number';              // to force the numeric formatting of a value for the SQL statement formatting
-    const FLD_FORMAT_GEO = 'geo';                 // to force the geo point formatting of a value for the SQL statement formatting
-    const FLD_FORMAT_BOOL = 'boolean';            // to force the boolean formatting of a value for the SQL statement formatting
+    const string FLD_FORMAT_TEXT = 'text';               // to force the text formatting of a value for the SQL statement formatting
+    const string FLD_FORMAT_VAL = 'number';              // to force the numeric formatting of a value for the SQL statement formatting
+    const string FLD_FORMAT_GEO = 'geo';                 // to force the geo point formatting of a value for the SQL statement formatting
+    const string FLD_FORMAT_BOOL = 'boolean';            // to force the boolean formatting of a value for the SQL statement formatting
 
-    const VAL_BOOL_TRUE = '1';
+    const string VAL_BOOL_TRUE = '1';
 
     /*
      * object variables
@@ -1588,15 +1590,16 @@ class sql_db
     {
         global $usr;
 
+        $lib = new library();
         $this->reset();
         $this->class = $class;
         if ($usr == null) {
             $this->set_usr(users::SYSTEM_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
-            if ($usr->id() == null) {
+            if ($usr->id == null) {
                 $this->set_usr(0); // fallback for special cases
             } else {
-                $this->set_usr($usr->id()); // by default use the session user id
+                $this->set_usr($usr->id); // by default use the session user id
             }
         }
         $this->set_table($usr_table, $ext);
@@ -2960,7 +2963,7 @@ class sql_db
                 $function_trace = (new Exception)->getTraceAsString();
                 // set the global db connection to be able to report error also on db restart
                 $usr = new user();
-                $usr->set_id($this->usr_id);
+                $usr->id = $this->usr_id;
                 $msg = log_msg($msg_text, $msg_text . ' from ' . $sql_name, $log_level, $sql_name, $function_trace, $usr);
                 throw new Exception("sql_db->exe -> error (" . $msg . ")");
             }
@@ -3275,7 +3278,7 @@ class sql_db
     /**
      * returns the id field of a standard table
      * which means that the table name ends with 's', the name field is the table name plus '_name' and prim index ends with '_id'
-     * $name is the unique text that identifies one row e.g. for the $name "Company" the word id "1" is returned
+     * $name is the unique text that identifies one row e.g. for the $name "company" the word id "1" is returned
      */
     function get_id($name): string
     {
@@ -4358,7 +4361,7 @@ class sql_db
     function missing_owner_sql(): sql_par
     {
         $qp = new sql_par('missing_owner');
-        $qp->name .= $this->class;
+        $qp->name .= $this->table;
         $this->set_name($qp->name);
         $this->set_usr($this->usr_id);
         $this->set_id_field();
@@ -4394,12 +4397,12 @@ class sql_db
         $sys_usr = new user();
         $sys_usr->load_by_name(users::SYSTEM_NAME);
 
-        if ($sys_usr->id() <= 0) {
+        if ($sys_usr->id <= 0) {
             log_err('Cannot load system used in set_default_owner');
             $result = false;
         } else {
             $sql = "UPDATE " . $this->name_sql_esc($this->table) . "
-               SET user_id = " . $sys_usr->id() . "
+               SET user_id = " . $sys_usr->id . "
              WHERE user_id IS NULL;";
 
             //return $this->exe($sql, 'user_default', array());
@@ -5804,7 +5807,7 @@ class sql_db
         $usr = new user;
         $usr->load_by_id(users::SYSTEM_ID);
 
-        if ($usr->id() <= 0) {
+        if ($usr->id <= 0) {
 
             // check if there is really no user in the database with a system profile
             $check_usr = new user();
@@ -5907,7 +5910,7 @@ class sql_db
             foreach (config_numbers::HIDDEN_KEY_TRIPLES as $trp_lst) {
                 $from_name = $trp_lst[0];
                 $to_name = $trp_lst[1];
-                $vrb = $vrb_cac->get_verb(verbs::CAN_USE);
+                $vrb = $vrb_cac->get_verb(verbs::AND);
                 $trp = new triple($usr);
                 $from = new phrase($usr);
                 $from->load_by_name($from_name);
@@ -5953,7 +5956,7 @@ class sql_db
 
         if ($usr->is_admin() or $usr->is_system()) {
             $imf = new import_file();
-            $import_result = $imf->json_file(files::SYSTEM_VIEWS, $usr);
+            $import_result = $imf->json_file(files_shared::SYSTEM_VIEWS, $usr);
             if (str_starts_with($import_result->get_last_message(), ' done ')) {
                 $result = true;
             }

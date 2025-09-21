@@ -32,12 +32,12 @@
   
 */
 
-namespace html\ref;
+namespace Zukunft\ZukunftCom\main\php\web\ref;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-include_once paths::SHARED . 'json_fields.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::USER . 'user_message.php';
@@ -45,15 +45,17 @@ include_once html_paths::WORD . 'word.php';
 include_once html_paths::REF . 'source.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
 
-use html\sandbox\db_object as db_object_dsp;
-use html\phrase\phrase as phrase_dsp;
-use html\user\user_message;
-use html\word\word as word_dsp;
-use html\ref\source as source_dsp;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class ref extends db_object_dsp
 {
@@ -154,6 +156,11 @@ class ref extends db_object_dsp
         return $usr_msg;
     }
 
+    function name(): string
+    {
+        return $this->source_name() . ' ' . $this->external_key();
+    }
+
     function set_phrase(phrase_dsp $phr = null): void
     {
         $this->phr = $phr;
@@ -172,6 +179,11 @@ class ref extends db_object_dsp
     function source(): ?source
     {
         return $this->source;
+    }
+
+    function source_name(): ?string
+    {
+        return $this->source?->name();
     }
 
     /**
@@ -277,14 +289,18 @@ class ref extends db_object_dsp
      * select
      */
 
-    public function ref_type_selector(string $form_name): string
+    /**
+     * @param string $form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @return string
+     */
+    public function ref_type_selector(string $form, ?type_lists $typ_lst): string
     {
-        global $html_ref_types;
         $used_ref_type_id = $this->predicate_id();
         if ($used_ref_type_id == null) {
-            $used_ref_type_id = $html_ref_types->default_id();
+            $used_ref_type_id = $typ_lst->html_ref_types->default_id();
         }
-        return $html_ref_types->selector($form_name, $used_ref_type_id);
+        return $typ_lst->html_ref_types->selector($form, $used_ref_type_id);
     }
 
 }

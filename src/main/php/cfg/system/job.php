@@ -69,9 +69,9 @@ A user updates a formula
 
 */
 
-namespace cfg\system;
+namespace Zukunft\ZukunftCom\main\php\cfg\system;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
 include_once paths::DB . 'sql.php';
@@ -101,32 +101,32 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\helper\db_object_seq_id_user;
-use cfg\formula\formula;
-use cfg\helper\type_object;
-use cfg\ref\ref_db;
-use cfg\ref\source;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\ref\ref;
-use cfg\ref\source_db;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id_user;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_db;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use DateTime;
 use DateTimeInterface;
-use shared\enum\messages as msg_id;
-use shared\types\api_type_list;
-use shared\json_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class job extends db_object_seq_id_user
 {
@@ -332,7 +332,7 @@ class job extends db_object_seq_id_user
         $sc->set_class(job::class);
 
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(self::FLD_NAMES);
 
         return $qp;
@@ -452,14 +452,14 @@ class job extends db_object_seq_id_user
                     //$db_con = New mysql;
                     $db_type = $db_con->get_class();
                     $db_con->set_class(job::class);
-                    $db_con->set_usr($this->user()->id());
+                    $db_con->set_usr($this->user()->id);
                     $job_id = $db_con->insert_old(array(user_db::FLD_ID, self::FLD_TIME_REQUEST, self::FLD_TYPE, self::FLD_ROW),
-                        array($this->user()->id(), sql::NOW, $this->type_id(), $this->row_id));
+                        array($this->user()->id, sql::NOW, $this->type_id(), $this->row_id));
                     $this->request_time = new DateTime();
 
                     // execute the job if possible
                     if ($job_id > 0 and $code_id != job_type_list::BASE_IMPORT) {
-                        $this->set_id($job_id);
+                        $this->id = $job_id;
                         $this->exe();
                         $result = $job_id;
                     }
@@ -498,7 +498,7 @@ class job extends db_object_seq_id_user
         //$db_con = New mysql;
         $db_type = $db_con->get_class();
         $db_con->set_class(job::class);
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         $result = $db_con->update_old($this->id(), 'end_time', sql::NOW);
         $db_con->set_class($db_type);
 
@@ -513,7 +513,7 @@ class job extends db_object_seq_id_user
         global $db_con;
         //$db_con = New mysql;
         $db_type = $db_con->get_class();
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         $db_con->set_class(job::class);
         $result = $db_con->update_old($this->id(), 'start_time', sql::NOW);
 

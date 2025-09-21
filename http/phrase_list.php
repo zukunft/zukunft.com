@@ -35,21 +35,19 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED_CONST . 'views.php';
-
-use cfg\phrase\term;
-use cfg\user\user;
-use cfg\view\view;
-use cfg\word\triple;
-use cfg\word\word;
-use html\html_base;
-use html\view\view as view_dsp;
-use html\word\word as word_dsp;
-use shared\api;
-use shared\const\views;
-use shared\const\views as view_shared;
 
 /* open database */
 $db_con = prg_start("phrase_list");
@@ -72,7 +70,7 @@ if ($usr->id() > 0) {
     $msk_db = new view($usr);
     $msk_db->load_by_code_id(view_shared::WORD_ADD);
     $msk = new view_dsp($msk_db->api_json());
-    $back = $_GET[api::URL_VAR_BACK] = ''; // the calling page which should be displayed after saving
+    $back = $_GET[url_var::BACK] = ''; // the calling page which should be displayed after saving
 
     // create the word object to have a place to update the parameters
     $wrd = new word($usr);
@@ -162,9 +160,9 @@ if ($usr->id() > 0) {
                 // ... and link it to an existing word
                 log_debug('word ' . $wrd->id() . ' linked via ' . $vrb_id . ' to ' . $phr_to . ': ' . $add_result);
                 $lnk = new triple($usr);
-                $lnk->from()->set_id($wrd->id());
+                $lnk->from()->id = $wrd->id();
                 $lnk->set_verb_id($vrb_id);
-                $lnk->to()->set_id($phr_to);
+                $lnk->to()->id = $phr_to;
                 $add_result .= $lnk->save()->get_last_message();
             }
 

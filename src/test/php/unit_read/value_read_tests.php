@@ -30,26 +30,21 @@
 
 */
 
-namespace unit_read;
+namespace Zukunft\ZukunftCom\test\php\unit_read;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_CONST . 'triples.php';
 
-use cfg\db\sql;
-use cfg\db\sql_type;
-use cfg\group\group_id;
-use cfg\log\change_values_norm;
-use cfg\phrase\phrase_list;
-use cfg\user\user;
-use cfg\value\value;
-use shared\const\groups;
-use shared\const\triples;
-use shared\const\values;
-use shared\const\words;
-use shared\enum\change_fields;
-use shared\types\phrase_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class value_read_tests
 {

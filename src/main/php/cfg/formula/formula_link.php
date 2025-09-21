@@ -41,9 +41,9 @@
   
 */
 
-namespace cfg\formula;
+namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
@@ -71,29 +71,29 @@ include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\helper\combine_named;
-use cfg\helper\type_object;
-use cfg\log\change;
-use cfg\phrase\phrase;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_link;
-use cfg\sandbox\sandbox_named;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
-use shared\enum\change_actions;
-use shared\enum\change_tables;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class formula_link extends sandbox_link
 {
@@ -218,7 +218,7 @@ class formula_link extends sandbox_link
         $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, self::FLD_ID);
         if ($result) {
             // TODO load by if from cache?
-            $this->formula()->set_id($db_row[formula_db::FLD_ID]);
+            $this->formula()->id = $db_row[formula_db::FLD_ID];
             $this->phrase()->set_id($db_row[phrase::FLD_ID]);
             $this->predicate_id = $db_row[formula_link_type::FLD_ID];
             $this->order_nbr = $db_row[formula_link::FLD_ORDER];
@@ -243,7 +243,7 @@ class formula_link extends sandbox_link
      */
     function set(int $id, formula $frm, phrase $phr): void
     {
-        $this->set_id($id);
+        $this->id = $id;
         $this->set_formula($frm);
         $this->set_phrase($phr);
     }
@@ -365,7 +365,7 @@ class formula_link extends sandbox_link
 
         $sc->set_class($class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(self::FLD_NAMES_LINK);
         $sc->set_usr_num_fields(self::FLD_NAMES_NUM_USR);
 
@@ -400,7 +400,7 @@ class formula_link extends sandbox_link
         $qp = new sql_par($this::class, new sql_type_list([sql_type::NORM]));
         $qp->name .= $this->load_sql_name_extension();
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(self::FLD_NAMES);
         if ($this->id() != 0) {
             $sc->add_where($this->id_field(), $this->id());
@@ -541,7 +541,7 @@ class formula_link extends sandbox_link
         global $db_con;
         $result = true;
         $qp = $this->not_changed_sql($db_con->sql_creator());
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         $db_row = $db_con->get1($qp);
         if ($db_row != null) {
             if ($db_row[user_db::FLD_ID] > 0) {
@@ -596,7 +596,7 @@ class formula_link extends sandbox_link
         $db_con->set_class(self::class);
         return $db_con->insert_old(
             array($this->from_name . sql_db::FLD_EXT_ID, $this->to_name . sql_db::FLD_EXT_ID, user_db::FLD_ID, 'order_nbr'),
-            array($this->formula_id(), $this->phrase_id(), $this->user()->id(), $this->order_nbr));
+            array($this->formula_id(), $this->phrase_id(), $this->user()->id, $this->order_nbr));
     }
 
     /**
@@ -628,7 +628,7 @@ class formula_link extends sandbox_link
         $this->load_objects();
 
         // build the database object because the is anyway needed
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_class(formula_link::class);
 
         // check if a new value is supposed to be added
@@ -640,7 +640,7 @@ class formula_link extends sandbox_link
             $db_chk->set_phrase($this->phrase());
             $db_chk->load_standard();
             if ($db_chk->id() > 0) {
-                $this->set_id($db_chk->id());
+                $this->id = $db_chk->id();
             }
         }
 
@@ -665,7 +665,7 @@ class formula_link extends sandbox_link
             }
             log_debug("database formula loaded (" . $db_rec->id() . ")");
             $std_rec = new formula_link($this->user()); // must also be set to allow to take the ownership
-            $std_rec->set_id($this->id());
+            $std_rec->id = $this->id();
             $std_rec->load_standard();
             log_debug("standard formula settings loaded (" . $std_rec->id() . ")");
 

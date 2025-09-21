@@ -68,10 +68,10 @@
 
 */
 
-namespace cfg\sandbox;
+namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
 //include_once paths::MODEL_COMPONENT . 'component.php';
@@ -118,6 +118,7 @@ include_once paths::MODEL_USER . 'user_message.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED_TYPES . 'share_type.php';
@@ -125,58 +126,58 @@ include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\component\component_link_type;
-use cfg\const\def;
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\formula\formula;
-use cfg\formula\formula_db;
-use cfg\formula\formula_link;
-use cfg\formula\formula_link_type;
-use cfg\helper\combine_named;
-use cfg\helper\data_object;
-use cfg\helper\db_object_seq_id;
-use cfg\helper\db_object_seq_id_user;
-use cfg\helper\type_object;
-use cfg\log\change;
-use cfg\log\change_action;
-use cfg\log\change_link;
-use cfg\log\change_log;
-use cfg\log\change_table;
-use cfg\phrase\phrase;
-use cfg\ref\ref;
-use cfg\ref\source;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_list;
-use cfg\user\user_message;
-use cfg\verb\verb;
-use cfg\verb\verb_db;
-use cfg\view\view;
-use cfg\view\term_view;
-use cfg\word\triple;
-use cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id_user;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
 use Exception;
-use shared\enum\change_actions;
-use shared\enum\messages;
-use shared\enum\messages as msg_id;
-use shared\helper\CombineObject;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\types\protection_type as protect_type_shared;
-use shared\types\share_type as share_type_shared;
 
 class sandbox extends db_object_seq_id_user
 {
@@ -231,7 +232,7 @@ class sandbox extends db_object_seq_id_user
 
     // list of all user sandbox database types with a sequence ID
     // so exclude values and result TODO check missing owner for values and results
-    const DB_TYPES = array(
+    const array DB_TYPES = array(
         word::class,
         triple::class,
         source::class,
@@ -772,11 +773,12 @@ class sandbox extends db_object_seq_id_user
      * check if a database relevant var of the object differs from the given reference sandbox object
      * is expected to be similar to the diff_msg function
      *
-     * @param CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $db_obj which might be different to this sandbox object
+     * @param CombineObject|sandbox|IdObject $db_obj which might be different to this sandbox object
      * @return bool true if there is a difference
      */
-    function needs_db_update(CombineObject|sandbox|db_object_seq_id_user|db_object_seq_id $db_obj): bool
+    function needs_db_update(CombineObject|sandbox|IdObject $db_obj): bool
     {
+        //$result = parent::needs_db_update($db_obj);
         $result = false;
         if ($this->owner_id() != null and $this->owner_id() != $db_obj->owner_id()) {
             $result = true;
@@ -1056,7 +1058,7 @@ class sandbox extends db_object_seq_id_user
         $qp->name .= sql_db::FLD_ID;
 
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->add_where($this->id_field(), $this->id());
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
@@ -1079,7 +1081,7 @@ class sandbox extends db_object_seq_id_user
 
         $sc->set_class($sbx::class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields($sbx::FLD_NAMES);
         $sc->set_usr_fields($sbx::FLD_NAMES_USR);
         $sc->set_usr_num_fields($sbx::FLD_NAMES_NUM_USR);
@@ -1107,7 +1109,7 @@ class sandbox extends db_object_seq_id_user
     ): sql_par
     {
         $qp = parent::load_sql($sc, $query_name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields($fields);
         $sc->set_usr_fields($usr_fields);
         $sc->set_usr_num_fields($usr_num_fields);
@@ -1141,8 +1143,8 @@ class sandbox extends db_object_seq_id_user
             } else {
                 // take the ownership if it is not yet done. The ownership is probably missing due to an error in an older program version.
                 $db_con->set_class($this::class);
-                $db_con->set_usr($this->user()->id());
-                if ($db_con->update_old($this->id(), user_db::FLD_ID, $this->user()->id())) {
+                $db_con->set_usr($this->user()->id);
+                if ($db_con->update_old($this->id(), user_db::FLD_ID, $this->user()->id)) {
                     $result = true;
                 }
             }
@@ -1179,7 +1181,7 @@ class sandbox extends db_object_seq_id_user
         }
         $db_con->set_class($this::class, true);
         $db_con->set_name($qp->name);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $db_con->set_fields(array(user_db::FLD_ID));
         $qp->sql = $db_con->select_by_id_not_owner($this->id());
 
@@ -1207,8 +1209,8 @@ class sandbox extends db_object_seq_id_user
             if ($this->owner_id() > 0) {
                 $result = $this->owner_id();
             } else {
-                if ($this->user()->id() > 0) {
-                    $result = $this->user()->id();
+                if ($this->user()->id > 0) {
+                    $result = $this->user()->id;
                 }
             }
         }
@@ -1234,7 +1236,7 @@ class sandbox extends db_object_seq_id_user
             // create a user db row for the current owner
             // TODO activate Prio 3 $result .= $this->usr_cfg_create_all();
             // take over the ownership by an admin
-            $result = $this->set_owner($usr->id()); // TODO remove double getting of the user object
+            $result = $this->set_owner($usr->id); // TODO remove double getting of the user object
             // set the protection to avoid that the admin is losing the ownership
             // TODO activate Prio 3 $result .= $this->usr_cfg_cleanup();
         }
@@ -1260,12 +1262,12 @@ class sandbox extends db_object_seq_id_user
             // to recreate the calling object
             $std = clone $this;
             $std->reset();
-            $std->set_id($this->id());
+            $std->id = $this->id();
             $std->set_user($this->user());
             $std->load_standard();
 
             $db_con->set_class($this::class);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
             if (!$db_con->update_old($this->id(), user_db::FLD_ID, $new_owner_id)) {
                 $result = false;
             }
@@ -1332,7 +1334,7 @@ class sandbox extends db_object_seq_id_user
 
         $user_id = 0;
         $db_con->set_class($this::class);
-        $db_con->set_usr($this->user()->id());
+        $db_con->set_usr($this->user()->id);
         $qp = $this->load_sql_changer($db_con->sql_creator());
         $db_row = $db_con->get1($qp);
         if ($db_row) {
@@ -1358,7 +1360,7 @@ class sandbox extends db_object_seq_id_user
         }
         $sc->set_class($this::class, new sql_type_list([sql_type::USER]));
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(array(user_db::FLD_ID));
         $sc->add_where($this->id_field(), $this->id());
         if ($this->owner_id() > 0) {
@@ -1413,7 +1415,7 @@ class sandbox extends db_object_seq_id_user
         $class = $lib->class_to_name($this::class);
         $sc->set_class($class, new sql_type_list([sql_type::USER]));
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_join_fields(
             array_merge(array(user_db::FLD_ID, user_db::FLD_NAME), user_db::FLD_NAMES_LIST),
             user::class,
@@ -1437,12 +1439,12 @@ class sandbox extends db_object_seq_id_user
         $result = true;
         log_debug($this->id());
 
-        log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id());
-        if ($this->owner_id() == $this->user()->id() or $this->owner_id() <= 0) {
+        log_debug('owner is ' . $this->owner_id . ' and the change is requested by ' . $this->user()->id);
+        if ($this->owner_id() == $this->user()->id or $this->owner_id() <= 0) {
             $changer_id = $this->changer();
             // removed "OR $changer_id <= 0" because if no one has changed the object jet does not mean that it can be changed
-            log_debug('changer is ' . $changer_id . ' and the change is requested by ' . $this->user()->id());
-            if ($changer_id == $this->user()->id() or $changer_id <= 0) {
+            log_debug('changer is ' . $changer_id . ' and the change is requested by ' . $this->user()->id);
+            if ($changer_id == $this->user()->id or $changer_id <= 0) {
                 $result = false;
             }
         }
@@ -1464,8 +1466,8 @@ class sandbox extends db_object_seq_id_user
 
         // if the user who wants to change it, is the owner, he can do it
         // or if the owner is not set, he can do it (and the owner should be set, because every object should have an owner)
-        log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->user()->id());
-        if ($this->owner_id() == $this->user()->id() or $this->owner_id() <= 0) {
+        log_debug('owner is ' . $this->owner_id() . ' and the change is requested by ' . $this->user()->id);
+        if ($this->owner_id() == $this->user()->id or $this->owner_id() <= 0) {
             $can_change = true;
             if ($this->owner_id() <= 0) {
                 log_warning('owner for ' . $this::class . ' ' . $this->dsp_id() . ' has not been set');
@@ -1519,7 +1521,7 @@ class sandbox extends db_object_seq_id_user
             } else {
                 $msg = $db_con->delete_old(
                     array($this->id_field(), user_db::FLD_ID),
-                    array($this->id(), $this->user()->id()));
+                    array($this->id(), $this->user()->id));
             }
             if ($msg == '') {
                 $this->usr_cfg_id = null;
@@ -1549,7 +1551,7 @@ class sandbox extends db_object_seq_id_user
         if ($this->id() > 0 and $this->user()->id() > 0) {
             $log = $this->log_del();
             if ($log->id() > 0) {
-                $db_con->usr_id = $this->user()->id();
+                $db_con->usr_id = $this->user()->id;
                 $result = $this->del_usr_cfg_exe($db_con);
             }
 
@@ -1599,9 +1601,9 @@ class sandbox extends db_object_seq_id_user
                 } else {
                     // create an entry in the user sandbox
                     $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->user()->id());
+                    $db_con->set_usr($this->user()->id);
                     $log_id = $db_con->insert_old(
-                        array($this->id_field(), user_db::FLD_ID), array($this->id(), $this->user()->id()));
+                        array($this->id_field(), user_db::FLD_ID), array($this->id(), $this->user()->id));
                 }
                 if ($log_id <= 0) {
                     log_err('Insert of ' . sql_db::USER_PREFIX . $this::class . ' failed.');
@@ -1631,10 +1633,10 @@ class sandbox extends db_object_seq_id_user
         $sc_par_lst->add(sql_type::USER);
         $sc->set_class($this::class, $sc_par_lst);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields($this->all_sandbox_fields());
         $sc->add_where($this->id_field(), $this->id());
-        $sc->add_where(user_db::FLD_ID, $this->user()->id());
+        $sc->add_where(user_db::FLD_ID, $this->user()->id);
         $qp->sql = $sc->sql();
         $qp->par = $sc->get_par();
         return $qp;
@@ -1651,7 +1653,7 @@ class sandbox extends db_object_seq_id_user
 
         // check again if there ist not yet a record
         $qp = $this->load_sql_user_changes($db_con->sql_creator());
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         $db_row = $db_con->get1($qp);
         if ($db_row != null) {
             $this->usr_cfg_id = $db_row[$this->id_field()];
@@ -1678,7 +1680,7 @@ class sandbox extends db_object_seq_id_user
 
         // check again if there ist not yet a record
         $qp = $this->load_sql_user_changes($db_con->sql_creator());
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         $usr_cfg_row = $db_con->get1($qp);
         if ($usr_cfg_row) {
             log_debug('check for "' . $this->dsp_id() . ' und user ' . $this->user()->name . ' with (' . $qp->sql . ')');
@@ -2059,7 +2061,7 @@ class sandbox extends db_object_seq_id_user
                     if ($this->has_usr_cfg()) {
                         log_debug('remove user change');
                         $db_con->set_class($this::class, true);
-                        $db_con->set_usr($this->user()->id());
+                        $db_con->set_usr($this->user()->id);
                         if (!$db_con->update_old($this->id(), $log->field(), Null)) {
                             $usr_msg->add_id_with_vars(msg_id::REMOVE_FIELD_FAILED, [msg_id::VAR_NAME => $log->field()]);
                         }
@@ -2067,7 +2069,7 @@ class sandbox extends db_object_seq_id_user
                     $this->del_usr_cfg_if_not_needed(); // don't care what the result is, because in most cases it is fine to keep the user sandbox row
                 } else {
                     $db_con->set_class($this::class);
-                    $db_con->set_usr($this->user()->id());
+                    $db_con->set_usr($this->user()->id);
                     if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
                         $usr_msg->add_id_with_vars(msg_id::DATABASE_UPDATE_FIELD_TO_VALUE_FAILED, [
                             msg_id::VAR_NAME => $log->field(),
@@ -2083,7 +2085,7 @@ class sandbox extends db_object_seq_id_user
                 }
                 if ($usr_msg->is_ok()) {
                     $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->user()->id());
+                    $db_con->set_usr($this->user()->id);
                     if ($new_value == $std_value) {
                         log_debug('remove user change');
                         if (!$db_con->update_old($this->id(), $log->field(), Null)) {
@@ -2123,7 +2125,7 @@ class sandbox extends db_object_seq_id_user
         }
         if ($log->add()) {
             $db_con->set_class($this::class);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
             if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
                 $result = 'update of value for ' . $log->field() . ' to ' . $new_value . ' failed';
             }
@@ -2145,7 +2147,7 @@ class sandbox extends db_object_seq_id_user
         $chk_obj->set_user($db_obj->user());
         // if this object does not yet have a db key ignore this
         if ($chk_obj->id() == 0) {
-            $chk_obj->set_id($db_obj->id());
+            $chk_obj->id = $db_obj->id();
         }
         return $chk_obj->db_fields_changed($db_obj)->is_empty_except_internal_fields();
     }
@@ -2197,7 +2199,7 @@ class sandbox extends db_object_seq_id_user
             // similar to $this->save_field_do
             if ($this->can_change()) {
                 $db_con->set_class($this::class);
-                $db_con->set_usr($this->user()->id());
+                $db_con->set_usr($this->user()->id);
                 if (!$db_con->update_old($this->id(), $log->field(), $new_value)) {
                     $usr_msg->add_id_with_vars(msg_id::EXCLUDING_FAILED, [msg_id::VAR_CLASS_NAME => $class_name]);
                 }
@@ -2209,7 +2211,7 @@ class sandbox extends db_object_seq_id_user
                 }
                 if ($usr_msg->is_ok()) {
                     $db_con->set_class($this::class, true);
-                    $db_con->set_usr($this->user()->id());
+                    $db_con->set_usr($this->user()->id);
                     if ($new_value == $std_value) {
                         if (!$db_con->update_old($this->id(), $log->field(), Null)) {
                             $usr_msg->add_id_with_vars(msg_id::INCLUDE_FOR_USER_FAILED, [msg_id::VAR_CLASS_NAME => $class_name]);
@@ -2255,7 +2257,7 @@ class sandbox extends db_object_seq_id_user
     {
         log_debug('check if target already exists ' . $this->dsp_id());
         $db_chk = clone $this;
-        $db_chk->set_id(0); // to force the load by the id fields
+        $db_chk->id = 0; // to force the load by the id fields
         $db_chk->load_standard(); // TODO should not ADDITIONAL the user specific load be called
         return $db_chk;
     }
@@ -2311,7 +2313,7 @@ class sandbox extends db_object_seq_id_user
                         if ($usr_msg->is_ok()) {
                             // .. and use it for the update
                             // TODO review the logging: from the user view this is a change not a delete and update
-                            $this->set_id($db_chk->id());
+                            $this->id = $db_chk->id();
                             $this->set_owner_id($db_chk->owner_id());
                             // TODO check which links needs to be updated, because this is a kind of combine objects
                             // force the include again
@@ -2364,8 +2366,8 @@ class sandbox extends db_object_seq_id_user
 
                         if ($usr_msg->is_ok()) {
                             // ... and create a new display component link
-                            $this->set_id(0);
-                            $this->set_owner_id($this->user()->id());
+                            $this->id = 0;
+                            $this->set_owner_id($this->user()->id);
                             $usr_msg->add($this->add());
                         }
                     }
@@ -2619,7 +2621,7 @@ class sandbox extends db_object_seq_id_user
 
             // configure the global database connection object for the select, insert, update and delete queries
             $db_con->set_class($this::class);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
         }
 
         // create an object to check possible duplicates
@@ -2641,7 +2643,7 @@ class sandbox extends db_object_seq_id_user
                     $similar->load_by_id($similar->id()); // e.g. to get the type_id
                     // prevent that the id of a formula is used for the word with the type formula link
                     if (get_class($this) == get_class($similar)) {
-                        $this->set_id($similar->id());
+                        $this->id = $similar->id();
                     } else {
                         if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                             or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
@@ -2696,7 +2698,7 @@ class sandbox extends db_object_seq_id_user
                             }
                             // configure the global database connection object again to overwrite any changes from load_objects
                             $db_con->set_class($this::class);
-                            $db_con->set_usr($this->user()->id());
+                            $db_con->set_usr($this->user()->id);
                         }
                         // relevant is if there is a user config in the database
                         // so use this information to prevent
@@ -2709,7 +2711,7 @@ class sandbox extends db_object_seq_id_user
                     // load the common object
                     $std_rec = clone $this;
                     $std_rec->reset();
-                    $std_rec->set_id($this->id());
+                    $std_rec->id = $this->id();
                     $std_rec->set_user($this->user()); // must also be set to allow to take the ownership
                     if ($usr_msg->is_ok()) {
                         if (!$std_rec->load_standard()) {
@@ -2792,7 +2794,7 @@ class sandbox extends db_object_seq_id_user
                 $log = $this->log_del();
             }
             if ($log->id() > 0) {
-                $db_con->usr_id = $this->user()->id();
+                $db_con->usr_id = $this->user()->id;
 
                 // if this object has related objects delete the related object before deleting this
                 $usr_msg = $this->del_links();
@@ -2806,7 +2808,7 @@ class sandbox extends db_object_seq_id_user
                         $usr_msg->add($msg);
                     } else {
                         $db_con->set_class($this::class, true);
-                        $db_con->set_usr($this->user()->id());
+                        $db_con->set_usr($this->user()->id);
                         $msg = $db_con->delete_old(
                             array($class_name . sql_db::FLD_EXT_ID, 'excluded'),
                             array($this->id(), '1'));
@@ -2822,7 +2824,7 @@ class sandbox extends db_object_seq_id_user
                         $usr_msg->add($msg);
                     } else {
                         $db_con->set_class($this::class);
-                        $db_con->set_usr($this->user()->id());
+                        $db_con->set_usr($this->user()->id);
                         $msg = $db_con->delete_old($this->id_field(), $this->id());
                         $usr_msg->add_message_text($msg);
                     }
@@ -2876,7 +2878,7 @@ class sandbox extends db_object_seq_id_user
         } else {
             log_debug('reloaded ' . $this->dsp_id());
             // check if the object is still valid
-            if ($this->id() <= 0) {
+            if ($this->id <= 0) {
                 log_warning('Delete failed', $class_name . '->del', 'Delete failed, because it seems that the ' . $class_name . ' ' . $this->dsp_id() . ' has been deleted in the meantime.', (new Exception)->getTraceAsString(), $this->user());
             } else {
                 // reload the objects if needed
@@ -2890,7 +2892,7 @@ class sandbox extends db_object_seq_id_user
                     $msg .= $this->del_exe($use_func);
                 } else {
                     // if the owner deletes the object find a new owner or delete the object completely
-                    if ($this->owner_id() == $this->user()->id()) {
+                    if ($this->owner_id() == $this->user()->id) {
                         log_debug('owner has requested the deletion');
                         // get median user
                         $new_owner_id = $this->median_user();
@@ -2943,7 +2945,7 @@ class sandbox extends db_object_seq_id_user
                         if ($msg == '') {
                             $std_rec = clone $this;
                             $std_rec->reset();
-                            $std_rec->set_id($this->id());
+                            $std_rec->id = $this->id();
                             $std_rec->set_user($this->user()); // must also be set to allow to take the ownership
                             if (!$std_rec->load_standard()) {
                                 $msg .= 'Reloading of standard ' . $class_name . ' ' . $this->dsp_id() . ' failed.';

@@ -29,11 +29,11 @@
 
 */
 
-namespace cfg\db;
+namespace Zukunft\ZukunftCom\main\php\cfg\db;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::DB . 'sql_db.php';
+//include_once paths::DB . 'sql_db.php';
 include_once paths::MODEL_SYSTEM . 'log.php';
 include_once paths::DB . 'sql_field_type.php';
 include_once paths::DB . 'sql_field_default.php';
@@ -43,110 +43,110 @@ include_once paths::DB . 'sql_where_list.php';
 include_once paths::DB . 'sql_pg.php';
 include_once paths::DB . 'sql.php';
 //include_once paths::MODEL_COMPONENT . 'component_link.php';
-include_once paths::MODEL_ELEMENT . 'element.php';
-include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
-include_once paths::MODEL_LOG . 'change_value.php';
-include_once paths::MODEL_FORMULA . 'formula_link.php';
-include_once paths::MODEL_GROUP . 'group.php';
-include_once paths::MODEL_GROUP . 'group_id.php';
-include_once paths::MODEL_SYSTEM . 'ip_range.php';
-include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
-include_once paths::MODEL_SYSTEM . 'job.php';
-include_once paths::MODEL_LOG . 'change.php';
-include_once paths::MODEL_LOG . 'change_action.php';
-include_once paths::MODEL_LOG . 'change_link.php';
-include_once paths::MODEL_LOG . 'change_log.php';
-include_once paths::MODEL_LOG . 'change_values_big.php';
-include_once paths::MODEL_LOG . 'change_values_norm.php';
-include_once paths::MODEL_LOG . 'change_values_prime.php';
-include_once paths::MODEL_LOG . 'change_values_time_prime.php';
-include_once paths::MODEL_LOG . 'change_values_time_big.php';
-include_once paths::MODEL_LOG . 'change_values_time_norm.php';
-include_once paths::MODEL_LOG . 'change_values_time_prime.php';
-include_once paths::MODEL_LOG . 'change_values_text_big.php';
-include_once paths::MODEL_LOG . 'change_values_text_norm.php';
-include_once paths::MODEL_LOG . 'change_values_text_prime.php';
-include_once paths::MODEL_LOG . 'change_values_geo_big.php';
-include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
-include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
-include_once paths::MODEL_LOG . 'change_table.php';
-include_once paths::MODEL_LOG . 'changes_big.php';
-include_once paths::MODEL_LOG . 'changes_norm.php';
-include_once paths::MODEL_REF . 'ref.php';
-include_once paths::MODEL_RESULT . 'result.php';
-include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
-include_once paths::MODEL_SYSTEM . 'sys_log.php';
-include_once paths::MODEL_WORD . 'triple.php';
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_USER . 'user_db.php';
-include_once paths::MODEL_USER . 'user_profile.php';
-include_once paths::MODEL_USER . 'user_type.php';
-include_once paths::MODEL_USER . 'user_official_type.php';
-include_once paths::MODEL_VALUE . 'value_base.php';
-include_once paths::MODEL_VALUE . 'value.php';
-include_once paths::MODEL_VALUE . 'value_time.php';
-include_once paths::MODEL_VALUE . 'value_text.php';
-include_once paths::MODEL_VALUE . 'value_geo.php';
-include_once paths::MODEL_VALUE . 'value_time_series.php';
-include_once paths::MODEL_VIEW . 'term_view.php';
+//include_once paths::MODEL_ELEMENT . 'element.php';
+//include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
+//include_once paths::MODEL_LOG . 'change_value.php';
+//include_once paths::MODEL_FORMULA . 'formula_link.php';
+//include_once paths::MODEL_GROUP . 'group.php';
+//include_once paths::MODEL_GROUP . 'group_id.php';
+//include_once paths::MODEL_SYSTEM . 'ip_range.php';
+//include_once paths::MODEL_SYSTEM . 'ip_range_list.php';
+//include_once paths::MODEL_SYSTEM . 'job.php';
+//include_once paths::MODEL_LOG . 'change.php';
+//include_once paths::MODEL_LOG . 'change_action.php';
+//include_once paths::MODEL_LOG . 'change_link.php';
+//include_once paths::MODEL_LOG . 'change_log.php';
+//include_once paths::MODEL_LOG . 'change_values_big.php';
+//include_once paths::MODEL_LOG . 'change_values_norm.php';
+//include_once paths::MODEL_LOG . 'change_values_prime.php';
+//include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+//include_once paths::MODEL_LOG . 'change_values_time_big.php';
+//include_once paths::MODEL_LOG . 'change_values_time_norm.php';
+//include_once paths::MODEL_LOG . 'change_values_time_prime.php';
+//include_once paths::MODEL_LOG . 'change_values_text_big.php';
+//include_once paths::MODEL_LOG . 'change_values_text_norm.php';
+//include_once paths::MODEL_LOG . 'change_values_text_prime.php';
+//include_once paths::MODEL_LOG . 'change_values_geo_big.php';
+//include_once paths::MODEL_LOG . 'change_values_geo_norm.php';
+//include_once paths::MODEL_LOG . 'change_values_geo_prime.php';
+//include_once paths::MODEL_LOG . 'change_table.php';
+//include_once paths::MODEL_LOG . 'changes_big.php';
+//include_once paths::MODEL_LOG . 'changes_norm.php';
+//include_once paths::MODEL_REF . 'ref.php';
+//include_once paths::MODEL_RESULT . 'result.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_link.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_link_named.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_multi.php';
+//include_once paths::MODEL_SANDBOX . 'sandbox_value.php';
+//include_once paths::MODEL_SYSTEM . 'sys_log.php';
+//include_once paths::MODEL_WORD . 'triple.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_USER . 'user_profile.php';
+//include_once paths::MODEL_USER . 'user_type.php';
+//include_once paths::MODEL_USER . 'user_official_type.php';
+//include_once paths::MODEL_VALUE . 'value_base.php';
+//include_once paths::MODEL_VALUE . 'value.php';
+//include_once paths::MODEL_VALUE . 'value_time.php';
+//include_once paths::MODEL_VALUE . 'value_text.php';
+//include_once paths::MODEL_VALUE . 'value_geo.php';
+//include_once paths::MODEL_VALUE . 'value_time_series.php';
+//include_once paths::MODEL_VIEW . 'term_view.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\component\component_link;
-use cfg\helper\db_object_seq_id;
-use cfg\element\element;
-use cfg\formula\formula_link;
-use cfg\group\group;
-use cfg\group\group_id;
-use cfg\log\change_log;
-use cfg\log\change_value;
-use cfg\log\change_values_geo_big;
-use cfg\log\change_values_geo_norm;
-use cfg\log\change_values_geo_prime;
-use cfg\log\change_values_text_big;
-use cfg\log\change_values_text_norm;
-use cfg\log\change_values_text_prime;
-use cfg\log\change_values_time_big;
-use cfg\log\change_values_time_norm;
-use cfg\log\change_values_time_prime;
-use cfg\sandbox\sandbox_multi;
-use cfg\system\ip_range;
-use cfg\system\ip_range_list;
-use cfg\system\job;
-use cfg\log\change;
-use cfg\log\change_action;
-use cfg\log\change_values_big;
-use cfg\log\change_link;
-use cfg\log\change_values_norm;
-use cfg\log\change_values_prime;
-use cfg\log\change_table;
-use cfg\log\changes_big;
-use cfg\log\changes_norm;
-use cfg\ref\ref;
-use cfg\result\result;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_link;
-use cfg\sandbox\sandbox_link_named;
-use cfg\system\sys_log;
-use cfg\user\user_db;
-use cfg\value\value;
-use cfg\value\value_geo;
-use cfg\value\value_text;
-use cfg\value\value_time;
-use cfg\word\triple;
-use cfg\user\user;
-use cfg\user\user_profile;
-use cfg\user\user_type;
-use cfg\user\user_official_type;
-use cfg\value\value_base;
-use cfg\value\value_time_series;
-use cfg\view\term_view;
-use shared\const\users;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\library;
 use DateTime;
 
 class sql_creator
@@ -587,10 +587,10 @@ class sql_creator
         if ($usr == null) {
             $this->set_usr(users::SYSTEM_ID); // if the session user is not yet set, use the system user id to test the database compatibility
         } else {
-            if ($usr->id() == null) {
+            if ($usr->id == null) {
                 $this->set_usr(0); // fallback for special cases
             } else {
-                $this->set_usr($usr->id()); // by default use the session user id
+                $this->set_usr($usr->id); // by default use the session user id
             }
         }
         $this->set_table($sc_par_lst, $ext);
@@ -1933,7 +1933,7 @@ class sql_creator
             // add the user_id if needed
             $log_usr_id = $fvt_lst->get_value(user_db::FLD_ID);
             if ($log_usr_id == null) {
-                $log_usr_id = $usr->id();
+                $log_usr_id = $usr->id;
             }
             $par_lst_out->add_field(
                 user_db::FLD_ID,
@@ -2218,7 +2218,7 @@ class sql_creator
         $par_lst_out = new sql_par_field_list();
         $usr_id = $fvt_lst->get_value(user_db::FLD_ID);
         if ($usr_id == null) {
-            $usr_id = $usr->id();
+            $usr_id = $usr->id;
         }
         $par_lst_out->add_field(
             user_db::FLD_ID,

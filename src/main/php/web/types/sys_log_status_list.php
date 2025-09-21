@@ -30,7 +30,7 @@
   
 */
 
-namespace html\types;
+namespace Zukunft\ZukunftCom\main\php\web\types;
 
 class sys_log_status_list extends type_list
 {

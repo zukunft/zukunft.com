@@ -36,16 +36,13 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::MODEL_USER . 'user_db.php';
-
-use cfg\user\user_db;
-use controller\controller;
-use html\rest_call;
-use html\html_base;
-use cfg\user\user;
-use shared\api;
 
 // open database
 $db_con = prg_start("login", "center_form");
@@ -58,17 +55,17 @@ if ($db_con->is_open()) {
     $result = $usr->get();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id() > 0) {
+    if ($usr->id > 0) {
 
         $result = ''; // reset the html code var
         $msg = '';
 
         $_SESSION['logged'] = FALSE;
         // the original calling page that should be shown after the login is finished
-        if (isset($_POST[api::URL_VAR_BACK])) {
-            $back = $_POST[api::URL_VAR_BACK];
+        if (isset($_POST[url_var::BACK])) {
+            $back = $_POST[url_var::BACK];
         } else {
-            $back = $_GET[api::URL_VAR_BACK] = '';
+            $back = $_GET[url_var::BACK] = '';
         }
 
         if (isset($_POST['submit'])) {

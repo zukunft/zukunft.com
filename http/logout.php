@@ -36,9 +36,9 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
 
 echo 'logging off ...'; // reset the html code var
 
@@ -52,11 +52,11 @@ if ($db_con->is_open()) {
     $result = $usr->get(); // to check from which ip the user has logged in
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id() > 0) {
+    if ($usr->id > 0) {
         $db_con->set_class(user::class);
-        $db_con->set_usr($usr->id());
-        if (!$db_con->update_old($usr->id(), "last_logoff", sql::NOW)) {
-            log_err('Logout time update failed for ' . $usr->id());
+        $db_con->set_usr($usr->id);
+        if (!$db_con->update_old($usr->id, "last_logoff", sql::NOW)) {
+            log_err('Logout time update failed for ' . $usr->id);
         }
     }
 

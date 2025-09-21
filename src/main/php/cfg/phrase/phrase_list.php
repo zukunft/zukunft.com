@@ -58,9 +58,9 @@
   
 */
 
-namespace cfg\phrase;
+namespace Zukunft\ZukunftCom\main\php\cfg\phrase;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_SANDBOX . 'sandbox_list_named.php';
 include_once paths::DB . 'sql_creator.php';
@@ -94,33 +94,33 @@ include_once paths::SHARED_TYPES . 'verbs.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\formula\formula_list;
-use cfg\group\group;
-use cfg\group\group_id;
-use cfg\helper\data_object;
-use cfg\import\import;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_list_named;
-use cfg\user\user_message;
-use cfg\value\value;
-use cfg\value\value_list;
-use cfg\verb\verb;
-use cfg\verb\verb_db;
-use cfg\word\triple_db;
-use cfg\word\word;
-use cfg\word\word_list;
-use cfg\word\triple;
-use cfg\word\triple_list;
-use shared\enum\foaf_direction;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\types\verbs;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class phrase_list extends sandbox_list_named
 {
@@ -336,7 +336,7 @@ class phrase_list extends sandbox_list_named
         $qp->name .= $query_name;
 
         $sc->set_name($qp->name); // assign incomplete name to force the usage of the user as a parameter
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(phrase::FLD_NAMES);
         $sc->set_usr_fields(phrase::FLD_NAMES_USR_NO_NAME);
         $sc->set_usr_num_fields(phrase::FLD_NAMES_NUM_USR);
@@ -789,7 +789,7 @@ class phrase_list extends sandbox_list_named
         if ($qp->name == '') {
             log_warning('The phrase list is empty, so nothing could be found', self::class . '->load_linked_phrases');
         } else {
-            $db_con->usr_id = $this->user()->id();
+            $db_con->usr_id = $this->user()->id;
             $db_phr_lst = $db_con->get($qp);
             if ($db_phr_lst) {
                 log_debug('got ' . $lib->dsp_count($db_phr_lst));
@@ -943,7 +943,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * @return phrase_list list of phrases that are related to this phrase list
-     * e.g. for "ABB" and "Daimler" it will return "Company" (but not "ABB"???)
+     * e.g. for "ABB" and "Daimler" it will return "company" (but not "ABB"???)
      */
     function is(): phrase_list
     {
@@ -1366,7 +1366,7 @@ class phrase_list extends sandbox_list_named
     function add_name($phr_name_to_add): void
     {
         log_debug('phrase_list->add_name "' . $phr_name_to_add . '"');
-        if (is_null($this->user()->id())) {
+        if (is_null($this->user()->id)) {
             log_err("The user must be set.", "phrase_list->add_name");
         } else {
             $phr_to_add = new phrase($this->user());
@@ -2304,7 +2304,7 @@ class phrase_list extends sandbox_list_named
 
     /**
      * load a list of phrases by a given phrase, verb and direction
-     * e.g. for "Zurich" "is a" and "UP" the result is "Canton", "City" and "Company"
+     * e.g. for "Zurich" "is a" and "UP" the result is "Canton", "City" and "company"
      *
      * @param phrase $phr the phrase which should be used for selecting the words or triples
      * @param verb|null $vrb if set to filter the selection

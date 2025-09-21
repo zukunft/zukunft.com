@@ -30,10 +30,10 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::SHARED_TYPES . 'component_type.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -45,35 +45,35 @@ include_once html_paths::VERB . 'verb_list.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
-use cfg\component\component;
-use cfg\group\group;
-use cfg\phrase\phrase_list;
-use cfg\result\result;
-use cfg\value\value;
-use cfg\verb\verb;
-use cfg\verb\verb_list;
-use html\formula\formula;
-use html\ref\source;
-use html\verb\verb_list as verb_list_dsp;
-use html\button;
-use html\component\component_exe as component_dsp;
-use html\html_base;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\result\result as result_dsp;
-use html\result\result_list as result_list_dsp;
-use html\value\value as value_dsp;
-use html\verb\verb as verb_dsp;
-use html\word\word;
-use shared\library;
-use shared\const\components;
-use shared\const\values;
-use shared\const\views;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\types\api_type;
-use shared\types\component_type as comp_type_shared;
-use shared\types\verbs;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
+use Zukunft\ZukunftCom\main\php\web\result\result_list as result_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class base_ui_tests
 {
@@ -122,7 +122,7 @@ class base_ui_tests
 
         // button add
         $url = $html->url(views::WORD_ADD);
-        $t->html_test((new button($url))->add(msg_id::WORD_ADD), '', 'button_add', $t);
+        $t->html_test(new button($url)->add(msg_id::WORD_ADD), '', 'button_add', $t);
 
         $t->subheader('unit html table tests');
 
@@ -257,7 +257,7 @@ class base_ui_tests
         // test if a simple text component can be created
         $cmp = new component($usr);
         $cmp->type_id = $cmp_typ_cac->id(comp_type_shared::TEXT);
-        $cmp->set_id(1);
+        $cmp->id = 1;
         $cmp->set_name(views::NESN_2016_FS_NAME);
         $cmp_dsp = new component_dsp($cmp->api_json());
         $result = $cmp_dsp->html();

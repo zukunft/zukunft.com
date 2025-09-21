@@ -52,9 +52,9 @@
   
 */
 
-namespace cfg\formula;
+namespace Zukunft\ZukunftCom\main\php\cfg\formula;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED_TYPES . 'protection_type.php';
 include_once paths::SHARED_TYPES . 'share_type.php';
@@ -104,55 +104,56 @@ include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_CONST . 'formulas.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_HELPER . 'CombineObject.php';
+include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_par_field_list;
-use cfg\db\sql_par_type;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\element\element;
-use cfg\element\element_list;
-use cfg\helper\data_object;
-use cfg\helper\db_object_seq_id;
-use cfg\log\change;
-use cfg\phrase\phr_ids;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term;
-use cfg\phrase\term_list;
-use cfg\result\result;
-use cfg\result\result_list;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_code_id;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
-use cfg\value\value;
-use cfg\view\view;
-use cfg\view\view_db;
-use cfg\word\triple;
-use cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_code_id;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\calc\parameter_type;
+use Zukunft\ZukunftCom\main\php\shared\const\chars;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use DateTime;
 use Exception;
 use math;
-use shared\calc\parameter_type;
-use shared\const\chars;
-use shared\const\formulas;
-use shared\enum\messages;
-use shared\enum\messages as msg_id;
-use shared\helper\CombineObject;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
-use shared\types\phrase_type as phrase_type_shared;
 
 class formula extends sandbox_code_id
 {
@@ -162,17 +163,17 @@ class formula extends sandbox_code_id
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'the mathematical expression to calculate results based on values and results';
+    const string TBL_COMMENT = 'the mathematical expression to calculate results based on values and results';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const FLD_ID = formula_db::FLD_ID;
-    const FLD_LST_MUST_BE_IN_STD = formula_db::FLD_LST_MUST_BE_IN_STD;
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = formula_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
-    const FLD_LST_USER_CAN_CHANGE = formula_db::FLD_LST_USER_CAN_CHANGE;
-    const FLD_NAMES = formula_db::FLD_NAMES;
-    const FLD_NAMES_USR = formula_db::FLD_NAMES_USR;
-    const FLD_NAMES_NUM_USR = formula_db::FLD_NAMES_NUM_USR;
-    const ALL_SANDBOX_FLD_NAMES = formula_db::ALL_SANDBOX_FLD_NAMES;
+    const string FLD_ID = formula_db::FLD_ID;
+    const array FLD_LST_MUST_BE_IN_STD = formula_db::FLD_LST_MUST_BE_IN_STD;
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = formula_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
+    const array FLD_LST_USER_CAN_CHANGE = formula_db::FLD_LST_USER_CAN_CHANGE;
+    const array FLD_NAMES = formula_db::FLD_NAMES;
+    const array FLD_NAMES_USR = formula_db::FLD_NAMES_USR;
+    const array FLD_NAMES_NUM_USR = formula_db::FLD_NAMES_NUM_USR;
+    const array ALL_SANDBOX_FLD_NAMES = formula_db::ALL_SANDBOX_FLD_NAMES;
 
 
     /*
@@ -267,11 +268,8 @@ class formula extends sandbox_code_id
     {
         global $frm_typ_cac;
         $lib = new library();
-        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld);
+        $result = parent::row_mapper_sandbox($db_row, $load_std, $allow_usr_protect, $id_fld, $name_fld, $type_fld);
         if ($result) {
-            if (array_key_exists($type_fld, $db_row)) {
-                $this->type_id = $db_row[$type_fld];
-            }
             if (array_key_exists(formula_db::FLD_FORMULA_TEXT, $db_row)) {
                 $this->ref_text = $db_row[formula_db::FLD_FORMULA_TEXT];
             }
@@ -455,17 +453,22 @@ class formula extends sandbox_code_id
      */
 
     /**
-     * set the predefined type of this formula
+     * set the predefined type of this formula by the given code id or name
      *
-     * @param string $code_id the code id that should be added to this formula
+     * @param string $code_id_or_name the code id or name that should be added to this formula
      * @param user $usr_req the user who wants to change the type
      * @return user_message a warning if the view type code id is not found
      */
-    function set_type(string $code_id, user $usr_req = new user()): user_message
+    function set_type(string $code_id_or_name, user $usr_req = new user()): user_message
     {
         global $frm_typ_cac;
-        return parent::set_type_by_code_id(
-            $code_id, $frm_typ_cac, msg_id::FORMULA_TYPE_NOT_FOUND, $usr_req);
+        if ($frm_typ_cac->has_code_id($code_id_or_name)) {
+            return parent::set_type_by_code_id(
+                $code_id_or_name, $frm_typ_cac, msg_id::FORMULA_TYPE_NOT_FOUND, $usr_req);
+        } else {
+            return parent::set_type_by_name(
+                $code_id_or_name, $frm_typ_cac, msg_id::FORMULA_TYPE_NOT_FOUND, $usr_req);
+        }
     }
 
     /**
@@ -487,7 +490,7 @@ class formula extends sandbox_code_id
         if ($this->view == null) {
             $this->view = new view($this->user());
         }
-        $this->view->set_id($id);
+        $this->view->id = $id;
     }
 
     /**
@@ -546,7 +549,15 @@ class formula extends sandbox_code_id
      */
 
     /**
-     * get the name of the formula type
+     * @return string|null the code_id of the formula type
+     */
+    function type_code_id(): string|null
+    {
+        global $frm_typ_cac;
+        return $frm_typ_cac->code_id($this->type_id);
+    }
+
+    /**
      * @return string the name of the formula type
      */
     function type_name(): string
@@ -696,7 +707,7 @@ class formula extends sandbox_code_id
         // if the formula word is missing, try a word creating as a kind of auto recovery
         $name_wrd = $this->formula_word();
         $name_wrd->save()->get_last_message();
-        if ($name_wrd->id() > 0) {
+        if ($name_wrd->id > 0) {
             $this->name_wrd = $name_wrd;
             $result = true;
         } else {
@@ -795,17 +806,25 @@ class formula extends sandbox_code_id
     {
         $usr_msg = parent::fill($obj, $usr_req);
 
-        if ($obj->ref_text != null) {
-            $this->ref_text = $obj->ref_text;
+        if ($obj::class == term::class) {
+            $used_obj = $obj->obj();
+        } else {
+            $used_obj = $obj;
         }
-        if ($obj->usr_text != null) {
-            $this->usr_text = $obj->usr_text;
-        }
-        if ($obj->need_all_val != null) {
-            $this->need_all_val = $obj->need_all_val;
-        }
-        if ($obj->last_update != null) {
-            $this->last_update = $obj->last_update;
+
+        if ($obj::class == formula::class) {
+            if ($used_obj->ref_text != null) {
+                $this->ref_text = $used_obj->ref_text;
+            }
+            if ($used_obj->usr_text != null) {
+                $this->usr_text = $used_obj->usr_text;
+            }
+            if ($used_obj->need_all_val != null) {
+                $this->need_all_val = $used_obj->need_all_val;
+            }
+            if ($used_obj->last_update != null) {
+                $this->last_update = $used_obj->last_update;
+            }
         }
 
         return $usr_msg;
@@ -862,10 +881,10 @@ class formula extends sandbox_code_id
      * check if the formula in the database needs to be updated
      * e.g. for import  if this formula has only the name set, the protection should not be updated in the database
      *
-     * @param formula|CombineObject|db_object_seq_id $db_obj the formula as saved in the database
+     * @param formula|CombineObject|IdObject $db_obj the formula as saved in the database
      * @return bool true if this formula has infos that should be saved in the database
      */
-    function needs_db_update(formula|CombineObject|db_object_seq_id $db_obj): bool
+    function needs_db_update(formula|CombineObject|IdObject $db_obj): bool
     {
         $result = parent::needs_db_update($db_obj);
         if ($this->ref_text() != null) {
@@ -1046,7 +1065,7 @@ class formula extends sandbox_code_id
 
     /**
      * returns a list of all words that the formula is assigned to
-     * e.g. if the formula is assigned to "Company" and "ABB is a Company" include ABB in the word list
+     * e.g. if the formula is assigned to "company" and "ABB is a company" include ABB in the word list
      */
     function assign_phr_glst($sbx): phrase_list
     {
@@ -1956,21 +1975,21 @@ class formula extends sandbox_code_id
         $result = true;
 
         // refresh the links for the standard formula used if the user has not changed the formula
-        $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, 0, $this->user()->id());
+        $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, 0, $this->user()->id);
 
         // update triple links of the standard formula
         if ($result) {
-            $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, 0, $this->user()->id());
+            $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, 0, $this->user()->id);
         }
 
         // update verb links of the standard formula
         if ($result) {
-            $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, 0, $this->user()->id());
+            $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, 0, $this->user()->id);
         }
 
         // update formula links of the standard formula
         if ($result) {
-            $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, 0, $this->user()->id());
+            $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, 0, $this->user()->id);
         }
 
         // refresh the links for the user specific formula
@@ -1980,19 +1999,19 @@ class formula extends sandbox_code_id
             foreach ($db_lst as $db_row) {
                 // update word links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[user_db::FLD_ID], $this->user()->id());
+                    $result = $this->element_refresh_type($frm_text, parameter_type::WORD_ID, $db_row[user_db::FLD_ID], $this->user()->id);
                 }
                 // update triple links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[user_db::FLD_ID], $this->user()->id());
+                    $result = $this->element_refresh_type($frm_text, parameter_type::TRIPLE_ID, $db_row[user_db::FLD_ID], $this->user()->id);
                 }
                 // update verb links of the user formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[user_db::FLD_ID], $this->user()->id());
+                    $result = $this->element_refresh_type($frm_text, parameter_type::VERB_ID, $db_row[user_db::FLD_ID], $this->user()->id);
                 }
                 // update formula links of the standard formula
                 if ($result) {
-                    $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, $db_row[user_db::FLD_ID], $this->user()->id());
+                    $result = $this->element_refresh_type($frm_text, parameter_type::FORMULA_ID, $db_row[user_db::FLD_ID], $this->user()->id);
                 }
             }
         }
@@ -2490,7 +2509,7 @@ class formula extends sandbox_code_id
                 // check if target formula name already exists
                 log_debug('->save_id_if_updated check if target formula already exists ' . $this->dsp_id() . ' (has been ' . $db_rec->dsp_id() . ')');
                 $db_chk = clone $this;
-                $db_chk->set_id(0); // to force the load by the id fields
+                $db_chk->id = 0; // to force the load by the id fields
                 $db_chk->load_standard();
                 if ($db_chk->id() > 0) {
                     log_debug('->save_id_if_updated target formula name already exists ' . $db_chk->dsp_id());
@@ -2500,7 +2519,7 @@ class formula extends sandbox_code_id
                         $msg = $to_del->del();
                         $usr_msg->add($msg);
                         // ... and use it for the update
-                        $this->set_id($db_chk->id());
+                        $this->id = $db_chk->id();
                         $this->set_owner_id($db_chk->owner_id());
                         // force including again
                         $this->include();
@@ -2527,8 +2546,8 @@ class formula extends sandbox_code_id
                         // ... and create a deletion request for all users ???
 
                         // ... and create a new display component link
-                        $this->set_id(0);
-                        $this->set_owner_id($this->user()->id());
+                        $this->id = 0;
+                        $this->set_owner_id($this->user()->id);
                         // TODO check the usr_msg values and if the id is needed
                         $usr_msg->add($this->add());
                         log_debug('->save_id_if_updated recreate the display component link del "' . $db_rec->dsp_id() . '" add ' . $this->dsp_id() . ' (standard "' . $std_rec->dsp_id() . '")');
@@ -2563,7 +2582,7 @@ class formula extends sandbox_code_id
             $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
             $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
             if ($ins_msg->is_ok()) {
-                $this->set_id($ins_msg->get_row_id());
+                $this->id = $ins_msg->get_row_id();
             }
             $usr_msg->add($ins_msg);
         } else {
@@ -2574,15 +2593,15 @@ class formula extends sandbox_code_id
                 // insert the new formula
                 $db_con->set_class(formula::class);
                 // include the formula_text and the resolved_text, because they should never be empty which is also forced by the db structure
-                $this->set_id($db_con->insert_old(
+                $this->id = $db_con->insert_old(
                     array(formula_db::FLD_NAME, user_db::FLD_ID, formula_db::FLD_LAST_UPDATE, formula_db::FLD_FORMULA_TEXT, formula_db::FLD_FORMULA_USER_TEXT),
-                    array($this->name(), $this->user()->id(), sql::NOW, $this->ref_text, $this->usr_text)));
+                    array($this->name(), $this->user()->id(), sql::NOW, $this->ref_text, $this->usr_text));
                 if ($this->id() > 0) {
                     log_debug('->add formula ' . $this->dsp_id() . ' has been added as ' . $this->id());
                     // update the id in the log for the correct reference
                     if (!$log->add_ref($this->id())) {
                         $usr_msg->add_id(msg_id::FAILED_UPDATE_REF);
-                        $this->set_id(0);
+                        $this->id = 0;
                         // TODO do rollback or retry?
                     }
                 } else {
@@ -2642,7 +2661,7 @@ class formula extends sandbox_code_id
 
             // build the database object because the is anyway needed
             $db_con->set_class(formula::class);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
 
             // check if a new formula is supposed to be added
             if ($this->id() <= 0) {
@@ -2661,7 +2680,7 @@ class formula extends sandbox_code_id
                             $usr_msg->add($trm->id_used_msg($this));
                         }
                     } else {
-                        $this->set_id($trm->id_obj());
+                        $this->id = $trm->id_obj();
                         log_debug('->save adding formula name ' . $this->dsp_id() . ' is OK');
                     }
                 }
@@ -2690,7 +2709,7 @@ class formula extends sandbox_code_id
                     $similar->load_by_id($similar->id()); // e.g. to get the type_id
                     // prevent that the id of a formula is used for the word with the type formula link
                     if (get_class($this) == get_class($similar)) {
-                        $this->set_id($similar->id());
+                        $this->id = $similar->id();
                     } else {
                         if (!((get_class($this) == word::class and get_class($similar) == formula::class)
                             or (get_class($this) == triple::class and get_class($similar) == formula::class))) {
@@ -2742,9 +2761,9 @@ class formula extends sandbox_code_id
                     }
 
                     $std_rec = new formula($this->user()); // must also be set to allow to take the ownership
-                    $std_rec->set_id($this->id());
+                    $std_rec->id = $this->id();
                     $std_rec->load_standard();
-                    log_debug('standard formula "' . $std_rec->name() . '" (' . $std_rec->id() . ') loaded');
+                    log_debug('standard formula "' . $std_rec->name() . '" (' . $std_rec->id . ') loaded');
 
                     // for a correct user formula detection (function can_change) set the owner even if the formula has not been loaded before the save
                     if ($this->owner_id() <= 0) {
@@ -2842,7 +2861,7 @@ class formula extends sandbox_code_id
             //$usr_msg->add($elm_lst->del_without_log());
 
             $db_con->set_class(element::class);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
             $msg = $db_con->delete_old($this->id_field(), $this->id());
             $usr_msg->add_message_text($msg);
         }
@@ -2850,7 +2869,7 @@ class formula extends sandbox_code_id
         // and the corresponding results
         if ($usr_msg->is_ok()) {
             $db_con->set_class(result::class);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
             $msg = $db_con->delete_old($this->id_field(), $this->id());
             $usr_msg->add_message_text($msg);
         }

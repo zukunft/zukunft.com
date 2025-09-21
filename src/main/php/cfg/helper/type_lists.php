@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::API_OBJECT . 'controller.php';
@@ -80,36 +80,36 @@ include_once paths::MODEL_USER . 'user_list.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use cfg\component\component_link_type_list;
-use cfg\component\position_type_list;
-use cfg\component\component_type_list;
-use cfg\component\view_style_list;
-use cfg\db\sql_db;
-use cfg\element\element_type_list;
-use cfg\formula\formula_link_type_list;
-use cfg\formula\formula_type_list;
-use cfg\language\language_form_list;
-use cfg\language\language_list;
-use cfg\log\change_action_list;
-use cfg\log\change_field_list;
-use cfg\log\change_table_list;
-use cfg\phrase\phrase_types;
-use cfg\ref\ref_type_list;
-use cfg\ref\source_type_list;
-use cfg\sandbox\protection_type_list;
-use cfg\sandbox\share_type_list;
-use cfg\system\job_type_list;
-use cfg\system\sys_log_status_list;
-use cfg\user\user;
-use cfg\user\user_profile_list;
-use cfg\user\user_list;
-use cfg\verb\verb_list;
-use cfg\view\view_link_type_list;
-use cfg\view\view_sys_list;
-use cfg\view\view_type_list;
-use controller\api_message;
-use shared\json_fields;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\position_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\view_style_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form_list;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_sys_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class type_lists
 {
@@ -144,6 +144,7 @@ class type_lists
 
     function load(sql_db $db_con, ?user $usr): bool
     {
+        // TODO Prio 1 use one type_list object instead
         global $sys_log_sta_cac;
         global $system_users;
         global $usr_pro_cac;

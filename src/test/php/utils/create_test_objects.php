@@ -42,11 +42,174 @@
 
 */
 
-namespace test;
+namespace Zukunft\ZukunftCom\test\php\utils;
 
-use cfg\const\paths;
-use cfg\helper\db_object;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\position_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\component\view_style_list;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\const\files;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
+use Zukunft\ZukunftCom\main\php\cfg\formula\figure;
+use Zukunft\ZukunftCom\main\php\cfg\formula\figure_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form_list;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table_list;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\results;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time_series;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\api\api_message;
+use Zukunft\ZukunftCom\main\php\web\component\component as component_dsp;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view_list as view_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\component\component_list as component_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\components;
+use Zukunft\ZukunftCom\main\php\shared\const\formulas;
+use Zukunft\ZukunftCom\main\php\shared\const\groups;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\sources;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\values;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\source_types;
+use Zukunft\ZukunftCom\main\php\shared\enum\sys_log_statuus;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\helper\Config as shared_config;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\types\component_type as comp_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type as protect_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\share_type as share_type_shared;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\component_link_write_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\formula_link_write_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\formula_write_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\group_write_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\source_write_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\triple_write_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\value_write_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\view_write_tests;
+use Zukunft\ZukunftCom\test\php\unit_write\word_write_tests;
+use DateTime;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
@@ -93,167 +256,6 @@ include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::VIEW . 'view.php';
 include_once html_paths::COMPONENT . 'component.php';
-
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\component\component_link_list;
-use cfg\component\component_link_type;
-use cfg\component\component_link_type_list;
-use cfg\component\component_list;
-use cfg\component\component_type_list;
-use cfg\component\position_type_list;
-use cfg\component\view_style_list;
-use cfg\const\def;
-use cfg\const\files;
-use cfg\db\sql_db;
-use cfg\element\element;
-use cfg\element\element_list;
-use cfg\element\element_type_list;
-use cfg\formula\expression;
-use cfg\formula\figure;
-use cfg\formula\figure_list;
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\formula\formula_link_type;
-use cfg\formula\formula_link_type_list;
-use cfg\formula\formula_list;
-use cfg\formula\formula_type;
-use cfg\formula\formula_type_list;
-use cfg\group\group;
-use cfg\group\group_list;
-use cfg\helper\db_id_object_non_sandbox;
-use cfg\helper\type_list;
-use cfg\helper\type_object;
-use cfg\language\language;
-use cfg\language\language_form;
-use cfg\language\language_form_list;
-use cfg\language\language_list;
-use cfg\log\change;
-use cfg\log\change_action_list;
-use cfg\log\change_field;
-use cfg\log\change_field_list;
-use cfg\log\change_link;
-use cfg\log\change_log_list;
-use cfg\log\change_table;
-use cfg\log\change_table_list;
-use cfg\log\change_values_big;
-use cfg\log\change_values_geo_big;
-use cfg\log\change_values_geo_norm;
-use cfg\log\change_values_geo_prime;
-use cfg\log\change_values_norm;
-use cfg\log\change_values_prime;
-use cfg\log\change_values_text_big;
-use cfg\log\change_values_text_norm;
-use cfg\log\change_values_text_prime;
-use cfg\log\change_values_time_big;
-use cfg\log\change_values_time_norm;
-use cfg\log\change_values_time_prime;
-use cfg\log\changes_big;
-use cfg\log\changes_norm;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\phrase_types;
-use cfg\phrase\term;
-use cfg\phrase\term_list;
-use cfg\ref\ref;
-use cfg\ref\ref_type;
-use cfg\ref\ref_type_list;
-use cfg\ref\source;
-use cfg\ref\source_type_list;
-use cfg\result\result;
-use cfg\result\result_list;
-use cfg\result\results;
-use cfg\sandbox\protection_type_list;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_value;
-use cfg\sandbox\share_type_list;
-use cfg\system\job;
-use cfg\system\job_list;
-use cfg\system\job_type_list;
-use cfg\system\sys_log;
-use cfg\system\sys_log_list;
-use cfg\system\sys_log_status_list;
-use cfg\user\user;
-use cfg\user\user_profile_list;
-use cfg\value\value;
-use cfg\value\value_db;
-use cfg\value\value_geo;
-use cfg\value\value_list;
-use cfg\value\value_text;
-use cfg\value\value_time;
-use cfg\value\value_time_series;
-use cfg\value\value_ts_data;
-use cfg\verb\verb;
-use cfg\verb\verb_list;
-use cfg\view\view;
-use cfg\view\view_link_type;
-use cfg\view\view_link_type_list;
-use cfg\view\view_list;
-use cfg\view\term_view;
-use cfg\view\view_type_list;
-use cfg\word\triple;
-use cfg\word\triple_list;
-use cfg\word\word;
-use cfg\word\word_db;
-use cfg\word\word_list;
-use controller\api_message;
-use shared\api;
-use shared\const\users;
-use shared\enum\change_actions;
-use shared\enum\change_fields;
-use shared\enum\change_tables;
-use shared\enum\source_types;
-use shared\enum\sys_log_statuus;
-use shared\enum\user_profiles;
-use shared\helper\Config as shared_config;
-use shared\json_fields;
-use shared\library;
-use shared\const\components;
-use shared\const\formulas;
-use shared\const\groups;
-use shared\const\refs;
-use shared\const\sources;
-use shared\const\triples;
-use shared\const\values;
-use shared\const\views;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\types\api_type;
-use shared\types\api_type_list;
-use shared\types\component_type as comp_type_shared;
-use shared\types\phrase_type as phrase_type_shared;
-use shared\types\position_types;
-use shared\types\protection_type as protect_type_shared;
-use shared\types\share_type as share_type_shared;
-use shared\types\verbs;
-use shared\types\view_styles;
-use shared\types\view_type;
-use html\user\user as user_dsp;
-use html\sandbox\sandbox as sandbox_dsp;
-use html\word\word as word_dsp;
-use html\verb\verb as verb_dsp;
-use html\word\triple as triple_dsp;
-use html\ref\source as source_dsp;
-use html\ref\ref as ref_dsp;
-use html\value\value as value_dsp;
-use html\formula\formula as formula_dsp;
-use html\result\result as result_dsp;
-use html\view\view as view_dsp;
-use html\component\component as component_dsp;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\view\view_list as view_list_dsp;
-use unit\sys_log_tests;
-use unit_write\component_link_write_tests;
-use unit_write\component_write_tests;
-use unit_write\formula_link_write_tests;
-use unit_write\formula_write_tests;
-use unit_write\group_write_tests;
-use unit_write\source_write_tests;
-use unit_write\triple_write_tests;
-use unit_write\value_write_tests;
-use unit_write\view_write_tests;
-use unit_write\word_write_tests;
-use DateTime;
 
 class create_test_objects extends test_base
 {
@@ -473,7 +475,7 @@ class create_test_objects extends test_base
                         } else {
                             $typ_obj = new type_object($data[$name_col]);
                         }
-                        $typ_obj->set_id($data[$id_col]);
+                        $typ_obj->id = $data[$id_col];
                         $typ_obj->set_name($data[$name_col]);
                         if ($code_id_col > 0) {
                             $typ_obj->set_code_id_db($data[$code_id_col]);
@@ -752,110 +754,136 @@ class create_test_objects extends test_base
     }
 
     /**
+     * get the filled url object related to the given class and action
+     * @param string $class the given main class name
+     * @param int $msk_id the id of the mask
+     * @param string $action
+     * @return string with only a few vars filled
+     */
+    function class_to_filled_url(string $class, int $msk_id, string $action): string
+    {
+        if ($action == change_actions::SHOW) {
+            $result = $this->class_to_url_show($class, $msk_id);
+        } elseif ($action == change_actions::ADD) {
+            $result = $this->class_to_url_add($class, $msk_id);
+        } elseif ($action == change_actions::UPDATE) {
+            $result = $this->class_to_url_edit($class, $msk_id);
+        } elseif ($action == change_actions::DELETE) {
+            $result = $this->class_to_url_del($class, $msk_id);
+        } else {
+            $msg = 'unknow action ' . $action . ' for view id ' . $msk_id;
+            log_err($msg);
+            $result = $msg;
+        }
+        return $result;
+    }
+
+    /**
+     * TODO Prio 1 review
      * get the filled url object related to the given class
      * @param string $class the given main class name
      * @param int $msk_id the id of the mask
      * @return string with only a few vars filled
      */
-    function class_to_url_add(string $class, int $msk_id): string
+    function class_to_url_show(string $class, int $msk_id): string
     {
-        $url = api::HOST_TESTING . api::MAIN_SCRIPT . api::URL_PAR;
-        $url .= $this->url_par(api::URL_VAR_MASK_HUMAN, $msk_id);
+        $url = api::HOST_TESTING . api::MAIN_SCRIPT . url_var::PAR;
+        $url .= $this->url_par(url_var::MASK_HUMAN, $msk_id);
         switch ($class) {
             case user::class;
                 $obj = $this->user_filled();
-                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
-                $url .= $this->url_par(api::URL_VAR_IP, $obj->ip_addr);
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::IP, $obj->ip_addr);
                 break;
             case word::class;
                 $obj = $this->word_filled();
-                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
-                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
-                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
-                $url .= $this->url_par(api::URL_VAR_PLURAL, $obj->plural());
-                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
-                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
-                $url .= $this->url_par(api::URL_VAR_VIEW_LONG, $obj->view_id());
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::PLURAL, $obj->plural);
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
                 break;
             case verb::class;
                 $obj = $this->verb_filled();
-                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
-                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
                 break;
             case triple::class;
                 $obj = $this->triple_filled();
-                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
-                $url .= $this->url_par(api::URL_VAR_FROM_ID_LONG, $obj->from_id());
-                $url .= $this->url_par(api::URL_VAR_VERB_ID_LONG, $obj->verb_id());
-                $url .= $this->url_par(api::URL_VAR_TO_ID_LONG, $obj->to_id());
-                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name_given());
-                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
-                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
-                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
-                $url .= $this->url_par(api::URL_VAR_VIEW_LONG, $obj->view_id());
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::FROM_ID_LONG, $obj->from_id());
+                $url .= $this->url_par(url_var::VERB_LONG, $obj->verb_id());
+                $url .= $this->url_par(url_var::TO_ID_LONG, $obj->to_id());
+                $url .= $this->url_par(url_var::NAME, $obj->name_given());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
                 break;
             case source::class;
                 $obj = $this->source_filled();
-                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
-                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
-                $url .= $this->url_par(api::URL_VAR_URL, $obj->url());
-                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
-                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
-                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::URL, $obj->url());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 break;
             case ref::class;
                 $obj = $this->reference_plus();
-                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
-                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
-                $url .= $this->url_par(api::URL_VAR_PHRASE_LONG, $obj->from_id());
-                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->predicate_id());
-                $url .= $this->url_par(api::URL_VAR_URL, $obj->url());
-                $url .= $this->url_par(api::URL_VAR_EXTERNAL_KEY, $obj->external_key());
-                $url .= $this->url_par(api::URL_VAR_SOURCE_LONG, $obj->source_id());
-                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
-                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::PHRASE_LONG, $obj->from_id());
+                $url .= $this->url_par(url_var::TYPE, $obj->predicate_id());
+                $url .= $this->url_par(url_var::URL, $obj->url());
+                $url .= $this->url_par(url_var::EXTERNAL_KEY, $obj->external_key());
+                $url .= $this->url_par(url_var::SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 break;
             case value::class;
                 $obj = $this->value_16_filled();
-                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
-                $url .= $this->url_par(api::URL_VAR_PHRASE_LIST_LONG, implode(',',$obj->ids()));
-                $url .= $this->url_par(api::URL_VAR_NUMERIC_VALUE_LONG, $obj->value());
-                $url .= $this->url_par(api::URL_VAR_SOURCE_LONG, $obj->source_id());
-                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
-                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::PHRASE_LIST_LONG, implode(',',$obj->ids()));
+                $url .= $this->url_par(url_var::NUMERIC_VALUE_LONG, $obj->value());
+                $url .= $this->url_par(url_var::SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 break;
             case formula::class;
                 $obj = $this->formula_filled();
-                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
-                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
-                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
-                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
-                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 break;
             case result::class;
                 $obj = $this->result_main_filled();
-                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
-                $url .= $this->url_par(api::URL_VAR_PHRASE_LIST_LONG, implode(',',$obj->ids()));
-                $url .= $this->url_par(api::URL_VAR_NUMERIC_VALUE_LONG, $obj->value());
-                $url .= $this->url_par(api::URL_VAR_FORMULA_LONG, $obj->formula_id());
-                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
-                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::PHRASE_LIST_LONG, implode(',',$obj->ids()));
+                $url .= $this->url_par(url_var::NUMERIC_VALUE_LONG, $obj->value());
+                $url .= $this->url_par(url_var::FORMULA_LONG, $obj->formula_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 break;
             case view::class;
                 $obj = $this->view_filled();
-                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
-                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
-                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
-                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
-                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 break;
             case component::class;
                 $obj = $this->component_filled();
-                $url .= $this->url_par(api::URL_VAR_NAME, $obj->name());
-                $url .= $this->url_par(api::URL_VAR_DESCRIPTION, $obj->description());
-                $url .= $this->url_par(api::URL_VAR_TYPE, $obj->type_id());
-                $url .= $this->url_par(api::URL_VAR_SHARE, $obj->share_id());
-                $url .= $this->url_par(api::URL_VAR_PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 break;
             case db_object::class;
                 // for the start page no additional vars in the url are needed
@@ -865,8 +893,346 @@ class create_test_objects extends test_base
                 $obj = $this->word_filled();
                 log_err('no filled url object defined for ' . $class);
         }
-        $url .= $this->url_par(api::URL_VAR_ID, $obj->id());
-        $url .= $this->url_par(api::URL_VAR_ACTION_LONG, api::URL_VAR_CURL_CREATE, true);
+        $url .= $this->url_par(url_var::ID, $obj->id());
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        return $url;
+    }
+
+    /**
+     * get the filled url object related to the given class
+     * @param string $class the given main class name
+     * @param int $msk_id the id of the mask
+     * @return string with only a few vars filled
+     */
+    function class_to_url_add(string $class, int $msk_id): string
+    {
+        $url = api::HOST_TESTING . api::MAIN_SCRIPT . url_var::PAR;
+        $url .= $this->url_par(url_var::MASK_HUMAN, $msk_id);
+        switch ($class) {
+            case user::class;
+                $obj = $this->user_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::IP, $obj->ip_addr);
+                break;
+            case word::class;
+                $obj = $this->word_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::PLURAL, $obj->plural);
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
+                break;
+            case verb::class;
+                $obj = $this->verb_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                break;
+            case triple::class;
+                $obj = $this->triple_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::FROM_ID_LONG, $obj->from_id());
+                $url .= $this->url_par(url_var::VERB_LONG, $obj->verb_id());
+                $url .= $this->url_par(url_var::TO_ID_LONG, $obj->to_id());
+                $url .= $this->url_par(url_var::NAME, $obj->name_given());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
+                break;
+            case source::class;
+                $obj = $this->source_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::URL, $obj->url());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case ref::class;
+                $obj = $this->reference_plus();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::PHRASE_LONG, $obj->from_id());
+                $url .= $this->url_par(url_var::TYPE, $obj->predicate_id());
+                $url .= $this->url_par(url_var::URL, $obj->url());
+                $url .= $this->url_par(url_var::EXTERNAL_KEY, $obj->external_key());
+                $url .= $this->url_par(url_var::SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case value::class;
+                $obj = $this->value_16_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::PHRASE_LIST_LONG, implode(',',$obj->ids()));
+                $url .= $this->url_par(url_var::NUMERIC_VALUE_LONG, $obj->value());
+                $url .= $this->url_par(url_var::SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case group::class;
+                $obj = $this->group_zh_2020();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case formula::class;
+                $obj = $this->formula_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case result::class;
+                $obj = $this->result_main_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::PHRASE_LIST_LONG, implode(',',$obj->ids()));
+                $url .= $this->url_par(url_var::NUMERIC_VALUE_LONG, $obj->value());
+                $url .= $this->url_par(url_var::FORMULA_LONG, $obj->formula_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case view::class;
+                $obj = $this->view_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case component::class;
+                $obj = $this->component_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case db_object::class;
+                // for the start page no additional vars in the url are needed
+                $obj = new db_object();
+                break;
+            default:
+                $obj = $this->word_filled();
+                log_err('no filled url object defined for ' . $class);
+        }
+        $url .= $this->url_par(url_var::ID, $obj->id());
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        return $url;
+    }
+
+    /**
+     * TODO review
+     * get the filled url object related to the given class
+     * @param string $class the given main class name
+     * @param int $msk_id the id of the mask
+     * @return string with only a few vars filled
+     */
+    function class_to_url_edit(string $class, int $msk_id): string
+    {
+        $url = api::HOST_TESTING . api::MAIN_SCRIPT . url_var::PAR;
+        $url .= $this->url_par(url_var::MASK_HUMAN, $msk_id);
+        switch ($class) {
+            case user::class;
+                $obj = $this->user_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::IP, $obj->ip_addr);
+                break;
+            case word::class;
+                $obj = $this->word_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::PLURAL, $obj->plural);
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
+                break;
+            case verb::class;
+                $obj = $this->verb_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                break;
+            case triple::class;
+                $obj = $this->triple_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::FROM_ID_LONG, $obj->from_id());
+                $url .= $this->url_par(url_var::VERB_LONG, $obj->verb_id());
+                $url .= $this->url_par(url_var::TO_ID_LONG, $obj->to_id());
+                $url .= $this->url_par(url_var::NAME, $obj->name_given());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
+                break;
+            case source::class;
+                $obj = $this->source_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::URL, $obj->url());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case ref::class;
+                $obj = $this->reference_plus();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::PHRASE_LONG, $obj->from_id());
+                $url .= $this->url_par(url_var::TYPE, $obj->predicate_id());
+                $url .= $this->url_par(url_var::URL, $obj->url());
+                $url .= $this->url_par(url_var::EXTERNAL_KEY, $obj->external_key());
+                $url .= $this->url_par(url_var::SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case value::class;
+                $obj = $this->value_16_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::PHRASE_LIST_LONG, implode(',',$obj->ids()));
+                $url .= $this->url_par(url_var::NUMERIC_VALUE_LONG, $obj->value());
+                $url .= $this->url_par(url_var::SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case group::class;
+                $obj = $this->group_zh_2020();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::SOURCE_LONG, $obj->source_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case formula::class;
+                $obj = $this->formula_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case result::class;
+                $obj = $this->result_main_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::PHRASE_LIST_LONG, implode(',',$obj->ids()));
+                $url .= $this->url_par(url_var::NUMERIC_VALUE_LONG, $obj->value());
+                $url .= $this->url_par(url_var::FORMULA_LONG, $obj->formula_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case view::class;
+                $obj = $this->view_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case component::class;
+                $obj = $this->component_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                $url .= $this->url_par(url_var::TYPE, $obj->type_id());
+                $url .= $this->url_par(url_var::SHARE, $obj->share_id());
+                $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
+                break;
+            case db_object::class;
+                // for the start page no additional vars in the url are needed
+                $obj = new db_object();
+                break;
+            default:
+                $obj = $this->word_filled();
+                log_err('no filled url object defined for ' . $class);
+        }
+        $url .= $this->url_par(url_var::ID, $obj->id());
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        return $url;
+    }
+
+    /**
+     * TODO Prio 2 review
+     * get the filled url object related to the given class
+     * @param string $class the given main class name
+     * @param int $msk_id the id of the mask
+     * @return string with only a few vars filled
+     */
+    function class_to_url_del(string $class, int $msk_id): string
+    {
+        $url = api::HOST_TESTING . api::MAIN_SCRIPT . url_var::PAR;
+        $url .= $this->url_par(url_var::MASK_HUMAN, $msk_id);
+        switch ($class) {
+            case user::class;
+                $obj = $this->user_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                break;
+            case word::class;
+                $obj = $this->word_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                break;
+            case verb::class;
+                $obj = $this->verb_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                break;
+            case triple::class;
+                $obj = $this->triple_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::NAME, $obj->name_given());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                break;
+            case source::class;
+                $obj = $this->source_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                break;
+            case ref::class;
+                $obj = $this->reference_plus();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                break;
+            case value::class;
+                $obj = $this->value_16_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                break;
+            case group::class;
+                $obj = $this->group_zh_2020();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                break;
+            case formula::class;
+                $obj = $this->formula_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                break;
+            case result::class;
+                $obj = $this->result_main_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                break;
+            case view::class;
+                $obj = $this->view_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                break;
+            case component::class;
+                $obj = $this->component_filled();
+                $url .= $this->url_par(url_var::NAME, $obj->name());
+                $url .= $this->url_par(url_var::DESCRIPTION, $obj->description());
+                break;
+            case db_object::class;
+                // for the start page no additional vars in the url are needed
+                $obj = new db_object();
+                break;
+            default:
+                $obj = $this->word_filled();
+                log_err('no filled url object defined for ' . $class);
+        }
+        $url .= $this->url_par(url_var::ID, $obj->id());
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
         return $url;
     }
 
@@ -876,9 +1242,9 @@ class create_test_objects extends test_base
             return '';
         } else {
             if ($last) {
-                return $name . api::URL_EQ . urlencode($par);
+                return $name . url_var::EQ . urlencode($par);
             } else {
-                return $name . api::URL_EQ . urlencode($par) . api::URL_ADD;
+                return $name . url_var::EQ . urlencode($par) . url_var::ADD;
             }
         }
     }
@@ -908,7 +1274,7 @@ class create_test_objects extends test_base
     }
 
     /**
-     * @return word "Company" with a suggested view
+     * @return word "company" with a suggested view
      */
     function word_view_set(): word
     {
@@ -917,7 +1283,7 @@ class create_test_objects extends test_base
         $wrd->set(words::COMPANY_ID, words::COMPANY);
         $msk = new view($this->usr1);
         $msk->set(views::HISTORIC_ID, '');
-        $wrd->set_view($msk);
+        $wrd->view = $msk;
         $wrd->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $wrd;
     }
@@ -928,7 +1294,7 @@ class create_test_objects extends test_base
     function word_view_not_4_user(): word
     {
         $wrd = $this->word_view_set();
-        $wrd->set_view(null);
+        $wrd->view = null;
         $wrd->set_protection_id(null);
         return $wrd;
     }
@@ -945,7 +1311,7 @@ class create_test_objects extends test_base
         $wrd->description = words::MATH_COM;
         $wrd->set_type(phrase_type_shared::SCALING, $this->usr1);
         $wrd->set_code_id(words::MATH, $this->usr_system);
-        $wrd->set_plural(words::MATH_PLURAL);
+        $wrd->plural = words::MATH_PLURAL;
         $wrd->set_view_id(views::START_ID);
         $wrd->set_usage(2);
         $wrd->exclude();
@@ -961,7 +1327,7 @@ class create_test_objects extends test_base
     {
         $wrd = $this->word_filled();
         $wrd->include();
-        $wrd->set_id(0);
+        $wrd->id = 0;
         $wrd->set_name(words::TEST_ADD);
         return $wrd;
     }
@@ -973,7 +1339,7 @@ class create_test_objects extends test_base
     {
         $wrd = $this->word_filled();
         $wrd->include();
-        $wrd->set_id(0);
+        $wrd->id = 0;
         $wrd->set_name(words::TEST_ADD_TO);
         return $wrd;
     }
@@ -1295,7 +1661,7 @@ class create_test_objects extends test_base
     {
         $wrd = new word($this->usr1);
         $wrd->set(words::INHABITANT_ID, words::INHABITANTS);
-        $wrd->set_plural(words::INHABITANTS);
+        $wrd->plural = words::INHABITANTS;
         return $wrd;
     }
 
@@ -1563,7 +1929,7 @@ class create_test_objects extends test_base
         $trp->set_from($this->word_const()->phrase());
         $trp->set_verb($this->verb_part());
         $trp->set_to($this->word()->phrase());
-        $trp->set_type(phrase_type_shared::MATH_CONST);
+        $trp->set_type(phrase_type_shared::MATH_CONST, $this->usr1);
         global $ptc_typ_cac;
         $trp->set_protection_id($ptc_typ_cac->id(protect_type_shared::ADMIN));
         return $trp;
@@ -1575,7 +1941,8 @@ class create_test_objects extends test_base
     function triple_filled(): triple
     {
         $trp = $this->triple();
-        $trp->set_name_given(triples::MATH_CONST_GIVEN);
+        $trp->name_given = triples::MATH_CONST_GIVEN;
+        $trp->weight = 0.5;
         $trp->set_view_id(views::START_ID);
         $trp->set_usage(triples::SYSTEM_TEST_ADD_USAGE);
         $trp->exclude();
@@ -1589,7 +1956,7 @@ class create_test_objects extends test_base
     {
         $trp = $this->triple();
         $trp->include();
-        $trp->set_id(0);
+        $trp->id = 0;
         $trp->set_name(triples::SYSTEM_TEST_ADD);
         $trp->set_from($this->word_filled_add()->phrase());
         $trp->set_to($this->word_filled_add_to()->phrase());
@@ -2144,55 +2511,55 @@ class create_test_objects extends test_base
     {
         $lst = new phrase_list($this->usr1);
         $wrd = $this->word();
-        $wrd->set_id(1);
+        $wrd->id = 1;
         $wrd->set_name('word1');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(11);
+        $trp->id = 11;
         $trp->set_name('triple1');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(12);
+        $wrd->id = 12;
         $wrd->set_name('word2');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(37);
+        $trp->id = 37;
         $trp->set_name('triple2');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(38);
+        $wrd->id = 38;
         $wrd->set_name('word3');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(64);
+        $trp->id = 64;
         $trp->set_name('triple3');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(376);
+        $wrd->id = 376;
         $wrd->set_name('word4');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(2367);
+        $trp->id = 2367;
         $trp->set_name('triple4');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(13108);
+        $wrd->id = 13108;
         $wrd->set_name('word5');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(82124);
+        $trp->id = 82124;
         $trp->set_name('triple5');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(505294);
+        $wrd->id = 505294;
         $wrd->set_name('word6');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(2815273);
+        $trp->id = 2815273;
         $trp->set_name('triple6');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(17192845);
+        $wrd->id = 17192845;
         $wrd->set_name('word7');
         $lst->add($wrd->phrase());
         return $lst;
@@ -2219,7 +2586,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_13();
         $trp = $this->triple();
-        $trp->set_id(106841477);
+        $trp->id = 106841477;
         $trp->set_name('triple7');
         $lst->add($trp->phrase());
         return $lst;
@@ -2246,7 +2613,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_13();
         $trp = $this->triple();
-        $trp->set_id(3516593476);
+        $trp->id = 3516593476;
         $trp->set_name('triple8');
         $lst->add($trp->phrase());
         return $lst;
@@ -2275,15 +2642,15 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_13();
         $trp = $this->triple();
-        $trp->set_id(106841477);
+        $trp->id = 106841477;
         $trp->set_name('triple7');
         $lst->add($trp->phrase());
         $wrd = $this->word();
-        $wrd->set_id(628779863);
+        $wrd->id = 628779863;
         $wrd->set_name('word8');
         $lst->add($wrd->phrase());
         $trp = $this->triple();
-        $trp->set_id(3516593476);
+        $trp->id = 3516593476;
         $trp->set_name('triple8');
         $lst->add($trp->phrase());
         return $lst;
@@ -2293,7 +2660,7 @@ class create_test_objects extends test_base
     {
         $lst = $this->phrase_list_16();
         $wrd = $this->word();
-        $wrd->set_id(987654321);
+        $wrd->id = 987654321;
         $wrd->set_name('word17');
         $lst->add($wrd->phrase());
         return $lst;
@@ -2962,7 +3329,7 @@ class create_test_objects extends test_base
     {
         $frm = $this->formula_filled();
         $frm->include();
-        $frm->set_id(0);
+        $frm->id = 0;
         $frm->set_name(formulas::SYSTEM_TEST_ADD);
         return $frm;
     }
@@ -3035,7 +3402,7 @@ class create_test_objects extends test_base
     {
         $lnk = $this->formula_link();
         $lnk->include();
-        $lnk->set_id(0);
+        $lnk->id = 0;
         $lnk->set_formula($this->formula_filled_add());
         $lnk->set_phrase($this->word_filled_add()->phrase());
         return $lnk;
@@ -3179,7 +3546,7 @@ class create_test_objects extends test_base
     function result_pct(): result
     {
         $res = new result($this->usr1);
-        $wrd_pct = $this->new_word(words::PCT, 2, phrase_type_shared::PERCENT);
+        $wrd_pct = $this->new_word(words::PCT, words::PCT_ID, phrase_type_shared::PERCENT);
         $phr_lst = new phrase_list($this->usr1);
         $phr_lst->add($wrd_pct->phrase());
         $res->grp()->set_phrase_list($phr_lst);
@@ -3253,7 +3620,7 @@ class create_test_objects extends test_base
     {
         $src = $this->source_filled();
         $src->include();
-        $src->set_id(0);
+        $src->id = 0;
         $src->set_name(sources::SYSTEM_TEST_ADD);
         return $src;
     }
@@ -3398,7 +3765,7 @@ class create_test_objects extends test_base
     {
         $ref = $this->ref_filled();
         $ref->include();
-        $ref->set_id(0);
+        $ref->id = 0;
         $ref->set_phrase($this->word_filled_add()->phrase());
         return $ref;
     }
@@ -3538,7 +3905,7 @@ class create_test_objects extends test_base
     {
         $msk = $this->view_filled();
         $msk->include();
-        $msk->set_id(0);
+        $msk->id = 0;
         $msk->set_code_id_db(views::TEST_ADD);
         $msk->set_name(views::TEST_ADD_NAME);
         return $msk;
@@ -3616,11 +3983,37 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return component_list with a list of suggested component for a word
+     */
+    function component_list_word(): component_list
+    {
+        $lst = new component_list($this->usr1);
+        $lst->add($this->component_filled());
+        return $lst;
+    }
+
+    /**
+     * @return formula_list_dsp a sample frontend formula list
+     */
+    function formula_list_dsp(): formula_list_dsp
+    {
+        return new formula_list_dsp($this->view_list_word()->api_json());
+    }
+
+    /**
      * @return view_list_dsp a sample frontend view list
      */
     function view_list_dsp(): view_list_dsp
     {
         return new view_list_dsp($this->view_list_word()->api_json());
+    }
+
+    /**
+     * @return component_list_dsp a sample frontend component list
+     */
+    function component_list_dsp(): component_list_dsp
+    {
+        return new component_list_dsp($this->component_list_word()->api_json());
     }
 
     /**
@@ -3656,7 +4049,7 @@ class create_test_objects extends test_base
     {
         $lnk = $this->view_link_filled();
         $lnk->include();
-        $lnk->set_id(0);
+        $lnk->id = 0;
         $lnk->set_view($this->view_filled_add());
         $lnk->set_term($this->word_filled_add()->term());
         return $lnk;
@@ -3723,7 +4116,7 @@ class create_test_objects extends test_base
     {
         $cmp = $this->component_filled();
         $cmp->include();
-        $cmp->set_id(0);
+        $cmp->id = 0;
         $cmp->set_name(components::TEST_ADD_NAME);
         return $cmp;
     }
@@ -3764,7 +4157,7 @@ class create_test_objects extends test_base
     {
         $cmp = new component($this->usr1);
         $cmp->set(components::MATRIX_ID, components::FORM_BACK_NAME);
-        $cmp->set_type(comp_type_shared::FORM_BACK, $this->usr1);
+        $cmp->set_type(comp_type_shared::FORM_HIDDEN_BACK, $this->usr1);
         $cmp->description = components::FORM_BACK_COM;
         $cmp->set_code_id(components::FORM_BACK, $this->usr_system);
         return $cmp;
@@ -3774,7 +4167,7 @@ class create_test_objects extends test_base
     {
         $cmp = new component($this->usr1);
         $cmp->set(3, components::FORM_CONFIRM_NAME);
-        $cmp->set_type(comp_type_shared::FORM_CONFIRM, $this->usr1);
+        $cmp->set_type(comp_type_shared::FORM_HIDDEN_STEP, $this->usr1);
         $cmp->description = components::FORM_CONFIRM_COM;
         $cmp->set_code_id(components::FORM_CONFIRM, $this->usr_system);
         return $cmp;
@@ -3784,7 +4177,7 @@ class create_test_objects extends test_base
     {
         $cmp = new component($this->usr1);
         $cmp->set(components::FORM_NAME_ID, components::FORM_NAME_NAME);
-        $cmp->set_type(comp_type_shared::FORM_NAME, $this->usr1);
+        $cmp->set_type(comp_type_shared::FORM_FIELD_NAME, $this->usr1);
         $cmp->description = components::FORM_NAME_COM;
         $cmp->set_code_id(components::FORM_NAME, $this->usr_system);
         return $cmp;
@@ -3794,7 +4187,7 @@ class create_test_objects extends test_base
     {
         $cmp = new component($this->usr1);
         $cmp->set(5, components::FORM_DESCRIPTION_NAME);
-        $cmp->set_type(comp_type_shared::FORM_DESCRIPTION, $this->usr1);
+        $cmp->set_type(comp_type_shared::FORM_FIELD_DESCRIPTION, $this->usr1);
         $cmp->description = components::FORM_DESCRIPTION_COM;
         $cmp->set_code_id(components::FORM_DESCRIPTION, $this->usr_system);
         return $cmp;
@@ -3804,7 +4197,7 @@ class create_test_objects extends test_base
     {
         $cmp = new component($this->usr1);
         $cmp->set(components::FORM_PLURAL_ID, components::FORM_PLURAL_NAME);
-        $cmp->set_type(comp_type_shared::FORM_PLURAL, $this->usr1);
+        $cmp->set_type(comp_type_shared::FORM_FIELD_PLURAL, $this->usr1);
         $cmp->description = components::FORM_PLURAL_COM;
         $cmp->set_code_id(components::FORM_PLURAL, $this->usr_system);
         return $cmp;
@@ -3814,9 +4207,19 @@ class create_test_objects extends test_base
     {
         $cmp = new component($this->usr1);
         $cmp->set(6, components::FORM_PHRASE_TYPE_NAME);
-        $cmp->set_type(comp_type_shared::FORM_PHRASE_TYPE, $this->usr1);
+        $cmp->set_type(comp_type_shared::FORM_SELECT_PHRASE_TYPE, $this->usr1);
         $cmp->description = components::FORM_PHRASE_TYPE_COM;
         $cmp->set_code_id(components::FORM_PHRASE_TYPE, $this->usr_system);
+        return $cmp;
+    }
+
+    function component_word_add_verb_type(): component
+    {
+        $cmp = new component($this->usr1);
+        $cmp->set(6, components::FORM_VERB_TYPE_NAME);
+        $cmp->set_type(comp_type_shared::FORM_SELECT_VERB_TYPE, $this->usr1);
+        $cmp->description = components::FORM_VERB_TYPE_COM;
+        $cmp->set_code_id(components::FORM_VERB_TYPE, $this->usr_system);
         return $cmp;
     }
 
@@ -3844,7 +4247,7 @@ class create_test_objects extends test_base
     {
         $cmp = new component($this->usr1);
         $cmp->set(9, components::FORM_CANCEL_NAME);
-        $cmp->set_type(comp_type_shared::FORM_CANCEL, $this->usr1);
+        $cmp->set_type(comp_type_shared::FORM_BUTTON_CANCEL, $this->usr1);
         $cmp->description = components::FORM_CANCEL_COM;
         $cmp->set_code_id(components::FORM_CANCEL, $this->usr_system);
         return $cmp;
@@ -3854,7 +4257,7 @@ class create_test_objects extends test_base
     {
         $cmp = new component($this->usr1);
         $cmp->set(10, components::FORM_SAVE_NAME);
-        $cmp->set_type(comp_type_shared::FORM_SAVE, $this->usr1);
+        $cmp->set_type(comp_type_shared::FORM_BUTTON_SAVE, $this->usr1);
         $cmp->description = components::FORM_SAVE_COM;
         $cmp->set_code_id(components::FORM_SAVE, $this->usr_system);
         return $cmp;
@@ -3912,7 +4315,7 @@ class create_test_objects extends test_base
     {
         $lnk = $this->component_link_filled();
         $lnk->include();
-        $lnk->set_id(0);
+        $lnk->id = 0;
         $lnk->set_view($this->view_filled_add());
         $lnk->set_component($this->component_filled_add());
         return $lnk;
@@ -3943,6 +4346,8 @@ class create_test_objects extends test_base
         $lst->add($pos, $msk, $this->component_word_add_plural(), $pos);
         $pos++;
         $lst->add($pos, $msk, $this->component_word_add_phrase_type(), $pos);
+        $pos++;
+        $lst->add($pos, $msk, $this->component_word_add_verb_type(), $pos);
         $pos++;
         $lst->add($pos, $msk, $this->component_word_add_share_type(), $pos);
         $pos++;
@@ -4322,7 +4727,7 @@ class create_test_objects extends test_base
     {
         global $sys_log_sta_cac;
         $sys = new sys_log();
-        $sys->set_id(1);
+        $sys->id = 1;
         $sys->log_time = new DateTime(sys_log_tests::TV_TIME);
         $sys->usr_name = users::SYSTEM_TEST_NAME;
         $sys->log_text = sys_log_tests::TV_LOG_TEXT;
@@ -4340,7 +4745,7 @@ class create_test_objects extends test_base
     {
         global $sys_log_sta_cac;
         $sys = new sys_log();
-        $sys->set_id(2);
+        $sys->id = 2;
         $sys->log_time = new DateTime(sys_log_tests::TV_TIME);
         $sys->usr_name = users::SYSTEM_TEST_NAME;
         $sys->log_text = sys_log_tests::T2_LOG_TEXT;
@@ -4358,7 +4763,7 @@ class create_test_objects extends test_base
     {
         $sys_usr = $this->system_user();
         $job = new job($sys_usr, new DateTime(sys_log_tests::TV_TIME));
-        $job->set_id(1);
+        $job->id = 1;
         $job->start_time = new DateTime(sys_log_tests::TV_TIME);
         $job->set_type(job_type_list::BASE_IMPORT, $sys_usr);
         $job->row_id = 1;
@@ -4406,7 +4811,7 @@ class create_test_objects extends test_base
     function system_user(): user
     {
         $sys_usr = new user;
-        $sys_usr->set_id(users::SYSTEM_ID);
+        $sys_usr->id = users::SYSTEM_ID;
         $sys_usr->name = users::SYSTEM_NAME;
         $sys_usr->code_id = users::SYSTEM_CODE_ID;
         $sys_usr->dec_point = shared_config::DEFAULT_DEC_POINT;
@@ -4452,7 +4857,7 @@ class create_test_objects extends test_base
         }
 
         $wrd = new word($test_usr);
-        $wrd->set_id($id);
+        $wrd->id = $id;
         $wrd->set_name($wrd_name);
 
         if ($wrd_type_code_id != null) {
@@ -4514,7 +4919,7 @@ class create_test_objects extends test_base
                 log_err('add formula failed due to: ' . $result);
             }
         }
-        if ($wrd->id() <= 0) {
+        if ($wrd->id <= 0) {
             log_err('Cannot create word ' . $wrd_name);
         }
         if ($wrd_type_code_id != null) {
@@ -4621,7 +5026,7 @@ class create_test_objects extends test_base
         }
 
         $trp = new triple($test_usr);
-        $trp->set_id($id);
+        $trp->id = $id;
         $trp->set_from($this->new_word($from_name)->phrase());
         $trp->set_verb_id($vrb_cac->id($verb_code_id));
         $trp->set_to($this->new_word($to_name)->phrase());
@@ -4739,7 +5144,7 @@ class create_test_objects extends test_base
                 if ($trp->id() > 0) {
                     // refresh the given name if needed
                     if ($name_given <> '' and $trp->name(true) <> $name_given) {
-                        $trp->set_name_given($name_given);
+                        $trp->name_given = $name_given;
                         $trp->set_name($name_given);
                         $result = $trp->save()->get_last_message();
                         if ($result != '') {
@@ -4762,7 +5167,7 @@ class create_test_objects extends test_base
                         $trp->set_verb($vrb);
                         $trp->set_to($to);
                         if ($trp->name(true) <> $name_given) {
-                            $trp->set_name_given($name_given);
+                            $trp->name_given = $name_given;
                             $trp->set_name($name_given);
                         }
                         $save_result = $trp->save()->get_last_message();
@@ -4920,7 +5325,7 @@ class create_test_objects extends test_base
         }
 
         $frm = new formula($test_usr);
-        $frm->set_id($id);
+        $frm->id =$id;
         $frm->set_name($frm_name);
 
         if ($frm_type_code_id != null) {
@@ -5232,7 +5637,7 @@ class create_test_objects extends test_base
         }
 
         $vrb = new verb();
-        $vrb->set_id($id);
+        $vrb->id = $id;
         $vrb->set_name($vrb_name);
         $vrb->set_user($this->usr1);
 

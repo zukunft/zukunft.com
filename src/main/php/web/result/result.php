@@ -5,7 +5,7 @@
     web/result_dsp.php - the display extension of the api result object
     ------------------
 
-    to creat the HTML code to display a formula
+    to create the HTML code to display a formula
 
 
     This file is part of zukunft.com - calc with words
@@ -32,10 +32,10 @@
 
 */
 
-namespace html\result;
+namespace Zukunft\ZukunftCom\main\php\web\result;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::FIGURE . 'figure.php';
 include_once html_paths::FORMULA . 'formula.php';
@@ -48,17 +48,17 @@ include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use html\formula\formula;
-use html\group\group;
-use html\html_base;
-use html\phrase\phrase_list as phrase_list_dsp;
-use html\sandbox\sandbox_value;
-use html\figure\figure as figure_dsp;
-use html\user\user_message;
-use shared\const\views;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\group\group;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\web\figure\figure as figure_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 
 class result extends sandbox_value
@@ -129,7 +129,7 @@ class result extends sandbox_value
      */
     function display(phrase_list_dsp $phr_lst_header = null): string
     {
-        return $this->grp()->name_tip($phr_lst_header);
+        return $this->grp->name_tip($phr_lst_header);
     }
 
     /**
@@ -138,7 +138,7 @@ class result extends sandbox_value
      */
     function display_linked(phrase_list_dsp $phr_lst_header = null): string
     {
-        return $this->grp()->name_link_list($phr_lst_header);
+        return $this->grp->name_link_list($phr_lst_header);
     }
 
 
@@ -239,7 +239,7 @@ class result extends sandbox_value
         // build the title
         $title = '';
         // add the words that specify the calculated value to the title
-        $val_phr_lst = clone $this->grp()->phrase_list();
+        $val_phr_lst = clone $this->grp->phrase_list();
         $val_wrd_lst = $val_phr_lst->wrd_lst_all();
         $title .= $lib->dsp_array($val_wrd_lst->api_obj()->ex_measure_and_time_lst()->dsp_obj()->names_linked());
         $time_phr = $lib->dsp_array($val_wrd_lst->dsp_obj()->time_lst()->names_linked());

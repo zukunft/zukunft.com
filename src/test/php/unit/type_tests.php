@@ -30,25 +30,25 @@
 
 */
 
-namespace unit;
+namespace Zukunft\ZukunftCom\test\php\unit;
 
-use cfg\component\view_style;
-use cfg\formula\formula_type;
-use cfg\ref\ref_type;
-use cfg\ref\source_type;
-use cfg\sandbox\protection_type;
-use cfg\sandbox\share_type;
-use cfg\system\job_type;
-use cfg\phrase\phrase_type;
-use cfg\system\sys_log_function;
-use cfg\system\sys_log_status;
-use cfg\system\sys_log_type;
-use cfg\user\user_official_type;
-use cfg\user\user_profile;
-use cfg\user\user_type;
-use cfg\view\view_link_type;
-use cfg\view\view_type;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\protection_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\share_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_type;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class type_tests
 {

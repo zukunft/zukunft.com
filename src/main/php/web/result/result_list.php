@@ -2,10 +2,10 @@
 
 /*
 
-    result_list_min_display.php - the display extension of the api result list object
-    ---------------------------
+    web/result/result_list.php - the display extension of the api result list object
+    --------------------------
 
-    to creat the HTML code to display a list of formula results
+    to create the HTML code to display a list of formula results
 
 
     This file is part of zukunft.com - calc with words
@@ -32,10 +32,23 @@
 
 */
 
-namespace html\result;
+namespace Zukunft\ZukunftCom\main\php\web\result;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\group\group_list;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call as api_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\list_value;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
+use Zukunft\ZukunftCom\main\php\shared\helper\TextIdObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::SANDBOX . 'list_value.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -51,21 +64,8 @@ include_once paths::SHARED_HELPER . 'CombineObject.php';
 include_once paths::SHARED_HELPER . 'IdObject.php';
 include_once paths::SHARED_HELPER . 'TextIdObject.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
-
-use html\rest_call as api_dsp;
-use html\html_base;
-use html\formula\formula;
-use html\group\group_list;
-use html\phrase\phrase_list;
-use html\sandbox\list_value;
-use html\system\back_trace;
-use html\user\user_message;
-use shared\api;
-use shared\helper\CombineObject;
-use shared\helper\IdObject;
-use shared\helper\TextIdObject;
-use shared\library;
 
 class result_list extends list_value
 {
@@ -102,8 +102,8 @@ class result_list extends list_value
 
         $api = new api_dsp();
         $data = array();
-        $data[api::URL_VAR_FORMULA] = $frm->id();
-        $data[api::URL_VAR_GROUP] = $lst->ids();
+        $data[url_var::FORMULA] = $frm->id();
+        $data[url_var::GROUP] = $lst->ids();
         $json_body = $api->api_get(self::class, $data);
         $this->api_mapper($json_body);
         if (!$this->is_empty()) {

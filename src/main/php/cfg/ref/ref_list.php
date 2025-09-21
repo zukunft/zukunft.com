@@ -30,34 +30,34 @@
   
 */
 
-namespace cfg\ref;
+namespace Zukunft\ZukunftCom\main\php\cfg\ref;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_db.php';
 //include_once paths::MODEL_HELPER . 'type_list.php';
-include_once paths::MODEL_HELPER . 'type_object.php';
+//include_once paths::MODEL_HELPER . 'type_object.php';
 //include_once paths::MODEL_IMPORT . 'import.php';
 //include_once paths::MODEL_REF . 'ref.php';
-include_once paths::MODEL_USER . 'user.php';
-include_once paths::MODEL_USER . 'user_message.php';
-include_once paths::MODEL_VIEW . 'view.php';
-include_once paths::MODEL_VERB . 'verb.php';
-include_once paths::SHARED_CONST . 'refs.php';
-include_once paths::SHARED_CONST . 'triples.php';
-include_once paths::SHARED_CONST . 'words.php';
-include_once paths::SHARED_ENUM . 'messages.php';
+//include_once paths::MODEL_USER . 'user.php';
+//include_once paths::MODEL_USER . 'user_message.php';
+//include_once paths::MODEL_VIEW . 'view.php';
+//include_once paths::MODEL_VERB . 'verb.php';
+//include_once paths::SHARED_CONST . 'refs.php';
+//include_once paths::SHARED_CONST . 'triples.php';
+//include_once paths::SHARED_CONST . 'words.php';
+//include_once paths::SHARED_ENUM . 'messages.php';
 
-use cfg\db\sql_db;
-use cfg\helper\type_list;
-use cfg\helper\type_object;
-use cfg\import\import;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\view\view;
-use shared\const\refs;
-use shared\const\triples;
-use shared\const\words;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\import\import;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\shared\const\refs;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
 
 class ref_list extends type_list
 {
@@ -190,7 +190,7 @@ class ref_list extends type_list
     {
         global $usr;
         $type = new ref($usr);
-        $type->set_id(1);
+        $type->id = 1;
         $type->set_name(refs::WIKIDATA_TYPE);
         $type->set_code_id_db(refs::WIKIDATA_TYPE);
         $this->add($type);

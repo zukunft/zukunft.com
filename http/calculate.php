@@ -32,14 +32,14 @@
 
 */
 
-use cfg\formula\formula;
-use cfg\formula\formula_list;
-use cfg\result\result_list;
-use cfg\user\user;
-use shared\api;
-use shared\const\triples;
-use shared\const\words;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 $debug = $_GET['debug'] ?? 0;
 const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
@@ -50,14 +50,14 @@ include_once PHP_PATH . 'init.php';
 $db_con = prg_start("calculate");
 
 // get the parameters
-$back = $_GET[api::URL_VAR_BACK] ?? ''; // the original calling page that should be shown after the change if finished
+$back = $_GET[url_var::BACK] ?? ''; // the original calling page that should be shown after the change if finished
 
 // load the requesting user
 $usr = new user;
-$usr_id = $_GET[api::URL_VAR_USER] ?? 0; // to force another user view for testing the formula calculation
+$usr_id = $_GET[url_var::USER] ?? 0; // to force another user view for testing the formula calculation
 
 // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-if ($usr->id() > 0) {
+if ($usr->id > 0) {
 
     global $cfg;
     $ui_response_time = $cfg->get_by([triples::RESPONSE_TIME, words::MIN, words::FRONTEND, words::BEHAVIOUR]);

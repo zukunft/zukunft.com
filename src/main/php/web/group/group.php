@@ -40,10 +40,11 @@
 
 */
 
-namespace html\group;
+namespace Zukunft\ZukunftCom\main\php\web\group;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'sandbox_named.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
@@ -52,13 +53,13 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use html\phrase\phrase as phrase;
-use html\phrase\phrase_list as phrase_list;
-use html\sandbox\sandbox_named as sandbox_named;
-use html\user\user_message;
-use html\word\triple as triple;
-use html\word\word as word;
-use shared\json_fields;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list;
+use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_named as sandbox_named;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple;
+use Zukunft\ZukunftCom\main\php\web\word\word as word;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 
 class group extends sandbox_named
 {
@@ -288,7 +289,36 @@ class group extends sandbox_named
      */
 
     /**
-     * the name of the phrase group with the tooltip 
+     * the name of the phrase group as pure text
+     * e.g. for form fields
+     * @param phrase_list|null $phr_lst_exclude list of phrases already shown in the header and should be excluded
+     * @param string $sep the separator between the phrase names
+     * @return string the html code to show the group name
+     */
+    function name(phrase_list $phr_lst_exclude = null, string $sep = ', '): string
+    {
+        $result = '';
+        if (parent::name() <> '') {
+            $result .= parent::name();
+        } else {
+            $lst_to_show = $this->phr_lst();
+            if ($phr_lst_exclude != null) {
+                if (!$phr_lst_exclude->is_empty()) {
+                    $lst_to_show->remove($phr_lst_exclude);
+                }
+            }
+            foreach ($lst_to_show->lst() as $phr) {
+                if ($result <> '') {
+                    $result .= $sep;
+                }
+                $result .= $phr->name();
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * the name of the phrase group with the tooltip
      * or the names of the phrases with the tooltip
      * @param phrase_list|null $phr_lst_exclude list of phrases already shown in the header and should be excluded
      * @param string $sep the separator between the phrase names
@@ -298,7 +328,7 @@ class group extends sandbox_named
     {
         $result = '';
         if ($this->name_tip_dirty or $phr_lst_exclude != null) {
-            if ($this->name() <> '') {
+            if ($this->name <> '') {
                 $result .= parent::name_tip();
             } else {
                 $lst_to_show = $this->phr_lst();
@@ -330,7 +360,7 @@ class group extends sandbox_named
     {
         $result = '';
         if ($this->name_link_dirty or $phr_lst_header != null) {
-            if ($this->name() <> '') {
+            if ($this->name <> '') {
                 $result .= $this->name_link();
             } else {
                 $lst_to_show = $this->phr_lst();

@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\user;
+namespace Zukunft\ZukunftCom\main\php\cfg\user;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql.php';
 include_once paths::DB . 'sql_creator.php';
@@ -60,25 +60,25 @@ include_once paths::SHARED_ENUM . 'user_profiles.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\formula\formula;
-use cfg\helper\db_object;
-use cfg\helper\db_object_multi;
-use cfg\ref\ref;
-use cfg\ref\source;
-use cfg\value\value;
-use cfg\view\view;
-use cfg\word\triple;
-use cfg\word\word;
-use shared\const\users;
-use shared\enum\messages as msg_id;
-use shared\enum\user_profiles;
-use shared\library;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_multi;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 global $system_users;
 
@@ -134,7 +134,7 @@ class user_list
         $sc->set_class(user::class);
         $sc->set_name($qp->name);
 
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(user_db::FLD_NAMES_LIST);
         return $qp;
     }
@@ -379,7 +379,7 @@ class user_list
         if ($db_usr_lst != null) {
             foreach ($db_usr_lst as $db_usr) {
                 $usr = new user;
-                $usr->set_id($db_usr[user_db::FLD_ID]);
+                $usr->id = $db_usr[user_db::FLD_ID];
                 $usr->name = $db_usr[user_db::FLD_NAME];
                 $usr->code_id = $db_usr[sql_db::FLD_CODE_ID];
                 $this->lst[] = $usr;
@@ -418,7 +418,7 @@ class user_list
         $result = array();
         if ($this->lst != null) {
             foreach ($this->lst as $usr) {
-                $result[] = $usr->id();
+                $result[] = $usr->id;
             }
         }
         return $result;
@@ -577,8 +577,8 @@ class user_list
         if ($allow_duplicates) {
             $this->add_direct($usr_to_add);
         } else {
-            if ($usr_to_add->id() != 0) {
-                if (!array_key_exists($usr_to_add->id(), $this->id_lst())) {
+            if ($usr_to_add->id != 0) {
+                if (!array_key_exists($usr_to_add->id, $this->id_lst())) {
                     if (!array_key_exists($usr_to_add->name(), $this->names())) {
                         $this->add_direct($usr_to_add);
                     } else {
@@ -665,7 +665,7 @@ class user_list
         } else {
             foreach ($this->lst() as $usr) {
                 if ($usr->excluded === true) {
-                    if ($usr->id() == 0 and $usr->name() != '') {
+                    if ($usr->id == 0 and $usr->name() != '') {
                         $usr->load_by_name($usr->name());
                     }
                     $usr_msg->add($usr->del($usr_req));

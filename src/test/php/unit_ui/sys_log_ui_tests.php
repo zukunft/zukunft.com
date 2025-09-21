@@ -30,14 +30,14 @@
 
 */
 
-namespace unit_ui;
+namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
-use cfg\user\user;
-use html\user\user as user_dsp;
-use html\html_base;
-use html\system\sys_log_list as sys_log_list_dsp;
-use shared\const\users;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 class sys_log_ui_tests
 {

@@ -35,48 +35,51 @@
 
 */
 
-namespace html\view;
+namespace Zukunft\ZukunftCom\main\php\web\view;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-include_once html_paths::VIEW . 'view_base.php';
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once html_paths::COMPONENT . 'component.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'display_list.php';
 include_once html_paths::HTML . 'html_base.php';
-include_once paths::SHARED_CONST . 'rest_ctrl.php';
-include_once html_paths::COMPONENT . 'component.php';
-include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::VIEW . 'view_base.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'components.php';
 include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_TYPES . 'view_type.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
-
-use html\button;
-use html\display_list;
-use html\helper\data_object;
-use html\html_base;
-use html\log\user_log_display;
-use html\sandbox\db_object;
-use html\system\back_trace;
-use html\word\word;
-use shared\api;
-use shared\const\triples;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\types\position_types;
-use shared\types\view_styles;
-use shared\types\view_type;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\button;
+use Zukunft\ZukunftCom\main\php\web\html\display_list;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
+use Zukunft\ZukunftCom\main\php\web\system\back_trace;
+use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\triples;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\position_types;
+use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 
 class view_exe extends view_base
 {
@@ -156,7 +159,7 @@ class view_exe extends view_base
             foreach ($this->cmp_lst->lst() as $cmp) {
                 // add previous collected components to the final result
                 if ($row != '') {
-                    if ($cmp->pos_type_code_id() == position_types::BELOW) {
+                    if ($cmp->pos_type_code_id($cfg->typ_lst_cache) == position_types::BELOW) {
                         if ($button_only) {
                             $result .= $row;
                         } else {
@@ -169,7 +172,10 @@ class view_exe extends view_base
                         $button_only = true;
                     }
                 }
-                if (!$cmp->is_button_or_hidden()) {
+                if ($cfg == null) {
+                    $this->log_err('frontend data object is missing');
+                }
+                if (!$cmp->is_button_or_hidden($cfg->typ_lst_cache)) {
                     $button_only = false;
                 }
                 $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $back, $test_mode);
@@ -334,15 +340,15 @@ class view_exe extends view_base
     }
 
     /**
-     * @param string $script the name of the html form
+     * @param string $form the name of the html form
+     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code for the view type selector
      */
-    private function dsp_type_selector(string $script, string $class, string $attribute): string
+    private function dsp_type_selector(string $form, string $class, string $attribute, ?type_lists $typ_lst): string
     {
-        global $html_view_types;
         //$sel->bs_class = $class;
         //$sel->attribute = $attribute;
-        return $html_view_types->selector($script);
+        return $typ_lst->html_view_types->selector($form);
     }
 
     /**
@@ -379,7 +385,7 @@ class view_exe extends view_base
             if ($add_cmp > 0) {
                 $result .= 'View component to add: ';
                 $url = $html->url(api::DSP_VIEW_ADD, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=-1&');
-                $result .= (new button($url, $back))->add(msg_id::COMPONENT_ADD);
+                $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
                 $id_selected = 0; // no default view component to add defined yet, maybe use the last???
                 $result .= $this->component_selector($script, '', $id_selected);
 
@@ -392,7 +398,7 @@ class view_exe extends view_base
                 $result .= $html->dsp_form_end('', "/http/view_edit.php?id=" . $this->id() . "&word=" . $wrd->id() . "&back=" . $back);
             } else {
                 $url = $html->url(api::DSP_COMPONENT_LINK, $this->id(), $back, '', word::class . '=' . $wrd->id() . '&add_entry=1');
-                $result .= (new button($url, $back))->add(msg_id::COMPONENT_ADD);
+                $result .= new button($url, $back)->add(msg_id::COMPONENT_ADD);
             }
         }
         if (html_base::UI_USE_BOOTSTRAP) {
@@ -471,9 +477,9 @@ class view_exe extends view_base
                 $result .= '<a href="' . $call . '&' . $field . '=' . $view_id . '">' . $view_name . '</a> ';
             }
             $call_edit = '/http/view_edit.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= \html\btn_edit('design the view', $call_edit) . ' ';
+            $result .= \Zukunft\ZukunftCom\main\php\web\btn_edit('design the view', $call_edit) . ' ';
             $call_del = '/http/view_del.php?id=' . $view_id . '&word=' . $wrd_id . '&back=' . $back;
-            $result .= \html\btn_del('delete the view', $call_del) . ' ';
+            $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete the view', $call_del) . ' ';
             $result .= '<br>';
         }
 

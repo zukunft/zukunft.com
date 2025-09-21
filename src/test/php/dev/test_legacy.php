@@ -30,7 +30,7 @@
 
 */
 
-use test\all_tests;
+use Zukunft\ZukunftCom\test\php\utils\all_tests;
 
 function run_legacy_test(all_tests $t): void
 {

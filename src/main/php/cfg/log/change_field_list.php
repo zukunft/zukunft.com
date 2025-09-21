@@ -30,9 +30,9 @@
 
 */
 
-namespace cfg\log;
+namespace Zukunft\ZukunftCom\main\php\cfg\log;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_HELPER . 'type_list.php';
@@ -44,10 +44,10 @@ include_once paths::MODEL_LOG . 'change_field_list.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED_ENUM . 'change_fields.php';
 
-use cfg\helper\type_list;
-use cfg\helper\type_object;
-use shared\enum\change_tables;
-use shared\enum\change_fields;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
 
 class change_field_list extends type_list
 {

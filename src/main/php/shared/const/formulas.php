@@ -32,9 +32,9 @@
 
 */
 
-namespace shared\const;
+namespace Zukunft\ZukunftCom\main\php\shared\const;
 
-use shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class formulas
 {

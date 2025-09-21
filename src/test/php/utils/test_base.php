@@ -49,10 +49,99 @@
 // TODO add checks that all id (name or link) changing return the correct error message if the new id already exists
 // TODO build a cascading test classes and split the classes to sections less than 1000 lines of code
 
-namespace test;
+namespace Zukunft\ZukunftCom\test\php\utils;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_list;
+use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
+use Zukunft\ZukunftCom\main\php\cfg\formula\fig_ids;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_list;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_named;
+use Zukunft\ZukunftCom\main\php\cfg\helper\combine_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object_seq_id;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_format;
+use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\trm_ids;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_value;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_list;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\test\php\const\files as test_files;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
+use Zukunft\ZukunftCom\main\php\web\component\component_exe as component_dsp;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\log\change_log_named as change_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\rest_call;
+use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\html\styles;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\shared\api;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\enum\user_profiles;
+use Zukunft\ZukunftCom\main\php\shared\enum\value_types;
+use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Exception;
 
 include_once paths::SERVICE . 'config.php';
 include_once paths::DB . 'sql_type.php';
@@ -95,95 +184,6 @@ include_once paths::SHARED_TYPES . 'share_type.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 include_once TEST_CONST_PATH . 'paths.php';
 include_once TEST_CONST_PATH . 'files.php';
-
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\component\component_list;
-use cfg\config;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\element\element_list;
-use cfg\formula\fig_ids;
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\formula\formula_list;
-use cfg\group\group;
-use cfg\helper\combine_named;
-use cfg\helper\combine_object;
-use cfg\helper\data_object;
-use cfg\helper\db_id_object_non_sandbox;
-use cfg\helper\db_object_seq_id;
-use cfg\helper\type_object;
-use cfg\log\change;
-use cfg\log\change_link;
-use cfg\log_text\text_log_format;
-use cfg\log_text\text_log_level;
-use cfg\phrase\phr_ids;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_list;
-use cfg\phrase\term;
-use cfg\phrase\trm_ids;
-use cfg\ref\ref;
-use cfg\ref\source;
-use cfg\result\result;
-use cfg\result\result_list;
-use cfg\sandbox\sandbox;
-use cfg\sandbox\sandbox_link;
-use cfg\sandbox\sandbox_link_named;
-use cfg\sandbox\sandbox_list_named;
-use cfg\sandbox\sandbox_multi;
-use cfg\sandbox\sandbox_named;
-use cfg\sandbox\sandbox_value;
-use cfg\system\ip_range;
-use cfg\system\job;
-use cfg\system\pod;
-use cfg\user\user;
-use cfg\value\value;
-use cfg\value\value_base;
-use cfg\value\value_list;
-use cfg\verb\verb;
-use cfg\view\term_view;
-use cfg\view\view;
-use cfg\view\view_list;
-use cfg\word\triple;
-use cfg\word\triple_list;
-use cfg\word\word;
-use cfg\word\word_list;
-use const\paths as test_paths;
-use const\files as test_files;
-use Exception;
-use html\component\component_exe as component_dsp;
-use html\formula\formula as formula_dsp;
-use html\helper\data_object as data_object_dsp;
-use html\html_base;
-use html\log\change_log_named as change_dsp;
-use html\ref\ref as ref_dsp;
-use html\ref\source as source_dsp;
-use html\rest_call;
-use html\result\result as result_dsp;
-use html\sandbox\db_object as db_object_dsp;
-use html\styles;
-use html\user\user as user_dsp;
-use html\value\value as value_dsp;
-use html\verb\verb as verb_dsp;
-use html\view\view as view_dsp;
-use html\word\triple as triple_dsp;
-use html\word\word as word_dsp;
-use shared\api;
-use shared\const\rest_ctrl;
-use shared\const\users;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\enum\user_profiles;
-use shared\enum\value_types;
-use shared\helper\CombineObject;
-use shared\library;
-use shared\types\api_type;
-use shared\types\verbs;
-use unit_read\system_views_read_tests;
 
 // TODO activate
 //use html\group\group as group_dsp;
@@ -785,7 +785,7 @@ class test_base
     {
         $lib = new library();
         $original_json = $usr_obj->export_json();
-        $db_obj = clone $usr_obj;
+        $db_obj = $usr_obj->clone_all();
         $db_obj->reset();
         $db_obj->load_by_id($usr_obj->id());
         $recreated_json = $db_obj->export_json();
@@ -808,7 +808,7 @@ class test_base
     {
         $lib = new library();
         $test_name = $lib->class_to_name($test_name);
-        $url = api::HOST_TESTING . api::URL_API_PATH . 'json';
+        $url = api::HOST_TESTING . url_var::API_PATH . 'json';
         $data = array($fld => $id);
         $ctrl = new rest_call();
         $actual = json_decode($ctrl->api_call(rest_ctrl::GET, $url, $data), true);
@@ -858,7 +858,11 @@ class test_base
         // load the view from the database
         $msk = new view($usr);
         $msk->load_by_code_id($dsp_code_id);
-        $msk->load_components();
+        if ($msk->id() > 0) {
+            $msk->load_components();
+        } else {
+            log_err('view with code id ' . $dsp_code_id . ' not found');
+        }
 
         // create the api message that send to the frontend
         $api_msg = $msk->api_json();
@@ -877,10 +881,16 @@ class test_base
         // create the view for the user
         $dsp_html = new view_dsp;
         $dsp_html->set_from_json($api_msg);
+        if ($cfg == null) {
+            $ui = new frontend('');
+            $ui->load_cache();
+            $cfg = new data_object_dsp();
+            $cfg->typ_lst_cache = $ui->typ_lst_cache;
+        }
         $actual = $dsp_html->show($dbo_dsp, $cfg, '', true);
 
         // check if the created view matches the expected view
-        return $this->assert_html(
+        return $this->assert_html_body(
             $this->name . ' view ' . $dsp_code_id,
             $actual, $filename);
     }
@@ -951,7 +961,7 @@ class test_base
     {
         $json_before = $obj->api_json([api_type::TEST_MODE]);
         $json_ex = $obj->export_json(false);
-        $new_obj = clone $obj;
+        $new_obj = $obj->clone_all();
         $new_obj->reset();
         $dto = new data_object($usr_req);
         $new_obj->import_obj($json_ex, $dto, $this);
@@ -1009,13 +1019,29 @@ class test_base
      * @param string $filename the filename of the expected html page
      * @return bool true if the html has no relevant differences
      */
-    function assert_html(string $test_name, string $body, string $filename): bool
+    function assert_html_body(string $test_name, string $body, string $filename): bool
     {
         $lib = new library();
 
         $actual = $this->html_page($body);
         $expected = $this->file('web/html/' . $filename . test_files::HTML);
         return $this->assert($test_name, $lib->trim_html($actual), $lib->trim_html($expected));
+    }
+
+    /**
+     * check if the created html matches a defined html file
+     *
+     * @param string $test_name the description of the test
+     * @param string $html the html code of a html page
+     * @param string $filename the filename of the expected html page
+     * @return bool true if the html has no relevant differences
+     */
+    function assert_html_page(string $test_name, string $html, string $filename): bool
+    {
+        $lib = new library();
+
+        $expected = $this->file('web/html/' . $filename . test_files::HTML);
+        return $this->assert($test_name, $lib->trim_html($html), $lib->trim_html($expected));
     }
 
 
@@ -2174,7 +2200,7 @@ class test_base
         // check the loading via id and check if the id has been mapped
         $test_name = 'load ' . $usr_obj::class . ' by id ' . $id;
         $usr_obj->reset();
-        $usr_obj->set_id(0);
+        $usr_obj->id = 0;
         $usr_obj->load_by_id($id);
         return $this->assert($test_name, $usr_obj->id(), $id);
     }
@@ -3916,7 +3942,7 @@ class test_base
         // set the id for simple db objects without related objects
         if ($usr_obj::class == user::class) {
             if ($usr_obj->id() == 0) {
-                $usr_obj->set_id($this->next_seq_nbr());
+                $usr_obj->id = $this->next_seq_nbr();
             }
         } elseif ($usr_obj::class == word::class
             or $usr_obj::class == triple::class
@@ -3926,7 +3952,7 @@ class test_base
             or $usr_obj::class == source::class
             or $usr_obj::class == ref::class) {
             if ($usr_obj->id() == 0) {
-                $usr_obj->set_id($this->next_seq_nbr());
+                $usr_obj->id = $this->next_seq_nbr();
             }
         } elseif ($usr_obj::class == value::class
             or $usr_obj::class == result::class) {
@@ -3987,7 +4013,7 @@ class test_base
     private function set_frm_id_for_unit_tests(formula $frm): void
     {
         if ($frm->id() == 0) {
-            $frm->set_id($this->next_seq_nbr());
+            $frm->id = $this->next_seq_nbr();
         }
     }
 

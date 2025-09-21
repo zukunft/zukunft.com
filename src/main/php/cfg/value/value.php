@@ -40,9 +40,9 @@
 
 */
 
-namespace cfg\value;
+namespace Zukunft\ZukunftCom\main\php\cfg\value;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_VALUE . 'value_base.php';
 include_once paths::DB . 'sql_field_default.php';
@@ -53,13 +53,13 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\group\group;
-use cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use DateTime;
-use shared\json_fields;
-use shared\types\api_type_list;
 
 class value extends value_base
 {
@@ -69,16 +69,16 @@ class value extends value_base
      */
 
     // object specific database and JSON object field names
-    const FLD_VALUE = 'numeric_value';
-    const FLD_COM = 'the numeric given by the user';
-    const FLD_USER_COM = 'the user specific numeric value change';
+    const string FLD_VALUE = 'numeric_value';
+    const string FLD_COM = 'the numeric given by the user';
+    const string FLD_USER_COM = 'the user specific numeric value change';
 
     // database field with the sql type specification
-    const FLD_NAMES_STD = value_db::FLD_NAMES_STD;
-    const FLD_ALL_VALUE = array(
+    const array FLD_NAMES_STD = value_db::FLD_NAMES_STD;
+    const array FLD_ALL_VALUE = array(
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NOT_NULL, '', '', self::FLD_COM],
     );
-    const FLD_ALL_VALUE_USER = array(
+    const array FLD_ALL_VALUE_USER = array(
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', self::FLD_USER_COM],
     );
 

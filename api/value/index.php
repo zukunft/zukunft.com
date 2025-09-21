@@ -36,20 +36,20 @@ const ROOT_PATH = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 const PHP_PATH = ROOT_PATH . 'src' . DIRECTORY_SEPARATOR . 'main' . DIRECTORY_SEPARATOR . 'php' . DIRECTORY_SEPARATOR;
 include_once PHP_PATH . 'init.php';
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\api\controller;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED_TYPES . 'api_type.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::API_OBJECT . 'api_message.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_VALUE . 'value.php';
-
-use cfg\value\value;
-use controller\controller;
-use cfg\user\user;
-use shared\api;
-use shared\types\api_type;
 
 // open database
 $db_con = prg_start("api/value", "", false);
@@ -57,8 +57,8 @@ $db_con = prg_start("api/value", "", false);
 if ($db_con->is_open()) {
 
     // get the parameters
-    $val_id = $_GET[api::URL_VAR_ID] ?? 0;
-    $with_phr = $_GET[api::URL_VAR_WITH_PHRASES] ?? '';
+    $val_id = $_GET[url_var::ID] ?? 0;
+    $with_phr = $_GET[url_var::WITH_PHRASES] ?? '';
 
     $msg = '';
     $result = ''; // reset the api message
@@ -68,7 +68,7 @@ if ($db_con->is_open()) {
     $msg .= $usr->get();
 
     // check if the user is permitted (e.g. to exclude crawlers from doing stupid stuff)
-    if ($usr->id() > 0) {
+    if ($usr->id > 0) {
 
         if (is_numeric($val_id)) {
             $val_id = (int)$val_id;
@@ -77,7 +77,7 @@ if ($db_con->is_open()) {
             $val = new value($usr);
             $val->load_by_id($val_id);
             $val->load_objects();
-            if ($with_phr == api::URL_VAR_TRUE) {
+            if ($with_phr == url_var::TRUE) {
                 $result = $val->api_json([api_type::INCL_PHRASES]);
             } else {
                 $result = $val->api_json();

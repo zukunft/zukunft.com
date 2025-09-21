@@ -4,6 +4,7 @@ PREPARE triple_by_usr_cfg FROM
            name_given,
            name_generated,
            description,
+           weight,
            phrase_type_id,
            `values`,
            excluded,

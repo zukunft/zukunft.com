@@ -30,9 +30,9 @@
   
 */
 
-namespace cfg\verb;
+namespace Zukunft\ZukunftCom\main\php\cfg\verb;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'type_list.php';
 include_once paths::DB . 'sql_db.php';
@@ -51,21 +51,21 @@ include_once paths::MODEL_WORD . 'triple_db.php';
 include_once paths::SHARED_ENUM . 'foaf_direction.php';
 include_once paths::SHARED_TYPES . 'verbs.php';
 
-use cfg\db\sql_db;
-use cfg\db\sql_par;
-use cfg\db\sql_par_type;
-use cfg\helper\type_list;
-use cfg\phrase\phrase;
-use cfg\phrase\term_list;
-use cfg\sandbox\sandbox;
-use cfg\system\system_time_type;
-use cfg\user\user;
-use cfg\user\user_message;
-use cfg\word\triple;
-use cfg\word\triple_db;
-use cfg\word\word;
-use shared\enum\foaf_direction;
-use shared\types\verbs;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_type;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\shared\enum\foaf_direction;
+use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 
 class verb_list extends type_list
 {
@@ -147,7 +147,7 @@ class verb_list extends type_list
         if ($qp->name != '') {
             $db_con->set_class(triple::class);
             $db_con->set_name($qp->name);
-            $db_con->set_usr($this->user()->id());
+            $db_con->set_usr($this->user()->id);
             $db_con->set_usr_num_fields(array(sql_db::FLD_EXCLUDED));
             $db_con->set_join_fields(array_merge(verb_db::FLD_NAMES, array(verb_db::FLD_NAME)), verb::class);
             $db_con->set_fields(array(verb_db::FLD_ID));
@@ -197,7 +197,7 @@ class verb_list extends type_list
                             $vrb->row_mapper_verb($db_vrb);
                             $vrb->set_user($this->usr);
                             $vrb_lst[] = $vrb;
-                            $vrb_id_lst[] = $vrb->id();
+                            $vrb_id_lst[] = $vrb->id;
                             log_debug('verb_list->load added (' . $vrb->name() . ')');
                         }
                     }
@@ -240,79 +240,94 @@ class verb_list extends type_list
     function load_dummy(): void
     {
         $vrb = new verb();
-        $vrb->set_id(verbs::NOT_SET_ID);
+        $vrb->id = verbs::NOT_SET_ID;
         $vrb->set_name(verbs::NOT_SET_NAME);
         $vrb->set_code_id_db(verbs::NOT_SET);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::IS_ID);
+        $vrb->id = verbs::IS_ID;
         $vrb->set_name(verbs::IS_NAME);
         $vrb->set_code_id_db(verbs::IS);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::OF_ID);
+        $vrb->id = verbs::OF_ID;
         $vrb->set_name(verbs::OF_NAME);
         $vrb->set_code_id_db(verbs::OF);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::PART_ID);
+        $vrb->id = verbs::PART_ID;
         $vrb->set_name(verbs::PART_NAME);
         $vrb->set_code_id_db(verbs::PART);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::WITH_ID);
+        $vrb->id = verbs::WITH_ID;
         $vrb->set_name(verbs::WITH_NAME);
         $vrb->set_code_id_db(verbs::WITH_NAME);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::FOLLOW_ID);
+        $vrb->id = verbs::FOLLOW_ID;
         $vrb->set_name(verbs::FOLLOW_NAME);
         $vrb->set_code_id_db(verbs::FOLLOW);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::MEASURE_ID);
+        $vrb->id = verbs::MEASURE_ID;
         $vrb->set_name(verbs::MEASURE_NAME);
         $vrb->set_code_id_db(verbs::MEASURE);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::ALIAS_ID);
+        $vrb->id = verbs::ALIAS_ID;
         $vrb->set_name(verbs::ALIAS_NAME);
         $vrb->set_code_id_db(verbs::ALIAS);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::CAN_BE_ID);
+        $vrb->id = verbs::CAN_BE_ID;
         $vrb->set_name(verbs::CAN_BE_NAME);
         $vrb->set_code_id_db(verbs::CAN_BE);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::CAN_GET_ID);
+        $vrb->id = verbs::CAN_GET_ID;
         $vrb->set_name(verbs::CAN_GET_NAME);
         $vrb->set_code_id_db(verbs::CAN_GET);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::CAN_USE_ID);
+        $vrb->id = verbs::CAN_USE_ID;
         $vrb->set_name(verbs::CAN_USE_NAME);
         $vrb->set_code_id_db(verbs::CAN_USE);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::CAN_CAUSE_ID);
+        $vrb->id = verbs::CAN_CAUSE_ID;
         $vrb->set_name(verbs::CAN_CAUSE_NAME);
         $vrb->set_code_id_db(verbs::CAN_CAUSE);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::PER_ID);
+        $vrb->id = verbs::PER_ID;
         $vrb->set_name(verbs::PER_NAME);
         $vrb->set_code_id_db(verbs::PER);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::SYMBOL_ID);
+        $vrb->id = verbs::SYMBOL_ID;
         $vrb->set_name(verbs::SYMBOL_NAME);
         $vrb->set_code_id_db(verbs::SYMBOL);
         $this->add_verb($vrb);
         $vrb = new verb();
-        $vrb->set_id(verbs::AND_ID);
+        $vrb->id = verbs::AND_ID;
         $vrb->set_name(verbs::AND_NAME);
         $vrb->set_code_id_db(verbs::AND);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::IN_ID;
+        $vrb->set_name(verbs::IN_NAME);
+        $vrb->set_code_id_db(verbs::IN);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::TO_ID;
+        $vrb->set_name(verbs::TO_NAME);
+        $vrb->set_code_id_db(verbs::TO);
+        $this->add_verb($vrb);
+        $vrb = new verb();
+        $vrb->id = verbs::ON_ID;
+        $vrb->set_name(verbs::ON_NAME);
+        $vrb->set_code_id_db(verbs::ON);
         $this->add_verb($vrb);
     }
 
@@ -364,7 +379,7 @@ class verb_list extends type_list
      */
     function add_verb(verb $vrb): void
     {
-        //$type_obj = new type_object($vrb->code_id, $vrb->name(), '', $vrb->id());
+        //$type_obj = new type_object($vrb->code_id, $vrb->name(), '', $vrb->id);
         $this->add($vrb);
     }
 
@@ -399,7 +414,7 @@ class verb_list extends type_list
                                    FROM triples l
                                   WHERE v.verb_id = l.verb_id)
                  WHERE verb_id > 0;";
-        $db_con->usr_id = $this->user()->id();
+        $db_con->usr_id = $this->user()->id;
         $sys_times->switch(system_time_type::DB_WRITE);
         $result = $db_con->exe_try('Calculation of the verb usage', $sql);
         $sys_times->switch();

@@ -30,12 +30,13 @@
 
 */
 
-namespace html\phrase;
+namespace Zukunft\ZukunftCom\main\php\web\phrase;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once paths::SHARED . 'api.php';
+include_once paths::SHARED . 'url_var.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::SANDBOX . 'combine_named.php';
 include_once html_paths::USER . 'user_message.php';
@@ -46,19 +47,20 @@ include_once paths::SHARED_TYPES . 'phrase_type.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use html\formula\formula;
-use html\verb\verb;
-use html\word\triple;
-use html\word\word;
-use html\sandbox\combine_named as combine_named_dsp;
-use html\formula\formula as formula_dsp;
-use html\user\user_message;
-use html\verb\verb as verb_dsp;
-use html\word\word as word_dsp;
-use html\word\triple as triple_dsp;
-use shared\types\phrase_type;
-use shared\json_fields;
-use shared\library;
+use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\verb\verb;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
+use Zukunft\ZukunftCom\main\php\web\word\word;
+use Zukunft\ZukunftCom\main\php\web\sandbox\combine_named as combine_named_dsp;
+use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
+use Zukunft\ZukunftCom\main\php\web\word\triple as triple_dsp;
+use Zukunft\ZukunftCom\main\php\shared\types\phrase_type;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class term extends combine_named_dsp
 {
@@ -299,25 +301,25 @@ class term extends combine_named_dsp
             if ($class == word::class) {
                 if ($this->obj == null) {
                     $this->obj = new word();
-                    $this->obj->set_id($id);
                 }
             } elseif ($class == triple::class) {
                 if ($this->obj == null) {
                     $this->obj = new triple();
-                    $this->obj->set_id($id);
                 }
             } elseif ($class == formula::class) {
                 if ($this->obj == null) {
                     $this->obj = new formula();
-                    $this->obj->set_id($id);
                 }
             } elseif ($class == verb::class) {
                 if ($this->obj == null) {
                     $this->obj = new verb();
-                    $this->obj->set_id($id);
+                }
+            } else {
+                if ($this->obj == null) {
+                    $this->obj = new word();
                 }
             }
-            $this->obj->set_id($id);
+            $this->obj->id = $id;
         }
     }
 
@@ -488,7 +490,7 @@ class term extends combine_named_dsp
     function dsp_unlink(int $link_id): string
     {
         $result = '    <td>' . "\n";
-        $result .= \html\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id());
+        $result .= \Zukunft\ZukunftCom\main\php\web\btn_del("unlink word", "/http/link_del.php?id=" . $link_id . "&back=" . $this->id());
         $result .= '    </td>' . "\n";
 
         return $result;
@@ -502,13 +504,13 @@ class term extends combine_named_dsp
      * if one form contains more than one selector, $pos is used for identification
      *
      * @param term $type is a word to preselect the list to only those phrases matching this type
-     * @param string $form_name
+     * @param string $form
      * @param int $pos
      * @param string $class
      * @param string $back
      * @return string
      */
-    function dsp_selector(term $type, string $form_name, int $pos, string $class, string $back = ''): string
+    function dsp_selector(term $type, string $form, int $pos, string $class, string $back = ''): string
     {
         // TODO include pattern in the call
         $pattern = '';
@@ -516,12 +518,12 @@ class term extends combine_named_dsp
         $trm_lst->load_like($pattern);
 
         if ($pos > 0) {
-            $field_name = "term" . $pos;
+            $name = url_var::TERM_POS_LONG . $pos;
         } else {
-            $field_name = "term";
+            $name = url_var::TERM_LONG;
         }
         $label = "";
-        if ($form_name != "value_add" and $form_name != "value_edit") {
+        if ($form != "value_add" and $form != "value_edit") {
             if ($pos == 1) {
                 $label = "From:";
             } elseif ($pos == 2) {
@@ -533,7 +535,7 @@ class term extends combine_named_dsp
         // TODO activate Prio 3
         // $sel->bs_class = $class;
 
-        return $trm_lst->selector($form_name, $this->id(), $field_name, $label, '');
+        return $trm_lst->selector($form, $this->id(), $name);
     }
 
 }

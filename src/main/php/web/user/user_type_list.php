@@ -32,18 +32,18 @@
 
 */
 
-namespace html\user;
+namespace Zukunft\ZukunftCom\main\php\web\user;
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::TYPES . 'type_list.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
 
-use html\html_base;
-use html\html_selector;
-use html\types\type_list;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\html\html_selector;
+use Zukunft\ZukunftCom\main\php\web\types\type_list;
 
 class user_type_list extends type_list
 {
@@ -58,9 +58,17 @@ class user_type_list extends type_list
     }
 
     /**
+     * create the HTML code to select a user type
+     * @param string $form the unique name of the html form
+     * @param int $selected the id of the preselected user type
+     * @param string $name the unique name inside the form for this selector
      * @returns string the html code to select a type from this list
      */
-    function selector(string $name = '', string $form = '', int $selected = 0): string
+    function selector(
+        string $form = '',
+        int $selected = 0,
+        string $name = ''
+    ): string
     {
         $sel = new html_selector();
         $sel->name = $name;

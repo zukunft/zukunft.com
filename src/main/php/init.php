@@ -30,39 +30,39 @@
 
 */
 
-use cfg\const\paths;
-use html\const\paths as html_paths;
-use cfg\db\db_check;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\element\element;
-use cfg\helper\config_numbers;
-use cfg\helper\type_lists;
-use cfg\log\change_action;
-use cfg\log\change_field;
-use cfg\log\change_link;
-use cfg\log\change_log;
-use cfg\log\change_table;
-use cfg\log\change_value;
-use cfg\log_text\text_log;
-use cfg\system\job;
-use cfg\system\session;
-use cfg\system\sys_log_function;
-use cfg\system\sys_log_status;
-use cfg\system\sys_log_type;
-use cfg\system\system_time;
-use cfg\system\system_time_type;
-use cfg\system_time_list;
-use cfg\user\user;
-use cfg\user\user_profile;
-use cfg\user\user_profile_list;
-use cfg\user\user_type;
-use html\html_base;
-use shared\const\rest_ctrl;
-use shared\const\users;
-use shared\helper\Translator;
-use shared\library;
-use test\test_cleanup;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\cfg\db\db_check;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\helper\config_numbers;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_log;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_value;
+use Zukunft\ZukunftCom\main\php\cfg\log_text\text_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\session;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile_list;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\const\users;
+use Zukunft\ZukunftCom\main\php\shared\helper\Translator;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
 // parameters for internal testing and debugging
 const LIST_MIN_NAMES = 4; // number of object names that should at least be shown
@@ -588,7 +588,7 @@ function prg_restart(string $code_name): sql_db
 
         // create a virtual one-time system user to load the system users
         $usr_sys = new user();
-        $usr_sys->set_id(users::SYSTEM_ID);
+        $usr_sys->id = users::SYSTEM_ID;
         $usr_sys->name = users::SYSTEM_NAME;
 
         // load system configuration

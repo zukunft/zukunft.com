@@ -35,9 +35,9 @@
 
 */
 
-namespace cfg\element;
+namespace Zukunft\ZukunftCom\main\php\cfg\element;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::DB . 'sql_creator.php';
 include_once paths::DB . 'sql_par.php';
@@ -49,15 +49,15 @@ include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
 
-use cfg\db\sql_creator;
-use cfg\db\sql_par;
-use cfg\formula\formula_db;
-use cfg\phrase\term_list;
-use cfg\sandbox\sandbox_list;
-use cfg\system\sys_log_level;
-use cfg\user\user;
-use cfg\user\user_db;
-use cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_level;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 
 class element_list extends sandbox_list
 {
@@ -130,7 +130,7 @@ class element_list extends sandbox_list
 
         $sc->set_class(element::class);
         $sc->set_name($qp->name);
-        $sc->set_usr($this->user()->id());
+        $sc->set_usr($this->user()->id);
         $sc->set_fields(element::FLD_NAMES);
         return $qp;
     }
@@ -146,7 +146,7 @@ class element_list extends sandbox_list
         $qp = $this->load_sql($sc, 'frm_id');
         if ($frm_id > 0) {
             $sc->add_where(formula_db::FLD_ID, $frm_id);
-            $sc->add_where(user_db::FLD_ID, $this->user()->id());
+            $sc->add_where(user_db::FLD_ID, $this->user()->id);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';
@@ -168,7 +168,7 @@ class element_list extends sandbox_list
         if ($frm_id > 0 and $elm_type_id != 0) {
             $sc->add_where(formula_db::FLD_ID, $frm_id);
             $sc->add_where(element::FLD_TYPE, $elm_type_id);
-            $sc->add_where(user_db::FLD_ID, $this->user()->id());
+            $sc->add_where(user_db::FLD_ID, $this->user()->id);
             $qp->sql = $sc->sql();
         } else {
             $qp->name = '';

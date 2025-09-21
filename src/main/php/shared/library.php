@@ -30,109 +30,109 @@
   
 */
 
-namespace shared;
+namespace Zukunft\ZukunftCom\main\php\shared;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
-include_once paths::SERVICE . 'config.php';
-include_once paths::MODEL_CONST . 'def.php';
-include_once paths::MODEL_REF . 'source_db.php';
-include_once paths::MODEL_USER . 'user_db.php';
-include_once paths::MODEL_VALUE . 'value_db.php';
+//include_once paths::SERVICE . 'config.php';
+//include_once paths::MODEL_CONST . 'def.php';
+//include_once paths::MODEL_REF . 'source_db.php';
+//include_once paths::MODEL_USER . 'user_db.php';
+//include_once paths::MODEL_VALUE . 'value_db.php';
 
-use cfg\component\view_style;
-use cfg\const\def;
-use cfg\log\change_values_geo_big;
-use cfg\log\change_values_geo_norm;
-use cfg\log\change_values_geo_prime;
-use cfg\log\change_values_text_big;
-use cfg\log\change_values_text_norm;
-use cfg\log\change_values_text_prime;
-use cfg\log\change_values_time_big;
-use cfg\log\change_values_time_norm;
-use cfg\log\change_values_time_prime;
-use cfg\ref\source_type;
-use cfg\sandbox\sandbox_multi;
-use cfg\ref\source_db;
-use cfg\system\session;
-use cfg\system\sys_log_status;
-use cfg\system\sys_log_status_list;
-use cfg\system\sys_log_type;
-use cfg\system\system_time;
-use cfg\user\user_db;
-use cfg\user\user_official_type;
-use cfg\value\value;
-use cfg\value\value_db;
-use cfg\value\value_geo;
-use cfg\value\value_text;
-use cfg\value\value_time;
-use cfg\verb\verb;
-use cfg\view\view_link_type;
-use cfg\word\triple;
-use cfg\word\word_db;
-use cfg\component\component;
-use cfg\component\component_link;
-use cfg\component\component_link_type;
-use cfg\component\component_type;
-use cfg\component\position_type;
-use cfg\config;
-use cfg\db\sql_db;
-use cfg\db\sql_par_field_list;
-use cfg\element\element;
-use cfg\element\element_type;
-use cfg\formula\formula;
-use cfg\formula\formula_link;
-use cfg\formula\formula_link_type;
-use cfg\formula\formula_type;
-use cfg\system\ip_range;
-use cfg\system\job;
-use cfg\system\job_time;
-use cfg\system\job_type;
-use cfg\language\language;
-use cfg\language\language_form;
-use cfg\log\change;
-use cfg\log\change_action;
-use cfg\log\change_values_big;
-use cfg\log\change_field;
-use cfg\log\change_link;
-use cfg\log\change_values_norm;
-use cfg\log\change_values_prime;
-use cfg\log\change_table;
-use cfg\log\change_table_field;
-use cfg\log\changes_big;
-use cfg\log\changes_norm;
-use cfg\phrase\phrase;
-use cfg\phrase\phrase_table;
-use cfg\phrase\phrase_table_status;
-use cfg\phrase\phrase_type;
-use cfg\phrase\phrase_types;
-use cfg\system\pod;
-use cfg\system\pod_status;
-use cfg\system\pod_type;
-use cfg\ref\ref;
-use cfg\ref\ref_type;
-use cfg\sandbox\sandbox_named;
-use cfg\ref\source;
-use cfg\system\sys_log;
-use cfg\system\sys_log_function;
-use cfg\system\system_time_type;
-use cfg\user\user;
-use cfg\user\user_profile;
-use cfg\user\user_type;
-use cfg\value\value_base;
-use cfg\value\value_ts_data;
-use cfg\view\view;
-use cfg\view\term_view;
-use cfg\word\word;
-use html\verb\verb as verb_dsp;
+use Zukunft\ZukunftCom\main\php\cfg\component\view_style;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_geo_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_text_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_time_prime;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
+use Zukunft\ZukunftCom\main\php\cfg\system\session;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_status_list;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_official_type;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_db;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_geo;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_text;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_time;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\component_type;
+use Zukunft\ZukunftCom\main\php\cfg\component\position_type;
+use Zukunft\ZukunftCom\main\php\service\config;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par_field_list;
+use Zukunft\ZukunftCom\main\php\cfg\element\element;
+use Zukunft\ZukunftCom\main\php\cfg\element\element_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link_type;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_type;
+use Zukunft\ZukunftCom\main\php\cfg\system\ip_range;
+use Zukunft\ZukunftCom\main\php\cfg\system\job;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_time;
+use Zukunft\ZukunftCom\main\php\cfg\system\job_type;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\cfg\log\change;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_field;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_link;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_norm;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_values_prime;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_big;
+use Zukunft\ZukunftCom\main\php\cfg\log\changes_norm;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_table_status;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_type;
+use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod_status;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod_type;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
+use Zukunft\ZukunftCom\main\php\cfg\system\sys_log_function;
+use Zukunft\ZukunftCom\main\php\cfg\system\system_time_type;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_profile;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_type;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_base;
+use Zukunft\ZukunftCom\main\php\cfg\value\value_ts_data;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\view\term_view;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
 use DateTime;
 use Exception;
-use shared\const\words;
-use shared\enum\messages as msg_id;
-use shared\types\protection_type;
-use shared\types\share_type;
-use shared\types\view_type;
-use test\test_api;
+use Zukunft\ZukunftCom\main\php\shared\const\words;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\types\protection_type;
+use Zukunft\ZukunftCom\main\php\shared\types\share_type;
+use Zukunft\ZukunftCom\main\php\shared\types\view_type;
+use Zukunft\ZukunftCom\test\php\utils\test_api;
 
 class library
 {
@@ -319,6 +319,9 @@ class library
     function trim_html(string $html_string): string
     {
         $result = $this->trim_lines($html_string);
+        // to keep spaces before links
+        $result = preg_replace('/ <a /', '<as ', $result);
+
         // special case: replace system test winter time with daylight saving time
         $result = str_replace('2023-01-03T20:59:59+00:00', '2023-01-03T20:59:59+01:00', $result);
         $result = preg_replace('/ <td>/', '<td>', $result);
@@ -337,7 +340,12 @@ class library
         $result = preg_replace('/" </', '"<', $result);
         $result = preg_replace('/ >/', '>', $result);
         $result = preg_replace('/ </', '<', $result);
-        return preg_replace('/> </', '><', $result);
+
+        // remove spaces not needed
+        $result = preg_replace('/> </', '><', $result);
+
+        // restore the spaces that are needed
+        return preg_replace('/<as /', ' <a ', $result);
     }
 
     function escape(string $txt_to_esc, string $chr_to_esc, string $esc_chr): string
@@ -494,6 +502,17 @@ class library
     function camelize_ex_1(string $input, string $separator = '_'): string
     {
         return str_replace($separator, '', lcfirst(ucwords($input, $separator)));
+    }
+
+    /**
+     * @param string $text
+     * @return string
+     */
+    function str_to_file(string $text): string
+    {
+        $text = str_replace('.', '', $text);
+        $text = str_replace('/', '', $text);
+        return substr($text, 0, 32);
     }
 
 
@@ -1098,72 +1117,73 @@ class library
     function php_path_convert(string $use_path): string
     {
         return match ($use_path) {
-            'api\result' => 'paths::API_RESULT',
-            'api\word' => 'paths::API_WORD',
-            'api\phrase' => 'API_PHRASE_PATH',
-            'api\value' => 'API_VALUE_PATH',
-            'api\ref' => 'API_REF_PATH',
-            'api\user' => 'API_USER_PATH',
-            'api\sandbox' => 'API_SANDBOX_PATH',
-            'api\formula' => 'API_FORMULA_PATH',
-            'api\component' => 'API_COMPONENT_PATH',
-            'api\verb' => 'API_VERB_PATH',
-            'api\view' => 'API_VIEW_PATH',
-            'api\log' => 'API_LOG_PATH',
-            'controller', 'api' => 'paths::API_OBJECT',
-            'controller\system', 'api\system' => 'API_SYSTEM_PATH',
-            'cfg' => 'paths::SERVICE',
-            'cfg\db' => 'paths::DB',
-            'cfg\log' => 'paths::MODEL_LOG',
-            'cfg\const' => 'paths::MODEL_CONST',
-            'cfg\component' => 'paths::MODEL_COMPONENT',
-            'cfg\component\sheet' => 'MODEL_SHEET_PATH',
-            'cfg\system' => 'paths::MODEL_SYSTEM',
-            'cfg\formula' => 'paths::MODEL_FORMULA',
-            'cfg\element' => 'paths::MODEL_ELEMENT',
-            'cfg\result' => 'paths::MODEL_RESULT',
-            'cfg\phrase' => 'paths::MODEL_PHRASE',
-            'cfg\sandbox' => 'paths::MODEL_SANDBOX',
-            'cfg\helper' => 'paths::MODEL_HELPER',
-            'cfg\group' => 'paths::MODEL_GROUP',
-            'cfg\user' => 'paths::MODEL_USER',
-            'cfg\word' => 'paths::MODEL_WORD',
-            'cfg\ref' => 'paths::MODEL_REF',
-            'cfg\view' => 'paths::MODEL_VIEW',
-            'cfg\value' => 'paths::MODEL_VALUE',
-            'cfg\import' => 'paths::MODEL_IMPORT',
-            'cfg\language' => 'paths::MODEL_LANGUAGE',
-            'cfg\verb' => 'paths::MODEL_VERB',
-            'cfg\export' => 'paths::EXPORT',
-            'const' => 'TEST_CONST_PATH',
-            'html' => 'html_paths::HTML',
-            'html\log' => 'html_paths::LOG',
-            'html\const' => 'html_paths::CONST',
-            'html\user' => 'html_paths::USER',
-            'html\element' => 'html_paths::ELEMENT',
-            'html\formula' => 'html_paths::FORMULA',
-            'html\result' => 'html_paths::RESULT',
-            'html\word' => 'html_paths::WORD',
-            'html\figure' => 'html_paths::FIGURE',
-            'html\group' => 'html_paths::GROUP',
-            'html\phrase' => 'html_paths::PHRASE',
-            'html\verb' => 'html_paths::VERB',
-            'html\value' => 'html_paths::VALUE',
-            'html\ref' => 'html_paths::REF',
-            'html\system' => 'html_paths::SYSTEM',
-            'html\types' => 'html_paths::TYPES',
-            'html\helper' => 'html_paths::HELPER',
-            'html\sandbox' => 'html_paths::SANDBOX',
-            'html\view' => 'html_paths::VIEW',
-            'html\component' => 'html_paths::COMPONENT',
-            'html\component\sheet' => 'html_paths::SHEET',
-            'html\component\form' => 'html_paths::FORM',
-            'shared' => 'paths::SHARED',
-            'shared\calc' => 'paths::SHARED_CALC',
-            'shared\const' => 'paths::SHARED_CONST',
-            'shared\enum' => 'paths::SHARED_ENUM',
-            'shared\helper' => 'paths::SHARED_HELPER',
-            'shared\types' => 'paths::SHARED_TYPES',
+            'Zukunft\ZukunftCom\main\php\api\result' => 'paths::API_RESULT',
+            'Zukunft\ZukunftCom\main\php\api\word' => 'paths::API_WORD',
+            'Zukunft\ZukunftCom\main\php\api\phrase' => 'API_PHRASE_PATH',
+            'Zukunft\ZukunftCom\main\php\api\value' => 'API_VALUE_PATH',
+            'Zukunft\ZukunftCom\main\php\api\ref' => 'API_REF_PATH',
+            'Zukunft\ZukunftCom\main\php\api\user' => 'API_USER_PATH',
+            'Zukunft\ZukunftCom\main\php\api\sandbox' => 'API_SANDBOX_PATH',
+            'Zukunft\ZukunftCom\main\php\api\formula' => 'API_FORMULA_PATH',
+            'Zukunft\ZukunftCom\main\php\api\component' => 'API_COMPONENT_PATH',
+            'Zukunft\ZukunftCom\main\php\api\verb' => 'API_VERB_PATH',
+            'Zukunft\ZukunftCom\main\php\api\view' => 'API_VIEW_PATH',
+            'Zukunft\ZukunftCom\main\php\api\log' => 'API_LOG_PATH',
+            'Zukunft\ZukunftCom\main\php\controller', 'Zukunft\ZukunftCom\main\php\api' => 'paths::API_OBJECT',
+            'Zukunft\ZukunftCom\main\php\controller\system', 'Zukunft\ZukunftCom\main\php\api\system' => 'API_SYSTEM_PATH',
+            'Zukunft\ZukunftCom\main\php\cfg\db' => 'paths::DB',
+            'Zukunft\ZukunftCom\main\php\cfg\log' => 'paths::MODEL_LOG',
+            'Zukunft\ZukunftCom\main\php\cfg\const' => 'paths::MODEL_CONST',
+            'Zukunft\ZukunftCom\main\php\cfg\component' => 'paths::MODEL_COMPONENT',
+            'Zukunft\ZukunftCom\main\php\cfg\component\sheet' => 'MODEL_SHEET_PATH',
+            'Zukunft\ZukunftCom\main\php\cfg\system' => 'paths::MODEL_SYSTEM',
+            'Zukunft\ZukunftCom\main\php\cfg\formula' => 'paths::MODEL_FORMULA',
+            'Zukunft\ZukunftCom\main\php\cfg\element' => 'paths::MODEL_ELEMENT',
+            'Zukunft\ZukunftCom\main\php\cfg\result' => 'paths::MODEL_RESULT',
+            'Zukunft\ZukunftCom\main\php\cfg\phrase' => 'paths::MODEL_PHRASE',
+            'Zukunft\ZukunftCom\main\php\cfg\sandbox' => 'paths::MODEL_SANDBOX',
+            'Zukunft\ZukunftCom\main\php\cfg\helper' => 'paths::MODEL_HELPER',
+            'Zukunft\ZukunftCom\main\php\cfg\group' => 'paths::MODEL_GROUP',
+            'Zukunft\ZukunftCom\main\php\cfg\user' => 'paths::MODEL_USER',
+            'Zukunft\ZukunftCom\main\php\cfg\word' => 'paths::MODEL_WORD',
+            'Zukunft\ZukunftCom\main\php\cfg\ref' => 'paths::MODEL_REF',
+            'Zukunft\ZukunftCom\main\php\cfg\view' => 'paths::MODEL_VIEW',
+            'Zukunft\ZukunftCom\main\php\cfg\value' => 'paths::MODEL_VALUE',
+            'Zukunft\ZukunftCom\main\php\cfg\import' => 'paths::MODEL_IMPORT',
+            'Zukunft\ZukunftCom\main\php\cfg\language' => 'paths::MODEL_LANGUAGE',
+            'Zukunft\ZukunftCom\main\php\cfg\verb' => 'paths::MODEL_VERB',
+            'Zukunft\ZukunftCom\main\php\cfg\export' => 'paths::EXPORT',
+            'Zukunft\ZukunftCom\main\php\web' => 'html_paths::WEB',
+            'Zukunft\ZukunftCom\main\php\web\html' => 'html_paths::HTML',
+            'Zukunft\ZukunftCom\main\php\web\log' => 'html_paths::LOG',
+            'Zukunft\ZukunftCom\main\php\web\const' => 'html_paths::CONST',
+            'Zukunft\ZukunftCom\main\php\web\user' => 'html_paths::USER',
+            'Zukunft\ZukunftCom\main\php\web\element' => 'html_paths::ELEMENT',
+            'Zukunft\ZukunftCom\main\php\web\formula' => 'html_paths::FORMULA',
+            'Zukunft\ZukunftCom\main\php\web\result' => 'html_paths::RESULT',
+            'Zukunft\ZukunftCom\main\php\web\word' => 'html_paths::WORD',
+            'Zukunft\ZukunftCom\main\php\web\figure' => 'html_paths::FIGURE',
+            'Zukunft\ZukunftCom\main\php\web\group' => 'html_paths::GROUP',
+            'Zukunft\ZukunftCom\main\php\web\phrase' => 'html_paths::PHRASE',
+            'Zukunft\ZukunftCom\main\php\web\verb' => 'html_paths::VERB',
+            'Zukunft\ZukunftCom\main\php\web\value' => 'html_paths::VALUE',
+            'Zukunft\ZukunftCom\main\php\web\ref' => 'html_paths::REF',
+            'Zukunft\ZukunftCom\main\php\web\system' => 'html_paths::SYSTEM',
+            'Zukunft\ZukunftCom\main\php\web\types' => 'html_paths::TYPES',
+            'Zukunft\ZukunftCom\main\php\web\helper' => 'html_paths::HELPER',
+            'Zukunft\ZukunftCom\main\php\web\sandbox' => 'html_paths::SANDBOX',
+            'Zukunft\ZukunftCom\main\php\web\view' => 'html_paths::VIEW',
+            'Zukunft\ZukunftCom\main\php\web\component' => 'html_paths::COMPONENT',
+            'Zukunft\ZukunftCom\main\php\web\component\execute' => 'html_paths::EXECUTE',
+            'Zukunft\ZukunftCom\main\php\web\component\sheet' => 'html_paths::SHEET',
+            'Zukunft\ZukunftCom\main\php\service' => 'paths::SERVICE',
+            'Zukunft\ZukunftCom\main\php\shared' => 'paths::SHARED',
+            'Zukunft\ZukunftCom\main\php\shared\calc' => 'paths::SHARED_CALC',
+            'Zukunft\ZukunftCom\main\php\shared\const' => 'paths::SHARED_CONST',
+            'Zukunft\ZukunftCom\main\php\shared\enum' => 'paths::SHARED_ENUM',
+            'Zukunft\ZukunftCom\main\php\shared\helper' => 'paths::SHARED_HELPER',
+            'Zukunft\ZukunftCom\main\php\shared\types' => 'paths::SHARED_TYPES',
+            'Zukunft\ZukunftCom\test\php\const' => 'TEST_CONST_PATH',
             default => 'missing path for ' . $use_path,
         };
     }
@@ -1333,10 +1353,10 @@ class library
                 if (array_key_exists(0, $a)) {
                     if (is_array($a[0])) {
                         if (array_key_exists(json_fields::OBJECT_CLASS, $a[0])) {
-                            usort($a, array('shared\library', 'sort_array_by_class'));
+                            usort($a, array('Zukunft\ZukunftCom\main\php\shared\library', 'sort_array_by_class'));
                         }
                         if (array_key_exists(json_fields::ID, $a[0])) {
-                            usort($a, array('shared\library', 'sort_array_by_id'));
+                            usort($a, array('Zukunft\ZukunftCom\main\php\shared\library', 'sort_array_by_id'));
                         }
                     }
                 }

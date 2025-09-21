@@ -39,9 +39,9 @@
 
 */
 
-namespace cfg\helper;
+namespace Zukunft\ZukunftCom\main\php\cfg\helper;
 
-use cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_object_seq_id.php';
 include_once paths::DB . 'sql.php';
@@ -68,27 +68,27 @@ include_once paths::SHARED_TYPES . 'api_type_list.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
 
-use cfg\db\sql;
-use cfg\db\sql_creator;
-use cfg\db\sql_db;
-use cfg\db\sql_field_default;
-use cfg\db\sql_field_type;
-use cfg\db\sql_par;
-use cfg\db\sql_type;
-use cfg\db\sql_type_list;
-use cfg\language\language;
-use cfg\language\language_form;
-use cfg\log\change_action;
-use cfg\log\change_table;
-use cfg\log\change_table_field;
-use cfg\sandbox\sandbox_named;
-use cfg\system\pod;
-use cfg\user\user;
-use cfg\user\user_message;
-use shared\enum\messages as msg_id;
-use shared\json_fields;
-use shared\library;
-use shared\types\api_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_default;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_field_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_par;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_type_list;
+use Zukunft\ZukunftCom\main\php\cfg\language\language;
+use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_action;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table;
+use Zukunft\ZukunftCom\main\php\cfg\log\change_table_field;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
+use Zukunft\ZukunftCom\main\php\cfg\system\pod;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type_list;
 
 class type_object extends db_object_seq_id
 {
@@ -145,7 +145,7 @@ class type_object extends db_object_seq_id
     function __construct(?string $code_id, string $name = '', ?string $description = null, int $id = 0)
     {
         parent::__construct();
-        $this->set_id($id);
+        $this->id = $id;
         $this->set_name($name);
         $this->set_code_id_db($code_id);
         $this->set_description($description);
@@ -153,7 +153,7 @@ class type_object extends db_object_seq_id
 
     function reset(): void
     {
-        $this->set_id(0);
+        $this->id = 0;
         $this->code_id = null;
         $this->name = '';
         $this->description = null;
@@ -170,7 +170,7 @@ class type_object extends db_object_seq_id
         $result = parent::row_mapper($db_row, $this->id_field_typ($class));
         // set the id upfront to allow row mapping
         if ($class == language::class and array_key_exists(language::FLD_ID, $db_row)) {
-            $this->set_id(($db_row[language::FLD_ID]));
+            $this->id = ($db_row[language::FLD_ID]);
         }
         if ($this->id() > 0) {
             $this->code_id = strval($db_row[sql_db::FLD_CODE_ID]);
@@ -205,7 +205,7 @@ class type_object extends db_object_seq_id
         $usr_msg = new user_message();
 
         if (array_key_exists(json_fields::ID, $api_json)) {
-            $this->set_id($api_json[json_fields::ID]);
+            $this->id = $api_json[json_fields::ID];
         }
         if (array_key_exists(json_fields::NAME, $api_json)) {
             $this->set_name($api_json[json_fields::NAME]);
