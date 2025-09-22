@@ -93,6 +93,7 @@ class view_exe extends view_base
      * @param db_object $dbo the word, triple or formula object that should be shown to the user
      * @param data_object|null $cfg the context used to create the view
      * @param string $back the history of the user actions to allow rollbacks
+     * @param string $pattern the selection pattern to filter a selection
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code for a view: this is the main function of this lib
      * TODO use backtrace or use a global backtrace var
@@ -101,6 +102,7 @@ class view_exe extends view_base
         db_object    $dbo,
         ?data_object $cfg = null,
         string       $back = '',
+        string       $pattern = '',
         bool         $test_mode = false
     ): string
     {
@@ -124,7 +126,7 @@ class view_exe extends view_base
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open();
             $result .= $this->dsp_navbar($back);
-            $result .= $this->dsp_entries($dbo, $cfg, $form_name, $back, $test_mode);
+            $result .= $this->dsp_entries($dbo, $cfg, $form_name, $back, $pattern, $test_mode);
             $result .= $this->dsp_type_close();
         }
 
@@ -138,6 +140,7 @@ class view_exe extends view_base
      * @param data_object|null $cfg the context used to create the view
      * @param string $form_name the name of the view which is also used for the html form name
      * @param string $back the backtrace for undo actions
+     * @param string $pattern the selection pattern to filter a selection
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
      */
@@ -146,6 +149,7 @@ class view_exe extends view_base
         ?data_object $cfg = null,
         string       $form_name = '',
         string       $back = '',
+        string       $pattern = '',
         bool         $test_mode = false
     ): string
     {
@@ -178,7 +182,7 @@ class view_exe extends view_base
                 if (!$cmp->is_button_or_hidden($cfg->typ_lst_cache)) {
                     $button_only = false;
                 }
-                $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $back, $test_mode);
+                $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $back, $pattern, $test_mode);
             }
             if ($row != '') {
                 $result .= $row;

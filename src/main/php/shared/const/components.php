@@ -48,29 +48,10 @@ class components
     const string MATRIX_COM = 'changeable sheet with words, number and formulas';
     const int MATRIX_ID = 2;
 
-    // persevered view component names for unit and integration tests
-    const string TEST_ADD_NAME = 'System Test View Component';
-    const string TEST_ADD_VIA_FUNC_NAME = 'System Test Component added via sql function';
-    const string TEST_ADD_VIA_SQL_NAME = 'System Test Component added via sql insert';
-    const string TEST_ADD_COM = 'System Test View Component description';
-    const string TEST_RENAMED_NAME = 'System Test View Component Renamed';
-    const string TEST_ADD_2_NAME = 'System Test View Component Two';
-    const string TEST_TITLE_NAME = 'System Test View Component Title';
-    const string TEST_VALUES_NAME = 'System Test View Component Values';
-    const string TEST_RESULTS_NAME = 'System Test View Component Results';
-    const string TEST_EXCLUDED_NAME = 'System Test View Component Excluded';
-    const string TEST_TABLE_NAME = 'System Test View Component Table';
-
     // for system views
     const string FORM_TITLE = 'form_title';
     const string FORM_TITLE_NAME = 'form title';
     const string FORM_TITLE_COM = 'show the language specific title of a add, change or delete form';
-    const string FORM_BACK = 'form_back_stack';
-    const string FORM_BACK_NAME = 'system form hidden back stack';
-    const string FORM_BACK_COM = 'field that contains the stack for the undo actions';
-    const string FORM_CONFIRM = 'form_confirm_button';
-    const string FORM_CONFIRM_NAME = 'confirm button';
-    const string FORM_CONFIRM_COM = 'switch on that the form saving needs an extra confirm by the user';
     const string FORM_NAME = 'form_field_name';
     const string FORM_NAME_NAME = 'system form field name';
     const string FORM_NAME_COM = 'the name field in a form';
@@ -78,16 +59,22 @@ class components
     const string FORM_DESCRIPTION = 'form_field_description';
     const string FORM_DESCRIPTION_NAME = 'system form field description';
     const string FORM_DESCRIPTION_COM = 'the description field in a form';
-    const string FORM_PLURAL = 'form_field_plural';
-    const string FORM_PLURAL_NAME = 'system form field plural';
-    const string FORM_PLURAL_COM = 'the plural language form field in a form (to be move to languages forms)';
-    const int FORM_PLURAL_ID = 92;
+
+    // select object types
     const string FORM_PHRASE_TYPE = 'form_field_phrase_type';
     const string FORM_PHRASE_TYPE_NAME = 'form field phrase type';
     const string FORM_PHRASE_TYPE_COM = 'the phrase type field in a form';
     const string FORM_VERB_TYPE = 'form_field_verb_type';
     const string FORM_VERB_TYPE_NAME = 'form field verb type';
     const string FORM_VERB_TYPE_COM = 'the verb type field in a form';
+
+    // select object fields
+
+    // verb only fields
+    const string FORM_PLURAL = 'form_field_plural';
+    const string FORM_PLURAL_NAME = 'system form field plural';
+    const string FORM_PLURAL_COM = 'the plural language form field in a form (to be move to languages forms)';
+    const int FORM_PLURAL_ID = 92;
     const string FORM_PHRASE_FROM_CODE_ID = 'form_field_triple_phrase_from';
     const string FORM_PHRASE_TO_CODE_ID = 'form_field_triple_phrase_from';
     const string FORM_PHRASE_ROW = 'form_field_select_phrase_row';
@@ -110,12 +97,35 @@ class components
     const string FORM_END_COM = 'just to indicate the end of the form';
     const string TN_SHOW_NAME = 'system show field name';
 
+    // hidden form fields
+    const string FORM_BACK = 'form_back_stack';
+    const string FORM_BACK_NAME = 'system form hidden back stack';
+    const string FORM_BACK_COM = 'field that contains the stack for the undo actions';
+
+    // buttons
+    const string FORM_CONFIRM = 'form_confirm_button';
+    const string FORM_CONFIRM_NAME = 'confirm button';
+    const string FORM_CONFIRM_COM = 'switch on that the form saving needs an extra confirm by the user';
+
     // code id of the view components
     const string VIEW_SELECTOR_WORD = "view_selector_word";
     const string REF_LIST_WORD = "ref_list_word";
     const string LINK_LIST_WORD = "link_list_word";
     const string USAGE_WORD = "usage_word";
     const string CHANGE_LOG_WORD = "change_log_word";
+
+    // persevered view component names for unit and integration tests
+    const string TEST_ADD_NAME = 'System Test View Component';
+    const string TEST_ADD_VIA_FUNC_NAME = 'System Test Component added via sql function';
+    const string TEST_ADD_VIA_SQL_NAME = 'System Test Component added via sql insert';
+    const string TEST_ADD_COM = 'System Test View Component description';
+    const string TEST_RENAMED_NAME = 'System Test View Component Renamed';
+    const string TEST_ADD_2_NAME = 'System Test View Component Two';
+    const string TEST_TITLE_NAME = 'System Test View Component Title';
+    const string TEST_VALUES_NAME = 'System Test View Component Values';
+    const string TEST_RESULTS_NAME = 'System Test View Component Results';
+    const string TEST_EXCLUDED_NAME = 'System Test View Component Excluded';
+    const string TEST_TABLE_NAME = 'System Test View Component Table';
 
 
     // array of component names that used for testing and remove them after the test

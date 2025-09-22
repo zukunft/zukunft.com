@@ -86,6 +86,7 @@ class component_exe extends component
      * @param int $msk_id the database id of the calling view
      * @param data_object_dsp|null $cfg the context used to create the view
      * @param string $back the backtrace for undo actions
+     * @param string $pattern the selection pattern to filter a selection
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
      */
@@ -95,6 +96,7 @@ class component_exe extends component
         int              $msk_id = 0,
         ?data_object_dsp $cfg = null,
         string           $back = '',
+        string           $pattern = '',
         bool             $test_mode = false
     ): string
     {
@@ -148,9 +150,9 @@ class component_exe extends component
             component_type::FORM_SELECT_PHRASES => $form->form_phrases($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
             component_type::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_VERBS => $form->form_verbs($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_SOURCE => $form->form_source($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_SOURCE => $form->form_source($dbo, $form_name, $cfg->typ_lst_cache, $pattern),
             component_type::FORM_SELECT_SOURCES => $form->form_sources($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_REF => $form->form_ref($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_REF => $form->form_ref($dbo, $form_name, $cfg->typ_lst_cache, $pattern),
             component_type::FORM_SELECT_REFS => $form->form_refs($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_VALUE => $form->form_value($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_VALUES => $form->form_values($dbo, $form_name, $cfg->typ_lst_cache),
