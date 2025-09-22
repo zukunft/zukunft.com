@@ -709,6 +709,13 @@
       "ui_msg_code_id": "form_field_source_group_or_phrase_list"
     },
     {
+      "name": "system form field value",
+      "description": "the numeric value field in a form",
+      "type": "system_form_field_value",
+      "code_id": "form_field_value",
+      "ui_msg_code_id": "form_field_value"
+    },
+    {
       "name": "system form field url",
       "description": "the url field in a form",
       "type": "system_form_field_url",

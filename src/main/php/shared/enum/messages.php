@@ -1030,6 +1030,7 @@ enum messages: string
     case FORM_FIELD_GROUP_OR_PHRASE_LIST = 'form_field_group_or_phrase_list';
     case FORM_FIELD_SOURCE_GROUP_OR_PHRASE_LIST = 'form_field_source_group_or_phrase_list';
     case FORM_FIELD_URL = 'form_field_url';
+    case FORM_FIELD_VALUE = 'form_field_value';
     case FORM_FIELD_SELECTION_NAME = 'system_form_selection_name';
     case FORM_FIELD_SELECTION_DESCRIPTION = 'system_form_selection_description';
     case FORM_FIELD_SELECTION_TEXT = 'system_form_selection_text';

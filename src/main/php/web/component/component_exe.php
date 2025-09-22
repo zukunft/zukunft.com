@@ -200,6 +200,7 @@ class component_exe extends component
             component_type::FORM_FIELD_PLURAL_REVERSE => $form->form_field_plural_reverse($dbo, $this->style_code_id($cfg->typ_lst_cache)),
 
             // value only fields
+            component_type::FORM_FIELD_VALUE => $form->form_num_value($dbo, $this->style_code_id($cfg->typ_lst_cache)),
             component_type::FORM_FIELD_GROUP => $form->form_field_group_name($dbo),
             component_type::FORM_FIELD_GROUP_OR_PHRASES => $form->form_field_group_or_phrases($dbo),
 

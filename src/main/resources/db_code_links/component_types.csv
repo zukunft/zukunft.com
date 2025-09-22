@@ -137,3 +137,4 @@ component_type_id, type_name, description, code_id
 136, 'form field plural reverse', 'fixed form field the language form plural reverse', 'system_form_field_plural_reverse'
 137, 'verb usage', 'display the triples where a verb is used', 'list_of_triples_that_use_a_verb'
 138, 'words or triples liked to formula', 'words or triples that like to this formula', 'list_phrases_of_formula'
+139, 'system form field value', 'the numeric value field in a form', 'system_form_field_value'

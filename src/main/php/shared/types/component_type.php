@@ -89,6 +89,8 @@ class component_type
     const int FORM_SELECT_REF_ID = 120;
     const string FORM_SELECT_REFS = "system_form_select_multi_refs";
     const int FORM_SELECT_REFS_ID = 121;
+    const string FORM_FIELD_VALUE = "system_form_field_value";
+    const int FORM_FIELD_VALUE_ID = 139;
     const string FORM_SELECT_VALUE = "system_form_select_value";
     const int FORM_SELECT_VALUE_ID = 81;
     const string FORM_SELECT_VALUES = "system_form_select_multi_values";
@@ -405,6 +407,7 @@ class component_type
         self::FORM_FIELD_GROUP_OR_PHRASES,
         self::FORM_FIELD_SOURCE_GROUP,
         self::FORM_FIELD_SOURCE_GROUP_OR_PHRASES,
+        self::FORM_FIELD_VALUE,
         self::FORM_FIELD_SELECTION_NAME,
         self::FORM_FIELD_SELECTION_DESCRIPTION,
         self::FORM_FIELD_SELECTION_TEXT,
@@ -510,6 +513,7 @@ class component_type
         [self::FORM_FIELD_GROUP_OR_PHRASES, self::FORM_FIELD_GROUP_OR_PHRASES_ID],
         [self::FORM_FIELD_SOURCE_GROUP, self::FORM_FIELD_SOURCE_GROUP_ID],
         [self::FORM_FIELD_SOURCE_GROUP_OR_PHRASES, self::FORM_FIELD_SOURCE_GROUP_OR_PHRASES_ID],
+        [self::FORM_FIELD_VALUE, self::FORM_FIELD_VALUE_ID],
         [self::FORM_FIELD_SELECTION_NAME, self::FORM_FIELD_SELECTION_NAME_ID],
         [self::FORM_FIELD_SELECTION_DESCRIPTION, self::FORM_FIELD_SELECTION_DESCRIPTION_ID],
         [self::FORM_FIELD_SELECTION_TEXT, self::FORM_FIELD_SELECTION_TEXT_ID],

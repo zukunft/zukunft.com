@@ -269,6 +269,25 @@ class system_form extends component
     }
 
     /**
+     * @param db_object_dsp $dbo the object
+     * @return string the html code to request a numeric value from the user
+     */
+    function form_num_value(db_object_dsp $dbo, string $style_text): string
+    {
+        $html = new html_base();
+        $val_txt = $dbo->value();
+        if ($val_txt == null) {
+            $val_txt = '';
+        }
+        return $html->form_field(
+            url_var::VALUE,
+            $val_txt,
+            html_base::INPUT_NUMBER,
+            '', $style_text
+        );
+    }
+
+    /**
      * @return string the html code to request a url from the user
      */
     function form_field_url(db_object_dsp $dbo): string
