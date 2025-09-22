@@ -314,14 +314,16 @@ class sandbox_named extends sandbox
     {
         $usr_msg = new user_message();
 
-        if(!is_string($name)) {
-            $name = '';
+        if($name != null) {
+            $used_name = trim($name);
+        } else {
+            $used_name = $name;
         }
 
-        if (trim($name) <> $name) {
+        if ($used_name <> $name) {
             $usr_msg->add_id_with_vars(msg_id::TRIM_NAME,
                 [msg_id::VAR_NAME => $name]);
-            $name = trim($name);
+            $name = $used_name;
         }
         $this->name = $name;
         return $usr_msg;
