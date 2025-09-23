@@ -9497,8 +9497,12 @@
           },
           {
             "link_id": 185,
-            "id": 190,
-            "name": "system form field select ref",
+            "id": 116,
+            "name": "system form select ref",
+            "description": "select one ref",
+            "type_id": 120,
+            "code_id": "system_form_select_ref",
+            "ui_msg_code_id": "system_form_select_ref",
             "position": 8,
             "position_type": 1
           },
@@ -9664,8 +9668,12 @@
           },
           {
             "link_id": 200,
-            "id": 190,
-            "name": "system form field select ref",
+            "id": 116,
+            "name": "system form select ref",
+            "description": "select one ref",
+            "type_id": 120,
+            "code_id": "system_form_select_ref",
+            "ui_msg_code_id": "system_form_select_ref",
             "position": 8,
             "position_type": 1
           },
@@ -9797,14 +9805,14 @@
           },
           {
             "link_id": 212,
-            "id": 191,
+            "id": 190,
             "name": "system show field group or phrase list",
             "position": 4,
             "position_type": 1
           },
           {
             "link_id": 213,
-            "id": 192,
+            "id": 191,
             "name": "system show field number",
             "position": 5,
             "position_type": 1
@@ -10081,7 +10089,7 @@
           },
           {
             "link_id": 237,
-            "id": 193,
+            "id": 192,
             "name": "system show field group",
             "position": 4,
             "position_type": 1
@@ -10663,7 +10671,7 @@
           },
           {
             "link_id": 289,
-            "id": 194,
+            "id": 193,
             "name": "system form field select formula",
             "position": 7,
             "position_type": 1
@@ -10830,7 +10838,7 @@
           },
           {
             "link_id": 304,
-            "id": 194,
+            "id": 193,
             "name": "system form field select formula",
             "position": 7,
             "position_type": 1
@@ -10933,7 +10941,7 @@
         "components": [
           {
             "link_id": 313,
-            "id": 195,
+            "id": 194,
             "name": "system form title result exclude",
             "position": 1,
             "position_type": 1
@@ -10960,14 +10968,14 @@
           },
           {
             "link_id": 316,
-            "id": 191,
+            "id": 190,
             "name": "system show field group or phrase list",
             "position": 4,
             "position_type": 1
           },
           {
             "link_id": 317,
-            "id": 192,
+            "id": 191,
             "name": "system show field number",
             "position": 5,
             "position_type": 1
@@ -11339,7 +11347,7 @@
         "components": [
           {
             "link_id": 350,
-            "id": 196,
+            "id": 195,
             "name": "system form title view preview",
             "position": 1,
             "position_type": 1
@@ -11366,21 +11374,21 @@
           },
           {
             "link_id": 353,
-            "id": 197,
+            "id": 196,
             "name": "system form field select view",
             "position": 4,
             "position_type": 1
           },
           {
             "link_id": 354,
-            "id": 198,
+            "id": 197,
             "name": "system show view new",
             "position": 5,
             "position_type": 1
           },
           {
             "link_id": 355,
-            "id": 199,
+            "id": 198,
             "name": "system show view old",
             "position": 6,
             "position_type": 1
@@ -12247,7 +12255,7 @@
           },
           {
             "link_id": 432,
-            "id": 200,
+            "id": 199,
             "name": "system form component link priority",
             "position": 8,
             "position_type": 1
@@ -12388,7 +12396,7 @@
           },
           {
             "link_id": 445,
-            "id": 201,
+            "id": 200,
             "name": "system show view diff list",
             "position": 6,
             "position_type": 1
@@ -12489,7 +12497,7 @@
           },
           {
             "link_id": 454,
-            "id": 202,
+            "id": 201,
             "name": "system form select component position type",
             "position": 6,
             "position_type": 2
@@ -12663,7 +12671,7 @@
           },
           {
             "link_id": 470,
-            "id": 202,
+            "id": 201,
             "name": "system form select component position type",
             "position": 6,
             "position_type": 2
@@ -12837,7 +12845,7 @@
           },
           {
             "link_id": 486,
-            "id": 201,
+            "id": 200,
             "name": "system show view diff list",
             "position": 6,
             "position_type": 1
@@ -13127,7 +13135,7 @@
           },
           {
             "link_id": 512,
-            "id": 203,
+            "id": 202,
             "name": "system form formula link prio",
             "position": 8,
             "position_type": 1
@@ -13246,21 +13254,21 @@
           },
           {
             "link_id": 523,
-            "id": 204,
+            "id": 203,
             "name": "system show field formula",
             "position": 4,
             "position_type": 1
           },
           {
             "link_id": 524,
-            "id": 205,
+            "id": 204,
             "name": "system show field phrase",
             "position": 5,
             "position_type": 1
           },
           {
             "link_id": 525,
-            "id": 206,
+            "id": 205,
             "name": "system show result diff list",
             "position": 6,
             "position_type": 1
@@ -13339,7 +13347,7 @@
           },
           {
             "link_id": 532,
-            "id": 207,
+            "id": 206,
             "name": "system form class",
             "position": 4,
             "position_type": 1,
@@ -13359,7 +13367,7 @@
           },
           {
             "link_id": 534,
-            "id": 208,
+            "id": 207,
             "name": "system form changes",
             "position": 6,
             "position_type": 2
@@ -13425,7 +13433,7 @@
         "components": [
           {
             "link_id": 540,
-            "id": 209,
+            "id": 208,
             "name": "system form title confirm update",
             "position": 1,
             "position_type": 1
@@ -13452,7 +13460,7 @@
           },
           {
             "link_id": 543,
-            "id": 207,
+            "id": 206,
             "name": "system form class",
             "position": 4,
             "position_type": 1
@@ -13470,7 +13478,7 @@
           },
           {
             "link_id": 545,
-            "id": 208,
+            "id": 207,
             "name": "system form changes",
             "position": 6,
             "position_type": 1,
@@ -13478,7 +13486,7 @@
           },
           {
             "link_id": 546,
-            "id": 210,
+            "id": 209,
             "name": "system form impact",
             "position": 7,
             "position_type": 2,
@@ -13545,7 +13553,7 @@
         "components": [
           {
             "link_id": 552,
-            "id": 211,
+            "id": 210,
             "name": "system form title confirm delete",
             "position": 1,
             "position_type": 1
@@ -13572,7 +13580,7 @@
           },
           {
             "link_id": 555,
-            "id": 207,
+            "id": 206,
             "name": "system form class",
             "position": 4,
             "position_type": 1
@@ -13590,7 +13598,7 @@
           },
           {
             "link_id": 557,
-            "id": 210,
+            "id": 209,
             "name": "system form impact",
             "position": 6,
             "position_type": 1
@@ -14017,14 +14025,14 @@
         "components": [
           {
             "link_id": 587,
-            "id": 212,
+            "id": 211,
             "name": "system form title result explain",
             "position": 1,
             "position_type": 1
           },
           {
             "link_id": 588,
-            "id": 213,
+            "id": 212,
             "name": "system form body result explain",
             "position": 2,
             "position_type": 1
@@ -14041,14 +14049,14 @@
         "components": [
           {
             "link_id": 589,
-            "id": 214,
+            "id": 213,
             "name": "system form title formula test",
             "position": 1,
             "position_type": 1
           },
           {
             "link_id": 590,
-            "id": 215,
+            "id": 214,
             "name": "system form body formula test",
             "position": 2,
             "position_type": 1
@@ -14166,14 +14174,14 @@
           },
           {
             "link_id": 598,
-            "id": 216,
+            "id": 215,
             "name": "system form field context",
             "position": 2,
             "position_type": 1
           },
           {
             "link_id": 599,
-            "id": 217,
+            "id": 216,
             "name": "system form body paste table",
             "position": 3,
             "position_type": 1
@@ -14293,7 +14301,7 @@
           },
           {
             "link_id": 609,
-            "id": 218,
+            "id": 217,
             "name": "system form field selection text",
             "position": 4,
             "position_type": 1
@@ -14424,7 +14432,7 @@
           },
           {
             "link_id": 621,
-            "id": 218,
+            "id": 217,
             "name": "system form field selection text",
             "position": 4,
             "position_type": 1
@@ -14544,7 +14552,7 @@
           },
           {
             "link_id": 632,
-            "id": 218,
+            "id": 217,
             "name": "system form field selection text",
             "position": 4,
             "position_type": 1
@@ -14664,7 +14672,7 @@
           },
           {
             "link_id": 643,
-            "id": 218,
+            "id": 217,
             "name": "system form field selection text",
             "position": 4,
             "position_type": 1
@@ -14784,7 +14792,7 @@
           },
           {
             "link_id": 654,
-            "id": 218,
+            "id": 217,
             "name": "system form field selection text",
             "position": 4,
             "position_type": 1
@@ -14978,7 +14986,7 @@
           },
           {
             "link_id": 676,
-            "id": 230,
+            "id": 229,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -14996,7 +15004,7 @@
         "components": [
           {
             "link_id": 677,
-            "id": 220,
+            "id": 219,
             "name": "Verb",
             "description": "simply show the verb name",
             "type_id": 37,
@@ -15005,7 +15013,7 @@
           },
           {
             "link_id": 678,
-            "id": 221,
+            "id": 220,
             "name": "related triples",
             "description": "triples where this verb is used",
             "type_id": 47,
@@ -15023,7 +15031,7 @@
         "components": [
           {
             "link_id": 679,
-            "id": 222,
+            "id": 221,
             "name": "triple name",
             "description": "simply show the name of a triple",
             "type_id": 57,
@@ -15032,7 +15040,7 @@
           },
           {
             "link_id": 680,
-            "id": 230,
+            "id": 229,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -15050,7 +15058,7 @@
         "components": [
           {
             "link_id": 681,
-            "id": 223,
+            "id": 222,
             "name": "source name",
             "description": "simply show the name of a source",
             "type_id": 58,
@@ -15059,7 +15067,7 @@
           },
           {
             "link_id": 682,
-            "id": 230,
+            "id": 229,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -15077,7 +15085,7 @@
         "components": [
           {
             "link_id": 683,
-            "id": 224,
+            "id": 223,
             "name": "reference name",
             "description": "simply show the name of a reference",
             "type_id": 59,
@@ -15086,7 +15094,7 @@
           },
           {
             "link_id": 684,
-            "id": 230,
+            "id": 229,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -15104,7 +15112,7 @@
         "components": [
           {
             "link_id": 685,
-            "id": 225,
+            "id": 224,
             "name": "language name",
             "description": "simply show the name of a language",
             "type_id": 60,
@@ -15113,7 +15121,7 @@
           },
           {
             "link_id": 686,
-            "id": 230,
+            "id": 229,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -15131,7 +15139,7 @@
         "components": [
           {
             "link_id": 687,
-            "id": 229,
+            "id": 228,
             "name": "main value",
             "description": "show one most relevant value",
             "type_id": 38,
@@ -15149,7 +15157,7 @@
         "components": [
           {
             "link_id": 691,
-            "id": 231,
+            "id": 230,
             "name": "related results",
             "description": "show the most relevant and related results",
             "type_id": 61,
@@ -15167,7 +15175,7 @@
         "components": [
           {
             "link_id": 692,
-            "id": 232,
+            "id": 231,
             "name": "phrase",
             "description": "simply show the name of a word or triple",
             "type_id": 8,
@@ -15176,7 +15184,7 @@
           },
           {
             "link_id": 693,
-            "id": 233,
+            "id": 232,
             "name": "ranking parameters",
             "description": "the parameters used to calculate a ranking",
             "type_id": 45,
@@ -15185,7 +15193,7 @@
           },
           {
             "link_id": 694,
-            "id": 234,
+            "id": 233,
             "name": "ranking list",
             "description": "list sorted by the calculated ranking",
             "type_id": 46,
