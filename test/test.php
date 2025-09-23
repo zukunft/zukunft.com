@@ -70,7 +70,7 @@ if ($db_con->is_open()) {
         if ($start_usr->is_admin()) {
 
             // run all unit, read and write tests
-            (new all_tests())->run_all_tests();
+            new all_tests()->run_all_tests();
 
         } else {
             echo 'Only admin users are allowed to start the system testing. Login as an admin for system testing.' . "\n";

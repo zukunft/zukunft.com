@@ -40,7 +40,7 @@ include_once paths::MODEL_SYSTEM . 'sys_log_level.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_VIEW . 'view.php';
-include_once html_paths::VIEW . 'view.php';
+//include_once html_paths::VIEW . 'view.php';
 include_once paths::SHARED_CONST . 'users.php';
 include_once paths::SHARED . 'library.php';
 

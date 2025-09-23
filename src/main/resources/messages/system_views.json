@@ -1196,6 +1196,24 @@
       "code_id": "list_phrases_of_formula"
     },
     {
+      "name": "value name",
+      "description": "show the group name of a value or a list of phrases",
+      "type": "group_or_phrase_list",
+      "code_id": "group_or_phrase_list"
+    },
+    {
+      "name": "group name",
+      "description": "show the group name",
+      "type": "group_name",
+      "code_id": "group_name"
+    },
+    {
+      "name": "number value",
+      "description": "show the numeric value",
+      "type": "value_numeric",
+      "code_id": "value_numeric"
+    },
+    {
       "name": "formula result list",
       "description": "list of results calculated by this formula",
       "type": "result_list",
@@ -2333,11 +2351,11 @@
         },
         {
           "position": "4",
-          "name": "system show field group or phrase list"
+          "name": "value name"
         },
         {
           "position": "5",
-          "name": "system show field number"
+          "name": "number value"
         },
         {
           "position": "6",
@@ -2460,7 +2478,7 @@
         },
         {
           "position": "4",
-          "name": "system show field group"
+          "name": "group name"
         },
         {
           "position": "5",
@@ -2712,7 +2730,7 @@
         },
         {
           "position": "7",
-          "name": "system form field select formula"
+          "name": "system form select formula"
         },
         {
           "position": "8",
@@ -2783,7 +2801,7 @@
         },
         {
           "position": "7",
-          "name": "system form field select formula"
+          "name": "system form select formula"
         },
         {
           "position": "8",
@@ -2830,7 +2848,7 @@
       "components": [
         {
           "position": "1",
-          "name": "system form title result exclude"
+          "name": "system form title result del"
         },
         {
           "position": "2",
@@ -2842,11 +2860,11 @@
         },
         {
           "position": "4",
-          "name": "system show field group or phrase list"
+          "name": "value name"
         },
         {
           "position": "5",
-          "name": "system show field number"
+          "name": "number value"
         },
         {
           "position": "6",
@@ -3013,7 +3031,7 @@
       "components": [
         {
           "position": "1",
-          "name": "system form title view preview"
+          "name": "system form title confirm edit"
         },
         {
           "position": "2",

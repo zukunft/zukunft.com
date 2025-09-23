@@ -982,7 +982,7 @@ class data_object
                                 if ($cmp_reloaded == null) {
                                     $usr_msg->add_warning_text('component id and name missing in ' . $cmp->dsp_id());
                                 } else {
-                                    $cmp->set_id($cmp_reloaded->id());
+                                    $cmp->id = $cmp_reloaded->id();
                                     $lnk->set_component_id($cmp_reloaded->id());
                                 }
                             }

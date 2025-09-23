@@ -101,10 +101,7 @@ class system_read_tests
         $result = $db_con->db_check_missing_owner();
         $t->assert('db_consistency->check ', $result, true);
 
-        $t->subheader('API unit db tests of preloaded types');
-        $sys_typ_lst = new type_lists();
-        $sys_typ_lst->load($db_con, $t->usr1);
-        $t->assert_api($sys_typ_lst, '', [api_type::HEADER]);
+        $t->type_list_recreate($t);
 
     }
 

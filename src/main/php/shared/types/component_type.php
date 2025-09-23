@@ -325,6 +325,14 @@ class component_type
     const string USAGE_WORD = "usage";
     const int USAGE_WORD_ID = 44;
 
+    // user components for value
+    const string VALUE_NAME = "group_or_phrase_list";
+    const int VALUE_NAME_ID = 140;
+    const string GROUP_NAME = "group_name";
+    const int GROUP_NAME_ID = 141;
+    const string VALUE_NUMERIC = "value_numeric";
+    const int VALUE_NUMERIC_ID = 142;
+
     // show the user specific name of a word or triple with the description on mouseover without allowing to change it
     const string PHRASE = "phrase";
     const int PHRASE_ID = 4;
@@ -603,6 +611,9 @@ class component_type
         [self::LIST_RESULTS, self::LIST_RESULTS_ID],
         [self::LINK_LIST_WORD, self::LINK_LIST_WORD_ID],
         [self::USAGE_WORD, self::USAGE_WORD_ID],
+        [self::VALUE_NAME, self::VALUE_NAME_ID],
+        [self::GROUP_NAME, self::GROUP_NAME_ID],
+        [self::VALUE_NUMERIC, self::VALUE_NUMERIC_ID],
         [self::PHRASE, self::PHRASE_ID],
         [self::VERB_NAME, self::VERB_NAME_ID],
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],

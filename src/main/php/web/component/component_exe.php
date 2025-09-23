@@ -284,6 +284,11 @@ class component_exe extends component
             // verb only -
             component_type::VERB_NAME => $this->verb_name($dbo),
 
+            // value only -
+            component_type::VALUE_NAME => $this->value_name($dbo),
+            component_type::GROUP_NAME => $this->group_name($dbo),
+            component_type::VALUE_NUMERIC => $this->num_value($dbo),
+
             // other
             component_type::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $cfg->view_list()),
 
@@ -512,6 +517,33 @@ class component_exe extends component
     function verb_name(?db_object_dsp $dbo = null): string
     {
         return $dbo->name();
+    }
+
+    /**
+     * TODO move to a component exe part class
+     * @return string a dummy text
+     */
+    function value_name(?db_object_dsp $dbo = null): string
+    {
+        return $dbo->name();
+    }
+
+    /**
+     * TODO move to a component exe part class
+     * @return string a dummy text
+     */
+    function group_name(?db_object_dsp $dbo = null): string
+    {
+        return $dbo->name();
+    }
+
+    /**
+     * TODO move to a component exe part class
+     * @return string a dummy text
+     */
+    function num_value(?db_object_dsp $dbo = null): string
+    {
+        return $dbo->value();
     }
 
     /**

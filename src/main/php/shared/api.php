@@ -40,30 +40,30 @@ class api
      */
 
     // TODO review (move to .env and/or application.yaml)
-    const HOST_TESTING = 'http://localhost/';
-    const HOST_DEV = 'http://localhost/';
-    const HOST_DEV_RELATIVE = '/';
-    const HOST_UAT = 'https://test.zukunft.com/';
-    const HOST_PROD = 'https://www.zukunft.com/';
-    const HOST_SAME = '/';
-    const BS_PATH_DEV = 'bootstrap/';
-    const BS_PATH_UAT = 'bootstrap/';
-    const BS_PATH_PROD = 'bootstrap/';
-    const BS_JS = 'js' . DIRECTORY_SEPARATOR . 'bootstrap.js';
-    const BS_CSS_PATH_DEV = 'bootstrap/';
-    const BS_CSS_PATH_UAT = 'bootstrap/';
-    const BS_CSS_PATH_PROD = 'bootstrap/';
-    const BS_CSS = 'css' . DIRECTORY_SEPARATOR . 'bootstrap.css';
-    const EXT_LIB_PATH = 'external_lib' . DIRECTORY_SEPARATOR;
-    const HOST_SYS_LOG = '';
+    const string HOST_TESTING = 'http://localhost/';
+    const string HOST_DEV = 'http://localhost/';
+    const string HOST_DEV_RELATIVE = '/';
+    const string HOST_UAT = 'https://test.zukunft.com/';
+    const string HOST_PROD = 'https://www.zukunft.com/';
+    const string HOST_SAME = '/';
+    const string BS_PATH_DEV = 'bootstrap/';
+    const string BS_PATH_UAT = 'bootstrap/';
+    const string BS_PATH_PROD = 'bootstrap/';
+    const string BS_JS = 'js' . DIRECTORY_SEPARATOR . 'bootstrap.js';
+    const string BS_CSS_PATH_DEV = 'bootstrap/';
+    const string BS_CSS_PATH_UAT = 'bootstrap/';
+    const string BS_CSS_PATH_PROD = 'bootstrap/';
+    const string BS_CSS = 'css' . DIRECTORY_SEPARATOR . 'bootstrap.css';
+    const string EXT_LIB_PATH = 'external_lib' . DIRECTORY_SEPARATOR;
+    const string HOST_SYS_LOG = '';
 
     // to select the configuration part that should be updated in the frontend e.g. all, frontend or user
-    const CONFIG_ALL = 'all';
-    const CONFIG_FRONTEND = 'frontend';
-    const CONFIG_USER = 'user';
+    const string CONFIG_ALL = 'all';
+    const string CONFIG_FRONTEND = 'frontend';
+    const string CONFIG_USER = 'user';
 
     // the url name of the main script that is used in combination with the host url
-    const MAIN_SCRIPT = 'http/view.php';
+    const string MAIN_SCRIPT = 'http/view.php';
 
 
     /*
@@ -71,40 +71,40 @@ class api
      */
 
     // json field names of the api json messages
-    const JSON_BODY = 'body';
-    const JSON_BODY_SYS_LOG = 'sys_log';
+    const string JSON_BODY = 'body';
+    const string JSON_BODY_SYS_LOG = 'sys_log';
 
     // to include the objects that should be displayed in one api message
-    const JSON_WORD = 'word';
-    const JSON_TRIPLE = 'triple';
+    const string JSON_WORD = 'word';
+    const string JSON_TRIPLE = 'triple';
 
     //
-    const JSON_TYPE_LISTS = 'type_lists';
-    const JSON_LIST_USER_PROFILES = 'user_profiles';
-    const JSON_LIST_PHRASE_TYPES = 'phrase_types';
-    const JSON_LIST_FORMULA_TYPES = 'formula_types';
-    const JSON_LIST_FORMULA_LINK_TYPES = 'formula_link_types';
-    const JSON_LIST_ELEMENT_TYPES = 'element_types';
-    const JSON_LIST_VIEW_TYPES = 'view_types';
-    const JSON_LIST_VIEW_STYLES = 'view_styles';
-    const JSON_LIST_VIEW_LINK_TYPES = 'view_link_types';
-    const JSON_LIST_COMPONENT_TYPES = 'component_types';
-    // const JSON_LIST_COMPONENT_LINK_TYPES = 'component_link_types';
-    const JSON_LIST_COMPONENT_POSITION_TYPES = 'position_types';
-    const JSON_LIST_REF_TYPES = 'ref_types';
-    const JSON_LIST_SOURCE_TYPES = 'source_types';
-    const JSON_LIST_SHARE_TYPES = 'share_types';
-    const JSON_LIST_PROTECTION_TYPES = 'protection_types';
-    const JSON_LIST_LANGUAGES = 'languages';
-    const JSON_LIST_LANGUAGE_FORMS = 'language_forms';
-    const JSON_LIST_SYS_LOG_STATUUS = 'sys_log_statuus';
-    const JSON_LIST_JOB_TYPES = 'job_types';
-    const JSON_LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
-    const JSON_LIST_CHANGE_LOG_TABLES = 'change_table_list';
-    const JSON_LIST_CHANGE_LOG_FIELDS = 'change_field_list';
-    const JSON_LIST_VERBS = 'verbs';
-    const JSON_LIST_SYSTEM_VIEWS = 'system_views';
-    const JSON_LIST_PHRASE_IDS = 'phrase_ids';
+    const string JSON_TYPE_LISTS = 'type_lists';
+    const string JSON_LIST_USER_PROFILES = 'user_profiles';
+    const string JSON_LIST_PHRASE_TYPES = 'phrase_types';
+    const string JSON_LIST_FORMULA_TYPES = 'formula_types';
+    const string JSON_LIST_FORMULA_LINK_TYPES = 'formula_link_types';
+    const string JSON_LIST_ELEMENT_TYPES = 'element_types';
+    const string JSON_LIST_VIEW_TYPES = 'view_types';
+    const string JSON_LIST_VIEW_STYLES = 'view_styles';
+    const string JSON_LIST_VIEW_LINK_TYPES = 'view_link_types';
+    const string JSON_LIST_COMPONENT_TYPES = 'component_types';
+    // const string JSON_LIST_COMPONENT_LINK_TYPES = 'component_link_types';
+    const string JSON_LIST_COMPONENT_POSITION_TYPES = 'position_types';
+    const string JSON_LIST_REF_TYPES = 'ref_types';
+    const string JSON_LIST_SOURCE_TYPES = 'source_types';
+    const string JSON_LIST_SHARE_TYPES = 'share_types';
+    const string JSON_LIST_PROTECTION_TYPES = 'protection_types';
+    const string JSON_LIST_LANGUAGES = 'languages';
+    const string JSON_LIST_LANGUAGE_FORMS = 'language_forms';
+    const string JSON_LIST_SYS_LOG_STATUUS = 'sys_log_statuus';
+    const string JSON_LIST_JOB_TYPES = 'job_types';
+    const string JSON_LIST_CHANGE_LOG_ACTIONS = 'change_action_list';
+    const string JSON_LIST_CHANGE_LOG_TABLES = 'change_table_list';
+    const string JSON_LIST_CHANGE_LOG_FIELDS = 'change_field_list';
+    const string JSON_LIST_VERBS = 'verbs';
+    const string JSON_LIST_SYSTEM_VIEWS = 'system_views';
+    const string JSON_LIST_PHRASE_IDS = 'phrase_ids';
 
 
     /*
@@ -113,17 +113,17 @@ class api
 
     // TODO review
     // to include the objects that should be displayed in one api message
-    const API_WORD = 'word';
-    const API_TRIPLE = 'triple';
+    const string API_WORD = 'word';
+    const string API_TRIPLE = 'triple';
 
-    const DSP_VIEW_ADD = "view_add";
-    const DSP_VIEW_EDIT = "view_edit";
-    const DSP_VIEW_DEL = "view_del";
-    const DSP_COMPONENT_ADD = "component_add";
-    const DSP_COMPONENT_EDIT = "component_edit";
-    const DSP_COMPONENT_DEL = "component_del";
-    const DSP_COMPONENT_LINK = "component_link";
-    const DSP_COMPONENT_UNLINK = "component_unlink";
+    const string DSP_VIEW_ADD = "view_add";
+    const string DSP_VIEW_EDIT = "view_edit";
+    const string DSP_VIEW_DEL = "view_del";
+    const string DSP_COMPONENT_ADD = "component_add";
+    const string DSP_COMPONENT_EDIT = "component_edit";
+    const string DSP_COMPONENT_DEL = "component_del";
+    const string DSP_COMPONENT_LINK = "component_link";
+    const string DSP_COMPONENT_UNLINK = "component_unlink";
 
     /**
      * check if an api message is fine

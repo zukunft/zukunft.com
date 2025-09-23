@@ -138,3 +138,6 @@ component_type_id, type_name, description, code_id
 137, 'verb usage', 'display the triples where a verb is used', 'list_of_triples_that_use_a_verb'
 138, 'words or triples liked to formula', 'words or triples that like to this formula', 'list_phrases_of_formula'
 139, 'system form field value', 'the numeric value field in a form', 'system_form_field_value'
+140, 'group or phrase list', 'show the group name or a list of prase names', 'group_or_phrase_list'
+141, 'group name', 'show the group name', 'group_name'
+142, 'numeric value', 'show the numeric value', 'value_numeric'

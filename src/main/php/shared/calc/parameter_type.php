@@ -40,10 +40,10 @@ include_once paths::MODEL_FORMULA . 'formula.php';
 include_once paths::MODEL_VERB . 'verb.php';
 include_once paths::MODEL_WORD . 'triple.php';
 include_once paths::MODEL_WORD . 'word.php';
-include_once html_paths::FORMULA . 'formula.php';
-include_once html_paths::VERB . 'verb.php';
-include_once html_paths::WORD . 'triple.php';
-include_once html_paths::WORD . 'word.php';
+//include_once html_paths::FORMULA . 'formula.php';
+//include_once html_paths::VERB . 'verb.php';
+//include_once html_paths::WORD . 'triple.php';
+//include_once html_paths::WORD . 'word.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
 use Zukunft\ZukunftCom\main\php\cfg\system\BasicEnum;

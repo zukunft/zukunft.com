@@ -48,7 +48,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once paths::DB . 'sql_db.php';
 //include_once html_paths::SANDBOX . 'sandbox_typed.php';
-include_once html_paths::TYPES . 'type_lists.php';
+//include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
