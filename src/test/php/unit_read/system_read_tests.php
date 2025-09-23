@@ -101,8 +101,6 @@ class system_read_tests
         $result = $db_con->db_check_missing_owner();
         $t->assert('db_consistency->check ', $result, true);
 
-        $t->type_list_recreate($t);
-
     }
 
 }

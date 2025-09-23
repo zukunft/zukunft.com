@@ -67,6 +67,7 @@ include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
 include_once paths::SHARED . 'library.php';
@@ -91,6 +92,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_tables;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -743,11 +745,13 @@ class formula_link extends sandbox_link
      *
      * @param sandbox|formula_link $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|formula_link $sbx,
-        sql_type_list        $sc_par_lst = new sql_type_list()
+        sql_type_list        $sc_par_lst = new sql_type_list(),
+        user_message         $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -757,7 +761,7 @@ class formula_link extends sandbox_link
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
         // for the standard table the type field should always be included because it is part of the prime index
         if ($sbx->predicate_id() <> $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
@@ -768,6 +772,12 @@ class formula_link extends sandbox_link
                 );
             }
             global $frm_lnk_typ_cac;
+            if ($this->predicate_id() < 0) {
+                $usr_msg->add_id_with_vars(msg_id::FORMULA_LINK_TYPE_MISSING, [
+                    msg_id::VAR_TYPE => $this->predicate_id(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
             $lst->add_type_field(
                 formula_link_type::FLD_ID,
                 type_object::FLD_NAME,

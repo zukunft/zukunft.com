@@ -814,12 +814,14 @@ class sandbox_link extends sandbox
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($ins_msg->is_ok()) {
-                $this->id = $ins_msg->get_row_id();
+            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
+            if ($usr_msg->is_ok()) {
+                $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+                if ($ins_msg->is_ok()) {
+                    $this->id = $ins_msg->get_row_id();
+                }
+                $usr_msg->add($ins_msg);
             }
-            $usr_msg->add($ins_msg);
         } else {
 
             // log the insert attempt first
@@ -1263,11 +1265,13 @@ class sandbox_link extends sandbox
      *
      * @param sandbox|sandbox_link $sbx the same named sandbox as this to compare which fields have been changed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox|sandbox_link $sbx,
-        sql_type_list        $sc_par_lst = new sql_type_list()
+        sql_type_list        $sc_par_lst = new sql_type_list(),
+        user_message         $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -1499,11 +1503,13 @@ class sandbox_link extends sandbox
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        user_message  $usr_msg = new user_message()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
@@ -1519,7 +1525,7 @@ class sandbox_link extends sandbox
             $lnk_empty = $this->set_link_objects($lnk_empty);
         }
         // get the list of the changed fields
-        $fvt_lst = $this->db_fields_changed($lnk_empty, $sc_par_lst_used);
+        $fvt_lst = $this->db_fields_changed($lnk_empty, $sc_par_lst_used, $usr_msg);
         // get the list of all fields that can be changed by the user
         $all_fields = $this->db_fields_all($sc_par_lst_used);
         // create either the prepared sql query or a sql function that includes the logging of the changes
@@ -1532,12 +1538,14 @@ class sandbox_link extends sandbox
      * @param sql_creator $sc with the target db_type set
      * @param sandbox $db_row the word with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
         sql_creator   $sc,
         sandbox       $db_row,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        user_message  $usr_msg = new user_message()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
@@ -1548,7 +1556,7 @@ class sandbox_link extends sandbox
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
         // including the sql parameters for logging
-        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst_used);
+        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst_used, $usr_msg);
         $all_fields = $this->db_fields_all($sc_par_lst_used);
         // unlike the db_* function the sql_update_* parent function is called directly
         return $this::sql_update_switch($sc, $fld_lst, $all_fields, $sc_par_lst_used);

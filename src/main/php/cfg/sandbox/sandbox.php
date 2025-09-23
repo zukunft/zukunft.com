@@ -519,7 +519,7 @@ class sandbox extends db_object_seq_id_user
 
         log_debug();
 
-        if (in_array( $this::class, def::CODE_ID_CLASSES)) {
+        if (in_array($this::class, def::CODE_ID_CLASSES)) {
             $usr_msg = $this->import_mapper_user($in_ex_json, $usr, $dto, $test_obj);
         } else {
             $usr_msg = $this->import_mapper($in_ex_json, $dto, $test_obj);
@@ -1571,6 +1571,7 @@ class sandbox extends db_object_seq_id_user
     protected function add_usr_cfg(): bool
     {
         global $db_con;
+        $usr_msg = new user_message();
 
         $result = true;
 
@@ -1592,11 +1593,14 @@ class sandbox extends db_object_seq_id_user
                 $log_id = 0;
                 if ($this->sql_write_prepared()) {
                     $sc = $db_con->sql_creator();
-                    $qp = $this->sql_insert($sc, new sql_type_list([sql_type::USER]));
-                    $usr_msg = $db_con->insert($qp, 'add ' . $this->dsp_id()
-                        . ' for user ' . $this->user()->dsp_id());
+                    $qp = $this->sql_insert($sc, new sql_type_list([sql_type::USER]), $usr_msg);
                     if ($usr_msg->is_ok()) {
-                        $log_id = $usr_msg->get_row_id();
+                        $ins_msg = $db_con->insert($qp, 'add ' . $this->dsp_id()
+                            . ' for user ' . $this->user()->dsp_id());
+                        if ($ins_msg->is_ok()) {
+                            $log_id = $ins_msg->get_row_id();
+                        }
+                        $usr_msg->add($ins_msg);
                     }
                 } else {
                     // create an entry in the user sandbox
@@ -1933,9 +1937,15 @@ class sandbox extends db_object_seq_id_user
      * @param sql_db $db_con the database connection that can be either the real database connection or a simulation used for testing
      * @param sandbox $db_obj the database record before saving the changes whereas $this is the record with the changes
      * @param sandbox $norm_obj the database record defined as standard because it is used by most users
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return user_message with the description of any problems for the user and the suggested solution
      */
-    function save_fields_func(sql_db $db_con, sandbox $db_obj, sandbox $norm_obj): user_message
+    function save_fields_func(
+        sql_db       $db_con,
+        sandbox      $db_obj,
+        sandbox      $norm_obj,
+        user_message $usr_msg = new user_message()
+    ): user_message
     {
         // always return a user message and if everything is fine, it is just empty
         $usr_msg = new user_message();
@@ -1961,7 +1971,7 @@ class sandbox extends db_object_seq_id_user
             } else {
                 // apply the changes directly to the norm db record
                 // TODO maybe check of other user have used the object and if yes keep or inform
-                $fvt_lst = $this->db_fields_changed($db_obj, $sc_par_lst);
+                $fvt_lst = $this->db_fields_changed($db_obj, $sc_par_lst, $usr_msg);
                 if (!$fvt_lst->is_empty_except_internal_fields()) {
                     $sc_par_lst->add(sql_type::UPDATE);
                     $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
@@ -1981,14 +1991,14 @@ class sandbox extends db_object_seq_id_user
         } else {
             $sc_par_lst->add(sql_type::USER);
             // make sure that the code id never differs between the standard row and the user row
-            if (in_array( $this::class, def::CODE_ID_CLASSES)) {
+            if (in_array($this::class, def::CODE_ID_CLASSES)) {
                 if ($this->code_id() != $norm_obj->code_id()) {
                     $this->set_code_id($norm_obj->code_id(), $this->user());
                     log_warning('code id has been changed in ' . $this->dsp_id() . ' with is not expected');
                 }
             }
             // make sure that the ui msg code id never differs between the standard row and the user row
-            if (in_array( $this::class, def::UI_MSG_CODE_ID_CLASSES)) {
+            if (in_array($this::class, def::UI_MSG_CODE_ID_CLASSES)) {
                 if ($this->ui_msg_code_id() != $norm_obj->ui_msg_code_id()) {
                     $this->set_ui_msg_code_id($norm_obj->ui_msg_code_id(), $this->user());
                     log_warning('ui message code id has been changed in ' . $this->dsp_id() . ' with is not expected');
@@ -2006,7 +2016,7 @@ class sandbox extends db_object_seq_id_user
                         $sc_par_lst->add(sql_type::EXCLUDE);
                     }
                     // for a new user record compare with the norm db_row
-                    $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
+                    $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst, $usr_msg);
                     $qp = $this->sql_update_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
                     $usr_msg->add($db_con->update($qp, 'update user ' . $obj_name));
                 }
@@ -2015,7 +2025,7 @@ class sandbox extends db_object_seq_id_user
                     $sc_par_lst->add(sql_type::INSERT);
                     $sc_par_lst->add(sql_type::NO_ID_RETURN);
                     // recreate the field list to include the id for the user table and to create the diff vs the norm db_row
-                    $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst);
+                    $fvt_lst = $this->db_fields_changed($norm_obj, $sc_par_lst, $usr_msg);
                     $qp = $this->sql_insert_switch($sc, $fvt_lst, $all_fields, $sc_par_lst);
                     $usr_msg->add($db_con->insert($qp, 'add user ' . $obj_name, true));
                 }
@@ -3127,11 +3137,13 @@ class sandbox extends db_object_seq_id_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_insert(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        user_message  $usr_msg = new user_message()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
@@ -3143,7 +3155,7 @@ class sandbox extends db_object_seq_id_user
         // for a new sandbox object the owner should be set, so remove the user id to force writing the user
         $sbx_empty->set_user($this->user()->clone_reset());
         // get the list of the changed fields
-        $fvt_lst = $this->db_fields_changed($sbx_empty, $sc_par_lst_used);
+        $fvt_lst = $this->db_fields_changed($sbx_empty, $sc_par_lst_used, $usr_msg);
         // get the list of all fields that can be changed by the user
         $all_fields = $this->db_fields_all();
         // create either the prepared sql query or a sql function that includes the logging of the changes
@@ -3156,12 +3168,14 @@ class sandbox extends db_object_seq_id_user
      * @param sql_creator $sc with the target db_type set
      * @param sandbox $db_row the sandbox object with the database values before the update
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par the SQL insert statement, the name of the SQL statement and the parameter list
      */
     function sql_update(
         sql_creator   $sc,
         sandbox       $db_row,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        user_message  $usr_msg = new user_message()
     ): sql_par
     {
         // clone the parameter list to avoid changing the given list
@@ -3172,7 +3186,7 @@ class sandbox extends db_object_seq_id_user
         // and that needs to be updated in the database
         // the db_* child function call the corresponding parent function
         // including the sql parameters for logging
-        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst_used);
+        $fld_lst = $this->db_fields_changed($db_row, $sc_par_lst_used, $usr_msg);
         // get the list of all fields that can be changed by the user
         $all_fields = $this->db_fields_all();
         // create either the prepared sql query or a sql function that includes the logging of the changes
@@ -3185,11 +3199,13 @@ class sandbox extends db_object_seq_id_user
      *
      * @param sql_creator $sc with the target db_type set
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par the SQL update statement, the name of the SQL statement and the parameter list
      */
     function sql_delete(
         sql_creator   $sc,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        user_message  $usr_msg = new user_message()
     ): sql_par
     {
         // clone the sql parameter list to avoid changing the given list
@@ -3205,7 +3221,7 @@ class sandbox extends db_object_seq_id_user
         $sbx_empty->set_user($this->user()->clone_reset());
         // get the list of the changed fields
         // the list of all fields is not needed because only the id fields are written to the log in case of a delete
-        $fvt_lst = $sbx_empty->db_fields_changed($this, $sc_par_lst_used);
+        $fvt_lst = $sbx_empty->db_fields_changed($this, $sc_par_lst_used, $usr_msg);
         // delete the user overwrite
         // but if the excluded user overwrites should be deleted the overwrites for all users should be deleted
         if ($sc_par_lst_used->incl_log()) {
@@ -4075,11 +4091,13 @@ class sandbox extends db_object_seq_id_user
      *
      * @param sandbox_named $sbx the same named sandbox as this to compare which fields have been changed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox       $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        user_message  $usr_msg = new user_message()
     ): sql_par_field_list
     {
         return new sql_par_field_list();
@@ -4190,7 +4208,7 @@ class sandbox extends db_object_seq_id_user
 
     function set_code_id(?string $code_id, user $usr): user_message
     {
-        $msg = 'code id change has been requested to be set but ' . $this->dsp_id() .  ' is not expected to have a code id';
+        $msg = 'code id change has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
         log_err($msg);
         $usr_msg = new user_message();
         $usr_msg->add_warning_text($msg);
@@ -4199,13 +4217,13 @@ class sandbox extends db_object_seq_id_user
 
     function code_id(): ?string
     {
-        log_err('code id has been requested but ' . $this->dsp_id() .  ' is not expected to have a code id');
+        log_err('code id has been requested but ' . $this->dsp_id() . ' is not expected to have a code id');
         return '';
     }
 
     function set_ui_msg_code_id(?msg_id $ui_msg_id, user $usr): user_message
     {
-        $msg = 'frontend message code id has been requested to be set but ' . $this->dsp_id() .  ' is not expected to have a code id';
+        $msg = 'frontend message code id has been requested to be set but ' . $this->dsp_id() . ' is not expected to have a code id';
         log_err($msg);
         $usr_msg = new user_message();
         $usr_msg->add_warning_text($msg);
@@ -4214,7 +4232,7 @@ class sandbox extends db_object_seq_id_user
 
     function ui_msg_code_id(): ?msg_id
     {
-        log_err('a frontend message code id change has been requested but ' . $this->dsp_id() .  ' is not expected to have a code id');
+        log_err('a frontend message code id change has been requested but ' . $this->dsp_id() . ' is not expected to have a code id');
         return null;
     }
 

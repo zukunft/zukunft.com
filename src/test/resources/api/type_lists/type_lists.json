@@ -1293,6 +1293,18 @@
         "code_id": "value_numeric",
         "description": "show the numeric value",
         "id": 142
+      },
+      {
+        "name": "system preview after change",
+        "code_id": "system_show_after_change",
+        "description": "show a preview if the changes are confirmed",
+        "id": 143
+      },
+      {
+        "name": "system view before change",
+        "code_id": "system_show_before_change",
+        "description": "show the view like it is without the changes",
+        "id": 144
       }
     ],
     "component_link_types": [
@@ -7511,7 +7523,7 @@
           },
           {
             "link_id": 9,
-            "id": 190,
+            "id": 192,
             "name": "system form field plural",
             "description": "the plural language form field in a form (to be move to languages forms)",
             "type_id": 55,
@@ -7556,7 +7568,7 @@
           },
           {
             "link_id": 13,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -7565,7 +7577,7 @@
           },
           {
             "link_id": 14,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -7576,7 +7588,7 @@
           },
           {
             "link_id": 15,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -7587,7 +7599,7 @@
           },
           {
             "link_id": 16,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -7596,7 +7608,7 @@
           },
           {
             "link_id": 17,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -7680,7 +7692,7 @@
           },
           {
             "link_id": 24,
-            "id": 190,
+            "id": 192,
             "name": "system form field plural",
             "description": "the plural language form field in a form (to be move to languages forms)",
             "type_id": 55,
@@ -7692,8 +7704,8 @@
           },
           {
             "link_id": 25,
-            "id": 168,
-            "name": "system form select view default",
+            "id": 170,
+            "name": "select default view",
             "description": "form field to select the default view for this object",
             "type_id": 2,
             "code_id": "system_form_select_view_default",
@@ -7725,7 +7737,7 @@
           },
           {
             "link_id": 28,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -7736,7 +7748,7 @@
           },
           {
             "link_id": 29,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -7747,7 +7759,7 @@
           },
           {
             "link_id": 30,
-            "id": 170,
+            "id": 172,
             "name": "parents of word",
             "description": "list of words or triples that lead to this word",
             "type_id": 96,
@@ -7758,7 +7770,7 @@
           },
           {
             "link_id": 31,
-            "id": 171,
+            "id": 173,
             "name": "children of word",
             "description": "list of words or triples where this word leading to",
             "type_id": 47,
@@ -7769,7 +7781,7 @@
           },
           {
             "link_id": 32,
-            "id": 172,
+            "id": 174,
             "name": "value list of word",
             "description": "list of values related to this word",
             "type_id": 11,
@@ -7780,7 +7792,7 @@
           },
           {
             "link_id": 33,
-            "id": 173,
+            "id": 175,
             "name": "ref list word",
             "description": "changeable list of reference of this word",
             "type_id": 41,
@@ -7791,7 +7803,7 @@
           },
           {
             "link_id": 34,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -7800,7 +7812,7 @@
           },
           {
             "link_id": 35,
-            "id": 188,
+            "id": 190,
             "name": "usage word",
             "description": "show where this word has been used e.g. how many values are related",
             "type_id": 43,
@@ -7810,7 +7822,7 @@
           },
           {
             "link_id": 36,
-            "id": 189,
+            "id": 191,
             "name": "change log word",
             "description": "show the change log of this word",
             "type_id": 44,
@@ -7871,7 +7883,7 @@
           },
           {
             "link_id": 41,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -7882,7 +7894,7 @@
           },
           {
             "link_id": 42,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -7893,7 +7905,7 @@
           },
           {
             "link_id": 43,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -7976,7 +7988,7 @@
           },
           {
             "link_id": 50,
-            "id": 190,
+            "id": 192,
             "name": "system form field plural",
             "description": "the plural language form field in a form (to be move to languages forms)",
             "type_id": 55,
@@ -7987,7 +7999,7 @@
           },
           {
             "link_id": 51,
-            "id": 191,
+            "id": 193,
             "name": "system form field reverse",
             "description": "the reverse language form field in a form (to be move to languages forms)",
             "type_id": 135,
@@ -7998,7 +8010,7 @@
           },
           {
             "link_id": 52,
-            "id": 192,
+            "id": 194,
             "name": "system form field plural reverse",
             "description": "the plural reverse language form field in a form (to be move to languages forms)",
             "type_id": 136,
@@ -8009,7 +8021,7 @@
           },
           {
             "link_id": 53,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -8020,7 +8032,7 @@
           },
           {
             "link_id": 54,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -8031,7 +8043,7 @@
           },
           {
             "link_id": 55,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -8114,7 +8126,7 @@
           },
           {
             "link_id": 62,
-            "id": 190,
+            "id": 192,
             "name": "system form field plural",
             "description": "the plural language form field in a form (to be move to languages forms)",
             "type_id": 55,
@@ -8125,7 +8137,7 @@
           },
           {
             "link_id": 63,
-            "id": 191,
+            "id": 193,
             "name": "system form field reverse",
             "description": "the reverse language form field in a form (to be move to languages forms)",
             "type_id": 135,
@@ -8136,7 +8148,7 @@
           },
           {
             "link_id": 64,
-            "id": 192,
+            "id": 194,
             "name": "system form field plural reverse",
             "description": "the plural reverse language form field in a form (to be move to languages forms)",
             "type_id": 136,
@@ -8147,7 +8159,7 @@
           },
           {
             "link_id": 65,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -8158,7 +8170,7 @@
           },
           {
             "link_id": 66,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -8169,7 +8181,7 @@
           },
           {
             "link_id": 67,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -8229,7 +8241,7 @@
           },
           {
             "link_id": 72,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -8240,7 +8252,7 @@
           },
           {
             "link_id": 73,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -8251,7 +8263,7 @@
           },
           {
             "link_id": 74,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -8401,7 +8413,7 @@
           },
           {
             "link_id": 87,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -8410,7 +8422,7 @@
           },
           {
             "link_id": 88,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -8421,7 +8433,7 @@
           },
           {
             "link_id": 89,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -8432,7 +8444,7 @@
           },
           {
             "link_id": 90,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -8441,7 +8453,7 @@
           },
           {
             "link_id": 91,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -8525,7 +8537,7 @@
           },
           {
             "link_id": 98,
-            "id": 165,
+            "id": 167,
             "name": "system formatter row start",
             "type_id": 32,
             "code_id": "row_start",
@@ -8567,7 +8579,7 @@
           },
           {
             "link_id": 102,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -8576,7 +8588,7 @@
           },
           {
             "link_id": 103,
-            "id": 165,
+            "id": 167,
             "name": "system formatter row start",
             "type_id": 32,
             "code_id": "row_start",
@@ -8618,7 +8630,7 @@
           },
           {
             "link_id": 107,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -8627,7 +8639,7 @@
           },
           {
             "link_id": 108,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -8636,7 +8648,7 @@
           },
           {
             "link_id": 109,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -8647,7 +8659,7 @@
           },
           {
             "link_id": 110,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -8658,7 +8670,7 @@
           },
           {
             "link_id": 111,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -8667,7 +8679,7 @@
           },
           {
             "link_id": 112,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -8727,7 +8739,7 @@
           },
           {
             "link_id": 117,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -8738,7 +8750,7 @@
           },
           {
             "link_id": 118,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -8749,7 +8761,7 @@
           },
           {
             "link_id": 119,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -8876,7 +8888,7 @@
           },
           {
             "link_id": 130,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -8887,7 +8899,7 @@
           },
           {
             "link_id": 131,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -8898,7 +8910,7 @@
           },
           {
             "link_id": 132,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -9025,7 +9037,7 @@
           },
           {
             "link_id": 143,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -9036,7 +9048,7 @@
           },
           {
             "link_id": 144,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -9047,7 +9059,7 @@
           },
           {
             "link_id": 145,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -9107,7 +9119,7 @@
           },
           {
             "link_id": 150,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -9118,7 +9130,7 @@
           },
           {
             "link_id": 151,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -9129,7 +9141,7 @@
           },
           {
             "link_id": 152,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -9212,7 +9224,7 @@
           },
           {
             "link_id": 159,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -9223,7 +9235,7 @@
           },
           {
             "link_id": 160,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -9234,7 +9246,7 @@
           },
           {
             "link_id": 161,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -9317,7 +9329,7 @@
           },
           {
             "link_id": 168,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -9328,7 +9340,7 @@
           },
           {
             "link_id": 169,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -9339,7 +9351,7 @@
           },
           {
             "link_id": 170,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -9399,7 +9411,7 @@
           },
           {
             "link_id": 175,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -9410,7 +9422,7 @@
           },
           {
             "link_id": 176,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -9421,7 +9433,7 @@
           },
           {
             "link_id": 177,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -9570,7 +9582,7 @@
           },
           {
             "link_id": 190,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -9581,7 +9593,7 @@
           },
           {
             "link_id": 191,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -9592,7 +9604,7 @@
           },
           {
             "link_id": 192,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -9751,7 +9763,7 @@
           },
           {
             "link_id": 206,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -9762,7 +9774,7 @@
           },
           {
             "link_id": 207,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -9773,7 +9785,7 @@
           },
           {
             "link_id": 208,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -9823,7 +9835,7 @@
           },
           {
             "link_id": 212,
-            "id": 176,
+            "id": 178,
             "name": "value name",
             "description": "show the group name of a value or a list of phrases",
             "type_id": 140,
@@ -9833,7 +9845,7 @@
           },
           {
             "link_id": 213,
-            "id": 178,
+            "id": 180,
             "name": "number value",
             "description": "show the numeric value",
             "type_id": 142,
@@ -9853,7 +9865,7 @@
           },
           {
             "link_id": 215,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -9864,7 +9876,7 @@
           },
           {
             "link_id": 216,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -9875,7 +9887,7 @@
           },
           {
             "link_id": 217,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -9947,7 +9959,7 @@
           },
           {
             "link_id": 223,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -9958,7 +9970,7 @@
           },
           {
             "link_id": 224,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -9969,7 +9981,7 @@
           },
           {
             "link_id": 225,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -10041,7 +10053,7 @@
           },
           {
             "link_id": 231,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -10052,7 +10064,7 @@
           },
           {
             "link_id": 232,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -10063,7 +10075,7 @@
           },
           {
             "link_id": 233,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -10113,7 +10125,7 @@
           },
           {
             "link_id": 237,
-            "id": 177,
+            "id": 179,
             "name": "group name",
             "description": "show the group name",
             "type_id": 141,
@@ -10123,7 +10135,7 @@
           },
           {
             "link_id": 238,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -10134,7 +10146,7 @@
           },
           {
             "link_id": 239,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -10145,7 +10157,7 @@
           },
           {
             "link_id": 240,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -10284,7 +10296,7 @@
           },
           {
             "link_id": 252,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -10293,7 +10305,7 @@
           },
           {
             "link_id": 253,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -10304,7 +10316,7 @@
           },
           {
             "link_id": 254,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -10315,7 +10327,7 @@
           },
           {
             "link_id": 255,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -10324,7 +10336,7 @@
           },
           {
             "link_id": 256,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -10463,7 +10475,7 @@
           },
           {
             "link_id": 268,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -10472,7 +10484,7 @@
           },
           {
             "link_id": 269,
-            "id": 175,
+            "id": 177,
             "name": "assigned phrases of this formula",
             "description": "changeable list of phrases assigned to this formula",
             "type_id": 138,
@@ -10482,7 +10494,7 @@
           },
           {
             "link_id": 270,
-            "id": 179,
+            "id": 181,
             "name": "formula result list",
             "description": "list of results calculated by this formula",
             "type_id": 97,
@@ -10492,7 +10504,7 @@
           },
           {
             "link_id": 271,
-            "id": 180,
+            "id": 182,
             "name": "formula usage list",
             "description": "list of formulas that use by this formula",
             "type_id": 12,
@@ -10502,7 +10514,7 @@
           },
           {
             "link_id": 272,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -10513,7 +10525,7 @@
           },
           {
             "link_id": 273,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -10524,7 +10536,7 @@
           },
           {
             "link_id": 274,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -10533,7 +10545,7 @@
           },
           {
             "link_id": 275,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -10593,7 +10605,7 @@
           },
           {
             "link_id": 280,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -10604,7 +10616,7 @@
           },
           {
             "link_id": 281,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -10615,7 +10627,7 @@
           },
           {
             "link_id": 282,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -10764,7 +10776,7 @@
           },
           {
             "link_id": 295,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -10775,7 +10787,7 @@
           },
           {
             "link_id": 296,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -10786,7 +10798,7 @@
           },
           {
             "link_id": 297,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -10935,7 +10947,7 @@
           },
           {
             "link_id": 310,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -10946,7 +10958,7 @@
           },
           {
             "link_id": 311,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -10957,7 +10969,7 @@
           },
           {
             "link_id": 312,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -11007,7 +11019,7 @@
           },
           {
             "link_id": 316,
-            "id": 176,
+            "id": 178,
             "name": "value name",
             "description": "show the group name of a value or a list of phrases",
             "type_id": 140,
@@ -11017,7 +11029,7 @@
           },
           {
             "link_id": 317,
-            "id": 178,
+            "id": 180,
             "name": "number value",
             "description": "show the numeric value",
             "type_id": 142,
@@ -11037,7 +11049,7 @@
           },
           {
             "link_id": 319,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -11048,7 +11060,7 @@
           },
           {
             "link_id": 320,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -11059,7 +11071,7 @@
           },
           {
             "link_id": 321,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -11176,7 +11188,7 @@
           },
           {
             "link_id": 331,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -11185,7 +11197,7 @@
           },
           {
             "link_id": 332,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -11196,7 +11208,7 @@
           },
           {
             "link_id": 333,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -11207,7 +11219,7 @@
           },
           {
             "link_id": 334,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -11216,7 +11228,7 @@
           },
           {
             "link_id": 335,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -11333,7 +11345,7 @@
           },
           {
             "link_id": 345,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -11342,7 +11354,7 @@
           },
           {
             "link_id": 346,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -11353,7 +11365,7 @@
           },
           {
             "link_id": 347,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -11364,7 +11376,7 @@
           },
           {
             "link_id": 348,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -11373,7 +11385,7 @@
           },
           {
             "link_id": 349,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -11423,28 +11435,38 @@
           },
           {
             "link_id": 353,
-            "id": 193,
-            "name": "system form field select view",
+            "id": 126,
+            "name": "system form select view",
+            "description": "select one view",
+            "type_id": 40,
+            "code_id": "system_form_select_view",
+            "ui_msg_code_id": "system_form_select_view",
             "position": 4,
             "position_type": 1
           },
           {
             "link_id": 354,
-            "id": 194,
+            "id": 159,
             "name": "system show view new",
+            "description": "show to the user how it would look like if the change is confirmed",
+            "type_id": 143,
+            "code_id": "system_show_after_change",
             "position": 5,
             "position_type": 1
           },
           {
             "link_id": 355,
-            "id": 195,
+            "id": 160,
             "name": "system show view old",
+            "description": "show to the user how it looks without the change",
+            "type_id": 144,
+            "code_id": "system_show_before_change",
             "position": 6,
             "position_type": 1
           },
           {
             "link_id": 356,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -11455,7 +11477,7 @@
           },
           {
             "link_id": 357,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -11466,7 +11488,7 @@
           },
           {
             "link_id": 358,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -11526,7 +11548,7 @@
           },
           {
             "link_id": 363,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -11537,7 +11559,7 @@
           },
           {
             "link_id": 364,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -11548,7 +11570,7 @@
           },
           {
             "link_id": 365,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -11720,7 +11742,7 @@
           },
           {
             "link_id": 380,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -11729,7 +11751,7 @@
           },
           {
             "link_id": 381,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -11740,7 +11762,7 @@
           },
           {
             "link_id": 382,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -11751,7 +11773,7 @@
           },
           {
             "link_id": 383,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -11760,7 +11782,7 @@
           },
           {
             "link_id": 384,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -11921,7 +11943,7 @@
           },
           {
             "link_id": 398,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -11930,7 +11952,7 @@
           },
           {
             "link_id": 399,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -11941,7 +11963,7 @@
           },
           {
             "link_id": 400,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -11952,7 +11974,7 @@
           },
           {
             "link_id": 401,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -11961,7 +11983,7 @@
           },
           {
             "link_id": 402,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -12021,7 +12043,7 @@
           },
           {
             "link_id": 407,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -12032,7 +12054,7 @@
           },
           {
             "link_id": 408,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -12043,7 +12065,7 @@
           },
           {
             "link_id": 409,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -12170,7 +12192,7 @@
           },
           {
             "link_id": 420,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -12179,7 +12201,7 @@
           },
           {
             "link_id": 421,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -12190,7 +12212,7 @@
           },
           {
             "link_id": 422,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -12201,7 +12223,7 @@
           },
           {
             "link_id": 423,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -12210,7 +12232,7 @@
           },
           {
             "link_id": 424,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -12304,7 +12326,7 @@
           },
           {
             "link_id": 432,
-            "id": 196,
+            "id": 195,
             "name": "system form component link priority",
             "position": 8,
             "position_type": 1
@@ -12333,7 +12355,7 @@
           },
           {
             "link_id": 435,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -12342,7 +12364,7 @@
           },
           {
             "link_id": 436,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -12353,7 +12375,7 @@
           },
           {
             "link_id": 437,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -12364,7 +12386,7 @@
           },
           {
             "link_id": 438,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -12373,7 +12395,7 @@
           },
           {
             "link_id": 439,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -12445,14 +12467,14 @@
           },
           {
             "link_id": 445,
-            "id": 197,
+            "id": 196,
             "name": "system show view diff list",
             "position": 6,
             "position_type": 1
           },
           {
             "link_id": 446,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -12463,7 +12485,7 @@
           },
           {
             "link_id": 447,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -12474,7 +12496,7 @@
           },
           {
             "link_id": 448,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -12546,7 +12568,7 @@
           },
           {
             "link_id": 454,
-            "id": 198,
+            "id": 197,
             "name": "system form select component position type",
             "position": 6,
             "position_type": 2
@@ -12608,7 +12630,7 @@
           },
           {
             "link_id": 460,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -12617,7 +12639,7 @@
           },
           {
             "link_id": 461,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -12628,7 +12650,7 @@
           },
           {
             "link_id": 462,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -12639,7 +12661,7 @@
           },
           {
             "link_id": 463,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -12648,7 +12670,7 @@
           },
           {
             "link_id": 464,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -12720,7 +12742,7 @@
           },
           {
             "link_id": 470,
-            "id": 198,
+            "id": 197,
             "name": "system form select component position type",
             "position": 6,
             "position_type": 2
@@ -12782,7 +12804,7 @@
           },
           {
             "link_id": 476,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -12791,7 +12813,7 @@
           },
           {
             "link_id": 477,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -12802,7 +12824,7 @@
           },
           {
             "link_id": 478,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -12813,7 +12835,7 @@
           },
           {
             "link_id": 479,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -12822,7 +12844,7 @@
           },
           {
             "link_id": 480,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -12894,14 +12916,14 @@
           },
           {
             "link_id": 486,
-            "id": 197,
+            "id": 196,
             "name": "system show view diff list",
             "position": 6,
             "position_type": 1
           },
           {
             "link_id": 487,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -12912,7 +12934,7 @@
           },
           {
             "link_id": 488,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -12923,7 +12945,7 @@
           },
           {
             "link_id": 489,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -13050,7 +13072,7 @@
           },
           {
             "link_id": 500,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -13059,7 +13081,7 @@
           },
           {
             "link_id": 501,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -13070,7 +13092,7 @@
           },
           {
             "link_id": 502,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -13081,7 +13103,7 @@
           },
           {
             "link_id": 503,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -13090,7 +13112,7 @@
           },
           {
             "link_id": 504,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -13184,7 +13206,7 @@
           },
           {
             "link_id": 512,
-            "id": 199,
+            "id": 198,
             "name": "system form formula link prio",
             "position": 8,
             "position_type": 1
@@ -13213,7 +13235,7 @@
           },
           {
             "link_id": 515,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -13222,7 +13244,7 @@
           },
           {
             "link_id": 516,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -13233,7 +13255,7 @@
           },
           {
             "link_id": 517,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -13244,7 +13266,7 @@
           },
           {
             "link_id": 518,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -13253,7 +13275,7 @@
           },
           {
             "link_id": 519,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -13303,28 +13325,28 @@
           },
           {
             "link_id": 523,
-            "id": 200,
+            "id": 199,
             "name": "system show field formula",
             "position": 4,
             "position_type": 1
           },
           {
             "link_id": 524,
-            "id": 201,
+            "id": 200,
             "name": "system show field phrase",
             "position": 5,
             "position_type": 1
           },
           {
             "link_id": 525,
-            "id": 202,
+            "id": 201,
             "name": "system show result diff list",
             "position": 6,
             "position_type": 1
           },
           {
             "link_id": 526,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -13335,7 +13357,7 @@
           },
           {
             "link_id": 527,
-            "id": 161,
+            "id": 163,
             "name": "system form button del",
             "description": "button to delete or exclude a word, triple, verb, value, formula, view or component",
             "type_id": 30,
@@ -13346,7 +13368,7 @@
           },
           {
             "link_id": 528,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -13396,7 +13418,7 @@
           },
           {
             "link_id": 532,
-            "id": 203,
+            "id": 202,
             "name": "system form class",
             "position": 4,
             "position_type": 1,
@@ -13416,14 +13438,14 @@
           },
           {
             "link_id": 534,
-            "id": 204,
+            "id": 203,
             "name": "system form changes",
             "position": 6,
             "position_type": 2
           },
           {
             "link_id": 535,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -13432,7 +13454,7 @@
           },
           {
             "link_id": 536,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -13443,7 +13465,7 @@
           },
           {
             "link_id": 537,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -13454,7 +13476,7 @@
           },
           {
             "link_id": 538,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -13463,7 +13485,7 @@
           },
           {
             "link_id": 539,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -13482,7 +13504,7 @@
         "components": [
           {
             "link_id": 540,
-            "id": 205,
+            "id": 204,
             "name": "system form title confirm update",
             "position": 1,
             "position_type": 1
@@ -13509,7 +13531,7 @@
           },
           {
             "link_id": 543,
-            "id": 203,
+            "id": 202,
             "name": "system form class",
             "position": 4,
             "position_type": 1
@@ -13527,7 +13549,7 @@
           },
           {
             "link_id": 545,
-            "id": 204,
+            "id": 203,
             "name": "system form changes",
             "position": 6,
             "position_type": 1,
@@ -13535,7 +13557,7 @@
           },
           {
             "link_id": 546,
-            "id": 206,
+            "id": 205,
             "name": "system form impact",
             "position": 7,
             "position_type": 2,
@@ -13543,7 +13565,7 @@
           },
           {
             "link_id": 547,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -13552,7 +13574,7 @@
           },
           {
             "link_id": 548,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -13563,7 +13585,7 @@
           },
           {
             "link_id": 549,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -13574,7 +13596,7 @@
           },
           {
             "link_id": 550,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -13583,7 +13605,7 @@
           },
           {
             "link_id": 551,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -13602,7 +13624,7 @@
         "components": [
           {
             "link_id": 552,
-            "id": 207,
+            "id": 206,
             "name": "system form title confirm delete",
             "position": 1,
             "position_type": 1
@@ -13629,7 +13651,7 @@
           },
           {
             "link_id": 555,
-            "id": 203,
+            "id": 202,
             "name": "system form class",
             "position": 4,
             "position_type": 1
@@ -13647,14 +13669,14 @@
           },
           {
             "link_id": 557,
-            "id": 206,
+            "id": 205,
             "name": "system form impact",
             "position": 6,
             "position_type": 1
           },
           {
             "link_id": 558,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -13663,7 +13685,7 @@
           },
           {
             "link_id": 559,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -13674,7 +13696,7 @@
           },
           {
             "link_id": 560,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -13685,7 +13707,7 @@
           },
           {
             "link_id": 561,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -13694,7 +13716,7 @@
           },
           {
             "link_id": 562,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -14074,14 +14096,14 @@
         "components": [
           {
             "link_id": 587,
-            "id": 208,
+            "id": 207,
             "name": "system form title result explain",
             "position": 1,
             "position_type": 1
           },
           {
             "link_id": 588,
-            "id": 209,
+            "id": 208,
             "name": "system form body result explain",
             "position": 2,
             "position_type": 1
@@ -14098,14 +14120,14 @@
         "components": [
           {
             "link_id": 589,
-            "id": 210,
+            "id": 209,
             "name": "system form title formula test",
             "position": 1,
             "position_type": 1
           },
           {
             "link_id": 590,
-            "id": 211,
+            "id": 210,
             "name": "system form body formula test",
             "position": 2,
             "position_type": 1
@@ -14223,14 +14245,14 @@
           },
           {
             "link_id": 598,
-            "id": 212,
+            "id": 211,
             "name": "system form field context",
             "position": 2,
             "position_type": 1
           },
           {
             "link_id": 599,
-            "id": 213,
+            "id": 212,
             "name": "system form body paste table",
             "position": 3,
             "position_type": 1
@@ -14268,7 +14290,7 @@
           },
           {
             "link_id": 602,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -14279,7 +14301,7 @@
           },
           {
             "link_id": 603,
-            "id": 162,
+            "id": 164,
             "name": "system form button import",
             "description": "button to start the import",
             "type_id": 94,
@@ -14290,7 +14312,7 @@
           },
           {
             "link_id": 604,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -14299,7 +14321,7 @@
           },
           {
             "link_id": 605,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -14350,7 +14372,7 @@
           },
           {
             "link_id": 609,
-            "id": 214,
+            "id": 213,
             "name": "system form field selection text",
             "position": 4,
             "position_type": 1
@@ -14379,7 +14401,7 @@
           },
           {
             "link_id": 612,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -14388,7 +14410,7 @@
           },
           {
             "link_id": 613,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -14399,7 +14421,7 @@
           },
           {
             "link_id": 614,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -14410,7 +14432,7 @@
           },
           {
             "link_id": 615,
-            "id": 163,
+            "id": 165,
             "name": "system form button export",
             "description": "button to start the export",
             "type_id": 95,
@@ -14421,7 +14443,7 @@
           },
           {
             "link_id": 616,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -14430,7 +14452,7 @@
           },
           {
             "link_id": 617,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -14481,7 +14503,7 @@
           },
           {
             "link_id": 621,
-            "id": 214,
+            "id": 213,
             "name": "system form field selection text",
             "position": 4,
             "position_type": 1
@@ -14499,7 +14521,7 @@
           },
           {
             "link_id": 623,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -14508,7 +14530,7 @@
           },
           {
             "link_id": 625,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -14519,7 +14541,7 @@
           },
           {
             "link_id": 624,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -14530,7 +14552,7 @@
           },
           {
             "link_id": 626,
-            "id": 163,
+            "id": 165,
             "name": "system form button export",
             "description": "button to start the export",
             "type_id": 95,
@@ -14541,7 +14563,7 @@
           },
           {
             "link_id": 627,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -14550,7 +14572,7 @@
           },
           {
             "link_id": 628,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -14601,7 +14623,7 @@
           },
           {
             "link_id": 632,
-            "id": 214,
+            "id": 213,
             "name": "system form field selection text",
             "position": 4,
             "position_type": 1
@@ -14619,7 +14641,7 @@
           },
           {
             "link_id": 634,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -14628,7 +14650,7 @@
           },
           {
             "link_id": 636,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -14639,7 +14661,7 @@
           },
           {
             "link_id": 635,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -14650,7 +14672,7 @@
           },
           {
             "link_id": 637,
-            "id": 163,
+            "id": 165,
             "name": "system form button export",
             "description": "button to start the export",
             "type_id": 95,
@@ -14661,7 +14683,7 @@
           },
           {
             "link_id": 638,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -14670,7 +14692,7 @@
           },
           {
             "link_id": 639,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -14721,7 +14743,7 @@
           },
           {
             "link_id": 643,
-            "id": 214,
+            "id": 213,
             "name": "system form field selection text",
             "position": 4,
             "position_type": 1
@@ -14739,7 +14761,7 @@
           },
           {
             "link_id": 645,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -14748,7 +14770,7 @@
           },
           {
             "link_id": 647,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -14759,7 +14781,7 @@
           },
           {
             "link_id": 646,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -14770,7 +14792,7 @@
           },
           {
             "link_id": 648,
-            "id": 163,
+            "id": 165,
             "name": "system form button export",
             "description": "button to start the export",
             "type_id": 95,
@@ -14781,7 +14803,7 @@
           },
           {
             "link_id": 649,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -14790,7 +14812,7 @@
           },
           {
             "link_id": 650,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -14841,7 +14863,7 @@
           },
           {
             "link_id": 654,
-            "id": 214,
+            "id": 213,
             "name": "system form field selection text",
             "position": 4,
             "position_type": 1
@@ -14859,7 +14881,7 @@
           },
           {
             "link_id": 656,
-            "id": 166,
+            "id": 168,
             "name": "system formatter row right",
             "type_id": 33,
             "code_id": "row_right",
@@ -14868,7 +14890,7 @@
           },
           {
             "link_id": 658,
-            "id": 159,
+            "id": 161,
             "name": "system form button cancel",
             "description": "button to cancel the form action and go back to the previous view",
             "type_id": 28,
@@ -14879,7 +14901,7 @@
           },
           {
             "link_id": 657,
-            "id": 160,
+            "id": 162,
             "name": "system form button save",
             "description": "button to save the form field into the database",
             "type_id": 29,
@@ -14890,7 +14912,7 @@
           },
           {
             "link_id": 659,
-            "id": 163,
+            "id": 165,
             "name": "system form button export",
             "description": "button to start the export",
             "type_id": 95,
@@ -14901,7 +14923,7 @@
           },
           {
             "link_id": 660,
-            "id": 167,
+            "id": 169,
             "name": "system formatter row end",
             "type_id": 34,
             "code_id": "row_end",
@@ -14910,7 +14932,7 @@
           },
           {
             "link_id": 661,
-            "id": 164,
+            "id": 166,
             "name": "system form end",
             "type_id": 31,
             "code_id": "form_end",
@@ -15035,7 +15057,7 @@
           },
           {
             "link_id": 676,
-            "id": 226,
+            "id": 225,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -15053,7 +15075,7 @@
         "components": [
           {
             "link_id": 677,
-            "id": 216,
+            "id": 215,
             "name": "Verb",
             "description": "simply show the verb name",
             "type_id": 37,
@@ -15062,7 +15084,7 @@
           },
           {
             "link_id": 678,
-            "id": 217,
+            "id": 216,
             "name": "related triples",
             "description": "triples where this verb is used",
             "type_id": 47,
@@ -15080,7 +15102,7 @@
         "components": [
           {
             "link_id": 679,
-            "id": 218,
+            "id": 217,
             "name": "triple name",
             "description": "simply show the name of a triple",
             "type_id": 57,
@@ -15089,7 +15111,7 @@
           },
           {
             "link_id": 680,
-            "id": 226,
+            "id": 225,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -15107,7 +15129,7 @@
         "components": [
           {
             "link_id": 681,
-            "id": 219,
+            "id": 218,
             "name": "source name",
             "description": "simply show the name of a source",
             "type_id": 58,
@@ -15116,7 +15138,7 @@
           },
           {
             "link_id": 682,
-            "id": 226,
+            "id": 225,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -15134,7 +15156,7 @@
         "components": [
           {
             "link_id": 683,
-            "id": 220,
+            "id": 219,
             "name": "reference name",
             "description": "simply show the name of a reference",
             "type_id": 59,
@@ -15143,7 +15165,7 @@
           },
           {
             "link_id": 684,
-            "id": 226,
+            "id": 225,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -15161,7 +15183,7 @@
         "components": [
           {
             "link_id": 685,
-            "id": 221,
+            "id": 220,
             "name": "language name",
             "description": "simply show the name of a language",
             "type_id": 60,
@@ -15170,7 +15192,7 @@
           },
           {
             "link_id": 686,
-            "id": 226,
+            "id": 225,
             "name": "related values",
             "description": "show the most relevant and related values",
             "type_id": 11,
@@ -15188,7 +15210,7 @@
         "components": [
           {
             "link_id": 687,
-            "id": 225,
+            "id": 224,
             "name": "main value",
             "description": "show one most relevant value",
             "type_id": 38,
@@ -15206,7 +15228,7 @@
         "components": [
           {
             "link_id": 691,
-            "id": 227,
+            "id": 226,
             "name": "related results",
             "description": "show the most relevant and related results",
             "type_id": 61,
@@ -15224,7 +15246,7 @@
         "components": [
           {
             "link_id": 692,
-            "id": 228,
+            "id": 227,
             "name": "phrase",
             "description": "simply show the name of a word or triple",
             "type_id": 8,
@@ -15233,7 +15255,7 @@
           },
           {
             "link_id": 693,
-            "id": 229,
+            "id": 228,
             "name": "ranking parameters",
             "description": "the parameters used to calculate a ranking",
             "type_id": 45,
@@ -15242,7 +15264,7 @@
           },
           {
             "link_id": 694,
-            "id": 230,
+            "id": 229,
             "name": "ranking list",
             "description": "list sorted by the calculated ranking",
             "type_id": 46,

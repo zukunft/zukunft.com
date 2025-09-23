@@ -925,9 +925,9 @@ class result extends sandbox_value
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_obj(
-        array $in_ex_json,
+        array        $in_ex_json,
         ?data_object $dto = null,
-        object $test_obj = null
+        object       $test_obj = null
     ): user_message
     {
         log_debug();
@@ -1506,14 +1506,16 @@ class result extends sandbox_value
      *
      * @param sandbox_multi|sandbox_value|result $sbx the same value sandbox as this to compare which fields have been changed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_multi|sandbox_value|result $sbx,
-        sql_type_list                      $sc_par_lst = new sql_type_list()
+        sql_type_list                      $sc_par_lst = new sql_type_list(),
+        user_message                       $usr_msg = new user_message()
     ): sql_par_field_list
     {
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
         if (!$sc_par_lst->is_standard()) {
             if ($sbx->src_grp_id() <> $this->src_grp_id()) {
                 $lst->add_field(

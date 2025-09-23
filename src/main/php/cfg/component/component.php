@@ -112,6 +112,7 @@ use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\shared\helper\CombineObject;
 use Zukunft\ZukunftCom\main\php\shared\helper\IdObject;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -1417,11 +1418,13 @@ class component extends sandbox_code_id
      *
      * @param sandbox|component $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|component $sbx,
-        sql_type_list     $sc_par_lst = new sql_type_list()
+        sql_type_list     $sc_par_lst = new sql_type_list(),
+        user_message      $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -1430,7 +1433,7 @@ class component extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
         if ($sbx->type_id() <> $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
@@ -1439,10 +1442,13 @@ class component extends sandbox_code_id
                     change::FLD_FIELD_ID_SQL_TYP
                 );
             }
-            global $cmp_typ_cac;
             if ($this->type_id() < 0) {
-                log_err('component type for ' . $this->dsp_id() . ' not found');
+                $usr_msg->add_id_with_vars(msg_id::COMPONENT_TYPE_MISSING, [
+                    msg_id::VAR_TYPE => $this->type_name(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
             }
+            global $cmp_typ_cac;
             $lst->add_type_field(
                 component_db::FLD_TYPE,
                 type_object::FLD_NAME,
@@ -1462,7 +1468,10 @@ class component extends sandbox_code_id
             global $msk_sty_cac;
             // TODO easy move to id function of type list
             if ($this->style_id() < 0) {
-                log_err('component style for ' . $this->dsp_id() . ' not found');
+                $usr_msg->add_id_with_vars(msg_id::COMPONENT_STYLE_MISSING, [
+                    msg_id::VAR_TYPE => $this->style_id(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
             }
             $lst->add_type_field(
                 component_db::FLD_STYLE,

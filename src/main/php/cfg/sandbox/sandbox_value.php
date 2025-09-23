@@ -304,6 +304,7 @@ class sandbox_value extends sandbox_multi
         $clone->grp = clone $clone->grp;
         return clone $clone;
     }
+
     /**
      * map the database fields to the object fields
      * to be extended by the child functions
@@ -1451,7 +1452,7 @@ class sandbox_value extends sandbox_multi
     /**
      * load a value by the phrase ids
      * @param array $names with the word of triple names
-     * @param  phrase_list|null $phr_lst with the cache of the phrases already loaded
+     * @param phrase_list|null $phr_lst with the cache of the phrases already loaded
      * @return int the id of the object found and zero if nothing is found
      */
     function load_by_names(array $names, phrase_list $phr_lst = null): int
@@ -2093,11 +2094,13 @@ class sandbox_value extends sandbox_multi
      *
      * @param sandbox_multi|sandbox_value $sbx the same value sandbox as this to compare which fields have been changed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_multi|sandbox_value $sbx,
-        sql_type_list               $sc_par_lst = new sql_type_list()
+        sql_type_list               $sc_par_lst = new sql_type_list(),
+        user_message                $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;

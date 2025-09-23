@@ -2413,18 +2413,20 @@ class value_base extends sandbox_value
      *
      * @param sandbox_multi|sandbox_value|value_base $sbx the same value sandbox as this to compare which fields have been changed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_multi|sandbox_value|value_base $sbx,
-        sql_type_list                          $sc_par_lst = new sql_type_list()
+        sql_type_list                          $sc_par_lst = new sql_type_list(),
+        user_message                           $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
         $sc = new sql_creator();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
 
         // in the user table the source is part of the index to allow several sources for the same value
         // but only if any other field has been updated, update the last_update field also

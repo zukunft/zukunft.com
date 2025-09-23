@@ -353,6 +353,10 @@ class component_type
     const int SHOW_NAME_ID = 20;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
+    const string VIEW_AFTER_CHANGE = "system_show_after_change";
+    const int VIEW_AFTER_CHANGE_ID = 143;
+    const string VIEW_BEFORE_CHANGE = "system_show_before_change";
+    const int VIEW_BEFORE_CHANGE_ID = 144;
     const string WORD_RESULTS = "word_results";
     const int WORD_RESULTS_ID = 85;
     const string USED_IN_AS_TEXT = "used_in_as_text";
@@ -474,6 +478,8 @@ class component_type
         self::FORM_HIDDEN_STEP,
         self::SHOW_NAME,
         self::SHOW_FIELD_USAGE,
+        self::VIEW_AFTER_CHANGE,
+        self::VIEW_BEFORE_CHANGE,
         self::WORD_RESULTS,
         self::USED_IN_AS_TEXT,
         self::USED_IN_AS_TEXT_WITH_LINK,
@@ -619,6 +625,8 @@ class component_type
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
+        [self::VIEW_AFTER_CHANGE, self::VIEW_AFTER_CHANGE_ID],
+        [self::VIEW_BEFORE_CHANGE, self::VIEW_BEFORE_CHANGE_ID],
         [self::WORD_RESULTS, self::WORD_RESULTS_ID],
         [self::USED_IN_AS_TEXT, self::USED_IN_AS_TEXT_ID],
         [self::USED_IN_AS_TEXT_WITH_LINK, self::USED_IN_AS_TEXT_WITH_LINK_ID],

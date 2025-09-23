@@ -1245,12 +1245,14 @@ class ref extends sandbox_link
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($ins_msg->is_ok()) {
-                $this->id = $ins_msg->get_row_id();
+            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
+            if ($usr_msg->is_ok()) {
+                $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+                if ($ins_msg->is_ok()) {
+                    $this->id = $ins_msg->get_row_id();
+                }
+                $usr_msg->add($ins_msg);
             }
-            $usr_msg->add($ins_msg);
         } else {
             // log the insert attempt first
             $log = $this->log_link_add();
@@ -1425,11 +1427,13 @@ class ref extends sandbox_link
      *
      * @param sandbox|ref $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|ref   $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        user_message  $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -1439,7 +1443,7 @@ class ref extends sandbox_link
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
         // the link type cannot be changed by the user, because this would be another link
         if (!$usr_tbl) {
             // for insert into the standard table the type field should always be included
@@ -1453,6 +1457,12 @@ class ref extends sandbox_link
                     );
                 }
                 global $ref_typ_cac;
+                if ($this->predicate_id() < 0) {
+                    $usr_msg->add_id_with_vars(msg_id::REFERENCE_TYPE_MISSING, [
+                        msg_id::VAR_TYPE => $this->predicate_id(),
+                        msg_id::VAR_NAME => $this->dsp_id()
+                    ]);
+                }
                 $lst->add_type_field(
                     ref_type::FLD_ID,
                     type_object::FLD_NAME,

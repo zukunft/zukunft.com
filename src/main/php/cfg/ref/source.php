@@ -618,11 +618,13 @@ class source extends sandbox_code_id
      *
      * @param sandbox|source $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list list of the database field names that have been updated
      */
     function db_fields_changed(
         sandbox|source $sbx,
-        sql_type_list  $sc_par_lst = new sql_type_list()
+        sql_type_list  $sc_par_lst = new sql_type_list(),
+        user_message   $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -631,7 +633,7 @@ class source extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
         if ($sbx->type_id() <> $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(

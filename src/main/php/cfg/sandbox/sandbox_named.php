@@ -314,7 +314,7 @@ class sandbox_named extends sandbox
     {
         $usr_msg = new user_message();
 
-        if($name != null) {
+        if ($name != null) {
             $used_name = trim($name);
         } else {
             $used_name = $name;
@@ -768,12 +768,14 @@ class sandbox_named extends sandbox
 
         if ($use_func) {
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($ins_msg->is_ok()) {
-                $this->id = $ins_msg->get_row_id();
+            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
+            if ($usr_msg->is_ok()) {
+                $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+                if ($ins_msg->is_ok()) {
+                    $this->id = $ins_msg->get_row_id();
+                }
+                $usr_msg->add($ins_msg);
             }
-            $usr_msg->add($ins_msg);
         } else {
 
             // log the insert attempt first
@@ -1265,11 +1267,13 @@ class sandbox_named extends sandbox
      *
      * @param sandbox $sbx the same named sandbox as this to compare which fields have been changed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox       $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        user_message  $usr_msg = new user_message()
     ): sql_par_field_list
     {
         $lst = new sql_par_field_list();

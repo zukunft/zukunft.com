@@ -968,13 +968,6 @@
       "ui_msg_code_id": "system_form_preview_change_component"
     },
     {
-      "name": "system form select view",
-      "description": "selector for the default view to show this object to the user e.g. the word physics should be shown with the view science",
-      "type": "system_form_select_view",
-      "code_id": "system_form_field_view",
-      "ui_msg_code_id": "system_form_select_view"
-    },
-    {
       "name": "system form select view style",
       "description": "selector for the style used in views and components e.g. to define the width",
       "type": "system_form_select_view_style",
@@ -1092,6 +1085,18 @@
       "code_id": "show_field_value_usage"
     },
     {
+      "name": "system show view new",
+      "description": "show to the user how it would look like if the change is confirmed",
+      "type": "system_show_after_change",
+      "code_id": "system_show_after_change"
+    },
+    {
+      "name": "system show view old",
+      "description": "show to the user how it looks without the change",
+      "type": "system_show_before_change",
+      "code_id": "system_show_before_change"
+    },
+    {
       "name": "system form button cancel",
       "description": "button to cancel the form action and go back to the previous view",
       "type": "system_button_cancel",
@@ -1147,7 +1152,7 @@
       "code_id": "row_end"
     },
     {
-      "name": "system form select view default",
+      "name": "select default view",
       "description": "form field to select the default view for this object",
       "type": "select_view",
       "code_id": "system_form_select_view_default",
@@ -1433,7 +1438,7 @@
         },
         {
           "position": "8",
-          "name": "system form select view default"
+          "name": "select default view"
         },
         {
           "position": "9",
@@ -3043,7 +3048,7 @@
         },
         {
           "position": "4",
-          "name": "system form field select view"
+          "name": "system form select view"
         },
         {
           "position": "5",

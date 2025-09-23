@@ -141,3 +141,5 @@ component_type_id, type_name, description, code_id
 140, 'group or phrase list', 'show the group name or a list of prase names', 'group_or_phrase_list'
 141, 'group name', 'show the group name', 'group_name'
 142, 'numeric value', 'show the numeric value', 'value_numeric'
+143, 'system preview after change', 'show a preview if the changes are confirmed', 'system_show_after_change'
+144, 'system view before change', 'show the view like it is without the changes', 'system_show_before_change'

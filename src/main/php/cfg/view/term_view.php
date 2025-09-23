@@ -54,10 +54,10 @@ include_once paths::MODEL_HELPER . 'type_object.php';
 include_once paths::MODEL_LOG . 'change.php';
 include_once paths::MODEL_PHRASE . 'term.php';
 include_once paths::MODEL_SANDBOX . 'sandbox.php';
-include_once paths::MODEL_SANDBOX . 'sandbox_named.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
-include_once paths::MODEL_VIEW . 'view.php';
+include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\db\sql;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_creator;
@@ -72,10 +72,10 @@ use Zukunft\ZukunftCom\main\php\cfg\log\change;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_link;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_named;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
-use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 class term_view extends sandbox_link
 {
@@ -86,24 +86,24 @@ class term_view extends sandbox_link
 
     // the database and JSON object field names used only for formula links
     // *_SQL_TYP is the sql data type used for the field
-    const TBL_COMMENT = 'to link view to a word, triple, verb or formula with an n:m relation';
-    const FLD_ID = 'term_view_id';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
-    const FLD_TYPE_COM = '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
+    const string TBL_COMMENT = 'to link view to a word, triple, verb or formula with an n:m relation';
+    const string FLD_ID = 'term_view_id';
+    const sql_field_type FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
+    const string FLD_TYPE_COM = '1 = from_term_id is link the terms table; 2=link to the term_links table;3=to term_groups';
 
     // all database field names excluding the id
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         term::FLD_ID,
         view_link_type::FLD_ID,
         view_db::FLD_ID
     );
     //
-    const FLD_NAMES_USR = array(
+    const array FLD_NAMES_USR = array(
         sql_db::FLD_DESCRIPTION
     );
     // all database field names, excluding the id, used to identify if there are some user specific changes
     // TODO check if this is used in all relevant objects
-    const ALL_SANDBOX_FLD_NAMES = array(
+    const array ALL_SANDBOX_FLD_NAMES = array(
         view_link_type::FLD_ID,
         sql_db::FLD_DESCRIPTION,
         sql_db::FLD_EXCLUDED,
@@ -111,17 +111,17 @@ class term_view extends sandbox_link
         sandbox::FLD_PROTECT
     );
     // list of fields that select the objects that should be linked
-    const FLD_LST_LINK = array(
+    const array FLD_LST_LINK = array(
         [term::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
         [view_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
         [view_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, view_link_type::class, self::FLD_TYPE_COM],
     );
     // list of MANDATORY fields that CAN be CHANGEd by the user
-    const FLD_LST_MUST_BUT_STD_ONLY = array(
+    const array FLD_LST_MUST_BUT_STD_ONLY = array(
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CAN be CHANGEd by the user
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [view_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_link_type::class, ''],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
     );
@@ -467,11 +467,13 @@ class term_view extends sandbox_link
      *
      * @param sandbox|term_view $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|term_view $sbx,
-        sql_type_list     $sc_par_lst = new sql_type_list()
+        sql_type_list     $sc_par_lst = new sql_type_list(),
+        user_message      $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -480,7 +482,7 @@ class term_view extends sandbox_link
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
 
         if ($sbx->description <> $this->description) {
             if ($do_log) {
@@ -507,12 +509,18 @@ class term_view extends sandbox_link
                 );
             }
             global $phr_typ_cac;
+            if ($this->predicate_id() < 0) {
+                $usr_msg->add_id_with_vars(msg_id::VIEW_LINK_TYPE_MISSING, [
+                    msg_id::VAR_TYPE => $this->predicate_name(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
             $lst->add_type_field(
                 view_link_type::FLD_ID,
                 type_object::FLD_NAME,
                 $this->predicate_id(),
                 $sbx->predicate_id(),
-                $phr_typ_cac            );
+                $phr_typ_cac);
         }
         return $lst;
     }

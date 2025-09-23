@@ -114,28 +114,28 @@ class component_link extends sandbox_link
      */
 
     // the database and JSON object field names used only for formula links
-    const TBL_COMMENT = 'to link components to views with an n:m relation';
-    const FLD_ID = 'component_link_id';
-    const FLD_ORDER_NBR = 'order_nbr';
-    const FLD_ORDER_NBR_SQL_TYP = sql_field_type::INT;
-    const FLD_POS_COM = 'the position of the component e.g. right or below';
-    const FLD_POS_TYPE = 'position_type_id';
-    const FLD_POS_TYPE_NAME = 'position'; // for log only
-    const FLD_STYLE_COM = 'the display style for this component link';
-    const FLD_STYLE = 'view_style_id';
+    const string TBL_COMMENT = 'to link components to views with an n:m relation';
+    const string FLD_ID = 'component_link_id';
+    const string FLD_ORDER_NBR = 'order_nbr';
+    const sql_field_type FLD_ORDER_NBR_SQL_TYP = sql_field_type::INT;
+    const string FLD_POS_COM = 'the position of the component e.g. right or below';
+    const string FLD_POS_TYPE = 'position_type_id';
+    const string FLD_POS_TYPE_NAME = 'position'; // for log only
+    const string FLD_STYLE_COM = 'the display style for this component link';
+    const string FLD_STYLE = 'view_style_id';
 
     // all database field names excluding the user specific fields and the id
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         view_db::FLD_ID,
         component::FLD_ID
     );
     // list of the link database field names
-    const FLD_NAMES_LINK = array(
+    const array FLD_NAMES_LINK = array(
         view_db::FLD_ID,
         component::FLD_ID
     );
     // list of the user specific database field names
-    const FLD_NAMES_NUM_USR = array(
+    const array FLD_NAMES_NUM_USR = array(
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
         self::FLD_STYLE,
@@ -144,7 +144,7 @@ class component_link extends sandbox_link
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
+    const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_ORDER_NBR,
         self::FLD_POS_TYPE,
         self::FLD_STYLE,
@@ -153,19 +153,19 @@ class component_link extends sandbox_link
         sandbox::FLD_PROTECT
     );
     // list of fields that select the objects that should be linked
-    const FLD_LST_LINK = array(
+    const array FLD_LST_LINK = array(
         [view_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, view::class, ''],
         [component::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, component::class, ''],
     );
     // list of MANDATORY fields that CAN be CHANGED by the user
-    const FLD_LST_MUST_BUT_STD_ONLY = array(
+    const array FLD_LST_MUST_BUT_STD_ONLY = array(
         [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQL_TYP, sql_field_default::ONE, '', '', ''],
         [component_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, component_link_type::class, ''],
         [position_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::ONE, sql::INDEX, position_type::class, self::FLD_POS_COM],
         [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
     );
     // list of fields that CAN be CHANGEd by the user
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [self::FLD_ORDER_NBR, self::FLD_ORDER_NBR_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [component_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, component_link_type::class, ''],
         [position_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, position_type::class, self::FLD_POS_COM],
@@ -174,7 +174,7 @@ class component_link extends sandbox_link
 
 
     // default const
-    const START_ORDER_NBR = 1;
+    const int START_ORDER_NBR = 1;
 
 
     /*
@@ -1226,11 +1226,13 @@ class component_link extends sandbox_link
      *
      * @param sandbox|component_link $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|component_link $sbx,
-        sql_type_list          $sc_par_lst = new sql_type_list()
+        sql_type_list          $sc_par_lst = new sql_type_list(),
+        user_message           $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -1240,7 +1242,7 @@ class component_link extends sandbox_link
         $usr_tbl = $sc_par_lst->is_usr_tbl();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
         // for the standard table the type field should always be included because it is part of the prime index
         if ($sbx->predicate_id() <> $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
@@ -1251,6 +1253,12 @@ class component_link extends sandbox_link
                 );
             }
             global $cmp_lnk_typ_cac;
+            if ($this->predicate_id() < 0) {
+                $usr_msg->add_id_with_vars(msg_id::COMPONENT_LINK_TYPE_MISSING, [
+                    msg_id::VAR_TYPE => $this->predicate_name(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
             $lst->add_type_field(
                 component_link_type::FLD_ID,
                 type_object::FLD_NAME,
@@ -1283,6 +1291,12 @@ class component_link extends sandbox_link
                 );
             }
             global $pos_typ_cac;
+            if ($this->pos_type_id() < 0) {
+                $usr_msg->add_id_with_vars(msg_id::COMPONENT_POS_TYPE_MISSING, [
+                    msg_id::VAR_TYPE => $this->pos_type_id(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
             $lst->add_type_field(
                 self::FLD_POS_TYPE,
                 self::FLD_POS_TYPE_NAME,
@@ -1302,7 +1316,10 @@ class component_link extends sandbox_link
             global $msk_sty_cac;
             // TODO easy move to id function of type list
             if ($this->style_id() < 0) {
-                log_err('component link style for ' . $this->dsp_id() . ' not found');
+                $usr_msg->add_id_with_vars(msg_id::COMPONENT_LINK_STYLE_MISSING, [
+                    msg_id::VAR_TYPE => $this->style_id(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
             }
             $lst->add_type_field(
                 self::FLD_STYLE,

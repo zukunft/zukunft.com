@@ -769,6 +769,71 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . '" '
         . self::VAR_START . self::VAR_JSON_TEXT . self::VAR_END;
+    case USER_PROFILE_MISSING = 'user profile '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case PHRASE_TYPE_MISSING = 'phrase type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case VERB_MISSING = 'verb '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case REFERENCE_TYPE_MISSING = 'reference type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case VIEW_TYPE_MISSING = 'view type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case VIEW_STYLE_MISSING = 'view style '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case COMPONENT_TYPE_MISSING = 'component type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case COMPONENT_STYLE_MISSING = 'component style '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case FORMULA_LINK_TYPE_MISSING = 'formula link type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case VIEW_LINK_TYPE_MISSING = 'view link type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case COMPONENT_LINK_TYPE_MISSING = 'component link type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case COMPONENT_POS_TYPE_MISSING = 'component position type '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
+    case COMPONENT_LINK_STYLE_MISSING = 'component link style '
+        . self::VAR_START . self::VAR_TYPE . self::VAR_END
+        . ' for '
+        . self::VAR_START . self::VAR_NAME . self::VAR_END
+        . ' not found';
 
     case USER_NO_IMPORT_PRIVILEGES = 'user "'
         . self::VAR_START . self::VAR_USER_NAME . self::VAR_END

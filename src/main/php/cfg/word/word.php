@@ -1793,11 +1793,13 @@ class word extends sandbox_code_id
      *
      * @param sandbox|word $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|word  $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        user_message  $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -1806,7 +1808,7 @@ class word extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
         if ($sbx->type_id() <> $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
@@ -1816,6 +1818,12 @@ class word extends sandbox_code_id
                 );
             }
             global $phr_typ_cac;
+            if ($this->type_id() < 0) {
+                $usr_msg->add_id_with_vars(msg_id::PHRASE_TYPE_MISSING, [
+                    msg_id::VAR_TYPE => $this->type_id(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
             $lst->add_type_field(
                 phrase::FLD_TYPE,
                 phrase::FLD_TYPE_NAME,

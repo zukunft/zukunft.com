@@ -327,8 +327,8 @@ class view extends sandbox_code_id
      * @return void just enriches the given user message object with the warning message
      */
     private function check_component_position(
-        array $cmp_lnk_json,
-        int $pos,
+        array        $cmp_lnk_json,
+        int          $pos,
         user_message $usr_msg
     ): void
     {
@@ -1254,11 +1254,13 @@ class view extends sandbox_code_id
      *
      * @param sandbox|view $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|view  $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        user_message  $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -1267,7 +1269,7 @@ class view extends sandbox_code_id
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
         if ($sbx->type_id() <> $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
@@ -1277,6 +1279,12 @@ class view extends sandbox_code_id
                 );
             }
             global $msk_typ_cac;
+            if ($this->type_id() < 0) {
+                $usr_msg->add_id_with_vars(msg_id::VIEW_TYPE_MISSING, [
+                    msg_id::VAR_TYPE => $this->type_id(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
             $lst->add_type_field(
                 view_db::FLD_TYPE,
                 type_object::FLD_NAME,
@@ -1296,7 +1304,10 @@ class view extends sandbox_code_id
             global $msk_sty_cac;
             // TODO move to id function of type list
             if ($this->style_id() < 0) {
-                log_err('view style for ' . $this->dsp_id() . ' not found');
+                $usr_msg->add_id_with_vars(msg_id::VIEW_STYLE_MISSING, [
+                    msg_id::VAR_TYPE => $this->style_id(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
             }
             $lst->add_type_field(
                 view_db::FLD_STYLE,

@@ -313,11 +313,16 @@ class component_exe extends component
 
             // related
             component_type::LIST_REF => $this->ref_list_word($dbo, $cfg),
+            component_type::LIST_RESULTS => $this->result_list($dbo),
             component_type::LINK_LIST_WORD => $this->link_list_word($dbo, $cfg),
             component_type::FORMULAS => $this->formulas($dbo),
             component_type::FORMULA_RESULTS => $this->results($dbo),
             component_type::WORDS_DOWN => $this->word_children($dbo),
             component_type::WORDS_UP => $this->word_parents($dbo),
+
+            // preview
+            component_type::VIEW_AFTER_CHANGE => $this->view_after($dbo),
+            component_type::VIEW_BEFORE_CHANGE => $this->view_before($dbo),
 
             // export
             component_type::JSON_EXPORT => $this->json_export($dbo, $back),
@@ -327,11 +332,12 @@ class component_exe extends component
 
             component_type::TEXT => $this->text(),
 
-            default => 'program code for component ' . $this->dsp_id() . ' of component type "' . $this->type_code_id($cfg->typ_lst_cache) . '" (id ' . $this->type_id() . ')missing<br>'
+            default => 'program code for component ' . $this->dsp_id() . ' of component type "' . $this->type_code_id($cfg->typ_lst_cache) . '" (id ' . $this->type_id() . ') missing<br>'
         };
         $this->log_debug($this->dsp_id() . ' created');
-        // TODO remove temp
-        if (str_starts_with('program code for component', $result)) {
+
+        // TODO review
+        if (str_starts_with($result, 'program code for component')) {
             $this->log_err($result);
         }
 
@@ -568,6 +574,15 @@ class component_exe extends component
      * TODO move code from component_dsp_old
      * @return string a dummy text
      */
+    function result_list(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO move code from component_dsp_old
+     * @return string a dummy text
+     */
     function word_children(): string
     {
         return $this->name();
@@ -578,6 +593,24 @@ class component_exe extends component
      * @return string a dummy text
      */
     function word_parents(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO move code from component_dsp_old
+     * @return string a dummy text
+     */
+    function view_after(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO move code from component_dsp_old
+     * @return string a dummy text
+     */
+    function view_before(): string
     {
         return $this->name();
     }

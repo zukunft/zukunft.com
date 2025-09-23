@@ -3328,7 +3328,7 @@ class sandbox_multi extends db_object_multi_user
             } else {
                 // apply the changes directly to the norm db record
                 // TODO maybe check of other user have used the object and if yes keep or inform
-                $fvt_lst = $this->db_fields_changed($db_obj, $sc_par_lst);
+                $fvt_lst = $this->db_fields_changed($db_obj, $sc_par_lst, $usr_msg);
                 if (!$fvt_lst->is_empty_except_internal_fields()) {
                     $sc_par_lst->add(sql_type::UPDATE);
                     // call sql_write instead of sql_update_switch function to add the multi key fields based on the value type
@@ -3673,11 +3673,13 @@ class sandbox_multi extends db_object_multi_user
      *
      * @param sandbox_multi $sbx the same named sandbox as this to compare which fields have been changed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox_multi $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        user_message  $usr_msg = new user_message()
     ): sql_par_field_list
     {
         return new sql_par_field_list();

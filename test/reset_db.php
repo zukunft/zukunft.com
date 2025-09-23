@@ -80,6 +80,10 @@ if ($db_con->is_open()) {
             $t->run_unit();
             $t->run_db_recreate();
 
+            // recreate the type list api message based on the updated db
+            // because this json is used for the unit tests
+            //$t->type_list_recreate($t);
+
             // display the test results
             if ($t->format == text_log_format::HTML) {
                 $t->dsp_result_html();
