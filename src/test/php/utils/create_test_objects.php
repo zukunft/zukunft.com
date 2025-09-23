@@ -44,6 +44,55 @@
 
 namespace Zukunft\ZukunftCom\test\php\utils;
 
+use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
+include_once paths::MODEL_HELPER . 'type_object.php';
+include_once paths::SHARED_TYPES . 'component_type.php';
+include_once paths::MODEL_PHRASE . 'phrase.php';
+include_once paths::MODEL_PHRASE . 'term.php';
+include_once paths::MODEL_CONST . 'def.php';
+include_once paths::MODEL_CONST . 'files.php';
+include_once paths::MODEL_COMPONENT . 'component.php';
+include_once paths::MODEL_COMPONENT . 'component_list.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type.php';
+include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
+include_once paths::MODEL_RESULT . 'results.php';
+include_once paths::MODEL_VALUE . 'value.php';
+include_once paths::MODEL_VALUE . 'value_db.php';
+include_once paths::MODEL_VALUE . 'value_time.php';
+include_once paths::MODEL_VALUE . 'value_text.php';
+include_once paths::MODEL_VALUE . 'value_geo.php';
+include_once paths::MODEL_VALUE . 'value_ts_data.php';
+include_once paths::SHARED_ENUM . 'change_actions.php';
+include_once paths::SHARED_ENUM . 'change_tables.php';
+include_once paths::SHARED_ENUM . 'change_fields.php';
+include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
+include_once paths::SHARED_TYPES . 'phrase_type.php';
+include_once paths::SHARED_TYPES . 'position_types.php';
+include_once paths::SHARED_ENUM . 'source_types.php';
+include_once paths::SHARED_TYPES . 'verbs.php';
+include_once paths::SHARED_TYPES . 'view_styles.php';
+include_once paths::SHARED_CONST . 'components.php';
+include_once paths::SHARED_CONST . 'formulas.php';
+include_once paths::SHARED_CONST . 'groups.php';
+include_once paths::SHARED_CONST . 'triples.php';
+include_once paths::SHARED_CONST . 'values.php';
+include_once paths::SHARED_CONST . 'words.php';
+include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'json_fields.php';
+include_once html_paths::USER . 'user.php';
+include_once html_paths::WORD . 'word.php';
+include_once html_paths::VERB . 'verb.php';
+include_once html_paths::WORD . 'triple.php';
+include_once html_paths::REF . 'source.php';
+include_once html_paths::REF . 'ref.php';
+include_once html_paths::VALUE . 'value.php';
+include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::RESULT . 'result.php';
+include_once html_paths::VIEW . 'view.php';
+include_once html_paths::COMPONENT . 'component.php';
+
 use Zukunft\ZukunftCom\main\php\cfg\component\component;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link;
 use Zukunft\ZukunftCom\main\php\cfg\component\component_link_list;
@@ -55,7 +104,6 @@ use Zukunft\ZukunftCom\main\php\cfg\component\position_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\component\view_style_list;
 use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\files;
-use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
 use Zukunft\ZukunftCom\main\php\cfg\element\element;
 use Zukunft\ZukunftCom\main\php\cfg\element\element_list;
@@ -75,6 +123,7 @@ use Zukunft\ZukunftCom\main\php\cfg\group\group_list;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_id_object_non_sandbox;
 use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_list;
+use Zukunft\ZukunftCom\main\php\cfg\helper\type_lists;
 use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 use Zukunft\ZukunftCom\main\php\cfg\language\language;
 use Zukunft\ZukunftCom\main\php\cfg\language\language_form;
@@ -150,7 +199,6 @@ use Zukunft\ZukunftCom\main\php\cfg\word\word_db;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
 use Zukunft\ZukunftCom\main\php\api\api_message;
 use Zukunft\ZukunftCom\main\php\web\component\component as component_dsp;
-use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
@@ -211,57 +259,11 @@ use Zukunft\ZukunftCom\test\php\unit_write\view_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\word_write_tests;
 use DateTime;
 
-include_once paths::MODEL_HELPER . 'type_object.php';
-include_once paths::SHARED_TYPES . 'component_type.php';
-include_once paths::MODEL_PHRASE . 'phrase.php';
-include_once paths::MODEL_PHRASE . 'term.php';
-include_once paths::MODEL_CONST . 'def.php';
-include_once paths::MODEL_CONST . 'files.php';
-include_once paths::MODEL_COMPONENT . 'component.php';
-include_once paths::MODEL_COMPONENT . 'component_list.php';
-include_once paths::MODEL_COMPONENT . 'component_link_type.php';
-include_once paths::MODEL_COMPONENT . 'component_link_type_list.php';
-include_once paths::MODEL_RESULT . 'results.php';
-include_once paths::MODEL_VALUE . 'value.php';
-include_once paths::MODEL_VALUE . 'value_db.php';
-include_once paths::MODEL_VALUE . 'value_time.php';
-include_once paths::MODEL_VALUE . 'value_text.php';
-include_once paths::MODEL_VALUE . 'value_geo.php';
-include_once paths::MODEL_VALUE . 'value_ts_data.php';
-include_once paths::SHARED_ENUM . 'change_actions.php';
-include_once paths::SHARED_ENUM . 'change_tables.php';
-include_once paths::SHARED_ENUM . 'change_fields.php';
-include_once paths::SHARED_ENUM . 'sys_log_statuus.php';
-include_once paths::SHARED_TYPES . 'phrase_type.php';
-include_once paths::SHARED_TYPES . 'position_types.php';
-include_once paths::SHARED_ENUM . 'source_types.php';
-include_once paths::SHARED_TYPES . 'verbs.php';
-include_once paths::SHARED_TYPES . 'view_styles.php';
-include_once paths::SHARED_CONST . 'components.php';
-include_once paths::SHARED_CONST . 'formulas.php';
-include_once paths::SHARED_CONST . 'groups.php';
-include_once paths::SHARED_CONST . 'triples.php';
-include_once paths::SHARED_CONST . 'values.php';
-include_once paths::SHARED_CONST . 'words.php';
-include_once paths::SHARED_ENUM . 'messages.php';
-include_once paths::SHARED . 'json_fields.php';
-include_once html_paths::USER . 'user.php';
-include_once html_paths::WORD . 'word.php';
-include_once html_paths::VERB . 'verb.php';
-include_once html_paths::WORD . 'triple.php';
-include_once html_paths::REF . 'source.php';
-include_once html_paths::REF . 'ref.php';
-include_once html_paths::VALUE . 'value.php';
-include_once html_paths::FORMULA . 'formula.php';
-include_once html_paths::RESULT . 'result.php';
-include_once html_paths::VIEW . 'view.php';
-include_once html_paths::COMPONENT . 'component.php';
-
 class create_test_objects extends test_base
 {
 
     // the timestamp used for unit testing
-    const DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
+    const string DUMMY_DATETIME = '2022-12-26T18:23:45+01:00';
 
     /*
      * dummy objects for unit tests
@@ -5922,18 +5924,36 @@ class create_test_objects extends test_base
      */
     function create_test_db_entries(all_tests $t): void
     {
-        (new word_write_tests())->create_test_words($t);
-        (new triple_write_tests())->create_test_triples($t);
-        (new triple_write_tests())->create_base_times($t);
-        (new group_write_tests())->create_test_groups($t);
-        (new source_write_tests())->create_test_sources($t);
-        (new formula_write_tests())->create_test_formulas($t);
-        (new formula_link_write_tests())->create_test_formula_links($t);
-        (new view_write_tests())->create_test_views($t);
-        // (new view_link_write_tests())->create_test_views($t);
-        (new component_write_tests())->create_test_components($t);
-        (new component_link_write_tests())->create_test_component_links($t);
-        (new value_write_tests())->create_test_values($t);
+        new word_write_tests()->create_test_words($t);
+        new triple_write_tests()->create_test_triples($t);
+        new triple_write_tests()->create_base_times($t);
+        new group_write_tests()->create_test_groups($t);
+        new source_write_tests()->create_test_sources($t);
+        new formula_write_tests()->create_test_formulas($t);
+        new formula_link_write_tests()->create_test_formula_links($t);
+        new view_write_tests()->create_test_views($t);
+        // new view_link_write_tests()->create_test_views($t);
+        new component_write_tests()->create_test_components($t);
+        new component_link_write_tests()->create_test_component_links($t);
+        new value_write_tests()->create_test_values($t);
+    }
+
+    /**
+     * update the list of types json file
+     * called upfront also from the reset db run because this is used for the unit tests
+     *
+     * @param all_tests $t the test object to collect the errors and calculate the execution times
+     * @return void
+     */
+    function type_list_recreate(test_cleanup $t): void
+    {
+        global $db_con;
+
+        $t->subheader('API unit db tests of preloaded types');
+        $sys_typ_lst = new type_lists();
+        $sys_typ_lst->load($db_con, $t->usr1);
+        $t->assert_api($sys_typ_lst, '', [api_type::HEADER]);
+
     }
 
 }

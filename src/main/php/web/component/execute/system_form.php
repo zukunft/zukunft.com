@@ -269,6 +269,25 @@ class system_form extends component
     }
 
     /**
+     * @param db_object_dsp $dbo the object
+     * @return string the html code to request a numeric value from the user
+     */
+    function form_num_value(db_object_dsp $dbo, string $style_text): string
+    {
+        $html = new html_base();
+        $val_txt = $dbo->value();
+        if ($val_txt == null) {
+            $val_txt = '';
+        }
+        return $html->form_field(
+            url_var::VALUE,
+            $val_txt,
+            html_base::INPUT_NUMBER,
+            '', $style_text
+        );
+    }
+
+    /**
      * @return string the html code to request a url from the user
      */
     function form_field_url(db_object_dsp $dbo): string
@@ -453,10 +472,10 @@ class system_form extends component
      */
     function form_phrase(
         db_object_dsp|triple $dbo,
-        string $form_name,
-        string $code_id = '',
-        phrase_list $phr_lst = null,
-        bool $test_mode = false
+        string               $form_name,
+        string               $code_id = '',
+        phrase_list          $phr_lst = null,
+        bool                 $test_mode = false
     ): string
     {
         $lib = new library();
@@ -515,10 +534,10 @@ class system_form extends component
      */
     function form_phrases(
         db_object_dsp|triple $dbo,
-        string $form_name,
-        string $code_id = '',
-        phrase_list $phr_lst = null,
-        bool $test_mode = false
+        string               $form_name,
+        string               $code_id = '',
+        phrase_list          $phr_lst = null,
+        bool                 $test_mode = false
     ): string
     {
         $lib = new library();
@@ -577,10 +596,10 @@ class system_form extends component
      */
     function form_term(
         db_object_dsp|triple $dbo,
-        string $form_name,
-        string $code_id = '',
-        phrase_list $phr_lst = null,
-        bool $test_mode = false
+        string               $form_name,
+        string               $code_id = '',
+        phrase_list          $phr_lst = null,
+        bool                 $test_mode = false
     ): string
     {
         $lib = new library();
@@ -623,10 +642,10 @@ class system_form extends component
      */
     function form_terms(
         db_object_dsp|triple $dbo,
-        string $form_name,
-        string $code_id = '',
-        phrase_list $phr_lst = null,
-        bool $test_mode = false
+        string               $form_name,
+        string               $code_id = '',
+        phrase_list          $phr_lst = null,
+        bool                 $test_mode = false
     ): string
     {
         $lib = new library();
@@ -688,11 +707,12 @@ class system_form extends component
      * @param db_object_dsp $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param string $pattern the selection pattern to filter a selection
      * @return string the html code to select the source
      */
-    function form_source(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_source(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst, string $pattern = ''): string
     {
-        return $dbo->source_selector($form_name, $typ_lst);
+        return $dbo->source_selector($form_name, $pattern);
     }
 
     /**
@@ -712,11 +732,12 @@ class system_form extends component
      * @param db_object_dsp $dbo the frontend phrase object with the type used until now
      * @param string $form_name the name of the view which is also used for the html form name
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
+     * @param string $pattern the selection pattern to filter a selection
      * @return string the html code to select the reference
      */
-    function form_ref(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst): string
+    function form_ref(db_object_dsp $dbo, string $form_name, ?type_lists $typ_lst, string $pattern = ''): string
     {
-        return $dbo->ref_selector($form_name, $typ_lst);
+        return $dbo->ref_selector($form_name, $pattern);
     }
 
     /**
@@ -855,10 +876,10 @@ class system_form extends component
      * @return string the html code to select the component
      */
     function form_component(
-        db_object_dsp $dbo,
-        string $form_name,
-        string $pattern,
-        int $id,
+        db_object_dsp   $dbo,
+        string          $form_name,
+        string          $pattern,
+        int             $id,
         ?component_list $cmp_lst
     ): string
     {
@@ -875,10 +896,10 @@ class system_form extends component
      * @return string the html code to select the component
      */
     function form_components(
-        db_object_dsp $dbo,
-        string $form_name,
-        string $pattern,
-        int $id,
+        db_object_dsp   $dbo,
+        string          $form_name,
+        string          $pattern,
+        int             $id,
         ?component_list $msk_lst
     ): string
     {

@@ -2608,11 +2608,13 @@ class user extends db_id_object_non_sandbox
      *
      * @param user $db_usr the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         user          $db_usr,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list $sc_par_lst = new sql_type_list(),
+        user_message  $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -2709,6 +2711,12 @@ class user extends db_id_object_non_sandbox
             if ($usr_pro_cac == null) {
                 log_fatal('no user profile found', 'user->db_fields_changed');
             } else {
+                if ($this->profile_id() < 0) {
+                    $usr_msg->add_id_with_vars(msg_id::USER_PROFILE_MISSING, [
+                        msg_id::VAR_TYPE => $this->profile_id(),
+                        msg_id::VAR_NAME => $this->dsp_id()
+                    ]);
+                }
                 $lst->add_type_field(
                     user_db::FLD_PROFILE,
                     type_object::FLD_NAME,

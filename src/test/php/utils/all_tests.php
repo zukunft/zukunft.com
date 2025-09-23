@@ -186,6 +186,10 @@ class all_tests extends all_unit_write_tests
             $this->run_db_write_tests($this);
         }
 
+        // recreate the type list api message based on the updated db
+        // because this json is used for the unit tests
+        $this->type_list_recreate($this);
+
         // display the test results
         if ($this->format == text_log_format::HTML) {
             $this->dsp_result_html();

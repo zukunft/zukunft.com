@@ -30,7 +30,7 @@
     "ui_msg_code_id": "form_field_name"
   },
   {
-    "id": 129,
+    "id": 130,
     "name": "system form select phrase type",
     "description": "selector for the phrase type",
     "type_id": 25,
@@ -46,7 +46,7 @@
     "ui_msg_code_id": "form_field_description"
   },
   {
-    "id": 186,
+    "id": 192,
     "name": "system form field plural",
     "description": "the plural language form field in a form (to be move to languages forms)",
     "type_id": 55,
@@ -54,7 +54,7 @@
     "ui_msg_code_id": "form_field_plural"
   },
   {
-    "id": 125,
+    "id": 126,
     "name": "system form select view",
     "description": "select one view",
     "type_id": 40,
@@ -62,7 +62,7 @@
     "ui_msg_code_id": "system_form_select_view"
   },
   {
-    "id": 149,
+    "id": 150,
     "name": "system form select share type",
     "description": "selector for the share type",
     "type_id": 26,
@@ -70,7 +70,7 @@
     "ui_msg_code_id": "form_select_share"
   },
   {
-    "id": 150,
+    "id": 151,
     "name": "system form select protection type",
     "description": "selector for the protection type",
     "type_id": 27,
@@ -78,13 +78,13 @@
     "ui_msg_code_id": "form_select_protection"
   },
   {
-    "id": 165,
+    "id": 168,
     "name": "system formatter row right",
     "type_id": 33,
     "code_id": "row_right"
   },
   {
-    "id": 158,
+    "id": 161,
     "name": "system form button cancel",
     "description": "button to cancel the form action and go back to the previous view",
     "type_id": 28,
@@ -92,7 +92,7 @@
     "ui_msg_code_id": "form_button_cancel"
   },
   {
-    "id": 159,
+    "id": 162,
     "name": "system form button save",
     "description": "button to save the form field into the database",
     "type_id": 29,
@@ -100,13 +100,13 @@
     "ui_msg_code_id": "form_button_save"
   },
   {
-    "id": 166,
+    "id": 169,
     "name": "system formatter row end",
     "type_id": 34,
     "code_id": "row_end"
   },
   {
-    "id": 163,
+    "id": 166,
     "name": "system form end",
     "type_id": 31,
     "code_id": "form_end"

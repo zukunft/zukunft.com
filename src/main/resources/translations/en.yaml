@@ -82,6 +82,7 @@ messages:
   form_field_group_or_phrase_list: "group or phrases"
   form_field_source_group_or_phrase_list: "source group or phrases"
   form_field_url: "URL"
+  form_field_value: "Value"
   system_form_selection_name: "Name"
   system_form_selection_description: "Text"
   system_form_selection_text: "Selection"

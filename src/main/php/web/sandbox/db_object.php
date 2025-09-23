@@ -34,6 +34,7 @@
 
 namespace Zukunft\ZukunftCom\main\php\web\sandbox;
 
+use DateTime;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
@@ -428,6 +429,11 @@ class db_object extends TextIdObject
     function plural_reverse(): ?string
     {
         return 'plural reverse not overwritten by ' . $this::class;
+    }
+
+    function value(): float|string|DateTime|null
+    {
+        return 'value not overwritten by ' . $this::class;
     }
 
     function phrase(): phrase_dsp

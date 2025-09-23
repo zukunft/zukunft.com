@@ -49,7 +49,9 @@ include_once html_paths::HELPER . 'config.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::REF . 'source.php';
+include_once html_paths::REF . 'source_list.php';
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
@@ -67,7 +69,9 @@ use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\ref\source;
+use Zukunft\ZukunftCom\main\php\web\ref\source_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox_value;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -412,6 +416,36 @@ class value extends sandbox_value
             }
         }
         return $result;
+    }
+
+    /**
+     * @param string $form
+     * @param string $pattern
+     * @return string
+     */
+    function source_selector(string $form, string $pattern): string
+    {
+        $src_lst = new source_list();
+        // TODO review and maybe use test_mode parameter
+        if ($pattern != '') {
+            $src_lst->load_like($pattern);
+        }
+        return $src_lst->selector($form, $this->id(), url_var::SOURCE_LONG,  msg_id::LABEL_STYLE);
+    }
+
+    /**
+     * @param string $form
+     * @param string $pattern
+     * @return string
+     */
+    function ref_selector(string $form, string $pattern): string
+    {
+        $ref_lst = new ref_list();
+        // TODO review and maybe use test_mode parameter
+        if ($pattern != '') {
+            $ref_lst->load_like($pattern);
+        }
+        return $ref_lst->selector($form, $this->id(), url_var::REF,  msg_id::LABEL_STYLE);
     }
 
 

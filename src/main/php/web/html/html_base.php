@@ -61,6 +61,7 @@ class html_base
 
     // the html input types used
     const INPUT_TEXT = 'text';
+    const INPUT_NUMBER = 'text';
     const INPUT_SUBMIT = 'submit';
     const INPUT_SEARCH = 'search';
     const INPUT_CHECKBOX = 'checkbox';

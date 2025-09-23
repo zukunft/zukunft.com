@@ -86,6 +86,7 @@ class component_exe extends component
      * @param int $msk_id the database id of the calling view
      * @param data_object_dsp|null $cfg the context used to create the view
      * @param string $back the backtrace for undo actions
+     * @param string $pattern the selection pattern to filter a selection
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
      */
@@ -95,6 +96,7 @@ class component_exe extends component
         int              $msk_id = 0,
         ?data_object_dsp $cfg = null,
         string           $back = '',
+        string           $pattern = '',
         bool             $test_mode = false
     ): string
     {
@@ -148,9 +150,9 @@ class component_exe extends component
             component_type::FORM_SELECT_PHRASES => $form->form_phrases($dbo, $form_name, $this->code_id(), $phr_lst, $test_mode),
             component_type::FORM_SELECT_VERB => $form->form_verb($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_VERBS => $form->form_verbs($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_SOURCE => $form->form_source($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_SOURCE => $form->form_source($dbo, $form_name, $cfg->typ_lst_cache, $pattern),
             component_type::FORM_SELECT_SOURCES => $form->form_sources($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_REF => $form->form_ref($dbo, $form_name, $cfg->typ_lst_cache),
+            component_type::FORM_SELECT_REF => $form->form_ref($dbo, $form_name, $cfg->typ_lst_cache, $pattern),
             component_type::FORM_SELECT_REFS => $form->form_refs($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_VALUE => $form->form_value($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_VALUES => $form->form_values($dbo, $form_name, $cfg->typ_lst_cache),
@@ -200,6 +202,7 @@ class component_exe extends component
             component_type::FORM_FIELD_PLURAL_REVERSE => $form->form_field_plural_reverse($dbo, $this->style_code_id($cfg->typ_lst_cache)),
 
             // value only fields
+            component_type::FORM_FIELD_VALUE => $form->form_num_value($dbo, $this->style_code_id($cfg->typ_lst_cache)),
             component_type::FORM_FIELD_GROUP => $form->form_field_group_name($dbo),
             component_type::FORM_FIELD_GROUP_OR_PHRASES => $form->form_field_group_or_phrases($dbo),
 
@@ -281,6 +284,11 @@ class component_exe extends component
             // verb only -
             component_type::VERB_NAME => $this->verb_name($dbo),
 
+            // value only -
+            component_type::VALUE_NAME => $this->value_name($dbo),
+            component_type::GROUP_NAME => $this->group_name($dbo),
+            component_type::VALUE_NUMERIC => $this->num_value($dbo),
+
             // other
             component_type::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $cfg->view_list()),
 
@@ -305,11 +313,16 @@ class component_exe extends component
 
             // related
             component_type::LIST_REF => $this->ref_list_word($dbo, $cfg),
+            component_type::LIST_RESULTS => $this->result_list($dbo),
             component_type::LINK_LIST_WORD => $this->link_list_word($dbo, $cfg),
             component_type::FORMULAS => $this->formulas($dbo),
             component_type::FORMULA_RESULTS => $this->results($dbo),
             component_type::WORDS_DOWN => $this->word_children($dbo),
             component_type::WORDS_UP => $this->word_parents($dbo),
+
+            // preview
+            component_type::VIEW_AFTER_CHANGE => $this->view_after($dbo),
+            component_type::VIEW_BEFORE_CHANGE => $this->view_before($dbo),
 
             // export
             component_type::JSON_EXPORT => $this->json_export($dbo, $back),
@@ -319,11 +332,12 @@ class component_exe extends component
 
             component_type::TEXT => $this->text(),
 
-            default => 'program code for component ' . $this->dsp_id() . ' of component type "' . $this->type_code_id($cfg->typ_lst_cache) . '" (id ' . $this->type_id() . ')missing<br>'
+            default => 'program code for component ' . $this->dsp_id() . ' of component type "' . $this->type_code_id($cfg->typ_lst_cache) . '" (id ' . $this->type_id() . ') missing<br>'
         };
         $this->log_debug($this->dsp_id() . ' created');
-        // TODO remove temp
-        if (str_starts_with('program code for component', $result)) {
+
+        // TODO review
+        if (str_starts_with($result, 'program code for component')) {
             $this->log_err($result);
         }
 
@@ -512,6 +526,33 @@ class component_exe extends component
     }
 
     /**
+     * TODO move to a component exe part class
+     * @return string a dummy text
+     */
+    function value_name(?db_object_dsp $dbo = null): string
+    {
+        return $dbo->name();
+    }
+
+    /**
+     * TODO move to a component exe part class
+     * @return string a dummy text
+     */
+    function group_name(?db_object_dsp $dbo = null): string
+    {
+        return $dbo->name();
+    }
+
+    /**
+     * TODO move to a component exe part class
+     * @return string a dummy text
+     */
+    function num_value(?db_object_dsp $dbo = null): string
+    {
+        return $dbo->value();
+    }
+
+    /**
      * TODO move code from component_dsp_old
      * @return string a dummy text
      */
@@ -533,6 +574,15 @@ class component_exe extends component
      * TODO move code from component_dsp_old
      * @return string a dummy text
      */
+    function result_list(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO move code from component_dsp_old
+     * @return string a dummy text
+     */
     function word_children(): string
     {
         return $this->name();
@@ -543,6 +593,24 @@ class component_exe extends component
      * @return string a dummy text
      */
     function word_parents(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO move code from component_dsp_old
+     * @return string a dummy text
+     */
+    function view_after(): string
+    {
+        return $this->name();
+    }
+
+    /**
+     * TODO move code from component_dsp_old
+     * @return string a dummy text
+     */
+    function view_before(): string
     {
         return $this->name();
     }

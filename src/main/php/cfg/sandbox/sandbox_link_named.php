@@ -627,11 +627,13 @@ class sandbox_link_named extends sandbox_link
      *
      * @param sandbox|sandbox_link_named $sbx the same named sandbox as this to compare which fields have been changed
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list with the field names of the object and any child object
      */
     function db_fields_changed(
         sandbox|sandbox_link_named $sbx,
-        sql_type_list $sc_par_lst = new sql_type_list()
+        sql_type_list              $sc_par_lst = new sql_type_list(),
+        user_message               $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -640,7 +642,7 @@ class sandbox_link_named extends sandbox_link
         $do_log = $sc_par_lst->incl_log();
         $table_id = $sc->table_id($this::class);
 
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
         // for insert statements of user sandbox rows user id fields always needs to be included
         $lst->add_name_and_description($this, $sbx, $do_log, $table_id);
         return $lst;
@@ -655,7 +657,7 @@ class sandbox_link_named extends sandbox_link
      * @return bool true if this sandbox object has a name as unique key
      * final function overwritten by the child object
      */
-        function is_named_obj(): bool
+    function is_named_obj(): bool
     {
         return true;
     }

@@ -2448,12 +2448,14 @@ class triple extends sandbox_link_named
             // TODO review: do not set the generated name if it matches the name
             $this->set_names();
             $sc = $db_con->sql_creator();
-            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]));
-            $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
-            if ($ins_msg->is_ok()) {
-                $this->id = $ins_msg->get_row_id();
+            $qp = $this->sql_insert($sc, new sql_type_list([sql_type::LOG]), $usr_msg);
+            if ($usr_msg->is_ok()) {
+                $ins_msg = $db_con->insert($qp, 'add and log ' . $this->dsp_id());
+                if ($ins_msg->is_ok()) {
+                    $this->id = $ins_msg->get_row_id();
+                }
+                $usr_msg->add($ins_msg);
             }
-            $usr_msg->add($ins_msg);
         } else {
 
             // log the insert attempt first
@@ -2729,11 +2731,13 @@ class triple extends sandbox_link_named
      *
      * @param sandbox|triple $sbx the compare value to detect the changed fields
      * @param sql_type_list $sc_par_lst the parameters for the sql statement creation
+     * @param user_message $usr_msg the user message object that collects any issues during the sql creation
      * @return sql_par_field_list list 3 entry arrays with the database field name, the value and the sql type that have been updated
      */
     function db_fields_changed(
         sandbox|triple $sbx,
-        sql_type_list  $sc_par_lst = new sql_type_list()
+        sql_type_list  $sc_par_lst = new sql_type_list(),
+        user_message   $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;
@@ -2745,7 +2749,7 @@ class triple extends sandbox_link_named
         $table_id = $sc->table_id($this::class);
 
         // should be corresponding with the list of triple object vars
-        $lst = parent::db_fields_changed($sbx, $sc_par_lst);
+        $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
 
         // for triple the type is the phrase type
         // the type is object specific that why it is not part of sandbox_link_types
@@ -2758,6 +2762,12 @@ class triple extends sandbox_link_named
                 );
             }
             global $phr_typ_cac;
+            if ($this->type_id() < 0) {
+                $usr_msg->add_id_with_vars(msg_id::PHRASE_TYPE_MISSING, [
+                    msg_id::VAR_TYPE => $this->type_id(),
+                    msg_id::VAR_NAME => $this->dsp_id()
+                ]);
+            }
             $lst->add_type_field(
                 phrase::FLD_TYPE,
                 phrase::FLD_TYPE_NAME,
@@ -2777,6 +2787,12 @@ class triple extends sandbox_link_named
                     );
                 }
                 global $vrb_cac;
+                if ($this->verb_id() < 0) {
+                    $usr_msg->add_id_with_vars(msg_id::VERB_MISSING, [
+                        msg_id::VAR_TYPE => $this->verb_name(),
+                        msg_id::VAR_NAME => $this->dsp_id()
+                    ]);
+                }
                 $lst->add_type_field(
                     verb_db::FLD_ID,
                     verb_db::FLD_NAME,
@@ -2800,6 +2816,12 @@ class triple extends sandbox_link_named
                         );
                     }
                     global $vrb_cac;
+                    if ($sbx->verb_id() < 0) {
+                        $usr_msg->add_id_with_vars(msg_id::VERB_MISSING, [
+                            msg_id::VAR_TYPE => $sbx->verb_name(),
+                            msg_id::VAR_NAME => $sbx->dsp_id()
+                        ]);
+                    }
                     $lst->add_type_field(
                         verb_db::FLD_ID,
                         verb_db::FLD_NAME,
@@ -2829,6 +2851,12 @@ class triple extends sandbox_link_named
                         );
                     }
                     global $vrb_cac;
+                    if ($this->verb_id() < 0) {
+                        $usr_msg->add_id_with_vars(msg_id::VERB_MISSING, [
+                            msg_id::VAR_TYPE => $this->verb_name(),
+                            msg_id::VAR_NAME => $this->dsp_id()
+                        ]);
+                    }
                     $lst->add_type_field(
                         verb_db::FLD_ID,
                         verb_db::FLD_NAME,

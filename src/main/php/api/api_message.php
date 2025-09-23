@@ -69,6 +69,10 @@ class api_message
         $msg = [];
         if ($db_con->connected()) {
             $msg[json_fields::POD] = $cfg->get_db(config::SITE_NAME, $db_con);
+            // TODO remove this fallback case
+            if ($msg[json_fields::POD] == '') {
+                $msg[json_fields::POD] = POD_NAME;
+            }
         } else {
             // for unit tests use the default pod name
             $msg[json_fields::POD] = POD_NAME;
@@ -79,7 +83,7 @@ class api_message
             $msg[json_fields::USER_NAME] = $usr->name();
         }
         $msg[json_fields::VERSION] = PRG_VERSION;
-        $msg[json_fields::TIMESTAMP] = (new DateTime())->format(DateTimeInterface::ATOM);
+        $msg[json_fields::TIMESTAMP] = new DateTime()->format(DateTimeInterface::ATOM);
         $msg[json_fields::BODY] = $vars;
 
         return $msg;

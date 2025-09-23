@@ -36,9 +36,11 @@ namespace Zukunft\ZukunftCom\main\php\web\result;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::SANDBOX . 'sandbox_value.php';
 include_once html_paths::FIGURE . 'figure.php';
 include_once html_paths::FORMULA . 'formula.php';
+include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::GROUP . 'group.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::USER . 'user_message.php';
@@ -47,8 +49,10 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 include_once paths::SHARED . 'library.php';
+include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\formula\formula;
+use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
@@ -59,6 +63,7 @@ use Zukunft\ZukunftCom\main\php\shared\const\views;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
 use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 
 class result extends sandbox_value
@@ -69,12 +74,12 @@ class result extends sandbox_value
      */
 
     // curl views
-    const VIEW_EDIT = views::RESULT_EDIT;
-    const VIEW_DEL = views::RESULT_DEL;
+    const string VIEW_EDIT = views::RESULT_EDIT;
+    const string VIEW_DEL = views::RESULT_DEL;
 
     // curl message id
-    const MSG_EDIT = msg_id::RESULT_EDIT;
-    const MSG_DEL = msg_id::RESULT_DEL;
+    const msg_id MSG_EDIT = msg_id::RESULT_EDIT;
+    const msg_id MSG_DEL = msg_id::RESULT_DEL;
 
 
     /*
@@ -118,6 +123,13 @@ class result extends sandbox_value
         return $usr_msg;
     }
 
+    function formula_id(): ?int
+    {
+        return $this->frm?->id;
+    }
+
+
+
 
     /*
      * display
@@ -139,6 +151,26 @@ class result extends sandbox_value
     function display_linked(phrase_list_dsp $phr_lst_header = null): string
     {
         return $this->grp->name_link_list($phr_lst_header);
+    }
+
+    /**
+     * create the HTML code to select a formula
+     * @param string $form the name of the html form
+     * @param formula_list $frm_lst with the suggested formulas
+     * @param string $name the unique html field name for the selection of the formula
+     * @return string the html code to select a formula
+     */
+    public function formula_selector(
+        string       $form,
+        formula_list $frm_lst,
+        string       $name = url_var::VIEW_ID
+    ): string
+    {
+        $frm_id = $this->formula_id();
+        if ($frm_id == null) {
+            $frm_id = $frm_lst->default_id($this);
+        }
+        return $frm_lst->selector($form, $frm_id, $name, msg_id::LABEL_VIEW);
     }
 
 

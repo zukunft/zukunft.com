@@ -89,6 +89,8 @@ class component_type
     const int FORM_SELECT_REF_ID = 120;
     const string FORM_SELECT_REFS = "system_form_select_multi_refs";
     const int FORM_SELECT_REFS_ID = 121;
+    const string FORM_FIELD_VALUE = "system_form_field_value";
+    const int FORM_FIELD_VALUE_ID = 139;
     const string FORM_SELECT_VALUE = "system_form_select_value";
     const int FORM_SELECT_VALUE_ID = 81;
     const string FORM_SELECT_VALUES = "system_form_select_multi_values";
@@ -323,6 +325,14 @@ class component_type
     const string USAGE_WORD = "usage";
     const int USAGE_WORD_ID = 44;
 
+    // user components for value
+    const string VALUE_NAME = "group_or_phrase_list";
+    const int VALUE_NAME_ID = 140;
+    const string GROUP_NAME = "group_name";
+    const int GROUP_NAME_ID = 141;
+    const string VALUE_NUMERIC = "value_numeric";
+    const int VALUE_NUMERIC_ID = 142;
+
     // show the user specific name of a word or triple with the description on mouseover without allowing to change it
     const string PHRASE = "phrase";
     const int PHRASE_ID = 4;
@@ -343,6 +353,10 @@ class component_type
     const int SHOW_NAME_ID = 20;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
+    const string VIEW_AFTER_CHANGE = "system_show_after_change";
+    const int VIEW_AFTER_CHANGE_ID = 143;
+    const string VIEW_BEFORE_CHANGE = "system_show_before_change";
+    const int VIEW_BEFORE_CHANGE_ID = 144;
     const string WORD_RESULTS = "word_results";
     const int WORD_RESULTS_ID = 85;
     const string USED_IN_AS_TEXT = "used_in_as_text";
@@ -405,6 +419,7 @@ class component_type
         self::FORM_FIELD_GROUP_OR_PHRASES,
         self::FORM_FIELD_SOURCE_GROUP,
         self::FORM_FIELD_SOURCE_GROUP_OR_PHRASES,
+        self::FORM_FIELD_VALUE,
         self::FORM_FIELD_SELECTION_NAME,
         self::FORM_FIELD_SELECTION_DESCRIPTION,
         self::FORM_FIELD_SELECTION_TEXT,
@@ -463,6 +478,8 @@ class component_type
         self::FORM_HIDDEN_STEP,
         self::SHOW_NAME,
         self::SHOW_FIELD_USAGE,
+        self::VIEW_AFTER_CHANGE,
+        self::VIEW_BEFORE_CHANGE,
         self::WORD_RESULTS,
         self::USED_IN_AS_TEXT,
         self::USED_IN_AS_TEXT_WITH_LINK,
@@ -510,6 +527,7 @@ class component_type
         [self::FORM_FIELD_GROUP_OR_PHRASES, self::FORM_FIELD_GROUP_OR_PHRASES_ID],
         [self::FORM_FIELD_SOURCE_GROUP, self::FORM_FIELD_SOURCE_GROUP_ID],
         [self::FORM_FIELD_SOURCE_GROUP_OR_PHRASES, self::FORM_FIELD_SOURCE_GROUP_OR_PHRASES_ID],
+        [self::FORM_FIELD_VALUE, self::FORM_FIELD_VALUE_ID],
         [self::FORM_FIELD_SELECTION_NAME, self::FORM_FIELD_SELECTION_NAME_ID],
         [self::FORM_FIELD_SELECTION_DESCRIPTION, self::FORM_FIELD_SELECTION_DESCRIPTION_ID],
         [self::FORM_FIELD_SELECTION_TEXT, self::FORM_FIELD_SELECTION_TEXT_ID],
@@ -599,11 +617,16 @@ class component_type
         [self::LIST_RESULTS, self::LIST_RESULTS_ID],
         [self::LINK_LIST_WORD, self::LINK_LIST_WORD_ID],
         [self::USAGE_WORD, self::USAGE_WORD_ID],
+        [self::VALUE_NAME, self::VALUE_NAME_ID],
+        [self::GROUP_NAME, self::GROUP_NAME_ID],
+        [self::VALUE_NUMERIC, self::VALUE_NUMERIC_ID],
         [self::PHRASE, self::PHRASE_ID],
         [self::VERB_NAME, self::VERB_NAME_ID],
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
+        [self::VIEW_AFTER_CHANGE, self::VIEW_AFTER_CHANGE_ID],
+        [self::VIEW_BEFORE_CHANGE, self::VIEW_BEFORE_CHANGE_ID],
         [self::WORD_RESULTS, self::WORD_RESULTS_ID],
         [self::USED_IN_AS_TEXT, self::USED_IN_AS_TEXT_ID],
         [self::USED_IN_AS_TEXT_WITH_LINK, self::USED_IN_AS_TEXT_WITH_LINK_ID],
