@@ -35,7 +35,7 @@ PREPARE view_insert_log_0111000000_call FROM
 
 SELECT view_insert_log_0111000000 (
                'Start view',
-               1,
+               3,
                1,
                42,
                278,

@@ -44,7 +44,7 @@ PREPARE formula_insert_log_011001110100000_call FROM
 
 SELECT formula_insert_log_011001110100000 (
                'scale minute to sec',
-               1,
+               3,
                1,
                30,
                173,

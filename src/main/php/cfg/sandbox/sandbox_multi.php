@@ -2061,7 +2061,9 @@ class sandbox_multi extends db_object_multi_user
      */
     function save_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
-        return '';
+        $msg = 'ERROR: save_fields not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**
@@ -2390,7 +2392,9 @@ class sandbox_multi extends db_object_multi_user
      */
     function name_field(): string
     {
-        return '';
+        $msg = 'ERROR: name_field not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**
@@ -2631,7 +2635,9 @@ class sandbox_multi extends db_object_multi_user
      */
     function msg_id_already_used(): string
     {
-        return '';
+        $msg = 'ERROR: msg_id_already_used not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**
@@ -2730,7 +2736,9 @@ class sandbox_multi extends db_object_multi_user
     function save_id_fields(sql_db $db_con, sandbox_multi $db_rec, sandbox_multi $std_rec): string
     {
         log_warning($this->dsp_id());
-        return '';
+        $msg = 'ERROR: save_id_fields not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /*
@@ -4450,8 +4458,9 @@ class sandbox_multi extends db_object_multi_user
 
     function table_extension(): string
     {
-        log_err('dummy table_extension() function called in sandbox_multi, which should never happen');
-        return '';
+        $msg = 'ERROR: dummy table_extension() function called in ' . $this::class . ', which should never happen';
+        log_err($msg);
+        return $msg;
     }
 
     /**

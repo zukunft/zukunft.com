@@ -45,36 +45,11 @@
 
 namespace Zukunft\ZukunftCom\test\php\unit;
 
-use Zukunft\ZukunftCom\main\php\cfg\component\component;
-use Zukunft\ZukunftCom\main\php\cfg\const\def;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
-use Zukunft\ZukunftCom\main\php\cfg\group\group;
-use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
-use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
-use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
-use Zukunft\ZukunftCom\main\php\cfg\ref\source;
-use Zukunft\ZukunftCom\main\php\cfg\result\result;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
-use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
-use Zukunft\ZukunftCom\main\php\cfg\user\user;
-use Zukunft\ZukunftCom\main\php\cfg\value\value;
-use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
-use Zukunft\ZukunftCom\main\php\cfg\view\view;
-use Zukunft\ZukunftCom\main\php\cfg\word\triple;
-use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
-use Zukunft\ZukunftCom\main\php\web\frontend;
-use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\views;
-use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
-use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
-use Zukunft\ZukunftCom\main\php\shared\library;
-use Zukunft\ZukunftCom\main\php\shared\types\api_type;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
-use Zukunft\ZukunftCom\test\php\utils\test_api;
-use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
 
+include_once html_paths::HELPER . 'data_object.php';
 include_once paths::MODEL_CONST . 'def.php';
 include_once paths::API_OBJECT . 'controller.php';
 include_once paths::MODEL_SYSTEM . 'system_time_list.php';
@@ -95,7 +70,37 @@ include_once paths::MODEL_WORD . 'word.php';
 include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
+include_once test_paths::UTILS . 'test_lib.php';
 
+use Zukunft\ZukunftCom\main\php\cfg\component\component;
+use Zukunft\ZukunftCom\main\php\cfg\const\def;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula;
+use Zukunft\ZukunftCom\main\php\cfg\group\group;
+use Zukunft\ZukunftCom\main\php\cfg\helper\data_object;
+use Zukunft\ZukunftCom\main\php\cfg\helper\db_object;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\source;
+use Zukunft\ZukunftCom\main\php\cfg\result\result;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox;
+use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
+use Zukunft\ZukunftCom\main\php\cfg\user\user;
+use Zukunft\ZukunftCom\main\php\cfg\value\value;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb;
+use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\cfg\word\triple;
+use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\frontend;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
+use Zukunft\ZukunftCom\main\php\shared\const\views;
+use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
+use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
+use Zukunft\ZukunftCom\main\php\shared\library;
+use Zukunft\ZukunftCom\main\php\shared\types\api_type;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use Zukunft\ZukunftCom\test\php\utils\test_api;
+use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class horizontal_tests
 {
@@ -104,10 +109,12 @@ class horizontal_tests
 
         // init
         $lib = new library();
+        $tl = new test_lib();
 
         // start the test section (ts)
         $ts = 'unit horizontal ';
         $t->header($ts);
+        $t->usr1 = $t->user_sys_test();
 
         $t->subheader($ts . 'fill');
         foreach (def::MAIN_CLASSES as $class) {
@@ -212,6 +219,9 @@ class horizontal_tests
 
         $t->subheader($ts . 'system views');
         $ui = new frontend('unit test');
+        $dto = $tl->dummy_test_cache($t->usr1);
+        $ui->set_cache($dto);
+        // TODO Prio 1 deprecate
         $ui->load_dummy_cache_from_test_resources($t->usr1);
         for ($id = views::MIN_TEST_ID; $id <= views::MAX_TEST_ID; $id++) {
             $dbo = $this->view_id_to_dbo($id, $t->usr1);
@@ -219,9 +229,8 @@ class horizontal_tests
             $url = $t->class_to_filled_url($dbo::class, $id, $action);
             $url_part = parse_url($url);
             parse_str($url_part["query"], $url_array);
-            $usr_dsp = new user_dsp();
-            $usr_dsp->set_from_json($t->usr1->api_json());
-            $html = $ui->url_to_html($url_array, $usr_dsp);
+            $usr_dsp = $tl->cast_user($t->usr1);
+            $html = $ui->url_to_html($url_array, $usr_dsp, $ui->dto);
             $test_name = $action . ' ' . $lib->class_to_name($dbo::class) . ' view';
             // create the filename of the expected result
             $dbo_name = $id . '_';

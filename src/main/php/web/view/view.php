@@ -41,6 +41,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::VIEW . 'view_exe.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HELPER . 'config.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HTML . 'button.php';
@@ -49,6 +50,7 @@ include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'styles.php';
 include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
+include_once html_paths::USER . 'user.php';
 include_once html_paths::WORD . 'word.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'views.php';
@@ -60,6 +62,7 @@ include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\display_list;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
@@ -67,6 +70,7 @@ use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\html\styles;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
@@ -96,11 +100,12 @@ class view extends view_exe
 
 
     /**
-     * show the navigation bar, which allow the user to search, to login or change the settings
+     * show the navigation bar, which allow the user to search, to log in or change the settings
      * without javascript this is the top right corner
      * with    javascript this is a bar on the top
+     * @p
      */
-    function dsp_navbar(string $back = ''): string
+    function dsp_navbar(?data_object $cfg = null, string $back = ''): string
     {
         $result = '';
 
@@ -109,7 +114,7 @@ class view extends view_exe
             $this->log_err("The display ID (" . $this->id() . ") must be set to display a view.", "view_dsp->dsp_navbar");
         } else {
             if (html_base::UI_USE_BOOTSTRAP) {
-                $result = $this->dsp_navbar_bs(TRUE, $back);
+                $result = $this->dsp_navbar_bs(TRUE, $cfg->usr, $back);
             } else {
                 $result = $this->dsp_navbar_html($back);
             }
@@ -122,7 +127,7 @@ class view extends view_exe
      * same as dsp_navbar_html, but using bootstrap
      * JavaScript functions using bootstrap
      */
-    private function dsp_navbar_bs(bool $show_view, string $back): string
+    private function dsp_navbar_bs(bool $show_view, user $usr, string $back): string
     {
         $lib = new library();
         $html = new html_base();
@@ -136,7 +141,7 @@ class view extends view_exe
         $result .= '  <div class="' . view_styles::COL_SM_2 . '">';
         $result .= '    <ul class="nav navbar-nav">';
         $result .= '      <li class="active">';
-        $result .= $this->dsp_user($back);
+        $result .= $this->dsp_user($usr);
         $result .= '      </li>';
         $result .= '      <li class="active">';
         $result .= $this->dsp_logout();
@@ -206,7 +211,8 @@ class view extends view_exe
             $this->log_err("The user id must be set to display a view.", "view_dsp->dsp_navbar");
         } else {
             if (html_base::UI_USE_BOOTSTRAP) {
-                $result .= $this->dsp_navbar_bs(FALSE, $back);
+                $usr = new user();
+                $result .= $this->dsp_navbar_bs(FALSE, $usr, $back);
             } else {
                 $result .= $this->dsp_navbar_html_no_view($back);
             }
@@ -215,12 +221,13 @@ class view extends view_exe
     }
 
     /**
-     * the basic zukunft top elements that should be show always
+     * the basic zukunft top elements that should be shown always
      */
     function dsp_navbar_simple(): string
     {
         if (html_base::UI_USE_BOOTSTRAP) {
-            $result = $this->dsp_navbar_bs(FALSE, 0);
+            $usr = new user();
+            $result = $this->dsp_navbar_bs(FALSE, $usr, 0);
         } else {
             $result = $this->html_navbar_start();
             $result .= $this->html_navbar_end();

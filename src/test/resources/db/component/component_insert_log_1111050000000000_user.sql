@@ -32,7 +32,7 @@ PREPARE component_insert_log_1111050000000000_user_call
         ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10);
 
 SELECT component_insert_log_1111050000000000_user (
-               1::bigint,
+               3::bigint,
                1::smallint,
                51::smallint,
                'Word'::text,

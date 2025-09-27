@@ -162,6 +162,10 @@ class frontend
     private string $code_name; // the name of the call script to locate issues
     private string $msg; // messages that should be shown to the user asap
 
+    // the main data cache of the frontend
+    public ?data_object $dto = null;
+
+    // TODO deprecate old cache objects
     public ?type_lists $typ_lst_cache = null;
     public ?view_list $msk_lst_cache = null;
 
@@ -254,10 +258,15 @@ class frontend
                     msg_id::VAR_REQUEST => 'load cache'
                 ]);
             } else {
-                $this->set_cache($api_msg);
+                $this->set_type_cache($api_msg);
             }
         }
         return $usr_msg;
+    }
+
+    function set_cache(data_object $dto): void
+    {
+        $this->dto = $dto;
     }
 
     /**
@@ -269,7 +278,7 @@ class frontend
     {
         if ($this->typ_lst_cache == null) {
             $api_msg = file_get_contents(test_files::TYPE_LISTS_CACHE);
-            $this->set_cache($api_msg);
+            $this->set_type_cache($api_msg);
         }
         if ($this->msk_lst_cache == null) {
             $imp = new import();
@@ -291,7 +300,7 @@ class frontend
      * @param string|null $api_msg with the api message as a string
      * @return void
      */
-    function set_cache(?string $api_msg = null): void
+    function set_type_cache(?string $api_msg = null): void
     {
         if ($this->typ_lst_cache == null) {
             $this->typ_lst_cache = new type_lists($api_msg);
@@ -337,9 +346,10 @@ class frontend
      *
      * @param array $url_array the parsed url as an array
      * @param user_dsp $usr the session user who has requested the view
+     * @param data_object $dto the frontend cache used to reduce the backend loading for the html code creation
      * @return string the html code to show the page to the user
      */
-    function url_to_html(array $url_array, user_dsp $usr): string
+    function url_to_html(array $url_array, user_dsp $usr, data_object $dto = new data_object()): string
     {
         // init the view
         $result = ''; // reset the html code var
@@ -470,6 +480,7 @@ class frontend
             $msk_dsp = $this->typ_lst_cache->get_view_by_id($view_id);
             $title = $msk_dsp->title($dbo);
             $cfg = new data_object();
+            $cfg->usr = $usr;
             $cfg->typ_lst_cache = $this->typ_lst_cache;
             $cfg->set_view_list($this->msk_lst_cache);
             $dsp_text = $msk_dsp->show($dbo, $cfg, $back);
@@ -514,7 +525,7 @@ class frontend
     private function log_info(string $msg): string
     {
         // TODO actually sent the message to the server
-        return '';
+        return 'Info message to backend: ' . $msg;
     }
 
 

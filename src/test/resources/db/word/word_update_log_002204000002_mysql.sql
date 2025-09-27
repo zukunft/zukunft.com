@@ -41,7 +41,7 @@ PREPARE word_update_log_002204000002_call FROM
     'SELECT word_update_log_002204000002 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT word_update_log_002204000002
-       (1,
+       (3,
         2,
         10,
         'mathematics',

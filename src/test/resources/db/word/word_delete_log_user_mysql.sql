@@ -19,7 +19,7 @@ BEGIN
 END;
 
 SELECT word_delete_log_user
-       (1,
+       (3,
         3,
         10,
         'mathematics',

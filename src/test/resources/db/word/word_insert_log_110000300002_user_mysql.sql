@@ -28,7 +28,7 @@ PREPARE word_insert_log_110000300002_user_call FROM
     'SELECT word_insert_log_110000300002_user (?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT word_insert_log_110000300002_user
-        (1,
+        (3,
          1,
          85,
          '',

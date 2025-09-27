@@ -107,6 +107,7 @@ class views
 
     const VERBS = 'verbs';
     const USER = 'user';
+    const USER_ID = 64;
     const USER_ADD = 'user_add';
     const USER_EDIT = 'user_edit';
     const USER_DEL = 'user_del';

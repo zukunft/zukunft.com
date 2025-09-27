@@ -1566,7 +1566,9 @@ class phrase extends combine_named
         if ($this->obj() != null) {
             return $this->obj()->dsp_id($full) . ' as phrase';
         } else {
-            return 'phrase with null object';
+            $msg = 'ERROR: phrase with null object';
+            log_err($msg);
+            return $msg;
         }
     }
 

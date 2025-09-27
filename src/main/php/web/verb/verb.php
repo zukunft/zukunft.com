@@ -87,6 +87,7 @@ class verb extends sandbox_named
     // this id text is unique for all code links and is used for system im- and export
     public ?string $code_id = null;
     public int $usage = 0;
+    public ?string $plural = null;
     public ?string $reverse = null;
     public ?string $rev_plural = null;
 
@@ -115,6 +116,21 @@ class verb extends sandbox_named
         return $this->id;
     }
 
+    function get_plural(): ?string
+    {
+        return $this->plural;
+    }
+
+    function reverse(): ?string
+    {
+        return $this->reverse;
+    }
+
+    function plural_reverse(): ?string
+    {
+        return $this->rev_plural;
+    }
+
 
     /*
      * api
@@ -134,6 +150,26 @@ class verb extends sandbox_named
         } else {
             $this->set_code_id('');
         }
+        if (array_key_exists(json_fields::USAGE, $json_array)) {
+            $this->usage = $json_array[json_fields::USAGE];
+        } else {
+            $this->usage = 0;
+        }
+        if (array_key_exists(json_fields::PLURAL, $json_array)) {
+            $this->plural = $json_array[json_fields::PLURAL];
+        } else {
+            $this->plural = '';
+        }
+        if (array_key_exists(json_fields::REVERSE, $json_array)) {
+            $this->reverse = $json_array[json_fields::REVERSE];
+        } else {
+            $this->reverse = '';
+        }
+        if (array_key_exists(json_fields::REV_PLURAL, $json_array)) {
+            $this->rev_plural = $json_array[json_fields::REV_PLURAL];
+        } else {
+            $this->rev_plural = '';
+        }
         return $usr_msg;
     }
 
@@ -146,9 +182,9 @@ class verb extends sandbox_named
         $vars = parent::api_array();
         $vars[json_fields::CODE_ID] = $this->code_id();
         $vars[json_fields::USAGE] = $this->usage;
-        //$lib = new library();
-        //$class = $lib->class_to_name($this::class);
-        //$vars[json_fields::OBJECT_CLASS] = $class;
+        $vars[json_fields::PLURAL] = $this->plural;
+        $vars[json_fields::REVERSE] = $this->reverse;
+        $vars[json_fields::REV_PLURAL] = $this->rev_plural;
         return $vars;
     }
 
@@ -194,7 +230,7 @@ class verb extends sandbox_named
             //$used_verb_type_id = $typ_lst->html_verb_types->default_id();
         }
         //return $typ_lst->html_verb_types->selector($form, $used_verb_type_id);
-        return '';
+        return 'Missing verb type';
     }
 
 

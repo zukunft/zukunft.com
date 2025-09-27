@@ -29,7 +29,7 @@ PREPARE component_insert_log_1111050000000000_user_call FROM
     'SELECT component_insert_log_1111050000000000_user (?,?,?,?,?,?,?,?,?,?)';
 
 SELECT component_insert_log_1111050000000000_user (
-               1,
+               3,
                1,
                51,
                'Word',

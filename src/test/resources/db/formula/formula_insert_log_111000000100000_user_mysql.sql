@@ -20,7 +20,7 @@ PREPARE formula_insert_log_111000000100000_user_call FROM
     'SELECT formula_insert_log_111000000100000_user (?,?,?,?,?)';
 
 SELECT formula_insert_log_111000000100000_user (
-               1,
+               3,
                1,
                30,
                '"one" = "millions" * 1000000',

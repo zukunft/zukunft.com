@@ -1628,7 +1628,9 @@ class sandbox_value extends sandbox_multi
     {
         $lib = new library();
         $class_name = $lib->class_to_name($this::class);
-        return 'The user sandbox save_id_fields does not support changing the phrase for ' . $class_name;
+        $msg = 'ERROR: The user sandbox save_id_fields does not support changing the phrase for ' . $class_name;
+        log_err($msg);
+        return $msg;
     }
 
 

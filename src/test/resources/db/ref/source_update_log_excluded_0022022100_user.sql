@@ -53,7 +53,7 @@ SELECT source_update_log_excluded_0022022100_user
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18);
 
 SELECT source_update_log_excluded_0022022100_user
-       (1::bigint,
+       (3::bigint,
         2::smallint,
         57::smallint,
         'The International System of Units'::text,

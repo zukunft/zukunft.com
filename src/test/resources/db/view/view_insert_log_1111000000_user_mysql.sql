@@ -24,7 +24,7 @@ PREPARE view_insert_log_1111000000_user_call FROM
     'SELECT view_insert_log_1111000000_user (?,?,?,?,?,?,?)';
 
 SELECT view_insert_log_1111000000_user (
-               1,
+               3,
                1,
                42,
                'Start view',

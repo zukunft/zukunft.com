@@ -631,7 +631,7 @@ class component extends sandbox_code_id
         if ($cmp_typ_cac->code_id($this->type_id()) == component_type::PHRASE_NAME) {
             return $phr->name();
         } else {
-            return '';
+            return 'Missing component type';
         }
     }
 
@@ -691,7 +691,7 @@ class component extends sandbox_code_id
 
     function btn_unlink(): string
     {
-        return '';
+        return 'Missing unlink';
     }
 
     /**

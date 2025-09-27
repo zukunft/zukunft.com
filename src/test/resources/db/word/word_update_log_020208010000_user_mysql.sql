@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS word_update_log_000208010000_user;
-CREATE PROCEDURE word_update_log_000208010000_user
+DROP PROCEDURE IF EXISTS word_update_log_020208010000_user;
+CREATE PROCEDURE word_update_log_020208010000_user
     (_user_id                 bigint,
      _change_action_id        smallint,
      _field_id_description    smallint,
@@ -32,10 +32,10 @@ BEGIN
 
 END;
 
-PREPARE word_update_log_000208010000_user_call FROM
-    'SELECT word_update_log_000208010000_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE word_update_log_020208010000_user_call FROM
+    'SELECT word_update_log_020208010000_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT word_update_log_000208010000_user
+SELECT word_update_log_020208010000_user
        (1,
         2,
         11,

@@ -42,7 +42,7 @@ SELECT component_link_insert_log_01558100000
        (1,
         1,
         1,
-        1,
+        3,
         1,
         16,
         'Start view',

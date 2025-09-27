@@ -48,7 +48,7 @@ PREPARE component_insert_log_0111150000000000_call FROM
 
 SELECT component_insert_log_0111150000000000 (
                'form title',
-               1,
+               3,
                1,
                51,
                743,

@@ -73,6 +73,8 @@ A proper issue ticket should be created for these TODOs notes:
     TODO check the order of the class sections
     TODO used different name for each type e.g. view_style_name instead of type_name to be able to log the name of the change
 
+    TODO add a frontend cache that includes the most often used terms, values and views 
+    TODO in the config api return the user cache frontend json 1-to-1 if the trigger date is valid 
     TODO add parent to source and ref
     TODO include code_id for all terms 
     TODO use php 8.4 set and get function

@@ -60,14 +60,14 @@ class user extends db_object
 
     // TODO allow only admin users to add or change other users
     // curl views
-    const VIEW_ADD = views::USER_ADD;
-    const VIEW_EDIT = views::USER_EDIT;
-    const VIEW_DEL = views::USER_DEL;
+    const string VIEW_ADD = views::USER_ADD;
+    const string VIEW_EDIT = views::USER_EDIT;
+    const string VIEW_DEL = views::USER_DEL;
 
     // curl message id
-    const MSG_ADD = msg_id::USER_ADD;
-    const MSG_EDIT = msg_id::USER_EDIT;
-    const MSG_DEL = msg_id::USER_DEL;
+    const msg_id MSG_ADD = msg_id::USER_ADD;
+    const msg_id MSG_EDIT = msg_id::USER_EDIT;
+    const msg_id MSG_DEL = msg_id::USER_DEL;
 
 
     /*
@@ -182,6 +182,14 @@ class user extends db_object
         return $this->name;
     }
 
+    function description(): string
+    {
+        if ($this->description == null) {
+            return '';
+        } else {
+            return $this->description;
+        }
+    }
     function last_term(): term|null
     {
         return $this->last_term;
@@ -258,6 +266,17 @@ class user extends db_object
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
     }
 
+
+    /*
+     * display
+     */
+
+    function name_link(?string $back = '', string $style = '', int $msk_id = views::USER_ID): string
+    {
+        $html = new html_base();
+        $url = $html->url_new($msk_id, $this->id(), '', $back);
+        return $html->ref($url, $this->name(), $this->description(), $style);
+    }
 
     /*
      * to review

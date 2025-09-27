@@ -66,7 +66,7 @@ SELECT triple_insert_log_0155115500000001
         (2::bigint,
          3::smallint,
          1::bigint,
-         1::bigint,
+         3::bigint,
          1::smallint,
          7::smallint,
          'constant'::text,

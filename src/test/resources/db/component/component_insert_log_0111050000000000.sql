@@ -47,7 +47,7 @@ SELECT component_insert_log_0111050000000000
 
 SELECT component_insert_log_0111050000000000 (
                'Word'::text,
-               1::bigint,
+               3::bigint,
                1::smallint,
                51::smallint,
                743::smallint,

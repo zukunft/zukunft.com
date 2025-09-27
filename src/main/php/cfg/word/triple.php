@@ -850,11 +850,19 @@ class triple extends sandbox_link_named
             if ($vrb != null) {
                 return $vrb->name();
             } else {
-                return '';
+                $msg = 'verb with id ' . $id . ' is missing';
+                log_err($msg);
+                return $msg;
             }
         } elseif ($id < 0) {
             $vrb = $vrb_cac->get($this->predicate_id() * -1);
-            return $vrb->reverse();
+            if ($vrb != null) {
+                return $vrb->reverse();
+            } else {
+                $msg = 'verb with id ' . $id . ' is missing';
+                log_err($msg);
+                return $msg;
+            }
         } else {
             return '';
         }
@@ -872,17 +880,23 @@ class triple extends sandbox_link_named
             if ($vrb != null) {
                 return $vrb->code_id();
             } else {
-                return '';
+                $msg = 'verb with id ' . $id . ' is missing';
+                log_err($msg);
+                return $msg;
             }
         } elseif ($id < 0) {
             $vrb = $vrb_cac->get($this->predicate_id() * -1);
             if ($vrb != null) {
                 return $vrb->code_id();
             } else {
-                return '';
+                $msg = 'verb with id ' . $id . ' is missing';
+                log_err($msg);
+                return $msg;
             }
         } else {
-            return '';
+            $msg = 'verb with id is zero';
+            log_info($msg);
+            return $msg;
         }
     }
 
@@ -1245,7 +1259,9 @@ class triple extends sandbox_link_named
     {
         global $phr_typ_cac;
         if ($this->type_id == null) {
-            return '';
+            $msg = 'type for triple ' . $this->dsp_id() . ' is missing';
+            log_err($msg);
+            return $msg;
         } else {
             return $phr_typ_cac->code_id($this->type_id);
         }
@@ -1743,12 +1759,14 @@ class triple extends sandbox_link_named
         } elseif ($this->name != '') {
             return sql_db::FLD_NAME;
         } elseif ($this->has_objects()) {
-            return 'link_ids';
-        } else {
-            log_err('Either the database ID (' . $this->id() . ') or the ' .
-                self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->user()->id() . ') must be set to load a ' .
-                self::class, self::class . '->load');
+            // TODO Prio 2 check if an error message should be returned
             return '';
+        } else {
+            $msg = 'Either the database ID (' . $this->id() . ') or the ' .
+                self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->user()->id() . ') must be set to load a ' .
+                self::class;
+            log_err($msg, self::class . '->load');
+            return $msg;
         }
     }
 

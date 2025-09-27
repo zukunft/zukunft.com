@@ -49,7 +49,7 @@ PREPARE formula_insert_log_011001110100000_call
 
 SELECT formula_insert_log_011001110100000 (
                'scale minute to sec'::text,
-               1::bigint,
+               3::bigint,
                1::smallint,
                30::smallint,
                173::smallint,

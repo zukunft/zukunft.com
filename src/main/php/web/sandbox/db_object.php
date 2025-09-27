@@ -408,32 +408,45 @@ class db_object extends TextIdObject
 
     function name(): string
     {
-        return 'name not overwritten by ' . $this::class;
+        $msg = 'ERROR:  name not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     function description(): string
     {
-        return 'description not overwritten by ' . $this::class;
+        $msg = 'ERROR: description not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     function get_plural(): ?string
     {
-        return 'plural not overwritten by ' . $this::class;
+        $msg = 'ERROR: plural not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     function reverse(): ?string
     {
-        return 'reverse not overwritten by ' . $this::class;
+        $msg = 'ERROR: reverse not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     function plural_reverse(): ?string
     {
-        return 'plural reverse not overwritten by ' . $this::class;
+        $msg = 'ERROR: plural reverse not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     function value(): float|string|DateTime|null
     {
-        return 'value not overwritten by ' . $this::class;
+        $msg = 'ERROR: value not overwritten by ' . $this::class;
+        // TODO Prio 0 activate
+        //log_err($msg);
+        return $msg;
     }
 
     function phrase(): phrase_dsp
@@ -454,7 +467,7 @@ class db_object extends TextIdObject
      */
     function user_expression(): string
     {
-        return '';
+        return 'Missing user expression';
     }
 
     /**

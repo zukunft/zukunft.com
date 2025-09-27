@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\word_list;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\web\word\word_list as word_list_dsp;
@@ -79,7 +80,8 @@ if (!$db_con->connected()) {
         $msk->load_by_id($view_id);
         $msk->load_components();
         $msk_dsp = new view_dsp($msk->api_json());
-        $result .= $msk_dsp->dsp_navbar($back);
+        $dto = new data_object();
+        $result .= $msk_dsp->dsp_navbar($dto, $back);
 
         $find_str = $_GET['pattern'];
 

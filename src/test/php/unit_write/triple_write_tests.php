@@ -248,13 +248,13 @@ class triple_write_tests
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
         $msg = $trp->del();
         $result = $msg->get_last_message_translated();
-        $target = '';
+        $target = 'user message translation for position -1 not found';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
         $trp = new triple($t->usr2);
         $trp->load_by_link_id($wrd_from->id(), $vrb_is_id, $wrd_to->id());
         $msg = $trp->del();
         $result = $msg->get_last_message_translated();
-        $target = '';
+        $target = 'user message translation for position -1 not found';
         $t->assert($test_name, $result, $target, $t::TIMEOUT_LIMIT_DB_MULTI);
 
         $t->subheader('triple test cleanup');

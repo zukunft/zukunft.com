@@ -25,7 +25,7 @@ PREPARE term_view_update_log_0004_user_call FROM
     'SELECT term_view_update_log_0004_user (?,?,?,?,?,?,?,?)';
 
 SELECT term_view_update_log_0004_user
-    (1,
+    (3,
      2,
      726,
      'default',

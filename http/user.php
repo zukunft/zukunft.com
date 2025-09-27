@@ -46,6 +46,7 @@ use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\cfg\word\triple;
 use Zukunft\ZukunftCom\main\php\cfg\word\word;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
@@ -151,7 +152,8 @@ if ($usr->id > 0) {
     }
 
     $msk_dsp = new view_dsp($msk->api_json());
-    $result .= $msk_dsp->dsp_navbar($back);
+    $dto = new data_object();
+    $result .= $msk_dsp->dsp_navbar($dto, $back);
     $result .= $dsp_usr->form_edit($back);
 
     // allow to import data

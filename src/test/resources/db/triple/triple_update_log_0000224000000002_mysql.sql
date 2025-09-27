@@ -41,7 +41,7 @@ PREPARE triple_update_log_0000224000000002_call FROM
     'SELECT triple_update_log_0000224000000002 (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT triple_update_log_0000224000000002
-       (1,
+       (3,
         2,
         18,
         'mathematical constant',

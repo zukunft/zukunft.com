@@ -51,6 +51,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\cfg\result\result_list;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -82,7 +83,8 @@ if ($session_usr->id > 0) {
     $msk->id = $sys_msk_cac->id(view_shared::FORMULA_TEST);
     $back = $_GET[url_var::BACK] = ''; // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_dsp($msk->api_json());
-    echo $msk_dsp->dsp_navbar($back);
+    $dto = new data_object();
+    echo $msk_dsp->dsp_navbar($dto, $back);
 
     // get all parameters
     $frm_id = $_GET[url_var::ID];

@@ -325,7 +325,9 @@ class db_object_multi extends db_object_key
      */
     function name(): string
     {
-        return 'ERROR: name function not overwritten by child';
+        $msg = 'ERROR: name function not overwritten by child';
+        log_err($msg);
+        return $msg;
     }
 
     /**

@@ -53,7 +53,7 @@ SELECT word_insert_log_011105000001
 
 SELECT word_insert_log_011105000001
         ('mathematics'::text,
-         1::bigint,
+         3::bigint,
          1::smallint,
          10::smallint,
          9::smallint,

@@ -94,13 +94,13 @@ class verb extends type_object
      */
 
     // object specific database and JSON object field names and comments
-    const TBL_COMMENT = 'for verbs / triple predicates to use predefined behavior';
+    const string TBL_COMMENT = 'for verbs / triple predicates to use predefined behavior';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const FLD_ID = verb_db::FLD_ID;
-    const FLD_NAMES = verb_db::FLD_NAMES;
-    const FLD_LST_NAME = verb_db::FLD_LST_NAME;
-    const FLD_LST_ALL = verb_db::FLD_LST_ALL;
+    const string FLD_ID = verb_db::FLD_ID;
+    const array FLD_NAMES = verb_db::FLD_NAMES;
+    const array FLD_LST_NAME = verb_db::FLD_LST_NAME;
+    const array FLD_LST_ALL = verb_db::FLD_LST_ALL;
 
 
     /*

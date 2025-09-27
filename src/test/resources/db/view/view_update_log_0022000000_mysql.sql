@@ -27,7 +27,7 @@ PREPARE view_update_log_0022000000_call FROM
     'SELECT view_update_log_0022000000 (?,?,?,?,?,?,?,?,?)';
 
 SELECT view_update_log_0022000000
-       (1,
+       (3,
         2,
         42,
         'Start view',

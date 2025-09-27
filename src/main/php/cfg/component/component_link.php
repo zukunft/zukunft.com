@@ -929,6 +929,14 @@ class component_link extends sandbox_link
         return self::ALL_SANDBOX_FLD_NAMES;
     }
 
+    /**
+     * @return string the field name of the name db field as a function for complex overwrites
+     */
+    function name_field(): string
+    {
+        return '';
+    }
+
 
     /*
      * im- and export

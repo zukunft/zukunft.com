@@ -47,7 +47,7 @@ SELECT formula_link_insert_log_01551000
     (1::bigint,
      2::smallint,
      1::bigint,
-     1::bigint,
+     3::bigint,
      1::smallint,
      12::smallint,
      'scale minute to sec'::text,

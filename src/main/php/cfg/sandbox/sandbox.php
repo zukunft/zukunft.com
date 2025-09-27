@@ -70,7 +70,6 @@
 
 namespace Zukunft\ZukunftCom\main\php\cfg\sandbox;
 
-
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::MODEL_HELPER . 'db_object_seq_id_user.php';
@@ -901,7 +900,9 @@ class sandbox extends db_object_seq_id_user
      */
     function name_field(): string
     {
-        return '';
+        $msg = 'ERROR: name_field not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**
@@ -910,7 +911,9 @@ class sandbox extends db_object_seq_id_user
      */
     function type_field(): string
     {
-        return '';
+        $msg = 'ERROR: type_field not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**
@@ -920,7 +923,9 @@ class sandbox extends db_object_seq_id_user
      */
     function from_field(): string
     {
-        return '';
+        $msg = 'ERROR: from_field not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**
@@ -931,7 +936,9 @@ class sandbox extends db_object_seq_id_user
      */
     function from_name(): ?string
     {
-        return '';
+        $msg = 'ERROR: from_name not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**
@@ -941,7 +948,9 @@ class sandbox extends db_object_seq_id_user
      */
     function to_field(): string
     {
-        return '';
+        $msg = 'ERROR: to_field not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**
@@ -952,7 +961,9 @@ class sandbox extends db_object_seq_id_user
      */
     function to_name(): ?string
     {
-        return '';
+        $msg = 'ERROR: to_name not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**
@@ -962,7 +973,9 @@ class sandbox extends db_object_seq_id_user
      */
     function to_value(): string
     {
-        return '';
+        $msg = 'ERROR: to_value not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**
@@ -2278,7 +2291,9 @@ class sandbox extends db_object_seq_id_user
      */
     function msg_id_already_used(): string
     {
-        return '';
+        $msg = 'ERROR: msg_id_already_used not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**
@@ -2401,7 +2416,9 @@ class sandbox extends db_object_seq_id_user
     function save_id_fields(sql_db $db_con, sandbox $db_rec, sandbox $std_rec): string
     {
         log_warning($this->dsp_id());
-        return '';
+        $msg = 'ERROR: save_id_fields not overwritten by ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**

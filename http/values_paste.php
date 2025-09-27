@@ -117,7 +117,8 @@ if ($usr->id() > 0) {
           $result .= dsp_go_back($back, $usr);
         } else {
           // display the view header
-          $result .= $dsp->dsp_navbar($back);
+            $dto = new data_object();
+          $result .= $dsp->dsp_navbar($dto, $back);
 
           $result .= zuv_dsp_edit_or_add (0, $wrd_ids, $type_ids, $db_ids, $src_id, $back, $usr->id());
 

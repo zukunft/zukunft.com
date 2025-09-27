@@ -39,6 +39,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\value\value;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
@@ -138,7 +139,8 @@ if ($usr->id() > 0) {
     if ($result == '') {
         // display the view header
         $msk_dsp = new view_dsp($msk->api_json());
-        $result .= $msk_dsp->dsp_navbar($back);
+        $dto = new data_object();
+        $result .= $msk_dsp->dsp_navbar($dto, $back);
         $result .= $html->dsp_err($msg);
 
         $val_dsp = new value_dsp($val->api_json());

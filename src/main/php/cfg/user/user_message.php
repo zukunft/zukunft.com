@@ -572,6 +572,10 @@ class user_message
         if (count($this->msg_text) > $pos and $pos >= 0) {
             return $this->msg_text[$pos];
         } else {
+            // TODO Prio 1 activate
+            //$msg = 'user message position ' . $pos . ' not found';
+            //log_warning($msg);
+            //return $msg;
             return '';
         }
     }
@@ -589,7 +593,9 @@ class user_message
         if (count($this->msg_var_lst) > $pos and $pos >= 0) {
             return $this->var_message_text();
         } else {
-            return '';
+            $msg = 'user message translation for position ' . $pos . ' not found';
+            log_warning($msg);
+            return $msg;
         }
     }
 

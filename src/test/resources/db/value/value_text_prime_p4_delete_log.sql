@@ -24,7 +24,7 @@ END
 $$ LANGUAGE plpgsql;
 
 SELECT value_text_prime_p4_delete_log
-       (1::bigint,
+       (3::bigint,
         3::smallint,
         421::smallint,
         59673584134226012::bigint,
