@@ -42,6 +42,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'sandbox_typed.php';
 include_once paths::DB . 'sql_db.php';
+include_once html_paths::EXECUTE . 'ui_base.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::HTML . 'html_selector.php';
@@ -63,6 +64,7 @@ include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\html\html_selector;
@@ -597,10 +599,11 @@ class component extends sandbox_code_id
     function html(?phrase $phr = null, ?db_object $dbo = null, ?data_object $cfg = null): string
     {
         global $cmp_typ_cac;
+        $base = new ui_base();
         return match ($cmp_typ_cac->code_id($this->type_id())) {
             component_type::TEXT => $this->text(),
             component_type::PHRASE_NAME => $this->word_name($phr),
-            component_type::VALUES_RELATED => $this->table($dbo, $cfg),
+            component_type::VALUES_RELATED => $base->table($dbo, $cfg),
             default => 'ERROR: unknown type ',
         };
     }
@@ -611,15 +614,6 @@ class component extends sandbox_code_id
     function text(): string
     {
         return $this->name();
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string the html code to show a list of values
-     */
-    function table(?db_object $dbo = null, ?data_object $cfg = null): string
-    {
-        return 'values related to ' . $this->name() . ' ';
     }
 
     /**
