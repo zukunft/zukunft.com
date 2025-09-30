@@ -143,3 +143,4 @@ component_type_id, type_name, description, code_id
 142, 'numeric value', 'show the numeric value', 'value_numeric'
 143, 'system preview after change', 'show a preview if the changes are confirmed', 'system_show_after_change'
 144, 'system view before change', 'show the view like it is without the changes', 'system_show_before_change'
+145, 'system sub title', 'sub title also used for system views', 'system_sub_title'

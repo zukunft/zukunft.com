@@ -8,21 +8,21 @@
     "ui_msg_code_id": "form_title_word_add"
   },
   {
-    "id": 95,
+    "id": 96,
     "name": "system form hidden back stack",
     "description": "field that contains the stack for the undo actions",
     "type_id": 18,
     "code_id": "form_back_stack"
   },
   {
-    "id": 96,
+    "id": 97,
     "name": "system form hidden confirm status",
     "description": "switch on that the form saving needs an extra confirm by the user",
     "type_id": 19,
     "code_id": "form_confirm_status"
   },
   {
-    "id": 97,
+    "id": 98,
     "name": "system form field name",
     "description": "the name field in a form",
     "type_id": 21,
@@ -30,7 +30,7 @@
     "ui_msg_code_id": "form_field_name"
   },
   {
-    "id": 130,
+    "id": 131,
     "name": "system form select phrase type",
     "description": "selector for the phrase type",
     "type_id": 25,
@@ -38,7 +38,7 @@
     "ui_msg_code_id": "form_select_phrase_type"
   },
   {
-    "id": 98,
+    "id": 99,
     "name": "system form field description",
     "description": "the description field in a form",
     "type_id": 22,
@@ -46,7 +46,7 @@
     "ui_msg_code_id": "form_field_description"
   },
   {
-    "id": 192,
+    "id": 193,
     "name": "system form field plural",
     "description": "the plural language form field in a form (to be move to languages forms)",
     "type_id": 55,
@@ -54,7 +54,7 @@
     "ui_msg_code_id": "form_field_plural"
   },
   {
-    "id": 126,
+    "id": 127,
     "name": "system form select view",
     "description": "select one view",
     "type_id": 40,
@@ -62,7 +62,7 @@
     "ui_msg_code_id": "system_form_select_view"
   },
   {
-    "id": 150,
+    "id": 151,
     "name": "system form select share type",
     "description": "selector for the share type",
     "type_id": 26,
@@ -70,7 +70,7 @@
     "ui_msg_code_id": "form_select_share"
   },
   {
-    "id": 151,
+    "id": 152,
     "name": "system form select protection type",
     "description": "selector for the protection type",
     "type_id": 27,
@@ -78,13 +78,13 @@
     "ui_msg_code_id": "form_select_protection"
   },
   {
-    "id": 168,
+    "id": 169,
     "name": "system formatter row right",
     "type_id": 33,
     "code_id": "row_right"
   },
   {
-    "id": 161,
+    "id": 162,
     "name": "system form button cancel",
     "description": "button to cancel the form action and go back to the previous view",
     "type_id": 28,
@@ -92,7 +92,7 @@
     "ui_msg_code_id": "form_button_cancel"
   },
   {
-    "id": 162,
+    "id": 163,
     "name": "system form button save",
     "description": "button to save the form field into the database",
     "type_id": 29,
@@ -100,13 +100,13 @@
     "ui_msg_code_id": "form_button_save"
   },
   {
-    "id": 169,
+    "id": 170,
     "name": "system formatter row end",
     "type_id": 34,
     "code_id": "row_end"
   },
   {
-    "id": 166,
+    "id": 167,
     "name": "system form end",
     "type_id": 31,
     "code_id": "form_end"

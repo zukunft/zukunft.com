@@ -1062,6 +1062,7 @@ enum messages: string
     case FORM_TITLE_CONFIRM_ADD = 'form_title_confirm_add';
     case FORM_TITLE_CONFIRM_EDIT = 'form_title_confirm_edit';
     case FORM_TITLE_CONFIRM_DEL = 'form_title_confirm_del';
+    case SYSTEM_SUB_TITLE_USAGE = 'system_sub_title_usage';
     case SYSTEM_TITLE_ABOUT = 'system_title_about';
     case SYSTEM_TITLE_SETUP = 'system_title_setup';
     case SYSTEM_TITLE_SIGNUP = 'system_title_signup';

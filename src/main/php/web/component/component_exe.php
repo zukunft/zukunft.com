@@ -254,6 +254,7 @@ class component_exe extends component
 
             // fixed system pages - usage only allowed for fixed internal system pages
             component_type::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
+            component_type::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
             component_type::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_type::SYSTEM_BODY_SETUP => $page->setup_body(),
             component_type::SYSTEM_BODY_SIGNUP => $page->signup_body(),

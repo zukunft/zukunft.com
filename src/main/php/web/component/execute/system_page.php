@@ -68,6 +68,23 @@ class system_page extends component
         return $result;
     }
 
+    /**
+     * HTML for a subtitle
+     * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user specific frontend language
+     * @return string the html code to start a new form and display the subtitle
+     */
+    function system_sub_tile(?msg_id $ui_msg_code_id = null): string
+    {
+        global $mtr;
+
+        $html = new html_base();
+        $result = '';
+        if ($ui_msg_code_id != null) {
+            $result .= $html->text_h3($mtr->txt($ui_msg_code_id));
+        }
+        return $result;
+    }
+
     // TODO Prio 0 fill with real code
     function preview(): string
     {

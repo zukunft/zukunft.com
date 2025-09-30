@@ -332,6 +332,13 @@
       "ui_msg_code_id": "form_title_confirm_del"
     },
     {
+      "name": "system sub title usage",
+      "description": "show the language specific sub title for usage section",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_usage",
+      "ui_msg_code_id": "system_sub_title_usage"
+    },
+    {
       "name": "system title about",
       "description": "show the language specific title for the about page",
       "type": "system_title",
@@ -1460,37 +1467,42 @@
         },
         {
           "position": "13",
+          "name": "system sub title usage",
+          "style": "col-md-12"
+        },
+        {
+          "position": "14",
           "name": "parents of word",
           "style": "col-md-6"
         },
         {
-          "position": "13",
+          "position": "15",
           "name": "children of word",
           "position_type": "side",
           "style": "col-md-6"
         },
         {
-          "position": "14",
+          "position": "16",
           "name": "value list of word",
           "style": "col-md-6"
         },
         {
-          "position": "15",
+          "position": "17",
           "name": "ref list word",
           "position_type": "side",
           "style": "col-md-6"
         },
         {
-          "position": "16",
+          "position": "18",
           "name": "system form end"
         },
         {
-          "position": "17",
+          "position": "19",
           "name": "usage word",
           "position_type": "side"
         },
         {
-          "position": "18",
+          "position": "20",
           "name": "change log word",
           "position_type": "side"
         }
