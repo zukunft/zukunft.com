@@ -48,7 +48,7 @@ PREPARE source_insert_log_0111011000_call
 
 SELECT source_insert_log_0111011000 (
                'The International System of Units'::text,
-               1::bigint,
+               3::bigint,
                1::smallint,
                57::smallint,
                56::smallint,

@@ -35,7 +35,7 @@ PREPARE triple_insert_log_11115000000001_user_call FROM
 'SELECT triple_insert_log_11115000000001_user (?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT triple_insert_log_11115000000001_user (
-               1,
+               3,
                1,
                18,
                'mathematical constant',

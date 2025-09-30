@@ -49,6 +49,7 @@ include_once html_paths::LOG . 'user_log_display.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::SYSTEM . 'back_trace.php';
 include_once html_paths::TYPES . 'type_lists.php';
+include_once html_paths::USER . 'user.php';
 include_once html_paths::VIEW . 'view_base.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::WORD . 'word.php';
@@ -72,6 +73,7 @@ use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\web\system\back_trace;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -125,7 +127,7 @@ class view_exe extends view_base
         } else {
             // display always the view name in the top right corner and allow the user to edit the view
             $result .= $this->dsp_type_open();
-            $result .= $this->dsp_navbar($back);
+            $result .= $this->dsp_navbar($cfg, $back);
             $result .= $this->dsp_entries($dbo, $cfg, $form_name, $back, $pattern, $test_mode);
             $result .= $this->dsp_type_close();
         }
@@ -227,9 +229,9 @@ class view_exe extends view_base
         return $result;
     }
 
-    protected function dsp_user(): string
+    protected function dsp_user(user $usr): string
     {
-        return '';
+        return $usr->name_link();
     }
 
     /**
@@ -238,7 +240,7 @@ class view_exe extends view_base
      */
     protected function user(): string
     {
-        return '';
+        return 'Missing user';
     }
 
 

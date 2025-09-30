@@ -42,7 +42,7 @@ PREPARE triple_update_log_00224000000002_user_call FROM
     'SELECT triple_update_log_00224000000002_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT triple_update_log_00224000000002_user
-       (1,
+       (3,
         2,
         18,
         'mathematical constant',

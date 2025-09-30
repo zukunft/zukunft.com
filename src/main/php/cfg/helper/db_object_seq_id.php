@@ -433,7 +433,9 @@ class db_object_seq_id extends db_object
      */
     function name(): string
     {
-        return 'ERROR: name function not overwritten by child object ' . $this::class;
+        $msg = 'ERROR: name function not overwritten by child object ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**
@@ -443,7 +445,9 @@ class db_object_seq_id extends db_object
      */
     function name_or_null(): ?string
     {
-        return 'ERROR: name_or_null function not overwritten by child object ' . $this::class;
+        $msg = 'ERROR: name_or_null function not overwritten by child object ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**

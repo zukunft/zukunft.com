@@ -81,7 +81,7 @@ SELECT component_link_insert_log_01558185111
     (1::bigint,
      2::smallint,
      1::bigint,
-     1::bigint,
+     3::bigint,
      1::smallint,
      16::smallint,
      null::text,

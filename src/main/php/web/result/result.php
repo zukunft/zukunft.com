@@ -129,8 +129,6 @@ class result extends sandbox_value
     }
 
 
-
-
     /*
      * display
      */
@@ -142,6 +140,22 @@ class result extends sandbox_value
     function display(phrase_list_dsp $phr_lst_header = null): string
     {
         return $this->grp->name_tip($phr_lst_header);
+    }
+
+    /**
+     * @return string interface function to align the value with the other sandbox objects
+     */
+    function name(): string
+    {
+        return $this->grp->name();
+    }
+
+    /**
+     * @return string interface function to align the value with the other sandbox objects
+     */
+    function description(): string
+    {
+        return $this->grp->description();
     }
 
     /**

@@ -34,7 +34,7 @@ PREPARE formula_insert_log_011000000100000_call
 
 SELECT formula_insert_log_011000000100000 (
                '"one" = "millions" * 1000000'::text,
-               1::bigint,
+               3::bigint,
                1::smallint,
                30::smallint,
                173::smallint);

@@ -1183,6 +1183,7 @@ class library
             'Zukunft\ZukunftCom\main\php\shared\enum' => 'paths::SHARED_ENUM',
             'Zukunft\ZukunftCom\main\php\shared\helper' => 'paths::SHARED_HELPER',
             'Zukunft\ZukunftCom\main\php\shared\types' => 'paths::SHARED_TYPES',
+            'Zukunft\ZukunftCom\test\php\utils' => 'test_paths::UTILS',
             'Zukunft\ZukunftCom\test\php\const' => 'TEST_CONST_PATH',
             default => 'missing path for ' . $use_path,
         };

@@ -47,7 +47,7 @@ SELECT triple_update_log_0000224000000100
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12, $13, $14,$15, $16, $17);
 
 SELECT triple_update_log_0000224000000100
-        (1::bigint,
+        (3::bigint,
          2::smallint,
          18::smallint,
          'mathematical constant'::text,

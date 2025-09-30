@@ -24,7 +24,7 @@ BEGIN
 END;
 
 SELECT value_text_prime_p4_delete_log
-       (1,
+       (3,
         3,
         421,
         59673584134226012,

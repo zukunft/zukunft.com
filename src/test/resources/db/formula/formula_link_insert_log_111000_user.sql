@@ -21,7 +21,7 @@ SELECT formula_link_insert_log_111000_user
     ($1,$2,$3,$4,$5);
 
 SELECT formula_link_insert_log_111000_user (
-               1::bigint,
+               3::bigint,
                1::smallint,
                700::smallint,
                2::bigint,

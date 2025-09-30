@@ -76,7 +76,7 @@ SELECT component_link_insert_log_01558185111
        (1,
         2,
         1,
-        1,
+        3,
         1,
         16,
         null,

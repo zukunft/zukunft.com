@@ -59,13 +59,6 @@ class value_list_ui_tests
         $phr_lst_context->add($phr_inhabitant);
         $phr_lst_context_dsp = new phrase_list_dsp($phr_lst_context->api_json());
 
-        // create the value for the inhabitants of the city of zurich
-        $val_city = $t->value_zh();
-        // create the value for the inhabitants of the canton of zurich
-        $val_canton = $t->value_canton();
-        // create the value for the inhabitants of Switzerland
-        $val_ch = $t->value_ch();
-
         // create the value list and the table to display the results
         // TODO link phrases
         // TODO format numbers
@@ -76,20 +69,18 @@ class value_list_ui_tests
         // TODO if the row phrases have parent child relations by default display sub rows e.g. countries and cantons
         // TODO if the col phrases have parent child relations by default display sub col e.g. year and quarter by using a phrase tree object?
         // TODO add buttons to or empty cells for easy adding new related values
-        $val_lst = new value_list($usr);
-        $val_lst->add($val_city);
-        $val_lst->add($val_canton);
-        $val_lst->add($val_ch);
+        $lst_zh_ui = $t->value_list_zh_ui();
+        $lst_math_ui = $t->value_list_math_ui();
 
         // TODO add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
 
         $test_page = $html->text_h2('Value list display test');
-        $lst_dsp = new value_list_dsp($val_lst->api_json([api_type::INCL_PHRASES]));
-        $test_page .= 'without context: ' . $lst_dsp->table() . '<br>';
+        $test_page .= 'as list: ' . $lst_math_ui->list($phr_lst_context_dsp) . '<br>';
+        $test_page .= 'as table without context: ' . $lst_zh_ui->table() . '<br>';
         // create the same table as above, but within a context
         $header_html = $phr_lst_context_dsp->headline();
-        $table_html = $lst_dsp->table($phr_lst_context_dsp);
-        $test_page .= 'with context: ' . $header_html . $table_html . '<br>';
+        $table_html = $lst_zh_ui->table($phr_lst_context_dsp);
+        $test_page .= 'as table with context: ' . $header_html . $table_html . '<br>';
         $t->html_test($test_page, 'value_list', 'value_list', $t);
 
         // TODO add a test that if a view contains beside the "2023 (year)"

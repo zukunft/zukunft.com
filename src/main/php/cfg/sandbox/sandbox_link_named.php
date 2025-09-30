@@ -268,8 +268,9 @@ class sandbox_link_named extends sandbox_link
      */
     function name_field(): string
     {
-        log_err('function name_field() missing in class ' . $this::class);
-        return '';
+        $msg = 'function name_field() missing in class ' . $this::class;
+        log_err($msg);
+        return $msg;
     }
 
     /**

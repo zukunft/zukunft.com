@@ -1160,7 +1160,9 @@ class term extends combine_named
         if ($this->obj() != null) {
             return $this->obj()->dsp_id() . ' as term';
         } else {
-            return 'term with null object';
+            $msg = 'ERROR: term with null object';
+            log_err($msg);
+            return $msg;
         }
     }
 

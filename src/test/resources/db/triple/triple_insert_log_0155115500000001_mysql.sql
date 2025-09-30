@@ -61,7 +61,7 @@ SELECT triple_insert_log_0155115500000001
         (2,
          3,
          1,
-         1,
+         3,
          1,
          7,
          'constant',

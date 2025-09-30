@@ -60,7 +60,7 @@ SELECT formula_link_insert_log_01551111
        (1,
         2,
         1,
-        1,
+        3,
         1,
         12,
         null,

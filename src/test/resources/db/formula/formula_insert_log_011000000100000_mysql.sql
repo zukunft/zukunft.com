@@ -30,7 +30,7 @@ PREPARE formula_insert_log_011000000100000_call FROM
 
 SELECT formula_insert_log_011000000100000 (
                '"one" = "millions" * 1000000',
-               1,
+               3,
                1,
                30,
                173);

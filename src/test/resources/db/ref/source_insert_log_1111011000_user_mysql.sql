@@ -35,7 +35,7 @@ PREPARE source_insert_log_1111011000_user_call FROM
     'SELECT source_insert_log_1111011000_user (?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT source_insert_log_1111011000_user (
-               1,
+               3,
                1,
                57,
                'The International System of Units',

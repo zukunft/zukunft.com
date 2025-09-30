@@ -383,29 +383,29 @@ class html_base
 
     function text_h1(string $title, string $style = ''): string
     {
-        $result = '';
-        if (self::UI_USE_BOOTSTRAP) {
-            $result .= "<h2>" . $title . "</h2>";
-        } else {
-            if ($style <> "") {
-                $result .= '<h1 class="' . $style . '">' . $title . '</h1>';
-            } else {
-                $result .= "<h1>" . $title . "</h1>";
-            }
-        }
-        return $result;
+        return $this->text_h($title, 2, 1, $style);
     }
 
     function text_h2(string $title, string $style = ''): string
     {
+        return $this->text_h($title, 4, 2, $style);
+    }
+
+    function text_h3(string $title, string $style = ''): string
+    {
+        return $this->text_h($title, 5, 3, $style);
+    }
+
+    private function text_h(string $title, int $bs_i, int $i, string $style = ''): string
+    {
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
-            $result .= "<h4>" . $title . "</h4>";
+            $result .= '<h' . $bs_i . '>' . $title . '</h' . $bs_i . '>';
         } else {
             if ($style <> "") {
-                $result .= '<h2 class="' . $style . '">' . $title . '</h2>';
+                $result .= '<h' . $i . ' class="' . $style . '">' . $title . '</h' . $i . '>';
             } else {
-                $result .= "<h2>" . $title . "</h2>";
+                $result .= "<h' . $i . '>" . $title . "</h' . $i . '>";
             }
         }
         return $result;
@@ -471,6 +471,14 @@ class html_base
                 return '<th>' . $header_text . '</th>';
             }
         }
+    }
+
+    /**
+     * @return string with the html code for a line feed
+     */
+    function lf(): string
+    {
+        return '<br>';
     }
 
     /**

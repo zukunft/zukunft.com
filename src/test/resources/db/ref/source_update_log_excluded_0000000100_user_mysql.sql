@@ -28,7 +28,7 @@ PREPARE source_update_log_excluded_0000000100_user_call FROM
     'SELECT source_update_log_excluded_0000000100_user (?,?,?,?,?,?,?,?)';
 
 SELECT source_update_log_excluded_0000000100_user
-       (1,
+       (3,
         2,
         169,
         null,

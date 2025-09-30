@@ -82,6 +82,7 @@ if ($db_con->is_open()) {
 
             // recreate the type list api message based on the updated db
             // because this json is used for the unit tests
+            // TODO Prio 1 activate but check why the result differs to the creation of the full test
             //$t->type_list_recreate($t);
 
             // display the test results

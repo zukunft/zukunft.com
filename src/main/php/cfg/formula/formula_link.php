@@ -105,15 +105,15 @@ class formula_link extends sandbox_link
      */
 
     // object specific database and JSON object field names
-    const TBL_COMMENT = 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
+    const string TBL_COMMENT = 'for the link of a formula to phrases e.g. if the term pattern of a value matches this term pattern';
     // the database and JSON object field names used only for formula links
-    const FLD_ID = 'formula_link_id';
-    const FLD_TYPE = 'formula_link_type_id';
-    const FLD_ORDER = 'order_nbr';
-    const FLD_ORDER_SQL_TYP = sql_par_type::INT;
+    const string FLD_ID = 'formula_link_id';
+    const string FLD_TYPE = 'formula_link_type_id';
+    const string FLD_ORDER = 'order_nbr';
+    const sql_par_type FLD_ORDER_SQL_TYP = sql_par_type::INT;
 
     // all database field names excluding the id
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         formula_db::FLD_ID,
         phrase::FLD_ID,
         user_db::FLD_ID,
@@ -124,12 +124,12 @@ class formula_link extends sandbox_link
         sandbox::FLD_PROTECT
     );
     // list of the link database field names
-    const FLD_NAMES_LINK = array(
+    const array FLD_NAMES_LINK = array(
         formula_db::FLD_ID,
         phrase::FLD_ID
     );
     // all database field names excluding the id
-    const FLD_NAMES_NUM_USR = array(
+    const array FLD_NAMES_NUM_USR = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
         sql_db::FLD_EXCLUDED,
@@ -137,7 +137,7 @@ class formula_link extends sandbox_link
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
+    const array ALL_SANDBOX_FLD_NAMES = array(
         formula_link_type::FLD_ID,
         self::FLD_ORDER,
         sql_db::FLD_EXCLUDED,
@@ -145,12 +145,12 @@ class formula_link extends sandbox_link
         sandbox::FLD_PROTECT
     );
     // list of fields that CAN be changed by the user
-    const FLD_LST_USER_CAN_CHANGE = array(
+    const array FLD_LST_USER_CAN_CHANGE = array(
         [formula_link_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, formula_link_type::class, '', formula_link_type::FLD_ID],
         [self::FLD_ORDER, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
     );
     // list of fields that CANNOT be changed by the user
-    const FLD_LST_NON_CHANGEABLE = array(
+    const array FLD_LST_NON_CHANGEABLE = array(
         [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, formula::class, ''],
         [phrase::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
     );
@@ -505,6 +505,14 @@ class formula_link extends sandbox_link
     function type_field(): string
     {
         return formula_link_type::FLD_ID;
+    }
+
+    /**
+     * @return string the field name of the name db field as a function for complex overwrites
+     */
+    function name_field(): string
+    {
+        return '';
     }
 
 

@@ -25,7 +25,7 @@ PREPARE value_update_log_0210000_call
         ($1,$2, $3, $4, $5, $6);
 
 SELECT value_update_log_0210000
-       (1::bigint,
+       (3::bigint,
         1::smallint,
         1::smallint,
         123.456::numeric,

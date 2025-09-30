@@ -228,7 +228,8 @@ $db_con = prg_start("start test.php");
     $msk->load();
     $back = $_GET[url_var::BACK] = ''; // the original calling page that should be shown after the change if finished
 
-    $result .= $dsp->dsp_navbar($back);
+    $dto = new data_object();
+    $result .= $dsp->dsp_navbar($dto, $back);
 
     $result .= '  <br><br>';
     $result .= '  <form class="form-inline my-2 my-lg-0" action="/http/find.php">';

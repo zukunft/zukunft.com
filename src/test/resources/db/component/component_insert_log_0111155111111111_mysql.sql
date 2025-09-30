@@ -110,7 +110,7 @@ PREPARE component_insert_log_0111155111111111_call FROM
 
 SELECT component_insert_log_0111155111111111 (
                'Word',
-               1,
+               3,
                1,
                51,
                743,

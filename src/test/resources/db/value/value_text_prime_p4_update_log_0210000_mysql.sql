@@ -32,7 +32,7 @@ PREPARE value_text_prime_p4_update_log_0210000_call FROM
        (?,?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
 SELECT value_text_prime_p4_update_log_0210000
-       (1,
+       (3,
         1,
         421,
         'old db text sample value',

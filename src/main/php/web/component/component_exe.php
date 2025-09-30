@@ -43,32 +43,37 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::EXECUTE . 'system_form.php';
 include_once html_paths::EXECUTE . 'system_page.php';
-include_once html_paths::EXECUTE . 'list_related.php';
+include_once html_paths::EXECUTE . 'ui_base.php';
+include_once html_paths::EXECUTE . 'ui_foaf.php';
+include_once html_paths::EXECUTE . 'ui_log.php';
+include_once html_paths::EXECUTE . 'ui_preview.php';
+include_once html_paths::EXECUTE . 'ui_rank.php';
+include_once html_paths::EXECUTE . 'ui_select.php';
+include_once html_paths::EXECUTE . 'ui_im_export.php';
+include_once html_paths::EXECUTE . 'ui_link.php';
+include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::HELPER . 'data_object.php';
-include_once html_paths::HTML . 'list_sort.php';
-include_once html_paths::HTML . 'sheet.php';
-include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::TYPES . 'type_lists.php';
-include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'component_type.php';
-include_once paths::SHARED . 'url_var.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_form;
 use Zukunft\ZukunftCom\main\php\web\component\execute\system_page;
-use Zukunft\ZukunftCom\main\php\web\component\execute\list_related;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_base;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_foaf;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_log;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_preview;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_rank;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_select;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_im_export;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_link;
+use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
-use Zukunft\ZukunftCom\main\php\web\helper\data_object as data_object_dsp;
-use Zukunft\ZukunftCom\main\php\web\html\list_sort;
-use Zukunft\ZukunftCom\main\php\web\html\sheet;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
-use Zukunft\ZukunftCom\main\php\shared\const\triples;
 use Zukunft\ZukunftCom\main\php\shared\types\component_type;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 class component_exe extends component
 {
@@ -84,20 +89,20 @@ class component_exe extends component
      * @param db_object_dsp|null $dbo the word, triple, formula or ... object that should be shown to the user
      * @param string $form_name the name of the view which is also used for the html form name
      * @param int $msk_id the database id of the calling view
-     * @param data_object_dsp|null $cfg the context used to create the view
+     * @param data_object|null $cfg the context used to create the view
      * @param string $back the backtrace for undo actions
      * @param string $pattern the selection pattern to filter a selection
      * @param bool $test_mode true to create a reproducible result e.g. by using just one phrase
      * @return string the html code of all view components
      */
     function dsp_entries(
-        ?db_object_dsp   $dbo,
-        string           $form_name = '',
-        int              $msk_id = 0,
-        ?data_object_dsp $cfg = null,
-        string           $back = '',
-        string           $pattern = '',
-        bool             $test_mode = false
+        ?db_object_dsp $dbo,
+        string         $form_name = '',
+        int            $msk_id = 0,
+        ?data_object   $cfg = null,
+        string         $back = '',
+        string         $pattern = '',
+        bool           $test_mode = false
     ): string
     {
         global $mtr;
@@ -123,21 +128,29 @@ class component_exe extends component
 
         $form = new system_form();
         $page = new system_page();
-        $list = new list_related();
+        $base = new ui_base();
+        $select = new ui_select();
+        $link = new ui_link();
+        $list = new ui_list();
+        $foaf = new ui_foaf();
+        $rank = new ui_rank();
+        $port = new ui_im_export();
+        $preview = new ui_preview();
+        $log = new ui_log();
 
         // list of all possible view components
         $t_id = $this->type_id();
-        if ($t_id == 17 ) {
+        if ($t_id == 17) {
             log_info('');
         }
         $tc_id = $this->type_code_id($cfg->typ_lst_cache);
         $result .= match ($this->type_code_id($cfg->typ_lst_cache)) {
 
             // start page - components used for the start page
-            component_type::PHRASE_NAME => $this->phrase_name($dbo),
+            component_type::PHRASE_NAME => $base->phrase_name($dbo),
             // TODO Prio 2 use the spreadsheet for the start view
             //component_type::CALC_SHEET => $this->calc_sheet(),
-            component_type::CALC_SHEET => $this->start_list($cfg),
+            component_type::CALC_SHEET => $list->start_list($cfg),
 
             // system form - components that can only be used for internal system forms
             // general form fields
@@ -193,8 +206,8 @@ class component_exe extends component
 
             // other select fields
             component_type::FORM_SELECT_VIEW_DEFAULT => $form->form_view_default($dbo, $form_name, $cfg->view_list()),
-            component_type::FORM_SELECT_FILE => $this->select_file($dbo, $form_name, $cfg),
-            component_type::FORM_SELECT_FORMAT_EXPORT => $this->select_export_format($dbo, $form_name, $cfg),
+            component_type::FORM_SELECT_FILE => $port->select_file($dbo, $form_name, $cfg),
+            component_type::FORM_SELECT_FORMAT_EXPORT => $port->select_export_format($dbo, $form_name, $cfg),
 
             // verb only fields
             component_type::FORM_FIELD_PLURAL => $form->form_field_plural($dbo, $this->style_code_id($cfg->typ_lst_cache)),
@@ -241,6 +254,7 @@ class component_exe extends component
 
             // fixed system pages - usage only allowed for fixed internal system pages
             component_type::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
+            component_type::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
             component_type::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_type::SYSTEM_BODY_SETUP => $page->setup_body(),
             component_type::SYSTEM_BODY_SIGNUP => $page->signup_body(),
@@ -270,8 +284,8 @@ class component_exe extends component
             // components for user views
 
             // select
-            component_type::SELECT_PHRASE => $this->phrase_select($dbo, $form_name, $phr_lst,),
-            component_type::SELECT_VIEW => $this->view_select($dbo, $form_name, $cfg),
+            component_type::SELECT_PHRASE => $select->phrase_select($dbo, $form_name, $phr_lst),
+            component_type::SELECT_VIEW => $select->view_select($dbo, $form_name, $cfg),
 
             // related
             component_type::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo),
@@ -282,12 +296,12 @@ class component_exe extends component
             // TODO Prio 1 review the components below
 
             // verb only -
-            component_type::VERB_NAME => $this->verb_name($dbo),
+            component_type::VERB_NAME => $base->verb_name($dbo),
 
             // value only -
-            component_type::VALUE_NAME => $this->value_name($dbo),
-            component_type::GROUP_NAME => $this->group_name($dbo),
-            component_type::VALUE_NUMERIC => $this->num_value($dbo),
+            component_type::VALUE_NAME => $base->value_name($dbo),
+            component_type::GROUP_NAME => $base->group_name($dbo),
+            component_type::VALUE_NUMERIC => $base->num_value($dbo),
 
             // other
             component_type::FORM_TABLE_LINKED_VIEWS => $form->form_table_linked_view($dbo, $form_name, $cfg->view_list()),
@@ -299,38 +313,38 @@ class component_exe extends component
             component_type::WORD_RESULTS => $form->result($dbo),
             component_type::USED_IN_AS_TEXT => $form->used_as_text($dbo),
             component_type::USED_IN_AS_TEXT_WITH_LINK => $form->used_as_text_link($dbo),
-            component_type::USAGE_WORD => $this->usage_word($dbo, $form_name),
-            component_type::SYSTEM_CHANGE_LOG => $this->system_change_log($dbo, $form_name),
+            component_type::USAGE_WORD => $rank->usage_word($dbo, $form_name),
+            component_type::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $form_name),
 
             // base
             component_type::PHRASE => $this->name_tip(),
-            component_type::LINK => $this->phrase_link($dbo, $form_name),
+            component_type::LINK => $link->phrase_link($dbo, $form_name, $cfg->phrase_list()),
 
             // table
-            component_type::VALUES_ALL => $this->all($dbo, $back),
-            component_type::VALUES_RELATED => $this->table($dbo, $cfg),
-            component_type::NUMERIC_VALUE => $this->num_list($dbo, $back),
+            component_type::VALUES_ALL => $base->all($dbo, $back),
+            component_type::VALUES_RELATED => $list->value_list($dbo, $cfg),
+            component_type::NUMERIC_VALUE => $list->num_list($dbo, $back),
 
             // related
-            component_type::LIST_REF => $this->ref_list_word($dbo, $cfg),
-            component_type::LIST_RESULTS => $this->result_list($dbo),
-            component_type::LINK_LIST_WORD => $this->link_list_word($dbo, $cfg),
-            component_type::FORMULAS => $this->formulas($dbo),
-            component_type::FORMULA_RESULTS => $this->results($dbo),
-            component_type::WORDS_DOWN => $this->word_children($dbo),
-            component_type::WORDS_UP => $this->word_parents($dbo),
+            component_type::LIST_REF => $list->ref_list_word($dbo, $cfg),
+            component_type::LIST_RESULTS => $list->result_list($dbo),
+            component_type::LINK_LIST_WORD => $list->link_list_word($dbo, $cfg),
+            component_type::FORMULAS => $list->formulas($dbo),
+            component_type::FORMULA_RESULTS => $list->results($dbo),
+            component_type::WORDS_DOWN => $foaf->word_children($dbo),
+            component_type::WORDS_UP => $foaf->word_parents($dbo),
 
             // preview
-            component_type::VIEW_AFTER_CHANGE => $this->view_after($dbo),
-            component_type::VIEW_BEFORE_CHANGE => $this->view_before($dbo),
+            component_type::VIEW_AFTER_CHANGE => $preview->view_after($dbo),
+            component_type::VIEW_BEFORE_CHANGE => $preview->view_before($dbo),
 
             // export
-            component_type::JSON_EXPORT => $this->json_export($dbo, $back),
-            component_type::XML_EXPORT => $this->xml_export($dbo, $back),
-            component_type::CSV_EXPORT => $this->csv_export($dbo, $back),
-            component_type::ODS_EXPORT => $this->ods_export($dbo, $back),
+            component_type::JSON_EXPORT => $port->json_export($dbo, $back),
+            component_type::XML_EXPORT => $port->xml_export($dbo, $back),
+            component_type::CSV_EXPORT => $port->csv_export($dbo, $back),
+            component_type::ODS_EXPORT => $port->ods_export($dbo, $back),
 
-            component_type::TEXT => $this->text(),
+            component_type::TEXT => $base->text(),
 
             default => 'program code for component ' . $this->dsp_id() . ' of component type "' . $this->type_code_id($cfg->typ_lst_cache) . '" (id ' . $this->type_id() . ') missing<br>'
         };
@@ -342,355 +356,6 @@ class component_exe extends component
         }
 
         return $result;
-    }
-
-    /**
-     * @return string a fixed text
-     */
-    function text(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * @return string the name of a phrase and give the user the possibility to change the phrase name
-     */
-    function phrase_name(db_object_dsp $phr): string
-    {
-        return $phr->name();
-    }
-
-    /**
-     * @return string the name of a phrase and give the user the possibility to change the phrase name
-     */
-    function phrase_select(
-        db_object_dsp $phr,
-        string $form_name,
-        phrase_list $phr_lst
-    ): string
-    {
-        return $phr->phrase_selector($phr_lst, url_var::PHRASE_LONG, $form_name, $phr->id());
-    }
-
-    /**
-     * @return string show a list of phrases with a suggested link type that might be linked to the object
-     */
-    function phrase_link(
-        db_object_dsp $phr,
-        string $form_name,
-        phrase_list $phr_lst
-    ): string
-    {
-        return $phr->phrase_selector($phr_lst, url_var::PHRASE_LONG, $form_name, $phr->id());
-    }
-
-    /**
-     * the html code to select the view for the given object
-     * which can also be the component itself
-     * so view_select (for the $obj) can call view_selector of this class if $obj is of class component
-     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
-     * @param string $form the name of the view which is also used for the html form name
-     * @param data_object_dsp|null $cfg the context used to create the view
-     * @return string with the html code to select a view
-     */
-    function view_select(db_object_dsp $dbo, string $form, ?data_object_dsp $cfg = null): string
-    {
-        $msk_lst = null;
-        // over
-        if ($cfg != null) {
-            if ($cfg->has_view_list()) {
-                $msk_lst = $cfg->view_list();
-            }
-        }
-        if ($msk_lst == null) {
-            $msk_lst = $dbo->view_list();
-        }
-        return $dbo->view_selector($form, $msk_lst);
-    }
-
-    /**
-     * the html code to select a filename e.g. to upload the file
-     * TODO Prio 1 review
-     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
-     * @param string $form the name of the view which is also used for the html form name
-     * @param data_object_dsp|null $cfg the context used to create the view
-     * @return string with the html code to select a view
-     */
-    function select_file(db_object_dsp $dbo, string $form, ?data_object_dsp $cfg = null): string
-    {
-        $msk_lst = null;
-        // over
-        if ($cfg != null) {
-            if ($cfg->has_view_list()) {
-                $msk_lst = $cfg->view_list();
-            }
-        }
-        if ($msk_lst == null) {
-            $msk_lst = $dbo->view_list();
-        }
-        return $dbo->view_selector($form, $msk_lst);
-    }
-
-    /**
-     * the html code to select a filename e.g. to upload the file
-     * TODO Prio 1 review
-     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
-     * @param string $form the name of the view which is also used for the html form name
-     * @param data_object_dsp|null $cfg the context used to create the view
-     * @return string with the html code to select a view
-     */
-    function select_export_format(db_object_dsp $dbo, string $form, ?data_object_dsp $cfg = null): string
-    {
-        $msk_lst = null;
-        // over
-        if ($cfg != null) {
-            if ($cfg->has_view_list()) {
-                $msk_lst = $cfg->view_list();
-            }
-        }
-        if ($msk_lst == null) {
-            $msk_lst = $dbo->view_list();
-        }
-        return $dbo->view_selector($form, $msk_lst);
-    }
-
-    /**
-     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
-     * @param data_object_dsp|null $cfg the context used to create the view
-     * @return string with the html code of the external references
-     */
-    function ref_list_word(db_object_dsp $dbo, ?data_object_dsp $cfg): string
-    {
-        // TODO review
-        $result = 'list of references to ' . $dbo->name() . ' ';
-        if ($cfg != null) {
-            $result .= '';
-        }
-        return $result;
-    }
-
-    /**
-     * @param db_object_dsp $dbo the word, triple or formula object that should be shown to the user
-     * @param data_object_dsp|null $cfg the context used to create the view
-     * @return string with the html code of links that can be changes
-     */
-    function link_list_word(db_object_dsp $dbo, ?data_object_dsp $cfg): string
-    {
-        // TODO review
-        return 'list of phrases related to ' . $dbo->name() . ' ';
-    }
-
-    /**
-     * @return string with the html code that shows the usage of this word
-     */
-    function usage_word(db_object_dsp $phr, string $form_name): string
-    {
-        // TODO review
-        return 'usage of ' . $phr->name() . ' ';
-    }
-
-    /**
-     * @return string with the html code that shows the recent changes of this object
-     */
-    function system_change_log(db_object_dsp $phr, string $form_name): string
-    {
-        // TODO review
-        return 'change log for ' . $phr->name() . ' ';
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string the html code to show a list of values
-     */
-    function table(?db_object_dsp $dbo = null, ?data_object_dsp $cfg = null): string
-    {
-        return 'values related to ' . $this->name() . ' ';
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
-     */
-    function num_list(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * TODO move to a component exe part class
-     * @return string a dummy text
-     */
-    function verb_name(?db_object_dsp $dbo = null): string
-    {
-        return $dbo->name();
-    }
-
-    /**
-     * TODO move to a component exe part class
-     * @return string a dummy text
-     */
-    function value_name(?db_object_dsp $dbo = null): string
-    {
-        return $dbo->name();
-    }
-
-    /**
-     * TODO move to a component exe part class
-     * @return string a dummy text
-     */
-    function group_name(?db_object_dsp $dbo = null): string
-    {
-        return $dbo->name();
-    }
-
-    /**
-     * TODO move to a component exe part class
-     * @return string a dummy text
-     */
-    function num_value(?db_object_dsp $dbo = null): string
-    {
-        return $dbo->value();
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
-     */
-    function formulas(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
-     */
-    function results(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
-     */
-    function result_list(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
-     */
-    function word_children(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
-     */
-    function word_parents(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
-     */
-    function view_after(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
-     */
-    function view_before(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
-     */
-    function json_export(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
-     */
-    function xml_export(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
-     */
-    function csv_export(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
-     */
-    function ods_export(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * TODO move code from component_dsp_old
-     * @return string a dummy text
-     */
-    function all(): string
-    {
-        return $this->name();
-    }
-
-    /**
-     * @return string the html code of a calculation spreadsheet
-     */
-    function calc_sheet(): string
-    {
-        $sheet = new sheet();
-        return $sheet->calc_sheet();
-    }
-
-    /**
-     * @return string the html code of a sortable list
-     */
-    function list_sort(
-        phrase $phr,
-        data_object $dbo
-    ): string
-    {
-        $lst = new list_sort();
-        return $lst->list_sort($phr, $dbo);
-    }
-
-    /**
-     * @return string the html code for the start view as a sortable list
-     */
-    function start_list(
-        data_object $dbo
-    ): string
-    {
-        $phr = new phrase();
-        $phr->load_by_name(triples::GLOBAL_PROBLEM);
-        return $this->list_sort($phr, $dbo);
     }
 
 }

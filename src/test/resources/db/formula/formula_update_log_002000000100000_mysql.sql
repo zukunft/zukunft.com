@@ -23,7 +23,7 @@ PREPARE formula_update_log_002000000100000_call FROM
     'SELECT formula_update_log_002000000100000 (?,?,?,?,?,?)';
 
 SELECT formula_update_log_002000000100000
-    (1,
+    (3,
      2,
      30,
      '"one" = "millions" * 1000000',

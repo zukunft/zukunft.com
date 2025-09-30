@@ -33,7 +33,7 @@ PREPARE word_insert_log_111105000001_user_call FROM
     'SELECT word_insert_log_111105000001_user (?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT word_insert_log_111105000001_user
-        (1,
+        (3,
          1,
          10,
          'mathematics',

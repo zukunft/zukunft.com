@@ -31,7 +31,7 @@ SELECT view_update_log_0022000000_user
         ($1,$2,$3,$4,$5,$6,$7,$8,$9);
 
 SELECT view_update_log_0022000000_user
-       (1::bigint,
+       (3::bigint,
         2::smallint,
         42::smallint,
         'Start view'::text,

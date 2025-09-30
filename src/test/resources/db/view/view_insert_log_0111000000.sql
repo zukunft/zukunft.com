@@ -40,7 +40,7 @@ SELECT view_insert_log_0111000000
 
 SELECT view_insert_log_0111000000 (
                'Start view'::text,
-               1::bigint,
+               3::bigint,
                1::smallint,
                42::smallint,
                278::smallint,

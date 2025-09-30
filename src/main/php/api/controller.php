@@ -455,7 +455,11 @@ class controller
 
     function post(array $request): string
     {
-        return 'post';
+        // TODO Prio 1 activate
+        //$msg = 'ERROR: post not defined in controller';
+        //log_err($msg);
+        //return $msg;
+        return '';
     }
 
 }

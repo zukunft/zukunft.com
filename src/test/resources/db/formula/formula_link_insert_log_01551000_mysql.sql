@@ -42,7 +42,7 @@ SELECT formula_link_insert_log_01551000
        (1,
         2,
         1,
-        1,
+        3,
         1,
         12,
         'scale minute to sec',

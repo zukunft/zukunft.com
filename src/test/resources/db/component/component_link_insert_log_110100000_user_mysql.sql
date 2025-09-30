@@ -20,7 +20,7 @@ PREPARE component_link_insert_log_110100000_user_call FROM
            (?,?,?,?,?)';
 
 SELECT component_link_insert_log_110100000_user
-       (1,
+       (3,
         1,
         48,
         1,

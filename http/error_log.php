@@ -43,6 +43,7 @@ use Zukunft\ZukunftCom\main\php\cfg\system\sys_log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log as sys_log_dsp;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\views;
@@ -87,7 +88,8 @@ if ($usr->id > 0) {
         $msk->load_by_id($view_id);
         $msk->load_components();
         $msk_dsp = new view_dsp($msk->api_json());
-        $result .= $msk_dsp->dsp_navbar($back);
+        $dto = new data_object();
+        $result .= $msk_dsp->dsp_navbar($dto, $back);
         //$result .= " in \"zukunft.com\" that has been logged in the system automatically by you.";
         $result .= err_dsp($err_id, $usr->id);
     }

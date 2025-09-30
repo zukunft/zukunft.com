@@ -964,6 +964,14 @@ class ref extends sandbox_link
         return ref_type::FLD_ID;
     }
 
+    /**
+     * @return string the field name of the name db field as a function for complex overwrites
+     */
+    function name_field(): string
+    {
+        return '';
+    }
+
 
     /*
      * info

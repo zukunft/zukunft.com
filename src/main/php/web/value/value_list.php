@@ -38,6 +38,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::SANDBOX . 'list_dsp.php';
+include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'button.php';
 // TODO move phr_ids to shared objects
 include_once html_paths::HTML . 'html_base.php';
@@ -65,6 +66,7 @@ include_once paths::SHARED . 'library.php';
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phr_ids;
 use Zukunft\ZukunftCom\main\php\web\group\group;
 use Zukunft\ZukunftCom\main\php\web\group\group_list;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\button;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
@@ -164,10 +166,46 @@ class value_list extends list_dsp
         return $result;
     }
 
+    function filter(word|data_object|null $dbo = null): value_list
+    {
+        $val_lst = new value_list();
+        if ($dbo::class == word::class) {
+            foreach ($this->lst() as $val) {
+                if ($val->has_phrase($dbo->phrase())) {
+                    $val_lst->add($val);
+                }
+            }
+        }
+        return $val_lst;
+    }
+
 
     /*
      * display
      */
+
+    /**
+     * create the html code to show a list of values
+     *
+     * @param phrase_list $context_phr_lst list of phrases that should be excluded from the value name because humans would assume these phrases
+     * @param string $back list of the last view to suggest the best follow up view
+     * @return string the html code to display the values to the user
+     */
+    function list(phrase_list $context_phr_lst, string $back = ''): string
+    {
+        $html = new html_base();
+
+        $result = $html->lf();
+
+        foreach ($this->lst() as $val) {
+            $row = $val->grp->name_link_list($context_phr_lst);
+            $row .= ' ';
+            $row .= $val->value_edit($back);
+            $row .= $html->lf();
+            $result .= $html->tr($row);
+        }
+        return $result;
+    }
 
     /**
      * @param phrase_list|null $context_phr_lst list of phrases that are already known to the user by the context of this table and that does not need to be shown to the user again

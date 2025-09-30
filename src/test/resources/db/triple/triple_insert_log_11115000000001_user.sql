@@ -38,7 +38,7 @@ PREPARE triple_insert_log_11115000000001_user_call
         ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10, $11, $12);
 
 SELECT triple_insert_log_11115000000001_user (
-               1::bigint,
+               3::bigint,
                1::smallint,
                18::smallint,
                'mathematical constant'::text,

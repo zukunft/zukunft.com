@@ -40,7 +40,7 @@ PREPARE triple_insert_log_11000400000101_user_call FROM
 'SELECT triple_insert_log_11000400000101_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
 SELECT triple_insert_log_11000400000101_user (
-               1,
+               3,
                1,
                7,
                'constant',

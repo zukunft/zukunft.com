@@ -57,7 +57,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 class group_list extends sandbox_list
 {
 
-    public array $lst;                  // the list of the phrase group objects
+    public array $lst = [];             // the list of the phrase group objects
     public user $usr;                   // the person for whom the word group list has been created
     public ?array $time_lst = null;     // the list of the time phrase (the add function)
     public ?array $grp_ids = null;      // the list of the phrase group ids

@@ -35,7 +35,7 @@ PREPARE source_insert_log_1111011000_user_call
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11);
 
 SELECT source_insert_log_1111011000_user (
-               1::bigint,
+               3::bigint,
                1::smallint,
                57::smallint,
                'The International System of Units'::text,

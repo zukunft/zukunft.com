@@ -1005,14 +1005,17 @@ class group extends sandbox_multi
         if ($this->id() != 0) {
             return sql_db::FLD_ID;
         } elseif (!$this->phrase_list()->is_empty()) {
-            return 'phr_ids';
+            $msg = 'ERROR: phr_ids are empty in load_sql_name_ext';
+            log_err($msg);
+            return $msg;
         } elseif ($this->name != '') {
             return sql_db::FLD_NAME;
         } else {
-            log_err('Either the database ID (' . $this->id() . ') or the ' .
+            $msg = 'Either the database ID (' . $this->id() . ') or the ' .
                 self::class . ' link objects (' . $this->dsp_id() . ') and the user (' . $this->user()->id() . ') must be set to load a ' .
-                self::class, self::class . '->load');
-            return '';
+                self::class;
+            log_err($msg, self::class . '->load');
+            return $msg;
         }
     }
 

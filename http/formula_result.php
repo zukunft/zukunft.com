@@ -41,6 +41,7 @@ include_once paths::SHARED_CONST . 'views.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\result\result;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
@@ -66,7 +67,8 @@ if ($session_usr->id() > 0) {
     $msk->id = $sys_msk_cac->id(view_shared::FORMULA_EXPLAIN);
     $back = $_GET[url_var::BACK] = ''; // the page (or phrase id) from which formula testing has been called
     $msk_dsp = new view_dsp($msk->api_json());
-    $result .= $msk_dsp->dsp_navbar($back);
+    $dto = new data_object();
+    $result .= $msk_dsp->dsp_navbar($dto, $back);
 
     // get the parameters
     $frm_val_id = $_GET[url_var::ID];      // id of the formula result if known already

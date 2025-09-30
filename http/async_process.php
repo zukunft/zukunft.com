@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\import\import_file;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\shared\const\views as view_shared;
@@ -69,11 +70,15 @@ if ($usr->id > 0) {
 
     $usr->load_usr_data();
 
-    // prepare the display
-    $msk = new view($usr);
-    $msk->load_by_code_id(view_shared::IMPORT);
-
     if ($usr->is_admin()) {
+
+        // prepare the display
+        $msk = new view($usr);
+        $msk->load_by_code_id(view_shared::IMPORT);
+
+        // load the cache
+        $dto = new data_object();
+        //$dto->usr = $usr;
 
         // load the testing functions
         include_once '../src/main/php/service/import/import_file.php';
@@ -87,7 +92,7 @@ if ($usr->id > 0) {
 
         $html = new html_base();
         $msk_dsp = new view_dsp($msk->api_json());
-        $html->echo($msk_dsp->dsp_navbar($back));
+        $html->echo($msk_dsp->dsp_navbar($dto, $back));
 
         $html->echo("loading of base configuration started<br>");
 

@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\cfg\user\user;
 use Zukunft\ZukunftCom\main\php\cfg\verb\verb_list;
 use Zukunft\ZukunftCom\main\php\cfg\view\view;
+use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 use Zukunft\ZukunftCom\main\php\web\verb\verb_list as verb_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
@@ -72,7 +73,8 @@ if ($usr->id() > 0) {
 
     // show the header
     $msk_dsp = new view_dsp($msk->api_json());
-    $result .= $msk_dsp->dsp_navbar($back);
+    $dto = new data_object();
+    $result .= $msk_dsp->dsp_navbar($dto, $back);
 
     // display the verb list
     $result .= $html->dsp_text_h2("Word link types");

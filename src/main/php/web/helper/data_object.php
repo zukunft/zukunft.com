@@ -2,8 +2,10 @@
 
 /*
 
-    web/helper/data_object.php - a header object for all frontend data objects e.g. phrase_list, values, formulas
+    web/helper/data_object.php - frontend cache object
     --------------------------
+
+    header object for all frontend data objects e.g. phrase_list, values, formulas
 
 
     This file is part of zukunft.com - calc with words
@@ -40,7 +42,9 @@ include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VIEW . 'view_list.php';
+include_once html_paths::USER . 'user.php';
 include_once html_paths::WORD . 'word_list.php';
 include_once paths::SHARED . 'json_fields.php';
 
@@ -48,7 +52,9 @@ use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
+use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -62,14 +68,22 @@ class data_object
 
     private word_list $wrd_lst;
     private phrase_list $phr_lst;
+    public value_list $val_lst {
+        set(value_list $value) {
+            $this->val_lst = $value;
+        }
+    }
     private formula_list $frm_lst;
     private view_list $msk_lst;
     private component_list $cmp_lst;
     public ?type_lists $typ_lst_cache = null;
 
+    // the session user
+    public user $usr;
+
     // for warning and errors while filling the data_object
     private user_message $usr_msg;
-    // set to false if the api should not be used to reload missing data
+    // set to false if the api should not be used to reload missing data e.g. for unit tests
     private bool $online;
 
 
@@ -84,7 +98,9 @@ class data_object
     function __construct(?string $api_json = null)
     {
         if ($api_json != null) {
+            $this->val_lst = new value_list();
             $this->set_from_json($api_json);
+            $this->usr = new user();
         } else {
             $this->reset();
         }
@@ -92,8 +108,10 @@ class data_object
 
     function reset(): void
     {
+        $this->usr = new user();
         $this->wrd_lst = new word_list();
         $this->phr_lst = new phrase_list();
+        $this->val_lst = new value_list();
         $this->frm_lst = new formula_list();
         $this->msk_lst = new view_list();
         $this->cmp_lst = new component_list();
@@ -208,6 +226,11 @@ class data_object
     function phrase_list(): phrase_list
     {
         return $this->phr_lst;
+    }
+
+    function value_list_cloned(): value_list
+    {
+        return clone $this->val_lst;
     }
 
     function set_online(): void
