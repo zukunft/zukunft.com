@@ -321,7 +321,7 @@ class component_exe extends component
 
             // table
             component_type::VALUES_ALL => $base->all($dbo, $back),
-            component_type::VALUES_RELATED => $base->table($dbo, $cfg),
+            component_type::VALUES_RELATED => $list->value_list($dbo, $cfg),
             component_type::NUMERIC_VALUE => $list->num_list($dbo, $back),
 
             // related

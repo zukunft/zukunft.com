@@ -42,6 +42,7 @@ include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::VIEW . 'view_list.php';
 include_once html_paths::USER . 'user.php';
 include_once html_paths::WORD . 'word_list.php';
@@ -53,6 +54,7 @@ use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\web\value\value_list;
 use Zukunft\ZukunftCom\main\php\web\view\view_list;
 use Zukunft\ZukunftCom\main\php\web\word\word_list;
 use Zukunft\ZukunftCom\main\php\shared\json_fields;
@@ -66,6 +68,11 @@ class data_object
 
     private word_list $wrd_lst;
     private phrase_list $phr_lst;
+    public value_list $val_lst {
+        set(value_list $value) {
+            $this->val_lst = $value;
+        }
+    }
     private formula_list $frm_lst;
     private view_list $msk_lst;
     private component_list $cmp_lst;
@@ -91,6 +98,7 @@ class data_object
     function __construct(?string $api_json = null)
     {
         if ($api_json != null) {
+            $this->val_lst = new value_list();
             $this->set_from_json($api_json);
             $this->usr = new user();
         } else {
@@ -103,6 +111,7 @@ class data_object
         $this->usr = new user();
         $this->wrd_lst = new word_list();
         $this->phr_lst = new phrase_list();
+        $this->val_lst = new value_list();
         $this->frm_lst = new formula_list();
         $this->msk_lst = new view_list();
         $this->cmp_lst = new component_list();
@@ -217,6 +226,11 @@ class data_object
     function phrase_list(): phrase_list
     {
         return $this->phr_lst;
+    }
+
+    function value_list_cloned(): value_list
+    {
+        return clone $this->val_lst;
     }
 
     function set_online(): void

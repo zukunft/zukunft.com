@@ -474,6 +474,14 @@ class html_base
     }
 
     /**
+     * @return string with the html code for a line feed
+     */
+    function lf(): string
+    {
+        return '<br>';
+    }
+
+    /**
      * create a header column text for each string of the given array
      * @param array $header_cols array of the text or link that should be shown
      * @return string the html code of the table header cell

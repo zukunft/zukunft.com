@@ -88,6 +88,7 @@ include_once html_paths::WORD . 'triple.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::REF . 'ref.php';
 include_once html_paths::VALUE . 'value.php';
+include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::FORMULA . 'formula.php';
 include_once html_paths::RESULT . 'result.php';
 include_once html_paths::VIEW . 'view.php';
@@ -207,6 +208,7 @@ use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_dsp;
 use Zukunft\ZukunftCom\main\php\web\user\user as user_dsp;
 use Zukunft\ZukunftCom\main\php\web\value\value as value_dsp;
+use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_ui;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list as formula_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\verb\verb as verb_dsp;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
@@ -247,6 +249,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\view_styles;
 use Zukunft\ZukunftCom\main\php\shared\types\view_type;
 use Zukunft\ZukunftCom\main\php\shared\url_var;
 use Zukunft\ZukunftCom\test\php\unit\sys_log_tests;
+use Zukunft\ZukunftCom\test\php\unit_ui\value_list_ui_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_link_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\component_write_tests;
 use Zukunft\ZukunftCom\test\php\unit_write\formula_link_write_tests;
@@ -2398,6 +2401,20 @@ class create_test_objects extends test_base
         return $lst;
     }
 
+    function phrase_list_pi_symbol(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->word_pi_symbol()->phrase());
+        return $lst;
+    }
+
+    function phrase_list_e(): phrase_list
+    {
+        $lst = new phrase_list($this->usr1);
+        $lst->add($this->triple_e()->phrase());
+        return $lst;
+    }
+
     function phrase_list_const(): phrase_list
     {
         $lst = new phrase_list($this->usr1);
@@ -2883,6 +2900,28 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return group with one prime phrases
+     */
+    function group_pi_symbol(): group
+    {
+        $lst = $this->phrase_list_pi_symbol();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = groups::TN_READ;
+        return $grp;
+    }
+
+    /**
+     * @return group with one prime phrases
+     */
+    function group_e(): group
+    {
+        $lst = $this->phrase_list_e();
+        $grp = $lst->get_grp_id(false);
+        $grp->name = groups::TN_READ;
+        return $grp;
+    }
+
+    /**
      * @return group with the phrases of the launch date of this pod
      */
     function group_pod_launch(): group
@@ -3138,6 +3177,18 @@ class create_test_objects extends test_base
         return new value($this->usr1, round(values::PI_LONG, 13), $grp);
     }
 
+    function value_pi(): value
+    {
+        $grp = $this->group_pi_symbol();
+        return new value($this->usr1, round(values::PI_LONG, 13), $grp);
+    }
+
+    function value_e(): value
+    {
+        $grp = $this->group_e();
+        return new value($this->usr1, round(values::E, 13), $grp);
+    }
+
     function time_value(): value_time
     {
         $grp = $this->group_pod_launch();
@@ -3234,18 +3285,27 @@ class create_test_objects extends test_base
         return new value($this->usr1, round(values::PI_LONG, 13), $grp);
     }
 
+    /**
+     * @return value with the inhabitants of the city of zurich
+     */
     function value_zh(): value
     {
         $grp = $this->group_zh_2019();
         return new value($this->usr1, values::CITY_ZH_INHABITANTS_2019, $grp);
     }
 
+    /**
+     * @return value with the inhabitants of the canton of zurich
+     */
     function value_canton(): value
     {
         $grp = $this->group_canton();
         return new value($this->usr1, values::CANTON_ZH_INHABITANTS_2020_IN_MIO, $grp);
     }
 
+    /**
+     * @return value with the inhabitants of Switzerland
+     */
     function value_ch(): value
     {
         $grp = $this->group_ch();
@@ -3258,6 +3318,52 @@ class create_test_objects extends test_base
         $lst->add($this->value());
         $lst->add($this->value_zh());
         return $lst;
+    }
+
+    // TODO Prio 1 easy: move all test object creation to this class
+    function value_list_math(): value_list
+    {
+        $lst = new value_list($this->usr1);
+        $lst->add($this->value_pi());
+        $lst->add($this->value_e());
+        return $lst;
+    }
+
+    /**
+     * @return value_list with the test values for the word zurich
+     */
+    function value_list_zh(): value_list
+    {
+        $val_lst = new value_list($this->usr1);
+        $val_lst->add($this->value_zh());
+        $val_lst->add($this->value_canton());
+        $val_lst->add($this->value_ch());
+        return $val_lst;
+    }
+
+    // TODO Prio 1 easy: rename a _dsp functions and object to _ui
+    function value_list_ui(): value_list_ui
+    {
+        return $this->value_list_to_ui($this->value_list());
+    }
+
+    function value_list_zh_ui(): value_list_ui
+    {
+        return $this->value_list_to_ui($this->value_list_zh());
+    }
+
+    function value_list_math_ui(): value_list_ui
+    {
+        return $this->value_list_to_ui($this->value_list_math());
+    }
+
+    // TODO Prio 1 easy: move all cast function from a backend object to a frontend object to the class test_cast
+    private function value_list_to_ui(value_list $val_lst): value_list_ui
+    {
+        $val_lst_ui = new value_list_ui();
+        $api_json = $val_lst->api_json([api_type::INCL_PHRASES]);
+        $val_lst_ui->set_from_json($api_json);
+        return $val_lst_ui;
     }
 
     /**

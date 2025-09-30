@@ -163,6 +163,25 @@ class ui_list extends ui_base
     }
 
     /**
+     * show a list of values related to the given object
+     * the list is first created based on the given data object
+     * but additional an update of the list is request via api
+     * if the updated list is returned from the backend the list is updated
+     *
+     * @param word|db_object|null $dbo the selection object for the value list e.g. if mathematics the most often use math const are shown
+     * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
+     * @return string the html code to show the list of values
+     */
+    function value_list(word|db_object|null $dbo, ?data_object $dto = null): string
+    {
+        $val_lst = $dto->value_list_cloned();
+        $val_lst->filter($dbo);
+        $phr_lst = new phrase_list();
+        $phr_lst->add_phrase($dbo->phrase());
+        return $val_lst->list($phr_lst);
+    }
+
+    /**
      * TODO move code from component_dsp_old
      * @return string a dummy text
      */

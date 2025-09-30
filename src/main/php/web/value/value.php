@@ -448,6 +448,25 @@ class value extends sandbox_value
         return $ref_lst->selector($form, $this->id(), url_var::REF,  msg_id::LABEL_STYLE);
     }
 
+    /*
+     * info
+     */
+
+    /**
+     * to select a value by a phrase
+     * @param phrase $phr the phrase to select the value
+     * @return bool true if the value contains the given phrase
+     */
+    function has_phrase(phrase $phr): bool
+    {
+        $result = false;
+        foreach ($this->grp->phr_lst() as $val_phr) {
+            if ($val_phr->id() == $phr->id()) {
+                $result = true;
+            }
+        }
+        return $result;
+    }
 
     /*
      * buttons

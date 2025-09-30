@@ -181,6 +181,7 @@ class frontend
     {
         $this->set_start_time();
         $this->set_code_name($code_name);
+        $this->dto = new data_object();
     }
 
     function reset_cache(): void
@@ -479,11 +480,7 @@ class frontend
             // TODO use the frontend not the backend cache
             $msk_dsp = $this->typ_lst_cache->get_view_by_id($view_id);
             $title = $msk_dsp->title($dbo);
-            $cfg = new data_object();
-            $cfg->usr = $usr;
-            $cfg->typ_lst_cache = $this->typ_lst_cache;
-            $cfg->set_view_list($this->msk_lst_cache);
-            $dsp_text = $msk_dsp->show($dbo, $cfg, $back);
+            $dsp_text = $msk_dsp->show($dbo, $dto, $back);
 
             // use a fallback if the view is empty
             if ($dsp_text == '' or $msk_dsp->name() == '') {

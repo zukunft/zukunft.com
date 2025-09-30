@@ -103,6 +103,13 @@ class test_lib
         $dto = $imp->get_data_object($json_array, $usr_msg, $size);
         $dto_dsp->set_view_list($this->cast_view_list($dto->view_list()));
 
+        // TODO Prio 2 separate the test object creation from the test object class because this is not depending on the test object settings
+        $cto = new create_test_objects();
+        $cto->usr1 = $usr;
+
+        // set the value cache list based
+        $dto_dsp->val_lst = $cto->value_list_math_ui();
+
         return $dto_dsp;
     }
 
