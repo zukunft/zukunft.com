@@ -339,6 +339,13 @@
       "ui_msg_code_id": "system_sub_title_usage"
     },
     {
+      "name": "system sub title values",
+      "description": "show the language specific sub title for a value list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_values",
+      "ui_msg_code_id": "system_sub_title_values"
+    },
+    {
       "name": "system title about",
       "description": "show the language specific title for the about page",
       "type": "system_title",
@@ -1459,50 +1466,59 @@
         },
         {
           "position": "11",
-          "name": "system form button cancel"
+          "name": "system formatter row right"
         },
         {
           "position": "12",
-          "name": "system form button save"
+          "name": "system form button cancel"
         },
         {
           "position": "13",
+          "name": "system form button save"
+        },
+        {
+          "position": "14",
           "name": "system sub title usage",
           "style": "col-md-12"
         },
         {
-          "position": "14",
+          "position": "15",
           "name": "parents of word",
           "style": "col-md-6"
         },
         {
-          "position": "15",
+          "position": "16",
           "name": "children of word",
           "position_type": "side",
           "style": "col-md-6"
         },
         {
-          "position": "16",
+          "position": "17",
+          "name": "system sub title values",
+          "style": "col-md-6"
+        },
+        {
+          "position": "18",
           "name": "value list of word",
           "style": "col-md-6"
         },
         {
-          "position": "17",
+          "position": "19",
           "name": "ref list word",
           "position_type": "side",
           "style": "col-md-6"
         },
         {
-          "position": "18",
+          "position": "20",
           "name": "system form end"
         },
         {
-          "position": "19",
+          "position": "21",
           "name": "usage word",
           "position_type": "side"
         },
         {
-          "position": "20",
+          "position": "22",
           "name": "change log word",
           "position_type": "side"
         }

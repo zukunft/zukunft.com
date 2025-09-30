@@ -47,6 +47,7 @@ messages:
   form_title_confirm_edit: "Confirm adding"
   form_title_confirm_del: "Confirm adding"
   system_sub_title_usage: "Usage"
+  system_sub_title_values: "Values"
   system_title_about: "About"
   system_title_setup: "Setup"
   system_title_signup: "Signup"
