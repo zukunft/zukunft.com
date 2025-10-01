@@ -338,7 +338,7 @@ class element_group extends base_list
      * @param ?int $limit the max number of ids to show
      * @return array with the database ids of all objects of this list
      */
-    function ids(int $limit = null): array
+    function ids(?int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $frm_elm) {

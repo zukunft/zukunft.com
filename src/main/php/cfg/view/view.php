@@ -135,18 +135,18 @@ class view extends sandbox_code_id
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to store all user interfaces entry points';
+    const string TBL_COMMENT = 'to store all user interfaces entry points';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const FLD_ID = view_db::FLD_ID;
-    const FLD_LST_MUST_BE_IN_STD = view_db::FLD_LST_MUST_BE_IN_STD;
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = view_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
-    const FLD_LST_USER_CAN_CHANGE = view_db::FLD_LST_USER_CAN_CHANGE;
-    const FLD_LST_NON_CHANGEABLE = view_db::FLD_LST_NON_CHANGEABLE;
-    const FLD_NAMES = view_db::FLD_NAMES;
-    const FLD_NAMES_USR = view_db::FLD_NAMES_USR;
-    const FLD_NAMES_NUM_USR = view_db::FLD_NAMES_NUM_USR;
-    const ALL_SANDBOX_FLD_NAMES = view_db::ALL_SANDBOX_FLD_NAMES;
+    const string FLD_ID = view_db::FLD_ID;
+    const array FLD_LST_MUST_BE_IN_STD = view_db::FLD_LST_MUST_BE_IN_STD;
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = view_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
+    const array FLD_LST_USER_CAN_CHANGE = view_db::FLD_LST_USER_CAN_CHANGE;
+    const array FLD_LST_NON_CHANGEABLE = view_db::FLD_LST_NON_CHANGEABLE;
+    const array FLD_NAMES = view_db::FLD_NAMES;
+    const array FLD_NAMES_USR = view_db::FLD_NAMES_USR;
+    const array FLD_NAMES_NUM_USR = view_db::FLD_NAMES_NUM_USR;
+    const array ALL_SANDBOX_FLD_NAMES = view_db::ALL_SANDBOX_FLD_NAMES;
 
 
     /*
@@ -254,10 +254,10 @@ class view extends sandbox_code_id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        ?object      $test_obj = null
     ): user_message
     {
         // TODO use a requesting user because the object user might differ from the user who is requesting the import
@@ -399,7 +399,7 @@ class view extends sandbox_code_id
     function import_obj(
         array        $in_ex_json,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         $usr_msg = parent::import_obj($in_ex_json, $dto, $test_obj);
@@ -872,7 +872,7 @@ class view extends sandbox_code_id
      * @return user_message an empty string if the new component link has been saved to the database
      *                      or the message that should be shown to the user
      */
-    function add_component(component_link $lnk, int $pos = null): user_message
+    function add_component(component_link $lnk, ?int $pos = null): user_message
     {
         $result = new user_message();
 
@@ -909,7 +909,7 @@ class view extends sandbox_code_id
         ?int      $pos = null,
         ?string   $pos_type_code_id = null,
         ?string   $style_code_id = null,
-        object    $test_obj = null
+        ?object   $test_obj = null
     ): string
     {
         $result = '';

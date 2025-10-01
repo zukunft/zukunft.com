@@ -698,7 +698,7 @@ class group_list extends sandbox_list
     /**
      * create a useful (but not unique!) name of the phrase group list mainly used for debugging
      */
-    function name(int $limit = null): string
+    function name(?int $limit = null): string
     {
         global $debug;
         $lib = new library();
@@ -717,7 +717,7 @@ class group_list extends sandbox_list
     /**
      * return a list of the word names
      */
-    function names(bool $ignore_excluded = false, int $limit = null): array
+    function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
         $result = array();
         foreach ($this->lst() as $phr_lst) {

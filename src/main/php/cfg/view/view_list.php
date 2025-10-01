@@ -166,8 +166,8 @@ class view_list extends sandbox_list_named
      */
     function load_sql_by_names(
         sql_creator $sc,
-        array $names,
-        string $fld = view_db::FLD_NAME
+        array       $names,
+        string      $fld = view_db::FLD_NAME
     ): sql_par
     {
         return parent::load_sql_by_names($sc, $names, $fld);
@@ -257,7 +257,7 @@ class view_list extends sandbox_list_named
     function import_obj(
         array        $json_obj,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         $usr_msg = new user_message();
@@ -277,7 +277,7 @@ class view_list extends sandbox_list_named
      * @param import|null $imp the import object with the estimate of the total save time
      * @return user_message the message shown to the user why the action has failed or an empty string if everything is fine
      */
-    function save(import $imp = null): user_message
+    function save(?import $imp = null): user_message
     {
         $usr_msg = parent::save_block_wise($imp, words::VIEWS, view::class, new view_list($this->user()));
         // TODO Prio 2 use list based saving of the component links

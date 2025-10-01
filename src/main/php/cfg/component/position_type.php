@@ -45,7 +45,7 @@ class position_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to define the position of components';
-    const FLD_ID = 'position_type_id'; // to use in const until final is allowed
+    const string TBL_COMMENT = 'to define the position of components';
+    const string FLD_ID = 'position_type_id'; // to use in const until final is allowed
 
 }

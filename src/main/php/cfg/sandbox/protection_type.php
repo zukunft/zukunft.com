@@ -45,6 +45,6 @@ class protection_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for the write access control';
+    const string TBL_COMMENT = 'for the write access control';
 
 }

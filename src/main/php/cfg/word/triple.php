@@ -379,8 +379,8 @@ class triple extends sandbox_link_named
     function import_mapper_user(
         array       $in_ex_json,
         user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
+        ?data_object $dto = null,
+        ?object      $test_obj = null
     ): user_message
     {
         global $phr_typ_cac;
@@ -622,7 +622,7 @@ class triple extends sandbox_link_named
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return phrase the created phrase object
      */
-    private function import_phrase(string $name, object $test_obj = null): phrase
+    private function import_phrase(string $name, ?object $test_obj): phrase
     {
         $result = new phrase($this->user());
         if (!$test_obj) {
@@ -655,7 +655,7 @@ class triple extends sandbox_link_named
     function import_obj(
         array        $in_ex_json,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object       $test_obj = null
     ): user_message
     {
         $usr_msg = parent::import_obj($in_ex_json, $dto, $test_obj);
@@ -3125,7 +3125,7 @@ class triple extends sandbox_link_named
         log_debug("triple->dsp_del " . $this->id() . ".");
         $result = ''; // reset the html code var
 
-        $result .= \Zukunft\ZukunftCom\main\php\web\btn_yesno('Is "' . $this->display() . '" wrong?', '/http/link_del.php?id=' . $this->id() . '&back=' . $back);
+        $result .= btn_yesno('Is "' . $this->display() . '" wrong?', '/http/link_del.php?id=' . $this->id() . '&back=' . $back);
         $result .= '<br><br>... and "' . $this->dsp_r() . '" is also wrong.<br><br>If you press Yes, both rules will be removed.';
 
         return $result;

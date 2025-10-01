@@ -398,10 +398,10 @@ class user extends db_id_object_non_sandbox
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        ?object      $test_obj = null
     ): user_message
     {
         // set the object vars based on the json
@@ -1452,7 +1452,7 @@ class user extends db_id_object_non_sandbox
     function import_obj(
         array        $json_obj,
         ?data_object $dto = null,
-        object       $test_obj = null,
+        ?object      $test_obj = null,
         ?user        $usr_req = null
     ): user_message
     {
@@ -1974,7 +1974,7 @@ class user extends db_id_object_non_sandbox
      * @return user_message the message that should be shown to the user in case something went wrong
      *                      or the database id of the user just added
      */
-    function save_user(user $usr_req = null): user_message
+    function save_user(?user $usr_req = null): user_message
     {
         // all potential time intensive function should start with a log message to detect time improvement potential
         log_debug($this->dsp_id());

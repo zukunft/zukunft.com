@@ -342,10 +342,10 @@ class formula extends sandbox_code_id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        ?object      $test_obj = null
     ): user_message
     {
         $usr_msg = parent::import_mapper_user($in_ex_json, $usr_req, $dto, $test_obj);
@@ -372,7 +372,7 @@ class formula extends sandbox_code_id
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
         global $frm_typ_cac;
 
@@ -1622,7 +1622,7 @@ class formula extends sandbox_code_id
     function import_obj(
         array        $in_ex_json,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         $usr_msg = parent::import_obj($in_ex_json, $dto, $test_obj);
@@ -1633,7 +1633,7 @@ class formula extends sandbox_code_id
         return $usr_msg;
     }
 
-    private function assign_name(string $phr_name, object $test_obj = null): string
+    private function assign_name(string $phr_name, ?object $test_obj = null): string
     {
         $result = '';
         $phr = new phrase($this->user());
@@ -2074,7 +2074,7 @@ class formula extends sandbox_code_id
      * @return string which is empty if the update of the reference text was successful and otherwise the error message that should be shown to the user
      */
     function generate_ref_text(
-        ?term_list $trm_lst = null,
+        ?term_list   $trm_lst = null,
         user_message $usr_msg = new user_message()
     ): string
     {
@@ -2926,7 +2926,7 @@ class formula extends sandbox_code_id
     function db_fields_changed(
         sandbox|formula $sbx,
         sql_type_list   $sc_par_lst = new sql_type_list(),
-        user_message      $usr_msg = new user_message()
+        user_message    $usr_msg = new user_message()
     ): sql_par_field_list
     {
         global $cng_fld_cac;

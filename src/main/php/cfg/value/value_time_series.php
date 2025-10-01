@@ -397,7 +397,7 @@ class value_time_series extends sandbox_value
             $db_chk = new value_time_series($this->user());
             $db_chk->load_by_grp($this->grp());
             if ($db_chk->id() > 0) {
-                $this->set_id($db_chk->id());
+                $this->id = $db_chk->id();
             }
         }
 

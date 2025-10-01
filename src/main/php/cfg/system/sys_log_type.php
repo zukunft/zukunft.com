@@ -47,11 +47,11 @@ class sys_log_type extends type_object
      */
 
     // list of all possible log types
-    const UNDEFINED = 'undefined';
-    const INFO = 'info';
-    const WARNING = 'warning';
-    const ERROR = 'error';
-    const FATAL = 'fatal';
+    const string UNDEFINED = 'undefined';
+    const string INFO = 'info';
+    const string WARNING = 'warning';
+    const string ERROR = 'error';
+    const string FATAL = 'fatal';
 
 
     /*
@@ -59,6 +59,6 @@ class sys_log_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for system log types e.g. info, warning and error';
+    const string TBL_COMMENT = 'for system log types e.g. info, warning and error';
 
 }

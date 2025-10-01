@@ -311,7 +311,7 @@ class ip_range extends db_object_seq_id
     function import_obj(
         array        $json_obj,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object       $test_obj = null
     ): user_message
     {
         $usr_msg = parent::import_db_obj($this, $test_obj);

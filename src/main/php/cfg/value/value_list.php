@@ -873,7 +873,7 @@ class value_list extends sandbox_value_list
     function import_obj(
         array        $json_obj,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object       $test_obj = null
     ): user_message
     {
         global $shr_typ_cac;
@@ -972,7 +972,7 @@ class value_list extends sandbox_value_list
         phrase_list $phr_lst,
         bool $do_save,
         user_message $usr_msg,
-        object $test_obj = null
+        ?object $test_obj = null
     ): user_message
     {
         $val_to_add = clone $val;

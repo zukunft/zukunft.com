@@ -148,26 +148,26 @@ class ref extends sandbox_link
     // object specific database and JSON object field names
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const TBL_COMMENT = 'to link external data to internal for synchronisation';
+    const string TBL_COMMENT = 'to link external data to internal for synchronisation';
 
     // forward the const to enable usage of $this::CONST_NAME
-    const FLD_ID = ref_db::FLD_ID;
-    const FLD_NAMES = ref_db::FLD_NAMES;
-    const FLD_NAMES_USR = ref_db::FLD_NAMES_USR;
-    const FLD_NAMES_NUM_USR = ref_db::FLD_NAMES_NUM_USR;
-    const ALL_SANDBOX_FLD_NAMES = ref_db::ALL_SANDBOX_FLD_NAMES;
-    const FLD_LST_MUST_BUT_STD_ONLY = ref_db::FLD_LST_MUST_BUT_STD_ONLY;
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = ref_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
-    const FLD_LST_USER_CAN_CHANGE = ref_db::FLD_LST_USER_CAN_CHANGE;
-    const FLD_LST_NON_CHANGEABLE = ref_db::FLD_LST_NON_CHANGEABLE;
+    const string FLD_ID = ref_db::FLD_ID;
+    const array FLD_NAMES = ref_db::FLD_NAMES;
+    const array FLD_NAMES_USR = ref_db::FLD_NAMES_USR;
+    const array FLD_NAMES_NUM_USR = ref_db::FLD_NAMES_NUM_USR;
+    const array ALL_SANDBOX_FLD_NAMES = ref_db::ALL_SANDBOX_FLD_NAMES;
+    const array FLD_LST_MUST_BUT_STD_ONLY = ref_db::FLD_LST_MUST_BUT_STD_ONLY;
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = ref_db::FLD_LST_MUST_BUT_USER_CAN_CHANGE;
+    const array FLD_LST_USER_CAN_CHANGE = ref_db::FLD_LST_USER_CAN_CHANGE;
+    const array FLD_LST_NON_CHANGEABLE = ref_db::FLD_LST_NON_CHANGEABLE;
 
     // char used to create one unique key string for the reference
-    private const SEP = '|';
-    private const ESC_CHR = '|';
+    private const string SEP = '|';
+    private const string ESC_CHR = '|';
 
 
     // persevered reference names for unit and integration tests
-    const TEST_REF_NAME = 'System Test Reference Name';
+    const string TEST_REF_NAME = 'System Test Reference Name';
 
 
     /*
@@ -291,7 +291,7 @@ class ref extends sandbox_link
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
         $usr_msg = parent::import_mapper($in_ex_json, null, $test_obj);
 
@@ -441,7 +441,7 @@ class ref extends sandbox_link
      * @param int $id the database id of the reference mainly for unit testing
      * @param phrase|null $phr the phrase that should be linked to an external source for data exchange
      */
-    function set(int $id = 0, phrase $phr = null, int $predicate_id = 0, string|null $external_key = null): void
+    function set(int $id = 0, ?phrase $phr = null, int $predicate_id = 0, string|null $external_key = null): void
     {
         $this->id = $id;
         if ($phr != null) {
@@ -473,7 +473,7 @@ class ref extends sandbox_link
      * @param phrase_list|null $phr_lst cache of phrases
      * @return void
      */
-    function set_phrase_by_id(?int $id, phrase_list $phr_lst = null): void
+    function set_phrase_by_id(?int $id, ?phrase_list $phr_lst = null): void
     {
         if ($id != null) {
             if ($id != 0) {

@@ -49,10 +49,10 @@ class changes_norm extends change
      */
 
     // user log database and JSON object field names for named user sandbox objects
-    const TBL_COMMENT = 'to log all changes done by any user on the group name for values with up to 16 phrases';
+    const string TBL_COMMENT = 'to log all changes done by any user on the group name for values with up to 16 phrases';
 
     // field list to log the actual change of the named user sandbox object
-    const FLD_LST_CHANGE = array(
+    const array FLD_LST_CHANGE = array(
         [self::FLD_FIELD_ID, self::FLD_FIELD_ID_SQL_TYP, sql_field_default::NOT_NULL, '', change_field::class, ''],
         [change::FLD_OLD_VALUE, change::FLD_OLD_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [change::FLD_NEW_VALUE, change::FLD_NEW_VALUE_SQL_TYP, sql_field_default::NULL, '', '', ''],
@@ -61,7 +61,7 @@ class changes_norm extends change
     );
 
     // field list to identify the database row in the table that has been changed
-    const FLD_LST_ROW_ID = array(
+    const array FLD_LST_ROW_ID = array(
         [self::FLD_ROW_ID, sql_field_type::REF_512, sql_field_default::NULL, '', '', self::FLD_ROW_ID_COM],
     );
 

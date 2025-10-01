@@ -99,26 +99,26 @@ class change_link extends change_log
      */
 
     // user log database and JSON object field names for link user sandbox objects
-    const TBL_COMMENT = 'to log the link changes done by the users';
-    const FLD_ID = 'change_link_id';
-    const FLD_TABLE_ID = 'change_table_id';
-    const FLD_OLD_FROM_TEXT = 'old_text_from';
-    const FLD_OLD_FROM_ID = 'old_from_id';
-    const FLD_OLD_LINK_TEXT = 'old_text_link';
-    const FLD_OLD_LINK_ID = 'old_link_id';
-    const FLD_OLD_TO_TEXT = 'old_text_to';
-    const FLD_OLD_TO_ID = 'old_to_id';
-    const FLD_NEW_FROM_TEXT = 'new_text_from';
-    const FLD_NEW_FROM_ID = 'new_from_id';
-    const FLD_NEW_LINK_TEXT = 'new_text_link';
-    const FLD_NEW_LINK_ID = 'new_link_id';
-    const FLD_NEW_TO_TEXT_COM = 'the fixed text to display to the user or the external reference id e.g. Q1 (for universe) in case of wikidata';
-    const FLD_NEW_TO_TEXT = 'new_text_to';
-    const FLD_NEW_TO_ID_COM = 'either internal row id or the ref type id of the external system e.g. 2 for wikidata';
-    const FLD_NEW_TO_ID = 'new_to_id';
+    const string TBL_COMMENT = 'to log the link changes done by the users';
+    const string FLD_ID = 'change_link_id';
+    const string FLD_TABLE_ID = 'change_table_id';
+    const string FLD_OLD_FROM_TEXT = 'old_text_from';
+    const string FLD_OLD_FROM_ID = 'old_from_id';
+    const string FLD_OLD_LINK_TEXT = 'old_text_link';
+    const string FLD_OLD_LINK_ID = 'old_link_id';
+    const string FLD_OLD_TO_TEXT = 'old_text_to';
+    const string FLD_OLD_TO_ID = 'old_to_id';
+    const string FLD_NEW_FROM_TEXT = 'new_text_from';
+    const string FLD_NEW_FROM_ID = 'new_from_id';
+    const string FLD_NEW_LINK_TEXT = 'new_text_link';
+    const string FLD_NEW_LINK_ID = 'new_link_id';
+    const string FLD_NEW_TO_TEXT_COM = 'the fixed text to display to the user or the external reference id e.g. Q1 (for universe) in case of wikidata';
+    const string FLD_NEW_TO_TEXT = 'new_text_to';
+    const string FLD_NEW_TO_ID_COM = 'either internal row id or the ref type id of the external system e.g. 2 for wikidata';
+    const string FLD_NEW_TO_ID = 'new_to_id';
 
     // all database field names
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         user_db::FLD_ID,
         self::FLD_TABLE_ID,
         self::FLD_TIME,
@@ -137,14 +137,14 @@ class change_link extends change_log
     );
 
     // field lists for the sql table creation that are used for all change logs (incl. value and link changes)
-    const FLD_LST_KEY = array(
+    const array FLD_LST_KEY = array(
         [self::FLD_ID, sql_field_type::KEY_INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_ID_COM],
         [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
         [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [self::FLD_ACTION, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', change_action::class, self::FLD_ACTION_COM],
     );
     // field list to log the actual change of the value with a standard group id
-    const FLD_LST_CHANGE = array(
+    const array FLD_LST_CHANGE = array(
         [self::FLD_TABLE_ID, sql_field_type::INT_SMALL, sql_field_default::NOT_NULL, '', change_table::class, ''],
         [self::FLD_OLD_FROM_ID, sql_field_type::INT, sql_field_default::NULL, '', '', ''],
         [self::FLD_OLD_LINK_ID, sql_field_type::INT, sql_field_default::NULL, '', '', ''],

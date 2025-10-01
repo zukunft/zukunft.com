@@ -356,12 +356,12 @@ include_once html_paths::USER . 'user_display_old.php';
 class test_base
 {
     // the url which should be used for testing (maybe later https://test.zukunft.com/)
-    const URL = 'https://zukunft.com/';
+    const string URL = 'https://zukunft.com/';
 
-    const TEST_TYPE_CONTAINS = 'contains';
-    const TEST_TYPE_NOT = 'not';
-    const FILE_EXT = '.sql';
-    const FILE_MYSQL = '_mysql';
+    const string TEST_TYPE_CONTAINS = 'contains';
+    const string TEST_TYPE_NOT = 'not';
+    const string FILE_EXT = '.sql';
+    const string FILE_MYSQL = '_mysql';
 
 
     /*
@@ -369,7 +369,7 @@ class test_base
      */
 
     // add this to the object name to test if it can be renamed
-    const EXT_RENAME = ' renamed';
+    const string EXT_RENAME = ' renamed';
 
 
     /*
@@ -377,21 +377,21 @@ class test_base
      */
 
     // switch for the email testing
-    const TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
+    const bool TEST_EMAIL = FALSE; // if set to true an email will be sent in case of errors and once a day an "everything fine" email is send
 
     // max time expected for each function execution
-    const TIMEOUT_LIMIT = 0.03; // time limit for normal functions
-    const TIMEOUT_LIMIT_PAGE = 0.1;  // time limit for complete webpage
-    const TIMEOUT_LIMIT_FILE = 0.3;  // time limit for file reading function
-    const TIMEOUT_LIMIT_CALC = 0.5;  // time limit for calculations
-    const TIMEOUT_LIMIT_PAGE_SEMI = 0.6;  // time limit for complete webpage
-    const TIMEOUT_LIMIT_PAGE_LONG = 1.2;  // time limit for complete webpage
-    const TIMEOUT_LIMIT_DB = 0.2;  // time limit for database modification functions
-    const TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modifications
-    const TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
-    const TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
+    const float TIMEOUT_LIMIT = 0.03; // time limit for normal functions
+    const float TIMEOUT_LIMIT_PAGE = 0.1;  // time limit for complete webpage
+    const float TIMEOUT_LIMIT_FILE = 0.3;  // time limit for file reading function
+    const float TIMEOUT_LIMIT_CALC = 0.5;  // time limit for calculations
+    const float TIMEOUT_LIMIT_PAGE_SEMI = 0.6;  // time limit for complete webpage
+    const float TIMEOUT_LIMIT_PAGE_LONG = 1.2;  // time limit for complete webpage
+    const float TIMEOUT_LIMIT_DB = 0.2;  // time limit for database modification functions
+    const float TIMEOUT_LIMIT_DB_MULTI = 0.9;  // time limit for many database modifications
+    const int TIMEOUT_LIMIT_LONG = 3;    // time limit for complex functions
+    const int TIMEOUT_LIMIT_IMPORT = 12;    // time limit for complex import tests in seconds
 
-    const TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
+    const string TEST_TIMESTAMP = '2024-04-05T08:35:30+00:00'; // fixed timestamp used for testing
 
 
     public user $usr1; // the main user for testing

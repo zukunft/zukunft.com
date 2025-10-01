@@ -64,7 +64,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
  * @param int|null $debug_overwrite used to force the output
  * @return string the final output text
  */
-function log_debug(string $msg_text = '', int $debug_overwrite = null): string
+function log_debug(string $msg_text = '', ?int $debug_overwrite = null): string
 {
     global $debug;
 

@@ -68,21 +68,21 @@ class verb_db
     // means: database fields only used for words
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID = 'verb_id';
-    const FLD_NAME = 'verb_name';
-    const FLD_CODE_ID_COM = 'id text to link coded functionality to a specific verb';
-    const FLD_CONDITION = 'condition_type';
-    const FLD_FORMULA_COM = 'naming used in formulas';
-    const FLD_FORMULA = 'formula_name';
-    const FLD_PLURAL = 'name_plural';
-    const FLD_REVERSE = 'name_reverse';
-    const FLD_PLURAL_REVERSE_COM = 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
-    const FLD_PLURAL_REVERSE = 'name_plural_reverse';
-    const FLD_WORDS_COM = 'used for how many phrases or formulas';
-    const FLD_WORDS = 'words';
+    const string FLD_ID = 'verb_id';
+    const string FLD_NAME = 'verb_name';
+    const string FLD_CODE_ID_COM = 'id text to link coded functionality to a specific verb';
+    const string FLD_CONDITION = 'condition_type';
+    const string FLD_FORMULA_COM = 'naming used in formulas';
+    const string FLD_FORMULA = 'formula_name';
+    const string FLD_PLURAL = 'name_plural';
+    const string FLD_REVERSE = 'name_reverse';
+    const string FLD_PLURAL_REVERSE_COM = 'english description for the reverse list, e.g. Companies are ... TODO move to language forms';
+    const string FLD_PLURAL_REVERSE = 'name_plural_reverse';
+    const string FLD_WORDS_COM = 'used for how many phrases or formulas';
+    const string FLD_WORDS = 'words';
 
     // all database field names excluding the id used to identify if there are some user specific changes
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         sql_db::FLD_CODE_ID,
         sql_db::FLD_DESCRIPTION,
         self::FLD_PLURAL,
@@ -93,10 +93,10 @@ class verb_db
     );
 
     // field lists for the table creation
-    const FLD_LST_NAME = array(
+    const array FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', type_object::FLD_NAME_COM],
     );
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', type_object::FLD_DESCRIPTION_COM],
         [self::FLD_CONDITION, sql_field_type::INT, sql_field_default::NULL, '', '', ''],

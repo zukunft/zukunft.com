@@ -269,7 +269,7 @@ class figure_list extends sandbox_list
         return $result;
     }
 
-    function name(int $limit = null): string
+    function name(?int $limit = null): string
     {
         $result = '';
 

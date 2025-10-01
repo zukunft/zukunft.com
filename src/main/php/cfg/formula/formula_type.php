@@ -45,12 +45,12 @@ class formula_type extends type_object
      */
 
     // list of the formula types that have a coded functionality
-    const CALC = "default";    // a normal calculation formula
-    const NEXT = "time_next";  // time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"
-    const THIS = "time_this";  // selects the assumed time term
-    const PREV = "time_prior"; // time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"
-    const REV = "reversible";  // used to define a const value that is not supposed to be changed like pi
-    const DEFAULT = self::CALC;
+    const string CALC = "default";    // a normal calculation formula
+    const string NEXT = "time_next";  // time jump forward: replaces a time term with the next time term based on the verb follower. E.g. "2017" "next" would lead to use "2018"
+    const string THIS = "time_this";  // selects the assumed time term
+    const string PREV = "time_prior"; // time jump backward: replaces a time term with the previous time term based on the verb follower. E.g. "2017" "next" would lead to use "2016"
+    const string REV = "reversible";  // used to define a const value that is not supposed to be changed like pi
+    const string DEFAULT = self::CALC;
 
 
     /*
@@ -58,6 +58,6 @@ class formula_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to assign predefined behaviour to formulas';
+    const string TBL_COMMENT = 'to assign predefined behaviour to formulas';
 
 }

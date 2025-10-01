@@ -34,6 +34,6 @@ namespace Zukunft\ZukunftCom\main\php\cfg\db;
 class sql_pg
 {
 
-    const FLD_KEY = 'PRIMARY KEY';
+    const string FLD_KEY = 'PRIMARY KEY';
 
 }

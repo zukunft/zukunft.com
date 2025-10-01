@@ -61,16 +61,16 @@ class language extends type_object
      */
 
     // database and JSON object field names
-    const TBL_COMMENT = 'for table languages';
-    const FLD_ID = 'language_id';
-    const FLD_NAME = 'language_name';
-    const FLD_WIKI_CODE = 'wikimedia_code';
+    const string TBL_COMMENT = 'for table languages';
+    const string FLD_ID = 'language_id';
+    const string FLD_NAME = 'language_name';
+    const string FLD_WIKI_CODE = 'wikimedia_code';
 
     // field lists for the table creation
-    const FLD_LST_NAME = array(
+    const array FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', ''],
     );
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [sql_db::FLD_CODE_ID, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', ''],
         [self::FLD_WIKI_CODE, sql_field_type::CODE_ID, sql_field_default::NULL, '', '', ''],
@@ -82,9 +82,9 @@ class language extends type_object
      */
 
     // list of the languages that have a coded functionality
-    const DEFAULT = "english";
-    const DEFAULT_ID = 1;
-    const TN_READ = "English";
+    const string DEFAULT = "english";
+    const int DEFAULT_ID = 1;
+    const string TN_READ = "English";
 
 
     /*

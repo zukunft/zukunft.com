@@ -55,9 +55,9 @@ class sys_log_function extends type_object
      */
 
     // list predefined function groups e.g. to group the execution times to find possible improvements
-    const UNDEFINED = "undefined";
-    const DB_READ = "db_read";
-    const DB_WRITE = "db_write";
+    const string UNDEFINED = "undefined";
+    const string DB_READ = "db_read";
+    const string DB_WRITE = "db_write";
 
 
     /*
@@ -65,14 +65,14 @@ class sys_log_function extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to group the system log entries by function';
-    const FLD_NAME = 'sys_log_function_name';
+    const string TBL_COMMENT = 'to group the system log entries by function';
+    const string FLD_NAME = 'sys_log_function_name';
 
     // field lists for the table creation
-    const FLD_LST_NAME = array(
+    const array FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
     );

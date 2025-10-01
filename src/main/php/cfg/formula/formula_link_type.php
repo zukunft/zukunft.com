@@ -53,11 +53,11 @@ class formula_link_type extends type_object
      */
 
     // list of the formula link types that have a coded functionality
-    const DEFAULT = "default";               // a simple link between a formula and a phrase
-    const TIME_PERIOD = "time_period_based"; // for time based links
+    const string DEFAULT = "default";               // a simple link between a formula and a phrase
+    const string TIME_PERIOD = "time_period_based"; // for time based links
 
     // the database and JSON object field names used only for formula links
-    const FLD_ID = 'formula_link_type_id';
+    const string FLD_ID = 'formula_link_type_id';
 
 
     /*
@@ -65,10 +65,10 @@ class formula_link_type extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to assign predefined behaviour to a formula link';
+    const string TBL_COMMENT = 'to assign predefined behaviour to a formula link';
 
     // field lists for the table creation of phrase type
-    const FLD_LST_EXTRA = array(
+    const array FLD_LST_EXTRA = array(
         [formula_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, '', formula::class, ''],
         [phrase::FLD_TYPE, phrase::FLD_TYPE_SQL_TYP, sql_field_default::NOT_NULL, '', phrase_type::class, ''],
     );

@@ -219,7 +219,7 @@ class db_object_multi extends db_object_key
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_db_obj(db_object_multi $db_obj, object $test_obj = null): user_message
+    function import_db_obj(db_object_multi $db_obj, ?object $test_obj = null): user_message
     {
         $usr_msg = new user_message();
         // add a dummy id for unit testing

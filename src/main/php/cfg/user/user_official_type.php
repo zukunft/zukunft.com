@@ -48,13 +48,13 @@ class user_official_type extends type_object
 {
 
     // list of official user identification types
-    const PASSPORT_EU = "passport_eu"; //
+    const string PASSPORT_EU = "passport_eu"; //
 
     /*
      * database link
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for person identification types e.g. passports';
+    const string TBL_COMMENT = 'for person identification types e.g. passports';
 
 }

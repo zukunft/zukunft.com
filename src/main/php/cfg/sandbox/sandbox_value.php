@@ -1455,7 +1455,7 @@ class sandbox_value extends sandbox_multi
      * @param phrase_list|null $phr_lst with the cache of the phrases already loaded
      * @return int the id of the object found and zero if nothing is found
      */
-    function load_by_names(array $names, phrase_list $phr_lst = null): int
+    function load_by_names(array $names, ?phrase_list $phr_lst = null): int
     {
         $load_lst = new phrase_list($this->user());
         if ($phr_lst == null) {

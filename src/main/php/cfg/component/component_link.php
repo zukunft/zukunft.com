@@ -298,7 +298,7 @@ class component_link extends sandbox_link
      * @param object|null $test_obj if not null the unit testing object
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
         log_debug();
 
@@ -738,7 +738,7 @@ class component_link extends sandbox_link
     {
         // try to get the search values from the objects
         if ($this->id() <= 0) {
-            $this->set_id(0);
+            $this->id = 0;
         }
 
         $sc->set_class($this::class);

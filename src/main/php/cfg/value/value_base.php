@@ -448,7 +448,7 @@ class value_base extends sandbox_value
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
 
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
@@ -1279,7 +1279,7 @@ class value_base extends sandbox_value
     function import_obj(
         array        $in_ex_json,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         log_debug();
@@ -1330,7 +1330,7 @@ class value_base extends sandbox_value
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_phrase_value(string $phr_name, float $value, object $test_obj = null): user_message
+    function import_phrase_value(string $phr_name, float $value, ?object $test_obj = null): user_message
     {
         $usr_msg = new user_message();
         log_debug();

@@ -251,10 +251,10 @@ class verb extends type_object
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        ?object      $test_obj = null
     ): user_message
     {
         $usr_msg = parent::import_mapper($in_ex_json, $dto, $test_obj);
@@ -564,7 +564,7 @@ class verb extends type_object
     function import_obj(
         array        $json_obj,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object      $test_obj = null
     ): user_message
     {
         global $vrb_cac;

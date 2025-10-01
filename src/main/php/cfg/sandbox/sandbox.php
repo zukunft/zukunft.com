@@ -426,7 +426,7 @@ class sandbox extends db_object_seq_id_user
      * @param object|null $test_obj if not null the unit test object to get a dummy seq id
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
-    function import_mapper(array $in_ex_json, data_object $dto = null, object $test_obj = null): user_message
+    function import_mapper(array $in_ex_json, ?data_object $dto = null, ?object $test_obj = null): user_message
     {
         global $shr_typ_cac;
         global $ptc_typ_cac;
@@ -511,7 +511,7 @@ class sandbox extends db_object_seq_id_user
     function import_obj(
         array        $in_ex_json,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object       $test_obj = null
     ): user_message
     {
         global $usr; // must always be the user who has initiated the import
@@ -4213,10 +4213,10 @@ class sandbox extends db_object_seq_id_user
      * @return user_message the status of the import and if needed the error messages that should be shown to the user
      */
     function import_mapper_user(
-        array       $in_ex_json,
-        user        $usr_req,
-        data_object $dto = null,
-        object      $test_obj = null
+        array        $in_ex_json,
+        user         $usr_req,
+        ?data_object $dto = null,
+        ?object      $test_obj = null
     ): user_message
     {
         log_err('overwrite of import_mapper_user missing in ' . $this::class);

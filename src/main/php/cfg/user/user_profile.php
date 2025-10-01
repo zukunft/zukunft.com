@@ -52,15 +52,15 @@ class user_profile extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'to define the user roles and read and write rights';
+    const string TBL_COMMENT = 'to define the user roles and read and write rights';
 
     // database fields additional to the standard field names
-    const FLD_ID = 'user_profile_id';
-    const FLD_LEVEL_COM = 'the access right level to prevent not permitted right gaining';
-    const FLD_LEVEL = 'right_level';
+    const string FLD_ID = 'user_profile_id';
+    const string FLD_LEVEL_COM = 'the access right level to prevent not permitted right gaining';
+    const string FLD_LEVEL = 'right_level';
 
     // additional fields for the table creation of user profiles
-    const FLD_LST_EXTRA = array(
+    const array FLD_LST_EXTRA = array(
         [self::FLD_LEVEL, sql_field_type::INT_SMALL, sql_field_default::NULL, '', '', self::FLD_LEVEL_COM],
     );
 

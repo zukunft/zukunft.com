@@ -544,7 +544,7 @@ class formula_list extends sandbox_list_named
     function import_obj(
         array        $json_obj,
         ?data_object $dto = null,
-        object       $test_obj = null
+        ?object       $test_obj = null
     ): user_message
     {
         $usr_msg = new user_message();
@@ -705,7 +705,7 @@ class formula_list extends sandbox_list_named
      * display
      */
 
-    function name(int $limit = null): string
+    function name(?int $limit = null): string
     {
         $lib = new library();
         return $lib->dsp_array($this->names());
@@ -717,7 +717,7 @@ class formula_list extends sandbox_list_named
      * @param ?int $limit the max number of ids to show
      * @return array with all names of the list
      */
-    function names(bool $ignore_excluded = false, int $limit = null): array
+    function names(bool $ignore_excluded = false, ?int $limit = null): array
     {
         $result = array();
         if ($this->lst() != null) {

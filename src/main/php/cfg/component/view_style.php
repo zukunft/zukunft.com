@@ -53,10 +53,10 @@ class view_style extends type_object
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'the display style for a view or component e.g. number of columns to use';
-    const FLD_NAME = 'view_style_name';
+    const string TBL_COMMENT = 'the display style for a view or component e.g. number of columns to use';
+    const string FLD_NAME = 'view_style_name';
     // field lists for the table creation
-    const FLD_LST_NAME = array(
+    const array FLD_LST_NAME = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
 
