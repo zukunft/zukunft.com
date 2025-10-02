@@ -295,7 +295,7 @@ class group extends sandbox_named
      * @param string $sep the separator between the phrase names
      * @return string the html code to show the group name
      */
-    function name(phrase_list $phr_lst_exclude = null, string $sep = ', '): string
+    function name(?phrase_list $phr_lst_exclude = null, string $sep = ', '): string
     {
         $result = '';
         if (parent::name() <> '') {
@@ -324,7 +324,7 @@ class group extends sandbox_named
      * @param string $sep the separator between the phrase names
      * @return string the html code to show the group name
      */
-    function name_tip(phrase_list $phr_lst_exclude = null, string $sep = ', '): string
+    function name_tip(?phrase_list $phr_lst_exclude = null, string $sep = ', '): string
     {
         $result = '';
         if ($this->name_tip_dirty or $phr_lst_exclude != null) {
@@ -356,7 +356,7 @@ class group extends sandbox_named
      * @param phrase_list|null $phr_lst_header list of phrases already shown in the header and don't need to be included in the result
      * @return string
      */
-    function name_link_list(phrase_list $phr_lst_header = null): string
+    function name_link_list(?phrase_list $phr_lst_header = null): string
     {
         $result = '';
         if ($this->name_link_dirty or $phr_lst_header != null) {

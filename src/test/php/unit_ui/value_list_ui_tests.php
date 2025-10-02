@@ -75,7 +75,7 @@ class value_list_ui_tests
         // TODO add a sample to show a list of words and some values related to the words e.g. all companies with the main ratios
 
         $test_page = $html->text_h2('Value list display test');
-        $test_page .= 'as list: ' . $lst_math_ui->list($phr_lst_context_dsp) . '<br>';
+        $test_page .= 'as list: ' . $html->lf() .  $lst_math_ui->list($phr_lst_context_dsp) . '<br>';
         $test_page .= 'as table without context: ' . $lst_zh_ui->table() . '<br>';
         // create the same table as above, but within a context
         $header_html = $phr_lst_context_dsp->headline();

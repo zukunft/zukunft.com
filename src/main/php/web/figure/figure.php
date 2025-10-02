@@ -196,7 +196,7 @@ class figure extends combine_named_dsp
      * @param phrase_list|null $phr_lst_header list of phrases that are shown already in the context e.g. the table header and that should not be shown again
      * @returns string the html code to display the phrase group with reference links
      */
-    function name_linked(phrase_list $phr_lst_header = null): string
+    function name_linked(?phrase_list $phr_lst_header = null): string
     {
         return $this->grp()->name_link_list($phr_lst_header);
     }

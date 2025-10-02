@@ -1478,47 +1478,51 @@
         },
         {
           "position": "14",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "15",
+          "name": "system form end"
+        },
+        {
+          "position": "16",
           "name": "system sub title usage",
           "style": "col-md-12"
         },
         {
-          "position": "15",
+          "position": "17",
           "name": "parents of word",
           "style": "col-md-6"
         },
         {
-          "position": "16",
+          "position": "18",
           "name": "children of word",
           "position_type": "side",
           "style": "col-md-6"
         },
         {
-          "position": "17",
+          "position": "19",
           "name": "system sub title values",
           "style": "col-md-6"
         },
         {
-          "position": "18",
+          "position": "20",
           "name": "value list of word",
           "style": "col-md-6"
         },
         {
-          "position": "19",
+          "position": "21",
           "name": "ref list word",
           "position_type": "side",
           "style": "col-md-6"
         },
         {
-          "position": "20",
-          "name": "system form end"
-        },
-        {
-          "position": "21",
+          "position": "22",
           "name": "usage word",
           "position_type": "side"
         },
         {
-          "position": "22",
+          "position": "23",
           "name": "change log word",
           "position_type": "side"
         }

@@ -195,7 +195,7 @@ class value_list extends list_dsp
     {
         $html = new html_base();
 
-        $result = $html->lf();
+        $result = '';
 
         foreach ($this->lst() as $val) {
             $row = $val->grp->name_link_list($context_phr_lst);

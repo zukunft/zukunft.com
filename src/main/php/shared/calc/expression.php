@@ -299,9 +299,9 @@ class expression
      * @return string the expression text in the database ref format
      */
     private function get_ref_part(
-        string                  $frm_part_text,
-        term_list|term_list_dsp $trm_lst = null,
-        user_message            $usr_msg = new user_message()
+        string                       $frm_part_text,
+        term_list|term_list_dsp|null $trm_lst = null,
+        user_message                 $usr_msg = new user_message()
     ): string
     {
         $result = $frm_part_text;
@@ -400,7 +400,7 @@ class expression
      * @param term_list|null $trm_lst
      * @return term|null
      */
-    private function get_next_term_from_ref(string $frm_part_ref_text, term_list $trm_lst = null): ?term
+    private function get_next_term_from_ref(string $frm_part_ref_text, ?term_list $trm_lst = null): ?term
     {
         $trm = null;
 

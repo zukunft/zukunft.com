@@ -69,7 +69,7 @@ use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 
-class user_dsp_old extends user
+class user_display_old extends user
 {
 
     /*
