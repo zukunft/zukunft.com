@@ -87,14 +87,14 @@ class db_object extends TextIdObject
      */
 
     // the fallback curl views that are expected to be overwritten by the child objects
-    const VIEW_ADD = views::WORD_ADD;
-    const VIEW_EDIT = views::WORD_EDIT;
-    const VIEW_DEL = views::WORD_DEL;
+    const string VIEW_ADD = views::WORD_ADD;
+    const string VIEW_EDIT = views::WORD_EDIT;
+    const string VIEW_DEL = views::WORD_DEL;
 
     // the fallback curl message id that are expected to be overwritten by the child objects
-    const MSG_ADD = msg_id::WORD_ADD;
-    const MSG_EDIT = msg_id::WORD_EDIT;
-    const MSG_DEL = msg_id::WORD_DEL;
+    const msg_id MSG_ADD = msg_id::WORD_ADD;
+    const msg_id MSG_EDIT = msg_id::WORD_EDIT;
+    const msg_id MSG_DEL = msg_id::WORD_DEL;
 
 
     /*

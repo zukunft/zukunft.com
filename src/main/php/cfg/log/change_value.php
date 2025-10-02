@@ -78,7 +78,7 @@ class change_value extends change_log
      */
 
     // user log database and JSON object field names for named user sandbox objects
-    const TBL_COMMENT = 'to log all numeric value changes done by any user on all kind of values (table, prime, big and standard';
+    const string TBL_COMMENT = 'to log all numeric value changes done by any user on all kind of values (table, prime, big and standard';
     const string FLD_FIELD_ID = 'change_field_id';
     const string FLD_GROUP_ID = 'group_id';
     const string FLD_ROW_ID = self::FLD_GROUP_ID;

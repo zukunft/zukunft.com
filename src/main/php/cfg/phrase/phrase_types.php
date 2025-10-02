@@ -51,7 +51,7 @@ class phrase_types extends type_list
 
     // the phrase types used for unit testing
     // TODO sync this list with the csv list and write a update process for the prod database
-    const TYPES = array(
+    const array TYPES = array(
         phrase_type_shared::NORMAL,
         phrase_type_shared::TIME,
         phrase_type_shared::MEASURE,

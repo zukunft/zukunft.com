@@ -88,7 +88,7 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 class formula_list extends sandbox_list_named
 {
     // the number of formulas that should be updated with one commit if no dependency calculations are expected
-    const UPDATE_BLOCK_SIZE = 100;
+    const int UPDATE_BLOCK_SIZE = 100;
 
     // array $lst are the loaded formula objects
     // if user $usr->id is 0 (not NULL) for standard formulas, otherwise for a user specific formulas

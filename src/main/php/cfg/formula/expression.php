@@ -169,11 +169,11 @@ class expression extends shared_expression
      */
 
     // predefined type selectors potentially used also in other classes
-    const SELECT_ALL = "all";              // to get all formula elements
-    const SELECT_PHRASE = "phrases";       // to filter only the words from the expression element list
-    const SELECT_VERB = "verbs";           // to filter only the verbs from the expression element list
-    const SELECT_FORMULA = "formulas";     // to filter only the formulas from the expression element list
-    const SELECT_VERB_WORD = "verb_words"; // to filter the words and the words implied by the verbs from the expression element list
+    const string SELECT_ALL = "all";              // to get all formula elements
+    const string SELECT_PHRASE = "phrases";       // to filter only the words from the expression element list
+    const string SELECT_VERB = "verbs";           // to filter only the verbs from the expression element list
+    const string SELECT_FORMULA = "formulas";     // to filter only the formulas from the expression element list
+    const string SELECT_VERB_WORD = "verb_words"; // to filter the words and the words implied by the verbs from the expression element list
 
 
     /*

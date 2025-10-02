@@ -137,38 +137,38 @@ use Zukunft\ZukunftCom\test\php\utils\test_api;
 class library
 {
 
-    const DIFF_NUM_PRECISION = 7;
+    const int DIFF_NUM_PRECISION = 7;
 
     // to separate two string for the human-readable format
-    const SEPARATOR = ',';
+    const string SEPARATOR = ',';
 
     /*
      * internal const
      */
 
-    const STR_TYPE_AUTO = -1; // try to detect the type
-    const STR_TYPE_CODE = 0; // the string should be checked byte by byte
-    const STR_TYPE_PROSA = 1; // words are the critical parts
-    const STR_TYPE_JSON = 2; // check for json elements
-    const STR_TYPE_HTML = 3;
+    const int STR_TYPE_AUTO = -1; // try to detect the type
+    const int STR_TYPE_CODE = 0; // the string should be checked byte by byte
+    const int STR_TYPE_PROSA = 1; // words are the critical parts
+    const int STR_TYPE_JSON = 2; // check for json elements
+    const int STR_TYPE_HTML = 3;
 
-    private const STR_DIFF_VAL = 'values';
-    private const STR_DIFF_TYP = 'type';
-    private const STR_DIFF_UNCHANGED = 0;
-    private const STR_DIFF_ADD = 1;
-    private const STR_DIFF_DEL = -1;
-    private const STR_DIFF_ADD_START = '//+';
-    private const STR_DIFF_ADD_END = '//';
-    private const STR_DIFF_DEL_START = '//-';
-    private const STR_DIFF_DEL_END = '//';
-    private const STR_DIFF_MSG_LEN = 100; // the max target length of the difference message to keep it human-readable
-    private const STR_DIFF_MATCH_LEN = 8; // the min length of a matching pattern to keep the diff human-readable
+    private const string STR_DIFF_VAL = 'values';
+    private const string STR_DIFF_TYP = 'type';
+    private const int STR_DIFF_UNCHANGED = 0;
+    private const int STR_DIFF_ADD = 1;
+    private const int STR_DIFF_DEL = -1;
+    private const string STR_DIFF_ADD_START = '//+';
+    private const string STR_DIFF_ADD_END = '//';
+    private const string STR_DIFF_DEL_START = '//-';
+    private const string STR_DIFF_DEL_END = '//';
+    private const int STR_DIFF_MSG_LEN = 100; // the max target length of the difference message to keep it human-readable
+    private const int STR_DIFF_MATCH_LEN = 8; // the min length of a matching pattern to keep the diff human-readable
 
     // the expected minimal length of 80% of the words
-    private const STR_WORD_MIN_LEN = 2;
+    private const int STR_WORD_MIN_LEN = 2;
     // the expected maximal length of 80% of the words
-    private const STR_WORD_MAX_LEN = 20;
-    private const STR_WORD_MIN_LEN_NORMAL_IN_PCT = 0.9; // if 90% of the words have a "normal" length the text is supposed to be a text for humans
+    private const int STR_WORD_MAX_LEN = 20;
+    private const float STR_WORD_MIN_LEN_NORMAL_IN_PCT = 0.9; // if 90% of the words have a "normal" length the text is supposed to be a text for humans
 
 
     /*
@@ -1177,6 +1177,7 @@ class library
             'Zukunft\ZukunftCom\main\php\web\component\execute' => 'html_paths::EXECUTE',
             'Zukunft\ZukunftCom\main\php\web\component\sheet' => 'html_paths::SHEET',
             'Zukunft\ZukunftCom\main\php\service' => 'paths::SERVICE',
+            'Zukunft\ZukunftCom\main\php\service\math' => 'paths::SERVICE_MATH',
             'Zukunft\ZukunftCom\main\php\shared' => 'paths::SHARED',
             'Zukunft\ZukunftCom\main\php\shared\calc' => 'paths::SHARED_CALC',
             'Zukunft\ZukunftCom\main\php\shared\const' => 'paths::SHARED_CONST',

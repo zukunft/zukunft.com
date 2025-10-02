@@ -85,44 +85,44 @@ class component_db
     // the database and JSON object field names used only for view components links
     // *_COM: the description of the field
     // *_SQL_TYP: the sql field type used for this field
-    const FLD_ID = 'component_id';
-    const FLD_NAME_COM = 'the unique name used to select a component by the user';
-    const FLD_NAME = 'component_name';
-    const FLD_DESCRIPTION_COM = 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry';
-    const FLD_TYPE_COM = 'to select the predefined functionality';
-    const FLD_TYPE = 'component_type_id';
-    const FLD_STYLE_COM = 'the default display style for this component';
-    const FLD_STYLE = 'view_style_id';
-    const FLD_CODE_ID_COM = 'used for system components to select the component by the program code';
-    const FLD_UI_MSG_ID_COM = 'used for system components the id to select the language specific user interface message e.g. "add word"';
-    const FLD_UI_MSG_ID = 'ui_msg_code_id';
-    const FLD_UI_MSG_ID_SQL_TYP = sql_field_type::CODE_ID;
+    const string FLD_ID = 'component_id';
+    const string FLD_NAME_COM = 'the unique name used to select a component by the user';
+    const string FLD_NAME = 'component_name';
+    const string FLD_DESCRIPTION_COM = 'to explain the view component to the user with a mouse over text; to be replaced by a language form entry';
+    const string FLD_TYPE_COM = 'to select the predefined functionality';
+    const string FLD_TYPE = 'component_type_id';
+    const string FLD_STYLE_COM = 'the default display style for this component';
+    const string FLD_STYLE = 'view_style_id';
+    const string FLD_CODE_ID_COM = 'used for system components to select the component by the program code';
+    const string FLD_UI_MSG_ID_COM = 'used for system components the id to select the language specific user interface message e.g. "add word"';
+    const string FLD_UI_MSG_ID = 'ui_msg_code_id';
+    const sql_field_type FLD_UI_MSG_ID_SQL_TYP = sql_field_type::CODE_ID;
     // TODO move the lined phrases to a component phrase link table for n:m relation with a type for each link
-    const FLD_ROW_PHRASE_COM = 'for a tree the related value the start node';
-    const FLD_ROW_PHRASE = 'word_id_row';
-    const FLD_COL_PHRASE_COM = 'to define the type for the table columns';
-    const FLD_COL_PHRASE = 'word_id_col';
-    const FLD_COL2_PHRASE_COM = 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart';
-    const FLD_COL2_PHRASE = 'word_id_col2';
-    const FLD_FORMULA_COM = 'used for type 6';
-    const FLD_LINK_COMP_COM = 'to link this component to another component';
-    const FLD_LINK_COMP = 'linked_component_id';
-    const FLD_LINK_COMP_TYPE_COM = 'to define how this entry links to the other entry';
-    const FLD_LINK_COMP_TYPE = 'component_link_type_id';
-    const FLD_LINK_TYPE_COM = 'e.g. for type 4 to select possible terms';
-    const FLD_LINK_TYPE = 'link_type_id';
-    const FLD_LINK_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
+    const string FLD_ROW_PHRASE_COM = 'for a tree the related value the start node';
+    const string FLD_ROW_PHRASE = 'word_id_row';
+    const string FLD_COL_PHRASE_COM = 'to define the type for the table columns';
+    const string FLD_COL_PHRASE = 'word_id_col';
+    const string FLD_COL2_PHRASE_COM = 'e.g. "quarter" to show the quarters between the year columns or the second axis of a chart';
+    const string FLD_COL2_PHRASE = 'word_id_col2';
+    const string FLD_FORMULA_COM = 'used for type 6';
+    const string FLD_LINK_COMP_COM = 'to link this component to another component';
+    const string FLD_LINK_COMP = 'linked_component_id';
+    const string FLD_LINK_COMP_TYPE_COM = 'to define how this entry links to the other entry';
+    const string FLD_LINK_COMP_TYPE = 'component_link_type_id';
+    const string FLD_LINK_TYPE_COM = 'e.g. for type 4 to select possible terms';
+    const string FLD_LINK_TYPE = 'link_type_id';
+    const sql_field_type FLD_LINK_TYPE_SQL_TYP = sql_field_type::INT_SMALL;
 
     // list of fields that MUST be set by one user
-    const FLD_LST_MUST_BE_IN_STD = array(
+    const array FLD_LST_MUST_BE_IN_STD = array(
         [self::FLD_NAME, sql_field_type::NAME_UNIQUE, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     // list of must fields that CAN be changed by the user
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array(
         [self::FLD_NAME, sql_field_type::NAME, sql_field_default::NULL, sql::INDEX, '', self::FLD_NAME_COM],
     );
     // list of fields that CAN be changed by the user
-    const FLD_LST_USER_CAN_CHANGE = array(
+    const array FLD_LST_USER_CAN_CHANGE = array(
         [sql_db::FLD_DESCRIPTION, sql_db::FLD_DESCRIPTION_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_DESCRIPTION_COM],
         [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, component_type::class, self::FLD_TYPE_COM],
         [self::FLD_STYLE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, view_style::class, self::FLD_STYLE_COM],
@@ -136,22 +136,22 @@ class component_db
         [self::FLD_LINK_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NULL, sql::INDEX, '', self::FLD_LINK_TYPE_COM],
     );
     // list of fields that CANNOT be changed by the user
-    const FLD_LST_NON_CHANGEABLE = array(
+    const array FLD_LST_NON_CHANGEABLE = array(
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [self::FLD_UI_MSG_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_UI_MSG_ID_COM],
     );
 
     // all database field names excluding the id
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         sql_db::FLD_CODE_ID,
         self::FLD_UI_MSG_ID
     );
     // list of the user specific database field names
-    const FLD_NAMES_USR = array(
+    const array FLD_NAMES_USR = array(
         sql_db::FLD_DESCRIPTION
     );
     // list of the user specific database field names
-    const FLD_NAMES_NUM_USR = array(
+    const array FLD_NAMES_NUM_USR = array(
         self::FLD_TYPE,
         self::FLD_STYLE,
         self::FLD_ROW_PHRASE,
@@ -164,7 +164,7 @@ class component_db
         sandbox::FLD_PROTECT
     );
     // all database field names excluding the id used to identify if there are some user specific changes
-    const ALL_SANDBOX_FLD_NAMES = array(
+    const array ALL_SANDBOX_FLD_NAMES = array(
         self::FLD_NAME,
         sql_db::FLD_DESCRIPTION,
         self::FLD_TYPE,

@@ -104,7 +104,7 @@ class import
 {
 
     // import assumption
-    const IMPORT_VALIDATE_PCT_TIME = 10;
+    const int IMPORT_VALIDATE_PCT_TIME = 10;
 
     // the user who wants to import data
     public ?user $usr = null;

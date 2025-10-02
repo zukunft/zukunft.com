@@ -211,7 +211,7 @@ class source extends sandbox_code_id
         $result .= $html->dsp_form_hidden("back", $back);
         $result .= $html->dsp_form_hidden("confirm", 1);
         $result .= $html->dsp_form_fld("name", $this->name, "Source name:");
-        $result .= '<tr><td>type   </td><td>' . $this->dsp_select_type($script, $back) . '</td></tr>';
+        $result .= '<tr><td>type   </td><td>' . $this->dsp_select_type($script, new type_lists()) . '</td></tr>';
         $result .= $html->dsp_form_fld("url", $this->url(), "URL:");
         $result .= $html->dsp_form_fld("comment", $this->description, "Comment:");
         //$result .= dsp_tbl_end ();
@@ -237,8 +237,8 @@ class source extends sandbox_code_id
 
         log_debug("source id used (" . $this->id() . ")");
         $result .= '      taken from ' . $this->source_selector($form_name, '') . ' ';
-        $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id() . '&back=' . $back) . '</td>';
-        $result .= '    <td>' . \Zukunft\ZukunftCom\main\php\web\btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
+        $result .= '    <td>' . $this->btn_edit("Rename " . $this->name, '/http/source_edit.php?id=' . $this->id() . '&back=' . $back) . '</td>';
+        $result .= '    <td>' . $this->btn_add("Add new source", '/http/source_add.php?back=' . $back) . '</td>';
         return $result;
     }
 

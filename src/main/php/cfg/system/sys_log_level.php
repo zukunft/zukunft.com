@@ -39,11 +39,11 @@ use ReflectionException;
 
 class sys_log_level extends BasicEnum
 {
-    const UNDEFINED = 0;
-    const INFO = 1;
-    const WARNING = 2;
-    const ERROR = 3;
-    const FATAL = 4;
+    const int UNDEFINED = 0;
+    const int INFO = 1;
+    const int WARNING = 2;
+    const int ERROR = 3;
+    const int FATAL = 4;
 
     /**
      * @throws ReflectionException

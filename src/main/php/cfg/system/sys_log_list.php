@@ -66,9 +66,9 @@ class sys_log_list extends base_list
 {
 
     // display types
-    const DSP_ALL = 'all';
-    const DSP_MY = 'my';
-    const DSP_OTHER = 'other';
+    const string DSP_ALL = 'all';
+    const string DSP_MY = 'my';
+    const string DSP_OTHER = 'other';
 
     private ?user $usr = null;      // the user who wants to see the errors
     public ?string $dsp_type = '';  //

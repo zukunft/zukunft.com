@@ -36,67 +36,67 @@ class rest_ctrl
 {
 
     // methods used
-    const PHP_SELF = 'PHP_SELF';
-    const PHP_AUTH_USER = 'PHP_AUTH_USER';
-    const PHP_AUTH_PW = 'PHP_AUTH_PW';
-    const REMOTE_USER = 'REMOTE_USER';
-    const REMOTE_ADDR = 'REMOTE_ADDR';
-    const REQUEST_METHOD = 'REQUEST_METHOD';
-    const REQUEST_URI = 'REQUEST_URI';
-    const GET = 'GET';
-    const POST = 'POST';
-    const PUT = 'PUT';
-    const DELETE = 'DELETE';
+    const string PHP_SELF = 'PHP_SELF';
+    const string PHP_AUTH_USER = 'PHP_AUTH_USER';
+    const string PHP_AUTH_PW = 'PHP_AUTH_PW';
+    const string REMOTE_USER = 'REMOTE_USER';
+    const string REMOTE_ADDR = 'REMOTE_ADDR';
+    const string REQUEST_METHOD = 'REQUEST_METHOD';
+    const string REQUEST_URI = 'REQUEST_URI';
+    const string GET = 'GET';
+    const string POST = 'POST';
+    const string PUT = 'PUT';
+    const string DELETE = 'DELETE';
 
     // to get the json body included in the request
-    const REQUEST_BODY_FILENAME = 'php://input';
+    const string REQUEST_BODY_FILENAME = 'php://input';
 
     // url path of the api
-    const PATH = 'api/';
+    const string PATH = 'api/';
 
     // url path to the fixed views
-    const PATH_FIXED = '/http/';
-    const URL_MAIN_SCRIPT = 'view';
+    const string PATH_FIXED = '/http/';
+    const string URL_MAIN_SCRIPT = 'view';
 
     // url extension of the fixed views
-    const EXT = '.php';
+    const string EXT = '.php';
 
     // classes used to allow renaming of the API name independent of the class name
-    const WORD = 'word';
-    const VERB = 'verb';
-    const TRIPLE = 'triple';
-    const VALUE = 'value';
-    const FORMULA = 'formula';
-    const VIEW = 'view';
-    const LINK = 'link';
-    const SOURCE = 'source';
-    const LANGUAGE = 'language';
+    const string WORD = 'word';
+    const string VERB = 'verb';
+    const string TRIPLE = 'triple';
+    const string VALUE = 'value';
+    const string FORMULA = 'formula';
+    const string VIEW = 'view';
+    const string LINK = 'link';
+    const string SOURCE = 'source';
+    const string LANGUAGE = 'language';
 
     // class extensions of all possible the fixed views
-    const CREATE = '_add';
-    const UPDATE = '_edit';
-    const REMOVE = '_del';
-    const LIST = '';
-    const SEARCH = 'find';
+    const string CREATE = '_add';
+    const string UPDATE = '_edit';
+    const string REMOVE = '_del';
+    const string LIST = '';
+    const string SEARCH = 'find';
 
     // special api function independent of a class
-    const LOGIN_RESET = 'login_reset';
-    const ERROR_UPDATE = 'error_update';
-    const URL_ABOUT = 'about';
+    const string LOGIN_RESET = 'login_reset';
+    const string ERROR_UPDATE = 'error_update';
+    const string URL_ABOUT = 'about';
 
     // view parameter names
-    const PAR_VIEW_VERBS = 'verbs';  // to select the verbs that should be display
-    const PAR_LOG_STATUS = 'status'; // to set the status of a log entry
-    const PAR_VIEW_SOURCES = 'sources';  // to select the formulas that should be display
-    const PAR_VIEW_LANGUAGES = 'languages';  // to select the formulas that should be display
-    const PAR_VIEW_NEW_ID = 'new_id'; // if the user has changed the view for this word, save it
-    const PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
+    const string PAR_VIEW_VERBS = 'verbs';  // to select the verbs that should be display
+    const string PAR_LOG_STATUS = 'status'; // to set the status of a log entry
+    const string PAR_VIEW_SOURCES = 'sources';  // to select the formulas that should be display
+    const string PAR_VIEW_LANGUAGES = 'languages';  // to select the formulas that should be display
+    const string PAR_VIEW_NEW_ID = 'new_id'; // if the user has changed the view for this word, save it
+    const string PAR_VIEW_ID = 'view'; // if the user has selected a special view, use it
 
     // classes used
-    const CLASS_FORM_ROW = 'form-row';
+    const string CLASS_FORM_ROW = 'form-row';
 
     // to be reviewed
-    const VALUE_EDIT = 'value_edit';
-    const RESULT_EDIT = 'result_edit';
+    const string VALUE_EDIT = 'value_edit';
+    const string RESULT_EDIT = 'result_edit';
 
 }

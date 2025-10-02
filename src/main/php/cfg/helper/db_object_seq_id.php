@@ -93,7 +93,7 @@ class db_object_seq_id extends db_object
 
     // database fields and comments
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID_SQL_TYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
+    const sql_field_type FLD_ID_SQL_TYP = sql_field_type::INT; // this default type is changed e.g. if the id is part of and index
 
 
     /*

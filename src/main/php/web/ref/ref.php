@@ -65,14 +65,14 @@ class ref extends db_object_dsp
      */
 
     // curl views
-    const VIEW_ADD = views::REF_ADD;
-    const VIEW_EDIT = views::REF_EDIT;
-    const VIEW_DEL = views::REF_DEL;
+    const string VIEW_ADD = views::REF_ADD;
+    const string VIEW_EDIT = views::REF_EDIT;
+    const string VIEW_DEL = views::REF_DEL;
 
     // curl message id
-    const MSG_ADD = msg_id::REF_ADD;
-    const MSG_EDIT = msg_id::REF_EDIT;
-    const MSG_DEL = msg_id::REF_DEL;
+    const msg_id MSG_ADD = msg_id::REF_ADD;
+    const msg_id MSG_EDIT = msg_id::REF_EDIT;
+    const msg_id MSG_DEL = msg_id::REF_DEL;
 
 
     /*
@@ -161,7 +161,7 @@ class ref extends db_object_dsp
         return $this->source_name() . ' ' . $this->external_key();
     }
 
-    function set_phrase(phrase_dsp $phr = null): void
+    function set_phrase(?phrase_dsp $phr = null): void
     {
         $this->phr = $phr;
     }

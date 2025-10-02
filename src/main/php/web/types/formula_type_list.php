@@ -45,7 +45,7 @@ use Zukunft\ZukunftCom\main\php\shared\types\formula_types;
 class formula_type_list extends type_list
 {
 
-    const NAME = 'formula type';
+    const string NAME = 'formula type';
 
     /**
      * create the HTML code to select a formula type

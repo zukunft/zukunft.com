@@ -131,16 +131,16 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 class job extends db_object_seq_id_user
 {
 
-    const STATUS_NEW = 'new'; // the job is not yet assigned to any calc engine
-    const STATUS_ASSIGNED = 'assigned'; // the job has been assigned to a calc engine
-    const STATUS_WORKING = 'working'; // the calc engine is reporting the progress
-    const STATUS_NOT_RESPONDING = 'not_responding'; // the calc engine is not reporting the progress
-    const STATUS_WAITING = 'waiting'; // the task is waiting for user input of other jobs
-    const STATUS_DONE = 'done'; // the task has been completed successfully
-    const STATUS_FAILED = 'failed'; // the task has been completed unsuccessful
+    const string STATUS_NEW = 'new'; // the job is not yet assigned to any calc engine
+    const string STATUS_ASSIGNED = 'assigned'; // the job has been assigned to a calc engine
+    const string STATUS_WORKING = 'working'; // the calc engine is reporting the progress
+    const string STATUS_NOT_RESPONDING = 'not_responding'; // the calc engine is not reporting the progress
+    const string STATUS_WAITING = 'waiting'; // the task is waiting for user input of other jobs
+    const string STATUS_DONE = 'done'; // the task has been completed successfully
+    const string STATUS_FAILED = 'failed'; // the task has been completed unsuccessful
 
-    const PRIO_HIGHEST = 1;
-    const PRIO_LOWEST = 10;
+    const int PRIO_HIGHEST = 1;
+    const int PRIO_LOWEST = 10;
 
 
     /*
@@ -148,29 +148,29 @@ class job extends db_object_seq_id_user
      */
 
     // object specific database object field names and comments
-    const TBL_COMMENT = 'for each concrete job run';
-    const FLD_ID_COM = 'the unique internal id of the job';
-    const FLD_ID = 'job_id';
-    const FLD_USER_COM = 'the id of the user who has requested the job by editing the scheduler the last time';
-    const FLD_TIME_REQUEST_COM = 'timestamp of the request for the job execution';
-    const FLD_TIME_REQUEST = 'request_time';
-    const FLD_TIME_START_COM = 'timestamp when the system has started the execution';
-    const FLD_TIME_START = 'start_time';
-    const FLD_TIME_END_COM = 'timestamp when the job has been completed or canceled';
-    const FLD_TIME_END = 'end_time';
-    const FLD_TYPE_COM = 'the id of the job type that should be started';
-    const FLD_TYPE = 'job_type_id';
-    const FLD_PARAMETER_COM = 'id of the phrase with the snapped parameter set for this job start';
-    const FLD_PARAMETER = 'parameter';
-    const FLD_CHANGE_FIELD_COM = 'e.g. for undo jobs the id of the field that should be changed';
-    const FLD_CHANGE_FIELD = 'change_field_id';
-    const FLD_ROW_COM = 'e.g. for undo jobs the id of the row that should be changed';
-    const FLD_ROW = 'row_id';
-    const FLD_SOURCE_COM = 'used for import to link the source';
-    const FLD_REF_COM = 'used for import to link the reference';
+    const string TBL_COMMENT = 'for each concrete job run';
+    const string FLD_ID_COM = 'the unique internal id of the job';
+    const string FLD_ID = 'job_id';
+    const string FLD_USER_COM = 'the id of the user who has requested the job by editing the scheduler the last time';
+    const string FLD_TIME_REQUEST_COM = 'timestamp of the request for the job execution';
+    const string FLD_TIME_REQUEST = 'request_time';
+    const string FLD_TIME_START_COM = 'timestamp when the system has started the execution';
+    const string FLD_TIME_START = 'start_time';
+    const string FLD_TIME_END_COM = 'timestamp when the job has been completed or canceled';
+    const string FLD_TIME_END = 'end_time';
+    const string FLD_TYPE_COM = 'the id of the job type that should be started';
+    const string FLD_TYPE = 'job_type_id';
+    const string FLD_PARAMETER_COM = 'id of the phrase with the snapped parameter set for this job start';
+    const string FLD_PARAMETER = 'parameter';
+    const string FLD_CHANGE_FIELD_COM = 'e.g. for undo jobs the id of the field that should be changed';
+    const string FLD_CHANGE_FIELD = 'change_field_id';
+    const string FLD_ROW_COM = 'e.g. for undo jobs the id of the row that should be changed';
+    const string FLD_ROW = 'row_id';
+    const string FLD_SOURCE_COM = 'used for import to link the source';
+    const string FLD_REF_COM = 'used for import to link the reference';
 
     // all database field names excluding the id used to identify if there are some user specific changes
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         self::FLD_ID,
         self::FLD_TIME_REQUEST,
         self::FLD_TIME_START,
@@ -181,7 +181,7 @@ class job extends db_object_seq_id_user
     );
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_USER_COM],
         [job_type::FLD_ID, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, job_type::class, self::FLD_TYPE_COM],
         [self::FLD_TIME_REQUEST, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_REQUEST_COM],

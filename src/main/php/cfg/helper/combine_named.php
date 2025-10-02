@@ -64,7 +64,7 @@ class combine_named extends combine_object
      */
 
     // list of phrase types used for the database views
-    const TBL_LIST = array(
+    const array TBL_LIST = array(
         [sql_type::PRIME],
         [sql_type::MOST],
         [sql_type::PRIME, sql_type::USER],
@@ -73,7 +73,7 @@ class combine_named extends combine_object
     // list of original tables that should be connoted with union
     // with fields used in the view
     // overwritten by the child objects
-    const TBL_FLD_LST_VIEW = [];
+    const array TBL_FLD_LST_VIEW = [];
 
     /*
      * construct and map

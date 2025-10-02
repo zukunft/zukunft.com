@@ -123,13 +123,13 @@ class sandbox_link extends sandbox
 
     // list of fields that select the objects that should be linked
     // dummy array to enable references here and is overwritten by the child object
-    const FLD_LST_LINK = array();
-    const FLD_LST_MUST_BUT_STD_ONLY = array();
+    const array FLD_LST_LINK = array();
+    const array FLD_LST_MUST_BUT_STD_ONLY = array();
 
     // separator to create a unique key based on the
-    const KEY_SEP = '/';
+    const string KEY_SEP = '/';
     // to allow the usage of the name key separator within an object name
-    const KEY_SEP_ESC = '//';
+    const string KEY_SEP_ESC = '//';
 
 
     /*

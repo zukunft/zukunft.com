@@ -64,6 +64,8 @@
 
 */
 
+namespace Zukunft\ZukunftCom\main\php\service\math;
+
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 
 include_once paths::SHARED . 'library.php';
@@ -72,13 +74,13 @@ use Zukunft\ZukunftCom\main\php\cfg\formula\expression;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\library;
 
-class math
+class calc_internal
 {
 
     // interface const (to be removed, because specific functions for each part has been created)
-    const RESULT_TYPE_DB = 'db';       // returns a formula in the database format
-    const RESULT_TYPE_USER = 'user';   // returns a formula in the user format
-    const RESULT_TYPE_VALUE = 'value'; // returns a result of the formula
+    const string RESULT_TYPE_DB = 'db';       // returns a formula in the database format
+    const string RESULT_TYPE_USER = 'user';   // returns a formula in the user format
+    const string RESULT_TYPE_VALUE = 'value'; // returns a result of the formula
 
     /*
      * external functions that are supposed to be called from other libraries
@@ -447,7 +449,7 @@ class math
     {
         $result = -1;
 
-        $calc = new math();
+        $calc = new calc_internal();
 
         $pos = $calc->pos_separator($formula, chars::WORD_START, 0,);
         $end = $calc->pos_separator($formula, chars::WORD_END, $pos);

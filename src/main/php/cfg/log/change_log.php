@@ -179,7 +179,7 @@ class change_log extends db_object_seq_id_user
     const string FLD_ROW_ID = 'row_id';
 
     // sql table comments
-    const TBL_COMMENT = 'to log all changes done by any user on all tables except value and link changes';
+    const string TBL_COMMENT = 'to log all changes done by any user on all tables except value and link changes';
 
     // field lists for the sql table creation that are used for all change logs (incl. value and link changes)
     const array FLD_LST_KEY = array(

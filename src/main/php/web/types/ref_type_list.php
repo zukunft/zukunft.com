@@ -47,7 +47,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class ref_type_list extends type_list
 {
 
-    const NAME = url_var::REF_TYPE;
+    const string NAME = url_var::REF_TYPE;
 
     /**
      * create the HTML code to select a reference type

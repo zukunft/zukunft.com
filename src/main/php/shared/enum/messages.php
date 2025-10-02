@@ -1167,6 +1167,7 @@ enum messages: string
     case UNDO = 'undo';
     case FIND = 'find';
     case REMOVE_FILTER = 'remove filter';
+    case YES_NO = 'yes or no';
     case UNDO_ADD = 'undo_add';
     case UNDO_EDIT = 'undo_edit';
     case UNDO_DEL = 'undo_del';

@@ -52,7 +52,7 @@ class change_action extends type_object
 {
 
     // list of all log actions allowed in this program version
-    const ACTION_LIST = array(
+    const array ACTION_LIST = array(
         change_actions::ADD,
         change_actions::UPDATE,
         change_actions::DELETE

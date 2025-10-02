@@ -60,15 +60,15 @@ class value_ts_data extends db_object_no_id
      */
 
     // comment used for the database creation
-    const TBL_COMMENT = 'for a single time series value data entry and efficient saving of daily or intra-day values';
-    const FLD_ID_COM = 'link to the value time series';
-    const FLD_TIME_COM = 'short name of the configuration entry to be shown to the admin';
-    const FLD_TIME = 'val_time';
-    const FLD_VALUE_COM = 'the configuration value as a string';
-    const FLD_VALUE = 'number';
+    const string TBL_COMMENT = 'for a single time series value data entry and efficient saving of daily or intra-day values';
+    const string FLD_ID_COM = 'link to the value time series';
+    const string FLD_TIME_COM = 'short name of the configuration entry to be shown to the admin';
+    const string FLD_TIME = 'val_time';
+    const string FLD_VALUE_COM = 'the configuration value as a string';
+    const string FLD_VALUE = 'number';
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [value_time_series::FLD_ID, sql_field_type::INT, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_ID_COM],
         [self::FLD_TIME, sql_field_type::TIME, sql_field_default::NOT_NULL, '', '', self::FLD_TIME_COM],
         [self::FLD_VALUE, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', self::FLD_VALUE_COM],

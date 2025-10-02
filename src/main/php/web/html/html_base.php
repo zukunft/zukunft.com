@@ -35,15 +35,18 @@
 namespace Zukunft\ZukunftCom\main\php\web\html;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\enum\messages;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 //include_once html_paths::WEB . 'frontend.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
+include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'library.php';
 
+use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 use Zukunft\ZukunftCom\main\php\shared\api;
 use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
 use Zukunft\ZukunftCom\main\php\shared\library;
@@ -57,22 +60,22 @@ class html_base
     // TODO move all html const used in zukunft.com to html_names
 
     // fixed elements
-    const TOGGLE_TOOLTIP = 'data-toggle="tooltip"';
+    const string TOGGLE_TOOLTIP = 'data-toggle="tooltip"';
 
     // the html input types used
-    const INPUT_TEXT = 'text';
-    const INPUT_NUMBER = 'text';
-    const INPUT_SUBMIT = 'submit';
-    const INPUT_SEARCH = 'search';
-    const INPUT_CHECKBOX = 'checkbox';
-    const INPUT_FILE = 'file';
-    const INPUT_HIDDEN = 'hidden';
-    const INPUT_PASSWORD = 'password';
-    const INPUT_EMAIL = 'email';
+    const string INPUT_TEXT = 'text';
+    const string INPUT_NUMBER = 'text';
+    const string INPUT_SUBMIT = 'submit';
+    const string INPUT_SEARCH = 'search';
+    const string INPUT_CHECKBOX = 'checkbox';
+    const string INPUT_FILE = 'file';
+    const string INPUT_HIDDEN = 'hidden';
+    const string INPUT_PASSWORD = 'password';
+    const string INPUT_EMAIL = 'email';
 
-    // bootstrap const used in zukunft.com
-    const BS_FORM = 'form-control';
-    const BS_BTN = 'btn btn-space col-1';
+    // bootstrap const string used in zukunft.com
+    const string BS_FORM = 'form-control';
+    const string BS_BTN = 'btn btn-space col-1';
     const string BS_BTN_SUCCESS = 'btn-outline-success';
     const string BS_BTN_CANCEL = 'btn-outline-secondary';
     const string BS_BTN_DEL = 'btn-outline-secondary';
@@ -80,15 +83,15 @@ class html_base
     const string BS_BTN_EXPORT = 'btn-outline-secondary';
 
     // TODO move the user interface setting to the user page, so that he can define which UI he wants to use
-    const UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
+    const int UI_USE_BOOTSTRAP = 1; // IF FALSE a simple HTML frontend without javascript is used
 
-    const IMG_LOGO = "/src/main/resources/images/ZUKUNFT_logo.svg";
+    const string IMG_LOGO = "/src/main/resources/images/ZUKUNFT_logo.svg";
 
-    const SIZE_FULL = 'full';
-    const SIZE_HALF = 'half';
+    const string SIZE_FULL = 'full';
+    const string SIZE_HALF = 'half';
 
-    const WIDTH_FULL = '800px';
-    const WIDTH_HALF = '400px';
+    const string WIDTH_FULL = '800px';
+    const string WIDTH_HALF = '400px';
 
     /*
      * header & footer
@@ -702,6 +705,7 @@ class html_base
     function form_end_with_submit(string $submit_name, string $back, $del_call = ''): string
     {
         $result = '';
+        $but = new button();
         if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
                 $result .= '<button type="submit" class="btn btn-outline-success btn-space">Save</button>';
@@ -727,10 +731,10 @@ class html_base
                     '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
-                $result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
+                $result .= $but->back($back);
             }
             if ($del_call <> "") {
-                $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete', $del_call);
+                $result .= $but->del(msg_id::DEL, $del_call);
             }
         }
         $result .= '</form>';
@@ -818,6 +822,7 @@ class html_base
         string $script_parameter,
         string $back = ''): string
     {
+        $but = new button();
         $result = '';
 
         $row_nbr = 0;
@@ -840,7 +845,7 @@ class html_base
                 $result .= $this->ref($url, 'down');
             }
             $result .= ' ';
-            $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
+            $result .= $but->del('Delete ' . $class, $class . '?id=' . $script_parameter . '&del=' . $key);
             $result .= '<br>';
         }
 
@@ -1127,6 +1132,7 @@ class html_base
 // end a html form
     function dsp_form_end($submit_name, $back, $del_call = ''): string
     {
+        $but = new button();
         $result = '';
         if (self::UI_USE_BOOTSTRAP) {
             if ($submit_name == "") {
@@ -1153,10 +1159,10 @@ class html_base
                     '" value="' . $submit_name . '">';
             }
             if ($back <> "") {
-                $result .= \Zukunft\ZukunftCom\main\php\web\btn_back($back);
+                $result .= $but->back($back);
             }
             if ($del_call <> "") {
-                $result .= \Zukunft\ZukunftCom\main\php\web\btn_del('delete', $del_call);
+                $result .= $but->del(msg_id::DEL, $del_call);
             }
         }
         $result .= '</form>';
@@ -1295,7 +1301,7 @@ class html_base
           $result .= '</script> ';
         } else {
         */
-        $result .= ' <form action="import.php" method="post" enctype="multipart/form-data">';
+        $result .= ' <form action="/view.php?m=import" method="post" enctype="multipart/form-data">';
         $result .= '   Select JSON to upload:';
         $result .= '   <input type="' . html_base::INPUT_FILE .
             '" name="fileToUpload" id="fileToUpload">';

@@ -35,17 +35,17 @@ class view_type
 {
 
     // list of the view types that have a coded functionality
-    const DEFAULT = "default";
-    const ENTRY = "entry";
-    const MASK_DEFAULT = "mask_default";
-    const PRESENT = "presentation";
-    const WORD_DEFAULT = "word_default";
-    const DETAIL = "detail_view";
-    const SYSTEM = "system";
+    const string DEFAULT = "default";
+    const string ENTRY = "entry";
+    const string MASK_DEFAULT = "mask_default";
+    const string PRESENT = "presentation";
+    const string WORD_DEFAULT = "word_default";
+    const string DETAIL = "detail_view";
+    const string SYSTEM = "system";
 
     // list of view types that are used by the system
     // and should not be assignable by users
-    const SYSTEM_TYPES = array(
+    const array SYSTEM_TYPES = array(
         self::SYSTEM
     );
 

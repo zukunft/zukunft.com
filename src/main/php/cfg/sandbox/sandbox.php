@@ -190,26 +190,26 @@ class sandbox extends db_object_seq_id_user
     // e.g. always "word_id" instead of simply "id
     // *_COM: the description of the field
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_ID_COM = 'the owner / creator of the -=class=-';
-    const FLD_ID_COM_CHANGER = 'the changer of the -=class=-';
-    const FLD_ID = ''; // is always overwritten by the child class just added here to prevent polymorph warning
-    const FLD_CHANGE_USER = 'change_user_id'; // id of the user who wants something the object to be different from most other users
-    const FLD_USER_NAME = 'user_name';
-    const FLD_SHARE_COM = 'to restrict the access';
-    const FLD_SHARE = "share_type_id";  // field name for the share permission
-    const FLD_SHARE_SQL_TYP = sql_field_type::INT_SMALL;
-    const FLD_PROTECT_COM = 'to protect against unwanted changes';
-    const FLD_PROTECT = "protect_id";   // field name for the protection level
-    const FLD_PROTECT_SQL_TYP = sql_field_type::INT_SMALL;
+    const string FLD_ID_COM = 'the owner / creator of the -=class=-';
+    const string FLD_ID_COM_CHANGER = 'the changer of the -=class=-';
+    const string FLD_ID = ''; // is always overwritten by the child class just added here to prevent polymorph warning
+    const string FLD_CHANGE_USER = 'change_user_id'; // id of the user who wants something the object to be different from most other users
+    const string FLD_USER_NAME = 'user_name';
+    const string FLD_SHARE_COM = 'to restrict the access';
+    const string FLD_SHARE = "share_type_id";  // field name for the share permission
+    const sql_field_type FLD_SHARE_SQL_TYP = sql_field_type::INT_SMALL;
+    const string FLD_PROTECT_COM = 'to protect against unwanted changes';
+    const string FLD_PROTECT = "protect_id";   // field name for the protection level
+    const sql_field_type FLD_PROTECT_SQL_TYP = sql_field_type::INT_SMALL;
 
     // field lists for the table creation
-    const FLD_ALL_OWNER = array(
+    const array FLD_ALL_OWNER = array(
         [user_db::FLD_ID, sql_field_type::INT, sql_field_default::NULL, sql::INDEX, user::class, self::FLD_ID_COM],
     );
-    const FLD_ALL_CHANGER = array(
+    const array FLD_ALL_CHANGER = array(
         [user_db::FLD_ID, sql_field_type::KEY_PART_INT, sql_field_default::NOT_NULL, sql::INDEX, user::class, self::FLD_ID_COM_CHANGER],
     );
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [sql_db::FLD_EXCLUDED, sql_db::FLD_EXCLUDED_SQL_TYP, sql_field_default::NULL, '', '', sql_db::FLD_EXCLUDED_COM],
         [self::FLD_SHARE, self::FLD_SHARE_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_SHARE_COM],
         [self::FLD_PROTECT, self::FLD_PROTECT_SQL_TYP, sql_field_default::NULL, '', '', self::FLD_PROTECT_COM],
@@ -217,13 +217,13 @@ class sandbox extends db_object_seq_id_user
 
     // all database field names excluding the id used to identify if there are some user specific changes
     // dummy arrays that should be overwritten by the child object
-    const FLD_NAMES = array();
+    const array FLD_NAMES = array();
     // list of the user specific database field names
-    const FLD_NAMES_USR = array();
+    const array FLD_NAMES_USR = array();
     // database fields that should only be taken from the user sandbox table
-    const FLD_NAMES_USR_ONLY = array();
+    const array FLD_NAMES_USR_ONLY = array();
     // list of the user specific numeric database field names
-    const FLD_NAMES_NUM_USR = array(
+    const array FLD_NAMES_NUM_USR = array(
         sql_db::FLD_EXCLUDED,
         self::FLD_SHARE,
         self::FLD_PROTECT

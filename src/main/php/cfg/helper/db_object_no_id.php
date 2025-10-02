@@ -68,22 +68,22 @@ class db_object_no_id
 
     // dummy const to be overwritten by the child objects
     // description of the table for the sql table creation
-    const TBL_COMMENT = '';
+    const string TBL_COMMENT = '';
     // list of the table fields for the standard read query
-    const FLD_NAMES = array();
+    const array FLD_NAMES = array();
 
     // field lists for the table creation overwritten by the child object or grand child for extra fields
-    const FLD_LST_ALL = array();
-    const FLD_LST_NAME = array();
-    const FLD_LST_EXTRA = array();
+    const array FLD_LST_ALL = array();
+    const array FLD_LST_NAME = array();
+    const array FLD_LST_EXTRA = array();
     // list of fields that MUST be set by one user
-    const FLD_LST_MUST_BE_IN_STD = array();
+    const array FLD_LST_MUST_BE_IN_STD = array();
     // list of must fields that CAN be changed by the user
-    const FLD_LST_MUST_BUT_USER_CAN_CHANGE = array();
+    const array FLD_LST_MUST_BUT_USER_CAN_CHANGE = array();
     // fields that CAN be changed by the user with the parameters for the table creation
-    const FLD_LST_USER_CAN_CHANGE = array();
+    const array FLD_LST_USER_CAN_CHANGE = array();
     // fields that CANNOT be changed by the user with the parameters for the table creation
-    const FLD_LST_NON_CHANGEABLE = array();
+    const array FLD_LST_NON_CHANGEABLE = array();
 
 
     /*

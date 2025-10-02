@@ -49,7 +49,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class share extends type_list
 {
 
-    const NAME = url_var::SHARE;
+    const string NAME = url_var::SHARE;
 
     /**
      * create the HTML code to select a share type

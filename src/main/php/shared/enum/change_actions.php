@@ -36,9 +36,9 @@ enum change_actions: string
 {
 
     // the basic change types that are logged
-    const SHOW = 'show';
-    const ADD = 'add';
-    const UPDATE = 'update';
-    const DELETE = 'del';
+    const string SHOW = 'show';
+    const string ADD = 'add';
+    const string UPDATE = 'update';
+    const string DELETE = 'del';
 
 }

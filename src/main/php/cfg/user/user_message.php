@@ -53,11 +53,11 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 class user_message
 {
     // the message types that defines what needs to be done next
-    const OK = 1;
-    const NOK = 2;
-    const WARNING = 3;
-    //const YES_NO = 4;
-    //const CONFIRM_CANCEL = 5;
+    const int OK = 1;
+    const int NOK = 2;
+    const int WARNING = 3;
+    //const int YES_NO = 4;
+    //const int CONFIRM_CANCEL = 5;
 
     private int $msg_status;
     private int|null $checksum = null;

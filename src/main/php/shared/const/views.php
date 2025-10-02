@@ -41,137 +41,137 @@ class views
     // *_ID is the view / mask id that is expected never to change
     // *_NAME is the name of the view if it differs from the code id
     // *_COM is the comment or description used for the tooltip
-    const START = 'start';
-    const START_CODE = 'entry_view'; // TODO combine
-    const START_NAME = 'Start view';
-    const START_COM = 'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.';
-    const START_ID = 1;
+    const string START = 'start';
+    const string START_CODE = 'entry_view'; // TODO combine
+    const string START_NAME = 'Start view';
+    const string START_COM = 'A dynamic entry mask that initially shows a table for calculations with the biggest problems from the user point of view and suggestions what the user can do to solve these problems. Used also as fallback view.';
+    const int START_ID = 1;
 
     // curl views
-    const WORD_ADD = 'word_add';
-    const WORD_ADD_ID = 2;
-    const WORD_EDIT = 'word_edit';
-    const WORD_EDIT_ID = 3;
-    const WORD_DEL = 'word_del';
-    const WORD_DEL_ID = 4;
-    const VERB_ADD = 'verb_add';
-    const VERB_ADD_ID = 5;
-    const VERB_EDIT = 'verb_edit';
-    const VERB_EDIT_ID = 6;
-    const VERB_DEL = 'verb_del';
-    const VERB_DEL_ID = 7;
-    const TRIPLE_ADD = 'triple_add';
-    const TRIPLE_ADD_ID = 8;
-    const TRIPLE_EDIT = 'triple_edit';
-    const TRIPLE_EDIT_ID = 9;
-    const TRIPLE_DEL = 'triple_del';
-    const TRIPLE_DEL_ID = 10;
-    const SOURCE_ADD = 'source_add';
-    const SOURCE_ADD_ID = 11;
-    const SOURCE_EDIT = 'source_edit';
-    const SOURCE_EDIT_ID = 12;
-    const SOURCE_DEL = 'source_del';
-    const SOURCE_DEL_ID = 13;
-    const REF_ADD = 'ref_add';
-    const REF_ADD_ID = 14;
-    const REF_EDIT = 'ref_edit';
-    const REF_EDIT_ID = 15;
-    const REF_DEL = 'ref_del';
-    const REF_DEL_ID = 16;
-    const VALUE_ADD = 'value_add';
-    const VALUE_ADD_ID = 17;
-    const VALUE_EDIT = 'value_edit';
-    const VALUE_EDIT_ID = 18;
-    const VALUE_DEL = 'value_del';
-    const VALUE_DEL_ID = 19;
-    const GROUP_ADD = 'group_add';
-    const GROUP_ADD_ID = 20;
-    const GROUP_EDIT = 'group_edit';
-    const GROUP_EDIT_ID = 21;
-    const GROUP_DEL = 'group_del';
-    const GROUP_DEL_ID = 22;
-    const FORMULA_ADD = 'formula_add';
-    const FORMULA_ADD_ID = 23;
-    const FORMULA_EDIT = 'formula_edit';
-    const FORMULA_EDIT_ID = 24;
-    const FORMULA_DEL = 'formula_del';
-    const FORMULA_DEL_ID = 25;
-    const FORMULA_EXPLAIN = 'formula_explain';
-    const FORMULA_TEST = 'formula_test';
-    const RESULT_ADD = 'result_add';
-    const RESULT_ADD_ID = 26;
-    const RESULT_EDIT = 'result_edit';
-    const RESULT_EDIT_ID = 26;
-    const RESULT_DEL = 'result_del';
-    const RESULT_DEL_ID = 27;
+    const string WORD_ADD = 'word_add';
+    const int WORD_ADD_ID = 2;
+    const string WORD_EDIT = 'word_edit';
+    const int WORD_EDIT_ID = 3;
+    const string WORD_DEL = 'word_del';
+    const int WORD_DEL_ID = 4;
+    const string VERB_ADD = 'verb_add';
+    const int VERB_ADD_ID = 5;
+    const string VERB_EDIT = 'verb_edit';
+    const int VERB_EDIT_ID = 6;
+    const string VERB_DEL = 'verb_del';
+    const int VERB_DEL_ID = 7;
+    const string TRIPLE_ADD = 'triple_add';
+    const int TRIPLE_ADD_ID = 8;
+    const string TRIPLE_EDIT = 'triple_edit';
+    const int TRIPLE_EDIT_ID = 9;
+    const string TRIPLE_DEL = 'triple_del';
+    const int TRIPLE_DEL_ID = 10;
+    const string SOURCE_ADD = 'source_add';
+    const int SOURCE_ADD_ID = 11;
+    const string SOURCE_EDIT = 'source_edit';
+    const int SOURCE_EDIT_ID = 12;
+    const string SOURCE_DEL = 'source_del';
+    const int SOURCE_DEL_ID = 13;
+    const string REF_ADD = 'ref_add';
+    const int REF_ADD_ID = 14;
+    const string REF_EDIT = 'ref_edit';
+    const int REF_EDIT_ID = 15;
+    const string REF_DEL = 'ref_del';
+    const int REF_DEL_ID = 16;
+    const string VALUE_ADD = 'value_add';
+    const int VALUE_ADD_ID = 17;
+    const string VALUE_EDIT = 'value_edit';
+    const int VALUE_EDIT_ID = 18;
+    const string VALUE_DEL = 'value_del';
+    const int VALUE_DEL_ID = 19;
+    const string GROUP_ADD = 'group_add';
+    const int GROUP_ADD_ID = 20;
+    const string GROUP_EDIT = 'group_edit';
+    const int GROUP_EDIT_ID = 21;
+    const string GROUP_DEL = 'group_del';
+    const int GROUP_DEL_ID = 22;
+    const string FORMULA_ADD = 'formula_add';
+    const int FORMULA_ADD_ID = 23;
+    const string FORMULA_EDIT = 'formula_edit';
+    const int FORMULA_EDIT_ID = 24;
+    const string FORMULA_DEL = 'formula_del';
+    const int FORMULA_DEL_ID = 25;
+    const string FORMULA_EXPLAIN = 'formula_explain';
+    const string FORMULA_TEST = 'formula_test';
+    const string RESULT_ADD = 'result_add';
+    const int RESULT_ADD_ID = 26;
+    const string RESULT_EDIT = 'result_edit';
+    const int RESULT_EDIT_ID = 26;
+    const string RESULT_DEL = 'result_del';
+    const int RESULT_DEL_ID = 27;
 
-    const VERBS = 'verbs';
-    const USER = 'user';
-    const USER_ID = 64;
-    const USER_ADD = 'user_add';
-    const USER_EDIT = 'user_edit';
-    const USER_DEL = 'user_del';
-    const ERR_LOG = 'error_log';
-    const ERR_UPD = 'error_update';
-    const IMPORT = 'import';
+    const string VERBS = 'verbs';
+    const string USER = 'user';
+    const int USER_ID = 64;
+    const string USER_ADD = 'user_add';
+    const string USER_EDIT = 'user_edit';
+    const string USER_DEL = 'user_del';
+    const string ERR_LOG = 'error_log';
+    const string ERR_UPD = 'error_update';
+    const string IMPORT = 'import';
 
     // views to edit views
-    const VIEW_ADD = 'view_add';
-    const VIEW_ADD_ID = 28;
-    const VIEW_EDIT = 'view_edit';
-    const VIEW_EDIT_ID = 29;
-    const VIEW_DEL = 'view_del';
-    const VIEW_DEL_ID = 30;
-    const COMPONENT_ADD = 'component_add';
-    const COMPONENT_ADD_ID = 31;
-    const COMPONENT_EDIT = 'component_edit';
-    const COMPONENT_EDIT_ID = 32;
-    const COMPONENT_DEL = 'component_del';
-    const COMPONENT_DEL_ID = 33;
-    const COMPONENT_LINK = 'component_link';
-    const COMPONENT_UNLINK = 'component_unlink';
+    const string VIEW_ADD = 'view_add';
+    const int VIEW_ADD_ID = 28;
+    const string VIEW_EDIT = 'view_edit';
+    const int VIEW_EDIT_ID = 29;
+    const string VIEW_DEL = 'view_del';
+    const int VIEW_DEL_ID = 30;
+    const string COMPONENT_ADD = 'component_add';
+    const int COMPONENT_ADD_ID = 31;
+    const string COMPONENT_EDIT = 'component_edit';
+    const int COMPONENT_EDIT_ID = 32;
+    const string COMPONENT_DEL = 'component_del';
+    const int COMPONENT_DEL_ID = 33;
+    const string COMPONENT_LINK = 'component_link';
+    const string COMPONENT_UNLINK = 'component_unlink';
 
     // types
-    const LANGUAGE_ADD = 'language_add';
-    const LANGUAGE_ADD_ID = 29;
-    const LANGUAGE_EDIT = 'language_edit';
-    const LANGUAGE_EDIT_ID = 29;
-    const LANGUAGE_DEL = 'language_del';
-    const LANGUAGE_DEL_ID = 29;
+    const string LANGUAGE_ADD = 'language_add';
+    const int LANGUAGE_ADD_ID = 29;
+    const string LANGUAGE_EDIT = 'language_edit';
+    const int LANGUAGE_EDIT_ID = 29;
+    const string LANGUAGE_DEL = 'language_del';
+    const int LANGUAGE_DEL_ID = 29;
 
     // the id of the last system view that should be included in the unit testing
     // TODO Prio 1 set to 1
-    const MIN_TEST_ID = 2;
-    const MAX_TEST_ID = 33;
+    const int MIN_TEST_ID = 2;
+    const int MAX_TEST_ID = 33;
 
     // default views
     // TODO easy add missing default views e.g. for formula
-    const WORD = 'Word';
-    const WORD_ID = 44;
-    const WORD_CODE_ID = 'word';
-    const VERB = 'Verb';
-    const VERB_ID = 45;
-    const VERB_CODE_ID = 'verb';
-    const TRIPLE = 'Triple';
-    const TRIPLE_ID = 46;
-    const SOURCE = 'Source';
-    const SOURCE_ID = 47;
-    const REF = 'Reference';
-    const REF_ID = 48;
-    const VALUE_DISPLAY = 'Display Number';
-    const FORMULA = 'source';
-    const FORMULA_ID = 48;
-    const LANGUAGE = 'Language';
-    const LANGUAGE_ID = 49;
+    const string WORD = 'Word';
+    const int WORD_ID = 44;
+    const string WORD_CODE_ID = 'word';
+    const string VERB = 'Verb';
+    const int VERB_ID = 45;
+    const string VERB_CODE_ID = 'verb';
+    const string TRIPLE = 'Triple';
+    const int TRIPLE_ID = 46;
+    const string SOURCE = 'Source';
+    const int SOURCE_ID = 47;
+    const string REF = 'Reference';
+    const int REF_ID = 48;
+    const string VALUE_DISPLAY = 'Display Number';
+    const string FORMULA = 'source';
+    const int FORMULA_ID = 48;
+    const string LANGUAGE = 'Language';
+    const int LANGUAGE_ID = 49;
 
     // functional views
-    const WORD_FIND = 'word_find';
+    const string WORD_FIND = 'word_find';
 
     // TODO to be created
-    const WORD_LIST = 'word_list'; //
+    const string WORD_LIST = 'word_list'; //
 
     /*
-     * const for system testing
+     * const string for system testing
      */
 
     // persevered view names for unit and integration tests
@@ -179,51 +179,51 @@ class views
     // TD_* means 'test description'
     // TC_* means 'test code id'
     // TI_* means 'test id'
-    const TEST_ADD_NAME = 'System Test View';
-    const TEST_ADD_VIA_FUNC_NAME = 'System Test View added via sql function';
-    const TEST_ADD_VIA_SQL_NAME = 'System Test View added via sql insert';
-    const TEST_ADD_COM = 'System Test View Description';
-    const TEST_ADD = 'System Test View Code Id';
-    const TEST_RENAMED_NAME = 'System Test View Renamed';
-    const TEST_COMPLETE_NAME = 'System Test View Complete';
-    const TEST_EXCLUDED_NAME = 'System Test View Excluded';
-    const TEST_TABLE_NAME = 'System Test View Table';
-    const TEST_ALL_NAME = 'complete';
+    const string TEST_ADD_NAME = 'System Test View';
+    const string TEST_ADD_VIA_FUNC_NAME = 'System Test View added via sql function';
+    const string TEST_ADD_VIA_SQL_NAME = 'System Test View added via sql insert';
+    const string TEST_ADD_COM = 'System Test View Description';
+    const string TEST_ADD = 'System Test View Code Id';
+    const string TEST_RENAMED_NAME = 'System Test View Renamed';
+    const string TEST_COMPLETE_NAME = 'System Test View Complete';
+    const string TEST_EXCLUDED_NAME = 'System Test View Excluded';
+    const string TEST_TABLE_NAME = 'System Test View Table';
+    const string TEST_ALL_NAME = 'complete';
 
     // to test a system view (add word) as unit test without database
-    const TEST_FORM_NAME = 'Add word';
-    const TEST_FORM_NEW_NAME = 'Add new word';
-    const TEST_FORM_COM = 'system form to add a word';
-    const TEST_FORM = 'word_add';
-    const TEST_FORM_ID = 3;
-    const SCIENCE = 'science';
-    const SCIENCE_NAME = 'show mainly related words that are relevant in sciences';
-    const SCIENCE_ID = 50;
-    const HISTORIC_NAME = 'Historic';
-    const HISTORIC_COM = 'show mainly related words that are relevant in sciences';
-    const HISTORIC_ID = 51;
-    const BIOLOGICAL_NAME = 'Biological';
-    const BIOLOGICAL_COM = 'show what is relevant from the biological point of view';
-    const BIOLOGICAL_ID = 52;
-    const EDUCATION_NAME = 'Education';
-    const EDUCATION_COM = 'show mainly related words that are relevant in sciences';
-    const EDUCATION_ID = 53;
-    const TOURISTIC_NAME = 'Touristic';
-    const TOURISTIC_COM = 'show mainly related words that are relevant in sciences';
-    const TOURISTIC_ID = 54;
-    const GRAPH_NAME = 'Graph';
-    const GRAPH_COM = 'show mainly related words that are relevant in sciences';
-    const GRAPH_ID = 55;
-    const SIMPLE_NAME = 'Simple';
-    const SIMPLE_COM = 'show mainly related words that are relevant in sciences';
-    const SIMPLE_ID = 56;
+    const string TEST_FORM_NAME = 'Add word';
+    const string TEST_FORM_NEW_NAME = 'Add new word';
+    const string TEST_FORM_COM = 'system form to add a word';
+    const string TEST_FORM = 'word_add';
+    const int TEST_FORM_ID = 3;
+    const string SCIENCE = 'science';
+    const string SCIENCE_NAME = 'show mainly related words that are relevant in sciences';
+    const int SCIENCE_ID = 50;
+    const string HISTORIC_NAME = 'Historic';
+    const string HISTORIC_COM = 'show mainly related words that are relevant in sciences';
+    const int HISTORIC_ID = 51;
+    const string BIOLOGICAL_NAME = 'Biological';
+    const string BIOLOGICAL_COM = 'show what is relevant from the biological point of view';
+    const int BIOLOGICAL_ID = 52;
+    const string EDUCATION_NAME = 'Education';
+    const string EDUCATION_COM = 'show mainly related words that are relevant in sciences';
+    const int EDUCATION_ID = 53;
+    const string TOURISTIC_NAME = 'Touristic';
+    const string TOURISTIC_COM = 'show mainly related words that are relevant in sciences';
+    const int TOURISTIC_ID = 54;
+    const string GRAPH_NAME = 'Graph';
+    const string GRAPH_COM = 'show mainly related words that are relevant in sciences';
+    const int GRAPH_ID = 55;
+    const string SIMPLE_NAME = 'Simple';
+    const string SIMPLE_COM = 'show mainly related words that are relevant in sciences';
+    const int SIMPLE_ID = 56;
 
-    const COMPANY_RATIO_NAME = 'company ratios';
-    const NESN_2016_FS_NAME = 'Nestlé Financial Statement 2016';
-    const LINK_COM = 'System Test description for a view term link';
+    const string COMPANY_RATIO_NAME = 'company ratios';
+    const string NESN_2016_FS_NAME = 'Nestlé Financial Statement 2016';
+    const string LINK_COM = 'System Test description for a view term link';
 
     // array of view names that used for testing and remove them after the test
-    const RESERVED_NAMES = array(
+    const array RESERVED_NAMES = array(
         self::START_NAME,
         self::TEST_ADD_NAME,
         self::TEST_ADD_VIA_SQL_NAME,
@@ -235,12 +235,12 @@ class views
     );
 
     // array of view names that used for db read testing and that should not be renamed
-    const FIXED_NAMES = array(
+    const array FIXED_NAMES = array(
         self::START_NAME
     );
 
     // array of test view names create before the test
-    const TEST_VIEWS = array(
+    const array TEST_VIEWS = array(
         self::TEST_ADD_NAME,
         self::TEST_ADD_VIA_SQL_NAME,
         self::TEST_ADD_VIA_FUNC_NAME,
@@ -250,7 +250,7 @@ class views
         self::TEST_TABLE_NAME
     );
 
-    const TEST_VIEWS_AUTO_CREATE = array(
+    const array TEST_VIEWS_AUTO_CREATE = array(
         self::TEST_COMPLETE_NAME,
         self::TEST_EXCLUDED_NAME,
         self::TEST_TABLE_NAME
@@ -258,89 +258,89 @@ class views
 
 
     // system masks that have a word as the main object
-    const WORD_MASKS_IDS = [
+    const array WORD_MASKS_IDS = [
         self::WORD_ADD_ID,
         self::WORD_EDIT_ID,
         self::WORD_DEL_ID
     ];
 
     // system masks that have a verb as the main object
-    const VERB_MASKS_IDS = [
+    const array VERB_MASKS_IDS = [
         self::VERB_ADD_ID,
         self::VERB_EDIT_ID,
         self::VERB_DEL_ID
     ];
 
     // system masks that have a triple as the main object
-    const TRIPLE_MASKS_IDS = [
+    const array TRIPLE_MASKS_IDS = [
         self::TRIPLE_ADD_ID,
         self::TRIPLE_EDIT_ID,
         self::TRIPLE_DEL_ID
     ];
 
     // system masks that have a source as the main object
-    const SOURCE_MASKS_IDS = [
+    const array SOURCE_MASKS_IDS = [
         self::SOURCE_ADD_ID,
         self::SOURCE_EDIT_ID,
         self::SOURCE_DEL_ID
     ];
 
     // system masks that have a reference as the main object
-    const REF_MASKS_IDS = [
+    const array REF_MASKS_IDS = [
         self::REF_ADD_ID,
         self::REF_EDIT_ID,
         self::REF_DEL_ID
     ];
 
     // system masks that have a group as the main object
-    const GROUP_MASKS_IDS = [
+    const array GROUP_MASKS_IDS = [
         self::GROUP_ADD_ID,
         self::GROUP_EDIT_ID,
         self::GROUP_DEL_ID
     ];
 
     // system masks that have a value as the main object
-    const VALUE_MASKS_IDS = [
+    const array VALUE_MASKS_IDS = [
         self::VALUE_ADD_ID,
         self::VALUE_EDIT_ID,
         self::VALUE_DEL_ID
     ];
 
     // system masks that have a formula as the main object
-    const FORMULA_MASKS_IDS = [
+    const array FORMULA_MASKS_IDS = [
         self::FORMULA_ADD_ID,
         self::FORMULA_EDIT_ID,
         self::FORMULA_DEL_ID
     ];
 
     // system masks that have a result as the main object
-    const RESULT_MASKS_IDS = [
+    const array RESULT_MASKS_IDS = [
         self::RESULT_ADD_ID,
         self::RESULT_EDIT_ID,
         self::RESULT_DEL_ID
     ];
 
     // system masks that have a view as the main object
-    const VIEW_MASKS_IDS = [
+    const array VIEW_MASKS_IDS = [
         self::VIEW_ADD_ID,
         self::VIEW_EDIT_ID,
         self::VIEW_DEL_ID
     ];
 
     // system masks that have a component as the main object
-    const COMPONENT_MASKS_IDS = [
+    const array COMPONENT_MASKS_IDS = [
         self::COMPONENT_ADD_ID,
         self::COMPONENT_EDIT_ID,
         self::COMPONENT_DEL_ID
     ];
 
     // system masks that only used to display a sandbox object
-    const SHOW_MASKS_IDS = [
+    const array SHOW_MASKS_IDS = [
         self::START_ID,
     ];
 
     // system masks that add a sandbox object
-    const ADD_MASKS_IDS = [
+    const array ADD_MASKS_IDS = [
         self::WORD_ADD_ID,
         self::VERB_ADD_ID,
         self::TRIPLE_ADD_ID,
@@ -355,7 +355,7 @@ class views
     ];
 
     // system masks that change a sandbox object
-    const EDIT_MASKS_IDS = [
+    const array EDIT_MASKS_IDS = [
         self::WORD_EDIT_ID,
         self::VERB_EDIT_ID,
         self::TRIPLE_EDIT_ID,
@@ -370,7 +370,7 @@ class views
     ];
 
     // system masks that delete a sandbox object
-    const DEL_MASKS_IDS = [
+    const array DEL_MASKS_IDS = [
         self::WORD_DEL_ID,
         self::VERB_DEL_ID,
         self::TRIPLE_DEL_ID,
@@ -385,7 +385,7 @@ class views
     ];
 
     // system masks that change or delete a sandbox object (see https://wiki.php.net/rfc/spread_operator_for_array )
-    const EDIT_DEL_MASKS_IDS = [
+    const array EDIT_DEL_MASKS_IDS = [
         self::EDIT_MASKS_IDS,
         self::DEL_MASKS_IDS,
     ];

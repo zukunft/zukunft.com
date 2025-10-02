@@ -42,30 +42,30 @@ enum change_tables: string
     // so the phrase, term and figure tables are not included here, but in the sql_db list
     // TODO should only contain the table names of past program versions
     //      to combine the log in case of a renamed class
-    const USER = 'users';
-    const WORD = 'words';
-    const WORD_USR = 'user_words';
-    const VERB = 'verbs';
-    const TRIPLE = 'triples';
-    const TRIPLE_USR = 'user_triples';
-    const VALUE = 'values';
-    const VALUE_USR = 'user_values';
-    const VALUE_LINK = 'value_links';
-    const FORMULA = 'formulas';
-    const FORMULA_USR = 'user_formulas';
-    const FORMULA_LINK = 'formula_links';
-    const FORMULA_LINK_USR = 'user_formula_links';
-    const VIEW = 'views';
-    const VIEW_USR = 'user_views';
-    const VIEW_TERM_LINK = 'term_views';
-    //const VIEW_TERM_LINK_USR = 'user_term_views';
-    const VIEW_COMPONENT = 'components';
-    const VIEW_COMPONENT_USR = 'user_components';
-    const VIEW_LINK = 'component_links';
-    const VIEW_LINK_USR = 'user_component_links';
-    const REF = 'refs';
-    const REF_USR = 'user_refs';
-    const SOURCE = 'sources';
-    const SOURCE_USR = 'user_sources';
+    const string USER = 'users';
+    const string WORD = 'words';
+    const string WORD_USR = 'user_words';
+    const string VERB = 'verbs';
+    const string TRIPLE = 'triples';
+    const string TRIPLE_USR = 'user_triples';
+    const string VALUE = 'values';
+    const string VALUE_USR = 'user_values';
+    const string VALUE_LINK = 'value_links';
+    const string FORMULA = 'formulas';
+    const string FORMULA_USR = 'user_formulas';
+    const string FORMULA_LINK = 'formula_links';
+    const string FORMULA_LINK_USR = 'user_formula_links';
+    const string VIEW = 'views';
+    const string VIEW_USR = 'user_views';
+    const string VIEW_TERM_LINK = 'term_views';
+    //const string VIEW_TERM_LINK_USR = 'user_term_views';
+    const string VIEW_COMPONENT = 'components';
+    const string VIEW_COMPONENT_USR = 'user_components';
+    const string VIEW_LINK = 'component_links';
+    const string VIEW_LINK_USR = 'user_component_links';
+    const string REF = 'refs';
+    const string REF_USR = 'user_refs';
+    const string SOURCE = 'sources';
+    const string SOURCE_USR = 'user_sources';
 
 }

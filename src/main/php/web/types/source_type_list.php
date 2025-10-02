@@ -47,7 +47,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class source_type_list extends type_list
 {
 
-    const NAME = url_var::SOURCE_TYPE;
+    const string NAME = url_var::SOURCE_TYPE;
 
     /**
      * create the HTML code to select a source type

@@ -53,28 +53,28 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 class convert_wikipedia_table
 {
 
-    const KEY_TABLE_NAME = 'table_name';
+    const string KEY_TABLE_NAME = 'table_name';
 
-    const TABLE_START = '{| class=';
-    const TABLE_END = '|}';
-    const CLASS_NAME = '"wikitable';
+    const string TABLE_START = '{| class=';
+    const string TABLE_END = '|}';
+    const string CLASS_NAME = '"wikitable';
 
-    const ROW_END = "\n";
-    const ROW_MAKER = '|-';
-    const COL_MAKER_HEADER = '!';
-    const COL_MAKER = '|';
-    const COL_MAKER_INNER = '||';
-    const NUMBER_MAKER = "'''";
-    const LINK_MAKER = "{{";
-    const LINK_FLAGDECO = "flagdeco";
-    const LINK_MONO = "mono";
-    const LINK_SORT = "sort";
-    const LINK_STYLE = "style=";
-    const LINK_MAKER_END = "}}";
-    const LINK_LONG_MAKER = "[[";
-    const LINK_LONG_MAKER_END = "]]";
-    const ITEM_IGNORE_MAKER = "rowspan";
-    const SORT_MAKER = "sort";
+    const string ROW_END = "\n";
+    const string ROW_MAKER = '|-';
+    const string COL_MAKER_HEADER = '!';
+    const string COL_MAKER = '|';
+    const string COL_MAKER_INNER = '||';
+    const string NUMBER_MAKER = "'''";
+    const string LINK_MAKER = "{{";
+    const string LINK_FLAGDECO = "flagdeco";
+    const string LINK_MONO = "mono";
+    const string LINK_SORT = "sort";
+    const string LINK_STYLE = "style=";
+    const string LINK_MAKER_END = "}}";
+    const string LINK_LONG_MAKER = "[[";
+    const string LINK_LONG_MAKER_END = "]]";
+    const string ITEM_IGNORE_MAKER = "rowspan";
+    const string SORT_MAKER = "sort";
 
     /**
      * convert a wikipedia table to a zukunft.com json string

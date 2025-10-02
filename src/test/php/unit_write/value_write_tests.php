@@ -60,10 +60,10 @@ class value_write_tests
 {
 
     // const only used for these write tests
-    const NUMBER_TEST = 123456789;
-    const NUMBER_ADD2 = 234567890;
-    const NUMBER_ADD = 987654321;
-    const NUMBER_CHANGED = 23456;
+    const int NUMBER_TEST = 123456789;
+    const int NUMBER_ADD2 = 234567890;
+    const int NUMBER_ADD = 987654321;
+    const int NUMBER_CHANGED = 23456;
 
     function run(test_cleanup $t): void
     {

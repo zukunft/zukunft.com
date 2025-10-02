@@ -42,9 +42,9 @@ class user_message
 {
     // the message types that defines what needs to be done next
     const int OK = 1;
-    //const INFO = 2;
-    //const YES_NO = 3;
-    //const CONFIRM_CANCEL = 4;
+    //const int INFO = 2;
+    //const int YES_NO = 3;
+    //const int CONFIRM_CANCEL = 4;
     const int NOK = 5;
     const int WARNING = 6;
     const int ERROR = 7;

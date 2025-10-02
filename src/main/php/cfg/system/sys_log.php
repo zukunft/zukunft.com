@@ -88,33 +88,33 @@ class sys_log extends db_object_seq_id
     // database and export JSON object field names
     // and comments used for the database creation
     // *_SQL_TYP is the sql data type used for the field
-    const TBL_COMMENT = 'for system error tracking and to measure execution times';
-    const FLD_ID = 'sys_log_id';
-    const FLD_TIME_COM = 'timestamp of the creation';
-    const FLD_TIME = 'sys_log_time';
-    const FLD_TYPE_COM = 'the level e.g. debug, info, warning, error or fatal';
-    const FLD_TYPE = 'sys_log_type_id';
-    const FLD_FUNCTION_COM = 'the function or function group for the entry e.g. db_write to measure the db write times';
-    const FLD_FUNCTION = 'sys_log_function_id';
-    const FLD_TEXT_COM = 'the short text of the log entry to identify the error and to reduce the number of double entries';
-    const FLD_TEXT = 'sys_log_text';
-    const FLD_DESCRIPTION_COM = 'the long description with all details of the log entry to solve ti issue';
-    const FLD_DESCRIPTION = 'sys_log_description';
-    const FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
-    const FLD_TRACE_COM = 'the generated code trace to local the path to the error cause';
-    const FLD_TRACE = 'sys_log_trace';
-    const FLD_USER_COM = 'the id of the user who has caused the log entry';
-    const FLD_SOLVER_COM = 'user id of the user that is trying to solve the problem';
-    const FLD_SOLVER = 'solver_id';
+    const string TBL_COMMENT = 'for system error tracking and to measure execution times';
+    const string FLD_ID = 'sys_log_id';
+    const string FLD_TIME_COM = 'timestamp of the creation';
+    const string FLD_TIME = 'sys_log_time';
+    const string FLD_TYPE_COM = 'the level e.g. debug, info, warning, error or fatal';
+    const string FLD_TYPE = 'sys_log_type_id';
+    const string FLD_FUNCTION_COM = 'the function or function group for the entry e.g. db_write to measure the db write times';
+    const string FLD_FUNCTION = 'sys_log_function_id';
+    const string FLD_TEXT_COM = 'the short text of the log entry to identify the error and to reduce the number of double entries';
+    const string FLD_TEXT = 'sys_log_text';
+    const string FLD_DESCRIPTION_COM = 'the long description with all details of the log entry to solve ti issue';
+    const string FLD_DESCRIPTION = 'sys_log_description';
+    const sql_field_type FLD_DESCRIPTION_SQL_TYP = sql_field_type::TEXT;
+    const string FLD_TRACE_COM = 'the generated code trace to local the path to the error cause';
+    const string FLD_TRACE = 'sys_log_trace';
+    const string FLD_USER_COM = 'the id of the user who has caused the log entry';
+    const string FLD_SOLVER_COM = 'user id of the user that is trying to solve the problem';
+    const string FLD_SOLVER = 'solver_id';
 
     // join database and export JSON object field names
-    const FLD_TIME_JSON = 'time';
-    const FLD_TIMESTAMP_JSON = 'timestamp';
-    const FLD_SOLVER_NAME = 'solver_name';
+    const string FLD_TIME_JSON = 'time';
+    const string FLD_TIMESTAMP_JSON = 'timestamp';
+    const string FLD_SOLVER_NAME = 'solver_name';
 
     // all database field names excluding the id
     // the extra user field is needed because it is common to check the log entries of others users e.g. for admin users
-    const FLD_NAMES = array(
+    const array FLD_NAMES = array(
         user_db::FLD_ID,
         self::FLD_SOLVER,
         self::FLD_TIME,
@@ -127,7 +127,7 @@ class sys_log extends db_object_seq_id
     );
 
     // field lists for the table creation
-    const FLD_LST_ALL = array(
+    const array FLD_LST_ALL = array(
         [self::FLD_TIME, sql_field_type::TIME, sql_field_default::TIME_NOT_NULL, sql::INDEX, '', self::FLD_TIME_COM],
         [self::FLD_TYPE, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, '', self::FLD_TYPE_COM],
         [self::FLD_FUNCTION, type_object::FLD_ID_SQL_TYP, sql_field_default::NOT_NULL, sql::INDEX, sys_log_function::class, self::FLD_FUNCTION_COM],

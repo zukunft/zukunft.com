@@ -42,29 +42,29 @@ use Zukunft\ZukunftCom\main\php\cfg\helper\type_object;
 class db_cl
 {
     // list of all user types that are used
-    const SYS_USER = "system_user";
-    const PHRASE_TYPE = "phrase_type";
-    const VERB = "verb";
-    const FORMULA_TYPE = "formula_type";
-    const FORMULA_LINK_TYPE = "formula_link_type";
-    const ELEMENT_TYPE = "element_type";
-    const VIEW = "view";
-    const VIEW_TYPE = "view_type";
-    const VIEW_COMPONENT_TYPE = "component_type";
-    const VIEW_COMPONENT_LINK_TYPE = "component_link_type";
-    const VIEW_COMPONENT_POS_TYPE = "position_type";
-    const REF_TYPE = "ref_type";
-    const SOURCE_TYPE = "source_type";
-    const SHARE_TYPE = "share_type";
-    const PROTECTION_TYPE = "protection_type";
-    const LANGUAGE = "language";
-    const LANGUAGE_FORM = "language_form";
-    const USER_PROFILE = "user_profile_type";
-    const LOG_STATUS = "sys_log_status";
-    const LOG_ACTION = "change_action";
-    const LOG_TABLE = "change_table";
-    const LOG_FIELD = "change_field";
-    const JOB_TYPE = "job_type";
+    const string SYS_USER = "system_user";
+    const string PHRASE_TYPE = "phrase_type";
+    const string VERB = "verb";
+    const string FORMULA_TYPE = "formula_type";
+    const string FORMULA_LINK_TYPE = "formula_link_type";
+    const string ELEMENT_TYPE = "element_type";
+    const string VIEW = "view";
+    const string VIEW_TYPE = "view_type";
+    const string VIEW_COMPONENT_TYPE = "component_type";
+    const string VIEW_COMPONENT_LINK_TYPE = "component_link_type";
+    const string VIEW_COMPONENT_POS_TYPE = "position_type";
+    const string REF_TYPE = "ref_type";
+    const string SOURCE_TYPE = "source_type";
+    const string SHARE_TYPE = "share_type";
+    const string PROTECTION_TYPE = "protection_type";
+    const string LANGUAGE = "language";
+    const string LANGUAGE_FORM = "language_form";
+    const string USER_PROFILE = "user_profile_type";
+    const string LOG_STATUS = "sys_log_status";
+    const string LOG_ACTION = "change_action";
+    const string LOG_TABLE = "change_table";
+    const string LOG_FIELD = "change_field";
+    const string JOB_TYPE = "job_type";
 
     /**
      * get the database row id for a given code_id

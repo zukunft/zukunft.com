@@ -133,6 +133,7 @@ include_once paths::MODEL_SYSTEM . 'log.php';
 include_once paths::MODEL_USER . 'user.php';
 include_once paths::MODEL_USER . 'user_db.php';
 include_once paths::MODEL_USER . 'user_message.php';
+include_once paths::SERVICE_MATH . 'calc_internal.php';
 include_once paths::SHARED_CONST . 'chars.php';
 include_once paths::SHARED_ENUM . 'change_actions.php';
 include_once paths::SHARED_ENUM . 'change_tables.php';
@@ -170,6 +171,7 @@ use Zukunft\ZukunftCom\main\php\cfg\sandbox\sandbox_multi;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source_db;
 use Zukunft\ZukunftCom\main\php\cfg\system\log;
 use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\service\math\calc_internal;
 use Zukunft\ZukunftCom\main\php\shared\const\chars;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_actions;
 use Zukunft\ZukunftCom\main\php\shared\enum\change_fields;
@@ -201,7 +203,6 @@ use Zukunft\ZukunftCom\main\php\shared\library;
 use Zukunft\ZukunftCom\main\php\shared\types\phrase_type as phrase_type_shared;
 use DateTime;
 use Exception;
-use math;
 
 class value_base extends sandbox_value
 {
@@ -218,7 +219,7 @@ class value_base extends sandbox_value
 
     // all database field names excluding the id and excluding the user specific fields
     const array FLD_NAMES = value_db::FLD_NAMES;
-    const FLD_NAMES_STD = value_db::FLD_NAMES_STD;
+    const array FLD_NAMES_STD = value_db::FLD_NAMES_STD;
     const array FLD_NAMES_USR = value_db::FLD_NAMES_USR;
     const array FLD_NAMES_NUM_USR = value_db::FLD_NAMES_NUM_USR;
     const array FLD_ALL_TIME_SERIES = value_db::FLD_ALL_TIME_SERIES;
@@ -1237,7 +1238,7 @@ class value_base extends sandbox_value
                                                 $r_part = str_replace($wrd_symbol, $this->value(), $r_part);
                                                 log_debug('replace done (' . $r_part . ')');
                                                 // TODO separate time from value words
-                                                $calc = new math();
+                                                $calc = new calc_internal();
                                                 $result = $calc->parse($r_part);
                                             } else {
                                                 log_err('Formula "' . $formula_text . '" seems to be not a valid scaling formula, because the words are not defined as scaling words.', 'scale');

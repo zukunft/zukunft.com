@@ -106,14 +106,14 @@ class formula extends sandbox_code_id
      */
 
     // curl views
-    const VIEW_ADD = views::FORMULA_ADD;
-    const VIEW_EDIT = views::FORMULA_EDIT;
-    const VIEW_DEL = views::FORMULA_DEL;
+    const string VIEW_ADD = views::FORMULA_ADD;
+    const string VIEW_EDIT = views::FORMULA_EDIT;
+    const string VIEW_DEL = views::FORMULA_DEL;
 
     // curl message id
-    const MSG_ADD = msg_id::FORMULA_ADD;
-    const MSG_EDIT = msg_id::FORMULA_EDIT;
-    const MSG_DEL = msg_id::FORMULA_DEL;
+    const msg_id MSG_ADD = msg_id::FORMULA_ADD;
+    const msg_id MSG_EDIT = msg_id::FORMULA_EDIT;
+    const msg_id MSG_DEL = msg_id::FORMULA_DEL;
 
 
     /*
@@ -351,10 +351,10 @@ class formula extends sandbox_code_id
      * display the history of a formula
      */
     function dsp_hist(
-        int        $page,
-        int        $size,
-        string     $call = '',
-        back_trace $back = null
+        int         $page,
+        int         $size,
+        string      $call = '',
+        ?back_trace $back = null
     ): string
     {
         $log_dsp = new user_log_display();

@@ -95,10 +95,10 @@ include_once paths::SHARED_ENUM . 'change_fields.php';
 class api_tests
 {
     // path
-    const OPEN_API_PATH = 'src/main/resources/openapi/zukunft_com_api.yaml';
+    const string OPEN_API_PATH = 'src/main/resources/openapi/zukunft_com_api.yaml';
 
-    const API_PATH = 'api/';
-    const PHP_DEFAULT_FILENAME = 'index.php';
+    const string API_PATH = 'api/';
+    const string PHP_DEFAULT_FILENAME = 'index.php';
 
 
     /*

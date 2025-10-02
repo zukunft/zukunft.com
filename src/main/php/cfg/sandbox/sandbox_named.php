@@ -131,8 +131,8 @@ class sandbox_named extends sandbox
 
     // object specific database and JSON object field names
     // *_SQL_TYP is the sql data type used for the field
-    const FLD_NAME = 'name';
-    const FLD_NAME_SQL_TYP = sql_field_type::NAME; // in many cases overwritten by NAME_UNIQUE
+    const string FLD_NAME = 'name';
+    const sql_field_type FLD_NAME_SQL_TYP = sql_field_type::NAME; // in many cases overwritten by NAME_UNIQUE
 
 
     /*

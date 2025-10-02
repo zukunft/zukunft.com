@@ -67,11 +67,11 @@ use Zukunft\ZukunftCom\main\php\shared\types\verbs;
 class test_cleanup extends test_api
 {
     // queries to check if removing of the test rows is complete
-    const CLEAN_CHECK_WORDS = 'db/cleanup/test_words.sql';
-    const CLEAN_CHECK_TRIPLES = 'db/cleanup/test_triples.sql';
-    const CLEAN_CHECK_FORMULAS = 'db/cleanup/test_formulas.sql';
-    const CLEAN_CHECK_SOURCES = 'db/cleanup/test_sources.sql';
-    const CLEAN_CHECKS = array(
+    const string CLEAN_CHECK_WORDS = 'db/cleanup/test_words.sql';
+    const string CLEAN_CHECK_TRIPLES = 'db/cleanup/test_triples.sql';
+    const string CLEAN_CHECK_FORMULAS = 'db/cleanup/test_formulas.sql';
+    const string CLEAN_CHECK_SOURCES = 'db/cleanup/test_sources.sql';
+    const array CLEAN_CHECKS = array(
         self::CLEAN_CHECK_WORDS,
         self::CLEAN_CHECK_TRIPLES,
         self::CLEAN_CHECK_FORMULAS,

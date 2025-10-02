@@ -86,7 +86,7 @@ global $system_users;
 class user_list
 {
     // internal db field name to count the changes by on user
-    const FLD_CHANGES = 'changes';
+    const string FLD_CHANGES = 'changes';
 
     public ?array $lst = null;  // the list of users
     public array $code_id_hash = [];

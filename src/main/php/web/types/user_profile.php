@@ -47,7 +47,7 @@ use Zukunft\ZukunftCom\main\php\shared\url_var;
 class user_profile extends type_list
 {
 
-    const NAME = url_var::USER_PROFILE;
+    const string NAME = url_var::USER_PROFILE;
 
     /**
      * create the HTML code to select a user profile

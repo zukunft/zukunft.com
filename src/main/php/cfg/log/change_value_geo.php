@@ -70,7 +70,7 @@ class change_value_geo extends change_value
      */
 
     // user log database and JSON object field names for named user sandbox objects
-    const TBL_COMMENT = 'to log all geo value changes done by any user on all kind of values (table, prime, big and standard';
+    const string TBL_COMMENT = 'to log all geo value changes done by any user on all kind of values (table, prime, big and standard';
 
     // field list to log the actual change of the value with a standard group id
     const array FLD_LST_CHANGE = array(

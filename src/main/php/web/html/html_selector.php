@@ -41,8 +41,8 @@ use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
 
 class html_selector
 {
-    const TYPE_SELECT = "select";
-    const TYPE_DATALIST = "datalist";
+    const string TYPE_SELECT = "select";
+    const string TYPE_DATALIST = "datalist";
 
     // the parameters
     public ?array $lst = null;      // list of objects from which the user can select

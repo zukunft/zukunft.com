@@ -161,18 +161,18 @@ class user extends db_id_object_non_sandbox
      */
 
     // comments used for the database creation
-    const TBL_COMMENT = 'for users including system users; only users can add data';
+    const string TBL_COMMENT = 'for users including system users; only users can add data';
 
-    // forward the const to enable usage of $this::CONST_NAME
-    const FLD_ID = user_db::FLD_ID;
-    const FLD_NAMES = user_db::FLD_NAMES;
-    const FLD_LST_ALL = user_db::FLD_LST_ALL;
+    // forward the const string to enable usage of $this::CONST_NAME
+    const string FLD_ID = user_db::FLD_ID;
+    const array FLD_NAMES = user_db::FLD_NAMES;
+    const array FLD_LST_ALL = user_db::FLD_LST_ALL;
 
     // the possible unique key fields of a user
-    const KEY_ID = user_db::FLD_ID;
-    const KEY_IP = user_db::FLD_IP_ADDR;
-    const KEY_NAME = user_db::FLD_NAME;
-    const KEY_EMAIL = user_db::FLD_EMAIL;
+    const string KEY_ID = user_db::FLD_ID;
+    const string KEY_IP = user_db::FLD_IP_ADDR;
+    const string KEY_NAME = user_db::FLD_NAME;
+    const string KEY_EMAIL = user_db::FLD_EMAIL;
 
     /*
      * object vars
