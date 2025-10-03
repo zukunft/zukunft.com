@@ -68,6 +68,8 @@ class system_views_ui_tests
 
         // TODO review and combine with read db tests
         $t->html_view_test($test_page, view_shared::WORD_ADD, $t);
+
+        // TODO add a word edit page with no usage to test the switch to the exception message
     }
 
 }

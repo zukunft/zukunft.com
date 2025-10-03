@@ -426,7 +426,7 @@ class sandbox_code_id extends sandbox_typed
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
-        if ($sbx->code_id <> $this->code_id) {
+        if ($sbx->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_CODE_ID,

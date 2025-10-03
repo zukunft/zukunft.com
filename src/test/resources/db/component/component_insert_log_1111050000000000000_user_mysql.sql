@@ -1,4 +1,5 @@
-CREATE OR REPLACE FUNCTION component_insert_log_1111050000000000_user
+DROP PROCEDURE IF EXISTS component_insert_log_1111050000000000000_user;
+CREATE PROCEDURE component_insert_log_1111050000000000000_user
     (_user_id                    bigint,
      _change_action_id           smallint,
      _field_id_component_name    smallint,
@@ -8,8 +9,7 @@ CREATE OR REPLACE FUNCTION component_insert_log_1111050000000000_user
      _description                text,
      _field_id_component_type_id smallint,
      _type_name                  text,
-     _component_type_id          smallint) RETURNS bigint AS
-$$
+     _component_type_id          smallint)
 BEGIN
 
     INSERT INTO changes ( user_id, change_action_id, change_field_id,    new_value, row_id)
@@ -23,22 +23,19 @@ BEGIN
                 (component_id, user_id, component_name, description, component_type_id)
          SELECT _component_id,_user_id,_component_name,_description,_component_type_id ;
 
-END
-$$ LANGUAGE plpgsql;
+END;
 
-PREPARE component_insert_log_1111050000000000_user_call
-        (bigint, smallint, smallint, text, bigint, smallint, text, smallint, text, smallint) AS
-    SELECT component_insert_log_1111050000000000_user
-        ($1,$2,$3,$4,$5,$6,$7,$8,$9, $10);
+PREPARE component_insert_log_1111050000000000000_user_call FROM
+    'SELECT component_insert_log_1111050000000000000_user (?,?,?,?,?,?,?,?,?,?)';
 
-SELECT component_insert_log_1111050000000000_user (
-               3::bigint,
-               1::smallint,
-               51::smallint,
-               'Word'::text,
-               1::bigint,
-               52::smallint,
-               'simply show the word or triple name'::text,
-               53::smallint,
-               'phrase_name'::text,
-               8::smallint);
+SELECT component_insert_log_1111050000000000000_user (
+               3,
+               1,
+               51,
+               'Word',
+               1,
+               52,
+               'simply show the word or triple name',
+               53,
+               'phrase_name',
+               8);

@@ -484,7 +484,7 @@ class term_view extends sandbox_link
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
 
-        if ($sbx->description <> $this->description) {
+        if ($sbx->description !== $this->description) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
@@ -500,7 +500,7 @@ class term_view extends sandbox_link
             );
         }
 
-        if ($sbx->predicate_id() <> $this->predicate_id()) {
+        if ($sbx->predicate_id() !== $this->predicate_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_link_type::FLD_ID,

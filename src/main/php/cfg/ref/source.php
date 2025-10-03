@@ -634,7 +634,7 @@ class source extends sandbox_code_id
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
-        if ($sbx->type_id() <> $this->type_id()) {
+        if ($sbx->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_TYPE,
@@ -649,7 +649,7 @@ class source extends sandbox_code_id
                 $sbx->type_id()
             );
         }
-        if ($sbx->url() <> $this->url()) {
+        if ($sbx->url() !== $this->url()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_URL,

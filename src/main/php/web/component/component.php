@@ -113,6 +113,10 @@ class component extends sandbox_code_id
 
     // the code_id for the message that should be shown to the user and that should be translated to the frontend language
     public ?msg_id $ui_msg_code_id = null;
+    // TODO Prio 2 use a message id chain instead
+    public ?msg_id $ui_msg_code_id_vars = null;
+    public ?msg_id $ui_msg_code_id_exception = null;
+    public ?float $ui_msg_value_exception = null;
 
     // mainly for table components
     public ?phrase $phr_row = null;     // the main phrase to select the table rows
@@ -144,6 +148,24 @@ class component extends sandbox_code_id
             $this->ui_msg_code_id = $mtr->get($json_array[json_fields::UI_MSG_CODE_ID]);
         } else {
             $this->ui_msg_code_id = null;
+        }
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID_VARS, $json_array)) {
+            global $mtr;
+            $this->ui_msg_code_id_vars = $mtr->get($json_array[json_fields::UI_MSG_CODE_ID_VARS]);
+        } else {
+            $this->ui_msg_code_id_vars = null;
+        }
+        if (array_key_exists(json_fields::UI_MSG_CODE_ID_EXCEPTION, $json_array)) {
+            global $mtr;
+            $this->ui_msg_code_id_exception = $mtr->get($json_array[json_fields::UI_MSG_CODE_ID_EXCEPTION]);
+        } else {
+            $this->ui_msg_code_id_exception = null;
+        }
+        if (array_key_exists(json_fields::UI_MSG_CODE_VAL_EXCEPTION, $json_array)) {
+            global $mtr;
+            $this->ui_msg_value_exception = $json_array[json_fields::UI_MSG_CODE_VAL_EXCEPTION];
+        } else {
+            $this->ui_msg_value_exception = null;
         }
         if (array_key_exists(json_fields::POSITION, $json_array)) {
             $this->position = $json_array[json_fields::POSITION];
@@ -179,6 +201,9 @@ class component extends sandbox_code_id
     {
         $vars = parent::api_array();
         $vars[json_fields::UI_MSG_CODE_ID] = $this->ui_msg_code_id?->value;
+        $vars[json_fields::UI_MSG_CODE_ID_VARS] = $this->ui_msg_code_id_vars?->value;
+        $vars[json_fields::UI_MSG_CODE_ID_EXCEPTION] = $this->ui_msg_code_id_exception?->value;
+        $vars[json_fields::UI_MSG_CODE_VAL_EXCEPTION] = $this->ui_msg_value_exception;
         if ($this->position != 0 or $this->link_id != 0) {
             $vars[json_fields::POSITION] = $this->position;
         }

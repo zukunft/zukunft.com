@@ -1270,7 +1270,7 @@ class view extends sandbox_code_id
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
-        if ($sbx->type_id() <> $this->type_id()) {
+        if ($sbx->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_db::FLD_TYPE,
@@ -1293,7 +1293,7 @@ class view extends sandbox_code_id
                 $msk_typ_cac
             );
         }
-        if ($sbx->style_id() <> $this->style_id()) {
+        if ($sbx->style_id() !== $this->style_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . view_db::FLD_STYLE,

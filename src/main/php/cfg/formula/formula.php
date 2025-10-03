@@ -2937,7 +2937,7 @@ class formula extends sandbox_code_id
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
-        if ($sbx->type_id() <> $this->type_id()) {
+        if ($sbx->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_TYPE,
@@ -2952,7 +2952,7 @@ class formula extends sandbox_code_id
                 $sbx->type_id()
             );
         }
-        if ($sbx->ref_text <> $this->ref_text) {
+        if ($sbx->ref_text !== $this->ref_text) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_FORMULA_TEXT,
@@ -2967,7 +2967,7 @@ class formula extends sandbox_code_id
                 $sbx->ref_text
             );
         }
-        if ($sbx->usr_text <> $this->usr_text) {
+        if ($sbx->usr_text !== $this->usr_text) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_FORMULA_USER_TEXT,
@@ -2982,7 +2982,7 @@ class formula extends sandbox_code_id
                 $sbx->usr_text
             );
         }
-        if ($sbx->need_all_val <> $this->need_all_val) {
+        if ($sbx->need_all_val !== $this->need_all_val) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_ALL_NEEDED,
@@ -2997,7 +2997,7 @@ class formula extends sandbox_code_id
                 $sbx->need_all_val
             );
         }
-        if ($sbx->ref_text <> $this->ref_text
+        if ($sbx->ref_text !== $this->ref_text
             or $sbx->type_id() <> $this->type_id()
             or $sbx->need_all_val <> $this->need_all_val
             or $this->last_update == null) {
@@ -3007,7 +3007,7 @@ class formula extends sandbox_code_id
                 sql_field_type::TIME
             );
         }
-        if ($sbx->view_id() <> $this->view_id()) {
+        if ($sbx->view_id() !== $this->view_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_VIEW,
@@ -3022,7 +3022,7 @@ class formula extends sandbox_code_id
                 $sbx->view
             );
         }
-        if ($sbx->usage() <> $this->usage()) {
+        if ($sbx->usage() !== $this->usage()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . formula_db::FLD_USAGE,

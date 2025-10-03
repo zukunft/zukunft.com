@@ -111,6 +111,8 @@ enum messages: string
     const string VAR_FORMULA_CHK = 'VarFormulaCheck';
     // the name of a class
     const string VAR_CLASS_NAME = 'VarClassName';
+    // value how many times the object is referenced
+    const string VAR_USAGE = 'VarUsage';
     // the share permission of a sandbox object
     const string VAR_SHARE = 'VarShare';
     // the share permission of the compare sandbox object
@@ -905,6 +907,10 @@ enum messages: string
         . self::VAR_START . self::VAR_NAME . self::VAR_END
         . ' failed.';
 
+    case SYS_MSG_USAGE = 'Used '
+        . self::VAR_START . self::VAR_USAGE . self::VAR_END
+        . ' times';
+
 
     case JOB_FORMULA_MISSING = 'Job '
         . self::VAR_START . self::VAR_ID . self::VAR_END
@@ -1063,6 +1069,8 @@ enum messages: string
     case FORM_TITLE_CONFIRM_EDIT = 'form_title_confirm_edit';
     case FORM_TITLE_CONFIRM_DEL = 'form_title_confirm_del';
     case SYSTEM_SUB_TITLE_USAGE = 'system_sub_title_usage';
+    case SYSTEM_SUB_TITLE_VAR_USAGE = 'system_sub_title_var_usage';
+    case SYSTEM_SUB_TITLE_NO_USAGE = 'system_sub_title_no_usage';
     case SYSTEM_SUB_TITLE_VALUES = 'system_sub_title_values';
     case SYSTEM_TITLE_ABOUT = 'system_title_about';
     case SYSTEM_TITLE_SETUP = 'system_title_setup';

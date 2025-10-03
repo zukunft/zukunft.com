@@ -297,13 +297,13 @@ class view_exe extends view_base
         if ($add_cmp < 0 or $add_cmp > 0) {
             // show the fields inactive, because the assign fields are active
             $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_8, "disabled");
-            $result .= $this->dsp_type_selector($script, view_styles::COL_SM_4, "disabled");
+            //$result .= $this->dsp_type_selector($script, view_styles::COL_SM_4, "disabled");
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, "Comment:", "", "disabled");
         } else {
             // show the fields inactive, because the assign fields are active
             $result .= $html->dsp_form_text("name", $this->name, "Name:", view_styles::COL_SM_8);
-            $result .= $this->dsp_type_selector($script, view_styles::COL_SM_4, "");
+            $result .= $this->dsp_type_selector($script);
             $result .= '</div>';
             $result .= $html->dsp_form_text_big("description", $this->description, "Comment:");
             $result .= $html->dsp_form_end('', $back, "/http/view_del.php?id=" . $this->id() . "&back=" . $back);
@@ -347,14 +347,12 @@ class view_exe extends view_base
 
     /**
      * @param string $form the name of the html form
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return string the html code for the view type selector
      */
-    private function dsp_type_selector(string $form, string $class, string $attribute, ?type_lists $typ_lst): string
-    {
-        //$sel->bs_class = $class;
+    private function dsp_type_selector(string $form): string
+    {//$sel->bs_class = $class;
         //$sel->attribute = $attribute;
-        return $typ_lst->html_view_types->selector($form);
+        return null->html_view_types->selector($form);
     }
 
     /**
@@ -422,10 +420,10 @@ class view_exe extends view_base
      * display the history of a view
      */
     function dsp_hist(
-        int        $page,
-        int        $size,
-        string     $call,
-        back_trace $back = null
+        int         $page,
+        int         $size,
+        string      $call,
+        ?back_trace $back = null
     ): string
     {
         $log_dsp = new user_log_display();

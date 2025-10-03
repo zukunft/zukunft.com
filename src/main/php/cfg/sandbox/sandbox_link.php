@@ -1292,7 +1292,7 @@ class sandbox_link extends sandbox
         }
         // the link type cannot be changed by the user, because this would be another link
         if (!$usr_tbl) {
-            if ($sbx->from_id() <> $this->from_id()) {
+            if ($sbx->from_id() !== $this->from_id()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->from_field(),
@@ -1308,7 +1308,7 @@ class sandbox_link extends sandbox
                     $sbx->fob()
                 );
             }
-            if ($sbx->to_id() <> $this->to_id()) {
+            if ($sbx->to_id() !== $this->to_id()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . $this->to_field(),

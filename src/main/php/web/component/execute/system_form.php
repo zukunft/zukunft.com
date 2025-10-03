@@ -142,7 +142,7 @@ class system_form extends component
      * @param db_object_dsp $dbo the object
      * @return string the html code to show the object name to the user
      */
-    function usage(db_object_dsp $dbo): string
+    function show_usage(db_object_dsp $dbo): string
     {
         return $dbo->name();
     }
@@ -474,7 +474,7 @@ class system_form extends component
         db_object_dsp|triple $dbo,
         string               $form_name,
         string               $code_id = '',
-        phrase_list          $phr_lst = null,
+        ?phrase_list         $phr_lst = null,
         bool                 $test_mode = false
     ): string
     {
@@ -536,7 +536,7 @@ class system_form extends component
         db_object_dsp|triple $dbo,
         string               $form_name,
         string               $code_id = '',
-        phrase_list          $phr_lst = null,
+        ?phrase_list         $phr_lst = null,
         bool                 $test_mode = false
     ): string
     {
@@ -598,7 +598,7 @@ class system_form extends component
         db_object_dsp|triple $dbo,
         string               $form_name,
         string               $code_id = '',
-        phrase_list          $phr_lst = null,
+        ?phrase_list         $phr_lst = null,
         bool                 $test_mode = false
     ): string
     {
@@ -644,7 +644,7 @@ class system_form extends component
         db_object_dsp|triple $dbo,
         string               $form_name,
         string               $code_id = '',
-        phrase_list          $phr_lst = null,
+        ?phrase_list         $phr_lst = null,
         bool                 $test_mode = false
     ): string
     {

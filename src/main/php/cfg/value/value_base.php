@@ -2432,7 +2432,7 @@ class value_base extends sandbox_value
         // in the user table the source is part of the index to allow several sources for the same value
         // but only if any other field has been updated, update the last_update field also
         if (!$lst->is_empty_except_internal_fields()) {
-            if ($sbx->source_id() <> $this->source_id() or $sc_par_lst->is_usr_tbl()) {
+            if ($sbx->source_id() !== $this->source_id() or $sc_par_lst->is_usr_tbl()) {
                 if ($sc_par_lst->incl_log()) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,

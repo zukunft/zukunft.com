@@ -2771,7 +2771,7 @@ class triple extends sandbox_link_named
 
         // for triple the type is the phrase type
         // the type is object specific that why it is not part of sandbox_link_types
-        if ($sbx->type_id() <> $this->type_id()) {
+        if ($sbx->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
@@ -2796,7 +2796,7 @@ class triple extends sandbox_link_named
 
         // the link type cannot be changed by the user, because this would be another link
         if (!$usr_tbl) {
-            if ($sbx->verb_id() <> $this->verb_id()) {
+            if ($sbx->verb_id() !== $this->verb_id()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . verb_db::FLD_ID,
@@ -2886,7 +2886,7 @@ class triple extends sandbox_link_named
             }
         }
         // TODO check if the excluded field is not already added by the sandbox function
-        if ($sbx->is_excluded() <> $this->is_excluded()) {
+        if ($sbx->is_excluded() !== $this->is_excluded()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
@@ -2905,7 +2905,7 @@ class triple extends sandbox_link_named
                 sql_db::FLD_EXCLUDED_SQL_TYP
             );
         }
-        if ($sbx->name_given() <> $this->name_given()) {
+        if ($sbx->name_given() !== $this->name_given()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_NAME_GIVEN,
@@ -2923,7 +2923,7 @@ class triple extends sandbox_link_named
         // TODO add test case
         // if the user has not changed the name or the give name the generated name does not need to be taken into account
         if (!$usr_tbl and ($sbx->name != '' or $sbx->name_given() != '')) {
-            if ($sbx->name_generated() <> $this->name_generated()) {
+            if ($sbx->name_generated() !== $this->name_generated()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_NAME_AUTO,
@@ -2939,7 +2939,7 @@ class triple extends sandbox_link_named
                 );
             }
         }
-        if ($sbx->weight <> $this->weight) {
+        if ($sbx->weight !== $this->weight) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_WIGHT,
@@ -2955,7 +2955,7 @@ class triple extends sandbox_link_named
             );
         }
         // TODO rename to usage
-        if ($sbx->values <> $this->values) {
+        if ($sbx->values !== $this->values) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_VALUES,
@@ -2970,7 +2970,7 @@ class triple extends sandbox_link_named
                 $sbx->values
             );
         }
-        if ($sbx->view_id() <> $this->view_id()) {
+        if ($sbx->view_id() !== $this->view_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . triple_db::FLD_VIEW,

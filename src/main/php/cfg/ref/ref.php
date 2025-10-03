@@ -1456,7 +1456,7 @@ class ref extends sandbox_link
         if (!$usr_tbl) {
             // for insert into the standard table the type field should always be included
             // because it is part of the prime index
-            if ($sbx->predicate_id() <> $this->predicate_id() or $sc_par_lst->is_insert()) {
+            if ($sbx->predicate_id() !== $this->predicate_id() or $sc_par_lst->is_insert()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . ref_type::FLD_ID,
@@ -1481,7 +1481,7 @@ class ref extends sandbox_link
             }
         }
         if ($sc_par_lst->is_insert()) {
-            if ($sbx->phrase_id() <> $this->phrase_id()) {
+            if ($sbx->phrase_id() !== $this->phrase_id()) {
                 if ($do_log) {
                     $lst->add_field(
                         sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_ID,
@@ -1497,7 +1497,7 @@ class ref extends sandbox_link
                 );
             }
         }
-        if ($sbx->external_key() <> $this->external_key()) {
+        if ($sbx->external_key() !== $this->external_key()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_EX_KEY,
@@ -1516,7 +1516,7 @@ class ref extends sandbox_link
                 $old_key
             );
         }
-        if ($sbx->url() <> $this->url()) {
+        if ($sbx->url() !== $this->url()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . ref_db::FLD_URL,
@@ -1531,7 +1531,7 @@ class ref extends sandbox_link
                 $sbx->url()
             );
         }
-        if ($sbx->source()?->id() <> $this->source()?->id()) {
+        if ($sbx->source()?->id() !== $this->source()?->id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . source_db::FLD_ID,
@@ -1546,7 +1546,7 @@ class ref extends sandbox_link
                 $sbx->source()
             );
         }
-        if ($sbx->description <> $this->description) {
+        if ($sbx->description !== $this->description) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,

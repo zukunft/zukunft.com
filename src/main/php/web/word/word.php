@@ -137,6 +137,9 @@ class word extends sandbox_code_id
     // the main parent phrase
     private ?phrase $parent = null;
 
+    // the number of references to this word object
+    private int $usage = 0;
+
     // the default view
     private ?view $msk = null;
 
@@ -159,6 +162,9 @@ class word extends sandbox_code_id
                 $this->set_plural($url_array[url_var::PLURAL]);
             } else {
                 $this->set_plural(null);
+            }
+            if (array_key_exists(url_var::USAGE, $url_array)) {
+                $this->usage = $url_array[url_var::USAGE];
             }
             if (array_key_exists(url_var::VIEW, $url_array)) {
                 if ($url_array[url_var::VIEW] != null) {
@@ -197,6 +203,11 @@ class word extends sandbox_code_id
         } else {
             $this->set_plural(null);
         }
+        if (array_key_exists(json_fields::USAGE, $json_array)) {
+            $this->usage = $json_array[json_fields::USAGE];
+        } else {
+            $this->usage = 0;
+        }
         if (array_key_exists(json_fields::PARENT, $json_array)) {
             $this->set_parent($json_array[json_fields::PARENT]);
         } else {
@@ -220,6 +231,7 @@ class word extends sandbox_code_id
         $vars = parent::api_array();
 
         $vars[json_fields::PLURAL] = $this->get_plural();
+        // usage is not included here because this system value is never updated by the frontend
         if ($this->has_parent()) {
             $vars[json_fields::PARENT] = $this->parent()->api_array();
         }
@@ -249,6 +261,11 @@ class word extends sandbox_code_id
     function parent(): ?phrase
     {
         return $this->parent;
+    }
+
+    function usage(): ?int
+    {
+        return $this->usage;
     }
 
     function set_view_id(?int $view_id): void

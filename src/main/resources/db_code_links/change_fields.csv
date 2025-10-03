@@ -788,3 +788,8 @@ change_field_id,change_field_name,table_id,description
 788,text_value,2,
 789,geo_value,2,
 790,excluded,1,
+791,weight,7,
+792,weight,8,
+793,ui_msg_code_id_vars,18,
+794,ui_msg_code_id_exception,18,
+795,ui_msg_value_exception,18,

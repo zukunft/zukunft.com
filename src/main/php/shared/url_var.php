@@ -192,6 +192,8 @@ class url_var
     const string REVERSE_PLURAL = 'plural_reverse';
     const string URL = 'url';
     const string WEIGHT = 'weight';
+
+    const string USAGE = 'usage';
     const string EXTERNAL_KEY = 'external_key';
 
     // for triple link selections

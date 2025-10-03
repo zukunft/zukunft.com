@@ -29,13 +29,11 @@
   
 */
 
+namespace Zukunft\ZukunftCom\main\php\web\user;
+
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
-use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
-use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
-use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once paths::DB . 'sql_db.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::COMPONENT . 'component.php';
@@ -59,13 +57,16 @@ include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::VIEW . 'view.php';
 
 use Zukunft\ZukunftCom\main\php\cfg\word\triple_db;
+use Zukunft\ZukunftCom\main\php\cfg\db\sql_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_db;
+use Zukunft\ZukunftCom\main\php\cfg\formula\formula_link;
+use Zukunft\ZukunftCom\main\php\cfg\user\user_db;
+use Zukunft\ZukunftCom\main\php\cfg\verb\verb_db;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\log\user_log_display;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\system\sys_log_list as sys_log_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\user\user;
-use Zukunft\ZukunftCom\main\php\web\verb\verb;
 use Zukunft\ZukunftCom\main\php\web\view\view as view_dsp;
 use Zukunft\ZukunftCom\main\php\web\word\triple;
 

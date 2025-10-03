@@ -1,4 +1,4 @@
-PREPARE component_update_0022040000000000 FROM
+PREPARE component_update_0022040000000000000 FROM
     'UPDATE components
         SET component_name    = ?,
             description       = ?,

@@ -397,7 +397,7 @@ class db_object extends TextIdObject
      */
     function obj_url(string $view_code_id, ?string $back = ''): string
     {
-        return (new html_base())->url($view_code_id, $this->id(), $back);
+        return new html_base()->url($view_code_id, $this->id(), $back);
     }
 
 
@@ -446,7 +446,17 @@ class db_object extends TextIdObject
         $msg = 'ERROR: value not overwritten by ' . $this::class;
         // TODO Prio 0 activate
         //log_err($msg);
-        return $msg;
+        return 0;
+    }
+
+    /**
+     * @return int|null how many times the object has been referenced or used
+     */
+    function usage(): int|null
+    {
+        $msg = 'ERROR: usage not overwritten by ' . $this::class;
+        log_err($msg);
+        return 0;
     }
 
     function phrase(): phrase_dsp

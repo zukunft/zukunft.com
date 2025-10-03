@@ -515,6 +515,58 @@ class library
         return substr($text, 0, 32);
     }
 
+    /**
+     * translated a text with a list of variables to the user interface language
+     * and replace the variable names with the variable values
+     *
+     * @param array $msg_var_lst list with the variable names and the matching values
+     * @param object $mtr the translator object of the back or frontend
+     * @return string the translated text for all messages with vars
+     */
+    function msg_var_text(array $msg_var_lst, object $mtr): string
+    {
+        $part = '';
+        foreach ($msg_var_lst as $msg_var) {
+            if ($part != '') {
+                $part .= ', ';
+            }
+            $msg_txt = $mtr->txt($msg_var[0]);
+            foreach ($msg_var[1] as $key => $var) {
+                $msg_txt = $this->msg_var_replace($msg_txt, $key, $var);
+            }
+            // replace the escaped var makers
+            $msg_txt = str_replace(msg_id::VAR_ESC_START, msg_id::VAR_START, $msg_txt);
+            $msg_txt = str_replace(msg_id::VAR_ESC_END, msg_id::VAR_END, $msg_txt);
+            $part .= $msg_txt;
+        }
+        return $part;
+    }
+
+    /**
+     * replace one message var with the message value
+     *
+     * @param string $msg_txt the message text before the variable replacement
+     * @param string $key the variable name
+     * @param string $var the value to be used
+     * @return string the message text after the variable replacement
+     */
+    function msg_var_replace(string $msg_txt, string $key, string $var): string
+    {
+        // avoid using escaped var makers (probably not 100% correct)
+        $msg_txt = str_replace(
+            msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END,
+            msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END, $msg_txt);
+        // replace the var
+        $msg_txt = str_replace(
+            msg_id::VAR_START . $key . msg_id::VAR_END,
+            $var, $msg_txt);
+        // undo escaped vars
+        return str_replace(
+            msg_id::VAR_TEMP_START . msg_id::VAR_TEMP_VAR . $key . msg_id::VAR_TEMP_END,
+            msg_id::VAR_ESC_START . $key . msg_id::VAR_ESC_END, $msg_txt);
+    }
+
+
 
     /*
      * list functions (to be replaced by standard functions if possible)

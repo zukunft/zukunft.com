@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION component_update_log_0022040000000000_user
+CREATE OR REPLACE FUNCTION component_update_log_0022040000000000000_user
     (_user_id                    bigint,
      _change_action_id           smallint,
      _field_id_component_name    smallint,
@@ -33,12 +33,12 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
-PREPARE component_update_log_0022040000000000_user_call
+PREPARE component_update_log_0022040000000000000_user_call
         (bigint, smallint, smallint, text, text, bigint, smallint, text, text, smallint, text, smallint, text, smallint) AS
-SELECT component_update_log_0022040000000000_user
+SELECT component_update_log_0022040000000000000_user
         ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12, $13, $14);
 
-SELECT component_update_log_0022040000000000_user
+SELECT component_update_log_0022040000000000000_user
        (3::bigint,
         2::smallint,
         51::smallint,

@@ -82,8 +82,11 @@ if ($db_con->is_open()) {
 
             // recreate the type list api message based on the updated db
             // because this json is used for the unit tests
-            // TODO Prio 1 activate but check why the result differs to the creation of the full test
-            //$t->type_list_recreate($t);
+            // if the type_list created by this reset_db script differs
+            // from the type_list created by the test.php differs
+            // most likely new fields have not yet been added to the
+            // src/main/resources/db_code_links/change_fields.csv of the predefined fields
+            $t->type_list_recreate($t);
 
             // display the test results
             if ($t->format == text_log_format::HTML) {

@@ -1252,7 +1252,7 @@ class component_link extends sandbox_link
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
         // for the standard table the type field should always be included because it is part of the prime index
-        if ($sbx->predicate_id() <> $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
+        if ($sbx->predicate_id() !== $this->predicate_id() or (!$usr_tbl and $sc_par_lst->is_insert())) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . component_link_type::FLD_ID,
@@ -1275,7 +1275,7 @@ class component_link extends sandbox_link
                 $cmp_lnk_typ_cac
             );
         }
-        if ($sbx->pos() <> $this->pos()) {
+        if ($sbx->pos() !== $this->pos()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_ORDER_NBR,
@@ -1290,7 +1290,7 @@ class component_link extends sandbox_link
                 $sbx->pos()
             );
         }
-        if ($sbx->pos_type_id() <> $this->pos_type_id()) {
+        if ($sbx->pos_type_id() !== $this->pos_type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_POS_TYPE,
@@ -1313,7 +1313,7 @@ class component_link extends sandbox_link
                 $pos_typ_cac
             );
         }
-        if ($sbx->style_id() <> $this->style_id()) {
+        if ($sbx->style_id() !== $this->style_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . self::FLD_STYLE,

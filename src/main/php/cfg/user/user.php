@@ -2629,7 +2629,7 @@ class user extends db_id_object_non_sandbox
         // the user database fields in order of user_db::FLD_NAMES and user_db::FLD_LST_ALL
 
         // the username must be unique
-        if ($db_usr->name_or_null() <> $this->name()) {
+        if ($db_usr->name_or_null() !== $this->name()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_NAME,
@@ -2646,7 +2646,7 @@ class user extends db_id_object_non_sandbox
         }
 
         // the ip address should always be included
-        if ($db_usr->ip_addr <> $this->ip_addr) {
+        if ($db_usr->ip_addr !== $this->ip_addr) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_IP_ADDR,
@@ -2665,7 +2665,7 @@ class user extends db_id_object_non_sandbox
         // the password is not part of the standard update process
 
         // the description is mainly used for system users
-        if ($db_usr->description() <> $this->description()) {
+        if ($db_usr->description() !== $this->description()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_DESCRIPTION,
@@ -2682,7 +2682,7 @@ class user extends db_id_object_non_sandbox
         }
 
         // the code_id to select users with predefined assigned functionality that can change their username
-        if ($db_usr->code_id <> $this->code_id) {
+        if ($db_usr->code_id !== $this->code_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_CODE_ID,
@@ -2699,7 +2699,7 @@ class user extends db_id_object_non_sandbox
         }
 
         // TODO a profile with more permissions can only be set by a user that has the permission to do so
-        if ($db_usr->profile_id() <> $this->profile_id()) {
+        if ($db_usr->profile_id() !== $this->profile_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_PROFILE,
@@ -2728,7 +2728,7 @@ class user extends db_id_object_non_sandbox
 
         /* TODO the confirmation levels should created and be added
         // the confirmation type should only be changed by the system based on the confirmation process
-        if ($db_usr->type_id  <> $this->type_id) {
+        if ($db_usr->type_id !== $this->type_id) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_TYPE_ID,
@@ -2748,7 +2748,7 @@ class user extends db_id_object_non_sandbox
 
         // TODO add user_db::FLD_LEVEL
 
-        if ($db_usr->excluded <> $this->excluded) {
+        if ($db_usr->excluded !== $this->excluded) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . sql_db::FLD_EXCLUDED,
@@ -2765,7 +2765,7 @@ class user extends db_id_object_non_sandbox
         }
 
         // the is used as the name if no name is given
-        if ($db_usr->email <> $this->email) {
+        if ($db_usr->email !== $this->email) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_EMAIL,
@@ -2782,7 +2782,7 @@ class user extends db_id_object_non_sandbox
         }
 
         // in may be useful to move the name and other non-critical user parameters to a value_list
-        if ($db_usr->first_name <> $this->first_name) {
+        if ($db_usr->first_name !== $this->first_name) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_FIRST_NAME,
@@ -2799,7 +2799,7 @@ class user extends db_id_object_non_sandbox
         }
 
         // in may be useful to move the last name and other non-critical user parameters to a value_list
-        if ($db_usr->last_name <> $this->last_name) {
+        if ($db_usr->last_name !== $this->last_name) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_LAST_NAME,
@@ -2816,7 +2816,7 @@ class user extends db_id_object_non_sandbox
         }
 
         // for the last used term additional the name is written to the log
-        if ($db_usr->term_id() <> $this->term_id()) {
+        if ($db_usr->term_id() !== $this->term_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_TERM,
@@ -2833,7 +2833,7 @@ class user extends db_id_object_non_sandbox
         }
 
         // for the source id additional the source name is written to the log
-        if ($db_usr->source_id() <> $this->source_id()) {
+        if ($db_usr->source_id() !== $this->source_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . user_db::FLD_SOURCE,

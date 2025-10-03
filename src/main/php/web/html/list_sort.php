@@ -34,6 +34,7 @@ namespace Zukunft\ZukunftCom\main\php\web\html;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
+
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'table.php';
@@ -62,8 +63,8 @@ class list_sort
      * @return string html code to display a spreadsheet
      */
     function list_sort(
-        phrase      $phr,
-        data_object $dbo = null
+        phrase       $phr,
+        ?data_object $dbo = null
     ): string
     {
         // create the table
@@ -140,7 +141,6 @@ class list_sort
         $html = new html_base();
         $col_lst = new phrase_list();
         // add phrase_views class: a phrase_list with a selected component and component parameters
-
 
 
         $th = $html->th('Priority', scopes::COL);

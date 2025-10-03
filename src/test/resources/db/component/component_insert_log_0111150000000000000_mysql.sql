@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS component_insert_log_0111050000000000;
-CREATE PROCEDURE component_insert_log_0111050000000000
+DROP PROCEDURE IF EXISTS component_insert_log_0111150000000000000;
+CREATE PROCEDURE component_insert_log_0111150000000000000
     (_component_name             text,
      _user_id                    bigint,
      _change_action_id           smallint,
@@ -7,6 +7,8 @@ CREATE PROCEDURE component_insert_log_0111050000000000
      _field_id_user_id           smallint,
      _field_id_description       smallint,
      _description                text,
+     _field_id_code_id           smallint,
+     _code_id                    text,
      _field_id_component_type_id smallint,
      _type_name                  text,
      _component_type_id          smallint)
@@ -26,28 +28,34 @@ BEGIN
     INSERT INTO changes ( user_id, change_action_id, change_field_id,      new_value,   row_id)
          SELECT          _user_id,_change_action_id,_field_id_description,_description,@new_component_id ;
 
-    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value, new_id,           row_id)
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,  new_value, row_id)
+         SELECT          _user_id,_change_action_id,_field_id_code_id,_code_id,  @new_component_id ;
+
+    INSERT INTO changes ( user_id, change_action_id, change_field_id,            new_value, new_id,         row_id)
          SELECT          _user_id,_change_action_id,_field_id_component_type_id,_type_name,_component_type_id,@new_component_id ;
 
     UPDATE components
        SET user_id           = _user_id,
            description       = _description,
+           code_id           = _code_id,
            component_type_id = _component_type_id
-     WHERE components.component_id = @new_component_id;
+      WHERE components.component_id = @new_component_id;
 
 END;
 
-PREPARE component_insert_log_0111050000000000_call FROM
-    'SELECT component_insert_log_0111050000000000 (?,?, ?, ?, ?, ?, ?, ?, ?, ?)';
+PREPARE component_insert_log_0111150000000000000_call FROM
+    'SELECT component_insert_log_0111150000000000000 (?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
-SELECT component_insert_log_0111050000000000 (
-               'Word',
+SELECT component_insert_log_0111150000000000000 (
+               'form title',
                3,
                1,
                51,
                743,
                52,
-               'simply show the word or triple name',
+               'show the language specific title of a add,change or delete form',
+               63,
+               'form_title',
                53,
-               'phrase_name',
-               8);
+               'system_form_title',
+               17);

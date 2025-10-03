@@ -190,8 +190,14 @@ class json_fields
     // the position rules for a component relative to the previous component
     const string POS_TYPE = 'position_type';
 
-    // to link predefined functionality to a row e.g. to select a system view
+    // id the select a predefined text for the user that is translated into the user interface language
     const string UI_MSG_CODE_ID = 'ui_msg_code_id';
+    // id the select a second predefined text for the user that is translated into the user interface language e.g. after the number that is shown
+    const string UI_MSG_CODE_ID_VARS = 'ui_msg_code_id_vars';
+    // id the select a predefined text for the user in case of a special value that is translated into the user interface language e.g. if the number is zero
+    const string UI_MSG_CODE_ID_EXCEPTION = 'ui_msg_code_id_exception';
+    // the value of the system var the select the exception message; the value is selected by the placeholder in the ui_msg_code_id_vars text
+    const string UI_MSG_CODE_VAL_EXCEPTION = 'ui_msg_value_exception';
 
     // phrase api specific fields
     // the json field name in the api json message to identify if the term is a word, triple, verb or formula

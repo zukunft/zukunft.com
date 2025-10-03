@@ -96,6 +96,12 @@ class component_db
     const string FLD_CODE_ID_COM = 'used for system components to select the component by the program code';
     const string FLD_UI_MSG_ID_COM = 'used for system components the id to select the language specific user interface message e.g. "add word"';
     const string FLD_UI_MSG_ID = 'ui_msg_code_id';
+    const string FLD_UI_MSG_ID_VARS = 'ui_msg_code_id_vars';
+    const string FLD_UI_MSG_ID_VARS_COM = 'used for system components the id to select the language specific user interface message where some variable placeholders are replaced with system values';
+    const string FLD_UI_MSG_ID_EXCEPTION = 'ui_msg_code_id_exception';
+    const string FLD_UI_MSG_ID_EXCEPTION_COM = 'used for system components the id to select the language specific user interface exception message e.g. if the system value is zero';
+    const string FLD_UI_MSG_VAL_EXCEPTION = 'ui_msg_value_exception';
+    const string FLD_UI_MSG_VAL_EXCEPTION_COM = 'used for system components the value to select the exception message e.g. 0 (zero)';
     const sql_field_type FLD_UI_MSG_ID_SQL_TYP = sql_field_type::CODE_ID;
     // TODO move the lined phrases to a component phrase link table for n:m relation with a type for each link
     const string FLD_ROW_PHRASE_COM = 'for a tree the related value the start node';
@@ -139,12 +145,18 @@ class component_db
     const array FLD_LST_NON_CHANGEABLE = array(
         [sql_db::FLD_CODE_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_CODE_ID_COM],
         [self::FLD_UI_MSG_ID, sql_field_type::NAME_UNIQUE, sql_field_default::NULL, '', '', self::FLD_UI_MSG_ID_COM],
+        [self::FLD_UI_MSG_ID_VARS, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_UI_MSG_ID_VARS_COM],
+        [self::FLD_UI_MSG_ID_EXCEPTION, sql_field_type::NAME, sql_field_default::NULL, '', '', self::FLD_UI_MSG_ID_EXCEPTION_COM],
+        [self::FLD_UI_MSG_VAL_EXCEPTION, sql_field_type::NUMERIC_FLOAT, sql_field_default::NULL, '', '', self::FLD_UI_MSG_VAL_EXCEPTION_COM],
     );
 
     // all database field names excluding the id
     const array FLD_NAMES = array(
         sql_db::FLD_CODE_ID,
-        self::FLD_UI_MSG_ID
+        self::FLD_UI_MSG_ID,
+        self::FLD_UI_MSG_ID_VARS,
+        self::FLD_UI_MSG_ID_EXCEPTION,
+        self::FLD_UI_MSG_VAL_EXCEPTION
     );
     // list of the user specific database field names
     const array FLD_NAMES_USR = array(

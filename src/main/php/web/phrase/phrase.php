@@ -296,7 +296,7 @@ class phrase extends combine_named
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
      * @return phrase_list
      */
-    function is_or_can_be(phrase_list $phr_lst_cac = null, ?type_lists $typ_lst = null): phrase_list
+    function is_or_can_be(?phrase_list $phr_lst_cac = null, ?type_lists $typ_lst = null): phrase_list
     {
         $result = new phrase_list();
         if ($phr_lst_cac != null) {

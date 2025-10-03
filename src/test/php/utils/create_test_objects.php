@@ -1056,6 +1056,7 @@ class create_test_objects extends test_base
                 $url .= $this->url_par(url_var::SHARE, $obj->share_id());
                 $url .= $this->url_par(url_var::PROTECTION, $obj->protection_id());
                 $url .= $this->url_par(url_var::VIEW_LONG, $obj->view_id());
+                $url .= $this->url_par(url_var::USAGE, $obj->usage());
                 break;
             case verb::class;
                 $obj = $this->verb_filled();
@@ -4195,6 +4196,9 @@ class create_test_objects extends test_base
         $cmp->set_style(view_styles::COL_SM_4);
         $cmp->set_code_id(components::FORM_TITLE, $this->usr_system);
         $cmp->ui_msg_code_id = msg_id::PLEASE_SELECT;
+        $cmp->ui_msg_code_id_vars = msg_id::DONE;
+        $cmp->ui_msg_code_id_exception = msg_id::ERROR;
+        $cmp->ui_msg_value_exception = 0;
         $cmp->set_row_phrase($this->year());
         $cmp->set_col_phrase($this->canton());
         $cmp->set_col_sub_phrase($this->city());

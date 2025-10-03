@@ -1,5 +1,5 @@
-DROP PROCEDURE IF EXISTS component_update_log_0022040000000000_user;
-CREATE PROCEDURE component_update_log_0022040000000000_user
+DROP PROCEDURE IF EXISTS component_update_log_0022040000000000000_user;
+CREATE PROCEDURE component_update_log_0022040000000000000_user
     (_user_id                    bigint,
      _change_action_id           smallint,
      _field_id_component_name    smallint,
@@ -32,10 +32,10 @@ BEGIN
 
 END;
 
-PREPARE component_update_log_0022040000000000_user_call FROM
-    'SELECT component_update_log_0022040000000000_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
+PREPARE component_update_log_0022040000000000000_user_call FROM
+    'SELECT component_update_log_0022040000000000000_user (?,?,?,?,?,?,?,?,?,?,?,?,?,?)';
 
-SELECT component_update_log_0022040000000000_user
+SELECT component_update_log_0022040000000000000_user
        (3,
         2,
         51,

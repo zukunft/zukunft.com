@@ -241,6 +241,8 @@ class component_type
     const int SYSTEM_TITLE_ID = 63;
     const string SYSTEM_SUB_TITLE = "system_sub_title";
     const int SYSTEM_SUB_TITLE_ID = 145;
+    const string SYSTEM_SUB_TITLE_VAR = "system_sub_title_var";
+    const int SYSTEM_SUB_TITLE_VAR_ID = 146;
     const string SYSTEM_BODY_ABOUT = "system_body_about";
     const int SYSTEM_BODY_ABOUT_ID = 64;
     const string SYSTEM_BODY_SETUP = "system_body_setup";
@@ -589,6 +591,7 @@ class component_type
         [self::ROW_END, self::ROW_END_ID],
         [self::SYSTEM_TITLE, self::SYSTEM_TITLE_ID],
         [self::SYSTEM_SUB_TITLE, self::SYSTEM_SUB_TITLE_ID],
+        [self::SYSTEM_SUB_TITLE_VAR, self::SYSTEM_SUB_TITLE_VAR_ID],
         [self::SYSTEM_BODY_ABOUT, self::SYSTEM_BODY_ABOUT_ID],
         [self::SYSTEM_BODY_SETUP, self::SYSTEM_BODY_SETUP_ID],
         [self::SYSTEM_BODY_SIGNUP, self::SYSTEM_BODY_SIGNUP_ID],

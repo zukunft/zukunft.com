@@ -255,6 +255,7 @@ class component_exe extends component
             // fixed system pages - usage only allowed for fixed internal system pages
             component_type::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
             component_type::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
+            component_type::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->usage(), $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
             component_type::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_type::SYSTEM_BODY_SETUP => $page->setup_body(),
             component_type::SYSTEM_BODY_SIGNUP => $page->signup_body(),
@@ -309,7 +310,7 @@ class component_exe extends component
 
             // view only -
             component_type::SHOW_NAME => $form->show_name($dbo),
-            component_type::SHOW_FIELD_USAGE => $form->usage($dbo),
+            component_type::SHOW_FIELD_USAGE => $form->show_usage($dbo),
             component_type::WORD_RESULTS => $form->result($dbo),
             component_type::USED_IN_AS_TEXT => $form->used_as_text($dbo),
             component_type::USED_IN_AS_TEXT_WITH_LINK => $form->used_as_text_link($dbo),

@@ -212,7 +212,7 @@ class value_list extends list_dsp
      * @param string $back
      * @return string the html code to show the values as a table to the user
      */
-    function table(phrase_list $context_phr_lst = null, string $back = ''): string
+    function table(?phrase_list $context_phr_lst = null, string $back = ''): string
     {
         $html = new html_base();
 

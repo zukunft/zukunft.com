@@ -2,7 +2,7 @@
 
 namespace Zukunft\ZukunftCom\test\php\PHPUnit;
 
-use Zukunft\ZukunftCom\test\php\PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase;
 
 class wordTest extends TestCase
 {

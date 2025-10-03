@@ -124,7 +124,7 @@ class ListOfIdObjects extends ListOf
      * @param ?int $limit the max number of ids to show
      * @return array with the database ids of all objects of this list
      */
-    function ids(int $limit = null): array
+    function ids(?int $limit = null): array
     {
         if ($limit == null and !$this->lst_dirty) {
             $result = array_keys($this->id_pos_lst);

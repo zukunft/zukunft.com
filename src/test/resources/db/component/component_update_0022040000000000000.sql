@@ -1,4 +1,4 @@
-PREPARE component_update_0022040000000000 (text, text, smallint, bigint) AS
+PREPARE component_update_0022040000000000000 (text, text, smallint, bigint) AS
     UPDATE components
        SET component_name    = $1,
            description       = $2,

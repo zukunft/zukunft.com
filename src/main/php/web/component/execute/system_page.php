@@ -43,10 +43,12 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 include_once html_paths::COMPONENT . 'component.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED . 'library.php';
 
 use Zukunft\ZukunftCom\main\php\web\component\component;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\shared\enum\messages as msg_id;
+use Zukunft\ZukunftCom\main\php\shared\library;
 
 class system_page extends component
 {
@@ -81,6 +83,51 @@ class system_page extends component
         $result = '';
         if ($ui_msg_code_id != null) {
             $result .= $html->text_h3($mtr->txt($ui_msg_code_id));
+        }
+        return $result;
+    }
+
+    /**
+     * HTML for a subtitle
+     * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user specific frontend language
+     * @return string the html code to start a new form and display the subtitle
+     */
+    function system_sub_tile_var(
+        ?msg_id $ui_msg_code_id = null,
+        ?int $value_numeric = null,
+        ?msg_id $ui_msg_code_id_vars = null,
+        ?int $value_exception = null,
+        ?msg_id $ui_msg_code_id_exception = null
+    ): string
+    {
+        global $mtr;
+        $lib = new library();
+
+        $html = new html_base();
+        $result = '';
+        if ($value_exception != null and $value_numeric == $value_exception) {
+            if ($ui_msg_code_id_exception != null) {
+                $result .= $html->text_h3($mtr->txt($ui_msg_code_id_exception));
+            }
+        } else {
+            if ($ui_msg_code_id != null) {
+                $result .= $html->text_h3($mtr->txt($ui_msg_code_id));
+            }
+            if ($ui_msg_code_id_vars != null) {
+                $msg_id = $mtr->txt($ui_msg_code_id_vars);
+                $msg_txt = '';
+
+                // TODO Prio 1 move to a general function
+                if ($msg_id == msg_id::SYSTEM_SUB_TITLE_VAR_USAGE->value) {
+                    $msg_txt = msg_id::SYS_MSG_USAGE;
+                    $msg_txt = $lib->msg_var_replace(
+                        $msg_txt->value,
+                        msg_id::VAR_USAGE,
+                        $value_numeric);
+                }
+
+                $result .= ' ' . $html->text_h3($msg_txt);
+            }
         }
         return $result;
     }

@@ -197,7 +197,7 @@ class result_list extends list_value
     /**
      * @return string the html code to show the results as a table to the user
      */
-    function table(phrase_list $context_phr_lst = null, string $back = ''): string
+    function table(?phrase_list $context_phr_lst = null, string $back = ''): string
     {
         $html = new html_base();
 

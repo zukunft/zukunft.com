@@ -339,6 +339,15 @@
       "ui_msg_code_id": "system_sub_title_usage"
     },
     {
+      "name": "system sub title usage number",
+      "description": "show the language specific sub title and the number how many times the object has been used",
+      "type": "system_sub_title_var",
+      "code_id": "system_sub_title_value_usage",
+      "ui_msg_code_id_vars": "system_sub_title_var_usage",
+      "ui_msg_code_id_exception": "system_sub_title_no_usage",
+      "ui_msg_value_exception": 0
+    },
+    {
       "name": "system sub title values",
       "description": "show the language specific sub title for a value list",
       "type": "system_sub_title",
@@ -1486,7 +1495,7 @@
         },
         {
           "position": "16",
-          "name": "system sub title usage",
+          "name": "system sub title usage number",
           "style": "col-md-12"
         },
         {

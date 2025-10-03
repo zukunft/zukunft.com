@@ -555,7 +555,7 @@ class element extends db_object_seq_id_user
     function db_fields_changed(element $sbx): sql_par_field_list
     {
         $lst = new sql_par_field_list();
-        if ($sbx->trm_id() <> $this->trm_id()) {
+        if ($sbx->trm_id() !== $this->trm_id()) {
             $lst->add_field(
                 term::FLD_ID,
                 $this->trm_id(),

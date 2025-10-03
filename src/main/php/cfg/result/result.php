@@ -1517,14 +1517,14 @@ class result extends sandbox_value
     {
         $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
         if (!$sc_par_lst->is_standard()) {
-            if ($sbx->src_grp_id() <> $this->src_grp_id()) {
+            if ($sbx->src_grp_id() !== $this->src_grp_id()) {
                 $lst->add_field(
                     result_db::FLD_SOURCE . group::FLD_ID,
                     $this->src_grp_id(),
                     sql_field_type::INT
                 );
             }
-            if ($sbx->formula_id() <> $this->formula_id()) {
+            if ($sbx->formula_id() !== $this->formula_id()) {
                 $lst->add_field(
                     formula_db::FLD_ID,
                     $this->formula_id(),

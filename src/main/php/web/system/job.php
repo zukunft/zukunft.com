@@ -32,23 +32,26 @@
 namespace Zukunft\ZukunftCom\main\php\web\system;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
-use DateTime;
-use DateTimeInterface;
-use Exception;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
-use Zukunft\ZukunftCom\main\php\web\html\html_base;
-use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
-use Zukunft\ZukunftCom\main\php\web\user\user_message;
-use Zukunft\ZukunftCom\main\php\shared\json_fields;
-use Zukunft\ZukunftCom\main\php\shared\url_var;
 
 include_once html_paths::SANDBOX . 'db_object.php';
-include_once paths::API_OBJECT . 'controller.php';
 include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::USER . 'user_message.php';
+include_once paths::API_OBJECT . 'controller.php';
+include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED . 'api.php';
 include_once paths::SHARED . 'url_var.php';
 include_once paths::SHARED . 'json_fields.php';
+
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
+use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
+use Zukunft\ZukunftCom\main\php\web\user\user_message;
+use Zukunft\ZukunftCom\main\php\shared\const\rest_ctrl;
+use Zukunft\ZukunftCom\main\php\shared\json_fields;
+use Zukunft\ZukunftCom\main\php\shared\url_var;
+use DateTime;
+use DateTimeInterface;
+use Exception;
 
 class job extends db_object_dsp
 {
@@ -290,7 +293,7 @@ class job extends db_object_dsp
     function display_linked(?string $back = '', string $style = ''): string
     {
         $html = new html_base();
-        $url = $html->url(\Zukunft\ZukunftCom\main\php\web\rest_ctrl::VIEW, $this->id(), $back, url_var::WORDS);
+        $url = $html->url(rest_ctrl::VIEW, $this->id(), $back, url_var::WORDS);
         return $html->ref($url, $this->name(), $this->description(), $style);
     }
 
@@ -320,7 +323,7 @@ class job extends db_object_dsp
      */
     function tr(): string
     {
-        return (new html_base())->tr($this->td());
+        return new html_base()->tr($this->td());
     }
 
 

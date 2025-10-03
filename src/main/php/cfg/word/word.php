@@ -490,6 +490,7 @@ class word extends sandbox_code_id
     }
 
     /**
+     * TODO Prio 1 review the usage handling for all object and create a batch job to update the usage
      * @return int|null a higher number indicates a higher usage
      */
     function usage(): ?int
@@ -1809,7 +1810,7 @@ class word extends sandbox_code_id
         $table_id = $sc->table_id($this::class);
 
         $lst = parent::db_fields_changed($sbx, $sc_par_lst, $usr_msg);
-        if ($sbx->type_id() <> $this->type_id()) {
+        if ($sbx->type_id() !== $this->type_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . phrase::FLD_TYPE,
@@ -1831,7 +1832,7 @@ class word extends sandbox_code_id
                 $sbx->type_id(),
                 $phr_typ_cac);
         }
-        if ($sbx->view_id() <> $this->view_id()) {
+        if ($sbx->view_id() !== $this->view_id()) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_VIEW,
@@ -1847,7 +1848,7 @@ class word extends sandbox_code_id
             );
         }
         // TODO move to language forms
-        if ($sbx->plural <> $this->plural) {
+        if ($sbx->plural !== $this->plural) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_PLURAL,
@@ -1862,8 +1863,8 @@ class word extends sandbox_code_id
                 $sbx->plural
             );
         }
-        // TODO rename to usage
-        if ($sbx->values <> $this->values) {
+        // TODO Prio 0 rename to usage
+        if ($sbx->values !== $this->values) {
             if ($do_log) {
                 $lst->add_field(
                     sql::FLD_LOG_FIELD_PREFIX . word_db::FLD_VALUES,
