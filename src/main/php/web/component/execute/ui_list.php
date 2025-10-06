@@ -46,6 +46,7 @@ include_once html_paths::HELPER . 'data_object.php';
 include_once html_paths::HTML . 'list_sort.php';
 include_once html_paths::PHRASE . 'phrase.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::WORD . 'triple.php';
 include_once html_paths::WORD . 'word.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once paths::SHARED_CONST . 'triples.php';
@@ -58,6 +59,7 @@ use Zukunft\ZukunftCom\main\php\web\helper\data_object;
 use Zukunft\ZukunftCom\main\php\web\html\list_sort;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\word\triple;
 use Zukunft\ZukunftCom\main\php\web\word\word;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object;
 use Zukunft\ZukunftCom\main\php\shared\const\triples;
@@ -119,16 +121,31 @@ class ui_list extends ui_base
     }
 
     /**
-     * @param db_object $dbo the word, triple or formula object that should be shown to the user
-     * @param data_object|null $cfg the context used to create the view
+     * show a list of references related to the given object
+     * the list is first created based on the given data object
+     * but additional an update of the list is request via api
+     * if the updated list is returned from the backend the list is updated
+     *
+     * @param db_object $dbo the word or triple shown to the user and used to select the related references
+     * @param data_object|null $dto the context used to create the view
      * @return string with the html code of the external references
      */
-    function ref_list_word(db_object $dbo, ?data_object $cfg): string
+    function ref_list_word(db_object $dbo, ?data_object $dto): string
     {
-        // TODO review
-        $result = 'list of references to ' . $dbo->name() . ' ';
-        if ($cfg != null) {
-            $result .= '';
+        $result = '';
+        $phr = null;
+        if ($dbo:: class == word::class) {
+            $phr = $dbo->phrase();
+        }
+        if ($dbo:: class == triple::class) {
+            $phr = $dbo->phrase();
+        }
+        $ref_lst = $dto->ref_list_cloned();
+        if ($phr != null) {
+            $ref_lst = $ref_lst->get_by_phrase($phr);
+            $phr_lst = new phrase_list();
+            $phr_lst->add_phrase($dbo->phrase());
+            $result = $ref_lst->list($phr_lst);
         }
         return $result;
     }
@@ -203,7 +220,7 @@ class ui_list extends ui_base
      * @return string the html code of a sortable list
      */
     function list_sort(
-        phrase $phr,
+        phrase      $phr,
         data_object $dbo
     ): string
     {

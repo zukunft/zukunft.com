@@ -40,6 +40,7 @@ use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 //include_once html_paths::COMPONENT . 'component_list.php';
 include_once html_paths::FORMULA . 'formula_list.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
+include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::VALUE . 'value_list.php';
@@ -51,6 +52,7 @@ include_once paths::SHARED . 'json_fields.php';
 use Zukunft\ZukunftCom\main\php\web\component\component_list;
 use Zukunft\ZukunftCom\main\php\web\formula\formula_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\user\user;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
@@ -68,6 +70,11 @@ class data_object
 
     private word_list $wrd_lst;
     private phrase_list $phr_lst;
+    public ref_list $ref_lst {
+        set(ref_list $value) {
+            $this->ref_lst = $value;
+        }
+    }
     public value_list $val_lst {
         set(value_list $value) {
             $this->val_lst = $value;
@@ -99,6 +106,7 @@ class data_object
     {
         if ($api_json != null) {
             $this->val_lst = new value_list();
+            $this->ref_lst = new ref_list();
             $this->set_from_json($api_json);
             $this->usr = new user();
         } else {
@@ -112,6 +120,7 @@ class data_object
         $this->wrd_lst = new word_list();
         $this->phr_lst = new phrase_list();
         $this->val_lst = new value_list();
+        $this->ref_lst = new ref_list();
         $this->frm_lst = new formula_list();
         $this->msk_lst = new view_list();
         $this->cmp_lst = new component_list();
@@ -226,6 +235,11 @@ class data_object
     function phrase_list(): phrase_list
     {
         return $this->phr_lst;
+    }
+
+    function ref_list_cloned(): ref_list
+    {
+        return clone $this->ref_lst;
     }
 
     function value_list_cloned(): value_list

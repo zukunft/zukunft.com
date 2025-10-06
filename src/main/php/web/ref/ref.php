@@ -47,9 +47,10 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
+use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
-use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
 use Zukunft\ZukunftCom\main\php\web\user\user_message;
 use Zukunft\ZukunftCom\main\php\web\word\word as word_dsp;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
@@ -81,11 +82,23 @@ class ref extends db_object_dsp
 
     private ?phrase_dsp $phr;
     private ?source $source = null;
-    private ?string $external_key = null; // maybe use field name instead
-    private ?string $url = null;
+    private ?string $url = null {
+        set {
+            $this->url = $value;
+        }
+    }
+    private ?string $external_key = null {
+        set {
+            $this->external_key = $value;
+        }
+    } // maybe use field name instead
     private ?int $predicate_id;
     // the mouse over tooltip for the named object e.g. word, triple, formula, verb, view or component
-    public ?string $description = null;
+    public ?string $description = null {
+        set {
+            $this->description = $value;
+        }
+    }
 
 
     /*
@@ -123,6 +136,19 @@ class ref extends db_object_dsp
             $phr->set_obj($wrd);
             $phr->set_id($json_array[json_fields::PHRASE]);
             $this->phr = $phr;
+        } elseif (array_key_exists(json_fields::PHRASES, $json_array)) {
+            $phr = new phrase_dsp();
+            $phr_lst_json = $json_array[json_fields::PHRASES];
+            if (count($phr_lst_json) > 1) {
+                log_warning('reference ' . json_encode($json_array) . 'is not expected to have more than on phrase');
+            } elseif (count($phr_lst_json) < 1) {
+                log_warning('reference ' . json_encode($json_array)  . 'is not expected to have no phrase');
+            } else {
+                $phr = new phrase_dsp();
+                $phr_json = $phr_lst_json[0];
+                $phr->api_mapper($phr_json);
+            }
+            $this->phr = $phr;
         } else {
             $this->phr = null;
         }
@@ -134,14 +160,14 @@ class ref extends db_object_dsp
             $this->source = null;
         }
         if (array_key_exists(json_fields::EXTERNAL_KEY, $json_array)) {
-            $this->set_external_key($json_array[json_fields::EXTERNAL_KEY]);
+            $this->external_key = $json_array[json_fields::EXTERNAL_KEY];
         } else {
-            $this->set_external_key(null);
+            $this->external_key = null;
         }
         if (array_key_exists(json_fields::URL, $json_array)) {
-            $this->set_url($json_array[json_fields::URL]);
+            $this->url = $json_array[json_fields::URL];
         } else {
-            $this->set_url(null);
+            $this->url = null;
         }
         if (array_key_exists(json_fields::PREDICATE, $json_array)) {
             $this->set_predicate_id($json_array[json_fields::PREDICATE]);
@@ -149,9 +175,9 @@ class ref extends db_object_dsp
             $this->set_predicate_id();
         }
         if (array_key_exists(json_fields::DESCRIPTION, $json_array)) {
-            $this->set_description($json_array[json_fields::DESCRIPTION]);
+            $this->description = $json_array[json_fields::DESCRIPTION];
         } else {
-            $this->set_description(null);
+            $this->description = null;
         }
         return $usr_msg;
     }
@@ -195,19 +221,9 @@ class ref extends db_object_dsp
         return $ref_typ_cac->name($this->predicate_id());
     }
 
-    function set_external_key(?string $external_key): void
-    {
-        $this->external_key = $external_key;
-    }
-
     function external_key(): ?string
     {
         return $this->external_key;
-    }
-
-    function set_url(?string $url): void
-    {
-        $this->url = $url;
     }
 
     function url(): ?string
@@ -223,11 +239,6 @@ class ref extends db_object_dsp
     function predicate_id(): ?int
     {
         return $this->predicate_id;
-    }
-
-    function set_description(?string $description): void
-    {
-        $this->description = $description;
     }
 
     /**
@@ -254,10 +265,10 @@ class ref extends db_object_dsp
     function api_array(): array
     {
         $vars = parent::api_array();
-        $vars[json_fields::URL] = $this->url();
-        $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
         $vars[json_fields::PHRASE] = $this->phr?->id();
         $vars[json_fields::SOURCE] = $this->source?->id();
+        $vars[json_fields::URL] = $this->url();
+        $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
         $vars[json_fields::PREDICATE] = $this->predicate_id();
         $vars[json_fields::DESCRIPTION] = $this->description();
         return array_filter($vars, fn($value) => !is_null($value) && $value !== '');
@@ -282,6 +293,20 @@ class ref extends db_object_dsp
     function name_link(): string
     {
         return $this->type_name() . ' ' . $this->external_key();
+    }
+
+
+    /*
+     * info
+     */
+
+    function has_phrase(phrase $phr): bool
+    {
+        $result = false;
+        if ($this->phr->id() == $phr->id()) {
+            $result = true;
+        }
+        return $result;
     }
 
 

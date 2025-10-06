@@ -108,6 +108,7 @@ class test_lib
         $cto->usr1 = $usr;
 
         // set the value cache list based
+        $dto_dsp->ref_lst = $cto->ref_list_math_ui();
         $dto_dsp->val_lst = $cto->value_list_math_ui();
 
         return $dto_dsp;

@@ -47,6 +47,7 @@ class refs
     const string PI_KEY = 'Q167';
     const int PI_ID = 21;
     const string PI_URL = 'https://www.wikidata.org/wiki/Special:EntityData/Q167.json';
+    const string MATH_KEY = 'Q395';
 
     // to test changing the external key of a reference
     const string CHANGE_OLD_KEY = 'Q901028';

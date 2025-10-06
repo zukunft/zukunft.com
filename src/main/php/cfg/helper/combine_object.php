@@ -157,7 +157,7 @@ class combine_object extends CombineObject
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @returns array with the json fields to create an api message
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list $typ_lst = new api_type_list(), user|null $usr = null): array
     {
         $lib = new library();
         $vars = $this->obj()->api_json_array($typ_lst, $usr);

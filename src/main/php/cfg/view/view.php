@@ -362,7 +362,7 @@ class view extends sandbox_code_id
      * @param user|null $usr the user for whom the api message should be created which can differ from the session user
      * @return array the filled array used to create the api json message to the frontend
      */
-    function api_json_array(api_type_list $typ_lst, user|null $usr = null): array
+    function api_json_array(api_type_list $typ_lst = new api_type_list(), user|null $usr = null): array
     {
         if ($this->is_excluded() and !$typ_lst->test_mode()) {
             $vars = [];

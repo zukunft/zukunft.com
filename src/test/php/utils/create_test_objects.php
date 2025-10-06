@@ -87,6 +87,7 @@ include_once html_paths::VERB . 'verb.php';
 include_once html_paths::WORD . 'triple.php';
 include_once html_paths::REF . 'source.php';
 include_once html_paths::REF . 'ref.php';
+include_once html_paths::REF . 'ref_list.php';
 include_once html_paths::VALUE . 'value.php';
 include_once html_paths::VALUE . 'value_list.php';
 include_once html_paths::FORMULA . 'formula.php';
@@ -158,6 +159,7 @@ use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_types;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\term_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref;
+use Zukunft\ZukunftCom\main\php\cfg\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type;
 use Zukunft\ZukunftCom\main\php\cfg\ref\ref_type_list;
 use Zukunft\ZukunftCom\main\php\cfg\ref\source;
@@ -203,6 +205,7 @@ use Zukunft\ZukunftCom\main\php\web\component\component as component_dsp;
 use Zukunft\ZukunftCom\main\php\web\formula\formula as formula_dsp;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\ref\ref as ref_dsp;
+use Zukunft\ZukunftCom\main\php\web\ref\ref_list as ref_list_ui;
 use Zukunft\ZukunftCom\main\php\web\ref\source as source_dsp;
 use Zukunft\ZukunftCom\main\php\web\result\result as result_dsp;
 use Zukunft\ZukunftCom\main\php\web\sandbox\sandbox as sandbox_dsp;
@@ -1581,6 +1584,13 @@ class create_test_objects extends test_base
         $wrd = new word($this->usr1);
         $wrd->set(words::ONE_ID, words::ONE);
         $wrd->set_type(phrase_type_shared::SCALING_HIDDEN, $this->usr1);
+        return $wrd;
+    }
+
+    function word_math(): word
+    {
+        $wrd = new word($this->usr1);
+        $wrd->set(words::MATH_ID, words::MATH);
         return $wrd;
     }
 
@@ -3802,6 +3812,19 @@ class create_test_objects extends test_base
     }
 
     /**
+     * @return ref with the most often used fields set for unit testing
+     */
+    function reference_math(): ref
+    {
+        global $ref_typ_cac;
+        $ref = new ref($this->usr1);
+        $ref->set(1,
+            $this->word_math()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::MATH_KEY);
+        $ref->description = refs::PI_COM;
+        return $ref;
+    }
+
+    /**
      * @return ref with the more fields set for unit testing
      */
     function reference_plus(): ref
@@ -3877,6 +3900,28 @@ class create_test_objects extends test_base
         $ref->id = 0;
         $ref->set_phrase($this->word_filled_add()->phrase());
         return $ref;
+    }
+
+    function ref_list_math(): ref_list
+    {
+        $lst = new ref_list();
+        $lst->add($this->reference());
+        $lst->add($this->reference_math());
+        return $lst;
+    }
+
+    function ref_list_math_ui(): ref_list_ui
+    {
+        return $this->list_to_ui($this->ref_list_math());
+    }
+
+    // TODO Prio 1 easy: move all cast function from a backend object to a frontend object to the class test_cast
+    private function list_to_ui(ref_list $lst): ref_list_ui
+    {
+        $lst_ui = new ref_list_ui();
+        $api_json = $lst->api_json([api_type::INCL_PHRASES]);
+        $lst_ui->set_from_json($api_json);
+        return $lst_ui;
     }
 
     function view(): view

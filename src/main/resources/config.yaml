@@ -280,6 +280,10 @@ zukunft.com:
         top level:
           pods: 16380
           tooltip-comment: "for a fast selection of the prime responding pod the number of pods should start low but mainly the number of levels should be low"
+      api:
+        message:
+          format: "json"
+          tooltip-comment: "json for human friendly api message, yaml for as short as possible messages without compression and compressed to activate additional the compression on yaml messages; to sync the api message format between front end backend an upfront handshake message should be used; fallback is json"
       launch: 2025-06-07
       point: 2025-06-07
       hardware:

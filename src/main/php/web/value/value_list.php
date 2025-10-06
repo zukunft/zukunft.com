@@ -188,10 +188,19 @@ class value_list extends list_dsp
      * create the html code to show a list of values
      *
      * @param phrase_list $context_phr_lst list of phrases that should be excluded from the value name because humans would assume these phrases
-     * @param string $back list of the last view to suggest the best follow up view
+     * @param string $back list of the last view to suggest the best follow-up view
+     * @param string $style to define e.g. the width of the list
+     * @param int|null $limit the max number of entries to show
+     * @param int|null $page the offset if there are more entries that could be shown at once
      * @return string the html code to display the values to the user
      */
-    function list(phrase_list $context_phr_lst, string $back = ''): string
+    function list(
+        phrase_list $context_phr_lst = new phrase_list(),
+        string $back = '',
+        string $style = '',
+        ?int $limit = null,
+        ?int $page = null
+    ): string
     {
         $html = new html_base();
 
