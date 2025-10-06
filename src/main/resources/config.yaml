@@ -173,6 +173,9 @@ zukunft.com:
       default:
         tooltip-comment: "the default settings for normal users"
         backend:
+          impact:
+            phrase: "happy time points"
+            tooltip-comment: "the impact type is the default word or triple that is used to define what is most relevant"
           max change:
             daily:
               ip user: 1000

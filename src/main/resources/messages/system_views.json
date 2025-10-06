@@ -355,6 +355,13 @@
       "ui_msg_code_id": "system_sub_title_values"
     },
     {
+      "name": "system sub title references",
+      "description": "show the language specific sub title for a references list",
+      "type": "system_sub_title",
+      "code_id": "system_sub_title_references",
+      "ui_msg_code_id": "system_sub_title_references"
+    },
+    {
       "name": "system title about",
       "description": "show the language specific title for the about page",
       "type": "system_title",
@@ -1521,17 +1528,22 @@
         },
         {
           "position": "21",
+          "name": "system sub title references",
+          "style": "col-md-6"
+        },
+        {
+          "position": "22",
           "name": "ref list word",
           "position_type": "side",
           "style": "col-md-6"
         },
         {
-          "position": "22",
+          "position": "23",
           "name": "usage word",
           "position_type": "side"
         },
         {
-          "position": "23",
+          "position": "24",
           "name": "change log word",
           "position_type": "side"
         }

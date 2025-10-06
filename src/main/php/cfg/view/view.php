@@ -165,6 +165,10 @@ class view extends sandbox_code_id
     // the default display style for this component which can be overwritten by the link
     private ?type_object $style = null;
 
+    // the parent view so that this view is either overwrites some component of the parent view
+    // or is used to group some components and use the group for several view
+    // which type is use is defined by the view type
+
 
     /*
      * construct and map
