@@ -45,9 +45,11 @@ class refs
     const string WIKIDATA_TYPE = 'wikidata';
     const string PI_COM = 'pi - ratio of the circumference of a circle to its diameter';
     const string PI_KEY = 'Q167';
-    const int PI_ID = 21;
+    const int PI_ID = 22;
     const string PI_URL = 'https://www.wikidata.org/wiki/Special:EntityData/Q167.json';
     const string MATH_KEY = 'Q395';
+    const int MATH_ID = 2;
+    const string MATH_COM = 'field of study';
 
     // to test changing the external key of a reference
     const string CHANGE_OLD_KEY = 'Q901028';

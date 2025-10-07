@@ -37,6 +37,7 @@ class position_types
     // list of the view component position types that have a coded functionality
     const string BELOW = "below";
     const string SIDE = "side";
+    const string COMBINE = "combine";
 
     const string DEFAULT = self::BELOW;
     const int DEFAULT_ID = 1;

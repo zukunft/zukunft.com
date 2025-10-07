@@ -53,6 +53,7 @@ include_once html_paths::EXECUTE . 'ui_im_export.php';
 include_once html_paths::EXECUTE . 'ui_link.php';
 include_once html_paths::EXECUTE . 'ui_list.php';
 include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::PHRASE . 'phrase_list.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::TYPES . 'type_lists.php';
@@ -71,6 +72,7 @@ use Zukunft\ZukunftCom\main\php\web\component\execute\ui_im_export;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_link;
 use Zukunft\ZukunftCom\main\php\web\component\execute\ui_list;
 use Zukunft\ZukunftCom\main\php\web\helper\data_object;
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\sandbox\db_object as db_object_dsp;
 use Zukunft\ZukunftCom\main\php\shared\types\component_type;
@@ -100,6 +102,7 @@ class component_exe extends component
         string         $form_name = '',
         int            $msk_id = 0,
         ?data_object   $cfg = null,
+        ?int           $style_id = null,
         string         $back = '',
         string         $pattern = '',
         bool           $test_mode = false
@@ -144,7 +147,7 @@ class component_exe extends component
             log_info('');
         }
         $tc_id = $this->type_code_id($cfg->typ_lst_cache);
-        $result .= match ($this->type_code_id($cfg->typ_lst_cache)) {
+        $result .= match ($tc_id) {
 
             // start page - components used for the start page
             component_type::PHRASE_NAME => $base->phrase_name($dbo),
@@ -254,8 +257,6 @@ class component_exe extends component
 
             // fixed system pages - usage only allowed for fixed internal system pages
             component_type::SYSTEM_TITLE => $page->system_tile($this->ui_msg_code_id),
-            component_type::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
-            component_type::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->usage(), $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
             component_type::SYSTEM_BODY_ABOUT => $page->about_body(),
             component_type::SYSTEM_BODY_SETUP => $page->setup_body(),
             component_type::SYSTEM_BODY_SIGNUP => $page->signup_body(),
@@ -289,6 +290,8 @@ class component_exe extends component
             component_type::SELECT_VIEW => $select->view_select($dbo, $form_name, $cfg),
 
             // related
+            component_type::SYSTEM_SUB_TITLE => $page->system_sub_tile($this->ui_msg_code_id),
+            component_type::SYSTEM_SUB_TITLE_VAR => $page->system_sub_tile_var($this->ui_msg_code_id, $dbo->usage(), $this->ui_msg_code_id_vars, $this->ui_msg_value_exception, $this->ui_msg_code_id_exception),
             component_type::LIST_PARENTS_OF_WORD => $list->parents_of_word($dbo),
             component_type::LIST_CHILDREN_OF_WORD => $list->children_of_word($dbo),
             component_type::LIST_TRIPLES_OF_VERB => $list->triple_list($dbo),
@@ -298,6 +301,7 @@ class component_exe extends component
 
             // verb only -
             component_type::VERB_NAME => $base->verb_name($dbo),
+
 
             // value only -
             component_type::VALUE_NAME => $base->value_name($dbo),
@@ -323,7 +327,7 @@ class component_exe extends component
 
             // table
             component_type::VALUES_ALL => $base->all($dbo, $back),
-            component_type::VALUES_RELATED => $list->value_list($dbo, $cfg),
+            component_type::VALUES_RELATED => $list->value_list($dbo, $cfg, $style_id),
             component_type::NUMERIC_VALUE => $list->num_list($dbo, $back),
 
             // related
@@ -356,6 +360,7 @@ class component_exe extends component
             $this->log_err($result);
         }
 
+        // finally add the html style if requested
         return $result;
     }
 

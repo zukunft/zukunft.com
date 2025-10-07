@@ -30,8 +30,10 @@
     </nav>
     <br><br><br><br><br><h4>Change result</h4>
     <form action="/http/view.php" id="result_edit"><input class="form-control" type="hidden" name="m" id="m" value="27"><input
-            class="form-control" type="hidden" name="id" id="id" value="0"><input class="form-control" type="hidden"
-                                                                                  name="back" id="back" value="0"><input
+            class="form-control" type="hidden" name="id" id="id"
+            value="....0A+....0R+....0T+....0n+....0p+....12+....1C+......+......+......+......+......+......+......+......+......+"><input
+            class="form-control" type="hidden" name="back" id="back"
+            value="....0A+....0R+....0T+....0n+....0p+....12+....1C+......+......+......+......+......+......+......+......+......+"><input
             class="form-control" type="hidden" name="confirm" id="confirm" value="1">
         <div class="row col-md-12">
             <div class="form-group col-md-8"><label for="group_name">group_name</label><input class="form-control"
@@ -40,8 +42,8 @@
                                                                                               id="group_name"></div>
         </div>
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="v">v</label><input class="form-control" type="text" name="v"
-                                                                            id="v"></div>
+            <div class="form-group "><label for="v">v</label><input class="form-control" type="text" name="v" id="v">
+            </div>
         </div>
         <div class="row col-md-12">
             <div class="form-group col-md-12"><label for="description">description</label><input class="form-control"
@@ -88,7 +90,8 @@
                 <option value="4">no change</option>
             </select></div>
         </div>
-        <a href="/http/view.php?m=0" title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
+        <a href="/http/view.php?m=0&id=....0A+....0R+....0T+....0n+....0p+....12+....1C+......+......+......+......+......+......+......+......+......+"
+           title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
         <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
     </form>
 </div>

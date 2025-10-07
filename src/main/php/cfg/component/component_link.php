@@ -391,10 +391,10 @@ class component_link extends sandbox_link
             }
             // TODO Prio 2 activate
             //$vars[json_fields::TYPE] = $this->type_id();
-            if ($this->pos_type_code_id() != position_types::BELOW or $this->id() != 0) {
+            if ($this->pos_type_code_id() != position_types::DEFAULT or $this->id() != 0) {
                 $vars[json_fields::POS_TYPE] = $this->pos_type_id();
             }
-            if ($this->style != null) {
+            if ($this->style_id() != null) {
                 $vars[json_fields::STYLE] = $this->style_id();
             }
         }
@@ -521,7 +521,7 @@ class component_link extends sandbox_link
     }
 
     /**
-     * @return string the code id of the position type for the component in the linked view by the database id
+     * @return string|null the code id of the position type for the component in the linked view by the database id
      */
     function pos_type_code_id(): ?string
     {
@@ -581,7 +581,11 @@ class component_link extends sandbox_link
      */
     function style_id(): ?int
     {
-        return $this->style?->id();
+        $style_id = $this->style?->id();
+        if ($style_id == null) {
+            $style_id = $this->component()->style_id();
+        }
+        return $style_id;
     }
 
     /**

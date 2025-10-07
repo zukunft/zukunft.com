@@ -18,9 +18,9 @@
         </form>
         <div class="col-md-2">
             <ul class="nav navbar-nav">
-                <li class="active">
-                <a href="/http/view.php?m=64&id=3" title="the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests">zukunft.com system test</a>
-                </li>
+                <li class="active"><a href="/http/view.php?m=64&id=3"
+                                      title="the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests">zukunft.com
+                    system test</a></li>
                 <li class="active"></li>
                 <li class="active"><a href="/http/view.php?m=view_edit&id=29" title="adjust the view"><i
                         class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=29" title="create a new view"><i
@@ -31,10 +31,10 @@
     <br><br><br><br><br><h4>Add a new view</h4>
     <form action="/http/view.php" id="view_add"><input class="form-control" type="hidden" name="m" id="m"
                                                        value="29"><input class="form-control" type="hidden" name="id"
-                                                                         id="id" value="0"><input class="form-control"
+                                                                         id="id" value="1"><input class="form-control"
                                                                                                   type="hidden"
                                                                                                   name="back" id="back"
-                                                                                                  value="0"><input
+                                                                                                  value="1"><input
             class="form-control" type="hidden" name="confirm" id="confirm" value="1">
         <div class="row col-md-12">
             <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
@@ -76,7 +76,8 @@
                 <option value="4">no change</option>
             </select></div>
         </div>
-        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=0" title="Cancel"
+        <br>
+        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=0&id=1" title="Cancel"
                                                           class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
             <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
         </div>

@@ -173,7 +173,7 @@ class change_log extends db_object_seq_id_user
     const string FLD_TIME_COM = 'time when the user has confirmed the change';
     const string FLD_TIME = 'change_time';
     const string FLD_USER_COM = 'reference to the user who has done the change';
-    const string FLD_ACTION_COM = 'the curl action';
+    const string FLD_ACTION_COM = 'the crud action';
     const string FLD_ACTION = 'change_action_id';
     const string FLD_ROW_ID_COM = 'the prime id in the table with the change';
     const string FLD_ROW_ID = 'row_id';

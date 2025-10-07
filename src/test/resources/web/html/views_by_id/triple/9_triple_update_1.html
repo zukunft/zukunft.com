@@ -32,10 +32,10 @@
     <br><br><br><br><br><h4>Change triple</h4>
     <form action="/http/view.php" id="triple_edit"><input class="form-control" type="hidden" name="m" id="m"
                                                           value="9"><input class="form-control" type="hidden" name="id"
-                                                                           id="id" value="0"><input class="form-control"
+                                                                           id="id" value="1"><input class="form-control"
                                                                                                     type="hidden"
                                                                                                     name="back"
-                                                                                                    id="back" value="0"><input
+                                                                                                    id="back" value="1"><input
             class="form-control" type="hidden" name="confirm" id="confirm" value="1">
         <div class="row col-md-12">
             <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
@@ -234,8 +234,7 @@
                                                                                                     form="triple_edit"
                                                                                                     id="phrase_id">
                     <datalist id="phrase_id_list">
-                        <option data-value="0" selected>please select ...</option>
-                        <option data-value="1">mathematics</option>
+                        <option data-value="1" selected>mathematics</option>
                         <option data-value="1032">ABB</option>
                         <option data-value="184">Bern</option>
                         <option data-value="158">billion</option>
@@ -361,7 +360,8 @@
                 </select></div>
             </div>
         </div>
-        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=46" title="Cancel"
+        <br>
+        <div class="row col-md-12 justify-content-end"><a href="/http/view.php?m=46&id=1" title="Cancel"
                                                           class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
             <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
         </div>

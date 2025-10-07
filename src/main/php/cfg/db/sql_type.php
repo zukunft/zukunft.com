@@ -35,7 +35,7 @@ namespace Zukunft\ZukunftCom\main\php\cfg\db;
 enum sql_type: string
 {
 
-    // curl sql statement types
+    // crud sql statement types
     case NULL = 'null'; // an empty type as a placeholder
     case INSERT = 'insert';
     case UPDATE = 'update';

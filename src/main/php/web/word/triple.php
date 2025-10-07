@@ -93,12 +93,12 @@ class triple extends sandbox_code_id
      * const
      */
 
-    // curl views
+    // crud views
     const string VIEW_ADD = views::TRIPLE_ADD;
     const string VIEW_EDIT = views::TRIPLE_EDIT;
     const string VIEW_DEL = views::TRIPLE_DEL;
 
-    // curl message id
+    // crud message id
     const msg_id MSG_ADD = msg_id::TRIPLE_ADD;
     const msg_id MSG_EDIT = msg_id::TRIPLE_EDIT;
     const msg_id MSG_DEL = msg_id::TRIPLE_DEL;

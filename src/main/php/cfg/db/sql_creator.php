@@ -153,7 +153,7 @@ class sql_creator
 {
 
     // internal const for unit testing
-    const string FILE_INSERT = 'insert'; // for insert (or create in curl notation) unit test files
+    const string FILE_INSERT = 'insert'; // for insert (or create in crud notation) unit test files
     const string FILE_UPDATE = 'update'; // for update unit test files
     const string FILE_DELETE = 'delete'; // for delete (or remove in curl notation) unit test files
     const string FILE_LOAD = 'load'; // for load unit test files

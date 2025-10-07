@@ -485,7 +485,7 @@ COMMENT ON TABLE changes IS 'to log all changes done by any user on all tables e
 COMMENT ON COLUMN changes.change_id IS 'the prime key to identify the change change';
 COMMENT ON COLUMN changes.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN changes.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN changes.change_action_id IS 'the curl action';
+COMMENT ON COLUMN changes.change_action_id IS 'the crud action';
 COMMENT ON COLUMN changes.row_id IS 'the prime id in the table with the change';
 COMMENT ON COLUMN changes.old_id IS 'old value id';
 COMMENT ON COLUMN changes.new_id IS 'new value id';
@@ -514,7 +514,7 @@ COMMENT ON TABLE changes_norm IS 'to log all changes done by any user on the gro
 COMMENT ON COLUMN changes_norm.change_id IS 'the prime key to identify the change changes_norm';
 COMMENT ON COLUMN changes_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN changes_norm.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN changes_norm.change_action_id IS 'the curl action';
+COMMENT ON COLUMN changes_norm.change_action_id IS 'the crud action';
 COMMENT ON COLUMN changes_norm.row_id IS 'the prime id in the table with the change';
 COMMENT ON COLUMN changes_norm.old_id IS 'old value id';
 COMMENT ON COLUMN changes_norm.new_id IS 'new value id';
@@ -543,7 +543,7 @@ COMMENT ON TABLE changes_big IS 'to log all changes done by any user on the grou
 COMMENT ON COLUMN changes_big.change_id IS 'the prime key to identify the change changes_big';
 COMMENT ON COLUMN changes_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN changes_big.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN changes_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN changes_big.change_action_id IS 'the crud action';
 COMMENT ON COLUMN changes_big.row_id IS 'the prime id in the table with the change';
 COMMENT ON COLUMN changes_big.old_id IS 'old value id';
 COMMENT ON COLUMN changes_big.new_id IS 'new value id';
@@ -570,7 +570,7 @@ COMMENT ON TABLE change_values_prime IS 'to log all changes done by any user on 
 COMMENT ON COLUMN change_values_prime.change_id IS 'the prime key to identify the change change_values_prime';
 COMMENT ON COLUMN change_values_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_prime.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_prime.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_prime.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -594,7 +594,7 @@ COMMENT ON TABLE change_values_time_prime IS 'to log all time value changes done
 COMMENT ON COLUMN change_values_time_prime.change_id IS 'the prime key to identify the change change_values_time_prime';
 COMMENT ON COLUMN change_values_time_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_prime.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_time_prime.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_time_prime.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -618,7 +618,7 @@ COMMENT ON TABLE change_values_text_prime IS 'to log all text value changes done
 COMMENT ON COLUMN change_values_text_prime.change_id IS 'the prime key to identify the change change_values_text_prime';
 COMMENT ON COLUMN change_values_text_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_prime.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_text_prime.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_text_prime.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -642,7 +642,7 @@ COMMENT ON TABLE change_values_geo_prime IS 'to log all geo value changes done b
 COMMENT ON COLUMN change_values_geo_prime.change_id IS 'the prime key to identify the change change_values_geo_prime';
 COMMENT ON COLUMN change_values_geo_prime.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_prime.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_geo_prime.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_geo_prime.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -666,7 +666,7 @@ COMMENT ON TABLE change_values_norm IS 'to log all changes done by any user on v
 COMMENT ON COLUMN change_values_norm.change_id IS 'the prime key to identify the change change_values_norm';
 COMMENT ON COLUMN change_values_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_norm.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_norm.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_norm.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -690,7 +690,7 @@ COMMENT ON TABLE change_values_time_norm IS 'to log all time value changes done 
 COMMENT ON COLUMN change_values_time_norm.change_id IS 'the prime key to identify the change change_values_time_norm';
 COMMENT ON COLUMN change_values_time_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_norm.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_time_norm.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_time_norm.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -714,7 +714,7 @@ COMMENT ON TABLE change_values_text_norm IS 'to log all text value changes done 
 COMMENT ON COLUMN change_values_text_norm.change_id IS 'the prime key to identify the change change_values_text_norm';
 COMMENT ON COLUMN change_values_text_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_norm.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_text_norm.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_text_norm.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -738,7 +738,7 @@ COMMENT ON TABLE change_values_geo_norm IS 'to log all geo value changes done by
 COMMENT ON COLUMN change_values_geo_norm.change_id IS 'the prime key to identify the change change_values_geo_norm';
 COMMENT ON COLUMN change_values_geo_norm.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_norm.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_geo_norm.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_geo_norm.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -762,7 +762,7 @@ COMMENT ON TABLE change_values_big IS 'to log all changes done by any user on va
 COMMENT ON COLUMN change_values_big.change_id IS 'the prime key to identify the change change_values_big';
 COMMENT ON COLUMN change_values_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_big.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_big.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -786,7 +786,7 @@ COMMENT ON TABLE change_values_time_big IS 'to log all time value changes done b
 COMMENT ON COLUMN change_values_time_big.change_id IS 'the prime key to identify the change change_values_time_big';
 COMMENT ON COLUMN change_values_time_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_time_big.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_time_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_time_big.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -810,7 +810,7 @@ COMMENT ON TABLE change_values_text_big IS 'to log all text value changes done b
 COMMENT ON COLUMN change_values_text_big.change_id IS 'the prime key to identify the change change_values_text_big';
 COMMENT ON COLUMN change_values_text_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_text_big.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_text_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_text_big.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -834,7 +834,7 @@ COMMENT ON TABLE change_values_geo_big IS 'to log all geo value changes done by 
 COMMENT ON COLUMN change_values_geo_big.change_id IS 'the prime key to identify the change change_values_geo_big';
 COMMENT ON COLUMN change_values_geo_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_values_geo_big.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_values_geo_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_values_geo_big.change_action_id IS 'the crud action';
 
 -- --------------------------------------------------------
 
@@ -868,7 +868,7 @@ COMMENT ON TABLE change_links IS 'to log the link changes done by the users';
 COMMENT ON COLUMN change_links.change_link_id IS 'the prime key to identify the change change_link';
 COMMENT ON COLUMN change_links.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN change_links.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN change_links.change_action_id IS 'the curl action';
+COMMENT ON COLUMN change_links.change_action_id IS 'the crud action';
 COMMENT ON COLUMN change_links.row_id IS 'the prime id in the table with the change';
 COMMENT ON COLUMN change_links.new_to_id IS 'either internal row id or the ref type id of the external system e.g. 2 for wikidata';
 COMMENT ON COLUMN change_links.new_text_to IS 'the fixed text to display to the user or the external reference id e.g. Q1 (for universe) in case of wikidata';

@@ -93,12 +93,12 @@ class component extends sandbox_code_id
      * const
      */
 
-    // curl views
+    // crud views
     const string VIEW_ADD = views::COMPONENT_ADD;
     const string VIEW_EDIT = views::COMPONENT_EDIT;
     const string VIEW_DEL = views::COMPONENT_DEL;
 
-    // curl message id
+    // crud message id
     const msg_id MSG_ADD = msg_id::COMPONENT_ADD;
     const msg_id MSG_EDIT = msg_id::COMPONENT_EDIT;
     const msg_id MSG_DEL = msg_id::COMPONENT_DEL;
@@ -261,7 +261,7 @@ class component extends sandbox_code_id
      * info
      */
 
-    protected function type_code_id(?type_lists $typ_lst): string
+    function type_code_id(?type_lists $typ_lst): string
     {
 
         $type_code_id = '';
@@ -369,11 +369,25 @@ class component extends sandbox_code_id
     }
 
     /**
+     * @return bool true if the component is a subheader to combine several lists
+     */
+    function is_list_group(?type_lists $typ_lst): bool
+    {
+        if (in_array($this->type_code_id($typ_lst), component_type::LIST_GROUP)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * @return bool true if the component is a system form button or a hidden form element
      */
-    function is_button_or_hidden(?type_lists $typ_lst): bool
+    function needs_row_components(?type_lists $typ_lst): bool
     {
-        if ($this->is_button($typ_lst) or $this->is_hidden($typ_lst)) {
+        if ($this->is_button($typ_lst)
+            or $this->is_hidden($typ_lst)
+            or $this->is_list_group($typ_lst)) {
             return true;
         } else {
             return false;
@@ -508,7 +522,7 @@ class component extends sandbox_code_id
 
         // show the view component name
         if ($this->id() <= 0) {
-            $form_name= views::COMPONENT_ADD;
+            $form_name = views::COMPONENT_ADD;
             $result .= $html->dsp_text_h2('Create a view element for <a href="/http/view.php?words=' . $wrd->id() . '">' . $wrd->name() . '</a>');
         } else {
             $form_name = views::COMPONENT_EDIT;

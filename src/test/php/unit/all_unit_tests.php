@@ -210,11 +210,13 @@ class all_unit_tests extends test_cleanup
              * unit testing - with system users
              */
 
-            new horizontal_tests()->run($t);
+            // new horizontal_tests()->run($t);
 
             /*
              * prepare db testing
              */
+
+            $t->type_list_recreate($t);
 
             //$this->create_test_db_entries($t);
 

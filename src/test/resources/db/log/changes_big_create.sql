@@ -22,7 +22,7 @@ COMMENT ON TABLE changes_big IS 'to log all changes done by any user on the grou
 COMMENT ON COLUMN changes_big.change_id IS 'the prime key to identify the change changes_big';
 COMMENT ON COLUMN changes_big.change_time IS 'time when the user has confirmed the change';
 COMMENT ON COLUMN changes_big.user_id IS 'reference to the user who has done the change';
-COMMENT ON COLUMN changes_big.change_action_id IS 'the curl action';
+COMMENT ON COLUMN changes_big.change_action_id IS 'the crud action';
 COMMENT ON COLUMN changes_big.row_id IS 'the prime id in the table with the change';
 COMMENT ON COLUMN changes_big.old_id IS 'old value id';
 COMMENT ON COLUMN changes_big.new_id IS 'new value id';

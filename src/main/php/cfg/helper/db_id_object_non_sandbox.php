@@ -11,7 +11,7 @@
     - set and get:       to capsule the single variables from unexpected changes
     - load:              database access object (DAO) functions
     - del:               database access object (DAO) functions
-    - sql:               create the curl sql statements based on the sql creator
+    - sql:               create the crud sql statements based on the sql creator
     - overwrite:         declared functions that must be overwritten by the child objects
 
 

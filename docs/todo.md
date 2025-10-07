@@ -101,7 +101,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO use the $load_all parameter for all load functions to include excluded rows for admins
     TODO add a unit and db test
     TODO check which arrays cam be converted to a class
-    TODO add system parameter to include the log write into the curl sql statements or use separate statements for log
+    TODO add system parameter to include the log write into the crud sql statements or use separate statements for log
     TODO combine phrase_group_word_links and phrase_group_triple_links to group_phrase_links
     TODO add a simple value format where the json key is used as the phrase name e.g "system config target number of selection entries": 7
     TODO add system and user config parameter that are e.g. 100 views a view is automatically frozen for the user

@@ -70,12 +70,12 @@ class source extends sandbox_code_id
      * const
      */
 
-    // curl views
+    // crud views
     const string VIEW_ADD = views::SOURCE_ADD;
     const string VIEW_EDIT = views::SOURCE_EDIT;
     const string VIEW_DEL = views::SOURCE_DEL;
 
-    // curl message id
+    // crud message id
     const msg_id MSG_ADD = msg_id::SOURCE_ADD;
     const msg_id MSG_EDIT = msg_id::SOURCE_EDIT;
     const msg_id MSG_DEL = msg_id::SOURCE_DEL;

@@ -132,19 +132,8 @@ class ref_list extends type_list
     {
         $vars = [];
         foreach ($this->lst() as $ref) {
-            $typ_vars[json_fields::ID] = $ref->id();
-            if ($typ_lst->include_phrases()) {
-                $typ_vars[json_fields::PHRASES] = [$ref->phrase()->api_json_array()];
-            } else {
-                $typ_vars[json_fields::PHRASE] = $ref->phrase()->id();
-            }
-            if ($ref->source() != null) {
-                $typ_vars[json_fields::SOURCE] = $ref->source()->id();
-            }
-            $typ_vars[json_fields::URL] = $ref->url();
-            $typ_vars[json_fields::EXTERNAL_KEY] = $ref->external_key();
-            $typ_vars[json_fields::DESCRIPTION] = $ref->description();
-            $vars[] = $typ_vars;
+            $ref_vars = $ref->api_json_array($typ_lst, $usr);
+            $vars[] = $ref_vars;
         }
         return $vars;
     }

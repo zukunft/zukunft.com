@@ -211,7 +211,7 @@ class value_list extends list_dsp
             $row .= ' ';
             $row .= $val->value_edit($back);
             $row .= $html->lf();
-            $result .= $html->tr($row);
+            $result .= $row;
         }
         return $result;
     }

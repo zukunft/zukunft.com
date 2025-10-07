@@ -282,10 +282,10 @@ class list_dsp extends ListOfIdObjects
      */
     function list(
         phrase_list $context_phr_lst = new phrase_list(),
-        string $back = '',
-        string $style = '',
-        ?int $limit = null,
-        ?int $page = null
+        string      $back = '',
+        string      $style = '',
+        ?int        $limit = null,
+        ?int        $page = null
     ): string
     {
         $result = '';
@@ -293,9 +293,8 @@ class list_dsp extends ListOfIdObjects
         $html = new html_base();
 
         foreach ($this->lst() as $obj) {
-            $row = $obj->name_link($context_phr_lst);
-            $row .= $html->lf();
-            $result .= $html->tr($row);
+            $result .= $obj->name_link($context_phr_lst);
+            $result .= $html->lf();
         }
         return $result;
     }
@@ -330,19 +329,19 @@ class list_dsp extends ListOfIdObjects
      * 4. cmp->view_select: add the component and view parameters e.g. the form name and the unique name within the form
      *
      * @param string $form the html form name which must be unique within the html page
-     * @param int|null $selected the unique database id of the object that has been selected
+     * @param int|string|null $selected the unique database id of the object that has been selected
      * @param string $name the name of this selector which must be unique within the form
      * @param msg_id $label_id the text show to the user
      * @param string $style the formatting code to adjust the formatting
      * @returns string the html code to select a word from this list
      */
     function selector(
-        string $form = '',
-        ?int   $selected = null,
-        string $name = '',
-        msg_id $label_id = msg_id::LABEL,
-        string $style = view_styles::COL_SM_4,
-        string $type = html_selector::TYPE_SELECT
+        string          $form = '',
+        int|string|null $selected = null,
+        string          $name = '',
+        msg_id          $label_id = msg_id::LABEL,
+        string          $style = view_styles::COL_SM_4,
+        string          $type = html_selector::TYPE_SELECT
     ): string
     {
         $sel = new html_selector();

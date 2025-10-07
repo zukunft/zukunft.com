@@ -189,13 +189,23 @@ class ui_list extends ui_base
      * @param data_object|null $dto the data cache used to fill the value list until the backend has returned the updated list
      * @return string the html code to show the list of values
      */
-    function value_list(word|db_object|null $dbo, ?data_object $dto = null): string
+    function value_list(
+        word|db_object|null $dbo,
+        ?data_object        $dto = null,
+        ?int                $style_id = null
+    ): string
     {
+        global $msk_sty_cac;
+        $style_txt = '';
+        if ($style_id != null) {
+            $style = $msk_sty_cac->get($style_id);
+            $style_txt = $style->code_id();
+        }
         $val_lst = $dto->value_list_cloned();
         $val_lst->filter($dbo);
         $phr_lst = new phrase_list();
         $phr_lst->add_phrase($dbo->phrase());
-        return $val_lst->list($phr_lst);
+        return $val_lst->list($phr_lst, '', $style_txt);
     }
 
     /**

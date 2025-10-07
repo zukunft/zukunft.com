@@ -902,7 +902,7 @@ class create_test_objects extends test_base
                 log_err('no filled url object defined for ' . $class);
         }
         $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CRUD_READ, true);
         return $url;
     }
 
@@ -1029,7 +1029,7 @@ class create_test_objects extends test_base
                 log_err('no filled url object defined for ' . $class);
         }
         $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CRUD_CREATE, true);
         return $url;
     }
 
@@ -1158,7 +1158,7 @@ class create_test_objects extends test_base
                 log_err('no filled url object defined for ' . $class);
         }
         $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CRUD_UPDATE, true);
         return $url;
     }
 
@@ -1241,7 +1241,7 @@ class create_test_objects extends test_base
                 log_err('no filled url object defined for ' . $class);
         }
         $url .= $this->url_par(url_var::ID, $obj->id());
-        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CURL_CREATE, true);
+        $url .= $this->url_par(url_var::ACTION_LONG, url_var::CRUD_REMOVE, true);
         return $url;
     }
 
@@ -3818,9 +3818,9 @@ class create_test_objects extends test_base
     {
         global $ref_typ_cac;
         $ref = new ref($this->usr1);
-        $ref->set(1,
+        $ref->set(refs::MATH_ID,
             $this->word_math()->phrase(), $ref_typ_cac->id(ref_type::WIKIDATA), refs::MATH_KEY);
-        $ref->description = refs::PI_COM;
+        $ref->description = refs::MATH_COM;
         return $ref;
     }
 

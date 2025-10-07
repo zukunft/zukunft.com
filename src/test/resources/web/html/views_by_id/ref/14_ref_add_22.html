@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><title>Change reference (zukunft.com)</title>
+<head><title>Add new reference (zukunft.com)</title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="/external_lib/bootstrap/css/bootstrap.css">
     <script src="/external_lib/bootstrap/js/bootstrap.js"></script>
@@ -18,26 +18,26 @@
         </form>
         <div class="col-md-2">
             <ul class="nav navbar-nav">
-                <li class="active">
-                <a href="/http/view.php?m=64&id=3" title="the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests">zukunft.com system test</a>
-                </li>
+                <li class="active"><a href="/http/view.php?m=64&id=3"
+                                      title="the internal zukunft.com user used for integration tests that should never be shown to the user but is used to check if integration test data is completely removed after the tests">zukunft.com
+                    system test</a></li>
                 <li class="active"></li>
-                <li class="active"><a href="/http/view.php?m=view_edit&id=15" title="adjust the view"><i
-                        class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=15" title="create a new view"><i
+                <li class="active"><a href="/http/view.php?m=view_edit&id=14" title="adjust the view"><i
+                        class="far fa-edit"></i></a><a href="/http/view.php?m=view_add&id=14" title="create a new view"><i
                         class="far fa-plus-square"></i></a></li>
             </ul>
         </div>
     </nav>
-    <br><br><br><br><br><h4>Change ref</h4>
-    <form action="/http/view.php" id="ref_edit"><input class="form-control" type="hidden" name="m" id="m"
-                                                       value="15"><input class="form-control" type="hidden" name="id"
-                                                                         id="id" value="0"><input class="form-control"
-                                                                                                  type="hidden"
-                                                                                                  name="back" id="back"
-                                                                                                  value="0"><input
+    <br><br><br><br><br><h4>Add a new ref</h4>
+    <form action="/http/view.php" id="ref_add"><input class="form-control" type="hidden" name="m" id="m"
+                                                      value="14"><input class="form-control" type="hidden" name="id"
+                                                                        id="id" value="0"><input class="form-control"
+                                                                                                 type="hidden"
+                                                                                                 name="back" id="back"
+                                                                                                 value="0"><input
             class="form-control" type="hidden" name="confirm" id="confirm" value="1">
         <div class="row col-md-12">
-            <div class="form-group col-md-4"><label for="name">name</label><input class="form-control" type="text"
+            <div class="form-group col-md-8"><label for="name">name</label><input class="form-control" type="text"
                                                                                   name="name" id="name" value=" "></div>
         </div>
         <div class="row col-md-12">
@@ -49,7 +49,7 @@
         <div class="row col-md-12">
             <div class="form-group col-md-4"><label for="ref_type">reference type</label><select class="form-control"
                                                                                                  name="ref_type"
-                                                                                                 form="ref_edit"
+                                                                                                 form="ref_add"
                                                                                                  id="ref_type">
                 <option value="1">wikipedia</option>
                 <option value="2" selected>wikidata</option>

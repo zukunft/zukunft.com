@@ -385,9 +385,15 @@ class ref extends sandbox_link
         $vars[json_fields::URL] = $this->url();
         $vars[json_fields::EXTERNAL_KEY] = $this->external_key();
         if ($this->phrase()->id() != 0) {
-            $vars[json_fields::PHRASE] = $this->phrase()->id();
+            if ($typ_lst->include_phrases()) {
+                $vars[json_fields::PHRASES] = [$this->phrase()->api_json_array()];
+            } else {
+                $vars[json_fields::PHRASE] = $this->phrase()->id();
+            }
         }
-        $vars[json_fields::SOURCE] = $this->source()?->id();
+        if ($this->source()?->id() != null) {
+            $vars[json_fields::SOURCE] = $this->source()?->id();
+        }
         if ($this->predicate_id() != 0) {
             $vars[json_fields::PREDICATE] = $this->predicate_id();
         }

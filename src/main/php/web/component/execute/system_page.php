@@ -75,7 +75,9 @@ class system_page extends component
      * @param msg_id|null $ui_msg_code_id the message id of the text that should be shown to the user in the user specific frontend language
      * @return string the html code to start a new form and display the subtitle
      */
-    function system_sub_tile(?msg_id $ui_msg_code_id = null): string
+    function system_sub_tile(
+        ?msg_id $ui_msg_code_id = null
+    ): string
     {
         global $mtr;
 
@@ -94,9 +96,9 @@ class system_page extends component
      */
     function system_sub_tile_var(
         ?msg_id $ui_msg_code_id = null,
-        ?int $value_numeric = null,
+        ?int    $value_numeric = null,
         ?msg_id $ui_msg_code_id_vars = null,
-        ?int $value_exception = null,
+        ?int    $value_exception = null,
         ?msg_id $ui_msg_code_id_exception = null
     ): string
     {

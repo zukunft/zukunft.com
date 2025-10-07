@@ -38,6 +38,7 @@
 namespace Zukunft\ZukunftCom\main\php\web\view;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\main\php\shared\types\component_type;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
 include_once html_paths::COMPONENT . 'component.php';
@@ -58,6 +59,7 @@ include_once paths::SHARED_CONST . 'triples.php';
 include_once paths::SHARED_CONST . 'rest_ctrl.php';
 include_once paths::SHARED_CONST . 'words.php';
 include_once paths::SHARED_ENUM . 'messages.php';
+include_once paths::SHARED_TYPES . 'component_type.php';
 include_once paths::SHARED_TYPES . 'position_types.php';
 include_once paths::SHARED_TYPES . 'view_styles.php';
 include_once paths::SHARED_TYPES . 'view_type.php';
@@ -155,36 +157,68 @@ class view_exe extends view_base
         bool         $test_mode = false
     ): string
     {
+        $html = new html_base();
+
         $this->log_debug($this->dsp_id());
         $result = '';
         if ($this->cmp_lst->is_empty()) {
             $this->log_debug('no components for ' . $this->dsp_id());
         } else {
             $row = '';
-            $button_only = true;
+            // if a row contains only standard for elements
+            // the row start and end can be set automatically
+            // if a row contains buttons, hidden components, subheader or related tables
+            // the row start and end should be defined by explicit components
+            $auto_row = true;
+            // the style for the column if used
+            $style_id = null;
             foreach ($this->cmp_lst->lst() as $cmp) {
                 // add previous collected components to the final result
                 if ($row != '') {
+                    //
                     if ($cmp->pos_type_code_id($cfg->typ_lst_cache) == position_types::BELOW) {
-                        if ($button_only) {
-                            $result .= $row;
-                        } else {
+                        if ($auto_row) {
+                            // the full page width row if a row contains only standard form elements
                             // TODO easy move code to HTML class
                             $result .= '<div class="row ';
                             $result .= view_styles::COL_SM_12;
                             $result .= '">' . $row . ' </div>';
+                        } else {
+                            // the component html code is added without adding a table row
+                            $result .= $html->add_style($row, $style_id);;
+                            $style_id = null;
                         }
                         $row = '';
-                        $button_only = true;
+                        $auto_row = true;
                     }
                 }
                 if ($cfg == null) {
                     $this->log_err('frontend data object is missing');
                 }
-                if (!$cmp->is_button_or_hidden($cfg->typ_lst_cache)) {
-                    $button_only = false;
+                // if a row contains something else than standard form components
+                // it needs to be grouped into a row by explicit components
+                // so buttons, hidden components, subheader and lists of related objects
+                // must be grouped by explicit start and end row components
+                if ($cmp->needs_row_components($cfg->typ_lst_cache)) {
+                    $auto_row = false;
                 }
-                $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $back, $pattern, $test_mode);
+                $row .= $cmp->dsp_entries($dbo, $form_name, $this->id(), $cfg, $cmp->style_id, $back, $pattern, $test_mode);
+
+                // remember the style to apply it to the complete row or column
+                if ($cmp->style_id != null) {
+                    $style_id = $cmp->style_id;
+                }
+
+                // Do not add the style if the style has been added by the component already
+                $tc_id = $cmp->type_code_id($cfg->typ_lst_cache);
+                if ($tc_id == component_type::FORM_FIELD_NAME
+                    or $tc_id == component_type::FORM_FIELD_PLURAL
+                    or $tc_id == component_type::FORM_FIELD_REVERSE
+                    or $tc_id == component_type::FORM_FIELD_PLURAL_REVERSE
+                    or $tc_id == component_type::FORM_FIELD_VALUE) {
+                    $style_id = null;
+                }
+
             }
             if ($row != '') {
                 $result .= $row;

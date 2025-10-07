@@ -52,7 +52,7 @@ class html_selector
     public string $style = '';      // to add addition class information for the bootstrap version
     public string $attribute = '';  // to add addition attribute information for the bootstrap version e.g. display an disabled selector
     public string $sql = '';        // to deprecate: the list should be filled by the calling object with min objects: query to select the items
-    public ?int $selected = null;   // id of the selected object
+    public int|string|null $selected = null;  // id of the selected object
     public string $dummy_text = ''; // text for the NULL result if allowed
     public string $type = self::TYPE_SELECT;  // the selector type
 
@@ -147,7 +147,8 @@ class html_selector
     /**
      * @returns string the HTML code to end a selector field
      */
-    function end_selector(): string {
+    function end_selector(): string
+    {
         if ($this->type == self::TYPE_DATALIST) {
             $result = '</datalist>';
         } else {

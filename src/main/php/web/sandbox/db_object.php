@@ -86,12 +86,12 @@ class db_object extends TextIdObject
      * const
      */
 
-    // the fallback curl views that are expected to be overwritten by the child objects
+    // the fallback crud views that are expected to be overwritten by the child objects
     const string VIEW_ADD = views::WORD_ADD;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
 
-    // the fallback curl message id that are expected to be overwritten by the child objects
+    // the fallback crud message id that are expected to be overwritten by the child objects
     const msg_id MSG_ADD = msg_id::WORD_ADD;
     const msg_id MSG_EDIT = msg_id::WORD_EDIT;
     const msg_id MSG_DEL = msg_id::WORD_DEL;
@@ -147,12 +147,12 @@ class db_object extends TextIdObject
     {
         $is_add = false;
         if (array_key_exists(url_var::ACTION, $url_array)) {
-            if ($url_array[url_var::ACTION] == url_var::CURL_CREATE) {
+            if ($url_array[url_var::ACTION] == url_var::CRUD_CREATE) {
                 $is_add = true;
             }
         }
         if (array_key_exists(url_var::ACTION_LONG, $url_array)) {
-            if ($url_array[url_var::ACTION_LONG] == url_var::CURL_CREATE) {
+            if ($url_array[url_var::ACTION_LONG] == url_var::CRUD_CREATE) {
                 $is_add = true;
             }
         }
@@ -505,7 +505,7 @@ class db_object extends TextIdObject
 
 
     /*
-     * curl
+     * crud
      */
 
     /**

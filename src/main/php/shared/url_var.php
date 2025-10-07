@@ -69,7 +69,7 @@ class url_var
      */
 
     // the var names for the short technical url (in alphabetic order to detect duplicates)
-    const string ACTION = 'a'; // the curl action
+    const string ACTION = 'a'; // the crud action
     const string VERB = 'b';
     const string COMPONENT = 'c';
     const string COMPONENT_LINK = 'cl'; // to link a component to a view
@@ -105,17 +105,17 @@ class url_var
      */
 
     // the var names for the easy human-readable url (in content related order)
-    const string ACTION_LONG = 'action'; // the curl action for the long url
+    const string ACTION_LONG = 'action'; // the CRUD action for the long url
     const string STEP_LONG = 'step_id';  // the action status for the long url
 
     // enum for next step the action for ACTION
-    const string CURL_CREATE = 'add'; // the curl action code to add an object
-    const string CURL_UPDATE = 'edit'; // the curl action to change an object
-    const string CURL_REMOVE = 'del'; // the curl action to delete an object
-    const string CURL_LOAD = 'show'; // the curl action to show object with the most relevant fields
-    const string CURL_FULL = 'full'; // to show object with all fields
-    const string CURL_POPUP = 'popup'; // to show object with only a few fields as a popup window
-    const string CURL_CELL = 'cell'; // to show object with only the name or key as table cell
+    const string CRUD_CREATE = 'add'; // the CRUD action code to add an object
+    const string CRUD_UPDATE = 'edit'; // the CRUD action to change an object
+    const string CRUD_REMOVE = 'del'; // the CRUD action to delete an object
+    const string CRUD_READ = 'show'; // the CRUD action to show object with the most relevant fields
+    const string CRUD_FULL = 'full'; // to show object with all fields
+    const string CRUD_POPUP = 'popup'; // to show object with only a few fields as a popup window
+    const string CRUD_CELL = 'cell'; // to show object with only the name or key as table cell
 
     const string WORD_LONG = 'word_id';
     const string WORD_POS_LONG = 'word_id_pos_';

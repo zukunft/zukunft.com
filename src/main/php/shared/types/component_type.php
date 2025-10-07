@@ -499,7 +499,7 @@ class component_type
         self::FORM_BUTTON_EXPORT
     );
 
-    // list of component types that are a e.g. button
+    // list of component types that are hidden
     const array HIDDEN_TYPES = array(
         self::ROW_START,
         self::FORM_TITLE,
@@ -509,6 +509,14 @@ class component_type
         self::ROW_START,
         self::ROW_RIGHT,
         self::ROW_END
+    );
+
+    // list of component types that are used to combine lists
+    const array LIST_GROUP = array(
+        self::SYSTEM_SUB_TITLE,
+        self::SYSTEM_SUB_TITLE_VAR,
+        self::VALUES_RELATED,
+        self::LIST_REF,
     );
 
     // list of the component types used for unit testing

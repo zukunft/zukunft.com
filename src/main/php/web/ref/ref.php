@@ -65,7 +65,7 @@ class ref extends db_object_dsp
      * const
      */
 
-    // curl views
+    // crud views
     const string VIEW_ADD = views::REF_ADD;
     const string VIEW_EDIT = views::REF_EDIT;
     const string VIEW_DEL = views::REF_DEL;

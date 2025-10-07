@@ -923,7 +923,7 @@ class view extends sandbox_code_id
             $pos = $this->component_links() + 1;
         }
         if ($pos_type_code_id == null) {
-            $pos_type_code_id = position_types::BELOW;
+            $pos_type_code_id = position_types::DEFAULT;
         }
         if ($pos != null) {
             if ($this->cmp_lnk_lst == null) {

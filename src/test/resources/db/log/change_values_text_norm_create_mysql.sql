@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS change_values_text_norm
     change_id        bigint     NOT NULL COMMENT 'the prime key to identify the change change_values_text_norm',
     change_time      timestamp  NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'time when the user has confirmed the change',
     user_id          bigint     NOT NULL COMMENT 'reference to the user who has done the change',
-    change_action_id smallint   NOT NULL COMMENT 'the curl action',
+    change_action_id smallint   NOT NULL COMMENT 'the crud action',
     group_id         char(112)  NOT NULL,
     change_field_id  smallint   NOT NULL,
     old_value        text DEFAULT NULL,

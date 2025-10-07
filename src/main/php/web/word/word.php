@@ -116,12 +116,12 @@ class word extends sandbox_code_id
      * const
      */
 
-    // curl views
+    // crud views
     const string VIEW_ADD = views::WORD_ADD;
     const string VIEW_EDIT = views::WORD_EDIT;
     const string VIEW_DEL = views::WORD_DEL;
 
-    // curl message id
+    // crud message id
     const msg_id MSG_ADD = msg_id::WORD_ADD;
     const msg_id MSG_EDIT = msg_id::WORD_EDIT;
     const msg_id MSG_DEL = msg_id::WORD_DEL;

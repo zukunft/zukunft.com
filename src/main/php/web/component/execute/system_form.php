@@ -105,11 +105,11 @@ class system_form extends component
      * create the HTML code to select this and the previous views
      *
      * @param int $msk_id the database id of the view that should be shown
-     * @param int|null $id the database id of the object that should be shown in the view
+     * @param int|string|null $id the database id of the object that should be shown in the view (string is used for the phrase list of values)
      * @param string $back the history of the views and actions for the back und undo function
      * @return string the html code to include the back trace into the form result
      */
-    function form_back(int $msk_id, ?int $id, string $back): string
+    function form_back(int $msk_id, int|string|null $id, string $back): string
     {
         $result = '';
         $html = new html_base();
@@ -1134,7 +1134,7 @@ class system_form extends component
     /**
      * @return string the html code for a form cancel button
      */
-    function button_cancel(int $msk_id, ?int $id): string
+    function button_cancel(int $msk_id, int|string|null $id): string
     {
         $html = new html_base();
         $views = new views();

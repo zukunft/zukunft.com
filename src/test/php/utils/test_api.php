@@ -435,7 +435,7 @@ class test_api extends create_test_objects
 
     /**
      * check the api message without using the real curl api
-     * @param sql_db $db_con to retrive the configuration for the message header
+     * @param sql_db $db_con to retrieve the configuration for the message header
      * @param object $usr_obj the user sandbox object that should be tested
      * @param string $filename to overwrite the filename of the expected json message based on the usr_obj
      * @param bool $contains set to true if the actual message is expected to contain more than the expected message

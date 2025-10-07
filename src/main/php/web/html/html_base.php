@@ -1378,14 +1378,28 @@ class html_base
         return '<input' . $class . $type . $name . $id . $value . $placeholder . '>';
     }
 
-    function div(string $text, string $class = ''): string
+    function div_form(string $text, string $style = ''): string
     {
-        if ($class == '') {
-            $class = 'form-group ' . view_styles::COL_SM_4;
-        } else {
-            $class = 'form-group ' . $class;
+        return $this->div($text, 'form-group ' . $style);
+    }
+
+    function div(string $text, string $style = ''): string
+    {
+        if ($style == '') {
+            $style = view_styles::COL_SM_4;
         }
-        return '<div class="' . $class . '">' . $text . '</div>';
+        return '<div class="' . $style . '">' . $text . '</div>';
+    }
+
+    function add_style(string $text, ?int $style_id = null): string
+    {
+        if ($style_id != null and $text != '') {
+            global $msk_sty_cac;
+            $style = $msk_sty_cac->get($style_id);
+            $style_txt = $style->code_id();
+            $text = $this->div($text, $style_txt);
+        }
+        return $text;
     }
 
     /**
@@ -1420,7 +1434,7 @@ class html_base
     ): string
     {
         $text = $this->label($name) . $this->input($name, $value, $type, $input_class);
-        return $this->div($text, $col_class);
+        return $this->div_form($text, $col_class);
     }
 
     /**
@@ -1447,7 +1461,8 @@ class html_base
      */
     function row_right(): string
     {
-        $result = '<div class="row ';
+        $result = $this->lf();
+        $result .= '<div class="row ';
         $result .= view_styles::COL_SM_12;
         $result .= ' justify-content-end">';
         return $result;

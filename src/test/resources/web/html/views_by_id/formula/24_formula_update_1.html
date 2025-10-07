@@ -31,8 +31,8 @@
     <br><br><br><br><br><h4>Change formula</h4>
     <form action="/http/view.php" id="formula_edit"><input class="form-control" type="hidden" name="m" id="m"
                                                            value="24"><input class="form-control" type="hidden"
-                                                                             name="id" id="id" value="0"><input
-            class="form-control" type="hidden" name="back" id="back" value="0"><input class="form-control" type="hidden"
+                                                                             name="id" id="id" value="1"><input
+            class="form-control" type="hidden" name="back" id="back" value="1"><input class="form-control" type="hidden"
                                                                                       name="confirm" id="confirm"
                                                                                       value="1">
         <div class="row col-md-12">
@@ -93,6 +93,7 @@
                 <option value="4">no change</option>
             </select></div>
         </div>
+        <br>
         <div class="row col-md-12 justify-content-end">
             <div class="row col-md-12"><a href="/http/view.php?m=44&id=273" title="$">$</a>, <a
                     href="/http/view.php?m=46&id=123" title="$ is symbol for US dollar">$ is symbol for US dollar</a>,
@@ -105,7 +106,8 @@
                         href="/http/view.php?m=44&id=136" title="1967">1967</a></div>
             <div class="row col-md-12">result_list component</div>
             <div class="row col-md-12">formulas component</div>
-            <a href="/http/view.php?m=0" title="Cancel" class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
+            <a href="/http/view.php?m=0&id=1" title="Cancel"
+               class="btn btn-space col-1 btn-outline-secondary">Cancel</a>
             <button class="btn btn-space col-1 btn-outline-success" type="submit">Save</button>
         </div>
     </form>
