@@ -112,11 +112,11 @@ class triples
     const string POTENTIAL_EDUCATION_PROBLEM = 'education can be global problem';
     const int POTENTIAL_EDUCATION_PROBLEM_ID = 109;
     const string CASH_FLOW = 'cash flow';
-    const int CASH_FLOW_ID = 127;
+    const int CASH_FLOW_ID = 126;
     const string CASH_FLOW_STATEMENT = 'cash flow statement';
     const int CASH_FLOW_STATEMENT_ID = 129;
     const string INCOME_TAX = 'income taxes';
-    const int INCOME_TAX_ID = 128;
+    const int INCOME_TAX_ID = 127;
 
     const string TN_CUBIC_METER = 'm3';
 

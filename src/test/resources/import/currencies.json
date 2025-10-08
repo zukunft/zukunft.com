@@ -58,6 +58,15 @@
       "name": "Swiss franc"
     },
     {
+      "name": "Japanese yen",
+      "refs": [
+        {
+          "name": "Japanese yen",
+          "type": "wikipedia"
+        }
+      ]
+    },
+    {
       "name": "other"
     },
     {
@@ -119,6 +128,15 @@
     },
     {
       "name": "criteria"
+    },
+    {
+      "name": "¥",
+      "refs": [
+        {
+          "name": "Yen and yuan sign",
+          "type": "wikipedia"
+        }
+      ]
     }
   ],
   "triples": [
@@ -255,6 +273,11 @@
       "from": "April",
       "verb": "of",
       "to": "2022"
+    },
+    {
+      "from": "¥",
+      "verb": "is symbol for",
+      "to": "Japanese yen"
     }
   ],
   "formulas": [

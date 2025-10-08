@@ -326,7 +326,7 @@ class words
     const string CASH = 'cash';
     const int CASH_ID = 282;
     const string STATEMENT = 'statement';
-    const int STATEMENT_ID = 283;
+    const int STATEMENT_ID = 282;
     const string PARTS = 'parts';
     const int PARTS_ID = 285;
     const string TOTAL_PRE = 'total';
@@ -371,9 +371,9 @@ class words
     const string COMPANY = 'company';
     const int COMPANY_ID = 188;
     const string ABB = 'ABB';
-    const int ABB_ID = 1034;
+    const int ABB_ID = 278;
     const string VESTAS = 'Vestas';
-    const int VESTAS_ID = 1037;
+    const int VESTAS_ID = 279;
 
     // for the config.yaml
     const string TEST = 'test';
