@@ -75,4 +75,14 @@ class ref_type_list extends type_list
         return parent::id(refs::WIKIDATA_TYPE);
     }
 
+    function url(int $id): string
+    {
+        $result = '';
+        $ref = $this->get($id);
+        if ($ref != null) {
+            $result = $ref->url;
+        }
+        return $result;
+    }
+
 }

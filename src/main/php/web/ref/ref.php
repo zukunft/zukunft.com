@@ -37,8 +37,11 @@ namespace Zukunft\ZukunftCom\main\php\web\ref;
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
 use Zukunft\ZukunftCom\main\php\web\const\paths as html_paths;
 
+include_once html_paths::HELPER . 'data_object.php';
+include_once html_paths::HTML . 'html_base.php';
 include_once html_paths::TYPES . 'type_lists.php';
 include_once html_paths::PHRASE . 'phrase.php';
+include_once html_paths::REF . 'ref_type.php';
 include_once html_paths::SANDBOX . 'db_object.php';
 include_once html_paths::USER . 'user_message.php';
 include_once html_paths::WORD . 'word.php';
@@ -47,6 +50,7 @@ include_once paths::SHARED_CONST . 'views.php';
 include_once paths::SHARED_ENUM . 'messages.php';
 include_once paths::SHARED . 'json_fields.php';
 
+use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase as phrase_dsp;
 use Zukunft\ZukunftCom\main\php\web\types\type_lists;
@@ -221,6 +225,25 @@ class ref extends db_object_dsp
         return $ref_typ_cac->name($this->predicate_id());
     }
 
+    /**
+     * @return string the url of the reference type e.g. https://www.wikidata.org/wiki/
+     */
+    function type_url(): string
+    {
+        global $ui_cac;
+        $ref_typ_lst = $ui_cac->typ_lst_cache->html_ref_types;
+        return $ref_typ_lst->url($this->predicate_id());
+    }
+
+    function used_url(): string
+    {
+        if ($this->url() != null) {
+            return $this->url();
+        } else {
+            return $this->type_url();
+        }
+    }
+
     function external_key(): ?string
     {
         return $this->external_key;
@@ -292,7 +315,18 @@ class ref extends db_object_dsp
      */
     function name_link(): string
     {
-        return $this->type_name() . ' ' . $this->external_key();
+        $html = new html_base();
+        $url = $this->used_url();
+        if ($url != null) {
+            return $html->url_ex(
+                $url,
+                $this->external_key(),
+                $this->type_name(),
+                $this->description()
+            );
+        } else {
+            return 'ERROR: url is null';
+        }
     }
 
 

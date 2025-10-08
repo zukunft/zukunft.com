@@ -86,6 +86,8 @@ class test_lib
      */
     function dummy_test_cache(user $usr): data_object_dsp
     {
+        global $ui_cac;
+
         $dto_dsp = new data_object_dsp();
         $dto_dsp->usr = $this->cast_user($usr);
 
@@ -110,6 +112,9 @@ class test_lib
         // set the value cache list based
         $dto_dsp->ref_lst = $cto->ref_list_math_ui();
         $dto_dsp->val_lst = $cto->value_list_math_ui();
+
+        // set the global cache var
+        $ui_cac = $dto_dsp;
 
         return $dto_dsp;
     }

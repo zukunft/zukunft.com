@@ -33,12 +33,14 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\value\value_list;
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\cfg\phrase\phrase_list;
 use Zukunft\ZukunftCom\main\php\web\phrase\phrase_list as phrase_list_dsp;
 use Zukunft\ZukunftCom\main\php\web\value\value_list as value_list_dsp;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class value_list_ui_tests
 {
@@ -46,6 +48,10 @@ class value_list_ui_tests
     {
         global $usr;
         $html = new html_base();
+        $tl = new test_lib();
+        $ui = new frontend('unit ui html reference list');
+        $dto = $tl->dummy_test_cache($t->usr1);
+        $ui->set_cache($dto);
 
         // start the test section (ts)
         $ts = 'unit ui html value list ';

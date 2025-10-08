@@ -287,7 +287,7 @@ class html_base
      */
 
     /**
-     * build an url for link a zukunft.com element
+     * build a url for link a zukunft.com element
      *
      * @param string $obj_name the object that is requested e.g. a view
      * @param int|string $id the id of the parameter e.g. 1 for math const
@@ -361,7 +361,7 @@ class html_base
     }
 
     /**
-     * build an url for link a zukunft.com element
+     * build a url for link a zukunft.com element
      *
      * @param string $obj_name the object that is requested e.g. a view
      * @return string the created url
@@ -369,6 +369,21 @@ class html_base
     function url_api(string $obj_name): string
     {
         return $this->host() . rest_ctrl::PATH . $obj_name . '/';
+    }
+
+    /**
+     * build a url for an external webside
+     *
+     * @param string $url the base url of the external page
+     * @param string $id the external id of the entry or subpage
+     * @param string $name the name of the link as shown to the user
+     * @param string $description the tooltip for the link
+     * @
+     * @return string the created url
+     */
+    function url_ex(string $url, string $id, string $name, string $description, string $style = ''): string
+    {
+        return $this->ref($url . $id, $name, $description, $style);
     }
 
     /**

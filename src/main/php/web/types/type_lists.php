@@ -375,7 +375,7 @@ class type_lists
     function set_ref_types(?array $json_array = null): void
     {
         $this->html_ref_types = new ref_type_list();
-        $this->html_ref_types->set_from_json_array($json_array);
+        $this->html_ref_types->set_from_json_array($json_array, ref_type::class);
     }
 
     function set_share_types(?array $json_array = null): void

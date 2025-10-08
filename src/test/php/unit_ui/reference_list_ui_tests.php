@@ -33,13 +33,17 @@
 namespace Zukunft\ZukunftCom\test\php\unit_ui;
 
 use Zukunft\ZukunftCom\main\php\cfg\const\paths;
+use Zukunft\ZukunftCom\test\php\const\paths as test_paths;
 
 include_once paths::SHARED_TYPES . 'api_type.php';
+include_once test_paths::UTILS . 'test_lib.php';
 
+use Zukunft\ZukunftCom\main\php\web\frontend;
 use Zukunft\ZukunftCom\main\php\web\html\html_base;
 use Zukunft\ZukunftCom\main\php\web\ref\ref_list;
 use Zukunft\ZukunftCom\main\php\shared\types\api_type;
 use Zukunft\ZukunftCom\test\php\utils\test_cleanup;
+use Zukunft\ZukunftCom\test\php\utils\test_lib;
 
 class reference_list_ui_tests
 {
@@ -47,6 +51,10 @@ class reference_list_ui_tests
     {
 
         $html = new html_base();
+        $tl = new test_lib();
+        $ui = new frontend('unit ui html reference list');
+        $dto = $tl->dummy_test_cache($t->usr1);
+        $ui->set_cache($dto);
 
         // start the test section (ts)
         $ts = 'unit ui html reference list ';
