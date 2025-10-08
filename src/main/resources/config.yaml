@@ -173,6 +173,9 @@ zukunft.com:
       default:
         tooltip-comment: "the default settings for normal users"
         backend:
+          rank:
+            phrase: "usage"
+            tooltip-comment: "the rank is the default word or triple that is used to sort the related objects e.g. math const are ranked by the time of discovery"
           impact:
             phrase: "happy time points"
             tooltip-comment: "the impact type is the default word or triple that is used to define what is most relevant"

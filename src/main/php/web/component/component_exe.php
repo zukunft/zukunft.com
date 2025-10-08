@@ -318,7 +318,7 @@ class component_exe extends component
             component_type::WORD_RESULTS => $form->result($dbo),
             component_type::USED_IN_AS_TEXT => $form->used_as_text($dbo),
             component_type::USED_IN_AS_TEXT_WITH_LINK => $form->used_as_text_link($dbo),
-            component_type::USAGE_WORD => $rank->usage_word($dbo, $form_name),
+            component_type::RANK_PHRASE => $rank->system_phrases($dbo),
             component_type::SYSTEM_CHANGE_LOG => $log->system_change_log($dbo, $form_name),
 
             // base

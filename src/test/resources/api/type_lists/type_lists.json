@@ -7483,6 +7483,17 @@
         "frm_name": null,
         "usage": 0,
         "id": 33
+      },
+      {
+        "name": "is ranked by",
+        "code_id": "rank",
+        "description": "to define which values should be used to sort related objects e.g. the first math const are the once that have been discovered first because they are probably the most relevant and useful",
+        "plural": "are ranked by",
+        "reverse": "is sort phrases for",
+        "rev_plural": "are sort phrases for",
+        "frm_name": null,
+        "usage": 0,
+        "id": 34
       }
     ],
     "system_views": [

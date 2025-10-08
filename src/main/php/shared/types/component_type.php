@@ -326,7 +326,7 @@ class component_type
     const int LIST_RESULTS_ID = 97;
     const string LINK_LIST_WORD = "link_list";
     const int LINK_LIST_WORD_ID = 43;
-    const string USAGE_WORD = "usage";
+    const string RANK_PHRASE = "usage";
     const int USAGE_WORD_ID = 44;
 
     // user components for value
@@ -630,7 +630,7 @@ class component_type
         [self::LIST_FORMULAS, self::LIST_FORMULAS_ID],
         [self::LIST_RESULTS, self::LIST_RESULTS_ID],
         [self::LINK_LIST_WORD, self::LINK_LIST_WORD_ID],
-        [self::USAGE_WORD, self::USAGE_WORD_ID],
+        [self::RANK_PHRASE, self::USAGE_WORD_ID],
         [self::VALUE_NAME, self::VALUE_NAME_ID],
         [self::GROUP_NAME, self::GROUP_NAME_ID],
         [self::VALUE_NUMERIC, self::VALUE_NUMERIC_ID],

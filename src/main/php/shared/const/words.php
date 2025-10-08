@@ -371,9 +371,9 @@ class words
     const string COMPANY = 'company';
     const int COMPANY_ID = 188;
     const string ABB = 'ABB';
-    const int ABB_ID = 1032;
+    const int ABB_ID = 1034;
     const string VESTAS = 'Vestas';
-    const int VESTAS_ID = 1035;
+    const int VESTAS_ID = 1037;
 
     // for the config.yaml
     const string TEST = 'test';

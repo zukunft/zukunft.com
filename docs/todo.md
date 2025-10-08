@@ -12,6 +12,7 @@ A proper issue ticket should be created for these TODOs notes:
     TODO make main backend object vars private (pending: ref, value, formula, result, view, component, user)
     TODO complete and test the url mapper in the frontend
     TODO clean up import_mapper and move all mapping from import_obj to the mapper
+    TODO use global $ui_cac for the frontend cache and $cac for the global backend cache and remove all other caches
 
     TODO complete system view with: about, async_process, calculate
 

@@ -260,6 +260,14 @@
       "name_plural_reverse": "",
       "name_plural": "to",
       "name_reverse": ""
+    },
+    {
+      "name": "is ranked by",
+      "code_id": "rank",
+      "description": "to define which values should be used to sort related objects e.g. the first math const are the once that have been discovered first because they are probably the most relevant and useful",
+      "name_plural_reverse": "are sort phrases for",
+      "name_plural": "are ranked by",
+      "name_reverse": "is sort phrases for"
     }
   ]
 }

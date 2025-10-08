@@ -103,6 +103,9 @@ class verbs
     const string AND = "and";
     const string AND_NAME = "and";
     const int AND_ID = 30;
+    const string RANK = "rank";
+    const string RANK_NAME = "is ranked by";
+    const int RANK_ID = 34;
     const string SELECTOR = "selector"; // the from_phrase of a selector can be used more than once so the description of the to_phrase should be shown to the user
 
     // directional forms of verbs (maybe move to verb_api or test if only used for testing)
@@ -118,6 +121,7 @@ class verbs
     const string DIRECTION_NO = '';
     const string DIRECTION_DOWN = 'down';    // or forward  to get a list of 'to' phrases
     const string DIRECTION_UP = 'up';        // or backward to get a list of 'from' phrases based on a given to phrase
+
 
 
     // word groups for creating the test words and remove them after the test
@@ -137,6 +141,11 @@ class verbs
         self::SYMBOL,
         self::PER,
         self::IN
+    );
+
+    // list of verbs used by the back- or frontend for internal processes e.g. to sort objects
+    const array SYSTEM_VERBS = array(
+        self::RANK,
     );
 
 }
