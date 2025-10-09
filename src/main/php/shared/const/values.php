@@ -44,8 +44,10 @@ class values
     const int PI_ID = 32819;
     const int PI_SYMBOL_ID = 32770;
     CONST float SAMPLE_ZERO = 0.0;
-    CONST float E = 0.57721566490153; // Euler const
+    CONST float E = 2.718281828459045235360; // Euler number
     const int E_ID = 32771;
+    CONST float E_CONST = 0.57721566490153; // Euler const
+    const int E_CONST_ID = 32771;
     CONST int SAMPLE_INT = 123456;
     CONST string SAMPLE_INT_COM = 'System Test Word Description for value curl testing';
     CONST float SAMPLE_FLOAT = 123.456;
