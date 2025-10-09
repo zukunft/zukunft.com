@@ -196,7 +196,6 @@ class component_exe extends component
 
             // select object types
             component_type::FORM_SELECT_PHRASE_TYPE => $form->form_phrase_type($dbo, $form_name, $cfg->typ_lst_cache),
-            component_type::FORM_SELECT_VERB_TYPE => $form->form_verb_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_SOURCE_TYPE => $form->form_source_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_REF_TYPE => $form->form_ref_type($dbo, $form_name, $cfg->typ_lst_cache),
             component_type::FORM_SELECT_VALUE_TYPE => $form->form_value_type($dbo, $form_name, $cfg->typ_lst_cache),

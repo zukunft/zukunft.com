@@ -120,7 +120,7 @@ component_type_id, type_name, description, code_id
 119, 'form select multi source', 'select one or many sources', 'system_form_select_multi_sources'
 120, 'form select ref', 'the form field to select a reference', 'system_form_select_ref'
 121, 'form select multi ref', 'select one or many references', 'system_form_select_multi_refs'
-122, 'form field verb type', 'the verb type field in a form', 'system_form_select_verb_type'
+122, 'views', 'show all views linked to here', 'view_list'
 123, 'form field value type', 'the value type field in a form', 'system_form_select_value_type'
 124, 'system form select component style', 'selector for the component style', 'system_form_select_component_style'
 125, 'system form view link priority', 'to set the priority of the view link', 'system_form_select_view_link_priority'

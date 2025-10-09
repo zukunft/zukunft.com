@@ -928,13 +928,6 @@
       "ui_msg_code_id": "form_select_phrase_type"
     },
     {
-      "name": "system form select verb type",
-      "description": "selector for the verb type",
-      "type": "system_form_select_verb_type",
-      "code_id": "form_select_verb_type",
-      "ui_msg_code_id": "form_select_verb_type"
-    },
-    {
       "name": "system form select source type",
       "description": "selector for the source type",
       "type": "system_form_select_source_type",
@@ -1727,49 +1720,43 @@
         },
         {
           "position": "5",
-          "name": "system form select verb type",
-          "style": "col-md-4",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
           "name": "system form field description"
         },
         {
-          "position": "7",
+          "position": "6",
           "name": "system form field plural",
           "style": "col-md-4"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "system form field reverse",
           "style": "col-md-4",
           "position_type": "side"
         },
         {
-          "position": "9",
+          "position": "8",
           "name": "system form field plural reverse",
           "style": "col-md-4",
           "position_type": "side"
         },
         {
-          "position": "10",
+          "position": "9",
           "name": "system formatter row right"
         },
         {
-          "position": "11",
+          "position": "10",
           "name": "system form button cancel"
         },
         {
-          "position": "12",
+          "position": "11",
           "name": "system form button save"
         },
         {
-          "position": "13",
+          "position": "12",
           "name": "system formatter row end"
         },
         {
-          "position": "14",
+          "position": "13",
           "name": "system form end"
         }
       ]
@@ -1800,49 +1787,43 @@
         },
         {
           "position": "5",
-          "name": "system form select verb type",
-          "style": "col-md-4",
-          "position_type": "side"
-        },
-        {
-          "position": "6",
           "name": "system form field description"
         },
         {
-          "position": "7",
+          "position": "6",
           "name": "system form field plural",
           "style": "col-md-4"
         },
         {
-          "position": "8",
+          "position": "7",
           "name": "system form field reverse",
           "style": "col-md-4",
           "position_type": "side"
         },
         {
-          "position": "9",
+          "position": "8",
           "name": "system form field plural reverse",
           "style": "col-md-4",
           "position_type": "side"
         },
         {
-          "position": "10",
+          "position": "9",
           "name": "system formatter row right"
         },
         {
-          "position": "11",
+          "position": "10",
           "name": "system form button cancel"
         },
         {
-          "position": "12",
+          "position": "11",
           "name": "system form button save"
         },
         {
-          "position": "13",
+          "position": "12",
           "name": "system formatter row end"
         },
         {
-          "position": "14",
+          "position": "13",
           "name": "system form end"
         }
       ]

@@ -1157,7 +1157,6 @@ enum messages: string
     case FORM_TRIPLE_VERB = 'form_select_verb';
     case FORM_PHRASE_TYPE_FROM = 'form_phrase_type_from';
     case FORM_PHRASE_TYPE_TO = 'form_phrase_type_to';
-    case FORM_SELECT_VERB_TYPE = 'form_select_verb_type';
     case FORM_SELECT_PHRASE_TYPE = 'form_select_phrase_type';
     case FORM_SELECT_SOURCE_TYPE = 'form_select_source_type';
     case FORM_SELECT_REF_TYPE = 'form_select_ref_type';

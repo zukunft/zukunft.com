@@ -585,19 +585,6 @@ class db_object extends TextIdObject
     }
 
     /**
-     * create the html code to select the verb type
-     * @param string $form the name of the html form
-     * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects
-     * @return string the html code to select the verb type
-     */
-    public function verb_type_selector(string $form, ?type_lists $typ_lst): string
-    {
-        $msg = 'verb type selector not defined for ' . $this::class;
-        log_err($msg);
-        return $msg;
-    }
-
-    /**
      * create the html code to select the source type
      * @param string $form the name of the html form
      * @param type_lists|null $typ_lst the frontend cache with the configuration, the preloaded types and the cached objects

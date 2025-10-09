@@ -125,8 +125,8 @@ class component_type
     // select object types
     const string FORM_SELECT_PHRASE_TYPE = "system_form_select_phrase_type";
     const int FORM_SELECT_PHRASE_TYPE_ID = 25;
-    const string FORM_SELECT_VERB_TYPE = "system_form_select_verb_type";
-    const int FORM_SELECT_VERB_TYPE_ID = 122;
+    const string LIST_VIEWS = "view_list";
+    const int LIST_VIEWS_ID = 122;
     const string FORM_SELECT_SOURCE_TYPE = "system_form_select_source_type";
     const int FORM_SELECT_SOURCE_TYPE_ID = 39;
     const string FORM_SELECT_REF_TYPE = "system_form_select_ref_type";
@@ -453,7 +453,7 @@ class component_type
         self::FORM_SELECT_FILE,
         self::FORM_SELECT_FORMAT_EXPORT,
         self::FORM_SELECT_PHRASE_TYPE,
-        self::FORM_SELECT_VERB_TYPE,
+        self::LIST_VIEWS,
         self::FORM_SELECT_SOURCE_TYPE,
         self::FORM_SELECT_REF_TYPE,
         self::FORM_SELECT_VALUE_TYPE,
@@ -570,7 +570,6 @@ class component_type
         [self::FORM_SELECT_FILE, self::FORM_SELECT_FILE_ID],
         [self::FORM_SELECT_FORMAT_EXPORT, self::FORM_SELECT_FORMAT_EXPORT_ID],
         [self::FORM_SELECT_PHRASE_TYPE, self::FORM_SELECT_PHRASE_TYPE_ID],
-        [self::FORM_SELECT_VERB_TYPE, self::FORM_SELECT_VERB_TYPE_ID],
         [self::FORM_SELECT_SOURCE_TYPE, self::FORM_SELECT_SOURCE_TYPE_ID],
         [self::FORM_SELECT_REF_TYPE, self::FORM_SELECT_REF_TYPE_ID],
         [self::FORM_SELECT_VALUE_TYPE, self::FORM_SELECT_VALUE_TYPE_ID],
@@ -632,6 +631,7 @@ class component_type
         [self::LIST_REF, self::LIST_REF_ID],
         [self::LIST_FORMULAS, self::LIST_FORMULAS_ID],
         [self::LIST_RESULTS, self::LIST_RESULTS_ID],
+        [self::LIST_VIEWS, self::LIST_VIEWS_ID],
         [self::LINK_LIST_WORD, self::LINK_LIST_WORD_ID],
         [self::RANK_PHRASE, self::USAGE_WORD_ID],
         [self::VALUE_NAME, self::VALUE_NAME_ID],
