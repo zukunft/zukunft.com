@@ -138,6 +138,15 @@ class system_form extends component
     }
 
     /**
+     * @param db_object_dsp $dbo the object
+     * @return string the html code to show the object description to the user
+     */
+    function show_description(db_object_dsp $dbo): string
+    {
+        return $dbo->description();
+    }
+
+    /**
      * TODO Prio 1 fill with the correct field
      * @param db_object_dsp $dbo the object
      * @return string the html code to show the object name to the user

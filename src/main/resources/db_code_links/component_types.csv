@@ -145,3 +145,4 @@ component_type_id, type_name, description, code_id
 144, 'system view before change', 'show the view like it is without the changes', 'system_show_before_change'
 145, 'system sub title', 'sub title also used for system views', 'system_sub_title'
 146, 'system sub title var', 'sub title with a variable number also used for system views', 'system_sub_title_var'
+147, 'show description', 'show the object description without link or form field', 'system_show_field_description'

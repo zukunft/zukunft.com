@@ -1116,6 +1116,12 @@
       "code_id": "show_field_name"
     },
     {
+      "name": "system show field description",
+      "description": "the object description as read only",
+      "type": "system_show_field_description",
+      "code_id": "show_field_description"
+    },
+    {
       "name": "system show value usage",
       "description": "the value usage as read only",
       "type": "system_show_field_usage",
@@ -1608,63 +1614,90 @@
         },
         {
           "position": "6",
-          "name": "system formatter row start"
+          "name": "system formatter row right"
         },
         {
           "position": "7",
+          "name": "system form button cancel"
+        },
+        {
+          "position": "8",
+          "name": "system form button del"
+        },
+        {
+          "position": "9",
+          "name": "system formatter row end"
+        },
+        {
+          "position": "10",
+          "name": "system form end"
+        },
+        {
+          "position": "11",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "12",
           "name": "system sub title usage number",
           "style": "col-md-12"
         },
         {
-          "position": "8",
+          "position": "13",
           "name": "parents of word",
           "style": "col-md-6"
         },
         {
-          "position": "9",
+          "position": "14",
           "name": "children of word",
           "position_type": "side",
           "style": "col-md-6"
         },
         {
-          "position": "10",
+          "position": "15",
           "name": "system sub title values",
           "style": "col-md-4"
         },
         {
-          "position": "11",
+          "position": "16",
           "name": "value list of word",
           "position_type": "combine"
         },
         {
-          "position": "12",
+          "position": "17",
           "name": "system sub title references",
           "style": "col-md-4"
         },
         {
-          "position": "13",
+          "position": "18",
           "name": "ref list word",
           "position_type": "combine"
         },
         {
-          "position": "14",
-          "name": "system formatter row right"
+          "position": "19",
+          "name": "usage word",
+          "position_type": "side"
         },
         {
-          "position": "15",
-          "name": "system form button cancel"
-        },
-        {
-          "position": "16",
-          "name": "system form button del"
-        },
-        {
-          "position": "17",
+          "position": "20",
           "name": "system formatter row end"
         },
         {
-          "position": "18",
-          "name": "system form end"
+          "position": "21",
+          "name": "system formatter row start"
+        },
+        {
+          "position": "22",
+          "name": "system sub title log",
+          "style": "col-md-12"
+        },
+        {
+          "position": "23",
+          "name": "change log word",
+          "position_type": "combine"
+        },
+        {
+          "position": "24",
+          "name": "system formatter row end"
         }
       ]
     },

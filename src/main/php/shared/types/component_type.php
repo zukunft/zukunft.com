@@ -355,6 +355,8 @@ class component_type
 
     const string SHOW_NAME = "system_show_field_name";
     const int SHOW_NAME_ID = 20;
+    const string SHOW_DESCRIPTION = "system_show_field_description";
+    const int SHOW_DESCRIPTION_ID = 147;
     const string SHOW_FIELD_USAGE = "system_show_field_usage";
     const int SHOW_FIELD_USAGE_ID = 128;
     const string VIEW_AFTER_CHANGE = "system_show_after_change";
@@ -481,6 +483,7 @@ class component_type
         self::FORM_HIDDEN_BACK,
         self::FORM_HIDDEN_STEP,
         self::SHOW_NAME,
+        self::SHOW_DESCRIPTION,
         self::SHOW_FIELD_USAGE,
         self::VIEW_AFTER_CHANGE,
         self::VIEW_BEFORE_CHANGE,
@@ -638,6 +641,7 @@ class component_type
         [self::VERB_NAME, self::VERB_NAME_ID],
         [self::VALUES_RELATED, self::VALUES_RELATED_ID],
         [self::SHOW_NAME, self::SHOW_NAME_ID],
+        [self::SHOW_DESCRIPTION, self::SHOW_DESCRIPTION_ID],
         [self::SHOW_FIELD_USAGE, self::SHOW_FIELD_USAGE_ID],
         [self::VIEW_AFTER_CHANGE, self::VIEW_AFTER_CHANGE_ID],
         [self::VIEW_BEFORE_CHANGE, self::VIEW_BEFORE_CHANGE_ID],
